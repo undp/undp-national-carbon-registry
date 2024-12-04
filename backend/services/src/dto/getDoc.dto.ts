@@ -1,9 +1,11 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsEnum,
   IsInt,
   IsNotEmpty,
   IsNotEmptyObject,
+  IsNumber,
+  IsOptional,
   IsString,
   ValidateNested,
 } from "class-validator";
@@ -21,4 +23,9 @@ export class GetDocDto {
     message: "Invalid doc type. Supported following doc type:" + Object.values(DocumentTypeEnum),
   })
   docType: DocumentTypeEnum;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumber()
+  version?: number;
 }

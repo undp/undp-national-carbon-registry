@@ -32,7 +32,7 @@ export enum ProcessSteps {
 }
 
 const StepperComponent = (props: any) => {
-  const { t } = props;
+  const { t, selectedVersion, handleDocumentStatus } = props;
   const [current, setCurrent] = useState(0);
   const navigate = useNavigate();
   const { id: programId } = useParams();
@@ -84,8 +84,6 @@ const StepperComponent = (props: any) => {
         appendix: formValues.content[ProcessSteps.VR_APPENDIX],
       },
     };
-
-    console.log('Validation Data', validationData);
 
     try {
       const res = await post('national/programmeSL/validation/create', validationData);
@@ -665,17 +663,24 @@ const StepperComponent = (props: any) => {
     // }
   };
 
-  const getValidationReportLastVersion = async (id: string) => {
+  const getValidationReportByVersion = async (id: string) => {
     try {
-      const {
-        data: { content },
-      } = await post('national/programmeSL/getDocLastVersion', {
-        programmeId: id,
-        docType: 'validationReport',
-      });
+      const res =
+        mode === FormMode.VIEW
+          ? await post('national/programmeSL/getDocByVersion', {
+              programmeId: id,
+              docType: 'validationReport',
+              version: selectedVersion,
+            })
+          : await post('national/programmeSL/getDocLastVersion', {
+              programmeId: id,
+              docType: 'validationReport',
+            });
 
-      const validationReportContent = JSON.parse(content);
-      console.log(validationReportContent);
+      if (mode === FormMode.VIEW) {
+        handleDocumentStatus(res.data.status);
+      }
+      const validationReportContent = JSON.parse(res.data.content);
 
       const projectDetails = validationReportContent.projectDetails;
       const introductionDetails = validationReportContent.introduction;
@@ -908,13 +913,13 @@ const StepperComponent = (props: any) => {
     getCountryList();
     if (programId) {
       if (mode === FormMode.VIEW || mode === FormMode.EDIT) {
-        getValidationReportLastVersion(programId);
+        getValidationReportByVersion(programId);
       } else {
         getProgrammeDetailsById(programId);
         getCMALastVersion(programId);
       }
     }
-  }, []);
+  }, [selectedVersion]);
 
   const steps = [
     {

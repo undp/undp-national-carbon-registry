@@ -101,7 +101,9 @@ export const formViewPermission = (
     (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
       userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
       userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
-      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+      userInfoState?.companyRole === CompanyRole.CERTIFIER ||
+      userInfoState?.companyRole === CompanyRole.MINISTRY)
   ) {
     return true;
   } else if (
@@ -119,7 +121,9 @@ export const formViewPermission = (
     (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
       userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
       userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
-      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+      userInfoState?.companyRole === CompanyRole.CERTIFIER ||
+      userInfoState?.companyRole === CompanyRole.MINISTRY)
   ) {
     return true;
   } else if (
@@ -136,7 +140,9 @@ export const formViewPermission = (
     (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
       userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
       userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
-      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+      userInfoState?.companyRole === CompanyRole.CERTIFIER ||
+      userInfoState?.companyRole === CompanyRole.MINISTRY)
   ) {
     return true;
   } else if (
@@ -150,7 +156,9 @@ export const formViewPermission = (
     (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
       userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
       userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
-      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+      userInfoState?.companyRole === CompanyRole.CERTIFIER ||
+      userInfoState?.companyRole === CompanyRole.MINISTRY)
   ) {
     return true;
   } else if (
@@ -162,7 +170,9 @@ export const formViewPermission = (
     (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
       userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
       userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
-      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+      userInfoState?.companyRole === CompanyRole.CERTIFIER ||
+      userInfoState?.companyRole === CompanyRole.MINISTRY)
   ) {
     return true;
   } else if (
@@ -173,7 +183,9 @@ export const formViewPermission = (
     (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
       userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
       userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
-      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+      userInfoState?.companyRole === CompanyRole.CERTIFIER ||
+      userInfoState?.companyRole === CompanyRole.MINISTRY)
   ) {
     return true;
   } else if (
@@ -181,7 +193,9 @@ export const formViewPermission = (
     projectProposalStage === ProjectProposalStage.AUTHORISED &&
     (userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
       userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
-      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+      userInfoState?.companyRole === CompanyRole.CERTIFIER ||
+      userInfoState?.companyRole === CompanyRole.MINISTRY)
   ) {
     return true;
   } else if (
@@ -189,7 +203,9 @@ export const formViewPermission = (
     (userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
       userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
       userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
-      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+      userInfoState?.companyRole === CompanyRole.CERTIFIER ||
+      userInfoState?.companyRole === CompanyRole.MINISTRY)
   ) {
     return true;
   } else if (
@@ -197,7 +213,9 @@ export const formViewPermission = (
     (userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
       userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
       userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
-      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+      userInfoState?.companyRole === CompanyRole.CERTIFIER ||
+      userInfoState?.companyRole === CompanyRole.MINISTRY)
   ) {
     return true;
   }

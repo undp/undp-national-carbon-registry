@@ -1,6 +1,6 @@
 @import '../../../Styles/variables.scss';
 
-.programme-view {
+.programme-sl-view {
   padding: 0px 50px;
 
   .ant-steps-item-tail::after {
@@ -118,7 +118,7 @@
     }
 
     .progress-bar {
-      width: calc(max(200px, 60%));
+      width: calc(max(200px, 100%));
       font-size: 0.8rem;
       color: $body-text-color;
       margin: 15px auto 0px;
@@ -134,6 +134,7 @@
     color: $title-text-color;
     margin-top: 14px;
     font-weight: 600;
+    display: flex;
   }
 
   .file-name {

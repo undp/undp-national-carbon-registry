@@ -41,6 +41,9 @@ import {
   SafetyOutlined,
   TransactionOutlined,
   FileOutlined,
+  ReadOutlined,
+  FileDoneOutlined,
+  SafetyCertificateOutlined,
 } from '@ant-design/icons';
 import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
@@ -122,6 +125,7 @@ import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verifi
 import LabelWithTooltip from '../../LabelWithTooltip/LabelWithTooltip';
 import ProgrammeHistoryStepsComponent from './programmeHistory/programmeHistoryStepComponent';
 import ProgrammeStatusTimelineComponent from './programmeStatusTimeline/programmeStatusTimelineComponent';
+import { OrganisationSlStatus } from '../../OrganisationSlStatus/organisationSlStatus';
 
 const SLCFProjectDetailsViewComponent = (props: any) => {
   const { onNavigateToProgrammeView, translator } = props;
@@ -1790,27 +1794,41 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     return (
       <div className="">
         <div className="company-info">
-          {isBase64(ele.company.logo) ? (
-            <img alt="company logo" src={'data:image/jpeg;base64,' + ele.company.logo} />
-          ) : ele.company.logo ? (
-            <img alt="company logo" src={ele.company.logo} />
-          ) : ele.company.name ? (
-            <div className="programme-logo">{ele.company.name.charAt(0).toUpperCase()}</div>
-          ) : (
-            <div className="programme-logo">{'A'}</div>
-          )}
-          <div className="text-center programme-name">{ele.company.name}</div>
-          <div className="progress-bar">
-            <div>
-              <div className="float-left">{t('projectDetailsView:ownership')}</div>
-              <div className="float-right">{ele.percentage}%</div>
-            </div>
-            <Progress percent={ele.percentage} strokeWidth={7} status="active" showInfo={false} />
-          </div>
-          <OrganisationStatus
-            organisationStatus={parseInt(ele.company.state)}
-            t={companyProfileTranslations}
-          ></OrganisationStatus>
+          <Row className="row" justify={'space-between'}>
+            <Col xl={6} md={6}>
+              {isBase64(ele.company.logo) ? (
+                <img alt="company logo" src={'data:image/jpeg;base64,' + ele.company.logo} />
+              ) : ele.company.logo ? (
+                <img alt="company logo" src={ele.company.logo} />
+              ) : ele.company.name ? (
+                <div className="programme-logo">{ele.company.name.charAt(0).toUpperCase()}</div>
+              ) : (
+                <div className="programme-logo">{'A'}</div>
+              )}
+            </Col>
+            <Col xl={18} md={18}>
+              <div className="text-left programme-name">
+                {ele.company.name}
+
+                <OrganisationSlStatus
+                  organisationStatus={parseInt(ele.company.state)}
+                  t={companyProfileTranslations}
+                ></OrganisationSlStatus>
+              </div>
+              <div className="progress-bar">
+                <Progress
+                  percent={ele.percentage}
+                  strokeWidth={7}
+                  status="active"
+                  showInfo={false}
+                />
+                <div>
+                  <div className="float-left">{t('projectDetailsView:ownership')}</div>
+                  <div className="float-right">{ele.percentage}%</div>
+                </div>
+              </div>
+            </Col>
+          </Row>
         </div>
       </div>
     );
@@ -2023,7 +2041,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   return loadingAll ? (
     <Loading />
   ) : (
-    <div className="content-container programme-view">
+    <div className="content-container programme-sl-view">
       <div className="title-bar">
         <div>
           <div className="body-title">{t('projectDetailsView:details')}</div>
@@ -2048,21 +2066,31 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         <Row gutter={16}>
           <Col md={24} lg={10}>
             <Card className="card-container">
-              <div className="info-view">
-                <div className="title">
-                  <span className="title-icon">
-                    {
-                      <span className="b-icon">
-                        <Icon.Building />
-                      </span>
-                    }
-                  </span>
-                  <span className="title-text">{t('projectDetailsView:programmeOwner')}</span>
-                </div>
-                <div className="centered-card">{elements}</div>
+              <div>
+                <ProjectForms
+                  data={documentsData}
+                  projectFormsTitle={t('projectDetailsView:projectProposalFormsTitle')}
+                  validationFormsTitle={t('projectDetailsView:validationFormsTitle')}
+                  cmaFormsTitle={t('projectDetailsView:cmaFormsTitle')}
+                  icon={<QrcodeOutlined />}
+                  projectProposalIcon={<ReadOutlined />}
+                  cmaIcon={<FileDoneOutlined />}
+                  validationIcon={<SafetyCertificateOutlined />}
+                  programmeId={data?.programmeId}
+                  programmeOwnerId={programmeOwnerId}
+                  getDocumentDetails={() => {
+                    getDocuments(data?.programmeId);
+                  }}
+                  getProgrammeById={() => {
+                    getProgrammeById();
+                  }}
+                  ministryLevelPermission={ministryLevelPermission}
+                  translator={i18n}
+                  projectProposalStage={data?.projectProposalStage}
+                  programmeDetails={data}
+                />
               </div>
             </Card>
-
             <Card className="card-container">
               <div className="info-view">
                 <div className="title">
@@ -2251,7 +2279,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 </div>
               </div>
             </Card>
-
             {data?.programmeProperties?.programmeMaterials &&
               data?.programmeProperties?.programmeMaterials.length > 0 && (
                 <Card className="card-container">
@@ -2291,29 +2318,23 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 />
               </div>
             </Card>
-            <Card className="card-container">
-              <div>
-                <ProjectForms
-                  data={documentsData}
-                  title={t('projectDetailsView:programmeForms')}
-                  icon={<QrcodeOutlined />}
-                  programmeId={data?.programmeId}
-                  programmeOwnerId={programmeOwnerId}
-                  getDocumentDetails={() => {
-                    getDocuments(data?.programmeId);
-                  }}
-                  getProgrammeById={() => {
-                    getProgrammeById();
-                  }}
-                  ministryLevelPermission={ministryLevelPermission}
-                  translator={i18n}
-                  projectProposalStage={data?.projectProposalStage}
-                  programmeDetails={data}
-                />
-              </div>
-            </Card>
           </Col>
           <Col md={24} lg={14}>
+            <Card className="card-container">
+              <div className="info-view ">
+                <div className="title">
+                  <span className="title-icon">
+                    {
+                      <span className="b-icon">
+                        <Icon.Building />
+                      </span>
+                    }
+                  </span>
+                  <span className="title-text">{t('projectDetailsView:programmeOwner')}</span>
+                </div>
+                <div className="centered-card">{elements}</div>
+              </div>
+            </Card>
             <Card className="card-container">
               <div>
                 <InfoView

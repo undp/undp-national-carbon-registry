@@ -32,8 +32,9 @@ import { Loading } from '../Loading/loading';
 const CMA_STEPS = {};
 
 const StepperComponent = (props: any) => {
-  const { t, form } = props;
+  const { t, form, selectedVersion, handleDocumentStatus } = props;
   const [current, setCurrent] = useState(0);
+
   const navigate = useNavigate();
 
   const { state } = useLocation();
@@ -150,11 +151,21 @@ const StepperComponent = (props: any) => {
     const getViewData = async () => {
       if (isView || isEdit) {
         setLoading(true);
+        let res;
         try {
-          const res = await post('national/programmeSl/getDocLastVersion', {
-            programmeId: id,
-            docType: 'cma',
-          });
+          if (isView) {
+            res = await post('national/programmeSl/getDocByVersion', {
+              programmeId: id,
+              docType: 'cma',
+              version: selectedVersion,
+            });
+            handleDocumentStatus(res.data.status);
+          } else {
+            res = await post('national/programmeSl/getDocLastVersion', {
+              programmeId: id,
+              docType: 'cma',
+            });
+          }
 
           if (res?.statusText === 'SUCCESS') {
             const content = JSON.parse(res?.data.content);
@@ -210,7 +221,7 @@ const StepperComponent = (props: any) => {
     if (isView) {
       setDisableFields(true);
     }
-  }, []);
+  }, [selectedVersion]);
 
   const submitForm = async (appendixVals: any) => {
     const tempValues = {

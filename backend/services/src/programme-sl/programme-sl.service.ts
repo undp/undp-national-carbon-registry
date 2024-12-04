@@ -85,7 +85,7 @@ export class ProgrammeSlService {
     private dateUtilService: DateUtilService,
     private serialGenerator: SLCFSerialNumberGeneratorService,
     @InjectRepository(ProgrammeAuditLogSl)
-    private programmeAuditSlRepo: Repository<ProgrammeAuditLogSl>,
+    private programmeAuditSlRepo: Repository<ProgrammeAuditLogSl>
   ) {}
 
   // MARK: Create Programme
@@ -1463,7 +1463,6 @@ export class ProgrammeSlService {
     );
 
     if (response) {
-
       const logs: ProgrammeAuditLogSl[] = [];
 
       const ValidationApprovedLog = new ProgrammeAuditLogSl();
@@ -1635,6 +1634,69 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, null);
   }
 
+  async getDocVersions(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const programme = await this.programmeLedgerService.getProgrammeSlById(getDocDto.programmeId);
+
+      if (!programme) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.programmeNotExist", []),
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      if (user.companyId !== programme.companyId) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+    }
+    const documentVersions = await this.documentRepo.find({
+      select: { version: true },
+      where: {
+        programmeId: getDocDto.programmeId,
+        type: getDocDto.docType,
+      },
+      order: {
+        version: "DESC",
+      },
+    });
+
+    const versions = documentVersions.map((doc) => doc.version);
+
+    return new DataResponseDto(HttpStatus.OK, versions);
+  }
+
+  async getDocByVersion(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const programme = await this.programmeLedgerService.getProgrammeSlById(getDocDto.programmeId);
+
+      if (!programme) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.programmeNotExist", []),
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      if (user.companyId !== programme.companyId) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+    }
+    const document = await this.documentRepo.findOne({
+      where: {
+        programmeId: getDocDto.programmeId,
+        type: getDocDto.docType,
+        version: getDocDto.version,
+      },
+    });
+
+    return new DataResponseDto(HttpStatus.OK, document);
+  }
+
   async query(query: QueryDto, abilityCondition: string, user: User): Promise<DataListResponseDto> {
     const skip = query.size * query.page - query.size;
     const limit = query.size || 10;
@@ -1743,12 +1805,33 @@ export class ProgrammeSlService {
       company = await this.companyService.findByCompanyId(project.companyId);
     }
 
+    let documents = await this.documentRepo.find({
+      select: {
+        version: true,
+        createdTime: true,
+        type: true,
+      },
+      where: {
+        programmeId: programmeId,
+      },
+    });
+
+    const lastVersions = documents.reduce((acc, doc) => {
+      // If the type is not in the accumulator or the current document has a higher version, update it
+      if (!acc[doc.type] || acc[doc.type].version < doc.version) {
+        acc[doc.type] = doc;
+      }
+      return acc;
+    }, {});
+
     let updatedProject = {
       ...project,
       company: company,
+      documents: lastVersions,
     };
     return updatedProject;
   }
+
   async getDocumentById(docId: number): Promise<any> {
     const document = await this.documentRepo.findOne({
       where: {
