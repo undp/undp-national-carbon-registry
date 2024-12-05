@@ -238,7 +238,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
               {/* Gases Included Start */}
               <div className="gases-included-container">
                 <div className="table">
-                  <div className="sidebar-header">Baseline</div>
+                  <div className="sidebar-header">Baseline Emission</div>
                   <div className="data-side">
                     <div className="header-row">
                       <div className="col1">Source</div>
@@ -695,7 +695,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                     </div>
                   </div>
 
-                  <div className="sidebar-header">Project</div>
+                  <div className="sidebar-header">Project Emission</div>
                   <div className="data-side">
                     <div className="data-row-wrapper add-padding-top">
                       <div className="data-row">
