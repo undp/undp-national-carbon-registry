@@ -1,4 +1,4 @@
-name: Carbol SL Test Deployment...
+name: Carbon Registry ZIM Test Deployment...
 on:
   push:
     branches:
@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   deploy_frontend:
-    name: Carbon SL Registry Frontend Deploy
+    name: Carbon Registry ZIM Frontend Deploy
     runs-on: ubuntu-latest
     env:
       # REACT_APP_BACKEND: https://ck5kt5uaw1.execute-api.us-east-1.amazonaws.com/dev
@@ -82,7 +82,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: carbon-web-sl
+          ECR_REPOSITORY: carbon-registry-zim-web
           IMAGE_TAG: ${{ github.head_ref || github.ref_name }} 
         run: |
           # Build a docker container and push it to ECR 
@@ -94,7 +94,7 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: carbon-web-sl
+          ECR_REPOSITORY: carbon-registry-zim-web
           IMAGE_TAG: ${{ github.head_ref || github.ref_name }}
           PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_TEST }}
           HOSTNAME: ${{secrets.HOST_IP_TEST }}
@@ -102,10 +102,10 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-            carbon-sl/sl_frontend_deploy.sh '
+            carbon-zim/zim_frontend_deploy.sh '
 
   deploy_backend:
-    name: Carbon SL Registry Backend Deploy 
+    name: Carbon Registry ZIM Backend Deploy 
     runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}-'dev'
@@ -136,7 +136,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: carbon-services-sl
+          ECR_REPOSITORY: carbon-registry-zim-services
           IMAGE_TAG: ${{ github.head_ref || github.ref_name }} 
         run: |
           # Build a docker container and push it to ECR 
@@ -153,4 +153,4 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-            carbon-sl/sl_backend_deploy.sh '
+            carbon-zim/zim_backend_deploy.sh '
