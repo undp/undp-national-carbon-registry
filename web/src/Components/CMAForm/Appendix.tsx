@@ -50,7 +50,7 @@ const Step08 = (props: CustomStepsProps) => {
   };
   return (
     <>
-      {current === 8 && (
+      {current === 7 && (
         <div>
           <div className="step-form-container">
             <Form
@@ -125,7 +125,7 @@ const Step08 = (props: CustomStepsProps) => {
                   name="design"
                   action="/upload.do"
                   listType="picture"
-                  multiple={false}
+                  multiple={true}
                   disabled={disableFields}
                   // maxCount={1}
                 >

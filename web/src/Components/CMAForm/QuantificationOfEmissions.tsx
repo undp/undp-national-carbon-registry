@@ -215,7 +215,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
               </Form.Item>
 
               {/* Equation */}
-              <div className="equation-container">
+              {/* <div className="equation-container">
                 <p className="equation">
                   <i>
                     BE<sub>y</sub> = EG<sub>y</sub> x EF<sub>y</sub>
@@ -245,7 +245,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                   </span>
                   <br />
                 </div>
-              </div>
+              </div> */}
               <Form.Item
                 className='className="full-width-form-item'
                 label={`6.2 ${t('CMAForm:projectEmissions')}`}

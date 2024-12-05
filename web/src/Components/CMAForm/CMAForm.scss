@@ -144,8 +144,9 @@
 
     .sidebar-header {
       width: 30px;
-      rotate: -90deg;
+      rotate: -180deg;
       background-color: #f3f3f3;
+      writing-mode: vertical-lr;
     }
 
     .full-width {
