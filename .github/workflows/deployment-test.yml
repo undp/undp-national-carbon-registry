@@ -1,4 +1,4 @@
-name: Carbon Registry ZIM Test Deployment...
+name: Carbon Registry ZIM Test Deployment
 on:
   push:
     branches:
