@@ -1137,12 +1137,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           </>
           {/* Overall background end */}
 
-          {/* Sri Lanka Carbon Crediting Scheme(SLCCS) start */}
+          {/* Zimbabwe Carbon Crediting Scheme(SLCCS) start */}
           <>
             <h4 className="section-title mg-top-2">3. {t('projectProposal:creditingScheme')}</h4>
 
             <p className="section-description">
-              Sri Lanka Carbon Crediting Scheme (SLCCS) is a Greenhouse Gas (GHG) reduction
+              Zimbabwe Carbon Crediting Scheme (SLCCS) is a Greenhouse Gas (GHG) reduction
               programme which needs encouragement of every kind of active carbon reduction or
               removal projects for the benefits of the Environment, Society and the Economy. It
               brings quality assurance for such projects and carbon offsets. It is a voluntary
@@ -1176,7 +1176,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               </li>
             </ol>
           </>
-          {/* Sri Lanka Carbon Crediting Scheme(SLCCS) end */}
+          {/* Zimbabwe Carbon Crediting Scheme(SLCCS) end */}
 
           {/* Scope for this proposal start */}
           <>
@@ -1536,7 +1536,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           <>
             <h4 className="section-description-title">{t('projectProposal:validationoftheCMA')}</h4>
             <p className="section-description mg-bottom-1">
-              Validation process would be done by Validation/Verification Team of Sri Lanka Climate
+              Validation process would be done by Validation/Verification Team of Zimbabwe Climate
               Fund based on the CMA provided by PP or 3rd Party by reviewing required document on
               site and off site.
             </p>
@@ -1547,8 +1547,8 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               {t('projectProposal:projectRegistration')}
             </h4>
             <p className="section-description mg-bottom-1">
-              Project registration would be done by SLCCS registry division of Sri Lanka Climate
-              Fund based on the Validation Report provided by Validation Division of Sri Lanka
+              Project registration would be done by SLCCS registry division of Zimbabwe Climate
+              Fund based on the Validation Report provided by Validation Division of Zimbabwe
               Climate Fund.
             </p>
           </>
@@ -1566,7 +1566,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           <>
             <h4 className="section-description-title">{t('projectProposal:verificationOfMR')}</h4>
             <p className="section-description mg-bottom-1">
-              Verification process would be done by Verification Team of Sri Lanka Climate Fund
+              Verification process would be done by Verification Team of Zimbabwe Climate Fund
               based on the MR provided by PP or 3rd Party by reviewing required document on site and
               off site.
             </p>
@@ -1575,7 +1575,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           <>
             <h4 className="section-description-title">{t('projectProposal:issuanceOfSCER')}</h4>
             <p className="section-description mg-bottom-1">
-              The amount of Sri Lankan Certified Emission Reduction (SCER) would be certified by
+              The amount of Zimbabwen Certified Emission Reduction (SCER) would be certified by
               SLCCS registry division and that amount would credited to PP.
             </p>
           </>
@@ -3001,11 +3001,11 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           {/*  Introduction to climate fund start */}
           <>
-            <h4 className="section-title">11. Introduction to Sri Lanka Climate Fund</h4>
+            <h4 className="section-title">11. Introduction to Zimbabwe Climate Fund</h4>
             <p className="capitalize">
               SLCF is a public-private partnership company established under the companies’ Act No.7
               of 2007, under the Ministry of Environment and Renewable Energy to promote carbon
-              trading projects in Sri Lanka. Company provides technical and finance resources to
+              trading projects in Zimbabwe. Company provides technical and finance resources to
               develop projects contribute to the sustainability of the environment in any sector.
               SLCF also purchases carbon credits from project owners while providing any service
               relating to CDM project development.{' '}
@@ -3013,7 +3013,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
             <div className="mg-top-1">Our Vision </div>
             <div className="capitalize">
-              Carbon neutral and climate-resilient blue-green economy in Sri Lanka.
+              Carbon neutral and climate-resilient blue-green economy in Zimbabwe.
             </div>
 
             <div className="mg-top-1">Mission</div>

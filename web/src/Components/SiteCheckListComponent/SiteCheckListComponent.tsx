@@ -813,7 +813,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 <Col md={10} xl={10} className="col-1">
                   <div className="text-row">
                     <div>2.</div>
-                    <div>The project activity shall be located in Sri Lanka.</div>
+                    <div>The project activity shall be located in Zimbabwe.</div>
                   </div>
                 </Col>
                 <Col md={4} xl={4}>
@@ -877,7 +877,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     <div>3.</div>
                     <div>
                       The project activity shall not happen in the absence of benefits received from
-                      trading Sri Lanka Certified Emission Reduction units (SCERs). (This is not
+                      trading Zimbabwe Certified Emission Reduction units (SCERs). (This is not
                       applicable Track II)
                     </div>
                   </div>

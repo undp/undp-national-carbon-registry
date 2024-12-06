@@ -135,7 +135,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.2
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      The project activity shall be located in Sri Lanka.
+                      The project activity shall be located in Zimbabwe.
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -186,7 +186,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                     </Col>
                     <Col md={10} xl={10} className="col-2">
                       The project activity shall not happen in the absence of benefits received from
-                      trading Sri Lanka Certified Emission Reduction units (SCERs). (This is not
+                      trading Zimbabwe Certified Emission Reduction units (SCERs). (This is not
                       applicable Track II)
                     </Col>
                     <Col md={6} xl={6}>

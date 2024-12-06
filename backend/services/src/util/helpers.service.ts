@@ -470,7 +470,7 @@ export class HelperService {
     }
 
     if(isSubject) 
-      return `Sri Lanka Carbon Registry: ${template}`;
+      return `Zimbabwe Carbon Registry: ${template}`;
     else 
       return template;
 }

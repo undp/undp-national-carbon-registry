@@ -100,7 +100,7 @@ export class VoluntarilyCancellationCertificateGenerator {
     // "Presented by:" Text
     const labelByText = "Presented by: ";
     const labelByWidth = doc.widthOfString(labelByText, { font: "Helvetica" });
-    const valueByText = "Sri Lanka Climate Fund (Pvt) Ltd.";
+    const valueByText = "Zimbabwe Climate Fund (Pvt) Ltd.";
     const valueByWidth = doc.widthOfString(valueByText, { font: "Helvetica-Bold" });
     const totalWidthPresentedBy = labelByWidth + valueByWidth;
     const startXPresentedBy = (doc.page.width - totalWidthPresentedBy) / 2;
@@ -203,7 +203,7 @@ export class VoluntarilyCancellationCertificateGenerator {
       .font("Helvetica")
       .fontSize(9)
       .text(
-        `${data.projectName} is developed and registered under Sri Lanka Carbon Crediting Scheme by ${data.projectProponent}, a subsidiary of ${data.projectProponent} in the interest of obtaining carbon credits for internal offsetting.`,
+        `${data.projectName} is developed and registered under Zimbabwe Carbon Crediting Scheme by ${data.projectProponent}, a subsidiary of ${data.projectProponent} in the interest of obtaining carbon credits for internal offsetting.`,
         70,
         680,
         { align: "left" }

@@ -78,14 +78,14 @@ export class CarbonNeutralCertificateGenerator {
     doc
       .font("Helvetica-Bold")
       .fontSize(14)
-      .text("Presented by: Sri Lanka Climate Fund (PVT) Ltd.", { align: "center" });
+      .text("Presented by: Zimbabwe Climate Fund (PVT) Ltd.", { align: "center" });
 
     doc.moveDown(1);
 
     doc
       .font("Helvetica")
       .fontSize(12)
-      .text("Sri Lanka Climate Fund (PVT) Ltd. certifies that", { align: "center" });
+      .text("Zimbabwe Climate Fund (PVT) Ltd. certifies that", { align: "center" });
 
     doc.moveDown(0.5);
 
@@ -114,7 +114,7 @@ export class CarbonNeutralCertificateGenerator {
     doc
       .font("Helvetica")
       .fontSize(12)
-      .text("Sri Lankan Certified Emission Reductions (SCER) of", { align: "center" });
+      .text("Zimbabwen Certified Emission Reductions (SCER) of", { align: "center" });
 
     doc.moveDown(0.5);
 
@@ -125,7 +125,7 @@ export class CarbonNeutralCertificateGenerator {
     doc
       .font("Helvetica")
       .fontSize(12)
-      .text(`registered under Sri Lanka Carbon Crediting Scheme (SLCCS)`, { align: "center" });
+      .text(`registered under Zimbabwe Carbon Crediting Scheme (SLCCS)`, { align: "center" });
 
     doc.moveDown(1);
     doc
@@ -180,7 +180,7 @@ export class CarbonNeutralCertificateGenerator {
         continued: true,
       })
       .font("Helvetica")
-      .text(`: Sri Lanka Climate Fund (Pvt) Ltd.`, 268, doc.y, {
+      .text(`: Zimbabwe Climate Fund (Pvt) Ltd.`, 268, doc.y, {
         continued: false,
       })
       .moveDown(1);
@@ -226,7 +226,7 @@ export class CarbonNeutralCertificateGenerator {
     doc
       .font("Helvetica")
       .fontSize(10)
-      .text("Sri Lanka Climate Fund (Pvt) Ltd.", 100, 690, { align: "left" });
+      .text("Zimbabwe Climate Fund (Pvt) Ltd.", 100, 690, { align: "left" });
 
     doc.image("images/carbonNeutralLogo.jpg", 260, 580, {
       width: 110,
@@ -257,13 +257,13 @@ export class CarbonNeutralCertificateGenerator {
     doc
       .font("Helvetica")
       .fontSize(10)
-      .text("Sri Lanka Climate Fund (Pvt) Ltd.", 378, 690, { align: "left" });
+      .text("Zimbabwe Climate Fund (Pvt) Ltd.", 378, 690, { align: "left" });
 
     doc
       .font("Helvetica")
       .fontSize(9)
       .text(
-        "Sri Lanka Climate Fund (Pvt) Ltd, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.",
+        "Zimbabwe Climate Fund (Pvt) Ltd, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.",
         70,
         720,
         { align: "center" }

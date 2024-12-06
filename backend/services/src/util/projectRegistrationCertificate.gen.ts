@@ -84,7 +84,7 @@ export class ProjectRegistrationCertificateGenerator {
     doc
       .font("Helvetica-Bold")
       .fontSize(16)
-      .text("Sri Lanka Climate Fund (PVT) Ltd", 70, 180, { align: "center" });
+      .text("Zimbabwe Climate Fund (PVT) Ltd", 70, 180, { align: "center" });
 
     doc.moveDown(0.5);
 
@@ -111,7 +111,7 @@ export class ProjectRegistrationCertificateGenerator {
     doc
       .font("Helvetica-Bold")
       .fontSize(16)
-      .text(`${track} of Sri Lanka Carbon Credit Scheme`, { align: "center" });
+      .text(`${track} of Zimbabwe Carbon Credit Scheme`, { align: "center" });
 
     doc.moveDown(0.5);
 
@@ -191,7 +191,7 @@ export class ProjectRegistrationCertificateGenerator {
     doc
       .font("Helvetica")
       .fontSize(10)
-      .text("Sri Lanka Climate Fund (Pvt) Ltd.", 100, 690, { align: "left" });
+      .text("Zimbabwe Climate Fund (Pvt) Ltd.", 100, 690, { align: "left" });
 
     doc.image("images/SLCF_logo.jpg", 260, 600, {
       width: 110,
@@ -221,13 +221,13 @@ export class ProjectRegistrationCertificateGenerator {
     doc
       .font("Helvetica")
       .fontSize(10)
-      .text("Sri Lanka Climate Fund (Pvt) Ltd.", 378, 690, { align: "left" });
+      .text("Zimbabwe Climate Fund (Pvt) Ltd.", 378, 690, { align: "left" });
 
     doc
       .font("Helvetica")
       .fontSize(9)
       .text(
-        "Sri Lanka Climate Fund (Pvt) Ltd, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.",
+        "Zimbabwe Climate Fund (Pvt) Ltd, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.",
         70,
         720,
         { align: "center" }

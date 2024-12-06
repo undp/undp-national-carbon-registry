@@ -45,7 +45,7 @@
   "validationReportRejectedDescription": "The Validation Report was rejected by {}",
 
   "authorisedTitle": "Project Registered",
-  "authorisedDescription": "The project was registered under Sri Lanka Carbon Credit Scheme",
+  "authorisedDescription": "The project was registered under Zimbabwe Carbon Credit Scheme",
 
   "monitoringReportCreatedTitle": "Monitoring Report Created",
   "monitoringReportCreatedDescription": "The Monitoring Report was created by {}",
@@ -72,10 +72,10 @@
   "transferRequestedDescription": "{} of {} has requested to transfer {} credits to {}",
 
   "transferApprovedTitle": "Credit Transfer Approved",
-  "transferApprovedDescription": "{} of Sri Lanka Climate Fund has approved the transfer of {} credits to {}",
+  "transferApprovedDescription": "{} of Zimbabwe Climate Fund has approved the transfer of {} credits to {}",
 
   "transferRejectedTitle": "Credit Transfer Rejected",
-  "transferRejectedDescription": "{} of Sri Lanka Climate Fund has rejected the transfer of {} credits to {}",
+  "transferRejectedDescription": "{} of Zimbabwe Climate Fund has rejected the transfer of {} credits to {}",
 
   "transferCancelledTitle": "Credit Transfer Cancelled",
   "transferCancelledDescription": "{} of {} has cancelled the request to transfer of {} credits to {}",
@@ -84,10 +84,10 @@
   "retireRequestedDescription": "{} of {} has request to retire {} credits from project {}",
 
   "retireApprovedTitle": "Credit Retirement Approved",
-  "retireApprovedDescription": "{} of Sri Lanka Climate Fund has approved the retirement of {} credits from project {}",
+  "retireApprovedDescription": "{} of Zimbabwe Climate Fund has approved the retirement of {} credits from project {}",
 
   "retireRejectedTitle": "Credit Retirement Rejected",
-  "retireRejectedDescription": "{} of Sri Lanka Climate Fund has rejected the request to retire {} credits from project {}",
+  "retireRejectedDescription": "{} of Zimbabwe Climate Fund has rejected the request to retire {} credits from project {}",
 
   "retireCancelledTitle": "Credit Retirement Cancelled",
   "retireCancelledDescription": "{} of {} has cancelled the request to retire {} credits from project {}"
