@@ -2303,7 +2303,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                     ministryLevelPermission={ministryLevelPermission}
                     translator={i18n}
                     projectProposalStage={data?.projectProposalStage}
-                    programmeDetails={data}
                   />
                 </div>
               </Card>
