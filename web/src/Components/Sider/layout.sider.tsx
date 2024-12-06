@@ -51,8 +51,12 @@ const LayoutSider = (props: LayoutSiderProps) => {
 
   const items: MenuItem[] = [
     getItem(t('nav:dashboard'), 'dashboard', <DashboardOutlined />),
-    getItem(t('nav:slcfprogrammes'), 'programmeManagementSLCF/viewAll', <AppstoreOutlined />),
-    getItem(t('nav:projectList'), 'projectList/viewAll', <UnorderedListOutlined />),
+    getItem(
+      t('nav:slcfprogrammes'),
+      'programmeManagementSLCF/viewAllProjects',
+      <AppstoreOutlined />
+    ),
+    getItem(t('nav:projectList'), 'programmeManagementSLCF/viewAll', <UnorderedListOutlined />),
     getItem(t('nav:retirements'), 'retirementManagement/viewAll', <SplitCellsOutlined />),
     getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
     getItem(t('nav:verra'), 'verraManagement/viewAll', <AppstoreOutlined />),
@@ -134,14 +138,13 @@ const LayoutSider = (props: LayoutSiderProps) => {
                   item?.key === 'ndcManagement/viewAll' ||
                   item?.key === 'investmentManagement/viewAll' ||
                   item?.key === 'retirementManagement/viewAll' ||
-                  item?.key === 'projectList/viewAll' ||
+                  item?.key === 'programmeManagementSLCF/viewAll' ||
                   item?.key === 'creditTransfers/viewAll'
                     ? 'custom-padding-left'
                     : ''
                 }
                 disabled={
                   item?.key === 'programmeManagement/viewAll' ||
-                  item?.key === 'projectList/viewAll' ||
                   item?.key === 'verraManagement/viewAll'
                 }
               >

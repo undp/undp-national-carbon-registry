@@ -116,6 +116,7 @@ const App = () => {
                     element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
                   >
                     <Route path="viewAll" element={<SLCFProgrammeManagement />} />
+                    <Route path="viewAllProjects" element={<SLCFProgrammeManagement />} />
                     <Route path="view/:id" element={<SLCFProjectDetailsView />} />
                     <Route path="addProgramme" element={<SLCFAddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
