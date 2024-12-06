@@ -97,15 +97,15 @@ $title-color: #3a8ab5;
         rgba(255, 255, 255, 0.3) 10%,
         rgba(4, 105, 177, 0.24) 40%
       ),
-      url('../../Assets/Images/sigiriya.jpg');
+      url('../../Assets/Images/home_image.jpg');
     background-image: linear-gradient(
         to bottom,
         rgba(255, 255, 255, 0.3) 10%,
         rgba(4, 105, 177, 0.24) 40%
       ),
       image-set(
-        '../../Assets/Images/sigiriya.jpg' type('image/jpg'),
-        '../../Assets/Images/sigiriya.webp' type('image/webp')
+        '../../Assets/Images/home_image.jpg' type('image/jpg'),
+        '../../Assets/Images/home_image.webp' type('image/webp')
       );
     background-size: cover;
     background-position: top !important;
@@ -640,7 +640,7 @@ $title-color: #3a8ab5;
 
       .homepage_accordian {
         border-radius: 5px;
-        font-family: "Inter";
+        font-family: 'Inter';
         margin-bottom: 80px;
 
         .homepage_collapsepanel {
@@ -667,8 +667,8 @@ $title-color: #3a8ab5;
           .collapsetext {
             font-size: 14px;
 
-            li{
-              strong{
+            li {
+              strong {
                 margin-bottom: 5px;
               }
             }
