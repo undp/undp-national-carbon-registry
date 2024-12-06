@@ -38,7 +38,7 @@ services:
       exComAdminEmail: <EXCECUTIVE COMMITTEE ADMIN EMAIL>
       Ministery: ""
       Department: ""
-      systemCountryCode: "LK"
+      systemCountryCode: "ZW"
       systemCountryName: "Zimbabwe"
       systemContinentName: "Zimbabwe"
       name: "Antactic Region"
