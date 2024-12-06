@@ -1575,7 +1575,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           <>
             <h4 className="section-description-title">{t('projectProposal:issuanceOfSCER')}</h4>
             <p className="section-description mg-bottom-1">
-              The amount of Zimbabwen Certified Emission Reduction (SCER) would be certified by
+              The amount of Zimbabwe Certified Emission Reduction (SCER) would be certified by
               SLCCS registry division and that amount would credited to PP.
             </p>
           </>
