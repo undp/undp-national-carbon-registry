@@ -1137,18 +1137,18 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           </>
           {/* Overall background end */}
 
-          {/* Zimbabwe Carbon Crediting Scheme(SLCCS) start */}
+          {/* Sri Lanka Carbon Crediting Scheme(SLCCS) start */}
           <>
             <h4 className="section-title mg-top-2">3. {t('projectProposal:creditingScheme')}</h4>
 
             <p className="section-description">
-              Zimbabwe Carbon Crediting Scheme (SLCCS) is a Greenhouse Gas (GHG) reduction
-              programme which needs encouragement of every kind of active carbon reduction or
-              removal projects for the benefits of the Environment, Society and the Economy. It
-              brings quality assurance for such projects and carbon offsets. It is a voluntary
-              initiative that regulates and registers such projects which offsets the GHG emissions
-              from companies, project developers, or other entities within a context of quality,
-              credibility and transparency.
+              Zimbabwe Carbon Crediting Scheme (SLCCS) is a Greenhouse Gas (GHG) reduction programme
+              which needs encouragement of every kind of active carbon reduction or removal projects
+              for the benefits of the Environment, Society and the Economy. It brings quality
+              assurance for such projects and carbon offsets. It is a voluntary initiative that
+              regulates and registers such projects which offsets the GHG emissions from companies,
+              project developers, or other entities within a context of quality, credibility and
+              transparency.
             </p>
 
             <h4 className="section-sub-title">{t('projectProposal:slccsObjectives')}</h4>
@@ -1176,7 +1176,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               </li>
             </ol>
           </>
-          {/* Zimbabwe Carbon Crediting Scheme(SLCCS) end */}
+          {/* Sri Lanka Carbon Crediting Scheme(SLCCS) end */}
 
           {/* Scope for this proposal start */}
           <>
@@ -1547,9 +1547,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               {t('projectProposal:projectRegistration')}
             </h4>
             <p className="section-description mg-bottom-1">
-              Project registration would be done by SLCCS registry division of Zimbabwe Climate
-              Fund based on the Validation Report provided by Validation Division of Zimbabwe
-              Climate Fund.
+              Project registration would be done by SLCCS registry division of Zimbabwe Climate Fund
+              based on the Validation Report provided by Validation Division of Zimbabwe Climate
+              Fund.
             </p>
           </>
 
@@ -1566,17 +1566,17 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           <>
             <h4 className="section-description-title">{t('projectProposal:verificationOfMR')}</h4>
             <p className="section-description mg-bottom-1">
-              Verification process would be done by Verification Team of Zimbabwe Climate Fund
-              based on the MR provided by PP or 3rd Party by reviewing required document on site and
-              off site.
+              Verification process would be done by Verification Team of Zimbabwe Climate Fund based
+              on the MR provided by PP or 3rd Party by reviewing required document on site and off
+              site.
             </p>
           </>
 
           <>
             <h4 className="section-description-title">{t('projectProposal:issuanceOfSCER')}</h4>
             <p className="section-description mg-bottom-1">
-              The amount of Zimbabwe Certified Emission Reduction (SCER) would be certified by
-              SLCCS registry division and that amount would credited to PP.
+              The amount of Zimbabwe Certified Emission Reduction (SCER) would be certified by SLCCS
+              registry division and that amount would credited to PP.
             </p>
           </>
 
@@ -3008,7 +3008,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               trading projects in Zimbabwe. Company provides technical and finance resources to
               develop projects contribute to the sustainability of the environment in any sector.
               SLCF also purchases carbon credits from project owners while providing any service
-              relating to CDM project development.{' '}
+              relating to CDM project development.
             </p>
 
             <div className="mg-top-1">Our Vision </div>
