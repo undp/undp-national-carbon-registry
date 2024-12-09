@@ -21,6 +21,7 @@ import { LocationOfProjectActivity } from "./locationOfProjectActivity.dto";
 import { CreditType } from "../enum/creditType.enum";
 import { ProjectScaleType } from "../enum/projectScaleType.enum";
 import { EstimatedAnnualGHGEmissions } from "./estimatedAnnualGHGEmissions.dto";
+import { SlSectoralScope } from "../enum/slSectoralScope.enum";
 
 export class ProjectActivity {
   @ApiProperty()
@@ -28,10 +29,12 @@ export class ProjectActivity {
   @IsString()
   introduction: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: SlSectoralScope })
   @IsNotEmpty()
-  @IsString()
-  sectoralScopeAndProjectType: string;
+  @IsEnum(SlSectoralScope, {
+    message: "Invalid sectoral scope. Supported following sectoral scopes:" + Object.values(SlSectoralScope),
+  })
+  sectoralScope: SlSectoralScope;
 
   @ApiProperty()
   @IsNotEmptyObject()

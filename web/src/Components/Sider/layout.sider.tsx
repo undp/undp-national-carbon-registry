@@ -59,7 +59,9 @@ const LayoutSider = (props: LayoutSiderProps) => {
     getItem(t('nav:projectList'), 'programmeManagementSLCF/viewAll', <UnorderedListOutlined />),
     getItem(t('nav:retirements'), 'retirementManagement/viewAll', <SplitCellsOutlined />),
     getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
+    getItem(t('nav:cdmTransitionProjects'), 'cdmManagement/viewAll', <UnorderedListOutlined />),
     getItem(t('nav:verra'), 'verraManagement/viewAll', <AppstoreOutlined />),
+    getItem(t('nav:goldStandards'), 'goldStandardManagement/viewAll', <AppstoreOutlined />),
     // getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),
     // getItem(t('nav:investments'), 'investmentManagement/viewAll', <Icon.Cash />),
     // getItem(t('nav:transfers'), 'creditTransfers/viewAll', <Icon.ArrowLeftRight />),
@@ -139,12 +141,15 @@ const LayoutSider = (props: LayoutSiderProps) => {
                   item?.key === 'investmentManagement/viewAll' ||
                   item?.key === 'retirementManagement/viewAll' ||
                   item?.key === 'programmeManagementSLCF/viewAll' ||
+                  item?.key === 'cdmManagement/viewAll' ||
                   item?.key === 'creditTransfers/viewAll'
                     ? 'custom-padding-left'
                     : ''
                 }
                 disabled={
                   item?.key === 'programmeManagement/viewAll' ||
+                  item?.key === 'cdmManagement/viewAll' ||
+                  item?.key === 'goldStandardManagement/viewAll' ||
                   item?.key === 'verraManagement/viewAll'
                 }
               >

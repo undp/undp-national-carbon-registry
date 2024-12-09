@@ -252,7 +252,7 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, response);
   }
 
-  async rejectINF(programmeId: string, user: User): Promise<DataResponseDto> {
+  async rejectINF(programmeId: string, remark: string, user: User): Promise<DataResponseDto> {
     if (user.companyRole != CompanyRole.CLIMATE_FUND) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
@@ -293,7 +293,7 @@ export class ProgrammeSlService {
     //send email to Project Participant
     await this.emailHelperService.sendEmailToProjectParticipant(
       EmailTemplates.PROGRAMME_SL_REJECTED,
-      null,
+      {remark},
       programmeId
     );
 
@@ -302,6 +302,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.INF_REJECTED;
       log.userId = user.id;
+      log.data = {remark}
 
       await this.programmeAuditSlRepo.save(log);
     }
@@ -734,7 +735,7 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, response);
   }
 
-  async rejectProposal(programmeId: string, user: User): Promise<DataResponseDto> {
+  async rejectProposal(programmeId: string, remark: string, user: User): Promise<DataResponseDto> {
     if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
@@ -841,7 +842,7 @@ export class ProgrammeSlService {
     //sending email to SLCF Admins
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.PROJECT_PROPOSAL_REJECTED,
-      null,
+      {remark},
       programmeId
     );
 
@@ -850,6 +851,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.PROJECT_PROPOSAL_REJECTED;
       log.userId = user.id;
+      log.data = {remark}
 
       await this.programmeAuditSlRepo.save(log);
     }
@@ -1141,7 +1143,7 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, siteVisitChecklistDoc);
   }
 
-  async rejectCMA(programmeId: string, user: User): Promise<DataResponseDto> {
+  async rejectCMA(programmeId: string, remark: string, user: User): Promise<DataResponseDto> {
     if (user.companyRole != CompanyRole.CLIMATE_FUND) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
@@ -1201,7 +1203,7 @@ export class ProgrammeSlService {
     //sending email to SLCF Admins
     await this.emailHelperService.sendEmailToProjectParticipant(
       EmailTemplates.CMA_REJECTED,
-      null,
+      {remark},
       programmeId
     );
 
@@ -1210,6 +1212,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.CMA_REJECTED;
       log.userId = user.id;
+      log.data = {remark}
 
       await this.programmeAuditSlRepo.save(log);
     }
@@ -1490,7 +1493,7 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, response);
   }
 
-  async rejectValidation(programmeId: string, user: User): Promise<DataResponseDto> {
+  async rejectValidation(programmeId: string, remark: string, user: User): Promise<DataResponseDto> {
     if (user.companyRole != CompanyRole.EXECUTIVE_COMMITTEE) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
@@ -1553,7 +1556,7 @@ export class ProgrammeSlService {
     //sending email to SLCF Admins
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.VALIDATION_REJECTED,
-      null,
+      {remark},
       programmeId
     );
 
@@ -1562,6 +1565,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.VALIDATION_REPORT_REJECTED;
       log.userId = user.id;
+      log.data = {remark}
 
       await this.programmeAuditSlRepo.save(log);
     }

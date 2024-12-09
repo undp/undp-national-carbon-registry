@@ -356,9 +356,8 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                     >
                       <Radio.Group style={{ justifyContent: 'flex-start' }}>
                         <Radio value={'LARGE'}>{t('validationReport:largeScale')}</Radio>
-                        <Radio value={'SMALL'}>
-                          {t('validationReport:smallScaleBundleProject')}
-                        </Radio>
+                        <Radio value={'SMALL'}>{t('validationReport:smallScale')}</Radio>
+                        <Radio value={'MICRO'}>{t('validationReport:microScale')}</Radio>
                       </Radio.Group>
                     </Form.Item>
                   </Col>

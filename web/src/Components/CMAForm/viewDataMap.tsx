@@ -51,7 +51,7 @@ export const descriptionOfProjectActivityDataMapToFields = (vals: any) => {
 
   const tempValues = {
     introduction: vals?.introduction,
-    sectoralScopeAndProjectType: vals?.sectoralScopeAndProjectType,
+    sectoralScope: vals?.sectoralScope,
     organizationName: vals?.projectProponent?.organizationName,
     email: vals?.projectProponent?.email,
     contactPerson: vals?.projectProponent?.contactPerson,

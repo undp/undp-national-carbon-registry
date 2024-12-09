@@ -411,6 +411,7 @@ export class EmailHelperService {
     const users = await this.userService.getSLCFAdminAndManagerUsers();
     let programme: ProgrammeSl;
     let companyDetails: Company;
+    const remark = templateData?.remark;
 
     programme = await this.programmeLedger.getProgrammeSlById(programmeId);
 
@@ -445,6 +446,7 @@ export class EmailHelperService {
           organisationName: companyDetails.name,
           countryName: systemCountryName,
           programmeName: programme.title,
+          remark,
           programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
         };
         break;
@@ -469,6 +471,7 @@ export class EmailHelperService {
           organisationName: companyDetails.name,
           countryName: systemCountryName,
           programmeName: programme.title,
+          remark,
           programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
         };
         break;
@@ -557,6 +560,7 @@ export class EmailHelperService {
     const hostAddress = this.configService.get("host");
     let programme: ProgrammeSl;
     let companyDetails: Company;
+    const remark = templateData?.remark;
 
     programme = await this.programmeLedger.getProgrammeSlById(programmeId);
 
@@ -584,6 +588,7 @@ export class EmailHelperService {
           organisationName: companyDetails.name,
           countryName: systemCountryName,
           programmeName: programme.title,
+          remark,
           programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
         };
         break;
@@ -608,6 +613,7 @@ export class EmailHelperService {
           organisationName: companyDetails.name,
           countryName: systemCountryName,
           programmeName: programme.title,
+          remark,
           programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
         };
         break;
