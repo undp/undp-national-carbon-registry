@@ -2183,32 +2183,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         <Row gutter={16}>
           <Col md={24} lg={10}>
             <Card className="card-container">
-              <div>
-                <ProjectForms
-                  data={documentsData}
-                  projectFormsTitle={t('projectDetailsView:projectProposalFormsTitle')}
-                  validationFormsTitle={t('projectDetailsView:validationFormsTitle')}
-                  cmaFormsTitle={t('projectDetailsView:cmaFormsTitle')}
-                  icon={<QrcodeOutlined />}
-                  projectProposalIcon={<ReadOutlined />}
-                  cmaIcon={<FileDoneOutlined />}
-                  validationIcon={<SafetyCertificateOutlined />}
-                  programmeId={data?.programmeId}
-                  programmeOwnerId={programmeOwnerId}
-                  getDocumentDetails={() => {
-                    getDocuments(data?.programmeId);
-                  }}
-                  getProgrammeById={() => {
-                    getProgrammeById();
-                  }}
-                  ministryLevelPermission={ministryLevelPermission}
-                  translator={i18n}
-                  projectProposalStage={data?.projectProposalStage}
-                  programmeDetails={data}
-                />
-              </div>
-            </Card>
-            <Card className="card-container">
               <div className="info-view">
                 <div className="title">
                   <span className="title-icon">{<BlockOutlined />}</span>
@@ -2396,6 +2370,56 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 </div>
               </div>
             </Card>
+            <Card className="card-container">
+              <div>
+                <ProjectForms
+                  data={documentsData}
+                  projectFormsTitle={t('projectDetailsView:projectProposalFormsTitle')}
+                  validationFormsTitle={t('projectDetailsView:validationFormsTitle')}
+                  cmaFormsTitle={t('projectDetailsView:cmaFormsTitle')}
+                  icon={<QrcodeOutlined />}
+                  projectProposalIcon={<ReadOutlined />}
+                  cmaIcon={<FileDoneOutlined />}
+                  validationIcon={<SafetyCertificateOutlined />}
+                  programmeId={data?.programmeId}
+                  programmeOwnerId={programmeOwnerId}
+                  getDocumentDetails={() => {
+                    getDocuments(data?.programmeId);
+                  }}
+                  getProgrammeById={() => {
+                    getProgrammeById();
+                  }}
+                  ministryLevelPermission={ministryLevelPermission}
+                  translator={i18n}
+                  projectProposalStage={data?.projectProposalStage}
+                  programmeDetails={data}
+                />
+              </div>
+            </Card>
+            {verificationHistoryData && verificationHistoryData.length > 0 && (
+              <Card className="card-container">
+                <div>
+                  <VerificationForms
+                    data={verificationHistoryData}
+                    title={t('projectDetailsView:verificationPhaseForms')}
+                    icon={<QrcodeOutlined />}
+                    programmeId={data?.programmeId}
+                    companyId={data.companyId}
+                    programmeOwnerId={programmeOwnerId}
+                    getDocumentDetails={() => {
+                      getDocuments(data?.programmeId);
+                    }}
+                    getVerificationData={() => {
+                      getVerificationHistory(data?.programmeId);
+                    }}
+                    ministryLevelPermission={ministryLevelPermission}
+                    translator={i18n}
+                    projectProposalStage={data?.projectProposalStage}
+                  />
+                </div>
+              </Card>
+            )}
+
             {data?.programmeProperties?.programmeMaterials &&
               data?.programmeProperties?.programmeMaterials.length > 0 && (
                 <Card className="card-container">
@@ -2488,29 +2512,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             ) : (
               ''
             )}
-            {verificationHistoryData && verificationHistoryData.length > 0 && (
-              <Card className="card-container">
-                <div>
-                  <VerificationForms
-                    data={verificationHistoryData}
-                    title={t('projectDetailsView:verificationPhaseForms')}
-                    icon={<QrcodeOutlined />}
-                    programmeId={data?.programmeId}
-                    companyId={data.companyId}
-                    programmeOwnerId={programmeOwnerId}
-                    getDocumentDetails={() => {
-                      getDocuments(data?.programmeId);
-                    }}
-                    getVerificationData={() => {
-                      getVerificationHistory(data?.programmeId);
-                    }}
-                    ministryLevelPermission={ministryLevelPermission}
-                    translator={i18n}
-                    projectProposalStage={data?.projectProposalStage}
-                  />
-                </div>
-              </Card>
-            )}
+
             {programmeHistoryLogData && programmeHistoryLogData.length > 0 && (
               <Card className="card-container">
                 <div className="info-view">

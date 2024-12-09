@@ -413,30 +413,30 @@ const StepperComponent = (props: any) => {
         />
       ),
     },
+    // {
+    //   title: (
+    //     <div className="stepper-title-container">
+    //       <div className="step-count">07</div>
+    //       <div className="title">{t('CMAForm:form08Title')}</div>
+    //     </div>
+    //   ),
+    //   description: (
+    //     <Monitoring
+    //       next={next}
+    //       prev={prev}
+    //       form={form8}
+    //       current={current}
+    //       t={t}
+    //       projectCategory={projectCategory}
+    //       handleValuesUpdate={handleValuesUpdate}
+    //       disableFields={disableFields}
+    //     />
+    //   ),
+    // },
     {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">07</div>
-          <div className="title">{t('CMAForm:form08Title')}</div>
-        </div>
-      ),
-      description: (
-        <Monitoring
-          next={next}
-          prev={prev}
-          form={form8}
-          current={current}
-          t={t}
-          projectCategory={projectCategory}
-          handleValuesUpdate={handleValuesUpdate}
-          disableFields={disableFields}
-        />
-      ),
-    },
-    {
-      title: (
-        <div className="stepper-title-container">
-          <div className="step-count">08</div>
           <div className="title">{t('CMAForm:form09Title')}</div>
         </div>
       ),

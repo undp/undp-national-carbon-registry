@@ -59,11 +59,11 @@ export class CMAContentDto {
   @Type(() => QuantificationOfGHG)
   quantificationOfGHG: QuantificationOfGHG;
 
-  @ApiProperty()
-  @IsNotEmptyObject()
-  @ValidateNested()
-  @Type(() => Monitoring)
-  monitoring: Monitoring;
+  // @ApiProperty()
+  // @IsNotEmptyObject()
+  // @ValidateNested()
+  // @Type(() => Monitoring)
+  // monitoring: Monitoring;
 
   @ApiProperty()
   @IsNotEmptyObject()
