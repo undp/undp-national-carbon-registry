@@ -44,6 +44,7 @@ import {
   ReadOutlined,
   FileDoneOutlined,
   SafetyCertificateOutlined,
+  CheckCircleOutlined,
 } from '@ant-design/icons';
 import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
@@ -126,6 +127,8 @@ import LabelWithTooltip from '../../LabelWithTooltip/LabelWithTooltip';
 import ProgrammeHistoryStepsComponent from './programmeHistory/programmeHistoryStepComponent';
 import ProgrammeStatusTimelineComponent from './programmeStatusTimeline/programmeStatusTimelineComponent';
 import { OrganisationSlStatus } from '../../OrganisationSlStatus/organisationSlStatus';
+import { SlcfFormActionModel } from '../../Models/SlcfFormActionModel';
+import { PopupInfo } from '../../../Definitions/Definitions/ndcDetails.definitions';
 
 const SLCFProjectDetailsViewComponent = (props: any) => {
   const { onNavigateToProgrammeView, translator } = props;
@@ -182,6 +185,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   const [projectLocationMapLayer, setProjectLocationMapLayer] = useState<any>();
   const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();
   const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<number[]>([]);
+  const [slcfActionModalVisible, setSlcfActioModalVisible] = useState<boolean>(false);
+  const [popupInfo, setPopupInfo] = useState<PopupInfo>();
 
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -462,10 +467,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     setLoadingAll(false);
   };
 
-  const rejectNotificationForm = async () => {
+  const rejectNotificationForm = async (remark: string) => {
     try {
       const response: any = await post('national/programmeSl/inf/reject', {
         programmeId: id,
+        remark,
       });
 
       if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
@@ -484,6 +490,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setSlcfActioModalVisible(false);
     }
   };
 
@@ -509,13 +517,16 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setSlcfActioModalVisible(false);
     }
   };
 
-  const rejectProposal = async () => {
+  const rejectProposal = async (remark: string) => {
     try {
       const response: any = await post('national/programmeSl/proposal/reject', {
         programmeId: id,
+        remark,
       });
 
       if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
@@ -534,6 +545,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setSlcfActioModalVisible(false);
     }
   };
 
@@ -559,13 +572,16 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setSlcfActioModalVisible(false);
     }
   };
 
-  const rejectCMA = async () => {
+  const rejectCMA = async (remark: string) => {
     try {
       const response: any = await post('national/programmeSl/cma/reject', {
         programmeId: id,
+        remark,
       });
 
       if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
@@ -584,16 +600,19 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setSlcfActioModalVisible(false);
     }
   };
 
   const approveCMA = () => {
     navigate(`/programmeManagementSLCF/siteVisitCheckList/${id}`);
   };
-  const rejectValidation = async () => {
+  const rejectValidation = async (remark: string) => {
     try {
       const response: any = await post('national/programmeSl/validation/reject', {
         programmeId: id,
+        remark,
       });
 
       if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
@@ -612,6 +631,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setSlcfActioModalVisible(false);
     }
   };
 
@@ -646,6 +667,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setSlcfActioModalVisible(false);
     }
   };
   const addElement = (e: any, time: number, hist: any) => {
@@ -1772,6 +1795,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     }
   };
 
+  const showModalOnAction = (info: PopupInfo) => {
+    setSlcfActioModalVisible(true);
+    setPopupInfo(info);
+  };
+
   useEffect(() => {
     if (data) {
       setProgrammeOwnerId(data?.companyId);
@@ -1839,7 +1867,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   });
   // genCerts(data);
   const actionBtns = [];
-
+  // MARK: Action Buttons
   if (userInfoState?.userRole !== 'ViewOnly') {
     if (userInfoState && data.projectProposalStage === ProjectProposalStage.SUBMITTED_INF) {
       if (userInfoState?.companyRole === CompanyRole.CLIMATE_FUND) {
@@ -1847,7 +1875,16 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             danger
             onClick={() => {
-              rejectNotificationForm();
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnReject'),
+                icon: <CloseCircleOutlined />,
+                title: t('projectDetailsView:rejectInfModalTitle'),
+                okAction: (remark: string) => {
+                  rejectNotificationForm(remark);
+                },
+                remarkRequired: true,
+                type: 'danger',
+              });
             }}
           >
             {t('projectDetailsView:reject')}
@@ -1857,7 +1894,18 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             type="primary"
             onClick={() => {
-              approveNotificationForm();
+              // approveNotificationForm();
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnApprove'),
+                icon: <CheckCircleOutlined />,
+                title: t('projectDetailsView:approveInfModalTitle'),
+                okAction: () => {
+                  console.log('Approved');
+                  approveNotificationForm();
+                },
+                remarkRequired: false,
+                type: 'primary',
+              });
             }}
           >
             {t('projectDetailsView:approve')}
@@ -1873,7 +1921,18 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             danger
             onClick={() => {
-              rejectProposal();
+              // rejectProposal();
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnReject'),
+                icon: <CloseCircleOutlined />,
+                title: t('projectDetailsView:rejectProposalTitle'),
+                okAction: (remark: string) => {
+                  console.log('rejected', remark);
+                  rejectProposal(remark);
+                },
+                remarkRequired: true,
+                type: 'danger',
+              });
             }}
           >
             {t('projectDetailsView:reject')}
@@ -1883,7 +1942,17 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             type="primary"
             onClick={() => {
-              approveProposal();
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnApprove'),
+                icon: <CheckCircleOutlined />,
+                title: t('projectDetailsView:approveProposalTitle'),
+                okAction: () => {
+                  console.log('Approved');
+                  approveProposal();
+                },
+                remarkRequired: false,
+                type: 'primary',
+              });
             }}
           >
             {t('projectDetailsView:accept')}
@@ -1896,7 +1965,17 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             danger
             onClick={() => {
-              rejectCMA();
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnReject'),
+                icon: <CloseCircleOutlined />,
+                title: t('projectDetailsView:rejectCMATitle'),
+                okAction: (remark: string) => {
+                  console.log('rejected', remark);
+                  rejectCMA(remark);
+                },
+                remarkRequired: true,
+                type: 'danger',
+              });
             }}
           >
             {t('projectDetailsView:reject')}
@@ -1906,7 +1985,17 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             type="primary"
             onClick={() => {
-              approveCMA();
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnApprove'),
+                icon: <CheckCircleOutlined />,
+                title: t('projectDetailsView:approveCMATitle'),
+                okAction: () => {
+                  console.log('Approved');
+                  approveCMA();
+                },
+                remarkRequired: false,
+                type: 'primary',
+              });
             }}
           >
             {t('projectDetailsView:accept')}
@@ -1922,7 +2011,19 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             danger
             onClick={() => {
-              rejectValidation();
+              // rejectValidation();
+
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnReject'),
+                icon: <CloseCircleOutlined />,
+                title: t('projectDetailsView:rejectValidationTitle'),
+                okAction: (remark: string) => {
+                  console.log('rejected', remark);
+                  rejectValidation(remark);
+                },
+                remarkRequired: true,
+                type: 'danger',
+              });
             }}
           >
             {t('projectDetailsView:reject')}
@@ -1932,7 +2033,18 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             type="primary"
             onClick={() => {
-              approveValidation();
+              // approveValidation();
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnApprove'),
+                icon: <CheckCircleOutlined />,
+                title: t('projectDetailsView:approveValidationTitle'),
+                okAction: () => {
+                  console.log('Approved');
+                  approveValidation();
+                },
+                remarkRequired: false,
+                type: 'primary',
+              });
             }}
           >
             {t('projectDetailsView:approve')}
@@ -2484,6 +2596,22 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           </div>
         )}
       </Modal>
+      {popupInfo && (
+        <SlcfFormActionModel
+          onCancel={() => {
+            setSlcfActioModalVisible(false);
+          }}
+          actionBtnText={popupInfo!.actionBtnText}
+          onFinish={popupInfo!.okAction}
+          subText={''}
+          openModal={slcfActionModalVisible}
+          icon={popupInfo!.icon}
+          title={popupInfo!.title}
+          type={popupInfo!.type}
+          remarkRequired={popupInfo!.remarkRequired}
+          translator={translator}
+        />
+      )}
     </div>
   );
 };
