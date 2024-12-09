@@ -25,6 +25,7 @@ import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 import { PURPOSE_CREDIT_DEVELOPMENT } from '../SLCFProgramme/AddNewProgramme/SLCFProgrammeCreationComponent';
 import LabelWithTooltip, { TooltipPostion } from '../LabelWithTooltip/LabelWithTooltip';
+import { CMASectoralScope } from '../../Definitions/Enums/programmeStage.enum';
 
 const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
   const { next, prev, form, current, t, countries, handleValuesUpdate, disableFields } = props;
@@ -175,14 +176,14 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
   const onFinish = async (values: any) => {
     const tempValues: any = {
       introduction: values?.introduction,
-      sectoralScopeAndProjectType: values?.sectoralScopeAndProjectType,
+      sectoralScope: values?.sectoralScope,
       projectProponent: {
         organizationName: values?.organizationName,
         email: values?.email,
         contactPerson: values?.contactPerson,
         title: values?.title,
         telephone: values?.telephone,
-        fax: values?.fax,
+        // fax: values?.fax,
         address: values?.address,
       },
       otherEntities: (function () {
@@ -194,7 +195,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
           contactPerson: values?.entityContactPerson,
           role: values?.entityRoleInTheProject,
           telephone: values?.entityTelephone,
-          fax: values?.entityFax,
+          // fax: values?.entityFax,
           address: values?.entityAddress,
         };
 
@@ -208,7 +209,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
               title: item?.title,
               role: item?.roleInTheProject,
               telephone: item?.telephone,
-              fax: item?.fax,
+              // fax: item?.fax,
               address: item?.address,
             };
 
@@ -432,9 +433,9 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
               </>
 
               <Form.Item
-                className="full-width-form-item"
-                label={`1.2 ${t('CMAForm:sectoralScopeProjectType')}`}
-                name="sectoralScopeAndProjectType"
+                className="half-width-form-item"
+                label={`1.2 ${t('CMAForm:sectoralScope')}`}
+                name="sectoralScope"
                 rules={[
                   {
                     required: true,
@@ -448,19 +449,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         value === null ||
                         value === undefined
                       ) {
-                        throw new Error(
-                          `${t('CMAForm:sectoralScopeProjectType')} ${t('isRequired')}`
-                        );
+                        throw new Error(`${t('CMAForm:sectoralScope')} ${t('isRequired')}`);
                       }
                     },
                   },
                 ]}
               >
-                <TextArea
-                  rows={4}
-                  placeholder="Provide a summary description of the project to enable an understanding of the nature  of the project and its implementation"
-                  disabled={disableFields}
-                />
+                <Select size="large" disabled={disableFields}>
+                  {Object.values(CMASectoralScope).map((sectoralScope: string, index: number) => (
+                    <Select.Option value={sectoralScope} key={sectoralScope + index}>
+                      {sectoralScope}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
 
               <>
@@ -576,7 +577,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                           />
                         </Form.Item>
 
-                        <Form.Item
+                        {/* <Form.Item
                           label={t('CMAForm:fax')}
                           name="fax"
                           rules={[
@@ -623,7 +624,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                             countries={countries as Country[]}
                             disabled={disableFields}
                           />
-                        </Form.Item>
+                        </Form.Item> */}
                       </div>
                     </Col>
 
@@ -936,7 +937,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       <TextArea rows={4} disabled={disableFields} />
                     </Form.Item>
 
-                    <Form.Item
+                    {/* <Form.Item
                       label={t('CMAForm:fax')}
                       name="entityFax"
                       rules={[
@@ -979,7 +980,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         countries={countries as Country[]}
                         disabled={disableFields}
                       />
-                    </Form.Item>
+                    </Form.Item> */}
                   </Col>
                 </Row>
 
@@ -1237,7 +1238,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                 <TextArea rows={4} disabled={disableFields} />
                               </Form.Item>
 
-                              <Form.Item
+                              {/* <Form.Item
                                 label={t('CMAForm:fax')}
                                 name={[name, 'fax']}
                                 rules={[
@@ -1288,7 +1289,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   countries={countries as Country[]}
                                   disabled={disableFields}
                                 />
-                              </Form.Item>
+                              </Form.Item> */}
                             </Col>
                           </Row>
                         </>
@@ -2320,6 +2321,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       ]}
                     >
                       <Radio.Group className="radio-btn-flex-row" disabled={disableFields}>
+                        <Radio value="MICRO">Micro</Radio>
                         <Radio value="SMALL">Small</Radio>
                         <Radio value="LARGE">Large</Radio>
                       </Radio.Group>

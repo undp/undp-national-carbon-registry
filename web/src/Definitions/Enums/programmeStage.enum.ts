@@ -72,3 +72,21 @@ export const getProjectCategory: { [key: string]: string } = {
   REFORESTATION: 'Reforestation',
   OTHER: 'Other',
 };
+
+export enum CMASectoralScope {
+  EnergyIndustries = 'Energy industries',
+  EnergyDistribution = 'Energy distribution',
+  EnergyDemand = 'Energy demand',
+  ManufacturingIndustries = 'Manufacturing industries',
+  ChemicalIndustry = 'Chemical industry',
+  Construction = 'Construction',
+  Transport = 'Transport',
+  MiningMineralProduction = 'Mining/Mineral production',
+  MetalProduction = 'Metal production',
+  FugitiveEmissionsFromFuels = 'Fugitive emissions from fuels (solid, oil and gas)',
+  FugitiveEmissionsFromHalocarbons = 'Fugitive emissions from production and consumption of halocarbons and sulphur hexafluoride',
+  SolventsUse = 'Solvents use',
+  WasteHandlingAndDisposal = 'Waste handling and disposal',
+  AfforestationAndReforestation = 'Afforestation and reforestation',
+  Agriculture = 'Agriculture',
+}
