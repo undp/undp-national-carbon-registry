@@ -137,11 +137,20 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
       },
     });
   };
-  const navigateToMonitoringReportView = (docId: any) => {
-    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}`, {
+
+  const navigateToMonitoringReportEdit = (docId: any, verificationRequestId: any) => {
+    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}/${verificationRequestId}`, {
+      state: {
+        mode: FormMode.EDIT,
+        docId: docId,
+      },
+    });
+  };
+
+  const navigateToMonitoringReportView = (verificationRequestId: any) => {
+    navigate(`/programmeManagementSLCF/monitoringReport/${programmeId}/${verificationRequestId}`, {
       state: {
         mode: FormMode.VIEW,
-        docId: docId,
       },
     });
   };
@@ -302,13 +311,28 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
       },
     });
   }
-  function navigateToVerificationReportView(docId: any): void {
-    navigate(`/programmeManagementSLCF/verificationReport/${programmeId}`, {
-      state: {
-        mode: FormMode.VIEW,
-        docId: docId,
-      },
-    });
+
+  const navigateToVerificationReportEdit = (docId: any, verificationRequestId: any) => {
+    navigate(
+      `/programmeManagementSLCF/verificationReport/${programmeId}/${verificationRequestId}`,
+      {
+        state: {
+          mode: FormMode.EDIT,
+          docId: docId,
+        },
+      }
+    );
+  };
+
+  function navigateToVerificationReportView(verificationRequestId: any): void {
+    navigate(
+      `/programmeManagementSLCF/verificationReport/${programmeId}/${verificationRequestId}`,
+      {
+        state: {
+          mode: FormMode.VIEW,
+        },
+      }
+    );
   }
 
   const requestCarbonNeutralCertificate = async (verificationRequestId: number) => {
@@ -385,7 +409,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
     }
   };
 
-  const getLatestReport = (reports: any[], docType: DocumentTypeEnum) => {
+  const getLatestReport = (reports: any[], docType: DocumentTypeEnum): any => {
     const filteredReports = reports.filter((report) => report.type === docType);
 
     let latestReport = null;
@@ -415,7 +439,6 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
         latestReport = report;
       }
     });
-
     return latestReport?.id;
   };
 
@@ -467,6 +490,19 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                   <div className="label-container">
                     <div className="label">{t('projectDetailsView:monitoringReport')}</div>
                   </div>
+                  {(() => {
+                    const latestReport = getLatestReport(
+                      item.documents,
+                      DocumentTypeEnum.MONITORING_REPORT
+                    );
+                    return latestReport ? (
+                      <div className="time">
+                        {moment(parseInt(latestReport?.createdTime, 10)).format('DD MMMM YYYY') +
+                          ' ~ V' +
+                          latestReport.version}
+                      </div>
+                    ) : null;
+                  })()}
                 </Col>
                 <Col span={6} className="field-value">
                   <>
@@ -518,11 +554,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                       /> */}
                       <Button
                         type="default"
-                        onClick={() =>
-                          navigateToMonitoringReportView(
-                            getLatestReportId(item.documents, DocumentTypeEnum.MONITORING_REPORT)
-                          )
-                        }
+                        onClick={() => navigateToMonitoringReportView(item.id)}
                         disabled={
                           !(
                             formViewPermission(
@@ -593,11 +625,12 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           <Button
                             type="default"
                             onClick={() =>
-                              navigateToMonitoringReportCreate(
+                              navigateToMonitoringReportEdit(
                                 getLatestReportId(
                                   item.documents,
                                   DocumentTypeEnum.MONITORING_REPORT
-                                )
+                                ),
+                                item.id
                               )
                             }
                             disabled={
@@ -688,6 +721,19 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                   <div className="label-container">
                     <div className="label">{t('projectDetailsView:verificationReport')}</div>
                   </div>
+                  {(() => {
+                    const latestReport = getLatestReport(
+                      item.documents,
+                      DocumentTypeEnum.VERIFICATION_REPORT
+                    );
+                    return latestReport ? (
+                      <div className="time">
+                        {moment(parseInt(latestReport?.createdTime, 10)).format('DD MMMM YYYY') +
+                          ' ~ V' +
+                          latestReport.version}
+                      </div>
+                    ) : null;
+                  })()}
                 </Col>
                 <Col span={6} className="field-value">
                   <>
@@ -741,11 +787,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                       /> */}
                       <Button
                         type="default"
-                        onClick={() =>
-                          navigateToVerificationReportView(
-                            getLatestReportId(item.documents, DocumentTypeEnum.VERIFICATION_REPORT)
-                          )
-                        }
+                        onClick={() => navigateToVerificationReportView(item.id)}
                         disabled={
                           !(
                             formViewPermission(
@@ -817,11 +859,12 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           <Button
                             type="default"
                             onClick={() =>
-                              navigateToVerificationReportCreate(
+                              navigateToVerificationReportEdit(
                                 getLatestReportId(
                                   item.documents,
                                   DocumentTypeEnum.VERIFICATION_REPORT
-                                )
+                                ),
+                                item.id
                               )
                             }
                             disabled={

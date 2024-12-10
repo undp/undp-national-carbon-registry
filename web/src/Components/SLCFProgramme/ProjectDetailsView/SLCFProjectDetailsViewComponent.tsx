@@ -1940,6 +1940,14 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         );
       }
     } else if (userInfoState && data.projectProposalStage === ProjectProposalStage.AUTHORISED) {
+      const totalCreditsToIssue = data.creditEst ? data.creditEst : 0;
+      const creditBalance = data.creditBalance ? data.creditBalance : 0;
+      const creditTransferred = data.creditTransferred ? data.creditTransferred : 0;
+      const creditRetired = data.creditRetired ? data.creditRetired : 0;
+      const creditFrozen = data.creditFrozen ? data.creditFrozen : 0;
+      const availableCreditsToIssue =
+        totalCreditsToIssue - (creditBalance + creditTransferred + creditRetired + creditFrozen);
+
       if (
         userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
         ((verificationHistoryData &&
@@ -1948,7 +1956,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED ||
             verificationHistoryData[verificationHistoryData.length - 1].status ===
               VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED)) ||
-          (!verificationHistoryData.length && verificationHistoryDataLoaded))
+          (!verificationHistoryData.length && verificationHistoryDataLoaded)) &&
+        availableCreditsToIssue > 0
       ) {
         actionBtns.push(
           <Button

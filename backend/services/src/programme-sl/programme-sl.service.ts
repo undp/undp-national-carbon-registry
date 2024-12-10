@@ -1634,6 +1634,30 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, null);
   }
 
+  async getVerificationDocLastVersion(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const programme = await this.programmeLedgerService.getProgrammeSlById(getDocDto.programmeId);
+      if (user.companyId !== programme.companyId) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+    }
+    const document = await this.documentRepo.findOne({
+      where: {
+        programmeId: getDocDto.programmeId,
+        type: getDocDto.docType,
+        verificationRequestId: getDocDto.verificationRequestId,
+      },
+      order: {
+        version: "DESC",
+      },
+    });
+
+    return new DataResponseDto(HttpStatus.OK, document);
+  }
+
   async getDocVersions(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       const programme = await this.programmeLedgerService.getProgrammeSlById(getDocDto.programmeId);
@@ -1668,6 +1692,41 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, versions);
   }
 
+  async getVerificationDocVersions(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const programme = await this.programmeLedgerService.getProgrammeSlById(getDocDto.programmeId);
+
+      if (!programme) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.programmeNotExist", []),
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      if (user.companyId !== programme.companyId) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+    }
+    const documentVersions = await this.documentRepo.find({
+      select: { version: true },
+      where: {
+        programmeId: getDocDto.programmeId,
+        type: getDocDto.docType,
+        verificationRequestId: getDocDto.verificationRequestId,
+      },
+      order: {
+        version: "DESC",
+      },
+    });
+
+    const versions = documentVersions.map((doc) => doc.version);
+
+    return new DataResponseDto(HttpStatus.OK, versions);
+  }
+
   async getDocByVersion(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       const programme = await this.programmeLedgerService.getProgrammeSlById(getDocDto.programmeId);
@@ -1691,6 +1750,36 @@ export class ProgrammeSlService {
         programmeId: getDocDto.programmeId,
         type: getDocDto.docType,
         version: getDocDto.version,
+      },
+    });
+
+    return new DataResponseDto(HttpStatus.OK, document);
+  }
+
+  async getVerificationDocByVersion(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const programme = await this.programmeLedgerService.getProgrammeSlById(getDocDto.programmeId);
+
+      if (!programme) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.programmeNotExist", []),
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      if (user.companyId !== programme.companyId) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+    }
+    const document = await this.documentRepo.findOne({
+      where: {
+        programmeId: getDocDto.programmeId,
+        type: getDocDto.docType,
+        version: getDocDto.version,
+        verificationRequestId: getDocDto.verificationRequestId,
       },
     });
 

@@ -6,6 +6,19 @@
   text-align: center;
   margin-top: 8px;
 }
+.add-programme-main-container {
+  .title-container {
+    .version-selector {
+      .ant-select-selector {
+        border-radius: 8px;
+        .ant-select-selection-item {
+          color: #000000 !important;
+        }
+      }
+    }
+  }
+}
+
 .monitoring-form-container {
   display: flex;
   flex-direction: column;

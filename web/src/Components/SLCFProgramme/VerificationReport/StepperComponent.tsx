@@ -20,11 +20,11 @@ import {
 } from '../../../Utils/utilityHelper';
 import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
 const StepperComponent = (props: any) => {
-  const { useLocation, translator, countries } = props;
+  const { useLocation, translator, countries, selectedVersion, handleDocumentStatus } = props;
   const navigationLocation = useLocation();
   const { mode, docId } = navigationLocation.state || {};
   const navigate = useNavigate();
-  const [verificationRequestId, setVerificationRequestId] = useState(0);
+  // const [verificationRequestId, setVerificationRequestId] = useState(0);
   const [reportId, setReportId] = useState(0);
   const [status, setStatus] = useState(null);
   const [current, setCurrent] = useState(0);
@@ -32,7 +32,7 @@ const StepperComponent = (props: any) => {
 
   const [formValues, setFormValues] = useState({});
   const { get, post } = useConnection();
-  const { id } = useParams();
+  const { id, verificationRequestId } = useParams();
   const t = translator.t;
   const reportVersion = process.env.VERIFICATION_REPORT_VERSION
     ? process.env.VERIFICATION_REPORT_VERSION
@@ -52,7 +52,7 @@ const StepperComponent = (props: any) => {
   const approve = async (verify: boolean) => {
     const body = {
       verify: verify,
-      verificationRequestId: verificationRequestId,
+      verificationRequestId: Number(verificationRequestId),
       reportId: reportId,
     };
     try {
@@ -241,14 +241,33 @@ const StepperComponent = (props: any) => {
 
   const getLatestReports = async (programId: any) => {
     try {
-      if (docId) {
-        const { data } = await post('national/programmeSl/getDocumentById', {
-          docId: docId,
-        });
+      // if (docId) {
+      //   const { data } = await post('national/programmeSl/getDocumentById', {
+      //     docId: docId,
+      //   });
+      if (mode === FormMode.VIEW || mode === FormMode.EDIT) {
+        const { data } =
+          mode === FormMode.VIEW && selectedVersion
+            ? await post('national/programmeSl/getVerificationDocByVersion', {
+                programmeId: id,
+                docType: DocumentTypeEnum.VERIFICATION_REPORT,
+                version: selectedVersion,
+                verificationRequestId: Number(verificationRequestId),
+              })
+            : await post('national/programmeSl/getVerificationDocLastVersion', {
+                programmeId: id,
+                docType: DocumentTypeEnum.VERIFICATION_REPORT,
+                verificationRequestId: Number(verificationRequestId),
+              });
+
+        if (mode === FormMode.VIEW) {
+          handleDocumentStatus(data.status);
+        }
+
         if (data && data?.content) {
           setReportId(data?.id);
           setStatus(data?.status);
-          setVerificationRequestId(data?.verificationRequestId);
+          // setVerificationRequestId(data?.verificationRequestId);
           const content = data?.content;
           projectDetailsForm.setFieldsValue({
             ...content?.projectDetails,
@@ -386,7 +405,7 @@ const StepperComponent = (props: any) => {
   useEffect(() => {
     getLatestReports(id);
     getProjectById(id);
-  }, []);
+  }, [selectedVersion]);
 
   const steps = [
     {

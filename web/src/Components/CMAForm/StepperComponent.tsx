@@ -153,18 +153,20 @@ const StepperComponent = (props: any) => {
         setLoading(true);
         let res;
         try {
-          if (isView) {
+          if (isView && selectedVersion) {
             res = await post('national/programmeSl/getDocByVersion', {
               programmeId: id,
               docType: 'cma',
               version: selectedVersion,
             });
-            handleDocumentStatus(res.data.status);
           } else {
             res = await post('national/programmeSl/getDocLastVersion', {
               programmeId: id,
               docType: 'cma',
             });
+          }
+          if (isView) {
+            handleDocumentStatus(res.data.status);
           }
 
           if (res?.statusText === 'SUCCESS') {
