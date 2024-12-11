@@ -143,6 +143,15 @@ export class ProgrammeSl implements EntitySubject {
   @Column({ nullable: true })
   registrationCertificateUrl: string;
 
+  @Column({ nullable: true })
+  contactName: string;
+
+  @Column({ nullable: true })
+  contactEmail: string;
+
+  @Column({ nullable: true })
+  contactPhoneNo: string;
+
   @Column({ type: "bigint" })
   createdTime: number;
 

@@ -334,6 +334,9 @@ export interface ProgrammeSl {
   community?: string;
   projectDescription?: string;
   additionalDocuments?: [];
+  contactName?: string;
+  contactEmail?: string;
+  contactPhoneNo?: string;
 }
 
 export interface ProgrammeR extends Programme {
