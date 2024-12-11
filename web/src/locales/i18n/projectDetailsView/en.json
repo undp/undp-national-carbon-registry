@@ -254,5 +254,9 @@
   "rejectCMATitle": "Are you sure you want to reject this Carbon Management Assessment?",
   "approveCMATitle": "Are you sure you want to approve this Carbon Management Assessment?",
   "rejectValidationTitle": "Are you sure you want to reject this Validation Report?",
-  "approveValidationTitle": "Are you sure you want to approve this Validation Report?"
+  "approveValidationTitle": "Are you sure you want to approve this Validation Report?",
+  "contactPerson": "Contact Person",
+  "contactName": "Name",
+  "contactEmail": "Email",
+  "contactPhoneNo": "Mobile"
 }

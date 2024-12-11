@@ -81,5 +81,19 @@
   "briefProjectDescription": "Brief description of the proposed project",
   "briefProjectDescriptionPlaceholder": "Describe about your project",
   "documentUpload": "Optional: Upload your documents",
-  "projectStatusDescription": "Project Status Description"
+  "projectStatusDescription": "Project Status Description",
+  "contactPersonTitle": "Contact Person",
+  "contactPersonName": "Name",
+  "email": "Email",
+  "phoneNo": "Mobile",
+  "documentInfoTitle": "Document Information",
+  "titleOfDoc": "Title of document",
+  "docNoTitle": "Document No",
+  "docTypeTitle": "Document Type",
+  "businessFunctionTitle": "Business Function",
+  "versionTitle": "Version",
+  "titleOfDocValue": "Initial Notification of Project Activity",
+  "docTypeValue": "Form",
+  "businessFunctionValue": "Registration of Project Activity",
+  "revision": "Revisions"
 }

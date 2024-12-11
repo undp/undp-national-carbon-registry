@@ -1,5 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Button, Col, DatePicker, Form, Input, Row, Select, Steps, Upload, message } from 'antd';
+import {
+  Button,
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  Row,
+  Select,
+  Skeleton,
+  Steps,
+  Upload,
+  message,
+} from 'antd';
 import {
   InfoCircleOutlined,
   MinusCircleOutlined,
@@ -20,6 +32,12 @@ import { RcFile } from 'antd/lib/upload';
 import { useNavigate } from 'react-router-dom';
 import GetMultipleLocationsMapComponent from '../../Maps/GetMultipleLocationsMapComponent';
 import { Loading } from '../../Loading/loading';
+import PhoneInput, {
+  formatPhoneNumber,
+  formatPhoneNumberIntl,
+  isPossiblePhoneNumber,
+} from 'react-phone-number-input';
+import InfDocumentInformation from './infDocumentInfo';
 
 type SizeType = Parameters<typeof Form>[0]['size'];
 
@@ -55,7 +73,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
   const { useLocation, onNavigateToProgrammeView, translator } = props;
   const [current, setCurrent] = useState<number>(0);
   const navigate = useNavigate();
-  const { post } = useConnection();
+  const { post, get } = useConnection();
   const [form] = Form.useForm();
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -67,6 +85,8 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
   const [districts, setDistricts] = useState<string[]>([]);
   const [dsDivisions, setDsDivisions] = useState<string[]>([]);
   const [cities, setCities] = useState<string[]>([]);
+  const [countries, setCountries] = useState<[]>([]);
+  const [isCountryListLoading, setIsCountryListLoading] = useState(false);
 
   const getProvinces = async () => {
     try {
@@ -135,8 +155,32 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
     }
   };
 
+  const getCountryList = async () => {
+    setIsCountryListLoading(true);
+    try {
+      const response = await get('national/organisation/countries');
+      if (response.data) {
+        const alpha2Names = response.data.map((item: any) => {
+          return item.alpha2;
+        });
+        setCountries(alpha2Names);
+      }
+    } catch (error: any) {
+      console.log('Error in getCountryList', error);
+      message.open({
+        type: 'error',
+        content: `${error.message}`,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setIsCountryListLoading(false);
+    }
+  };
+
   useEffect(() => {
     getProvinces();
+    getCountryList();
     // getCities();
   }, []);
 
@@ -217,6 +261,9 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
       purposeOfCreditDevelopment: values?.creditDevelopmentPurpose,
       startDate: moment(values?.startTime).startOf('day').unix(),
       additionalDocuments: base64Docs,
+      contactName: values?.contactName,
+      contactEmail: values?.contactEmail,
+      contactPhoneNo: formatPhoneNumberIntl(values?.contactPhoneNo),
     };
 
     setLoading(true);
@@ -855,6 +902,115 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                             </div>
                           </Col>
                         </Row>
+                        <div className="title contact-person-title">
+                          {t('addProgramme:contactPersonTitle')}
+                        </div>
+                        <Row className="row" gutter={[40, 16]}>
+                          <Col xl={12} md={24}>
+                            <Form.Item
+                              label={t('addProgramme:contactPersonName')}
+                              name={'contactName'}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: `${t('addProgramme:contactPersonName')} ${t(
+                                    'isRequired'
+                                  )}`,
+                                },
+                              ]}
+                            >
+                              <Input size="large" />
+                            </Form.Item>
+                          </Col>
+                          <Col xl={12} md={24}>
+                            <Form.Item
+                              label={t('addProgramme:email')}
+                              name="contactEmail"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: '',
+                                },
+                                {
+                                  validator: async (rule, value) => {
+                                    if (
+                                      String(value).trim() === '' ||
+                                      String(value).trim() === undefined ||
+                                      value === null ||
+                                      value === undefined
+                                    ) {
+                                      throw new Error(
+                                        `${t('addUser:email')} ${t('addUser:isRequired')}`
+                                      );
+                                    } else {
+                                      const val = value.trim();
+                                      const reg =
+                                        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                                      const matches = val.match(reg) ? val.match(reg) : [];
+                                      if (matches.length === 0) {
+                                        throw new Error(
+                                          `${t('addUser:email')} ${t('addUser:isInvalid')}`
+                                        );
+                                      }
+                                    }
+                                  },
+                                },
+                              ]}
+                            >
+                              <Input size="large" />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row className="row" gutter={[40, 16]}>
+                          <Col xl={12} md={24}>
+                            <Skeleton loading={isCountryListLoading} active>
+                              {countries.length > 0 && (
+                                <Form.Item
+                                  name="contactPhoneNo"
+                                  label={t('addProgramme:phoneNo')}
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: `${t('addProgramme:phoneNo')} ${t('isRequired')}`,
+                                    },
+                                    {
+                                      validator: async (rule: any, value: any) => {
+                                        const phoneNo = formatPhoneNumber(String(value));
+                                        if (String(value).trim() !== '') {
+                                          if (
+                                            (String(value).trim() !== '' &&
+                                              String(value).trim() !== undefined &&
+                                              value !== null &&
+                                              value !== undefined &&
+                                              phoneNo !== null &&
+                                              phoneNo !== '' &&
+                                              phoneNo !== undefined &&
+                                              !isPossiblePhoneNumber(String(value))) ||
+                                            value?.length > 17
+                                          ) {
+                                            throw new Error(
+                                              `${t('addProgramme:phoneNo')} ${t('isInvalid')}`
+                                            );
+                                          }
+                                        }
+                                      },
+                                    },
+                                  ]}
+                                >
+                                  <PhoneInput
+                                    placeholder={t('addProgramme:phoneNo')}
+                                    international
+                                    defaultCountry="LK"
+                                    countryCallingCodeEditable={false}
+                                    onChange={(v) => {}}
+                                    countries={countries}
+                                  />
+                                </Form.Item>
+                              )}
+                            </Skeleton>
+                          </Col>
+                        </Row>
+                        <InfDocumentInformation t={t}></InfDocumentInformation>
 
                         <div className="steps-actions">
                           <Button type="primary" htmlType="submit">

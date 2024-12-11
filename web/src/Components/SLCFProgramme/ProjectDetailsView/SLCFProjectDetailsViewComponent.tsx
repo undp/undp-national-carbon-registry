@@ -45,6 +45,7 @@ import {
   FileDoneOutlined,
   SafetyCertificateOutlined,
   CheckCircleOutlined,
+  MailOutlined,
 } from '@ant-design/icons';
 import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
@@ -260,16 +261,20 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
 
   const getPieChartData = (d: ProgrammeSlU) => {
     const frozen = d.creditFrozen ? Number(d.creditFrozen) : 0;
+    const authorised =
+      d.projectProposalStage.toString() === ProjectProposalStage.AUTHORISED && d.creditEst
+        ? Number(
+            (
+              numIsExist(d.creditEst) -
+              numIsExist(d?.creditBalance) -
+              numIsExist(d.creditTransferred) -
+              numIsExist(d.creditRetired) -
+              frozen
+            ).toFixed(2)
+          )
+        : 0;
     const dt = [
-      Number(
-        (
-          numIsExist(d.creditEst) -
-          numIsExist(d?.creditBalance) -
-          numIsExist(d.creditTransferred) -
-          numIsExist(d.creditRetired) -
-          frozen
-        ).toFixed(2)
-      ),
+      authorised,
       Number(numIsExist(d.creditBalance).toFixed(2)),
       Number(numIsExist(d.creditTransferred)),
       Number(numIsExist(d.creditRetired)),
@@ -2163,6 +2168,18 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     }
   });
 
+  const getContactPersonInfo = () => {
+    const nameText = t('projectDetailsView:contactName');
+    const emailText = t('projectDetailsView:contactEmail');
+    const phoneNoText = t('projectDetailsView:contactPhoneNo');
+
+    return {
+      [nameText]: data.contactName,
+      [emailText]: data.contactEmail,
+      [phoneNoText]: data.contactPhoneNo,
+    };
+  };
+
   return loadingAll ? (
     <Loading />
   ) : (
@@ -2468,6 +2485,17 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 />
               </div>
             </Card>
+            {data.contactName && (
+              <Card className="card-container">
+                <div>
+                  <InfoView
+                    data={getContactPersonInfo()}
+                    title={t('projectDetailsView:contactPerson')}
+                    icon={<MailOutlined />}
+                  />
+                </div>
+              </Card>
+            )}
           </Col>
           <Col md={24} lg={14}>
             <Card className="card-container">

@@ -7,6 +7,7 @@ import {
   ArrayMinSize,
   IsArray,
   IsBoolean,
+  IsEmail,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -160,4 +161,19 @@ export class ProgrammeSlDto {
   @IsInt()
   @IsNotPastDate()
   startDate: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  contactName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEmail()
+  contactEmail: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  contactPhoneNo: string;
 }
