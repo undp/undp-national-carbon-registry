@@ -139,49 +139,33 @@ export class VerificationService {
       docContent.quantifications.optionalDocuments = docUrls;
     }
 
-    const monitoringDocument = await this.documentRepository.findOne({
-      where: {
-        programmeId: monitoringReportDto.programmeId,
-        type: DocumentTypeEnum.MONITORING_REPORT,
-      },
-      order: {
-        createdTime: "DESC",
-      },
-    });
-    const monitoringReportDocument = new DocumentEntity();
-    monitoringReportDocument.userId = user.id;
-    monitoringReportDocument.version = monitoringDocument ? monitoringDocument.version + 1 : 1;
-
-    monitoringReportDocument.companyId = user.companyId;
-    monitoringReportDocument.programmeId = monitoringReportDto.programmeId;
-    monitoringReportDocument.status = DocumentStatus.PENDING;
-    monitoringReportDocument.type = DocumentTypeEnum.MONITORING_REPORT;
-    monitoringReportDocument.createdTime = new Date().getTime();
-    monitoringReportDocument.updatedTime = new Date().getTime();
-    monitoringReportDocument.content = docContent;
-
     const savedReport = await this.entityManager.transaction(async (em) => {
-      const verificationRequests: VerificationRequestEntity[] =
-        await this.verificationRequestRepository.find({
+      const monitoringReportDocument = new DocumentEntity();
+      monitoringReportDocument.userId = user.id;
+      monitoringReportDocument.companyId = user.companyId;
+      monitoringReportDocument.programmeId = monitoringReportDto.programmeId;
+      monitoringReportDocument.status = DocumentStatus.PENDING;
+      monitoringReportDocument.type = DocumentTypeEnum.MONITORING_REPORT;
+      monitoringReportDocument.createdTime = new Date().getTime();
+      monitoringReportDocument.updatedTime = new Date().getTime();
+      monitoringReportDocument.content = docContent;
+
+      const verificationRequest: VerificationRequestEntity =
+        await this.verificationRequestRepository.findOne({
           where: {
             programmeId: monitoringReportDto.programmeId,
           },
           order: { id: "DESC" },
         });
+
       if (
-        verificationRequests &&
-        verificationRequests.length &&
-        !(
-          verificationRequests[0].status ===
-            VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED ||
-          verificationRequests[0].status ===
-            VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED
-        )
+        verificationRequest &&
+        verificationRequest.status === VerificationRequestStatusEnum.MONITORING_REPORT_REJECTED
       ) {
         await em.update(
           VerificationRequestEntity,
           {
-            programmeId: monitoringReportDto.programmeId,
+            id: verificationRequest.id,
           },
           {
             status: VerificationRequestStatusEnum.MONITORING_REPORT_UPLOADED,
@@ -189,7 +173,20 @@ export class VerificationService {
             updatedTime: new Date().getTime(),
           }
         );
-        monitoringReportDocument.verificationRequestId = verificationRequests[0].id;
+
+        const lastMonitoringDocument = await this.documentRepository.findOne({
+          where: {
+            verificationRequestId: verificationRequest.id,
+            type: DocumentTypeEnum.MONITORING_REPORT,
+          },
+          order: {
+            createdTime: "DESC",
+          },
+        });
+        monitoringReportDocument.version = lastMonitoringDocument
+          ? lastMonitoringDocument.version + 1
+          : 1;
+        monitoringReportDocument.verificationRequestId = verificationRequest.id;
       } else {
         const verificationRequest = new VerificationRequestEntity();
         verificationRequest.programmeId = monitoringReportDto.programmeId;
@@ -199,6 +196,7 @@ export class VerificationService {
         verificationRequest.updatedTime = new Date().getTime();
         const saved = await em.save(verificationRequest);
         monitoringReportDocument.verificationRequestId = saved.id;
+        monitoringReportDocument.version = 1;
       }
       return await em.save(monitoringReportDocument);
     });
@@ -294,7 +292,9 @@ export class VerificationService {
 
       const log = new ProgrammeAuditLogSl();
       log.programmeId = verificationRequest.programmeId;
-      log.logType = verifyReportDto.verify ? ProgrammeAuditLogType.MONITORING_APPROVED : ProgrammeAuditLogType.MONITORING_REJECTED;
+      log.logType = verifyReportDto.verify
+        ? ProgrammeAuditLogType.MONITORING_APPROVED
+        : ProgrammeAuditLogType.MONITORING_REJECTED;
       log.userId = user.id;
 
       await this.programmeAuditSlRepo.save(log);
@@ -302,11 +302,13 @@ export class VerificationService {
 
     //send email to Project Participant
     // if (verifyReportDto.verify) {
-      await this.emailHelperService.sendEmailToProjectParticipant(
-        (verifyReportDto.verify) ? EmailTemplates.MONITORING_APPROVED : EmailTemplates.MONITORING_REJECTED,
-        null,
-        verificationRequest.programmeId
-      );
+    await this.emailHelperService.sendEmailToProjectParticipant(
+      verifyReportDto.verify
+        ? EmailTemplates.MONITORING_APPROVED
+        : EmailTemplates.MONITORING_REJECTED,
+      null,
+      verificationRequest.programmeId
+    );
     // } else {
     //   await this.emailHelperService.sendEmailToProjectParticipant(
     //     EmailTemplates.MONITORING_REJECTED,
@@ -418,40 +420,30 @@ export class VerificationService {
       docContent.verificationOpinion.signature2 = signUrls;
     }
 
-    const verificationDocument = await this.documentRepository.findOne({
-      where: {
-        programmeId: verificationReportDto.programmeId,
-        type: DocumentTypeEnum.VERIFICATION_REPORT,
-      },
-      order: {
-        createdTime: "DESC",
-      },
-    });
-
-    const programme = await this.programmeSlService.getProjectById(verificationReportDto.programmeId);
+    const programme = await this.programmeSlService.getProjectById(
+      verificationReportDto.programmeId
+    );
 
     const creditReceived =
-          (Number(programme.creditBalance) || 0) +
-          (Number(programme.creditFrozen) || 0) +
-          (Number(programme.creditRetired) || 0) +
-          (Number(programme.creditTransferred) || 0);
+      (Number(programme.creditBalance) || 0) +
+      (Number(programme.creditFrozen) || 0) +
+      (Number(programme.creditRetired) || 0) +
+      (Number(programme.creditTransferred) || 0);
 
-        if ((programme.creditEst - creditReceived) < Number(docContent?.projectDetails?.verifiedScer)) {
-          throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              "verification.cannotIssueMoreThanEstimatedCredits",
-              []
-            ),
-            HttpStatus.BAD_REQUEST
-          );
-        }
+    if (programme.creditEst - creditReceived < Number(docContent?.projectDetails?.verifiedScer)) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "verification.cannotIssueMoreThanEstimatedCredits",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
 
     const verificationReportDocument = new DocumentEntity();
     verificationReportDocument.userId = user.id;
     verificationReportDocument.companyId = user.companyId;
-    verificationReportDocument.version = verificationDocument
-      ? verificationDocument.version + 1
-      : 1;
+
     verificationReportDocument.programmeId = verificationReportDto.programmeId;
     verificationReportDocument.status = DocumentStatus.PENDING;
     verificationReportDocument.type = DocumentTypeEnum.VERIFICATION_REPORT;
@@ -464,12 +456,19 @@ export class VerificationService {
         where: {
           programmeId: verificationReportDto.programmeId,
         },
+        order: {
+          id: "DESC",
+        },
       });
-      if (verificationRequest) {
+      if (
+        verificationRequest &&
+        (verificationRequest.status == VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED ||
+          verificationRequest.status == VerificationRequestStatusEnum.MONITORING_REPORT_VERIFIED)
+      ) {
         await em.update(
           VerificationRequestEntity,
           {
-            programmeId: verificationReportDto.programmeId,
+            id: verificationRequest.id,
           },
           {
             status: VerificationRequestStatusEnum.VERIFICATION_REPORT_UPLOADED,
@@ -481,7 +480,19 @@ export class VerificationService {
             updatedTime: new Date().getTime(),
           }
         );
+        const lastVerificationDocument = await this.documentRepository.findOne({
+          where: {
+            verificationRequestId: verificationRequest.id,
+            type: DocumentTypeEnum.VERIFICATION_REPORT,
+          },
+          order: {
+            id: "DESC",
+          },
+        });
         verificationReportDocument.verificationRequestId = verificationRequest.id;
+        verificationReportDocument.version = lastVerificationDocument
+          ? lastVerificationDocument.version + 1
+          : 1;
       } else {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
@@ -490,7 +501,6 @@ export class VerificationService {
           ),
           HttpStatus.BAD_REQUEST
         );
-        return;
       }
       return await em.save(verificationReportDocument);
     });
@@ -546,7 +556,7 @@ export class VerificationService {
       const programme = await this.programmeSlService.getProjectById(
         verificationRequest.programmeId
       );
-      
+
       isInitialCreditIssue = !programme.creditStartSerialNumber;
       const txRef = this.txRefGen.getCreditIssueApproveRef(user, programme, verificationRequest);
 
@@ -598,7 +608,7 @@ export class VerificationService {
       const creditIssueLog = new ProgrammeAuditLogSl();
       creditIssueLog.programmeId = verificationRequest.programmeId;
       creditIssueLog.logType = ProgrammeAuditLogType.CREDIT_ISSUED;
-      creditIssueLog.data = {creditIssued: Number(verificationRequest.creditAmount)}
+      creditIssueLog.data = { creditIssued: Number(verificationRequest.creditAmount) };
       creditIssueLog.userId = user.id;
       logs.push(creditIssueLog);
 
@@ -762,7 +772,7 @@ export class VerificationService {
   //MARK: get Credit Issuance Certificate URL
   async getCreditIssuanceCertificateURL(
     verificationRequest: VerificationRequestEntity,
-    verificationSerialNo: string, 
+    verificationSerialNo: string,
     isInitialCreditIssue: boolean
   ) {
     const programme = await this.programmeSlService.getProjectById(verificationRequest.programmeId);
@@ -774,12 +784,14 @@ export class VerificationService {
       );
     }
 
-    const blockStart = isInitialCreditIssue ? programme.creditStartSerialNumber : this.serialGenerator.calculateCreditSerialNumber(
-      programme.creditStartSerialNumber,
-      programme.creditBalance > 0
-        ? programme.creditBalance - verificationRequest.creditAmount
-        : 0
-    );
+    const blockStart = isInitialCreditIssue
+      ? programme.creditStartSerialNumber
+      : this.serialGenerator.calculateCreditSerialNumber(
+          programme.creditStartSerialNumber,
+          programme.creditBalance > 0
+            ? programme.creditBalance - verificationRequest.creditAmount
+            : 0
+        );
     const blockEnd = this.serialGenerator.calculateCreditSerialNumber(
       programme.creditStartSerialNumber,
       programme.creditBalance - 1
@@ -835,6 +847,7 @@ export class VerificationService {
           type: data.d_type,
           content: data.d_content,
           status: data.d_status,
+          version: data.d_version,
           createdTime: data.d_createdTime,
         });
       }
@@ -862,7 +875,7 @@ export class VerificationService {
             vr.id AS vr_id, vr."programmeId" AS "programmeId", vr.status AS vr_status, vr."createdTime" AS "vr_createdTime", 
             vr."verificationSerialNo" AS "verificationSerialNo", vr."creditIssueCertificateUrl" AS "creditIssueCertificateUrl",
             vr."carbonNeutralCertificateRequested" AS "carbonNeutralCertificateRequested", vr."carbonNeutralCertificateUrl" AS "carbonNeutralCertificateUrl",
-            d.id AS d_id, d.type AS d_type, d.content AS d_content, d.status AS d_status, d."createdTime" AS "d_createdTime"
+            d.id AS d_id, d.type AS d_type, d.content AS d_content, d.status AS d_status, d.version AS d_version, d."createdTime" AS "d_createdTime"
         FROM 
             verification_request_entity vr
         LEFT JOIN 

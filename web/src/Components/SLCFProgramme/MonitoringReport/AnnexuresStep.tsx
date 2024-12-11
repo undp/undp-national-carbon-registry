@@ -10,6 +10,7 @@ import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
+import { DocumentStatus } from '../../../Definitions/Enums/document.status';
 export const AnnexuresStep = (props: any) => {
   const {
     useLocation,
@@ -22,6 +23,7 @@ export const AnnexuresStep = (props: any) => {
     approve,
     reject,
     onFinish,
+    status,
   } = props;
   const { userInfoState } = useUserContext();
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
@@ -119,16 +121,18 @@ export const AnnexuresStep = (props: any) => {
                     </Button>
                   )}
 
-                {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND && (
-                  <Button type="primary" onClick={reject} disabled={false}>
-                    <span>Reject</span>
-                  </Button>
-                )}
-                {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND && (
-                  <Button type="primary" onClick={approve} disabled={false}>
-                    <span>Approve</span>
-                  </Button>
-                )}
+                {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
+                  status === DocumentStatus.PENDING && (
+                    <Button type="primary" onClick={reject} disabled={false}>
+                      <span>Reject</span>
+                    </Button>
+                  )}
+                {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
+                  status === DocumentStatus.PENDING && (
+                    <Button type="primary" onClick={approve} disabled={false}>
+                      <span>Approve</span>
+                    </Button>
+                  )}
               </Row>
             </Form>
           </div>

@@ -666,7 +666,7 @@ const StepperComponent = (props: any) => {
   const getValidationReportByVersion = async (id: string) => {
     try {
       const res =
-        mode === FormMode.VIEW
+        mode === FormMode.VIEW && selectedVersion
           ? await post('national/programmeSL/getDocByVersion', {
               programmeId: id,
               docType: 'validationReport',

@@ -160,6 +160,14 @@ export class ProgrammeSlController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
+  @Post("getVerificationDocVersions")
+  async getVerificationDocVersions(@Body() getDocDto: GetDocDto, @Request() req) {
+    return this.programmeService.getVerificationDocVersions(getDocDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
   @Post("getDocByVersion")
   async getDocByVersion(@Body() getDocDto: GetDocDto, @Request() req) {
     return this.programmeService.getDocByVersion(getDocDto, req.user);
@@ -168,9 +176,25 @@ export class ProgrammeSlController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
+  @Post("getVerificationDocByVersion")
+  async getVerificationDocByVersion(@Body() getDocDto: GetDocDto, @Request() req) {
+    return this.programmeService.getVerificationDocByVersion(getDocDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
   @Post("getDocLastVersion")
   async getDocLastVersion(@Body() getDocDto: GetDocDto, @Request() req) {
     return this.programmeService.getDocLastVersion(getDocDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
+  @Post("getVerificationDocLastVersion")
+  async getVerificationDocLastVersion(@Body() getDocDto: GetDocDto, @Request() req) {
+    return this.programmeService.getVerificationDocLastVersion(getDocDto, req.user);
   }
 
   @ApiBearerAuth()
