@@ -105,6 +105,7 @@ export class ProgrammeLedgerService {
     return programme;
   }
 
+  //MARK: updateProgrammeSlProposalStage
   public async updateProgrammeSlProposalStage(
     programmeId: string,
     txType: TxType,
@@ -305,7 +306,7 @@ export class ProgrammeLedgerService {
         if (companyCreditBalances[companyAccount] != undefined) {
           updateMap[this.ledger.companyTableName + "#" + companyAccount] = {
             credit: this.helperService.halfUpToPrecision(
-              companyCreditBalances[companyAccount] + verificationRequest.creditAmount
+              companyCreditBalances[companyAccount] + Number(verificationRequest.creditAmount)
             ),
             txRef: verificationRequest.id + "#" + programme.serialNo,
             txType: TxType.ISSUE_SL,
@@ -1313,6 +1314,7 @@ export class ProgrammeLedgerService {
     else return 0;
   }
 
+  // MARK: authProgrammeStatus
   public async authProgrammeStatus(
     programmeId: string,
     countryCodeA2: string,
