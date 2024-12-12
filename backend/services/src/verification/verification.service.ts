@@ -296,6 +296,7 @@ export class VerificationService {
         ? ProgrammeAuditLogType.MONITORING_APPROVED
         : ProgrammeAuditLogType.MONITORING_REJECTED;
       log.userId = user.id;
+      if (verifyReportDto.remark) log.data = { remark: verifyReportDto.remark };
 
       await this.programmeAuditSlRepo.save(log);
     });
@@ -306,7 +307,7 @@ export class VerificationService {
       verifyReportDto.verify
         ? EmailTemplates.MONITORING_APPROVED
         : EmailTemplates.MONITORING_REJECTED,
-      null,
+      verifyReportDto.remark ? { remark: verifyReportDto.remark } : null,
       verificationRequest.programmeId
     );
     // } else {
@@ -665,7 +666,7 @@ export class VerificationService {
       verifyReportDto.verify
         ? EmailTemplates.VERIFICATION_APPROVED
         : EmailTemplates.VERIFICATION_REJECTED,
-      null,
+      verifyReportDto.remark ? { remark: verifyReportDto.remark } : null,
       verificationRequest.programmeId
     );
 
@@ -674,6 +675,7 @@ export class VerificationService {
       log.programmeId = verificationRequest.programmeId;
       log.logType = ProgrammeAuditLogType.VERIFICATION_REJECTED;
       log.userId = user.id;
+      if (verifyReportDto.remark) log.data = { remark: verifyReportDto.remark };
 
       await this.programmeAuditSlRepo.save(log);
     }

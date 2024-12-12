@@ -496,6 +496,7 @@ export class EmailHelperService {
           organisationName: companyDetails.name,
           countryName: systemCountryName,
           programmeName: programme.title,
+          remark,
           programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
         };
         break;
@@ -638,6 +639,7 @@ export class EmailHelperService {
           organisationName: companyDetails.name,
           countryName: systemCountryName,
           programmeName: programme.title,
+          remark,
           programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
         };
         break;
@@ -654,6 +656,7 @@ export class EmailHelperService {
           organisationName: companyDetails.name,
           countryName: systemCountryName,
           programmeName: programme.title,
+          remark,
           programmePageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
         };
         break;
