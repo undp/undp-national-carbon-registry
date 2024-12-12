@@ -283,7 +283,7 @@ export const AddCostQuotationForm = (props: any) => {
                     <Form.Item
                       label={t('costQuotation:quotationNo')}
                       name="quotationNo"
-                      // initialValue={state?.record?.name}
+                      initialValue={`SLCF/PD/${new Date().getFullYear() % 100}/${id}`}
                       rules={[
                         {
                           required: true,
@@ -305,7 +305,7 @@ export const AddCostQuotationForm = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" disabled={disableFields} />
+                      <Input size="large" disabled />
                     </Form.Item>
                   </Col>
                   ;
