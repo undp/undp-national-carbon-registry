@@ -607,6 +607,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 <Form.Item
                   label={t('projectProposal:proposalNo')}
                   name="proposalNo"
+                  initialValue={`SLCF/PP/${new Date().getFullYear() % 100}/${id}`}
                   rules={[
                     {
                       required: true,
@@ -626,7 +627,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" disabled={disableFields} />
+                  <Input size="large" disabled />
                 </Form.Item>
 
                 <Form.Item
