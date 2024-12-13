@@ -105,7 +105,7 @@ const StepperComponent = (props: any) => {
   const getProgrammeDetailsById = async (programId: any) => {
     try {
       setLoading(true);
-      const { data } = await post('national/programmeSL/getProjectById', {
+      const { data } = await post('national/programmeSl/getProjectById', {
         programmeId: programId,
       });
 

@@ -18,6 +18,7 @@ import ProjectTimeline, { IProjectTimelineData } from './ProjectTimeline';
 const { Text } = Typography;
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Loading } from '../Loading/loading';
+import { DocumentTypeEnum } from '../../Definitions/Enums/document.type';
 
 const ProjectProposalComponent = (props: { translator: i18n }) => {
   const { translator } = props;
@@ -42,6 +43,63 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
   const [countries, setCountries] = useState<[]>([]);
 
   const [timelineData, setTimelineData] = useState<{ x: string; y: [number, number] }[]>();
+
+  const { get, post } = useConnection();
+
+  const [contactNoInput] = useState<any>();
+
+  const setMigratedData = async () => {
+    try {
+      setLoading(true);
+      const { data } = await post('national/programmeSl/getProjectById', {
+        programmeId: id,
+      });
+      const res = await post('national/programmeSl/getDocLastVersion', {
+        programmeId: id,
+        docType: DocumentTypeEnum.COST_QUOTATION,
+      });
+      const quotationContent = JSON.parse(res?.data.content);
+
+      form.setFieldsValue({
+        projectTitle: data?.title,
+        clientName: data?.company?.name,
+        clientContactPerson: data?.contactName,
+        clientMobile: data?.contactPhoneNo,
+        clientEmail: data?.contactEmail,
+        serviceProviderName: 'Sri Lanka Climate Fund (Pvt.) Ltd.',
+        developProjectConcept: data?.company?.name,
+        notificationSLCSS: data?.company?.name,
+        prepareCMA: data?.company?.name,
+        validationCMA: data?.company?.name,
+        preparationOfMonitoringReport: data?.company?.name,
+        submissionOfMonitoringReport: data?.company?.name,
+        costValidation: quotationContent.costValidation,
+        costVerification: quotationContent.costVerification,
+        totalCost: quotationContent.totalCost,
+        additionalServices: (function () {
+          const servicesObjs: any[] = [];
+          const tempServices: { cost: number; service: string }[] =
+            quotationContent?.additionalServices;
+          if (tempServices !== undefined && tempServices.length > 0) {
+            tempServices.forEach((service) => {
+              const tempServiceObj = {
+                cost: String(service.cost),
+                service: service.service,
+              };
+
+              servicesObjs.push(tempServiceObj);
+            });
+          }
+
+          return servicesObjs;
+        })(),
+      });
+    } catch (error) {
+      console.log('error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const projectPlanChange = (value?: any) => {
     const projectPlanActivity01StartDate = form.getFieldValue('projectPlanActivity01StartDate');
@@ -105,10 +163,6 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
     }
   };
 
-  const { get, post } = useConnection();
-
-  const [contactNoInput] = useState<any>();
-
   const getCountryList = async () => {
     try {
       const response = await get('national/organisation/countries');
@@ -135,6 +189,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
     };
 
     form.setFieldsValue(formInitialValues);
+
+    if (!isView) {
+      setMigratedData();
+    }
   }, []);
 
   const calculateTotalCost = () => {
@@ -601,7 +659,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" disabled={disableFields} />
+                  <Input size="large" disabled />
                 </Form.Item>
 
                 <Form.Item
@@ -802,7 +860,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" disabled={disableFields} />
+                  <Input size="large" disabled />
                 </Form.Item>
 
                 <Form.Item
@@ -847,7 +905,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     countryCallingCodeEditable={false}
                     onChange={(v) => {}}
                     countries={countries as Country[]}
-                    disabled={disableFields}
+                    disabled
                   />
                 </Form.Item>
               </Col>
@@ -876,7 +934,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" disabled={disableFields} />
+                  <Input size="large" disabled />
                 </Form.Item>
                 <Form.Item
                   label={t('projectProposal:email')}
@@ -908,7 +966,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" disabled={disableFields} />
+                  <Input size="large" disabled />
                 </Form.Item>
               </Col>
             </Row>
@@ -943,7 +1001,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input size="large" disabled={disableFields} />
+                  <Input size="large" disabled />
                 </Form.Item>
 
                 <Form.Item
@@ -1247,7 +1305,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input disabled={disableFields} />
+                  <Input disabled />
                 </Form.Item>
               </Col>
             </Row>
@@ -1277,7 +1335,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input disabled={disableFields} />
+                  <Input disabled />
                 </Form.Item>
               </Col>
             </Row>
@@ -1307,7 +1365,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input disabled={disableFields} />
+                  <Input disabled />
                 </Form.Item>
               </Col>
             </Row>
@@ -1337,7 +1395,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input disabled={disableFields} />
+                  <Input disabled />
                 </Form.Item>
               </Col>
             </Row>
@@ -1431,7 +1489,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input disabled={disableFields} />
+                  <Input disabled />
                 </Form.Item>
               </Col>
             </Row>
@@ -1462,7 +1520,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input disabled={disableFields} />
+                  <Input disabled />
                 </Form.Item>
               </Col>
             </Row>
@@ -2675,7 +2733,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   <Input
                     // type="number"
                     size="large"
-                    disabled={disableFields}
+                    disabled
                     onChange={(val) => {
                       calculateTotalCost();
                     }}
@@ -2725,7 +2783,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   <Input
                     // type="number"
                     size="large"
-                    disabled={disableFields}
+                    disabled
                     onChange={(val) => {
                       calculateTotalCost();
                     }}
@@ -2771,7 +2829,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                               },
                             ]}
                           >
-                            <Input size="large" onChange={(val) => {}} disabled={disableFields} />
+                            <Input size="large" onChange={(val) => {}} disabled />
                           </Form.Item>
                         </Col>
                         <Col md={4} xl={4}>
@@ -2806,7 +2864,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                               onChange={(val) => {
                                 calculateTotalCost();
                               }}
-                              disabled={disableFields}
+                              disabled
                             />
                           </Form.Item>
                         </Col>
@@ -2822,7 +2880,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                               className="addMinusBtn"
                               // block
                               icon={<MinusOutlined />}
-                              disabled={disableFields}
+                              disabled
                             >
                               {/* Add Entity */}
                             </Button>
@@ -2841,7 +2899,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                             }}
                             size="large"
                             className="addMinusBtn"
-                            disabled={disableFields}
+                            disabled
                             // block
                             icon={<PlusOutlined />}
                           ></Button>
