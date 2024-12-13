@@ -1732,7 +1732,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input disabled={disableFields} />
+                    <Input type="number" disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={4} xl={4}>
@@ -1824,7 +1824,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input disabled={disableFields} />
+                    <Input type="number" disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={4} xl={4}>
@@ -1916,7 +1916,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input disabled={disableFields} />
+                    <Input type="number" disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={4} xl={4}>
@@ -2008,7 +2008,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input disabled={disableFields} />
+                    <Input type="number" disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={4} xl={4}>
@@ -2100,7 +2100,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input disabled={disableFields} />
+                    <Input type="number" disabled={disableFields} />
                   </Form.Item>
                 </Col>
                 <Col md={4} xl={4}>
@@ -2194,7 +2194,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input disabled={disableFields} />
+                  <Input type="number" disabled={disableFields} />
                 </Form.Item>
               </Col>
             </Row>
@@ -2870,7 +2870,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                         </Col>
 
                         <Col md={2} xl={2}>
-                          <Form.Item>
+                          {/* <Form.Item>
                             <Button
                               onClick={() => {
                                 calculateTotalCost();
@@ -2882,14 +2882,13 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                               icon={<MinusOutlined />}
                               disabled
                             >
-                              {/* Add Entity */}
                             </Button>
-                          </Form.Item>
+                          </Form.Item> */}
                         </Col>
                       </Row>
                     </>
                   ))}
-                  <Row align={'middle'} justify={'space-between'} className="data-rows">
+                  {/* <Row align={'middle'} justify={'space-between'} className="data-rows">
                     <Col md={2} xl={2}>
                       <div className="form-list-actions">
                         <Form.Item>
@@ -2915,7 +2914,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     <Col md={2} xl={2}>
                       {' '}
                     </Col>
-                  </Row>
+                  </Row> */}
                 </>
               )}
             </Form.List>
