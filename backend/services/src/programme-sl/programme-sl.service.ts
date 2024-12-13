@@ -1074,34 +1074,34 @@ export class ProgrammeSlService {
 
     await this.documentRepo.insert(siteVisitChecklistDoc);
 
-    const getDoctDto = {
-      programmeId: programmeId,
-      docType: DocumentTypeEnum.CMA,
-    };
-    const cmaDoc = await this.getDocLastVersion(getDoctDto, user);
-    let parsedCMADoc;
-    let data;
-    if (cmaDoc.data && cmaDoc.data.content) {
-      parsedCMADoc = JSON.parse(cmaDoc.data.content);
-    }
+    // const getDoctDto = {
+    //   programmeId: programmeId,
+    //   docType: DocumentTypeEnum.CMA,
+    // };
+    // const cmaDoc = await this.getDocLastVersion(getDoctDto, user);
+    // let parsedCMADoc;
+    // let data;
+    // if (cmaDoc.data && cmaDoc.data.content) {
+    //   parsedCMADoc = JSON.parse(cmaDoc.data.content);
+    // }
 
-    if (
-      parsedCMADoc &&
-      parsedCMADoc.quantificationOfGHG &&
-      parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions &&
-      parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions.totalNetEmissionReductions
-    ) {
-      data = {
-        creditEst: Number(
-          parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions.totalNetEmissionReductions
-        ),
-      };
-    }
+    // if (
+    //   parsedCMADoc &&
+    //   parsedCMADoc.quantificationOfGHG &&
+    //   parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions &&
+    //   parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions.totalNetEmissionReductions
+    // ) {
+    //   data = {
+    //     creditEst: Number(
+    //       parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions.totalNetEmissionReductions
+    //     ),
+    //   };
+    // }
 
     const updateProgrammeSlProposalStage = {
       programmeId: programmeId,
       txType: TxType.APPROVE_CMA,
-      data: data,
+      // data: data,
     };
     const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
 
@@ -1415,9 +1415,32 @@ export class ProgrammeSlService {
       );
     }
 
+    const getDoctDto = {
+      programmeId: programmeId,
+      docType: DocumentTypeEnum.CMA,
+    };
+    const cmaDoc = await this.getDocLastVersion(getDoctDto, user);
+    let parsedCMADoc;
+    let creditEst;
+    if (cmaDoc.data && cmaDoc.data.content) {
+      parsedCMADoc = JSON.parse(cmaDoc.data.content);
+    }
+
+    if (
+      parsedCMADoc &&
+      parsedCMADoc.quantificationOfGHG &&
+      parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions &&
+      parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions.totalNetEmissionReductions
+    ) {
+      creditEst = Number(
+        parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions.totalNetEmissionReductions
+      );
+    }
+
     const serialNo = await this.serialGenerator.generateProjectRegistrationSerial(programmeId);
     const registrationCertificateUrl = await this.generateProjectRegistrationCertificate(
-      programmeId
+      programmeId,
+      creditEst
     );
 
     const updateProgrammeSlProposalStage = {
@@ -1426,6 +1449,7 @@ export class ProgrammeSlService {
       data: {
         serialNo: serialNo,
         registrationCertificateUrl: registrationCertificateUrl,
+        creditEst,
       },
     };
     const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
@@ -1935,7 +1959,7 @@ export class ProgrammeSlService {
   }
 
   // MARK: gen Reg Certificate
-  async generateProjectRegistrationCertificate(programmeId: string) {
+  async generateProjectRegistrationCertificate(programmeId: string, creditEst: string) {
     const programme = await this.getProjectById(programmeId);
 
     if (!programme) {
@@ -1953,7 +1977,7 @@ export class ProgrammeSlService {
       regDate: this.dateUtilService.formatCustomDate(programme.createdTime),
       issueDate: this.dateUtilService.formatCustomDate(),
       sector: SlProjectCategoryMap[programme.projectCategory],
-      estimatedCredits: programme.creditEst,
+      estimatedCredits: creditEst,
     };
 
     const url =

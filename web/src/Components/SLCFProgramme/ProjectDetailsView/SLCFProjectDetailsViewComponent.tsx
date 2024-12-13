@@ -2208,194 +2208,197 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         </Row>
         <Row gutter={16}>
           <Col md={24} lg={10}>
-            <Card className="card-container">
-              <div className="info-view">
-                <div className="title">
-                  <span className="title-icon">{<BlockOutlined />}</span>
-                  <span className="title-text">{t('projectDetailsView:credits')}</span>
-                </div>
-                <div className="map-content">
-                  <Chart
-                    id={'creditChart'}
-                    options={{
-                      labels: ['Authorised', 'Issued', 'Transferred', 'Retired', 'Frozen'],
-                      legend: {
-                        position: 'bottom',
-                      },
-                      colors: ['#6ACDFF', '#D2FDBB', '#CDCDCD', '#FF8183', '#B7A4FE'],
-                      tooltip: {
-                        fillSeriesColor: false,
-                      },
-                      states: {
-                        normal: {
-                          filter: {
-                            type: 'none',
-                            value: 0,
+            {data.projectProposalStage === ProjectProposalStage.AUTHORISED && (
+              <Card className="card-container">
+                <div className="info-view">
+                  <div className="title">
+                    <span className="title-icon">{<BlockOutlined />}</span>
+                    <span className="title-text">{t('projectDetailsView:credits')}</span>
+                  </div>
+                  <div className="map-content">
+                    <Chart
+                      id={'creditChart'}
+                      options={{
+                        labels: ['Authorised', 'Issued', 'Transferred', 'Retired', 'Frozen'],
+                        legend: {
+                          position: 'bottom',
+                        },
+                        colors: ['#6ACDFF', '#D2FDBB', '#CDCDCD', '#FF8183', '#B7A4FE'],
+                        tooltip: {
+                          fillSeriesColor: false,
+                        },
+                        states: {
+                          normal: {
+                            filter: {
+                              type: 'none',
+                              value: 0,
+                            },
+                          },
+                          hover: {
+                            filter: {
+                              type: 'none',
+                              value: 0,
+                            },
+                          },
+                          active: {
+                            allowMultipleDataPointsSelection: true,
+                            filter: {
+                              type: 'darken',
+                              value: 0.7,
+                            },
                           },
                         },
-                        hover: {
-                          filter: {
-                            type: 'none',
-                            value: 0,
-                          },
+                        stroke: {
+                          colors: ['#00'],
                         },
-                        active: {
-                          allowMultipleDataPointsSelection: true,
-                          filter: {
-                            type: 'darken',
-                            value: 0.7,
-                          },
-                        },
-                      },
-                      stroke: {
-                        colors: ['#00'],
-                      },
-                      plotOptions: {
-                        pie: {
-                          expandOnClick: false,
-                          donut: {
-                            labels: {
-                              show: true,
-                              total: {
-                                showAlways: true,
+                        plotOptions: {
+                          pie: {
+                            expandOnClick: false,
+                            donut: {
+                              labels: {
                                 show: true,
-                                label: 'Total',
-                                formatter: () => {
-                                  console.log('------data-------', data);
-                                  return data.creditEst ? '' + data.creditEst : '0';
+                                total: {
+                                  showAlways: true,
+                                  show: true,
+                                  label: 'Total',
+                                  formatter: () => '' + data.creditEst,
                                 },
                               },
                             },
                           },
                         },
-                      },
-                      dataLabels: {
-                        enabled: false,
-                      },
-                      responsive: [
-                        {
-                          breakpoint: 480,
-                          options: {
-                            chart: {
-                              width: '15vw',
-                            },
-                            legend: {
-                              position: 'bottom',
+                        dataLabels: {
+                          enabled: false,
+                        },
+                        responsive: [
+                          {
+                            breakpoint: 480,
+                            options: {
+                              chart: {
+                                width: '15vw',
+                              },
+                              legend: {
+                                position: 'bottom',
+                              },
                             },
                           },
-                        },
-                      ],
-                    }}
-                    series={pieChartData}
-                    type="donut"
-                    width="100%"
-                    fontFamily="inter"
-                  />
-                  {userInfoState?.userRole !== 'ViewOnly' &&
-                    userInfoState?.companyRole !== 'Certifier' && (
-                      <div className="flex-display action-btns">
-                        {data.projectProposalStage.toString() === ProjectProposalStage.AUTHORISED &&
-                          data.creditBalance - (data.creditFrozen ? data.creditFrozen : 0) > 0 &&
-                          !isTransferFrozen && (
-                            <div>
-                              {(!isAllOwnersDeactivated ||
-                                (data.companyId === userInfoState!.companyId &&
-                                  userInfoState!.companyState !==
-                                    CompanyState.SUSPENDED.valueOf())) && (
-                                <span>
-                                  {data.purposeOfCreditDevelopment === CreditType.TRACK_2 && (
-                                    <Button
-                                      danger
-                                      onClick={() => {
-                                        setActionInfo({
-                                          action: 'Retire',
-                                          text: t('projectDetailsView:popupText'),
-                                          title: t('projectDetailsView:retireTitle'),
-                                          type: 'primary',
-                                          remark: true,
-                                          icon: <Icon.Save />,
-                                          contentComp: (
-                                            <CreditRetirementSlRequestForm
-                                              hideType={
-                                                userInfoState?.companyRole !==
-                                                  CompanyRole.GOVERNMENT &&
-                                                userInfoState?.companyRole !== CompanyRole.MINISTRY
-                                              }
-                                              myCompanyId={userInfoState?.companyId}
-                                              programme={data}
-                                              onCancel={() => {
-                                                setOpenModal(false);
-                                                setComment(undefined);
-                                              }}
-                                              actionBtnText={t('projectDetailsView:retire')}
-                                              onFinish={(body: any) =>
-                                                onCreditRetireTransferAction(
-                                                  body,
-                                                  t('projectDetailsView:successRetireInitSLCF'),
-                                                  updateCreditInfo
-                                                )
-                                              }
-                                              translator={i18n}
-                                            />
-                                          ),
-                                        });
-                                        showModal();
-                                      }}
-                                    >
-                                      {t('projectDetailsView:retire')}
-                                    </Button>
-                                  )}
-                                  {data.purposeOfCreditDevelopment === CreditType.TRACK_1 && (
-                                    <Button
-                                      type="primary"
-                                      onClick={() => {
-                                        setActionInfo({
-                                          action: 'Send',
-                                          text: '',
-                                          title: t('projectDetailsView:sendCreditTitle'),
-                                          type: 'primary',
-                                          remark: true,
-                                          icon: <Icon.BoxArrowRight />,
-                                          contentComp: (
-                                            <CreditRetirementSlRequestForm
-                                              hideType={
-                                                userInfoState?.companyRole !==
-                                                  CompanyRole.GOVERNMENT &&
-                                                userInfoState?.companyRole !== CompanyRole.MINISTRY
-                                              }
-                                              myCompanyId={userInfoState?.companyId}
-                                              programme={data}
-                                              onCancel={() => {
-                                                setOpenModal(false);
-                                                setComment(undefined);
-                                              }}
-                                              actionBtnText={t('projectDetailsView:transferSl')}
-                                              onFinish={(body: any) =>
-                                                onCreditRetireTransferAction(
-                                                  body,
-                                                  t('projectDetailsView:successTransferInitSLCF'),
-                                                  updateCreditInfo
-                                                )
-                                              }
-                                              translator={i18n}
-                                            />
-                                          ),
-                                        });
-                                        showModal();
-                                      }}
-                                    >
-                                      {t('projectDetailsView:send')}
-                                    </Button>
-                                  )}
-                                </span>
-                              )}
-                            </div>
-                          )}
-                      </div>
-                    )}
+                        ],
+                      }}
+                      series={pieChartData}
+                      type="donut"
+                      width="100%"
+                      fontFamily="inter"
+                    />
+
+                    {userInfoState?.userRole !== 'ViewOnly' &&
+                      userInfoState?.companyRole !== 'Certifier' && (
+                        <div className="flex-display action-btns">
+                          {data.projectProposalStage.toString() ===
+                            ProjectProposalStage.AUTHORISED &&
+                            data.creditBalance - (data.creditFrozen ? data.creditFrozen : 0) > 0 &&
+                            !isTransferFrozen && (
+                              <div>
+                                {(!isAllOwnersDeactivated ||
+                                  (data.companyId === userInfoState!.companyId &&
+                                    userInfoState!.companyState !==
+                                      CompanyState.SUSPENDED.valueOf())) && (
+                                  <span>
+                                    {data.purposeOfCreditDevelopment === CreditType.TRACK_2 && (
+                                      <Button
+                                        danger
+                                        onClick={() => {
+                                          setActionInfo({
+                                            action: 'Retire',
+                                            text: t('projectDetailsView:popupText'),
+                                            title: t('projectDetailsView:retireTitle'),
+                                            type: 'primary',
+                                            remark: true,
+                                            icon: <Icon.Save />,
+                                            contentComp: (
+                                              <CreditRetirementSlRequestForm
+                                                hideType={
+                                                  userInfoState?.companyRole !==
+                                                    CompanyRole.GOVERNMENT &&
+                                                  userInfoState?.companyRole !==
+                                                    CompanyRole.MINISTRY
+                                                }
+                                                myCompanyId={userInfoState?.companyId}
+                                                programme={data}
+                                                onCancel={() => {
+                                                  setOpenModal(false);
+                                                  setComment(undefined);
+                                                }}
+                                                actionBtnText={t('projectDetailsView:retire')}
+                                                onFinish={(body: any) =>
+                                                  onCreditRetireTransferAction(
+                                                    body,
+                                                    t('projectDetailsView:successRetireInitSLCF'),
+                                                    updateCreditInfo
+                                                  )
+                                                }
+                                                translator={i18n}
+                                              />
+                                            ),
+                                          });
+                                          showModal();
+                                        }}
+                                      >
+                                        {t('projectDetailsView:retire')}
+                                      </Button>
+                                    )}
+                                    {data.purposeOfCreditDevelopment === CreditType.TRACK_1 && (
+                                      <Button
+                                        type="primary"
+                                        onClick={() => {
+                                          setActionInfo({
+                                            action: 'Send',
+                                            text: '',
+                                            title: t('projectDetailsView:sendCreditTitle'),
+                                            type: 'primary',
+                                            remark: true,
+                                            icon: <Icon.BoxArrowRight />,
+                                            contentComp: (
+                                              <CreditRetirementSlRequestForm
+                                                hideType={
+                                                  userInfoState?.companyRole !==
+                                                    CompanyRole.GOVERNMENT &&
+                                                  userInfoState?.companyRole !==
+                                                    CompanyRole.MINISTRY
+                                                }
+                                                myCompanyId={userInfoState?.companyId}
+                                                programme={data}
+                                                onCancel={() => {
+                                                  setOpenModal(false);
+                                                  setComment(undefined);
+                                                }}
+                                                actionBtnText={t('projectDetailsView:transferSl')}
+                                                onFinish={(body: any) =>
+                                                  onCreditRetireTransferAction(
+                                                    body,
+                                                    t('projectDetailsView:successTransferInitSLCF'),
+                                                    updateCreditInfo
+                                                  )
+                                                }
+                                                translator={i18n}
+                                              />
+                                            ),
+                                          });
+                                          showModal();
+                                        }}
+                                      >
+                                        {t('projectDetailsView:send')}
+                                      </Button>
+                                    )}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                        </div>
+                      )}
+                  </div>
                 </div>
-              </div>
-            </Card>
+              </Card>
+            )}
             <Card className="card-container">
               <div>
                 <ProjectForms

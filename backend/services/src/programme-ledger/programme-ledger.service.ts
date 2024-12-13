@@ -171,7 +171,6 @@ export class ProgrammeLedgerService {
             uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED_PROPOSAL;
             break;
           case TxType.APPROVE_CMA:
-            uPayload["creditEst"] = data?.creditEst;
             uPayload["projectProposalStage"] = ProjectProposalStage.APPROVED_CMA;
             break;
           case TxType.REJECT_CMA:
@@ -183,6 +182,7 @@ export class ProgrammeLedgerService {
           case TxType.APPROVE_VALIDATION:
             uPayload["serialNo"] = data?.serialNo;
             uPayload["registrationCertificateUrl"] = data?.registrationCertificateUrl;
+            uPayload["creditEst"] = data?.creditEst;
             uPayload["projectProposalStage"] = ProjectProposalStage.AUTHORISED;
             break;
           case TxType.REJECT_VALIDATION:
