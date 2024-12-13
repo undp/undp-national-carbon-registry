@@ -116,6 +116,23 @@ const ValidationAgreement = (props: { translator: i18n }) => {
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
+  const setMigratedData = async () => {
+    try {
+      setLoading(true);
+      const { data } = await post('national/programmeSl/getProjectById', {
+        programmeId: id,
+      });
+
+      form.setFieldsValue({
+        clientBehalf: data?.company?.name,
+      });
+    } catch (error) {
+      console.log('error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const getViewData = async () => {
       if (isView) {
@@ -140,6 +157,12 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
     getViewData();
   }, [form]);
+
+  useEffect(() => {
+    if (!isView) {
+      setMigratedData();
+    }
+  }, []);
 
   const convertFileToBase64 = async (image: any) => {
     const res = await getBase64(image?.originFileObj as RcFile);
@@ -662,7 +685,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       },
                     ]}
                   >
-                    <Input disabled={isView} />
+                    <Input disabled />
                   </Form.Item>
                 </span>
 
