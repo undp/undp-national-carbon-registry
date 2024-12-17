@@ -286,7 +286,7 @@ export const CreditRetirementSlRequestForm: FC<CreditRetirementSlRequestFormProp
                   rules={[
                     {
                       required: true,
-                      message: 'Required field',
+                      message: 'Required!',
                     },
                   ]}
                 >
@@ -497,7 +497,7 @@ export const CreditRetirementSlRequestForm: FC<CreditRetirementSlRequestFormProp
                 },
                 {
                   required: true,
-                  message: 'Required field',
+                  message: 'Required!',
                 },
                 ({ getFieldValue }) => ({
                   validator(rule, v) {
@@ -549,7 +549,7 @@ export const CreditRetirementSlRequestForm: FC<CreditRetirementSlRequestFormProp
               rules={[
                 {
                   required: programme.purposeOfCreditDevelopment === CreditType.TRACK_2,
-                  message: 'Required field',
+                  message: 'Required!',
                 },
                 ({ getFieldValue }) => ({
                   validator(rule, v) {

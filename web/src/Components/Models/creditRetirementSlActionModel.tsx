@@ -279,7 +279,7 @@ export const CreditRetirementSlActionModel: FC<CreditRetirementSlActionModelProp
                 rules={[
                   {
                     required: remarkRequired,
-                    message: 'Required field',
+                    message: 'Required!',
                   },
                   ({ getFieldValue }) => ({
                     validator(rule, v) {

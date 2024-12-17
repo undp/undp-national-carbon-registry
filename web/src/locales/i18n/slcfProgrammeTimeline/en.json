@@ -63,7 +63,7 @@
   "verificationReportApprovedDescription": "The Verification Report was approved by {} of Executive Committee",
 
   "verificationReportRejectedTitle": "Verification Report Rejected",
-  "verificationReportRejectedDescription": "Verification Report was rejected by {} of Executive Committee",
+  "verificationReportRejectedDescription": "The Verification Report was rejected by {} of Executive Committee",
 
   "creditIssuedTitle": "Credit Issued",
   "creditIssuedDescription": "{} credit (s) were issued for the project and the Credit Issuance Certificate was generated",
