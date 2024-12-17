@@ -87,7 +87,7 @@
   "retireApprovedDescription": "The credit retirement was approved by {} of Sri Lanka Climate Fund and the Voluntary Cancellation Certificate was generated",
 
   "retireRejectedTitle": "Credit Retirement Rejected",
-  "retireRejectedDescription": "{} of Sri Lanka Climate Fund has rejected the retirement {} of credit(s)",
+  "retireRejectedDescription": "{} of Sri Lanka Climate Fund has rejected the retirement of {} credit(s)",
 
   "retireCancelledTitle": "Credit Retirement Cancelled",
   "retireCancelledDescription": "{} has cancelled the request to retire {} credit(s)"
