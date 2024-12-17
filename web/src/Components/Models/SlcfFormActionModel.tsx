@@ -75,7 +75,7 @@ export const SlcfFormActionModel: FC<SlcfFormActionModelProps> = (
                   rules={[
                     {
                       required: remarkRequired,
-                      message: 'Required field',
+                      message: 'Required!',
                     },
                     ({ getFieldValue }) => ({
                       validator(rule, v) {
