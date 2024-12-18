@@ -150,7 +150,7 @@ const StepperComponent = (props: any) => {
       console.log('-----response-------', data, user);
 
       form1.setFieldsValue({
-        title: data?.title,
+        projectTitle: data?.title,
         dateOfIssue: moment(),
         client: data.title,
       });
@@ -226,14 +226,14 @@ const StepperComponent = (props: any) => {
       form1.setFieldsValue({
         telephone: projectContent?.projectDetails?.telephone,
         email: projectContent?.projectDetails?.email,
-        physicalAddress: projectContent?.projectDetails?.physicalAddress,
+        address: projectContent?.projectDetails?.physicalAddress,
         website: projectContent?.projectDetails?.website,
         reportNo: `SLCCS/VDR/${new Date().getFullYear()}/${id}`,
       });
 
       form2.setFieldsValue({
-        titleOfTheProjectActivity: projectContent?.projectDetails?.title,
-        projectParticipants: projectContent?.projectActivity?.projectProponent?.organizationName,
+        titleOfProjectActivity: projectContent?.projectDetails?.title,
+        projectParticipant: projectContent?.projectActivity?.projectProponent?.organizationName,
       });
 
       form3.setFieldsValue({

@@ -481,6 +481,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                         <InputNumber
                                           className="full-width-form-item"
                                           size="large"
+                                          disabled
                                         />
                                       </Form.Item>
                                     </Col>
@@ -492,7 +493,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                         rules={requiredRule}
                                         className="full-width-form-item"
                                       >
-                                        <Input size="large" />
+                                        <Input size="large" disabled />
                                       </Form.Item>
                                     </Col>
                                     <Col md={5} xl={5}>
@@ -520,6 +521,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                             className="addMinusBtn"
                                             style={{ marginRight: 2 }}
                                             icon={<MinusOutlined />}
+                                            disabled
                                           ></Button>
                                         )}
                                         {index + 1 === employedTechnology.length && (
@@ -530,6 +532,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                             size="large"
                                             className="addMinusBtn"
                                             icon={<PlusOutlined />}
+                                            disabled
                                           ></Button>
                                         )}
                                       </div>
@@ -802,7 +805,13 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                       fieldKey={[name, 'location']}
                                       rules={[requiredValidationRule(t)]}
                                     >
-                                      {<Input size="large" className="full-width-form-item" />}
+                                      {
+                                        <Input
+                                          size="large"
+                                          className="full-width-form-item"
+                                          disabled
+                                        />
+                                      }
                                     </Form.Item>
                                   </Col>
                                   <Col md={3} xl={3}>
@@ -885,6 +894,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                         className="addMinusBtn"
                                         style={{ marginRight: 2 }}
                                         icon={<MinusOutlined />}
+                                        disabled
                                       ></Button>
                                     )}
                                     {index === baselineEmissions.length - 1 && (
@@ -896,6 +906,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                         className="addMinusBtn"
                                         // block
                                         icon={<PlusOutlined />}
+                                        disabled
                                       >
                                         {/* Add Entity */}
                                       </Button>
@@ -943,6 +954,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                     form={form}
                     t={t}
                     projectCategory={projectCategory}
+                    disableFields={true}
                   ></NetEmissionReduction>
                   {/* </Form.Item> */}
                   <Form.Item

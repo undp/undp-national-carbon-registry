@@ -89,7 +89,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                             },
                           ]}
                         >
-                          <Input size="large" />
+                          <Input size="large" disabled />
                         </Form.Item>
 
                         <Form.Item
@@ -156,7 +156,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                             countryCallingCodeEditable={false}
                             onChange={(v) => {}}
                             countries={countries as Country[]}
-                            disabled={FormMode.VIEW === formMode}
+                            disabled
                           />
                         </Form.Item>
 
@@ -194,7 +194,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                             },
                           ]}
                         >
-                          <Input size="large" />
+                          <Input size="large" disabled />
                         </Form.Item>
                       </div>
                     </Col>
@@ -241,7 +241,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled />
                       </Form.Item>
 
                       <Form.Item
@@ -269,7 +269,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -320,7 +320,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
                     <Form.Item
                       label={t('validationReport:workCarryOutBy')}
@@ -349,7 +349,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size={'large'} />
+                      <Input size={'large'} disabled />
                     </Form.Item>
                     <Form.Item
                       label={t('validationReport:workApprovedBy')}

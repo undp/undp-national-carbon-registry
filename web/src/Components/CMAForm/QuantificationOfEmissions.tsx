@@ -35,6 +35,21 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
       const netGHGEmissions =
         baselineEmissionReductionsVal - projectEmissionReductionsVal - leakageEmissionReductionsVal;
 
+      if (netGHGEmissions < 0) {
+        form.setFields([
+          {
+            name: 'netEmissionReductions',
+            errors: [`${t('CMAForm:estimatedNetGHGEmissionShouldHavePositive')}`],
+          },
+        ]);
+      } else {
+        form.setFields([
+          {
+            name: 'netEmissionReductions',
+            errors: [],
+          },
+        ]);
+      }
       form.setFieldValue('netEmissionReductions', String(netGHGEmissions));
     } else {
       const listVals = form.getFieldValue('extraEmissionReductions');
@@ -50,6 +65,22 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
           leakageEmissionReductionsVal;
 
         listVals[index].netEmissionReductions = netGHGEmissions;
+
+        if (netGHGEmissions < 0) {
+          form.setFields([
+            {
+              name: ['extraEmissionReductions', index, 'netEmissionReductions'],
+              errors: [`${t('CMAForm:estimatedNetGHGEmissionShouldHavePositive')}`],
+            },
+          ]);
+        } else {
+          form.setFields([
+            {
+              name: ['extraEmissionReductions', index, 'netEmissionReductions'],
+              errors: [],
+            },
+          ]);
+        }
 
         form.setFieldValue('extraEmissionReductions', listVals);
       }
@@ -500,6 +531,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Input
+                          type="number"
                           disabled={disableFields}
                           onChange={(value) => {
                             calculateNetGHGEmissions(value);
@@ -509,6 +541,8 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                               'totalBaselineEmissionReductions'
                             );
                           }}
+                          step="1"
+                          onKeyDown={(e) => (e.key === '.' || e.key === ',') && e.preventDefault()}
                         />
                       </Form.Item>
                     </Col>
@@ -542,6 +576,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Input
+                          type="number"
                           disabled={disableFields}
                           onChange={(value) => {
                             calculateNetGHGEmissions(value);
@@ -551,6 +586,8 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                               'totalProjectEmissionReductions'
                             );
                           }}
+                          step="1"
+                          onKeyDown={(e) => (e.key === '.' || e.key === ',') && e.preventDefault()}
                         />
                       </Form.Item>
                     </Col>
@@ -584,6 +621,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Input
+                          type="number"
                           disabled={disableFields}
                           onChange={(value) => {
                             calculateNetGHGEmissions(value);
@@ -593,6 +631,8 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                               'totalLeakageEmissionReductions'
                             );
                           }}
+                          step="1"
+                          onKeyDown={(e) => (e.key === '.' || e.key === ',') && e.preventDefault()}
                         />
                       </Form.Item>
                     </Col>
@@ -613,11 +653,14 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                 value === undefined
                               ) {
                                 throw new Error(`${t('CMAForm:required')}`);
-                              }
-
-                              // eslint-disable-next-line no-restricted-globals
-                              if (isNaN(value)) {
+                              } else if (isNaN(value)) {
                                 return Promise.reject(new Error('Should be a number'));
+                              } else if (Number(value) < 0) {
+                                return Promise.reject(
+                                  new Error(
+                                    `${t('CMAForm:estimatedNetGHGEmissionShouldHavePositive')}`
+                                  )
+                                );
                               }
 
                               return Promise.resolve();
@@ -625,7 +668,11 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(value) => calculateNetGHGEmissions(value)} disabled />
+                        <Input
+                          type="number"
+                          onChange={(value) => calculateNetGHGEmissions(value)}
+                          disabled
+                        />
                       </Form.Item>
                     </Col>
                     <Col md={2} xl={2}>
@@ -760,6 +807,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                   ]}
                                 >
                                   <Input
+                                    type="number"
                                     disabled={disableFields}
                                     onChange={(value) => {
                                       calculateNetGHGEmissions(value, name);
@@ -769,6 +817,10 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                         'totalBaselineEmissionReductions'
                                       );
                                     }}
+                                    step="1"
+                                    onKeyDown={(e) =>
+                                      (e.key === '.' || e.key === ',') && e.preventDefault()
+                                    }
                                   />
                                 </Form.Item>
                               </Col>
@@ -802,6 +854,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                   ]}
                                 >
                                   <Input
+                                    type="number"
                                     disabled={disableFields}
                                     onChange={(value) => {
                                       calculateNetGHGEmissions(value, name);
@@ -811,6 +864,10 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                         'totalProjectEmissionReductions'
                                       );
                                     }}
+                                    step="1"
+                                    onKeyDown={(e) =>
+                                      (e.key === '.' || e.key === ',') && e.preventDefault()
+                                    }
                                   />
                                 </Form.Item>
                               </Col>
@@ -844,6 +901,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                   ]}
                                 >
                                   <Input
+                                    type="number"
                                     disabled={disableFields}
                                     onChange={(value) => {
                                       calculateNetGHGEmissions(value, name);
@@ -853,6 +911,10 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                         'totalLeakageEmissionReductions'
                                       );
                                     }}
+                                    step="1"
+                                    onKeyDown={(e) =>
+                                      (e.key === '.' || e.key === ',') && e.preventDefault()
+                                    }
                                   />
                                 </Form.Item>
                               </Col>
@@ -873,11 +935,16 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                           value === undefined
                                         ) {
                                           throw new Error(`${t('CMAForm:required')}`);
-                                        }
-
-                                        // eslint-disable-next-line no-restricted-globals
-                                        if (isNaN(value)) {
+                                        } else if (isNaN(value)) {
                                           return Promise.reject(new Error('Should be a number'));
+                                        } else if (Number(value) < 0) {
+                                          return Promise.reject(
+                                            new Error(
+                                              `${t(
+                                                'CMAForm:estimatedNetGHGEmissionShouldHavePositive'
+                                              )}`
+                                            )
+                                          );
                                         }
 
                                         return Promise.resolve();

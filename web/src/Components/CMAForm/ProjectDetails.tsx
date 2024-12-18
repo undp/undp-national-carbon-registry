@@ -70,7 +70,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" disabled={disableFields} />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -112,7 +112,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" disabled={disableFields} />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -125,7 +125,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" disabled={disableFields} />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -158,7 +158,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" disabled={disableFields} />
+                      <Input size="large" disabled />
                     </Form.Item>
                   </div>
                 </Col>
@@ -233,7 +233,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         countryCallingCodeEditable={false}
                         onChange={(v) => {}}
                         countries={countries as Country[]}
-                        disabled={disableFields}
+                        disabled
                       />
                     </Form.Item>
 

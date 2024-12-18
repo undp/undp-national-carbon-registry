@@ -100,7 +100,7 @@ export const IntroductionStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -127,7 +127,7 @@ export const IntroductionStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
                     <h4 className="form-section-title">
                       {`${t('verificationReport:creditionPeriod')}`}
@@ -165,6 +165,7 @@ export const IntroductionStep = (props: any) => {
                             disabledDate={(currentDate: any) =>
                               currentDate < moment().startOf('day')
                             }
+                            disabled
                           />
                         </Form.Item>
                       </Col>
@@ -204,6 +205,7 @@ export const IntroductionStep = (props: any) => {
                             disabledDate={(currentDate: any) =>
                               currentDate < moment().startOf('day')
                             }
+                            disabled
                           />
                         </Form.Item>
                       </Col>
@@ -236,7 +238,7 @@ export const IntroductionStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -265,7 +267,7 @@ export const IntroductionStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
                     <h4 className="form-section-title">
                       {`${t('verificationReport:periodVerified')}`}

@@ -87,7 +87,7 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input disabled size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -114,33 +114,7 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
-                    </Form.Item>
-                    <Form.Item
-                      label={t('verificationReport:version')}
-                      name="version"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('verificationReport:version')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -167,7 +141,7 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -215,7 +189,7 @@ export const ProjectDetailsStep = (props: any) => {
                         international
                         value={formatPhoneNumberIntl(contactNoInput)}
                         defaultCountry="LK"
-                        disabled={FormMode.VIEW === formMode}
+                        disabled
                         countryCallingCodeEditable={false}
                         onChange={(v) => {}}
                         countries={countries}
@@ -223,47 +197,16 @@ export const ProjectDetailsStep = (props: any) => {
                     </Form.Item>
 
                     <Form.Item
-                      label={t('verificationReport:country')}
-                      name="country"
+                      label={t('verificationReport:address')}
+                      name="address"
                       rules={[
                         {
                           required: true,
-                          message: `${t('verificationReport:country')} ${t('isRequired')}`,
+                          message: `${t('verificationReport:address')} ${t('isRequired')}`,
                         },
                       ]}
                     >
-                      <Select size="large" placeholder={t('verificationReport:countryPlaceholder')}>
-                        {countryList.map((country: { name: string }) => (
-                          <Select.Option value={country.name}>{country.name}</Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-
-                    <Form.Item
-                      label={t('verificationReport:estimatedScer')}
-                      name="estimatedScer"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('verificationReport:estimatedScer')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
+                      <TextArea rows={3} disabled />
                     </Form.Item>
                   </div>
                 </Col>
@@ -301,36 +244,6 @@ export const ProjectDetailsStep = (props: any) => {
                     </Form.Item>
 
                     <Form.Item
-                      label={t('verificationReport:versionDate')}
-                      name="versionDate"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('verificationReport:versionDate')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <DatePicker
-                        size="large"
-                        disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
-                      />
-                    </Form.Item>
-
-                    <Form.Item
                       label={t('verificationReport:email')}
                       name="email"
                       rules={[
@@ -354,21 +267,9 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
 
-                    <Form.Item
-                      label={t('verificationReport:address')}
-                      name="address"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:address')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
-                    </Form.Item>
                     <h4 className="form-section-title">
                       {`${t('verificationReport:monitoringPeriod')}`}
                       <span style={{ color: '#ff4d4f' }}> *</span>
@@ -448,6 +349,32 @@ export const ProjectDetailsStep = (props: any) => {
                         </Form.Item>
                       </Col>
                     </Row>
+                    <Form.Item
+                      label={t('verificationReport:estimatedScer')}
+                      name="estimatedScer"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('verificationReport:estimatedScer')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input size="large" disabled />
+                    </Form.Item>
 
                     <Form.Item
                       label={t('verificationReport:verifiedScer')}
@@ -522,7 +449,7 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
+                      <TextArea rows={3} disabled />
                     </Form.Item>
                     <Form.Item
                       label={t('verificationReport:reportNo')}

@@ -141,7 +141,7 @@ export const VerificationFindingStep = (props: any) => {
                                       },
                                     ]}
                                   >
-                                    <Input size="large" />
+                                    <Input size="large" disabled />
                                   </Form.Item>
                                 </div>
                               </Col>
@@ -177,6 +177,7 @@ export const VerificationFindingStep = (props: any) => {
                                       disabledDate={(currentDate: any) =>
                                         currentDate < moment().startOf('day')
                                       }
+                                      disabled
                                     />
                                   </Form.Item>
                                 </div>
@@ -195,6 +196,7 @@ export const VerificationFindingStep = (props: any) => {
                                       className="addMinusBtn"
                                       // block
                                       icon={<MinusOutlined />}
+                                      disabled
                                     >
                                       {/* Add Entity */}
                                     </Button>
@@ -210,6 +212,7 @@ export const VerificationFindingStep = (props: any) => {
                                       className="addMinusBtn"
                                       // block
                                       icon={<PlusOutlined />}
+                                      disabled
                                     >
                                       {/* Add Entity */}
                                     </Button>

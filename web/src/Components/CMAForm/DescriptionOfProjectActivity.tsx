@@ -494,7 +494,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                             },
                           ]}
                         >
-                          <Input size="large" disabled={disableFields} />
+                          <Input size="large" disabled />
                         </Form.Item>
 
                         <Form.Item
@@ -521,7 +521,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                             },
                           ]}
                         >
-                          <Input size="large" disabled={disableFields} />
+                          <Input size="large" disabled />
                         </Form.Item>
 
                         <Form.Item
@@ -573,7 +573,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                             countryCallingCodeEditable={false}
                             onChange={(v) => {}}
                             countries={countries as Country[]}
-                            disabled={disableFields}
+                            disabled
                           />
                         </Form.Item>
 
@@ -659,7 +659,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Input size="large" disabled={disableFields} />
+                        <Input size="large" disabled />
                       </Form.Item>
 
                       <Form.Item
@@ -709,7 +709,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={4} disabled={disableFields} />
+                        <TextArea rows={4} disabled />
                       </Form.Item>
                     </Col>
                   </Row>

@@ -257,6 +257,7 @@ For AFOLU projects, include quantification of the net change in carbon stocks. A
                         form={form}
                         t={t}
                         projectCategory={projectCategory}
+                        disableFields={FormMode.VIEW === formMode}
                       ></NetEmissionReduction>
                     </>
 
