@@ -92,7 +92,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           <Input size="large" disabled />
                         </Form.Item>
 
-                        <Form.Item
+                        {/* <Form.Item
                           label={t('validationReport:versionNo')}
                           name="versionNo"
                           rules={[
@@ -103,7 +103,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           ]}
                         >
                           <Input size="large" />
-                        </Form.Item>
+                        </Form.Item> */}
 
                         <Form.Item
                           label={t('validationReport:telephone')}
@@ -215,7 +215,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
                         />
                       </Form.Item>
-                      <Form.Item
+                      {/* <Form.Item
                         label={t('validationReport:versionDate')}
                         name="versionDate"
                         rules={[
@@ -229,7 +229,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           size="large"
                           disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
                         />
-                      </Form.Item>
+                      </Form.Item> */}
 
                       <Form.Item
                         label={t('validationReport:address')}
