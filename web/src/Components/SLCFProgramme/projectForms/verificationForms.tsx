@@ -1,4 +1,4 @@
-import { Button, Col, Row, Skeleton, Tag, Tooltip, message } from 'antd';
+import { Button, Col, Row, Skeleton, Steps, Tag, Tooltip, message } from 'antd';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import './projectForms.scss';
 import Icon, {
@@ -41,8 +41,12 @@ import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
 import { addSpaces } from '../../../Definitions/Definitions/programme.definitions';
 import {
+  getIssuerCertificateContent,
+  getMonitoringContent,
+  getVerificationContent,
   getVerificationRequestStatusName,
   getVerificationRequestStatusType,
+  getVerificationTimelineCurrentStep,
 } from '../../../Definitions/Definitions/verificationSl.definition';
 import { VerificationRequest } from '../../../Definitions/Entities/verificationRequest';
 import {
@@ -485,7 +489,588 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
               </Col>
             </Row>
             <div>
-              <Row className="field" key="Monitoring Report">
+              <Steps
+                direction="vertical"
+                size="small"
+                current={getVerificationTimelineCurrentStep(item.status)}
+                items={[
+                  {
+                    // title: 'Finished',
+                    icon: (
+                      <div
+                        className={`${getMonitoringContent(item.status).className} timeline-icon`}
+                      >
+                        {getMonitoringContent(item.status).icon}
+                      </div>
+                    ),
+                    title: (
+                      <Row className="field" key="Monitoring Report">
+                        <Col span={12} className="field-key">
+                          <div className="label-container">
+                            <div className="label">{t('projectDetailsView:monitoringReport')}</div>
+                          </div>
+                          {(() => {
+                            const latestReport = getLatestReport(
+                              item.documents,
+                              DocumentTypeEnum.MONITORING_REPORT
+                            );
+                            return latestReport ? (
+                              <div className="time">
+                                {moment(parseInt(latestReport?.createdTime, 10)).format(
+                                  'DD MMMM YYYY'
+                                ) +
+                                  ' ~ V' +
+                                  latestReport.version}
+                              </div>
+                            ) : null;
+                          })()}
+                        </Col>
+                        <Col span={6} className="field-value">
+                          <>
+                            <Tooltip
+                              arrowPointAtCenter
+                              placement="top"
+                              trigger="hover"
+                              title={
+                                !formViewPermission(
+                                  userInfoState,
+                                  DocType.MONITORING_REPORT,
+                                  projectProposalStage
+                                )
+                                  ? t('projectDetailsView:orgNotAuthView')
+                                  : !getLatestReport(
+                                      item.documents,
+                                      DocumentTypeEnum.MONITORING_REPORT
+                                    ) && t('projectDetailsView:noMonitoringReports')
+                              }
+                              overlayClassName="custom-tooltip"
+                            >
+                              {/* <EyeOutlined
+                        className="common-progress-icon"
+                        style={
+                          formViewPermission(
+                            userInfoState,
+                            DocType.MONITORING_REPORT,
+                            projectProposalStage
+                          ) && getLatestReport(item.documents, DocumentTypeEnum.MONITORING_REPORT)
+                            ? {
+                                color: '#3F3A47',
+                                cursor: 'pointer',
+                                margin: '0px 0px 1.5px 0px',
+                              }
+                            : {
+                                color: '#cacaca',
+                                cursor: 'default',
+                                margin: '0px 0px 1.5px 0px',
+                              }
+                        }
+                        onClick={() =>
+                          formViewPermission(
+                            userInfoState,
+                            DocType.MONITORING_REPORT,
+                            projectProposalStage
+                          ) &&
+                          navigateToMonitoringReportView(
+                            getLatestReportId(item.documents, DocumentTypeEnum.MONITORING_REPORT)
+                          )
+                        }
+                      /> */}
+                              <Button
+                                type="default"
+                                onClick={() => navigateToMonitoringReportView(item.id)}
+                                disabled={
+                                  !(
+                                    formViewPermission(
+                                      userInfoState,
+                                      DocType.MONITORING_REPORT,
+                                      projectProposalStage
+                                    ) &&
+                                    getLatestReport(
+                                      item.documents,
+                                      DocumentTypeEnum.MONITORING_REPORT
+                                    )
+                                  )
+                                }
+                                size="small"
+                                className="btnProjectForms"
+                              >
+                                {t('projectDetailsView:btnView')}
+                              </Button>
+                            </Tooltip>
+                          </>
+                        </Col>
+                        {!hasAcceptedReport(item.documents, DocumentTypeEnum.MONITORING_REPORT) && (
+                          <Col span={6} className="field-value">
+                            {hasRejectedReport(
+                              item.documents,
+                              DocumentTypeEnum.MONITORING_REPORT
+                            ) ? (
+                              <>
+                                <Tooltip
+                                  arrowPointAtCenter
+                                  placement="top"
+                                  trigger="hover"
+                                  title={
+                                    !formCreatePermission(
+                                      userInfoState,
+                                      DocType.MONITORING_REPORT,
+                                      projectProposalStage
+                                    ) && t('projectDetailsView:orgNotAuthEdit')
+                                  }
+                                  overlayClassName="custom-tooltip"
+                                >
+                                  {/* <EditOutlined
+                            className="common-progress-icon"
+                            style={
+                              formCreatePermission(
+                                userInfoState,
+                                DocType.MONITORING_REPORT,
+                                projectProposalStage
+                              )
+                                ? {
+                                    color: '#3F3A47',
+                                    cursor: 'pointer',
+                                    margin: '0px 0px 1.5px 0px',
+                                  }
+                                : {
+                                    color: '#cacaca',
+                                    cursor: 'default',
+                                    margin: '0px 0px 1.5px 0px',
+                                  }
+                            }
+                            onClick={() =>
+                              formCreatePermission(
+                                userInfoState,
+                                DocType.MONITORING_REPORT,
+                                projectProposalStage
+                              ) &&
+                              navigateToMonitoringReportCreate(
+                                getLatestReportId(
+                                  item.documents,
+                                  DocumentTypeEnum.MONITORING_REPORT
+                                )
+                              )
+                            }
+                          /> */}
+                                  <Button
+                                    type="default"
+                                    onClick={() =>
+                                      navigateToMonitoringReportEdit(
+                                        getLatestReportId(
+                                          item.documents,
+                                          DocumentTypeEnum.MONITORING_REPORT
+                                        ),
+                                        item.id
+                                      )
+                                    }
+                                    disabled={
+                                      !formCreatePermission(
+                                        userInfoState,
+                                        DocType.MONITORING_REPORT,
+                                        projectProposalStage
+                                      )
+                                    }
+                                    size="small"
+                                    className="btnProjectForms"
+                                  >
+                                    {t('projectDetailsView:btnEdit')}
+                                  </Button>
+                                </Tooltip>
+                              </>
+                            ) : (
+                              !hasPendingReport(
+                                item.documents,
+                                DocumentTypeEnum.MONITORING_REPORT
+                              ) && (
+                                <>
+                                  <Tooltip
+                                    arrowPointAtCenter
+                                    placement="top"
+                                    trigger="hover"
+                                    title={
+                                      !formCreatePermission(
+                                        userInfoState,
+                                        DocType.MONITORING_REPORT,
+                                        projectProposalStage
+                                      ) && t('projectDetailsView:orgNotAuthCreate')
+                                    }
+                                    overlayClassName="custom-tooltip"
+                                  >
+                                    {/* <PlusOutlined
+                              className="common-progress-icon"
+                              style={
+                                formCreatePermission(
+                                  userInfoState,
+                                  DocType.MONITORING_REPORT,
+                                  projectProposalStage
+                                )
+                                  ? {
+                                      color: '#3F3A47',
+                                      cursor: 'pointer',
+                                      margin: '0px 0px 1.5px 0px',
+                                    }
+                                  : {
+                                      color: '#cacaca',
+                                      cursor: 'default',
+                                      margin: '0px 0px 1.5px 0px',
+                                    }
+                              }
+                              onClick={() =>
+                                formCreatePermission(
+                                  userInfoState,
+                                  DocType.MONITORING_REPORT,
+                                  projectProposalStage
+                                ) && navigateToMonitoringReportCreate(null)
+                              }
+                            /> */}
+                                    <Button
+                                      type="default"
+                                      onClick={() => navigateToMonitoringReportCreate(null)}
+                                      disabled={
+                                        !formCreatePermission(
+                                          userInfoState,
+                                          DocType.MONITORING_REPORT,
+                                          projectProposalStage
+                                        )
+                                      }
+                                      size="small"
+                                      className="btnProjectForms"
+                                    >
+                                      {t('projectDetailsView:btnAdd')}
+                                    </Button>
+                                  </Tooltip>
+                                </>
+                              )
+                            )}
+                          </Col>
+                        )}
+                      </Row>
+                    ),
+                  },
+                  {
+                    // icon: getVerificationContent(item.status).icon,
+                    icon: (
+                      <div
+                        className={`${getVerificationContent(item.status).className} timeline-icon`}
+                      >
+                        {getVerificationContent(item.status).icon}
+                      </div>
+                    ),
+                    title: (
+                      <Row className="field" key={`VerificationReport${item.id}`}>
+                        <Col span={12} className="field-key">
+                          <div className="label-container">
+                            <div className="label">
+                              {t('projectDetailsView:verificationReport')}
+                            </div>
+                          </div>
+                          {(() => {
+                            const latestReport = getLatestReport(
+                              item.documents,
+                              DocumentTypeEnum.VERIFICATION_REPORT
+                            );
+                            return latestReport ? (
+                              <div className="time">
+                                {moment(parseInt(latestReport?.createdTime, 10)).format(
+                                  'DD MMMM YYYY'
+                                ) +
+                                  ' ~ V' +
+                                  latestReport.version}
+                              </div>
+                            ) : null;
+                          })()}
+                        </Col>
+                        <Col span={6} className="field-value">
+                          <>
+                            <Tooltip
+                              arrowPointAtCenter
+                              placement="top"
+                              trigger="hover"
+                              title={
+                                !formViewPermission(
+                                  userInfoState,
+                                  DocType.VERIFICATION_REPORT,
+                                  projectProposalStage
+                                )
+                                  ? t('projectDetailsView:orgNotAuthView')
+                                  : !getLatestReport(
+                                      item.documents,
+                                      DocumentTypeEnum.VERIFICATION_REPORT
+                                    ) && t('projectDetailsView:noVerificationReports')
+                              }
+                              overlayClassName="custom-tooltip"
+                            >
+                              {/* <EyeOutlined
+                        className="common-progress-icon"
+                        style={
+                          formViewPermission(
+                            userInfoState,
+                            DocType.VERIFICATION_REPORT,
+                            projectProposalStage
+                          ) && getLatestReport(item.documents, DocumentTypeEnum.VERIFICATION_REPORT)
+                            ? {
+                                color: '#3F3A47',
+                                cursor: 'pointer',
+                                margin: '0px 0px 1.5px 0px',
+                              }
+                            : {
+                                color: '#cacaca',
+                                cursor: 'default',
+                                margin: '0px 0px 1.5px 0px',
+                              }
+                        }
+                        onClick={() =>
+                          formViewPermission(
+                            userInfoState,
+                            DocType.VERIFICATION_REPORT,
+                            projectProposalStage
+                          ) &&
+                          navigateToVerificationReportView(
+                            getLatestReportId(item.documents, DocumentTypeEnum.VERIFICATION_REPORT)
+                          )
+                        }
+                      /> */}
+                              <Button
+                                type="default"
+                                onClick={() => navigateToVerificationReportView(item.id)}
+                                disabled={
+                                  !(
+                                    formViewPermission(
+                                      userInfoState,
+                                      DocType.VERIFICATION_REPORT,
+                                      projectProposalStage
+                                    ) &&
+                                    getLatestReport(
+                                      item.documents,
+                                      DocumentTypeEnum.VERIFICATION_REPORT
+                                    )
+                                  )
+                                }
+                                size="small"
+                                className="btnProjectForms"
+                              >
+                                {t('projectDetailsView:btnView')}
+                              </Button>
+                            </Tooltip>
+                          </>
+                        </Col>
+                        {!hasAcceptedReport(
+                          item.documents,
+                          DocumentTypeEnum.VERIFICATION_REPORT
+                        ) && (
+                          <Col span={6} className="field-value">
+                            {hasRejectedReport(
+                              item.documents,
+                              DocumentTypeEnum.VERIFICATION_REPORT
+                            ) ? (
+                              <>
+                                <Tooltip
+                                  arrowPointAtCenter
+                                  placement="top"
+                                  trigger="hover"
+                                  title={
+                                    !formCreatePermission(
+                                      userInfoState,
+                                      DocType.VERIFICATION_REPORT,
+                                      projectProposalStage
+                                    ) && t('projectDetailsView:orgNotAuthCreate')
+                                  }
+                                  overlayClassName="custom-tooltip"
+                                >
+                                  {/* <EditOutlined
+                            className="common-progress-icon"
+                            style={
+                              formCreatePermission(
+                                userInfoState,
+                                DocType.VERIFICATION_REPORT,
+                                projectProposalStage
+                              )
+                                ? {
+                                    color: '#3F3A47',
+                                    cursor: 'pointer',
+                                    margin: '0px 0px 1.5px 0px',
+                                  }
+                                : {
+                                    color: '#cacaca',
+                                    cursor: 'default',
+                                    margin: '0px 0px 1.5px 0px',
+                                  }
+                            }
+                            onClick={() =>
+                              formCreatePermission(
+                                userInfoState,
+                                DocType.VERIFICATION_REPORT,
+                                projectProposalStage
+                              ) &&
+                              navigateToVerificationReportCreate(
+                                getLatestReportId(
+                                  item.documents,
+                                  DocumentTypeEnum.VERIFICATION_REPORT
+                                )
+                              )
+                            }
+                          /> */}
+                                  <Button
+                                    type="default"
+                                    onClick={() =>
+                                      navigateToVerificationReportEdit(
+                                        getLatestReportId(
+                                          item.documents,
+                                          DocumentTypeEnum.VERIFICATION_REPORT
+                                        ),
+                                        item.id
+                                      )
+                                    }
+                                    disabled={
+                                      !formCreatePermission(
+                                        userInfoState,
+                                        DocType.VERIFICATION_REPORT,
+                                        projectProposalStage
+                                      )
+                                    }
+                                    size="small"
+                                    className="btnProjectForms"
+                                  >
+                                    {t('projectDetailsView:btnEdit')}
+                                  </Button>
+                                </Tooltip>
+                              </>
+                            ) : (
+                              hasAcceptedReport(
+                                item.documents,
+                                DocumentTypeEnum.MONITORING_REPORT
+                              ) &&
+                              !hasPendingReport(
+                                item.documents,
+                                DocumentTypeEnum.VERIFICATION_REPORT
+                              ) && (
+                                <>
+                                  <Tooltip
+                                    arrowPointAtCenter
+                                    placement="top"
+                                    trigger="hover"
+                                    title={
+                                      !formCreatePermission(
+                                        userInfoState,
+                                        DocType.VERIFICATION_REPORT,
+                                        projectProposalStage
+                                      ) && t('projectDetailsView:orgNotAuthCreate')
+                                    }
+                                    overlayClassName="custom-tooltip"
+                                  >
+                                    {/* <PlusOutlined
+                              className="common-progress-icon"
+                              style={
+                                formCreatePermission(
+                                  userInfoState,
+                                  DocType.VERIFICATION_REPORT,
+                                  projectProposalStage
+                                )
+                                  ? {
+                                      color: '#3F3A47',
+                                      cursor: 'pointer',
+                                      margin: '0px 0px 1.5px 0px',
+                                    }
+                                  : {
+                                      color: '#cacaca',
+                                      cursor: 'default',
+                                      margin: '0px 0px 1.5px 0px',
+                                    }
+                              }
+                              onClick={() =>
+                                formCreatePermission(
+                                  userInfoState,
+                                  DocType.VERIFICATION_REPORT,
+                                  projectProposalStage
+                                ) && navigateToVerificationReportCreate(null)
+                              }
+                            /> */}
+                                    <Button
+                                      type="default"
+                                      onClick={() => navigateToVerificationReportCreate(null)}
+                                      disabled={
+                                        !formCreatePermission(
+                                          userInfoState,
+                                          DocType.VERIFICATION_REPORT,
+                                          projectProposalStage
+                                        )
+                                      }
+                                      size="small"
+                                      className="btnProjectForms"
+                                    >
+                                      {t('projectDetailsView:btnAdd')}
+                                    </Button>
+                                  </Tooltip>
+                                </>
+                              )
+                            )}
+                          </Col>
+                        )}
+                      </Row>
+                    ),
+                  },
+                  {
+                    title: (
+                      <Row className="field" key="creditIssueCertificate">
+                        <Col span={12} className="field-key">
+                          <div className="label-container">
+                            <div className="label">
+                              {t('projectDetailsView:creditIssueCertificate')}
+                            </div>
+                          </div>
+                        </Col>
+                        <Col span={6} className="field-value">
+                          <>
+                            <Tooltip
+                              arrowPointAtCenter
+                              placement="top"
+                              trigger="hover"
+                              title={
+                                userInfoState?.companyId !== companyId &&
+                                userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
+                                t('projectDetailsView:orgNotAuthDownload')
+                              }
+                              overlayClassName="custom-tooltip"
+                            >
+                              <Button
+                                type="default"
+                                onClick={() =>
+                                  downloadCreditIssueCertificate(item.creditIssueCertificateUrl)
+                                }
+                                disabled={
+                                  item.creditIssueCertificateUrl === null ||
+                                  (userInfoState?.companyId !== companyId &&
+                                    userInfoState?.companyRole ===
+                                      CompanyRole.PROGRAMME_DEVELOPER &&
+                                    !formViewPermission(
+                                      userInfoState,
+                                      DocType.VERIFICATION_REPORT,
+                                      projectProposalStage
+                                    ))
+                                }
+                                size="small"
+                                className="btnProjectForms"
+                              >
+                                {t('projectDetailsView:btnDownload')}
+                              </Button>
+                            </Tooltip>
+                          </>
+                        </Col>
+                      </Row>
+                    ),
+                    icon: (
+                      <div
+                        className={`${
+                          getIssuerCertificateContent(item.status).className
+                        } timeline-icon`}
+                      >
+                        {getIssuerCertificateContent(item.status).icon}
+                      </div>
+                    ),
+                  },
+                ]}
+              />
+              {/* <Row className="field" key="Monitoring Report">
                 <Col span={12} className="field-key">
                   <div className="label-container">
                     <div className="label">{t('projectDetailsView:monitoringReport')}</div>
@@ -522,36 +1107,6 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                       }
                       overlayClassName="custom-tooltip"
                     >
-                      {/* <EyeOutlined
-                        className="common-progress-icon"
-                        style={
-                          formViewPermission(
-                            userInfoState,
-                            DocType.MONITORING_REPORT,
-                            projectProposalStage
-                          ) && getLatestReport(item.documents, DocumentTypeEnum.MONITORING_REPORT)
-                            ? {
-                                color: '#3F3A47',
-                                cursor: 'pointer',
-                                margin: '0px 0px 1.5px 0px',
-                              }
-                            : {
-                                color: '#cacaca',
-                                cursor: 'default',
-                                margin: '0px 0px 1.5px 0px',
-                              }
-                        }
-                        onClick={() =>
-                          formViewPermission(
-                            userInfoState,
-                            DocType.MONITORING_REPORT,
-                            projectProposalStage
-                          ) &&
-                          navigateToMonitoringReportView(
-                            getLatestReportId(item.documents, DocumentTypeEnum.MONITORING_REPORT)
-                          )
-                        }
-                      /> */}
                       <Button
                         type="default"
                         onClick={() => navigateToMonitoringReportView(item.id)}
@@ -589,39 +1144,6 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           }
                           overlayClassName="custom-tooltip"
                         >
-                          {/* <EditOutlined
-                            className="common-progress-icon"
-                            style={
-                              formCreatePermission(
-                                userInfoState,
-                                DocType.MONITORING_REPORT,
-                                projectProposalStage
-                              )
-                                ? {
-                                    color: '#3F3A47',
-                                    cursor: 'pointer',
-                                    margin: '0px 0px 1.5px 0px',
-                                  }
-                                : {
-                                    color: '#cacaca',
-                                    cursor: 'default',
-                                    margin: '0px 0px 1.5px 0px',
-                                  }
-                            }
-                            onClick={() =>
-                              formCreatePermission(
-                                userInfoState,
-                                DocType.MONITORING_REPORT,
-                                projectProposalStage
-                              ) &&
-                              navigateToMonitoringReportCreate(
-                                getLatestReportId(
-                                  item.documents,
-                                  DocumentTypeEnum.MONITORING_REPORT
-                                )
-                              )
-                            }
-                          /> */}
                           <Button
                             type="default"
                             onClick={() =>
@@ -663,33 +1185,6 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             }
                             overlayClassName="custom-tooltip"
                           >
-                            {/* <PlusOutlined
-                              className="common-progress-icon"
-                              style={
-                                formCreatePermission(
-                                  userInfoState,
-                                  DocType.MONITORING_REPORT,
-                                  projectProposalStage
-                                )
-                                  ? {
-                                      color: '#3F3A47',
-                                      cursor: 'pointer',
-                                      margin: '0px 0px 1.5px 0px',
-                                    }
-                                  : {
-                                      color: '#cacaca',
-                                      cursor: 'default',
-                                      margin: '0px 0px 1.5px 0px',
-                                    }
-                              }
-                              onClick={() =>
-                                formCreatePermission(
-                                  userInfoState,
-                                  DocType.MONITORING_REPORT,
-                                  projectProposalStage
-                                ) && navigateToMonitoringReportCreate(null)
-                              }
-                            /> */}
                             <Button
                               type="default"
                               onClick={() => navigateToMonitoringReportCreate(null)}
@@ -715,8 +1210,8 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                     <CheckCircleTwoTone twoToneColor="#52c41a" />
                   </Col>
                 )}
-              </Row>
-              <Row className="field" key={`VerificationReport${item.id}`}>
+              </Row> */}
+              {/* <Row className="field" key={`VerificationReport${item.id}`}>
                 <Col span={12} className="field-key">
                   <div className="label-container">
                     <div className="label">{t('projectDetailsView:verificationReport')}</div>
@@ -755,36 +1250,6 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                       }
                       overlayClassName="custom-tooltip"
                     >
-                      {/* <EyeOutlined
-                        className="common-progress-icon"
-                        style={
-                          formViewPermission(
-                            userInfoState,
-                            DocType.VERIFICATION_REPORT,
-                            projectProposalStage
-                          ) && getLatestReport(item.documents, DocumentTypeEnum.VERIFICATION_REPORT)
-                            ? {
-                                color: '#3F3A47',
-                                cursor: 'pointer',
-                                margin: '0px 0px 1.5px 0px',
-                              }
-                            : {
-                                color: '#cacaca',
-                                cursor: 'default',
-                                margin: '0px 0px 1.5px 0px',
-                              }
-                        }
-                        onClick={() =>
-                          formViewPermission(
-                            userInfoState,
-                            DocType.VERIFICATION_REPORT,
-                            projectProposalStage
-                          ) &&
-                          navigateToVerificationReportView(
-                            getLatestReportId(item.documents, DocumentTypeEnum.VERIFICATION_REPORT)
-                          )
-                        }
-                      /> */}
                       <Button
                         type="default"
                         onClick={() => navigateToVerificationReportView(item.id)}
@@ -823,39 +1288,6 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                           }
                           overlayClassName="custom-tooltip"
                         >
-                          {/* <EditOutlined
-                            className="common-progress-icon"
-                            style={
-                              formCreatePermission(
-                                userInfoState,
-                                DocType.VERIFICATION_REPORT,
-                                projectProposalStage
-                              )
-                                ? {
-                                    color: '#3F3A47',
-                                    cursor: 'pointer',
-                                    margin: '0px 0px 1.5px 0px',
-                                  }
-                                : {
-                                    color: '#cacaca',
-                                    cursor: 'default',
-                                    margin: '0px 0px 1.5px 0px',
-                                  }
-                            }
-                            onClick={() =>
-                              formCreatePermission(
-                                userInfoState,
-                                DocType.VERIFICATION_REPORT,
-                                projectProposalStage
-                              ) &&
-                              navigateToVerificationReportCreate(
-                                getLatestReportId(
-                                  item.documents,
-                                  DocumentTypeEnum.VERIFICATION_REPORT
-                                )
-                              )
-                            }
-                          /> */}
                           <Button
                             type="default"
                             onClick={() =>
@@ -898,33 +1330,6 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                             }
                             overlayClassName="custom-tooltip"
                           >
-                            {/* <PlusOutlined
-                              className="common-progress-icon"
-                              style={
-                                formCreatePermission(
-                                  userInfoState,
-                                  DocType.VERIFICATION_REPORT,
-                                  projectProposalStage
-                                )
-                                  ? {
-                                      color: '#3F3A47',
-                                      cursor: 'pointer',
-                                      margin: '0px 0px 1.5px 0px',
-                                    }
-                                  : {
-                                      color: '#cacaca',
-                                      cursor: 'default',
-                                      margin: '0px 0px 1.5px 0px',
-                                    }
-                              }
-                              onClick={() =>
-                                formCreatePermission(
-                                  userInfoState,
-                                  DocType.VERIFICATION_REPORT,
-                                  projectProposalStage
-                                ) && navigateToVerificationReportCreate(null)
-                              }
-                            /> */}
                             <Button
                               type="default"
                               onClick={() => navigateToVerificationReportCreate(null)}
@@ -950,8 +1355,8 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                     <CheckCircleTwoTone twoToneColor="#52c41a" />
                   </Col>
                 )}
-              </Row>
-              {item.creditIssueCertificateUrl && (
+              </Row> */}
+              {/* {item.creditIssueCertificateUrl && (
                 <Row className="field" key="creditIssueCertificate">
                   <Col span={12} className="field-key">
                     <div className="label-container">
@@ -971,30 +1376,6 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                         }
                         overlayClassName="custom-tooltip"
                       >
-                        {/* <DownloadOutlined
-                          className="common-progress-icon"
-                          style={
-                            userInfoState?.companyId !== companyId &&
-                            userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                              ? {
-                                  color: '#cacaca',
-                                  cursor: 'default',
-                                  margin: '0px 0px 1.5px 0px',
-                                }
-                              : {
-                                  color: '#3F3A47',
-                                  cursor: 'pointer',
-                                  margin: '0px 0px 1.5px 0px',
-                                }
-                          }
-                          onClick={() =>
-                            formViewPermission(
-                              userInfoState,
-                              DocType.VERIFICATION_REPORT,
-                              projectProposalStage
-                            ) && downloadCreditIssueCertificate(item.creditIssueCertificateUrl)
-                          }
-                        /> */}
                         <Button
                           type="default"
                           onClick={() =>
@@ -1018,8 +1399,9 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                     </>
                   </Col>
                 </Row>
-              )}
-              {item.carbonNeutralCertificateUrl ? (
+              )} */}
+              {/* MARK: Carbon Neutral Certificate */}
+              {/* {item.carbonNeutralCertificateUrl ? (
                 <Row className="field" key="carbonNeutralCertificate">
                   <Col span={12} className="field-key">
                     <div className="label-container">
@@ -1041,30 +1423,6 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                         }
                         overlayClassName="custom-tooltip"
                       >
-                        {/* <DownloadOutlined
-                          className="common-progress-icon"
-                          style={
-                            userInfoState?.companyId !== companyId &&
-                            userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                              ? {
-                                  color: '#cacaca',
-                                  cursor: 'default',
-                                  margin: '0px 0px 1.5px 0px',
-                                }
-                              : {
-                                  color: '#3F3A47',
-                                  cursor: 'pointer',
-                                  margin: '0px 0px 1.5px 0px',
-                                }
-                          }
-                          onClick={() =>
-                            formViewPermission(
-                              userInfoState,
-                              DocType.VERIFICATION_REPORT,
-                              projectProposalStage
-                            ) && downloadCreditIssueCertificate(item.carbonNeutralCertificateUrl)
-                          }
-                        /> */}
                         <Button
                           type="default"
                           onClick={() =>
@@ -1114,32 +1472,6 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                         }
                         overlayClassName="custom-tooltip"
                       >
-                        {/* <SendOutlined
-                          className="common-progress-icon"
-                          style={
-                            userInfoState?.companyId === companyId &&
-                            !item.carbonNeutralCertificateRequested
-                              ? {
-                                  color: '#3F3A47',
-                                  cursor: 'pointer',
-                                  margin: '0px 0px 1.5px 0px',
-                                }
-                              : {
-                                  color: '#cacaca',
-                                  cursor: 'default',
-                                  margin: '0px 0px 1.5px 0px',
-                                }
-                          }
-                          onClick={() =>
-                            formCreatePermission(
-                              userInfoState,
-                              DocType.MONITORING_REPORT,
-                              projectProposalStage
-                            ) &&
-                            !item.carbonNeutralCertificateRequested &&
-                            requestCarbonNeutralCertificate(item.id)
-                          }
-                        /> */}
                         <Button
                           type="default"
                           onClick={() => requestCarbonNeutralCertificate(item.id)}
@@ -1190,57 +1522,6 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                         }
                         overlayClassName="custom-tooltip"
                       >
-                        {/* <CheckOutlined
-                          className="common-progress-icon"
-                          style={
-                            item.carbonNeutralCertificateRequested
-                              ? {
-                                  color: '#32c761',
-                                  cursor: 'pointer',
-                                  margin: '0px 0px 1.5px 0px',
-                                }
-                              : {
-                                  color: '#cacaca',
-                                  cursor: 'default',
-                                  margin: '0px 0px 1.5px 0px',
-                                }
-                          }
-                          onClick={() => {
-                            // Check permissions and if carbonNeutralCertificateRequested is true
-                            const hasPermission = formCreatePermission(
-                              userInfoState,
-                              DocType.VERIFICATION_REPORT,
-                              projectProposalStage
-                            );
-
-                            if (hasPermission && item.carbonNeutralCertificateRequested) {
-                              showCarbonNeutralCertificateRequestApproveModal(item, {
-                                headerText: t('projectDetailsView:approveCNCModelTitle'),
-                                icon: <CheckCircleOutlined />,
-                                actionBtnText: t('projectDetailsView:approve'),
-                                okAction: (
-                                  comment: any,
-                                  level: any,
-                                  startDate: any,
-                                  endDate: any,
-                                  year: any
-                                ) => {
-                                  handleApprove(
-                                    item.id,
-                                    level,
-                                    startDate,
-                                    endDate,
-                                    year,
-                                    comment,
-                                    true
-                                  );
-                                },
-                                type: 'primary',
-                                remarkRequired: false,
-                              });
-                            }
-                          }}
-                        /> */}
                         <Button
                           type="default"
                           onClick={() => {
@@ -1305,57 +1586,6 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                         }
                         overlayClassName="custom-tooltip"
                       >
-                        {/* <CloseOutlined
-                          className="common-progress-icon"
-                          style={
-                            item.carbonNeutralCertificateRequested
-                              ? {
-                                  color: '#f70505',
-                                  cursor: 'pointer',
-                                  margin: '0px 0px 1.5px 0px',
-                                }
-                              : {
-                                  color: '#cacaca',
-                                  cursor: 'default',
-                                  margin: '0px 0px 1.5px 0px',
-                                }
-                          }
-                          onClick={() => {
-                            // Check permissions and if carbonNeutralCertificateRequested is true
-                            const hasPermission = formCreatePermission(
-                              userInfoState,
-                              DocType.VERIFICATION_REPORT,
-                              projectProposalStage
-                            );
-
-                            if (hasPermission && item.carbonNeutralCertificateRequested) {
-                              showCarbonNeutralCertificateRequestApproveModal(item, {
-                                headerText: t('projectDetailsView:rejectCNCModelTitle'),
-                                icon: <CloseCircleOutlined />,
-                                actionBtnText: t('projectDetailsView:Reject'),
-                                okAction: (
-                                  comment: any,
-                                  level: any,
-                                  startDate: any,
-                                  endDate: any,
-                                  year: any
-                                ) => {
-                                  handleApprove(
-                                    item.id,
-                                    level,
-                                    startDate,
-                                    endDate,
-                                    year,
-                                    comment,
-                                    false
-                                  );
-                                },
-                                type: 'danger',
-                                remarkRequired: true,
-                              });
-                            }
-                          }}
-                        /> */}
                         <Button
                           danger
                           type="default"
@@ -1412,7 +1642,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                     </Col>
                   </Row>
                 )
-              )}
+              )} */}
             </div>
           </div>
         ))}

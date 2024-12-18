@@ -11,7 +11,7 @@ import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
 import { DocumentStatus } from '../../../Definitions/Enums/document.status';
-export const AnnexuresStep = (props: any) => {
+export const AnnexureStep = (props: any) => {
   const {
     useLocation,
     translator,
@@ -123,7 +123,7 @@ export const AnnexuresStep = (props: any) => {
 
                 {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
                   status === DocumentStatus.PENDING && (
-                    <Button type="primary" onClick={reject} disabled={false}>
+                    <Button danger onClick={reject} disabled={false}>
                       <span>Reject</span>
                     </Button>
                   )}

@@ -124,7 +124,7 @@ export const AppendixStep = (props: any) => {
                   )}
                 {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE &&
                   status === DocumentStatus.PENDING && (
-                    <Button type="primary" onClick={reject} disabled={false}>
+                    <Button danger onClick={reject} disabled={false}>
                       <span>Reject</span>
                     </Button>
                   )}

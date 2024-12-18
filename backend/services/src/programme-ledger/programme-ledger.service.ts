@@ -105,6 +105,7 @@ export class ProgrammeLedgerService {
     return programme;
   }
 
+  //MARK: updateProgrammeSlProposalStage
   public async updateProgrammeSlProposalStage(
     programmeId: string,
     txType: TxType,
@@ -170,7 +171,6 @@ export class ProgrammeLedgerService {
             uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED_PROPOSAL;
             break;
           case TxType.APPROVE_CMA:
-            uPayload["creditEst"] = data?.creditEst;
             uPayload["projectProposalStage"] = ProjectProposalStage.APPROVED_CMA;
             break;
           case TxType.REJECT_CMA:
@@ -182,6 +182,7 @@ export class ProgrammeLedgerService {
           case TxType.APPROVE_VALIDATION:
             uPayload["serialNo"] = data?.serialNo;
             uPayload["registrationCertificateUrl"] = data?.registrationCertificateUrl;
+            uPayload["creditEst"] = data?.creditEst;
             uPayload["projectProposalStage"] = ProjectProposalStage.AUTHORISED;
             break;
           case TxType.REJECT_VALIDATION:
@@ -305,7 +306,7 @@ export class ProgrammeLedgerService {
         if (companyCreditBalances[companyAccount] != undefined) {
           updateMap[this.ledger.companyTableName + "#" + companyAccount] = {
             credit: this.helperService.halfUpToPrecision(
-              companyCreditBalances[companyAccount] + verificationRequest.creditAmount
+              companyCreditBalances[companyAccount] + Number(verificationRequest.creditAmount)
             ),
             txRef: verificationRequest.id + "#" + programme.serialNo,
             txType: TxType.ISSUE_SL,
@@ -1313,6 +1314,7 @@ export class ProgrammeLedgerService {
     else return 0;
   }
 
+  // MARK: authProgrammeStatus
   public async authProgrammeStatus(
     programmeId: string,
     countryCodeA2: string,

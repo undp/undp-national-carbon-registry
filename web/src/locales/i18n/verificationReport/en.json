@@ -183,7 +183,7 @@
   "pa_scopeAndType": "Sectoral Scope and Project Type",
   "pa_scopeAndTypePlaceholder": "Indicate the sectoral scope(s) applicable to the project, the AFOLU project category activity type (if applicable) and whether the project is a bundled project.",
   "projectProponent": "Project Proponent",
-  "organizationName": "Oraganization Name",
+  "organizationName": "Organisation Name",
   "methodology": "Methodology",
   "telephone": "Telephone",
   "fax": "Fax",
@@ -251,11 +251,15 @@
   "location": "Location",
   "projectStartDate": "Project Start Date",
   "projectFundings": "Project Fundings",
-  "projectCommisionDate": "Project Commisissioning Date",
+  "projectCommisionDate": "Project Commissioning Date",
   "roleInTheProject": "Role in the project",
   "uploadImages": "Optional: Upload your images here",
   "createVerificationReportSuccess": "Verification report submitted successfully",
   "verificationReportRejectSuccess": "Verification report rejected successfully",
   "verificationReportApproveSuccess": "Verification report approved successfully",
-  "capacity": "Capacity"
+  "capacity": "Capacity",
+  "rejectVerificationModalTitle": "Are you sure you want to reject this Verification Report?",
+  "btnReject": "Reject",
+  "btnApprove": "Approve",
+  "approveVerificationModalTitle": "Are you sure you want to approve this Verification Report?"
 }

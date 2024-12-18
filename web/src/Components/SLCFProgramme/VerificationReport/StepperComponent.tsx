@@ -19,6 +19,9 @@ import {
   fileUploadValueExtract,
 } from '../../../Utils/utilityHelper';
 import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
+import { PopupInfo } from '../../../Definitions/Definitions/ndcDetails.definitions';
+import { SlcfFormActionModel } from '../../Models/SlcfFormActionModel';
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 const StepperComponent = (props: any) => {
   const { useLocation, translator, countries, selectedVersion, handleDocumentStatus } = props;
   const navigationLocation = useLocation();
@@ -37,6 +40,10 @@ const StepperComponent = (props: any) => {
   const reportVersion = process.env.VERIFICATION_REPORT_VERSION
     ? process.env.VERIFICATION_REPORT_VERSION
     : 'Version 03';
+
+  const [popupInfo, setPopupInfo] = useState<PopupInfo>();
+  const [slcfActionModalVisible, setSlcfActioModalVisible] = useState<boolean>(false);
+
   const onValueChange = (newValues: any) => {
     setFormValues((prevValues) => ({
       ...prevValues,
@@ -45,15 +52,21 @@ const StepperComponent = (props: any) => {
     console.log(JSON.stringify(formValues));
   };
 
+  const showModalOnAction = (info: PopupInfo) => {
+    setSlcfActioModalVisible(true);
+    setPopupInfo(info);
+  };
+
   const navigateToDetailsPage = () => {
     navigate(`/programmeManagementSLCF/view/${id}`);
   };
 
-  const approve = async (verify: boolean) => {
+  const approveOrReject = async (verify: boolean, remark?: string) => {
     const body = {
       verify: verify,
       verificationRequestId: Number(verificationRequestId),
       reportId: reportId,
+      remark,
     };
     try {
       const res = await post('national/verification/verifyVerificationReport', body);
@@ -592,10 +605,28 @@ const StepperComponent = (props: any) => {
           prev={prev}
           cancel={navigateToDetailsPage}
           approve={() => {
-            approve(true);
+            showModalOnAction({
+              actionBtnText: t('verificationReport:btnApprove'),
+              icon: <CheckCircleOutlined />,
+              title: t('verificationReport:approveVerificationModalTitle'),
+              okAction: () => {
+                approveOrReject(true);
+              },
+              remarkRequired: false,
+              type: 'primary',
+            });
           }}
           reject={() => {
-            approve(false);
+            showModalOnAction({
+              actionBtnText: t('verificationReport:btnReject'),
+              icon: <CloseCircleOutlined />,
+              title: t('verificationReport:rejectVerificationModalTitle'),
+              okAction: (remark: string) => {
+                approveOrReject(false, remark);
+              },
+              remarkRequired: true,
+              type: 'danger',
+            });
           }}
           onFinish={onFinish}
         />
@@ -614,6 +645,22 @@ const StepperComponent = (props: any) => {
           description: step.description,
         }))}
       />
+      {popupInfo && (
+        <SlcfFormActionModel
+          onCancel={() => {
+            setSlcfActioModalVisible(false);
+          }}
+          actionBtnText={popupInfo!.actionBtnText}
+          onFinish={popupInfo!.okAction}
+          subText={''}
+          openModal={slcfActionModalVisible}
+          icon={popupInfo!.icon}
+          title={popupInfo!.title}
+          type={popupInfo!.type}
+          remarkRequired={popupInfo!.remarkRequired}
+          translator={translator}
+        />
+      )}
     </>
   );
 };

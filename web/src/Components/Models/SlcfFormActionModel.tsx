@@ -1,9 +1,5 @@
-import { Alert, Button, Checkbox, Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd';
+import { Alert, Button, Checkbox, Col, Form, Input, Modal, Row } from 'antd';
 import { FC, useState } from 'react';
-import { creditUnit } from '../../Definitions/Definitions/common.definitions';
-import { addCommSep } from '../../Definitions/Definitions/programme.definitions';
-import { CreditRetirementSl } from '../../Definitions/Entities/creditRetirementSl';
-import { CreditTypeSl } from '../../Definitions/Enums/creditTypeSl.enum';
 
 export interface SlcfFormActionModelProps {
   icon: any;
@@ -38,20 +34,6 @@ export const SlcfFormActionModel: FC<SlcfFormActionModelProps> = (
   const [loading, setLoading] = useState<boolean>(false);
   const [checked, setChecked] = useState<boolean>(false);
 
-  // const companyList =
-  //   CreditTypeSl.TRACK_1 === transfer.creditType
-  //     ? [
-  //         {
-  //           value: transfer.toCompanyId,
-  //           label: transfer.toCompany[0] ? transfer.toCompany[0].name : undefined,
-  //         },
-  //       ]
-  //     : [
-  //         {
-  //           value: transfer.fromCompanyId,
-  //           label: transfer.fromCompany[0].name,
-  //         },
-  //       ];
   return (
     <Modal
       title={
@@ -72,19 +54,6 @@ export const SlcfFormActionModel: FC<SlcfFormActionModelProps> = (
         <Form
           name="slcf_form_action_popup"
           layout="vertical"
-          // initialValues={{
-          //   toCompanyId:
-          //     CreditTypeSl.TRACK_1 === transfer.creditType
-          //       ? transfer.toCompanyId
-          //       : transfer.fromCompanyId,
-          //   fromCompanyId: transfer.fromCompanyId,
-          //   programmeName: transfer.programmeTitle,
-          //   serialNo: transfer.programmeSerialNo,
-          //   creditAmount: transfer.creditAmount,
-          //   // company: transfer.toCompanyMeta ? transfer.toCompanyMeta.name : null,
-          //   // country: transfer.toCompanyMeta ? transfer.toCompanyMeta.country : null,
-          //   // countryName: transfer.toCompanyMeta ? transfer.toCompanyMeta.countryName : null,
-          // }}
           onChange={() => setPopupError(undefined)}
           onFinish={async (d) => {
             setLoading(true);
@@ -106,13 +75,13 @@ export const SlcfFormActionModel: FC<SlcfFormActionModelProps> = (
                   rules={[
                     {
                       required: remarkRequired,
-                      message: 'Required field',
+                      message: 'Required!',
                     },
                     ({ getFieldValue }) => ({
                       validator(rule, v) {
                         if (remarkRequired && v !== undefined && v !== '' && v.trim() === '') {
                           // eslint-disable-next-line prefer-promise-reject-errors
-                          return Promise.reject('Required field');
+                          return Promise.reject('Required!');
                         }
                         return Promise.resolve();
                       },

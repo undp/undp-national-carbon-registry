@@ -6,19 +6,19 @@
   "programmeCreatedDescription": "The project was created by {}",
 
   "infApprovedTitle": "Initial Notification Approved",
-  "infApprovedDescription": "The Initial Notification was approved by {}",
+  "infApprovedDescription": "The Initial Notification was approved by {} of Sri Lanka Climate Fund",
 
   "infRejectedTitle": "Initial Notification Rejected",
-  "infRejectedDescription": "The Initial Notification was rejected by {}",
+  "infRejectedDescription": "The Initial Notification was rejected by {} of Sri Lanka Climate Fund",
 
   "costQuoteCreatedTitle": "Cost Quotation Created",
-  "costQuoteCreatedDescription": "The Cost Quotation was created by {}",
+  "costQuoteCreatedDescription": "The Cost Quotation was created by {} of Sri Lanka Climate Fund",
 
   "proposalCreatedTitle": "Project Proposal Created",
-  "proposalCreatedDescription": "The Project Proposal was created by {}",
+  "proposalCreatedDescription": "The Project Proposal was created by {} of Sri Lanka Climate Fund",
 
   "validationAgreementCreatedTitle": "Validation Agreement Created",
-  "validationAgreementCreatedDescription": "The Validation Agreement was created by {}",
+  "validationAgreementCreatedDescription": "The Validation Agreement was created by {} of Sri Lanka Climate Fund",
 
   "projectProposalAcceptedTitle": "Project Proposal Accepted",
   "projectProposalAcceptedDescription": "The Project Proposal was accepted by {}",
@@ -26,69 +26,69 @@
   "projectProposalRejectedTitle": "Project Proposal Rejected",
   "projectProposalRejectedDescription": "The Project Proposal was rejected by {}",
 
-  "cmaCreatedTitle": "Carbon Management Assessment (CMA) Created",
+  "cmaCreatedTitle": "Carbon Management Assessment Created",
   "cmaCreatedDescription": "The Carbon Management Assessment was created by {}",
 
-  "cmaApprovedTitle": "Carbon Management Assessment (CMA) Approved",
-  "cmaApprovedDescription": "The Carbon Management Assessment was approved by {}",
+  "cmaApprovedTitle": "Carbon Management Assessment Approved",
+  "cmaApprovedDescription": "The Carbon Management Assessment was approved by {} of Sri Lanka Climate Fund",
 
-  "cmaRejectedTitle": "Carbon Management Assessment (CMA) Rejected",
-  "cmaRejectedDescription": "The Carbon Management Assessment was rejected by {}",
+  "cmaRejectedTitle": "Carbon Management Assessment Rejected",
+  "cmaRejectedDescription": "The Carbon Management Assessment was rejected by {} of Sri Lanka Climate Fund",
 
   "validationReportCreatedTitle": "Validation Report Created",
-  "validationReportCreatedDescription": "The Validation Report was created by {}",
+  "validationReportCreatedDescription": "The Validation Report was created by {} of Sri Lanka Climate Fund",
 
   "validationReportApprovedTitle": "Validation Report Approved",
-  "validationReportApprovedDescription": "The Validation Report was approved by {}",
+  "validationReportApprovedDescription": "The Validation Report was approved by {} of Executive Committee",
 
   "validationReportRejectedTitle": "Validation Report Rejected",
-  "validationReportRejectedDescription": "The Validation Report was rejected by {}",
+  "validationReportRejectedDescription": "The Validation Report was rejected by {} of Executive Committee",
 
-  "authorisedTitle": "Project Registered",
-  "authorisedDescription": "The project was registered under Sri Lanka Carbon Credit Scheme",
+  "authorisedTitle": "Project Authorised",
+  "authorisedDescription": "The project was authorised and the Project Registration Certificate was generated",
 
   "monitoringReportCreatedTitle": "Monitoring Report Created",
   "monitoringReportCreatedDescription": "The Monitoring Report was created by {}",
 
   "monitoringReportApprovedTitle": "Monitoring Report Approved",
-  "monitoringReportApprovedDescription": "The Monitoring Report was approved by {}",
+  "monitoringReportApprovedDescription": "The Monitoring Report was approved by {} of Sri Lanka Climate Fund",
 
   "monitoringReportRejectedTitle": "Monitoring Report Rejected",
-  "monitoringReportRejectedDescription": "The Monitoring Report was rejected by {}",
+  "monitoringReportRejectedDescription": "The Monitoring Report was rejected by {} of Sri Lanka Climate Fund",
 
   "verificationReportCreatedTitle": "Verification Report Created",
-  "verificationReportCreatedDescription": "The Verification Report was created by {}",
+  "verificationReportCreatedDescription": "The Verification Report was created by {} of Sri Lanka Climate Fund",
 
   "verificationReportApprovedTitle": "Verification Report Approved",
-  "verificationReportApprovedDescription": "The Verification Report was approved by {}",
+  "verificationReportApprovedDescription": "The Verification Report was approved by {} of Executive Committee",
 
   "verificationReportRejectedTitle": "Verification Report Rejected",
-  "verificationReportRejectedDescription": "Verification Report was rejected by {}",
+  "verificationReportRejectedDescription": "The Verification Report was rejected by {} of Executive Committee",
 
   "creditIssuedTitle": "Credit Issued",
-  "creditIssuedDescription": "{} credits have been issued for the project",
+  "creditIssuedDescription": "{} credit(s) were issued for the project and the Credit Issuance Certificate was generated",
 
   "transferRequestedTitle": "Credit Transfer Requested",
-  "transferRequestedDescription": "{} of {} has requested to transfer {} credits to {}",
+  "transferRequestedDescription": "{} has requested to transfer {} credit(s) to {} organisation",
 
   "transferApprovedTitle": "Credit Transfer Approved",
-  "transferApprovedDescription": "{} of Sri Lanka Climate Fund has approved the transfer of {} credits to {}",
+  "transferApprovedDescription": "The credit transfer was approved by {} of Sri Lanka Climate Fund and the Voluntary Cancellation Certificate was generated",
 
   "transferRejectedTitle": "Credit Transfer Rejected",
-  "transferRejectedDescription": "{} of Sri Lanka Climate Fund has rejected the transfer of {} credits to {}",
+  "transferRejectedDescription": "{} of Sri Lanka Climate Fund has rejected the transfer of {} credit(s) to {} organisation",
 
   "transferCancelledTitle": "Credit Transfer Cancelled",
-  "transferCancelledDescription": "{} of {} has cancelled the request to transfer of {} credits to {}",
+  "transferCancelledDescription": "{} has cancelled the request to transfer {} credit(s)",
 
   "retireRequestedTitle": "Credit Retirement Requested",
-  "retireRequestedDescription": "{} of {} has request to retire {} credits from project {}",
+  "retireRequestedDescription": "{} has requested to retire {} credit(s)",
 
   "retireApprovedTitle": "Credit Retirement Approved",
-  "retireApprovedDescription": "{} of Sri Lanka Climate Fund has approved the retirement of {} credits from project {}",
+  "retireApprovedDescription": "The credit retirement was approved by {} of Sri Lanka Climate Fund and the Voluntary Cancellation Certificate was generated",
 
   "retireRejectedTitle": "Credit Retirement Rejected",
-  "retireRejectedDescription": "{} of Sri Lanka Climate Fund has rejected the request to retire {} credits from project {}",
+  "retireRejectedDescription": "{} of Sri Lanka Climate Fund has rejected the retirement of {} credit(s)",
 
   "retireCancelledTitle": "Credit Retirement Cancelled",
-  "retireCancelledDescription": "{} of {} has cancelled the request to retire {} credits from project {}"
+  "retireCancelledDescription": "{} has cancelled the request to retire {} credit(s)"
 }

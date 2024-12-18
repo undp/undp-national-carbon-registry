@@ -68,8 +68,12 @@
 
   .verification-row {
     .field {
-      margin: 15px 50px;
+      margin: 0;
       font-size: 0.8rem;
+    }
+
+    .ant-steps-item-title {
+      width: 100%;
     }
 
     .verification-title-main {
@@ -80,7 +84,7 @@
         padding: 0px 10px;
       }
 
-      .verification-title-status-tag{
+      .verification-title-status-tag {
         padding-left: 15px;
         font-weight: 500;
       }
@@ -98,6 +102,109 @@
         font-weight: bold;
       }
     }
+
+    .timeline-icon {
+      svg {
+        height: 20px;
+        width: 20px;
+      }
+    }
+
+    .ant-steps-vertical > .ant-steps-item > .ant-steps-item-container > .ant-steps-item-tail {
+      left: 10px;
+    }
+
+    .monitoring-submitted,
+    .verification-submitted {
+      background-color: #1890ff;
+      color: #fff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.5;
+      height: 20px;
+      width: 20px;
+
+      svg {
+        height: 14px;
+        width: 13px;
+      }
+    }
+    .verification-pending {
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.2;
+      height: 20px;
+      width: 20px;
+
+      svg {
+        height: 12px;
+        width: 12px;
+      }
+    }
+    .verification-current {
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.2;
+      height: 20px;
+      width: 20px;
+
+      svg {
+        height: 12px;
+        width: 12px;
+      }
+    }
+    .issue-cert-pending {
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1;
+      height: 20px;
+      width: 20px;
+
+      svg {
+        height: 12px;
+        width: 12px;
+      }
+    }
+    .monitoring-approved,
+    .verification-approved,
+    .issue-cert-approved {
+      color: #5dc380;
+    }
+
+    .monitoring-rejected,
+    .verification-rejected {
+      color: #ff4141;
+    }
+
+    @media (min-width: 1600px) {
+      .verification-pending {
+        line-height: 1.4;
+      }
+
+      .issue-cert-pending {
+        line-height: 1.3;
+      }
+    }
   }
   .approve-cnc-title-col {
     .approve-cnc-title-icon {
@@ -111,22 +218,22 @@
 
   // .ant-btn span {
   //   text-transform: none;
-  //   color: rgba(58, 53, 65, 0.6);  
+  //   color: rgba(58, 53, 65, 0.6);
   // }
 
   // .ant-btn-dangerous span {
   //   text-transform: none;
-  //   color: #ff7875;  
+  //   color: #ff7875;
   // }
 
   // .ant-btn:hover span {
   //   text-transform: none;
-  //   color: #40a9ff;  
+  //   color: #40a9ff;
   // }
 
   // .ant-btn-dangerous:hover span {
   //   text-transform: none;
-  //   color: #ff7875;  
+  //   color: #ff7875;
   // }
 
   .anticon-check-circle {
@@ -155,16 +262,15 @@
 
   .btnDangerProjectForms span {
     text-transform: none;
-    color: #ff7875;  
+    color: #ff7875;
   }
 
   .btnDangerProjectForms:hover span {
     text-transform: none;
-    color: #ff7875;  
-  }
-  
-  .time {
-    color: rgba(58, 53, 65, 0.3)
+    color: #ff7875;
   }
 
+  .time {
+    color: rgba(58, 53, 65, 0.3);
+  }
 }

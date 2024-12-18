@@ -317,7 +317,7 @@ export const EmailTemplates = {
         Validation report submitted for the project {{programmeName}} owned by {{organisationName}} organisation has been rejected by Executive Board of Sri Lanka Climate Fund due to the following reason/s:<br>
         {{remark}} <br><br>
 
-        Please re-submit again by clicking <a href="{{programmePageLink}}">here</a>.
+        Please submit again by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
 
         Sincerely,  <br>
@@ -360,9 +360,10 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} organisation has been rejected by Sri Lanka Climate Fund. <br><br>
+        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} organisation has been rejected by Sri Lanka Climate Fund due to the following reason/s:<br>
+        {{remark}} <br><br>
 
-        Please re-submit again by clicking <a href="{{programmePageLink}}">here</a>.
+        Please submit again by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
 
         Sincerely,  <br>
@@ -405,9 +406,10 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Verification Report submitted for the project {{programmeName}} by the Sri Lanka Climate Fund has been rejected by Executive Board of Sri Lanka Climate Fund. <br><br>
+        Verification Report submitted for the project {{programmeName}} by the Sri Lanka Climate Fund has been rejected by Executive Board of Sri Lanka Climate Fund due to the following reason/s:<br>
+        {{remark}} <br><br>
 
-        Please re-submit again if required by clicking <a href="{{programmePageLink}}">here</a>. 
+        Please submit again if required by clicking <a href="{{programmePageLink}}">here</a>. 
         <br><br>
 
         Sincerely,  <br>
