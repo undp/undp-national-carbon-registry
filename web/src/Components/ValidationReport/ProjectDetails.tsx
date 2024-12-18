@@ -332,7 +332,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         },
                       ]}
                     >
-                      <TextArea disabled={FormMode.VIEW === formMode} rows={3} size="large" />
+                      <TextArea disabled rows={3} size="large" />
                     </Form.Item>
                   </div>
                 </Col>

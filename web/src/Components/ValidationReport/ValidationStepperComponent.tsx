@@ -229,6 +229,7 @@ const StepperComponent = (props: any) => {
         address: projectContent?.projectDetails?.physicalAddress,
         website: projectContent?.projectDetails?.website,
         reportNo: `SLCCS/VDR/${new Date().getFullYear()}/${id}`,
+        workCarriedOutBy: 'Validation Division - Sri Lanka Climate Fund (Pvt) Ltd',
       });
 
       form2.setFieldsValue({
