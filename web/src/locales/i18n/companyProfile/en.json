@@ -54,5 +54,6 @@
     "requestCarbonNeutralCertificateSuccess": "Carbon Neutral Certificate Requested",
     "carbonNeutralCertificateApproved": "Carbon Neutral Certificate Approved",
     "carbonNeutralCertificateRejected": "Carbon Neutral Certificate Rejected",
-    "btnApprove": "Approve"
+    "btnApprove": "Approve",
+    "remarks": "Remarks"
 }
