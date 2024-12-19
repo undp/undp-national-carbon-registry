@@ -400,7 +400,7 @@ export const ProjectDetailsStep = (props: any) => {
                                 `${t('verificationReport:verifiedScer')} ${t('isRequired')}`
                               );
                             }
-                            if (Number(value) > verifiedScer) {
+                            if (formMode !== FormMode.VIEW && Number(value) > verifiedScer) {
                               throw new Error(
                                 `${t('verificationReport:verifiedScer')} ${t(
                                   'verificationReport:lessThanOrEqual'
