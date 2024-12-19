@@ -258,5 +258,8 @@
   "contactPerson": "Contact Person",
   "contactName": "Name",
   "contactEmail": "Email",
-  "contactPhoneNo": "Mobile"
+  "contactPhoneNo": "Mobile",
+  "requestCarbonNeutralCert": "Request Carbon Neutral Certificate",
+  "requestCarbonNeutralCertificateTitle": "Are you sure you want to request a Carbon Neutral Certificate?",
+  "btnRequest": "Request"
 }

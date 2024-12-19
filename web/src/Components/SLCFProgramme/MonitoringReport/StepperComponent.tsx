@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Steps, Button, Form, message } from 'antd';
 import { ProjectDetailsStep } from './ProjectDetailsStep';
 import './MonitoringReport.scss';
@@ -45,6 +45,8 @@ const StepperComponent = (props: any) => {
       ...newValues,
     }));
   };
+
+  const scrollSection = useRef({} as any);
 
   const navigateToDetailsPage = () => {
     navigate(`/programmeManagementSLCF/view/${id}`);
@@ -412,7 +414,7 @@ const StepperComponent = (props: any) => {
   const steps = [
     {
       title: (
-        <div className="stepper-title-container">
+        <div ref={scrollSection} className="stepper-title-container">
           {/* <div className="step-count"></div> */}
           <div className="title">{t('monitoringReport:title01')}</div>
         </div>
@@ -604,7 +606,7 @@ const StepperComponent = (props: any) => {
           title={popupInfo!.title}
           type={popupInfo!.type}
           remarkRequired={popupInfo!.remarkRequired}
-          translator={translator}
+          t={t}
         />
       )}
     </>

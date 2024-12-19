@@ -47,34 +47,4 @@ export class VerificationController {
     return await this.verificationService.queryVerificationRequestsByProgrammeId(programmeId, req.user);
   }
 
-  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, VerificationRequestEntity, true))
-  @Post("requestCarbonNeutralCertificate")
-  async requestCarbonNeutralCertificate(@Body() body: {verificationRequestId: number}, @Request() req) {
-    const { verificationRequestId } = body;
-    return this.verificationService.requestCarbonNeutralCertificate(verificationRequestId, req.user);
-  }
-
-  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, VerificationRequestEntity, true))
-  @Post("issueCarbonNeutralCertificate")
-  async approveCarbonNeutralCertificate(@Body() cNCertificateIssueDto: CNCertificateIssueDto, @Request() req) {
-    return this.verificationService.approveCarbonNeutralCertificate(cNCertificateIssueDto, req.user);
-  }
-
-  // @UseGuards(JwtAuthGuard)
-  // @Post("creditIssuanceCertificate")
-  // creditIssuanceCertificate(
-  //   @Body() creditIssuanceCertificateDto: CreditIssuanceCertificateDto,
-  //   @Request() req
-  // ) {
-  //   return this.verificationService.creditIssuanceCertificate(
-  //     creditIssuanceCertificateDto,
-  //     req.user
-  //   );
-  // }
-
-  // @UseGuards(JwtAuthGuard)
-  // @Post("issueCredits")
-  // issueCredits(@Body() issueCreditsDto: IssueCreditsDto, @Request() req) {
-  //   return this.verificationService.issueCredits(issueCreditsDto, req.user);
-  // }
 }

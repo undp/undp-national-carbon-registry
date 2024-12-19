@@ -658,7 +658,7 @@ const StepperComponent = (props: any) => {
           title={popupInfo!.title}
           type={popupInfo!.type}
           remarkRequired={popupInfo!.remarkRequired}
-          translator={translator}
+          t={t}
         />
       )}
     </>

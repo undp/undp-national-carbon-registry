@@ -1063,7 +1063,7 @@ export const EmailTemplates = {
         Hi {{name}},<br><br>
 
         The Carbon Neutral Certificate for the project {{programmeName}} has been requested by the organisation {{organisationName}}.<br>
-        This can be approved/rejected from <a href="{{pageLink}}">here</a><br><br>
+        This can be approved/rejected from the organisation details page<br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team
@@ -1077,7 +1077,7 @@ export const EmailTemplates = {
         Hi {{name}},<br><br>
 
         The Carbon Neutral Certificate for the project {{programmeName}} requested by your organisation has been approved by {{countryName}} Climate Fund.<br>
-        This can be downloaded from <a href="{{pageLink}}">here</a><br><br>
+        This can be downloaded from your organisation details page<br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Credit Registry Team

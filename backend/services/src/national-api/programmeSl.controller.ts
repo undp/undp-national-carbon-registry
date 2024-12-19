@@ -19,6 +19,7 @@ import { ValidationAgreementDto } from "src/dto/validationAgreement.dto";
 import { DocumentEntity } from "src/entities/document.entity";
 import { CMAApproveDto } from "src/dto/cmaApprove.dto";
 import { ValidationReportDto } from "src/dto/validationReport.dto";
+import { CNCertificateIssueDto } from "src/dto/cncertificateIssue.dto";
 
 @ApiTags("ProgrammeSl")
 @ApiBearerAuth()
@@ -218,5 +219,25 @@ export class ProgrammeSlController {
   @Post("query")
   async getAll(@Body() query: QueryDto, @Request() req) {
     return this.programmeService.query(query, req.abilityCondition, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Post("getCarbonNeutralCertificates")
+  async getCncByCompanyId(@Body("companyId") companyId: number) {
+    return this.programmeService.getCarbonNeutralCertificateDocs(companyId);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Post("requestCarbonNeutralCertificate")
+  async createCncRequest(@Body("programmeId") programmeId: string, @Body("companyId") companyId: number, @Request() req) {
+    return this.programmeService.requestCarbonNeutralCertificate(programmeId, companyId, req.user);
+  }
+
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Post("issueCarbonNeutralCertificate")
+  async approveCarbonNeutralCertificate(@Body() cNCertificateIssueDto: CNCertificateIssueDto, @Request() req) {
+    return this.programmeService.approveCarbonNeutralCertificate(cNCertificateIssueDto, req.user);
   }
 }
