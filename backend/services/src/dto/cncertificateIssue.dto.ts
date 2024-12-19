@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsBoolean, IsNotEmpty, IsNumber, IsString, ValidateIf } from "class-validator";
 
 export class CNCertificateIssueDto {
@@ -6,7 +6,7 @@ export class CNCertificateIssueDto {
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty()
-  verificationRequestId: number;
+  documentId: number;
 
   @IsNotEmpty()
   @IsBoolean()
@@ -41,4 +41,10 @@ export class CNCertificateIssueDto {
   @IsNumber()
   @ApiProperty()
   assessmentPeriodEnd: number;
+
+  @ValidateIf(c => c.remark)
+  @IsNotEmpty()
+  @IsString()
+  @ApiPropertyOptional()
+  remark: string;
 }

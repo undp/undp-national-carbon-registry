@@ -48,8 +48,6 @@ export class VerificationService {
     private emailHelperService: EmailHelperService,
     private configService: ConfigService,
     private fileHandler: FileHandlerInterface,
-    private carbonNeutralCertificateGenerator: CarbonNeutralCertificateGenerator,
-    private creditRetirementSlService: CreditRetirementSlService,
     @InjectRepository(ProgrammeAuditLogSl)
     private programmeAuditSlRepo: Repository<ProgrammeAuditLogSl>
   ) {}
@@ -573,8 +571,7 @@ export class VerificationService {
     let creditIssueCertificateSerial = undefined;
     if (updatedProgramme) {
       const previousCreditIssueCertificateSerial = await this.getPreviousCertificateSerial(
-        verificationRequest.programmeId,
-        "CI"
+        verificationRequest.programmeId
       );
       creditIssueCertificateSerial = this.serialGenerator.generateCreditIssueCertificateNumber(
         updatedProgramme.serialNo,
@@ -679,96 +676,6 @@ export class VerificationService {
 
       await this.programmeAuditSlRepo.save(log);
     }
-  }
-
-  //MARK: approve Carbon Neutral Certificate
-  async approveCarbonNeutralCertificate(cNCertificateIssueDto: CNCertificateIssueDto, user: User) {
-    if (user.companyRole !== CompanyRole.CLIMATE_FUND) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "verification.verifyVerificationReportWrongUser",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
-    const verificationRequest = await this.verificationRequestRepository.findOneBy({
-      id: cNCertificateIssueDto.verificationRequestId,
-    });
-
-    if (!verificationRequest) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "verification.verificationRequestDoesNotExists",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-    let carbonNeutralCertificateSerial = undefined;
-    let carbonNeutralCertUrl = undefined;
-    const programme = await this.programmeSlService.getProjectById(verificationRequest.programmeId);
-
-    if (cNCertificateIssueDto.approve) {
-      const previousCarbonNeutralCertificateSerial = await this.getPreviousCertificateSerial(
-        verificationRequest.programmeId,
-        "CNC"
-      );
-      carbonNeutralCertificateSerial = this.serialGenerator.generateCarbonNeutralCertificateNumber(
-        previousCarbonNeutralCertificateSerial
-      );
-
-      const neutralData = {
-        projectName: programme.title,
-        companyName: programme.company.name,
-        scope: cNCertificateIssueDto.scope,
-        certificateNo: carbonNeutralCertificateSerial,
-        issueDate: this.dateUtilService.formatCustomDate(),
-        creditAmount: await this.creditRetirementSlService.getCreditAmountSum(
-          programme.company.companyId,
-          cNCertificateIssueDto.assessmentPeriodStart,
-          cNCertificateIssueDto.assessmentPeriodEnd
-        ),
-        orgBoundary: cNCertificateIssueDto.orgBoundary,
-        assessmentYear: cNCertificateIssueDto.year,
-        assessmentPeriod: `${this.dateUtilService.formatCustomDate(
-          cNCertificateIssueDto.assessmentPeriodStart
-        )} - ${this.dateUtilService.formatCustomDate(cNCertificateIssueDto.assessmentPeriodEnd)}`,
-      };
-      carbonNeutralCertUrl =
-        await this.carbonNeutralCertificateGenerator.generateCarbonNeutralCertificate(
-          neutralData,
-          false
-        );
-    }
-
-    const updatedRequest = await this.verificationRequestRepository.update(
-      {
-        id: cNCertificateIssueDto.verificationRequestId,
-      },
-      {
-        carbonNeutralCertificateRequested: false,
-        carbonNeutralCertificateSerialNo: carbonNeutralCertificateSerial,
-        carbonNeutralCertificateUrl: carbonNeutralCertUrl,
-      }
-    );
-
-    const hostAddress = this.configService.get("host");
-    await this.emailHelperService.sendEmailToOrganisationAdmins(
-      programme.company.companyId,
-      cNCertificateIssueDto.approve
-        ? EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_APPROVED
-        : EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_REJECTED,
-      {
-        programmeName: programme.title,
-        remark: cNCertificateIssueDto.orgBoundary,
-        pageLink: hostAddress + `/programmeManagementSLCF/view/${programme.programmeId}`,
-      }
-    );
-
-    console.log(carbonNeutralCertUrl);
-    return updatedRequest;
   }
 
   //MARK: get Credit Issuance Certificate URL
@@ -893,54 +800,7 @@ export class VerificationService {
     return this.aggregateDocuments(rawResults);
   }
 
-  // MARK: Request Carbon Neutral Certificate
-  async requestCarbonNeutralCertificate(verificationRequestId: number, user: User) {
-    if (user.companyRole !== CompanyRole.PROGRAMME_DEVELOPER) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "verification.requestCarbonNeutralCertificateReportWrongUser",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
-    const verificationRequest = await this.verificationRequestRepository.findOneBy({
-      id: verificationRequestId,
-    });
-
-    if (!verificationRequest) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "verification.verificationRequestDoesNotExists",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
-    const updatedVerificationRequest = await this.entityManager.transaction(async (em) => {
-      await em.update(
-        VerificationRequestEntity,
-        {
-          id: verificationRequestId,
-        },
-        {
-          carbonNeutralCertificateRequested: true,
-        }
-      );
-    });
-
-    await this.emailHelperService.sendEmailToSLCFAdmins(
-      EmailTemplates.CARBON_NEUTRAL_SL_REQUESTED,
-      {},
-      verificationRequest.programmeId
-    );
-
-    return updatedVerificationRequest;
-  }
-
-  async getPreviousCertificateSerial(programmeId: string, type: string) {
+  async getPreviousCertificateSerial(programmeId: string) {
     const latestVerifiedRequest = await this.verificationRequestRepository.findOne({
       where: {
         programmeId: programmeId,
@@ -951,9 +811,7 @@ export class VerificationService {
       },
     });
 
-    return type === "CNC"
-      ? latestVerifiedRequest?.carbonNeutralCertificateSerialNo
-      : latestVerifiedRequest?.verificationSerialNo;
+    return latestVerifiedRequest?.verificationSerialNo;
   }
 
   private isValidHttpUrl(attachment: string): boolean {

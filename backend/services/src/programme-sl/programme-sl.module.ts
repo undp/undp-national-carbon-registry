@@ -19,6 +19,7 @@ import { ProgrammeSl } from "../entities/programmeSl.entity";
 import { ProgrammeSlService } from "./programme-sl.service";
 import { DocumentEntity } from "src/entities/document.entity";
 import { ProgrammeAuditLogSl } from "../entities/programmeAuditLogSl.entity";
+import { CreditRetirementSlModule } from "../creditRetirement-sl/creditRetirementSl.module";
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ProgrammeAuditLogSl } from "../entities/programmeAuditLogSl.entity";
     LocationModule,
     AsyncOperationsModule,
     FileHandlerModule,
+    CreditRetirementSlModule,
   ],
   providers: [Logger, ProgrammeSlService],
   exports: [ProgrammeSlService],

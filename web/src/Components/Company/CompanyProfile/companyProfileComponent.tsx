@@ -1,8 +1,13 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable no-use-before-define */
-import { UserOutlined } from '@ant-design/icons';
-import { Button, Card, Col, message, Row, Skeleton } from 'antd';
+import {
+  CheckCircleOutlined,
+  ExclamationCircleTwoTone,
+  FileSyncOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import { Button, Card, Col, message, Row, Skeleton, Tooltip } from 'antd';
 import { plainToClass } from 'class-transformer';
 import { useEffect, useState } from 'react';
 import { Action } from '../../../Definitions/Enums/action.enum';
@@ -13,6 +18,15 @@ import * as Icon from 'react-bootstrap-icons';
 import { OrganisationStatus } from '../../OrganisationStatus/organisationStatus';
 import { CompanyDetailsComponent } from '../CompanyDetails/companyDetailsComponent';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
+import {
+  CarbonNeutralConfirmationModelSl,
+  CarbonNeutralConfirmationPopupInfo,
+} from '../../Models/carbonNeutralConfirmationModelSl';
+import { SlcfFormActionModel } from '../../Models/SlcfFormActionModel';
+import { PopupInfo } from '../../../Definitions/Definitions/ndcDetails.definitions';
+import moment from 'moment';
+import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
+import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 
 export const CompanyProfileComponent = (props: any) => {
   const {
@@ -25,6 +39,7 @@ export const CompanyProfileComponent = (props: any) => {
     systemType,
   } = props;
   const { get, put, post } = useConnection();
+  const { userInfoState } = useUserContext();
   const [companyDetails, setCompanyDetails] = useState<any>(undefined);
   const [userDetails, setUserDetails] = useState<any>(undefined);
   const { state } = useLocation();
@@ -37,6 +52,9 @@ export const CompanyProfileComponent = (props: any) => {
   const [errorMsg, setErrorMsg] = useState<any>('');
   const [userRole, setUserRole] = useState<any>('');
   const [companyRole, setCompanyRole] = useState<any>('');
+  const [cncModalVisible, setCNCModalVisible] = useState<boolean>(false);
+  const [cncModelInfo, setCNCModelInfo] = useState<any>({});
+  const [carbonNeutralCertificateData, setCarbonNeutralCertificateData] = useState<any>([]);
   const ability = useAbilityContext();
 
   const getCompanyDetails = async (companyId: string) => {
@@ -90,6 +108,7 @@ export const CompanyProfileComponent = (props: any) => {
       if (state.record?.state == '2' || state.record?.state == '3') {
         getUserDetails(state.record.companyId);
       }
+      getCarbonNeutralCertificates(state.record.companyId);
     }
   }, []);
 
@@ -254,6 +273,128 @@ export const CompanyProfileComponent = (props: any) => {
     setOpenRejectModal(true);
   };
 
+  const handleCancel = () => {
+    setCNCModalVisible(false);
+  };
+
+  const showCarbonNeutralCertificateRequestApproveModal = (
+    info: CarbonNeutralConfirmationPopupInfo
+  ) => {
+    setCNCModalVisible(true);
+    setCNCModelInfo(info);
+  };
+
+  const getCarbonNeutralCertificates = async (companyId: number) => {
+    // setLoading(true);
+    try {
+      const response: any = await post('national/programmeSl/getCarbonNeutralCertificates', {
+        companyId: companyId,
+      });
+      if (response.status === 200 || response.status === 201) {
+        console.log(response);
+        setCarbonNeutralCertificateData(response?.data);
+      }
+    } catch (err: any) {
+      console.log('Error in getting carbon neutral certificate data - ', err);
+      message.open({
+        type: 'error',
+        content: err.message,
+        duration: 4,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      // setLoading(false);
+    }
+  };
+
+  function formatCreatedTime(createdTime: string): string {
+    return moment(parseInt(createdTime, 10)).format('DD MMMM YYYY [@] HH:mm');
+  }
+
+  const downloadCertificate = async (item: any) => {
+    // setLoading(true);
+    try {
+      const url = JSON.parse(item?.content)?.certificateUrl;
+      if (url !== undefined && url !== '') {
+        const response = await fetch(url); // Ensure the URL is fetched properly
+        if (response.ok) {
+          const blob = await response.blob(); // Create a blob from the response
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = downloadUrl;
+          a.download = url.split('/').pop() || 'Credit_Issuance_Certificate.pdf'; // Extract filename or provide default
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(downloadUrl); // Clean up the created object URL
+        } else {
+          message.open({
+            type: 'error',
+            content: response.statusText,
+            duration: 3,
+            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          });
+        }
+      }
+      // setLoading(false);
+    } catch (error: any) {
+      console.log('Error in exporting transfers', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      // setLoading(false);
+    }
+  };
+
+  const handleApprove = async (
+    docId: number,
+    level: string,
+    startDate: number,
+    endDate: number,
+    year: number,
+    comment: string,
+    approve: boolean
+  ) => {
+    setIsLoading(true);
+    try {
+      await post('national/programmeSl/issueCarbonNeutralCertificate', {
+        documentId: docId,
+        scope: level,
+        assessmentPeriodStart: startDate,
+        assessmentPeriodEnd: endDate,
+        year,
+        approve,
+        orgBoundary: comment,
+      });
+      const successMsg = approve
+        ? `${t('projectDetailsView:carbonNeutralCertificateApproved')}`
+        : `${t('projectDetailsView:carbonNeutralCertificateRejected')}`;
+      message.open({
+        type: 'success',
+        content: successMsg,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      getCarbonNeutralCertificates(companyDetails.companyId);
+    } catch (error: any) {
+      console.log('Error in issuing  request', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 4,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+      // return error.message;
+    } finally {
+      setCNCModalVisible(false);
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="content-container company-profile">
       <div className="title-bar">
@@ -318,7 +459,7 @@ export const CompanyProfileComponent = (props: any) => {
       {companyDetails && (
         <div className="content-body">
           <Row gutter={16}>
-            <Col md={24} lg={8}>
+            <Col md={24} lg={10}>
               <Card className="card-container">
                 <Skeleton loading={isLoading} active>
                   <Row justify="center">
@@ -335,8 +476,135 @@ export const CompanyProfileComponent = (props: any) => {
                   </Row>
                 </Skeleton>
               </Card>
+              {carbonNeutralCertificateData?.length > 0 && (
+                <Card className="card-container cnc-container">
+                  <div className="info-view">
+                    <div className="title">
+                      <span className="title-icon">
+                        <FileSyncOutlined />
+                      </span>
+                      <span className="title-text">
+                        {t('companyProfile:carbonNeutralCertificates')}
+                      </span>
+                    </div>
+                    {carbonNeutralCertificateData.map((item: any, index: any) => (
+                      <Row className="field" key={index}>
+                        <Col span={12} className="field-key">
+                          <div>
+                            <div className="cnc-record-title">
+                              Project {item.programmeId} -{' '}
+                              <span className={item.status}>{item.status}</span>
+                              {item.status === 'Pending' &&
+                                userInfoState?.companyRole === CompanyRole.CLIMATE_FUND && (
+                                  <span className="approve-cnc-title-icon">
+                                    <ExclamationCircleTwoTone twoToneColor="#eb8f34" />
+                                  </span>
+                                )}
+                            </div>
+                            <div>{formatCreatedTime(item.createdTime)}</div>
+                            {(() => {
+                              const content = JSON.parse(item.content);
+                              return content?.remark ? <div>Remark: {content.remark}</div> : null;
+                            })()}
+                          </div>
+                        </Col>
+                        {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
+                          item.status == 'Pending' && (
+                            <>
+                              <Col span={6} className="field-value">
+                                <Button
+                                  type="default"
+                                  onClick={() => {
+                                    showCarbonNeutralCertificateRequestApproveModal({
+                                      headerText: t('companyProfile:approveCNCModelTitle'),
+                                      icon: <CheckCircleOutlined />,
+                                      actionBtnText: t('companyProfile:approve'),
+                                      okAction: (
+                                        comment: any,
+                                        level: any,
+                                        startDate: any,
+                                        endDate: any,
+                                        year: any
+                                      ) => {
+                                        handleApprove(
+                                          item.id,
+                                          level,
+                                          startDate,
+                                          endDate,
+                                          year,
+                                          comment,
+                                          true
+                                        );
+                                      },
+                                      type: 'primary',
+                                      remarkRequired: false,
+                                    });
+                                  }}
+                                  size="small"
+                                  className="btnProjectForms"
+                                >
+                                  {t('companyProfile:btnApprove')}
+                                </Button>
+                              </Col>
+                              <Col span={6} className="field-value">
+                                <Button
+                                  danger
+                                  type="default"
+                                  onClick={() => {
+                                    showCarbonNeutralCertificateRequestApproveModal({
+                                      headerText: t('companyProfile:rejectCNCModelTitle'),
+                                      icon: <CheckCircleOutlined />,
+                                      actionBtnText: t('companyProfile:reject'),
+                                      okAction: (
+                                        comment: any,
+                                        level: any,
+                                        startDate: any,
+                                        endDate: any,
+                                        year: any
+                                      ) => {
+                                        handleApprove(
+                                          item.id,
+                                          level,
+                                          startDate,
+                                          endDate,
+                                          year,
+                                          comment,
+                                          false
+                                        );
+                                      },
+                                      type: 'danger',
+                                      remarkRequired: true,
+                                    });
+                                  }}
+                                  size="small"
+                                  className="btn-danger"
+                                >
+                                  {t('companyProfile:btnReject')}
+                                </Button>
+                              </Col>
+                            </>
+                          )}
+                        {item.status == 'Accepted' && (
+                          <Col span={6} className="field-value">
+                            <>
+                              <Button
+                                type="default"
+                                onClick={() => downloadCertificate(item)}
+                                size="small"
+                                className="btnProjectForms"
+                              >
+                                {t('companyProfile:btnDownload')}
+                              </Button>
+                            </>
+                          </Col>
+                        )}
+                      </Row>
+                    ))}
+                  </div>
+                </Card>
+              )}
             </Col>
-            <Col md={24} lg={16}>
+            <Col md={24} lg={14}>
               <CompanyDetailsComponent
                 t={t}
                 companyDetails={companyDetails}
@@ -424,6 +692,15 @@ export const CompanyProfileComponent = (props: any) => {
         openModal={openRejectModal}
         errorMsg={errorMsg}
         loading={isLoading}
+      />
+
+      <CarbonNeutralConfirmationModelSl
+        actionInfo={cncModelInfo}
+        onActionCanceled={handleCancel}
+        openModal={cncModalVisible}
+        errorMsg={''}
+        loading={isLoading}
+        t={t}
       />
     </div>
   );

@@ -339,80 +339,6 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
     );
   }
 
-  const requestCarbonNeutralCertificate = async (verificationRequestId: number) => {
-    setLoading(true);
-    try {
-      const response: any = await post('national/verification/requestCarbonNeutralCertificate', {
-        verificationRequestId: verificationRequestId,
-      });
-      if (response.status === 200 || response.status === 201) {
-        message.open({
-          type: 'success',
-          content: `${t('projectDetailsView:requestCarbonNeutralCertificateSuccess')}`,
-          duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-        });
-
-        getVerificationData();
-      }
-    } catch (err: any) {
-      console.log('Error in getting documents - ', err);
-      message.open({
-        type: 'error',
-        content: err.message,
-        duration: 4,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleApprove = async (
-    reqId: number,
-    level: string,
-    startDate: number,
-    endDate: number,
-    year: number,
-    comment: string,
-    approve: boolean
-  ) => {
-    setLoading(true);
-    try {
-      const response: any = await post('national/verification/issueCarbonNeutralCertificate', {
-        verificationRequestId: reqId,
-        scope: level,
-        assessmentPeriodStart: startDate,
-        assessmentPeriodEnd: endDate,
-        year,
-        approve,
-        orgBoundary: comment,
-      });
-      const successMsg = approve
-        ? `${t('projectDetailsView:carbonNeutralCertificateApproved')}`
-        : `${t('projectDetailsView:carbonNeutralCertificateRejected')}`;
-      message.open({
-        type: 'success',
-        content: successMsg,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      getVerificationData();
-    } catch (error: any) {
-      console.log('Error in issuing  request', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 4,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      // return error.message;
-    } finally {
-      setModalVisible(false);
-      setLoading(false);
-    }
-  };
-
   const getLatestReport = (reports: any[], docType: DocumentTypeEnum): any => {
     const filteredReports = reports.filter((report) => report.type === docType);
 
@@ -1647,14 +1573,14 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
           </div>
         ))}
       </div>
-      <CarbonNeutralConfirmationModelSl
+      {/* <CarbonNeutralConfirmationModelSl
         actionInfo={popupInfo}
         onActionCanceled={handleCancel}
         openModal={modalVisible}
         errorMsg={''}
         loading={loading}
         translator={translator}
-      />
+      /> */}
     </>
   );
 };

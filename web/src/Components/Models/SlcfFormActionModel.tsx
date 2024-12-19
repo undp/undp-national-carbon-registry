@@ -11,7 +11,7 @@ export interface SlcfFormActionModelProps {
   openModal: boolean;
   type: string;
   remarkRequired: boolean;
-  translator: any;
+  t: any;
 }
 
 export const SlcfFormActionModel: FC<SlcfFormActionModelProps> = (
@@ -27,9 +27,9 @@ export const SlcfFormActionModel: FC<SlcfFormActionModelProps> = (
     icon,
     type,
     remarkRequired,
-    translator,
+    t,
   } = props;
-  const t = translator.t;
+  // const t = translator;
   const [popupError, setPopupError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
   const [checked, setChecked] = useState<boolean>(false);

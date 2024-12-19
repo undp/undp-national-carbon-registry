@@ -520,7 +520,7 @@ export class EmailHelperService {
           organisationName: companyDetails.name,
           countryName: systemCountryName,
           programmeName: programme.title,
-          pageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
+          // pageLink: hostAddress + `/programmeManagementSLCF/view/${programmeId}`,
         };
         break;
 

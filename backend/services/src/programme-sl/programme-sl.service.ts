@@ -52,6 +52,9 @@ import { ProjectCategory, SlProjectCategoryMap } from "../enum/projectCategory.e
 import { ProjectGeography } from "src/enum/projectGeography.enum";
 import { ProgrammeAuditLogSl } from "../entities/programmeAuditLogSl.entity";
 import { ProgrammeAuditLogType } from "../enum/programmeAuditLogType.enum";
+import { CNCertificateIssueDto } from "../dto/cncertificateIssue.dto";
+import { CarbonNeutralCertificateGenerator } from "../util/carbonNeutralCertificate.gen";
+import { CreditRetirementSlService } from "../creditRetirement-sl/creditRetirementSl.service";
 
 @Injectable()
 export class ProgrammeSlService {
@@ -85,7 +88,9 @@ export class ProgrammeSlService {
     private dateUtilService: DateUtilService,
     private serialGenerator: SLCFSerialNumberGeneratorService,
     @InjectRepository(ProgrammeAuditLogSl)
-    private programmeAuditSlRepo: Repository<ProgrammeAuditLogSl>
+    private programmeAuditSlRepo: Repository<ProgrammeAuditLogSl>,
+    private carbonNeutralCertificateGenerator: CarbonNeutralCertificateGenerator,
+    private creditRetirementSlService: CreditRetirementSlService,
   ) {}
 
   // MARK: Create Programme
@@ -293,7 +298,7 @@ export class ProgrammeSlService {
     //send email to Project Participant
     await this.emailHelperService.sendEmailToProjectParticipant(
       EmailTemplates.PROGRAMME_SL_REJECTED,
-      {remark},
+      { remark },
       programmeId
     );
 
@@ -302,7 +307,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.INF_REJECTED;
       log.userId = user.id;
-      log.data = {remark}
+      log.data = { remark };
 
       await this.programmeAuditSlRepo.save(log);
     }
@@ -842,7 +847,7 @@ export class ProgrammeSlService {
     //sending email to SLCF Admins
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.PROJECT_PROPOSAL_REJECTED,
-      {remark},
+      { remark },
       programmeId
     );
 
@@ -851,7 +856,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.PROJECT_PROPOSAL_REJECTED;
       log.userId = user.id;
-      log.data = {remark}
+      log.data = { remark };
 
       await this.programmeAuditSlRepo.save(log);
     }
@@ -1203,7 +1208,7 @@ export class ProgrammeSlService {
     //sending email to SLCF Admins
     await this.emailHelperService.sendEmailToProjectParticipant(
       EmailTemplates.CMA_REJECTED,
-      {remark},
+      { remark },
       programmeId
     );
 
@@ -1212,7 +1217,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.CMA_REJECTED;
       log.userId = user.id;
-      log.data = {remark}
+      log.data = { remark };
 
       await this.programmeAuditSlRepo.save(log);
     }
@@ -1517,7 +1522,11 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, response);
   }
 
-  async rejectValidation(programmeId: string, remark: string, user: User): Promise<DataResponseDto> {
+  async rejectValidation(
+    programmeId: string,
+    remark: string,
+    user: User
+  ): Promise<DataResponseDto> {
     if (user.companyRole != CompanyRole.EXECUTIVE_COMMITTEE) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
@@ -1580,7 +1589,7 @@ export class ProgrammeSlService {
     //sending email to SLCF Admins
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.VALIDATION_REJECTED,
-      {remark},
+      { remark },
       programmeId
     );
 
@@ -1589,7 +1598,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.VALIDATION_REPORT_REJECTED;
       log.userId = user.id;
-      log.data = {remark}
+      log.data = { remark };
 
       await this.programmeAuditSlRepo.save(log);
     }
@@ -1814,6 +1823,169 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, document);
   }
 
+  //MARK: Get Carbon Neutral Certs
+  async getCarbonNeutralCertificateDocs(companyId: number): Promise<DocumentEntity[]> {
+    return await this.documentRepo.find({
+      where: {
+        companyId: companyId,
+        type: DocumentTypeEnum.CARBON_NEUTRAL_CERTIFICATE,
+      },
+      order: {
+        createdTime: "ASC",
+      },
+    });
+  }
+
+  // MARK: Request Carbon Neutral Certificate
+  async requestCarbonNeutralCertificate(programmeId: string, companyId: number, user: User) {
+    if (user.companyRole !== CompanyRole.PROGRAMME_DEVELOPER || companyId != user.companyId) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "verification.requestCarbonNeutralCertificateReportWrongUser",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const programme = await this.programmeLedgerService.getProgrammeSlById(programmeId);
+
+    if (!programme) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.programmeNotExist", []),
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    const cncRequestDoc = new DocumentEntity();
+    cncRequestDoc.companyId = companyId;
+    cncRequestDoc.programmeId = programmeId;
+    cncRequestDoc.userId = user.id;
+    cncRequestDoc.type = DocumentTypeEnum.CARBON_NEUTRAL_CERTIFICATE;
+    cncRequestDoc.version = 1;
+    cncRequestDoc.createdTime = new Date().getTime();
+    cncRequestDoc.updatedTime = cncRequestDoc.createdTime;
+
+    const cncSavedRequest = await this.documentRepo.save(cncRequestDoc);
+
+    await this.emailHelperService.sendEmailToSLCFAdmins(
+      EmailTemplates.CARBON_NEUTRAL_SL_REQUESTED,
+      {},
+      programmeId
+    );
+
+    return cncSavedRequest;
+  }
+
+  //MARK: approve Carbon Neutral Certificate
+  async approveCarbonNeutralCertificate(cNCertificateIssueDto: CNCertificateIssueDto, user: User) {
+    if (user.companyRole !== CompanyRole.CLIMATE_FUND) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "verification.verifyVerificationReportWrongUser",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const cncRequest = await this.documentRepo.findOneBy({
+      id: cNCertificateIssueDto.documentId,
+    });
+
+    if (!cncRequest) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("verification.cncRequestDoesNotExists", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    let carbonNeutralCertificateSerial = undefined;
+    let carbonNeutralCertUrl = undefined;
+    const programme = await this.getProjectById(cncRequest.programmeId);
+
+    if (cNCertificateIssueDto.approve) {
+      const previousCarbonNeutralCertificateSerial = await this.getPreviousCNCertificateSerial();
+      carbonNeutralCertificateSerial = this.serialGenerator.generateCarbonNeutralCertificateNumber(
+        previousCarbonNeutralCertificateSerial
+      );
+
+      const neutralData = {
+        projectName: programme.title,
+        companyName: programme.company.name,
+        scope: cNCertificateIssueDto.scope,
+        certificateNo: carbonNeutralCertificateSerial,
+        issueDate: this.dateUtilService.formatCustomDate(),
+        creditAmount: await this.creditRetirementSlService.getCreditAmountSum(
+          programme.company.companyId,
+          cNCertificateIssueDto.assessmentPeriodStart,
+          cNCertificateIssueDto.assessmentPeriodEnd
+        ),
+        orgBoundary: cNCertificateIssueDto.orgBoundary,
+        assessmentYear: cNCertificateIssueDto.year,
+        assessmentPeriod: `${this.dateUtilService.formatCustomDate(
+          cNCertificateIssueDto.assessmentPeriodStart
+        )} - ${this.dateUtilService.formatCustomDate(cNCertificateIssueDto.assessmentPeriodEnd)}`,
+      };
+      carbonNeutralCertUrl =
+        await this.carbonNeutralCertificateGenerator.generateCarbonNeutralCertificate(
+          neutralData,
+          false
+        );
+    }
+
+    const certificateContent = {
+      serialNumber: carbonNeutralCertificateSerial,
+      certificateUrl: carbonNeutralCertUrl,
+    };
+
+    if (!cNCertificateIssueDto.approve)
+      certificateContent['remark'] = cNCertificateIssueDto.orgBoundary
+
+    const updatedRequest = await this.documentRepo.update(
+      {
+        id: cNCertificateIssueDto.documentId,
+      },
+      {
+        content: JSON.stringify(certificateContent),
+        status: cNCertificateIssueDto.approve ? DocumentStatus.ACCEPTED : DocumentStatus.REJECTED,
+      }
+    );
+
+    const hostAddress = this.configService.get("host");
+    await this.emailHelperService.sendEmailToOrganisationAdmins(
+      programme.company.companyId,
+      cNCertificateIssueDto.approve
+        ? EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_APPROVED
+        : EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_REJECTED,
+      {
+        programmeName: programme.title,
+        remark: cNCertificateIssueDto.orgBoundary,
+        pageLink: hostAddress + `/programmeManagementSLCF/view/${programme.programmeId}`,
+      }
+    );
+
+    console.log(carbonNeutralCertUrl);
+    return updatedRequest;
+  }
+
+  //MARK: Get Previous CNCertificate Serial
+  async getPreviousCNCertificateSerial() {
+    const latestApprovedCNCRequest = await this.documentRepo.findOne({
+      where: {
+        status: DocumentStatus.ACCEPTED,
+        type: DocumentTypeEnum.CARBON_NEUTRAL_CERTIFICATE,
+      },
+      order: {
+        createdTime: "DESC",
+      },
+    });
+
+    return latestApprovedCNCRequest
+      ? JSON.parse(latestApprovedCNCRequest.content).serialNumber
+      : null;
+  }
+
+  //MARK: Query
   async query(query: QueryDto, abilityCondition: string, user: User): Promise<DataListResponseDto> {
     const skip = query.size * query.page - query.size;
     const limit = query.size || 10;

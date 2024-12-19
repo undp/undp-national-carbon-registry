@@ -18,15 +18,15 @@ export interface CarbonNeutralConfirmationProps {
   openModal: any;
   errorMsg: any;
   loading: any;
-  translator: any;
+  t: any;
 }
 
 export const CarbonNeutralConfirmationModelSl: FC<CarbonNeutralConfirmationProps> = (
   props: CarbonNeutralConfirmationProps
 ) => {
-  const { actionInfo, onActionCanceled, openModal, errorMsg, loading, translator } = props;
+  const { actionInfo, onActionCanceled, openModal, errorMsg, loading, t } = props;
 
-  const t = translator.t;
+  // const t = translator.t;
   const [comment, setComment] = useState<any>('');
   const [level, setLevel] = useState<string>('');
   const [startDate, setStartDate] = useState<number | null>(null);
@@ -67,12 +67,12 @@ export const CarbonNeutralConfirmationModelSl: FC<CarbonNeutralConfirmationProps
         {actionInfo.type !== 'danger' && (
           <>
             <Form.Item
-              label={t('projectDetailsView:scope')}
+              label={t('companyProfile:scope')}
               name="scope"
               rules={[
                 {
                   required: true,
-                  message: `${t('projectDetailsView:scope')}` + ' ' + `${t('common:isRequired')}`,
+                  message: `${t('companyProfile:scope')}` + ' ' + `${t('common:isRequired')}`,
                 },
               ]}
             >
@@ -86,22 +86,18 @@ export const CarbonNeutralConfirmationModelSl: FC<CarbonNeutralConfirmationProps
                   justifyContent: 'space-around',
                 }}
               >
-                <Radio value="Organisation Level">
-                  {t('projectDetailsView:organisationLevel')}
-                </Radio>
-                <Radio value="Product Level">{t('projectDetailsView:productLevel')}</Radio>
+                <Radio value="Organisation Level">{t('companyProfile:organisationLevel')}</Radio>
+                <Radio value="Product Level">{t('companyProfile:productLevel')}</Radio>
               </Radio.Group>
             </Form.Item>
 
             <Form.Item
-              label={t('projectDetailsView:assessmentStartDate')}
+              label={t('companyProfile:assessmentStartDate')}
               name="startDate"
               rules={[
                 {
                   required: true,
-                  message: `${t('projectDetailsView:assessmentStartDate')} ${t(
-                    'common:isRequired'
-                  )}`,
+                  message: `${t('companyProfile:assessmentStartDate')} ${t('common:isRequired')}`,
                 },
               ]}
             >
@@ -112,12 +108,12 @@ export const CarbonNeutralConfirmationModelSl: FC<CarbonNeutralConfirmationProps
             </Form.Item>
 
             <Form.Item
-              label={t('projectDetailsView:assessmentEndDate')}
+              label={t('companyProfile:assessmentEndDate')}
               name="endDate"
               rules={[
                 {
                   required: true,
-                  message: `${t('projectDetailsView:assessmentEndDate')} ${t('common:isRequired')}`,
+                  message: `${t('companyProfile:assessmentEndDate')} ${t('common:isRequired')}`,
                 },
                 // Custom validation rule to ensure end date is not before start date
                 ({ getFieldValue }) => ({
@@ -127,7 +123,7 @@ export const CarbonNeutralConfirmationModelSl: FC<CarbonNeutralConfirmationProps
                       return Promise.resolve();
                     }
                     return Promise.reject(
-                      new Error(t('projectDetailsView:endDateCannotBeBeforeStartDate'))
+                      new Error(t('companyProfile:endDateCannotBeBeforeStartDate'))
                     );
                   },
                 }),
@@ -141,12 +137,12 @@ export const CarbonNeutralConfirmationModelSl: FC<CarbonNeutralConfirmationProps
 
             {/* Year Selector */}
             <Form.Item
-              label={t('projectDetailsView:year')}
+              label={t('companyProfile:year')}
               name="year"
               rules={[
                 {
                   required: true,
-                  message: `${t('projectDetailsView:year')} ${t('common:isRequired')}`,
+                  message: `${t('companyProfile:year')} ${t('common:isRequired')}`,
                 },
               ]}
             >
@@ -163,8 +159,8 @@ export const CarbonNeutralConfirmationModelSl: FC<CarbonNeutralConfirmationProps
           className="mg-bottom-0"
           label={
             actionInfo.type === 'danger'
-              ? t('projectDetailsView:remarks')
-              : t('projectDetailsView:organisationBoundary')
+              ? t('companyProfile:remarks')
+              : t('companyProfile:organisationBoundary')
           }
           name="remarks"
           rules={[
@@ -173,8 +169,8 @@ export const CarbonNeutralConfirmationModelSl: FC<CarbonNeutralConfirmationProps
               message:
                 `${
                   actionInfo.type === 'danger'
-                    ? t('programme:remarks')
-                    : t('programme:organisationBoundary')
+                    ? t('companyProfile:remarks')
+                    : t('companyProfile:organisationBoundary')
                 }` +
                 ' ' +
                 `${t('common:isRequired')}`,

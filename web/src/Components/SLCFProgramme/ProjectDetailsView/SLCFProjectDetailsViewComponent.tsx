@@ -186,8 +186,10 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   const [projectLocationMapLayer, setProjectLocationMapLayer] = useState<any>();
   const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();
   const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<number[]>([]);
-  const [slcfActionModalVisible, setSlcfActioModalVisible] = useState<boolean>(false);
+  const [slcfActionModalVisible, setSlcfActionModalVisible] = useState<boolean>(false);
   const [popupInfo, setPopupInfo] = useState<PopupInfo>();
+  const [slcfActionModalInfo, setSlcfActionModalInfo] = useState<PopupInfo>();
+  const [carbonNeutralCertificateData, setCarbonNeutralCertificateData] = useState<any>();
 
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -496,9 +498,77 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setSlcfActioModalVisible(false);
+      setSlcfActionModalVisible(false);
     }
   };
+
+  const getCarbonNeutralCertificates = async (companyId: number) => {
+    // setLoading(true);
+    try {
+      const response: any = await post('national/programmeSl/getCarbonNeutralCertificates', {
+        companyId: companyId,
+      });
+      if (response.status === 200 || response.status === 201) {
+        console.log(response);
+        setCarbonNeutralCertificateData(response?.data);
+      }
+    } catch (err: any) {
+      console.log('Error in getting carbon neutral certificate data - ', err);
+      message.open({
+        type: 'error',
+        content: err.message,
+        duration: 4,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      // setLoading(false);
+      // setSlcfActionModalVisible(false);
+    }
+  };
+
+  const requestCarbonNeutralCertificate = async () => {
+    // setLoading(true);
+    try {
+      const response: any = await post('national/programmeSl/requestCarbonNeutralCertificate', {
+        companyId: data?.companyId,
+        programmeId: data?.programmeId,
+      });
+      if (response.status === 200 || response.status === 201) {
+        message.open({
+          type: 'success',
+          content: `${t('projectDetailsView:requestCarbonNeutralCertificateSuccess')}`,
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+
+        if (data) getCarbonNeutralCertificates(data.companyId);
+      }
+    } catch (err: any) {
+      console.log('Error in getting documents - ', err);
+      message.open({
+        type: 'error',
+        content: err.message,
+        duration: 4,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      // setLoading(false);
+      setSlcfActionModalVisible(false);
+    }
+  };
+
+  function hasNoPendingStatus(): boolean {
+    if (carbonNeutralCertificateData) {
+      return carbonNeutralCertificateData.every((item: any) => item.status !== 'Pending');
+    } else {
+      return false;
+    }
+  }
+
+  // const showSlcfActionModalOnClick = (info: PopupInfo) => {
+  //   setSlcfActionModalVisible(true);
+  //   setSlcfActionModalInfo(info);
+  // };
 
   const approveNotificationForm = async () => {
     try {
@@ -523,7 +593,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setSlcfActioModalVisible(false);
+      setSlcfActionModalVisible(false);
     }
   };
 
@@ -551,7 +621,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setSlcfActioModalVisible(false);
+      setSlcfActionModalVisible(false);
     }
   };
 
@@ -578,7 +648,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setSlcfActioModalVisible(false);
+      setSlcfActionModalVisible(false);
     }
   };
 
@@ -606,7 +676,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setSlcfActioModalVisible(false);
+      setSlcfActionModalVisible(false);
     }
   };
 
@@ -637,7 +707,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setSlcfActioModalVisible(false);
+      setSlcfActionModalVisible(false);
     }
   };
 
@@ -673,7 +743,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setSlcfActioModalVisible(false);
+      setSlcfActionModalVisible(false);
     }
   };
   const addElement = (e: any, time: number, hist: any) => {
@@ -1705,6 +1775,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
 
   useEffect(() => {
     if (data) {
+      getCarbonNeutralCertificates(data.companyId);
       getInvestmentHistory(data?.programmeId);
       getProgrammeHistory(data.programmeId);
       getDocuments(data?.programmeId);
@@ -1801,7 +1872,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   };
 
   const showModalOnAction = (info: PopupInfo) => {
-    setSlcfActioModalVisible(true);
+    setSlcfActionModalVisible(true);
     setPopupInfo(info);
   };
 
@@ -2087,6 +2158,34 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           </Button>
         );
       }
+    }
+
+    if (
+      hasNoPendingStatus() &&
+      data.projectProposalStage === ProjectProposalStage.AUTHORISED &&
+      userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+    ) {
+      actionBtns.push(
+        <Button
+          className="mg-left-1"
+          type="primary"
+          onClick={() => {
+            showModalOnAction({
+              actionBtnText: t('projectDetailsView:btnRequest'),
+              icon: <CheckCircleOutlined />,
+              title: t('projectDetailsView:requestCarbonNeutralCertificateTitle'),
+              okAction: () => {
+                console.log('Approved');
+                requestCarbonNeutralCertificate();
+              },
+              remarkRequired: false,
+              type: 'primary',
+            });
+          }}
+        >
+          {t('projectDetailsView:requestCarbonNeutralCert')}
+        </Button>
+      );
     }
   }
 
@@ -2641,7 +2740,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       {popupInfo && (
         <SlcfFormActionModel
           onCancel={() => {
-            setSlcfActioModalVisible(false);
+            setSlcfActionModalVisible(false);
           }}
           actionBtnText={popupInfo!.actionBtnText}
           onFinish={popupInfo!.okAction}
@@ -2651,7 +2750,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           title={popupInfo!.title}
           type={popupInfo!.type}
           remarkRequired={popupInfo!.remarkRequired}
-          translator={translator}
+          t={t}
         />
       )}
     </div>
