@@ -21,5 +21,7 @@
   "approve": "APPROVE",
   "reject": "REJECT",
   "upload": "Upload",
-  "invalidFileFormat": "Unsupported file format"
+  "invalidFileFormat": "Unsupported file format",
+  "estimatedNetGHGEmissionShouldHavePositive": "should have positive value",
+  "required": "Required!"
 }

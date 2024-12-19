@@ -23,7 +23,6 @@ export const SLCFMonitoringReportComponent = (props: any) => {
   const mode = state?.mode;
 
   const onVersionSelect = async (value: number) => {
-    console.log('selected value', value);
     setSelectedVersion(value);
   };
 

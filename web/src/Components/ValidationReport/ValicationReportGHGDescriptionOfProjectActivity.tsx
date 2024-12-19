@@ -441,7 +441,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                       },
                     ]}
                   >
-                    <InputNumber className="full-width-form-item" size="large" />
+                    <InputNumber className="full-width-form-item" size="large" disabled />
                   </Form.Item>
                   <Form.Item
                     className="full-width-form-item"
@@ -493,6 +493,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                   className="addMinusBtn"
                                   // block
                                   icon={<MinusOutlined />}
+                                  disabled
                                 >
                                   {/* Remove Entity */}
                                 </Button>
@@ -521,7 +522,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                     },
                                   ]}
                                 >
-                                  <Input size="large" />
+                                  <Input size="large" disabled />
                                 </Form.Item>
 
                                 <Form.Item
@@ -540,6 +541,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                     size="large"
                                     onChange={(value) => onProvinceSelect(value, name)}
                                     placeholder={t('validationReport:provincePlaceholder')}
+                                    disabled
                                   >
                                     {provinces.map((province: string, index: number) => (
                                       <Select.Option value={province}>{province}</Select.Option>
@@ -563,6 +565,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                     size="large"
                                     placeholder={t('validationReport:districtPlaceholder')}
                                     onSelect={(value) => onDistrictSelect(value, name)}
+                                    disabled
                                   >
                                     {districts[name]?.map((district: string, index: number) => (
                                       <Select.Option key={district}>{district}</Select.Option>
@@ -585,6 +588,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                     size="large"
                                     placeholder={t('validationReport:dsDivisionPlaceholder')}
                                     onSelect={(value) => onDivisionSelect(value, name)}
+                                    disabled
                                   >
                                     {dsDivisions[name]?.map((division: string) => (
                                       <Select.Option value={division}>{division}</Select.Option>
@@ -604,6 +608,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                   <Select
                                     size="large"
                                     placeholder={t('validationReport:cityPlaceholder')}
+                                    disabled
                                   >
                                     {cities[name]?.map((city: string) => (
                                       <Select.Option value={city}>{city}</Select.Option>
@@ -622,7 +627,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                     },
                                   ]}
                                 >
-                                  <Input size="large" />
+                                  <Input size="large" disabled />
                                 </Form.Item>
                               </Col>
 
@@ -636,7 +641,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                     formItemName={[name, 'geographicalLocationCoordinates']}
                                     listName="locationsOfProjectActivity"
                                     existingCordinate={getExistingCordinate(locationIndex)}
-                                    disabled={formMode === FormMode.VIEW}
+                                    disabled
                                     isShowCordinate
                                   />
                                 </Form.Item>
@@ -678,6 +683,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                       className="upload-doc"
                                       size="large"
                                       icon={<UploadOutlined />}
+                                      disabled
                                     >
                                       Upload
                                     </Button>
@@ -916,6 +922,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                             className="addMinusBtn"
                             // block
                             icon={<PlusOutlined />}
+                            disabled
                           >
                             {t('validationReport:addLocation')}
                           </Button>
