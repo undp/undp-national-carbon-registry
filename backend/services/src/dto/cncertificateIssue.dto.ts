@@ -19,6 +19,7 @@ export class CNCertificateIssueDto {
   @ApiProperty()
   scope: string;
 
+  // this field contains the remark in the reject scenario
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
@@ -41,10 +42,4 @@ export class CNCertificateIssueDto {
   @IsNumber()
   @ApiProperty()
   assessmentPeriodEnd: number;
-
-  @ValidateIf(c => c.remark)
-  @IsNotEmpty()
-  @IsString()
-  @ApiPropertyOptional()
-  remark: string;
 }
