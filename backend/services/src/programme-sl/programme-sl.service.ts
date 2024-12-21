@@ -160,6 +160,7 @@ export class ProgrammeSlService {
     programme.txTime = new Date().getTime();
     programme.createdTime = programme.txTime;
     programme.updatedTime = programme.txTime;
+    programme.proposalStageUpdatedTime = programme.txTime;
 
     const docUrls = [];
 
@@ -293,7 +294,7 @@ export class ProgrammeSlService {
     //send email to Project Participant
     await this.emailHelperService.sendEmailToProjectParticipant(
       EmailTemplates.PROGRAMME_SL_REJECTED,
-      {remark},
+      { remark },
       programmeId
     );
 
@@ -302,7 +303,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.INF_REJECTED;
       log.userId = user.id;
-      log.data = {remark}
+      log.data = { remark };
 
       await this.programmeAuditSlRepo.save(log);
     }
@@ -842,7 +843,7 @@ export class ProgrammeSlService {
     //sending email to SLCF Admins
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.PROJECT_PROPOSAL_REJECTED,
-      {remark},
+      { remark },
       programmeId
     );
 
@@ -851,7 +852,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.PROJECT_PROPOSAL_REJECTED;
       log.userId = user.id;
-      log.data = {remark}
+      log.data = { remark };
 
       await this.programmeAuditSlRepo.save(log);
     }
@@ -1203,7 +1204,7 @@ export class ProgrammeSlService {
     //sending email to SLCF Admins
     await this.emailHelperService.sendEmailToProjectParticipant(
       EmailTemplates.CMA_REJECTED,
-      {remark},
+      { remark },
       programmeId
     );
 
@@ -1212,7 +1213,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.CMA_REJECTED;
       log.userId = user.id;
-      log.data = {remark}
+      log.data = { remark };
 
       await this.programmeAuditSlRepo.save(log);
     }
@@ -1517,7 +1518,11 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, response);
   }
 
-  async rejectValidation(programmeId: string, remark: string, user: User): Promise<DataResponseDto> {
+  async rejectValidation(
+    programmeId: string,
+    remark: string,
+    user: User
+  ): Promise<DataResponseDto> {
     if (user.companyRole != CompanyRole.EXECUTIVE_COMMITTEE) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
@@ -1580,7 +1585,7 @@ export class ProgrammeSlService {
     //sending email to SLCF Admins
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.VALIDATION_REJECTED,
-      {remark},
+      { remark },
       programmeId
     );
 
@@ -1589,7 +1594,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.VALIDATION_REPORT_REJECTED;
       log.userId = user.id;
-      log.data = {remark}
+      log.data = { remark };
 
       await this.programmeAuditSlRepo.save(log);
     }
