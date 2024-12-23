@@ -165,6 +165,7 @@ export class ProgrammeSlService {
     programme.txTime = new Date().getTime();
     programme.createdTime = programme.txTime;
     programme.updatedTime = programme.txTime;
+    programme.proposalStageUpdatedTime = programme.txTime;
 
     const docUrls = [];
 

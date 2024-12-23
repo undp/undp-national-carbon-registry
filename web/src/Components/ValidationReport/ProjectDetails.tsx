@@ -89,10 +89,10 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                             },
                           ]}
                         >
-                          <Input size="large" />
+                          <Input size="large" disabled />
                         </Form.Item>
 
-                        <Form.Item
+                        {/* <Form.Item
                           label={t('validationReport:versionNo')}
                           name="versionNo"
                           rules={[
@@ -103,7 +103,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           ]}
                         >
                           <Input size="large" />
-                        </Form.Item>
+                        </Form.Item> */}
 
                         <Form.Item
                           label={t('validationReport:telephone')}
@@ -156,7 +156,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                             countryCallingCodeEditable={false}
                             onChange={(v) => {}}
                             countries={countries as Country[]}
-                            disabled={FormMode.VIEW === formMode}
+                            disabled
                           />
                         </Form.Item>
 
@@ -194,7 +194,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                             },
                           ]}
                         >
-                          <Input size="large" />
+                          <Input size="large" disabled />
                         </Form.Item>
                       </div>
                     </Col>
@@ -215,7 +215,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
                         />
                       </Form.Item>
-                      <Form.Item
+                      {/* <Form.Item
                         label={t('validationReport:versionDate')}
                         name="versionDate"
                         rules={[
@@ -229,7 +229,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           size="large"
                           disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
                         />
-                      </Form.Item>
+                      </Form.Item> */}
 
                       <Form.Item
                         label={t('validationReport:address')}
@@ -241,7 +241,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled />
                       </Form.Item>
 
                       <Form.Item
@@ -269,7 +269,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -320,7 +320,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
                     <Form.Item
                       label={t('validationReport:workCarryOutBy')}
@@ -332,7 +332,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         },
                       ]}
                     >
-                      <TextArea disabled={FormMode.VIEW === formMode} rows={3} size="large" />
+                      <TextArea disabled rows={3} size="large" />
                     </Form.Item>
                   </div>
                 </Col>
@@ -349,7 +349,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size={'large'} />
+                      <Input size={'large'} disabled />
                     </Form.Item>
                     <Form.Item
                       label={t('validationReport:workApprovedBy')}

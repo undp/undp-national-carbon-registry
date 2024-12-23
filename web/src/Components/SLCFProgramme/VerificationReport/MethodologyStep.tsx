@@ -151,7 +151,7 @@ export const MethodologyStep = (props: any) => {
                                   },
                                 ]}
                               >
-                                <Input size="large" />
+                                <Input size="large" disabled />
                               </Form.Item>
                             </div>
                           </Col>

@@ -8,6 +8,7 @@ import { Stat } from "../dto/stat.dto";
 import { AggregateAPIService } from "./aggregate.api.service";
 import { AggregateSlAPIService } from "./aggregate.sl.api.service";
 import { StatFilter } from "../dto/stat.filter";
+import { QueryDto } from "src/dto/query.dto";
 // import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 
 @ApiTags("Programme")
@@ -46,6 +47,34 @@ export class ProgrammeController {
       req.user?.companyRole,
       query.system
     );
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Stat, true, true))
+  @Post("totalSLProjects")
+  async totalProjects(@Request() req) {
+    return this.aggSlService.getTotalSLProjects(req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Stat, true, true))
+  @Post("totalIssuedCredits")
+  async totalIssuedCredits(@Request() req) {
+    return this.aggSlService.getTotalIssuedCredits(req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Stat, true, true))
+  @Post("totalRetiredCredits")
+  async totalRetiredCredits(@Request() req) {
+    return this.aggSlService.getTotalRetiredCredits(req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard)
+  @Post("queryProgrammesByStatus")
+  async queryProgrammesByStatus(@Body() query: QueryDto, @Request() req) {
+    return this.aggSlService.queryProgrammesByStatus(query, req.user);
   }
 
   @ApiBearerAuth()

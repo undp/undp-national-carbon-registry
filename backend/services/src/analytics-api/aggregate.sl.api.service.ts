@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -42,6 +42,7 @@ import { VerificationRequestEntity } from "../entities/verification.request.enti
 import { User } from "../entities/user.entity";
 import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
 import { SLDashboardProjectStage } from "../enum/slDashboardProjectStage.enum";
+import { DataResponseDto } from "src/dto/data.response.dto";
 
 @Injectable()
 export class AggregateSlAPIService {
@@ -1460,6 +1461,68 @@ export class AggregateSlAPIService {
       );
     }
     return new DataCountResponseDto(results);
+  }
+
+  async getTotalSLProjects(user: User) {
+    const query = this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("COUNT(*)", "count") // Select count
+      .addSelect("MAX(pr.createdTime)", "latestUpdatedTime"); // Select latest updated time
+
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      query.where("pr.companyId = :companyId", { companyId: user.companyId });
+    }
+    const result = await query.getRawOne();
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async getTotalIssuedCredits(user: User) {
+    const query = this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("COALESCE(CAST(SUM(pr.creditIssued) AS INTEGER),0)", "totalCreditIssued") // Select count
+      .addSelect("MAX(pr.issuedCreditUpdatedTime)", "latestUpdatedTime"); // Select latest updated time
+
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      query.andWhere("pr.companyId = :companyId", { companyId: user.companyId });
+    }
+    const result = await query.getRawOne();
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async getTotalRetiredCredits(user: User) {
+    const query = this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("COALESCE(CAST(SUM(pr.creditRetired) AS INTEGER),0)", "totalCreditRetired")
+      .addSelect("COALESCE(CAST(SUM(pr.creditTransferred) AS INTEGER),0)", "totalCreditTransferred")
+      .addSelect("MAX(pr.creditUpdatedTime)", "latestUpdatedTime");
+
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      query.andWhere("pr.companyId = :companyId", { companyId: user.companyId });
+    }
+    const result = await query.getRawOne();
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async queryProgrammesByStatus(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: "companyId",
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+    let resp = await this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("pr.projectProposalStage", "projectProposalStage")
+      .addSelect("COUNT(*)", "count")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("pr.projectProposalStage")
+      .getRawMany();
+
+    return new DataResponseDto(HttpStatus.OK, resp);
   }
 
   async getEmissions(stat, companyId, abilityCondition, lastTimeForWhere, statCache) {

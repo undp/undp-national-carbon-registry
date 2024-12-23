@@ -364,11 +364,51 @@ const StepperComponent = (props: any) => {
           });
         }
       } else {
+        const { data } = await post('national/programmeSl/getDocLastVersion', {
+          programmeId: programId,
+          docType: DocumentTypeEnum.CMA,
+        });
+
+        const { data: monitoringData } = await post(
+          'national/programmeSl/getVerificationDocLastVersion',
+          {
+            programmeId: programId,
+            docType: DocumentTypeEnum.MONITORING_REPORT,
+            verificationRequestId: verificationRequestId,
+          }
+        );
+
+        const cmaData = JSON.parse(data?.content);
+
+        projectDetailsForm.setFieldsValue({
+          projectTitle: cmaData?.projectDetails?.title,
+          client: cmaData?.projectDetails?.projectProponent,
+          address: cmaData?.projectDetails?.physicalAddress,
+          email: cmaData?.projectDetails?.email,
+          telephone: cmaData?.projectDetails?.telephone,
+          contactPerson: cmaData?.projectActivity?.projectProponent?.contactPerson,
+          estimatedScer: monitoringData?.content?.quantifications?.totalNetEmissionReductions,
+          workCarriedOutBy: 'Validation & Verification Division Sri Lanka Climate Fund (Pvt) Ltd',
+        });
+
+        introductionForm.setFieldsValue({
+          title: cmaData?.projectDetails?.title,
+          hostParty: 'Sri Lanka',
+          tiprojectParticipantstle: cmaData?.projectActivity?.projectProponent?.organizationName,
+          monitoringMethodology: monitoringData?.content?.projectActivity?.methodology,
+          creditionPeriodStart: moment(
+            monitoringData?.content?.projectActivity?.creditingPeriodFromDate
+          ),
+          creditionPeriodEnd: moment(
+            monitoringData?.content?.projectActivity?.creditingPeriodToDate
+          ),
+        });
+
         methodologyForm.setFieldsValue({
           verificationTeamList: [
             {
               name: '',
-              company: '',
+              company: 'Sri Lanka Climate Fund',
               function: [],
               taskPerformed: [],
             },
@@ -384,12 +424,15 @@ const StepperComponent = (props: any) => {
           ],
         });
         verificationFindingForm.setFieldsValue({
-          siteLocations: [
-            {
-              siteLocation: '',
-              commissioningDate: '',
-            },
-          ],
+          siteLocations: cmaData?.projectActivity.locationsOfProjectActivity.map(
+            (location: any) => {
+              console.log('location', location.locationOfProjectActivity);
+              return {
+                siteLocation: location?.locationOfProjectActivity,
+                commissioningDate: moment(location?.commissioningDate * 1000),
+              };
+            }
+          ),
           complianceList: [
             {
               dataParameter: '',

@@ -108,6 +108,9 @@ export class ProgrammeSl implements EntitySubject {
   @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true })
   creditChange: number;
 
+  @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true })
+  creditIssued?: number;
+
   @Column("real", { nullable: true })
   creditRetired: number;
 
@@ -157,6 +160,24 @@ export class ProgrammeSl implements EntitySubject {
 
   @Column({ type: "bigint" })
   updatedTime: number;
+
+  @Column({ type: "bigint", nullable: true })
+  creditUpdatedTime?: number;
+
+  @Column({ type: "bigint", nullable: true })
+  authorisedCreditUpdatedTime?: number;
+
+  @Column({ type: "bigint", nullable: true })
+  issuedCreditUpdatedTime?: number;
+
+  @Column({ type: "bigint", nullable: true })
+  transferredCreditUpdatedTime?: number;
+
+  @Column({ type: "bigint", nullable: true })
+  retiredCreditUpdatedTime?: number;
+
+  @Column({ type: "bigint", nullable: true })
+  proposalStageUpdatedTime?: number;
 
   // @BeforeInsert()
   // async createTime() {

@@ -259,7 +259,7 @@ export const ProjectActivityStep = (props: any) => {
                               },
                             ]}
                           >
-                            <Input size="large" />
+                            <Input size="large" disabled />
                           </Form.Item>
 
                           <Form.Item
@@ -274,7 +274,7 @@ export const ProjectActivityStep = (props: any) => {
                               },
                             ]}
                           >
-                            <Input size="large" />
+                            <Input size="large" disabled />
                           </Form.Item>
 
                           <Form.Item
@@ -311,61 +311,7 @@ export const ProjectActivityStep = (props: any) => {
                             ]}
                           >
                             <PhoneInput
-                              disabled={FormMode.VIEW === formMode}
-                              international
-                              value={formatPhoneNumberIntl(contactNoInput)}
-                              defaultCountry="LK"
-                              countryCallingCodeEditable={false}
-                              onChange={(v) => {}}
-                              countries={countries as Country[]}
-                            />
-                          </Form.Item>
-
-                          <Form.Item
-                            label={t('monitoringReport:fax')}
-                            name="pp_fax"
-                            rules={[
-                              {
-                                required: true,
-                                message: ``,
-                              },
-                              {
-                                validator: async (rule: any, value: any) => {
-                                  if (
-                                    String(value).trim() === '' ||
-                                    String(value).trim() === undefined ||
-                                    value === null ||
-                                    value === undefined
-                                  ) {
-                                    throw new Error(
-                                      `${t('monitoringReport:fax')} ${t('isRequired')}`
-                                    );
-                                  } else {
-                                    const phoneNo = formatPhoneNumber(String(value));
-                                    if (String(value).trim() !== '') {
-                                      if (
-                                        phoneNo === null ||
-                                        phoneNo === '' ||
-                                        phoneNo === undefined
-                                      ) {
-                                        throw new Error(
-                                          `${t('monitoringReport:fax')} ${t('isRequired')}`
-                                        );
-                                      } else {
-                                        if (!isPossiblePhoneNumber(String(value))) {
-                                          throw new Error(
-                                            `${t('monitoringReport:fax')} ${t('isInvalid')}`
-                                          );
-                                        }
-                                      }
-                                    }
-                                  }
-                                },
-                              },
-                            ]}
-                          >
-                            <PhoneInput
-                              disabled={FormMode.VIEW === formMode}
+                              disabled
                               international
                               value={formatPhoneNumberIntl(contactNoInput)}
                               defaultCountry="LK"
@@ -412,7 +358,7 @@ export const ProjectActivityStep = (props: any) => {
                             },
                           ]}
                         >
-                          <Input size="large" />
+                          <Input size="large" disabled />
                         </Form.Item>
 
                         <Form.Item
@@ -438,7 +384,7 @@ export const ProjectActivityStep = (props: any) => {
                             },
                           ]}
                         >
-                          <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
+                          <TextArea rows={4} disabled />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -466,6 +412,7 @@ export const ProjectActivityStep = (props: any) => {
                                         className="addMinusBtn"
                                         // block
                                         icon={<MinusOutlined />}
+                                        disabled
                                       >
                                         {/* Remove Entity */}
                                       </Button>
@@ -491,7 +438,7 @@ export const ProjectActivityStep = (props: any) => {
                                           },
                                         ]}
                                       >
-                                        <Input size="large" />
+                                        <Input size="large" disabled />
                                       </Form.Item>
 
                                       <Form.Item
@@ -506,7 +453,7 @@ export const ProjectActivityStep = (props: any) => {
                                           },
                                         ]}
                                       >
-                                        <Input size="large" />
+                                        <Input size="large" disabled />
                                       </Form.Item>
 
                                       <Form.Item
@@ -562,7 +509,7 @@ export const ProjectActivityStep = (props: any) => {
                                         ]}
                                       >
                                         <PhoneInput
-                                          disabled={FormMode.VIEW === formMode}
+                                          disabled
                                           international
                                           value={formatPhoneNumberIntl(contactNoInput)}
                                           defaultCountry="LK"
@@ -609,7 +556,7 @@ export const ProjectActivityStep = (props: any) => {
                                         },
                                       ]}
                                     >
-                                      <Input size="large" />
+                                      <Input size="large" disabled />
                                     </Form.Item>
 
                                     <Form.Item
@@ -639,65 +586,7 @@ export const ProjectActivityStep = (props: any) => {
                                         },
                                       ]}
                                     >
-                                      <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
-                                    </Form.Item>
-
-                                    <Form.Item
-                                      label={t('monitoringReport:fax')}
-                                      name={[name, 'fax']}
-                                      rules={[
-                                        {
-                                          required: true,
-                                          message: ``,
-                                        },
-                                        {
-                                          validator: async (rule: any, value: any) => {
-                                            if (
-                                              String(value).trim() === '' ||
-                                              String(value).trim() === undefined ||
-                                              value === null ||
-                                              value === undefined
-                                            ) {
-                                              throw new Error(
-                                                `${t('monitoringReport:fax')} ${t('isRequired')}`
-                                              );
-                                            } else {
-                                              const phoneNo = formatPhoneNumber(String(value));
-                                              if (String(value).trim() !== '') {
-                                                if (
-                                                  phoneNo === null ||
-                                                  phoneNo === '' ||
-                                                  phoneNo === undefined
-                                                ) {
-                                                  throw new Error(
-                                                    `${t('monitoringReport:fax')} ${t(
-                                                      'isRequired'
-                                                    )}`
-                                                  );
-                                                } else {
-                                                  if (!isPossiblePhoneNumber(String(value))) {
-                                                    throw new Error(
-                                                      `${t('monitoringReport:fax')} ${t(
-                                                        'isInvalid'
-                                                      )}`
-                                                    );
-                                                  }
-                                                }
-                                              }
-                                            }
-                                          },
-                                        },
-                                      ]}
-                                    >
-                                      <PhoneInput
-                                        disabled={FormMode.VIEW === formMode}
-                                        international
-                                        value={formatPhoneNumberIntl(contactNoInput)}
-                                        defaultCountry="LK"
-                                        countryCallingCodeEditable={false}
-                                        onChange={(v) => {}}
-                                        countries={countries as Country[]}
-                                      />
+                                      <TextArea rows={4} disabled />
                                     </Form.Item>
                                   </Col>
                                 </Row>
@@ -714,6 +603,7 @@ export const ProjectActivityStep = (props: any) => {
                                   className="addMinusBtn"
                                   // block
                                   icon={<PlusOutlined />}
+                                  disabled
                                 >
                                   {/* Add Entity */}
                                 </Button>
@@ -764,6 +654,7 @@ export const ProjectActivityStep = (props: any) => {
                                     disabledDate={(currentDate: any) =>
                                       currentDate < moment().startOf('day')
                                     }
+                                    disabled
                                   />
                                 </Form.Item>
                               </Col>
@@ -803,6 +694,7 @@ export const ProjectActivityStep = (props: any) => {
                                     disabledDate={(currentDate: any) =>
                                       currentDate < moment().startOf('day')
                                     }
+                                    disabled
                                   />
                                 </Form.Item>
                               </Col>
@@ -821,7 +713,7 @@ export const ProjectActivityStep = (props: any) => {
                                       },
                                     ]}
                                   >
-                                    <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
+                                    <TextArea rows={6} disabled />
                                   </Form.Item>
                                 </div>
                               </Col>
@@ -889,7 +781,7 @@ export const ProjectActivityStep = (props: any) => {
                                     },
                                   ]}
                                 >
-                                  <TextArea rows={3} disabled={FormMode.VIEW === formMode} />
+                                  <TextArea rows={3} disabled />
                                 </Form.Item>
                                 <h4 className="form-section-title">
                                   {`${t('monitoringReport:projectTrackAndCreditUseComment')}`}
@@ -935,6 +827,7 @@ export const ProjectActivityStep = (props: any) => {
                                   className="addMinusBtn"
                                   // block
                                   icon={<MinusOutlined />}
+                                  disabled
                                 >
                                   {/* Remove Entity */}
                                 </Button>
@@ -960,7 +853,7 @@ export const ProjectActivityStep = (props: any) => {
                                   },
                                 ]}
                               >
-                                <Input size="large" />
+                                <Input size="large" disabled />
                               </Form.Item>
 
                               <Form.Item
@@ -977,6 +870,7 @@ export const ProjectActivityStep = (props: any) => {
                                   size="large"
                                   onChange={(value) => onProvinceSelect(value, name)}
                                   placeholder={t('monitoringReport:provincePlaceholder')}
+                                  disabled
                                 >
                                   {provinces.map((province: string, index: number) => (
                                     <Select.Option value={province}>{province}</Select.Option>
@@ -998,6 +892,7 @@ export const ProjectActivityStep = (props: any) => {
                                   size="large"
                                   placeholder={t('monitoringReport:districtPlaceholder')}
                                   onSelect={(value) => onDistrictSelect(value, name)}
+                                  disabled
                                 >
                                   {districts[name]?.map((district: string, index: number) => (
                                     <Select.Option key={district}>{district}</Select.Option>
@@ -1020,6 +915,7 @@ export const ProjectActivityStep = (props: any) => {
                                   size="large"
                                   placeholder={t('monitoringReport:dsDivisionPlaceholder')}
                                   onSelect={(value) => onDivisionSelect(value, name)}
+                                  disabled
                                 >
                                   {dsDivisions[name]?.map((division: string) => (
                                     <Select.Option value={division}>{division}</Select.Option>
@@ -1039,6 +935,7 @@ export const ProjectActivityStep = (props: any) => {
                                 <Select
                                   size="large"
                                   placeholder={t('monitoringReport:cityPlaceholder')}
+                                  disabled
                                 >
                                   {cities[name]?.map((city: string) => (
                                     <Select.Option value={city}>{city}</Select.Option>
@@ -1057,7 +954,7 @@ export const ProjectActivityStep = (props: any) => {
                                   },
                                 ]}
                               >
-                                <Input size="large" />
+                                <Input size="large" disabled />
                               </Form.Item>
                             </Col>
 
@@ -1077,7 +974,7 @@ export const ProjectActivityStep = (props: any) => {
                                   formItemName={[name, 'location']}
                                   listName="projectActivityLocationsList"
                                   existingCordinate={getExistingCordinate(locationIndex)}
-                                  disabled={formMode === FormMode.VIEW}
+                                  disabled
                                 />
                               </Form.Item>
                             </Col>
@@ -1120,6 +1017,7 @@ export const ProjectActivityStep = (props: any) => {
                                     className="upload-doc"
                                     size="large"
                                     icon={<UploadOutlined />}
+                                    disabled
                                   >
                                     Upload
                                   </Button>
@@ -1158,6 +1056,7 @@ export const ProjectActivityStep = (props: any) => {
                                   disabledDate={(currentDate: any) =>
                                     currentDate < moment().startOf('day')
                                   }
+                                  disabled
                                 />
                               </Form.Item>
                             </Col>
@@ -1175,6 +1074,7 @@ export const ProjectActivityStep = (props: any) => {
                             className="addMinusBtn"
                             // block
                             icon={<PlusOutlined />}
+                            disabled
                           >
                             {/* Add Entity */}
                           </Button>

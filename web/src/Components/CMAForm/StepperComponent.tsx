@@ -105,7 +105,7 @@ const StepperComponent = (props: any) => {
   const getProgrammeDetailsById = async (programId: any) => {
     try {
       setLoading(true);
-      const { data } = await post('national/programmeSL/getProjectById', {
+      const { data } = await post('national/programmeSl/getProjectById', {
         programmeId: programId,
       });
 
@@ -117,7 +117,7 @@ const StepperComponent = (props: any) => {
         form1.setFieldsValue({
           title: data?.title,
           dateOfIssue: moment(),
-          preparedBy: user?.name,
+          preparedBy: data?.company?.name,
           physicalAddress: data?.company?.address,
           email: data?.company?.email,
           projectProponent: data?.company?.name,
@@ -133,6 +133,7 @@ const StepperComponent = (props: any) => {
           telephone: data?.company?.phoneNo,
           address: data?.company?.address,
           fax: data?.company?.faxNo,
+          contactPerson: data?.contactName,
         });
       }
 

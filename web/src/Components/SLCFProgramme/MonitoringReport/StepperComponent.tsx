@@ -36,9 +36,6 @@ const StepperComponent = (props: any) => {
   const [projectCategory, setProjectCategory] = useState<string>('');
   const { mode, docId } = navigationLocation.state || {};
   const t = translator.t;
-  const reportVersion = process.env.MONITORING_REPORT_VERSION
-    ? process.env.MONITORING_REPORT_VERSION
-    : 'Version 03';
   const [popupInfo, setPopupInfo] = useState<PopupInfo>();
   const [slcfActionModalVisible, setSlcfActioModalVisible] = useState<boolean>(false);
 
@@ -221,73 +218,68 @@ const StepperComponent = (props: any) => {
 
   const getLatestReports = async (programId: any) => {
     try {
-      const { data } = await post('national/programmeSl/getDocLastVersion', {
-        programmeId: programId,
-        docType: DocumentTypeEnum.CMA,
-      });
-
-      if (data && data?.content) {
-        const cmaData = JSON.parse(data?.content);
-
-        projectDetailsForm.setFieldsValue({
-          title: cmaData?.projectDetails?.title,
-          projectProponent: cmaData?.projectDetails?.projectProponent,
-          dateOfIssue: moment(cmaData?.projectDetails?.dateOfIssue),
-          version: reportVersion,
-          physicalAddress: cmaData?.projectDetails?.physicalAddress,
-          email: cmaData?.projectDetails?.email,
-          telephone: cmaData?.projectDetails?.telephone,
-          website: cmaData?.projectDetails?.website,
-          preparedBy: cmaData?.projectDetails?.preparedBy,
-        });
-
-        qualificationForm.setFieldsValue({
-          estimatedNetEmissionReductions:
-            cmaData?.quantifications?.estimatedNetEmissionReductions.map((emissionData: any) => {
-              return {
-                startDate: moment(emissionData.startDate * 1000),
-                endDate: moment(emissionData.endDate * 1000),
-                baselineEmissionReductions: emissionData.baselineEmissionReductions,
-                projectEmissionReductions: emissionData.projectEmissionReductions,
-                leakageEmissionReductions: emissionData.leakageEmissionReductions,
-                netEmissionReductions: emissionData.netEmissionReductions,
-              };
-            }),
-        });
-      }
-    } catch (error) {
-      console.log('error');
-    }
-
-    try {
       // if (docId === null) {
       if (mode === FormMode.CREATE) {
-        projectActivityForm.setFieldsValue({
-          projectProponentsList: [
-            {
-              organizationName: '',
-              email: '',
-              telephone: '',
-              address: '',
-              designation: '',
-              contactPerson: '',
-              roleInTheProject: '',
-              fax: '',
-            },
-          ],
-          projectActivityLocationsList: [
-            {
-              locationOfProjectActivity: '',
-              province: '',
-              district: '',
-              dsDivision: '',
-              city: '',
-              community: '',
-              optionalDocuments: [],
-              projectStartDate: '',
-            },
-          ],
+        const { data } = await post('national/programmeSl/getDocLastVersion', {
+          programmeId: programId,
+          docType: DocumentTypeEnum.CMA,
         });
+
+        if (data && data?.content) {
+          const cmaData = JSON.parse(data?.content);
+
+          projectDetailsForm.setFieldsValue({
+            title: cmaData?.projectDetails?.title,
+            projectProponent: cmaData?.projectDetails?.projectProponent,
+            dateOfIssue: moment(Date.now()),
+            physicalAddress: cmaData?.projectDetails?.physicalAddress,
+            email: cmaData?.projectDetails?.email,
+            telephone: cmaData?.projectDetails?.telephone,
+            website: cmaData?.projectDetails?.website,
+            preparedBy: cmaData?.projectDetails?.preparedBy,
+          });
+
+          projectActivityForm.setFieldsValue({
+            pp_organizationName: cmaData?.projectActivity?.projectProponent?.organizationName,
+            pp_contactPerson: cmaData?.projectActivity?.projectProponent?.contactPerson,
+            pp_telephone: cmaData?.projectActivity?.projectProponent?.telephone,
+            pp_email: cmaData?.projectActivity?.projectProponent?.email,
+            pp_address: cmaData?.projectActivity?.projectProponent?.address,
+            projectProponentsList: cmaData?.projectActivity.otherEntities.map((entity: any) => {
+              return {
+                ...entity,
+                organizationName: entity?.orgainzationName,
+              };
+            }),
+            creditingPeriodFromDate: moment(
+              cmaData?.projectActivity?.creditingPeriodStartDate * 1000
+            ),
+            creditingPeriodToDate: moment(cmaData?.projectActivity?.creditingPeriodEndDate * 1000),
+            creditingPeriodComment: cmaData?.projectActivity?.creditingPeriodDescription,
+            projectTrackAndCreditUse: cmaData?.projectActivity?.projectTrack,
+            projectActivityLocationsList: cmaData?.projectActivity?.locationsOfProjectActivity?.map(
+              (location: any) => {
+                return {
+                  ...location,
+                  optionalDocuments:
+                    location.additionalDocuments && location.additionalDocuments?.length > 0
+                      ? location.additionalDocuments?.map((document: string, index: number) => {
+                          return {
+                            uid: index,
+                            name: extractFilePropertiesFromLink(document).fileName,
+                            status: 'done',
+                            url: document,
+                          };
+                        })
+                      : [],
+                  location: location?.geographicalLocationCoordinates,
+                  projectStartDate: moment(location?.startDate * 1000),
+                };
+              }
+            ),
+          });
+        }
+
         qualificationForm.setFieldsValue({
           estimatedNetEmissionReductions: [
             {
@@ -320,7 +312,6 @@ const StepperComponent = (props: any) => {
               });
 
         if (mode === FormMode.VIEW) {
-          console.log('form data', data.status, selectedVersion);
           handleDocumentStatus(data.status);
         }
         if (data && data?.content) {
@@ -418,8 +409,7 @@ const StepperComponent = (props: any) => {
   }, [selectedVersion]);
 
   useEffect(() => {
-    // loadProjectDetails();
-    // loadCMAForm();
+    getLatestReports(id);
   }, []);
   const steps = [
     {
