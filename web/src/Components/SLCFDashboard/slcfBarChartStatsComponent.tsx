@@ -16,7 +16,7 @@ export interface BarChartStatsProps {
 export const SLCFBarChartsStatComponent: FC<BarChartStatsProps> = (props: BarChartStatsProps) => {
   const { id, title, options, series, lastUpdate, loading, toolTipText, Chart } = props;
   return (
-    <div className="stastics-and-pie-card height-bar-rem">
+    <div className="statistics-and-pie-card height-bar-rem">
       <div className="pie-charts-top">
         <div className="pie-charts-title">{title}</div>
         <div className="info-container">

@@ -100,7 +100,7 @@
     "tTVerificationsPendingGovernmentSLCF": "Verifications in pending state awaiting approval.",
     "tTTransfersPendingProgrammeDevSLCF": "Retirements in your organisation in pending state awaiting approval.",
     "tTTransfersPendingGovernmentSLCF": "Retirements in pending state awaiting approval.",
-    "programmesByStatusSLCF": "Projects by Status",
+    "programmesByStatusSLCF": "Projects by Status - Summery",
     "tTProgrammesProgrammeDevSLCF": "Number of projects created within the selected time period in your organisation along with their current status.",
     "tTProgrammesGovernmentSLCF": "Number of projects created within the selected time period along with their current status.",
     "creditsByStatusSLCF": "Credits by Status",

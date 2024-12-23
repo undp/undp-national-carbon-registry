@@ -11,9 +11,10 @@ import {
   Dropdown,
   Space,
   MenuProps,
+  Select,
 } from 'antd';
 import './dashboard.scss';
-import { VerifiedOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, VerifiedOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import {
   ClockHistory,
@@ -25,6 +26,7 @@ import {
   Gem,
   InfoCircle,
   FileEarmarkCheck,
+  CreditCard2Back,
 } from 'react-bootstrap-icons';
 import {
   ChartSeriesItem,
@@ -68,6 +70,7 @@ import {
 import { LegendItem } from '../LegendItem/legendItem';
 import { MapComponent } from '../Maps/mapComponent';
 import { StasticCard } from '../StatisticsCard/statisticsCard';
+import { SLStatisticsCard } from './SlStatisticsCard/slStatisticsCard';
 const { RangePicker } = DatePicker;
 
 export const SLCFDashboardComponent = (props: any) => {
@@ -1903,186 +1906,187 @@ ${total}
   };
 
   return (
-    <div className="dashboard-main-container">
-      {isMultipleDashboardsVisible && (
-        <div className="systemchange-container" style={{ marginLeft: `20px` }}>
-          <ButtonGroup>
-            <Link to="/dashboard">
-              <Button className="slcf-default">ARTICLE 6.4 PROJECTS</Button>
-            </Link>
-            <Button type="primary" className="slcf-primary">
-              SLCF PROJECTS
-            </Button>
-          </ButtonGroup>
+    <div className="slcf-dashboard-main-container">
+      <div className="dashboard-inner-container">
+        {isMultipleDashboardsVisible && (
+          <div className="systemchange-container" style={{ marginLeft: `20px` }}>
+            <ButtonGroup>
+              <Link to="/dashboard">
+                <Button className="slcf-default">ARTICLE 6.4 PROJECTS</Button>
+              </Link>
+              <Button type="primary" className="slcf-primary">
+                SLCF PROJECTS
+              </Button>
+            </ButtonGroup>
+          </div>
+        )}
+        <div className="statistics-cards-container" style={{ marginTop: `50px` }}>
+          <Row gutter={[40, 40]} className="statistics-card-row">
+            <Col xxl={8} xl={8} md={12} className="statistics-card-col">
+              <SLStatisticsCard
+                value={
+                  pendingProjectsWithoutTimeRange
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? pendingProjectsWithoutTimeRange
+                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  //   ? transferRequestReceived
+                  //   : programmesUnCertifed
+                }
+                title={
+                  'Total Projects'
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? 'programmesPending'
+                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  //   ? 'trasnferReqReceived'
+                  //   : 'programmesUnCertified'
+                }
+                updatedDate={
+                  moment(parseInt('1734671412000')).fromNow()
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? lastUpdateProgrammesStats
+                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  //   ? lastUpdatePendingTransferReceived
+                  //   : lastUpdateProgrammesCertifiable
+                }
+                icon={
+                  <AppstoreOutlined />
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
+                  //   <ClockHistory color="#16B1FF" size={80} />
+                  // ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
+                  //   <BoxArrowInRight color="#16B1FF" size={80} />
+                  // ) : (
+                  //   <ShieldX color="#16B1FF" size={80} />
+                  // )
+                }
+                loading={loadingWithoutTimeRange}
+                backgroundColorClass="background-purple"
+                tooltip={
+                  t(
+                    userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                      ? 'tTprogrammespendingProgrammeDevSLCF'
+                      : 'tTprogrammespendingGovermentSLCF'
+                  )
+                  //   t(userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //     ? 'tTprogrammespendingGoverment'
+                  //     : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  //     ? 'tTTransferReqRecProgrammeDev'
+                  //     : 'tTProgrammesUnCertiCertifier'
+                  // )
+                }
+                t={t}
+              />
+            </Col>
+            <Col xxl={8} xl={8} md={12} className="statistic-card-col">
+              <SLStatisticsCard
+                value={
+                  verificationRequestPending
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? transferRequestSent
+                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  //   ? transferRequestSent
+                  //   : programmesCertifed
+                }
+                title={
+                  'Total Credits'
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? 'trasnferReqInit'
+                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  //   ? 'trasnferReqInit'
+                  //   : 'programmesCertified'
+                }
+                updatedDate={
+                  moment(parseInt('1734671412000')).fromNow()
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? lastUpdatePendingTransferSent
+                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  //   ? lastUpdatePendingTransferSent
+                  //   : lastUpdateProgrammesCertified
+                }
+                icon={
+                  <CreditCard2Back />
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
+                  //   <BoxArrowRight color="#16B1FF" size={80} />
+                  // ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
+                  //   <BoxArrowRight color="#16B1FF" size={80} />
+                  // ) : (
+                  //   <ShieldCheck color="#16B1FF" size={80} />
+                  // )
+                }
+                loading={loadingWithoutTimeRange}
+                backgroundColorClass="background-blue"
+                tooltip={
+                  t(
+                    userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                      ? 'tTVerificationsPendingProgrammeDevSLCF'
+                      : 'tTVerificationsPendingGovernmentSLCF'
+                  )
+                  //   t(userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //     ? 'tTTransferReqSentGovernment'
+                  //     : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  //     ? 'tTTransferReqInitProgrammeDev'
+                  //     : 'tTProgrammesCertiCertifier'
+                  // )
+                }
+                t={t}
+              />
+            </Col>
+            <Col xxl={8} xl={8} md={12} className="statistic-card-col">
+              <SLStatisticsCard
+                value={
+                  transferRequestSent
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? transferRequestSent
+                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  //   ? transferRequestSent
+                  //   : programmesCertifed
+                }
+                title={
+                  'Total Retired Credits'
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? 'trasnferReqInit'
+                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  //   ? 'trasnferReqInit'
+                  //   : 'programmesCertified'
+                }
+                updatedDate={
+                  moment(parseInt('1734671412000')).fromNow()
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? lastUpdatePendingTransferSent
+                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  //   ? lastUpdatePendingTransferSent
+                  //   : lastUpdateProgrammesCertified
+                }
+                icon={
+                  <ClockHistory />
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
+                  //   <BoxArrowRight color="#16B1FF" size={80} />
+                  // ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
+                  //   <BoxArrowRight color="#16B1FF" size={80} />
+                  // ) : (
+                  //   <ShieldCheck color="#16B1FF" size={80} />
+                  // )
+                }
+                loading={loadingWithoutTimeRange}
+                backgroundColorClass="background-green"
+                tooltip={
+                  t(
+                    userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                      ? 'tTTransfersPendingProgrammeDevSLCF'
+                      : 'tTTransfersPendingGovernmentSLCF'
+                  )
+                  //   t(userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //     ? 'tTTransferReqSentGovernment'
+                  //     : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  //     ? 'tTTransferReqInitProgrammeDev'
+                  //     : 'tTProgrammesCertiCertifier'
+                  // )
+                }
+                t={t}
+              />
+            </Col>
+          </Row>
         </div>
-      )}
-      <div className="stastics-cards-container" style={{ marginTop: `50px` }}>
-        <Row gutter={[40, 40]} className="stastic-card-row">
-          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
-            <StasticCard
-              value={
-                pendingProjectsWithoutTimeRange
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //   ? pendingProjectsWithoutTimeRange
-                //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                //   ? transferRequestReceived
-                //   : programmesUnCertifed
-              }
-              title={
-                'programmesPending'
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //   ? 'programmesPending'
-                //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                //   ? 'trasnferReqReceived'
-                //   : 'programmesUnCertified'
-              }
-              updatedDate={
-                '0'
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //   ? lastUpdateProgrammesStats
-                //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                //   ? lastUpdatePendingTransferReceived
-                //   : lastUpdateProgrammesCertifiable
-              }
-              icon={
-                <ClockHistory color="#16B1FF" size={80} />
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
-                //   <ClockHistory color="#16B1FF" size={80} />
-                // ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
-                //   <BoxArrowInRight color="#16B1FF" size={80} />
-                // ) : (
-                //   <ShieldX color="#16B1FF" size={80} />
-                // )
-              }
-              loading={loadingWithoutTimeRange}
-              companyRole={userInfoState?.companyRole}
-              tooltip={
-                t(
-                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                    ? 'tTprogrammespendingProgrammeDevSLCF'
-                    : 'tTprogrammespendingGovermentSLCF'
-                )
-                //   t(userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //     ? 'tTprogrammespendingGoverment'
-                //     : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                //     ? 'tTTransferReqRecProgrammeDev'
-                //     : 'tTProgrammesUnCertiCertifier'
-                // )
-              }
-              t={t}
-            />
-          </Col>
-          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
-            <StasticCard
-              value={
-                verificationRequestPending
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //   ? transferRequestSent
-                //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                //   ? transferRequestSent
-                //   : programmesCertifed
-              }
-              title={
-                'verificationsPending'
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //   ? 'trasnferReqInit'
-                //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                //   ? 'trasnferReqInit'
-                //   : 'programmesCertified'
-              }
-              updatedDate={
-                '0'
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //   ? lastUpdatePendingTransferSent
-                //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                //   ? lastUpdatePendingTransferSent
-                //   : lastUpdateProgrammesCertified
-              }
-              icon={
-                <FileEarmarkCheck color="#16B1FF" size={80} />
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
-                //   <BoxArrowRight color="#16B1FF" size={80} />
-                // ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
-                //   <BoxArrowRight color="#16B1FF" size={80} />
-                // ) : (
-                //   <ShieldCheck color="#16B1FF" size={80} />
-                // )
-              }
-              loading={loadingWithoutTimeRange}
-              companyRole={userInfoState?.companyRole}
-              tooltip={
-                t(
-                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                    ? 'tTVerificationsPendingProgrammeDevSLCF'
-                    : 'tTVerificationsPendingGovernmentSLCF'
-                )
-                //   t(userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //     ? 'tTTransferReqSentGovernment'
-                //     : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                //     ? 'tTTransferReqInitProgrammeDev'
-                //     : 'tTProgrammesCertiCertifier'
-                // )
-              }
-              t={t}
-            />
-          </Col>
-          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
-            <StasticCard
-              value={
-                transferRequestSent
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //   ? transferRequestSent
-                //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                //   ? transferRequestSent
-                //   : programmesCertifed
-              }
-              title={
-                'trasnferReqInit'
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //   ? 'trasnferReqInit'
-                //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                //   ? 'trasnferReqInit'
-                //   : 'programmesCertified'
-              }
-              updatedDate={
-                '0'
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //   ? lastUpdatePendingTransferSent
-                //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                //   ? lastUpdatePendingTransferSent
-                //   : lastUpdateProgrammesCertified
-              }
-              icon={
-                <BoxArrowRight color="#16B1FF" size={80} />
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
-                //   <BoxArrowRight color="#16B1FF" size={80} />
-                // ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
-                //   <BoxArrowRight color="#16B1FF" size={80} />
-                // ) : (
-                //   <ShieldCheck color="#16B1FF" size={80} />
-                // )
-              }
-              loading={loadingWithoutTimeRange}
-              companyRole={userInfoState?.companyRole}
-              tooltip={
-                t(
-                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                    ? 'tTTransfersPendingProgrammeDevSLCF'
-                    : 'tTTransfersPendingGovernmentSLCF'
-                )
-                //   t(userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //     ? 'tTTransferReqSentGovernment'
-                //     : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                //     ? 'tTTransferReqInitProgrammeDev'
-                //     : 'tTProgrammesCertiCertifier'
-                // )
-              }
-              t={t}
-            />
-          </Col>
-        </Row>
-      </div>
-      {/* {(userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+        {/* {(userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
         userInfoState?.companyRole === CompanyRole.CERTIFIER ||
         userInfoState?.companyRole === CompanyRole.MINISTRY) &&
         fileList.length > 0 && (
@@ -2114,165 +2118,187 @@ ${total}
             )}
           </div>
         )} */}
-      <div className="filter-container">
-        <div className="date-filter">
-          <RangePicker
-            ranges={{
-              Today: [moment(), moment()],
-              'Last 7 days': [moment().subtract('6', 'days'), moment()],
-              'Last 14 days': [moment().subtract('13', 'days'), moment()],
-            }}
-            defaultValue={[moment().subtract('13', 'days'), moment()]}
-            showTime
-            allowClear={true}
-            format="DD:MM:YYYY"
-            onChange={onChangeRange}
-          />
+        <div className="filter-container">
+          <div className="date-filter">
+            <RangePicker
+              ranges={{
+                Today: [moment(), moment()],
+                'Last 7 days': [moment().subtract('6', 'days'), moment()],
+                'Last 14 days': [moment().subtract('13', 'days'), moment()],
+              }}
+              defaultValue={[moment().subtract('13', 'days'), moment()]}
+              showTime
+              allowClear={true}
+              format="DD:MM:YYYY"
+              onChange={onChangeRange}
+            />
+          </div>
+          <div className="category-filter">
+            <Select
+              style={{ width: 270 }}
+              placeholder="Product Category"
+              options={[{ value: 'lucy', label: 'Lucy' }]}
+            />
+          </div>
+          <div className="credit-type-filter">
+            <Select
+              style={{ width: 200 }}
+              placeholder="Credit Type"
+              options={[{ value: 'lucy', label: 'Lucy' }]}
+            />
+          </div>
         </div>
-        {/* <div className="radio-selection">
-          {userInfoState?.companyRole === CompanyRole.CERTIFIER && (
-            <Radio.Group value={categoryType} onChange={onChangeCategory}>
-              <Radio.Button className="overall" value="overall">
-                OVERALL
-              </Radio.Button>
-              <Radio.Button className="mine" value="mine">
-                MINE
-              </Radio.Button>
-            </Radio.Group>
-          )}
-        </div> */}
-      </div>
-      <div className="stastics-and-charts-container center">
-        <Row gutter={[40, 40]} className="stastic-card-row">
-          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
-            <ProgrammeRejectAndTransferComponent
-              totalPrgrammes={totalProjects}
-              pending={pendingProjects}
-              rejected={rejectedProjects}
-              authorized={authorisedProjects}
-              updatedDate={'0'}
-              // updatedDate={lastUpdateProgrammesStatsC}
-              loading={loading}
-              toolTipText={t(
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //   ? 'tTProgrammesGoverment'
-                //   :
-                userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTProgrammesProgrammeDevSLCF'
-                  : 'tTProgrammesGovernmentSLCF'
-              )}
-              t={t}
-            />
-          </Col>
-          <Col xxl={8} xl={8} md={12} className="stastic-card-col pie">
-            <SLCFPieChartsStatComponent
-              id="credits"
-              title={t('creditsByStatusSLCF')}
-              options={optionDonutPieA}
-              series={creditsPieSeries}
-              // lastUpdate={lastUpdateProgrammesCreditsStats}
-              lastUpdate={'0'}
-              loading={loading}
-              toolTipText={t(
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //   ? 'tTCreditsGovernment'
-                //   :
-                userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTCreditsProgrammeDevSLCF'
-                  : 'tTCreditsGovernmentSLCF'
-              )}
-              Chart={Chart}
-            />
-          </Col>
-          <Col xxl={8} xl={8} md={12} className="stastic-card-col">
-            <SLCFPieChartsStatComponent
-              id="auth-credits-by-type"
-              title={t('creditDevelopmentPurpose')}
-              options={optionDonutPieB}
-              series={authCreditsByTypePieSeries}
-              // lastUpdate={lastUpdateCertifiedCreditsStats}
-              lastUpdate={'0'}
-              loading={loading}
-              toolTipText={t(
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //   ? 'tTCertifiedCreditsGovernment'
-                //   :
-                userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTAuthCreditByTypeProgrammeDev'
-                  : 'tTAuthCreditByTypeGovernment'
-              )}
-              Chart={Chart}
-            />
-          </Col>
-        </Row>
-      </div>
-      <div className="stastics-and-charts-container center">
-        <Row gutter={[40, 40]} className="stastic-card-row">
-          <Col xxl={12} xl={12} md={12} className="stastic-card-col">
-            <SLCFBarChartsStatComponent
-              id="total-programmes"
-              title={t('totalProgrammesByDateSLCF')}
-              options={totalProgrammesOptions}
-              series={totalProgrammesSeries}
-              // lastUpdate={lastUpdateProgrammesStatsC}
-              lastUpdate={'0'}
-              loading={loadingCharts}
-              toolTipText={t(
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //   ? 'tTTotalProgrammesGovernment'
-                //   :
-                userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTTotalProgrammesProgrammeDevSLCF'
-                  : 'tTTotalProgrammesGovernmentSLCF'
-              )}
-              Chart={Chart}
-            />
-          </Col>
-          <Col xxl={12} xl={12} md={12} className="stastic-card-col">
-            <SLCFBarChartsStatComponent
-              id="total-programmes-sector"
-              title={t('totalProgrammesSectorSLCF')}
-              options={totalProgrammesOptionsSub}
-              series={totalProgrammesSectorSeries}
-              // lastUpdate={lastUpdateProgrammesSectorStatsC}
-              lastUpdate={'0'}
-              loading={loadingCharts}
-              toolTipText={t(
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //   ? 'tTTotalProgrammesSectorGovernment'
-                //   :
-                userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTTotalProgrammesSecProgrammeDevSLCF'
-                  : 'tTTotalProgrammesSectorGovernmentSLCF'
-              )}
-              Chart={Chart}
-            />
-          </Col>
-        </Row>
-      </div>
-      <div className="stastics-and-charts-container center">
-        <Row gutter={[40, 40]} className="stastic-card-row">
-          <Col xxl={12} xl={12} md={12} className="stastic-card-col">
-            <SLCFBarChartsStatComponent
-              id="total-credits"
-              title={t('totalCreditsByDateSLCF')}
-              options={totalCreditsOptions}
-              series={totalCreditsSeries}
-              // lastUpdate={lastUpdateTotalCredits}
-              lastUpdate={'0'}
-              loading={loadingCharts}
-              toolTipText={t(
-                // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                //   ? 'tTTotalCreditsGovernment'
-                //   :
-                userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTTotalCreditsProgrammeDevSLCF'
-                  : 'tTTotalCreditsGovernmentSLCF'
-              )}
-              Chart={Chart}
-            />
-          </Col>
-          {/* <Col xxl={12} xl={12} md={12} className="stastic-card-col">
+        <div className="statistics-and-charts-container center">
+          <Row gutter={[40, 40]} className="statistic-card-row">
+            <Col xxl={8} xl={8} md={12} className="statistic-card-col">
+              <ProgrammeRejectAndTransferComponent
+                totalProgrammes={totalProjects}
+                pending={pendingProjects}
+                rejected={rejectedProjects}
+                authorized={authorisedProjects}
+                updatedDate={'0'}
+                // updatedDate={lastUpdateProgrammesStatsC}
+                loading={loading}
+                toolTipText={t(
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? 'tTProgrammesGoverment'
+                  //   :
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTProgrammesProgrammeDevSLCF'
+                    : 'tTProgrammesGovernmentSLCF'
+                )}
+                t={t}
+              />
+            </Col>
+            {/* <Col xxl={8} xl={8} md={12} className="statistic-card-col pie">
+              <SLCFPieChartsStatComponent
+                id="credits"
+                title={t('creditsByStatusSLCF')}
+                options={optionDonutPieA}
+                series={creditsPieSeries}
+                // lastUpdate={lastUpdateProgrammesCreditsStats}
+                lastUpdate={'0'}
+                loading={loading}
+                toolTipText={t(
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? 'tTCreditsGovernment'
+                  //   :
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTCreditsProgrammeDevSLCF'
+                    : 'tTCreditsGovernmentSLCF'
+                )}
+                Chart={Chart}
+              />
+            </Col>
+            <Col xxl={8} xl={8} md={12} className="statistic-card-col">
+              <SLCFPieChartsStatComponent
+                id="auth-credits-by-type"
+                title={t('creditDevelopmentPurpose')}
+                options={optionDonutPieB}
+                series={authCreditsByTypePieSeries}
+                // lastUpdate={lastUpdateCertifiedCreditsStats}
+                lastUpdate={'0'}
+                loading={loading}
+                toolTipText={t(
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? 'tTCertifiedCreditsGovernment'
+                  //   :
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTAuthCreditByTypeProgrammeDev'
+                    : 'tTAuthCreditByTypeGovernment'
+                )}
+                Chart={Chart}
+              />
+            </Col> */}
+            <Col xxl={16} xl={16} md={12} className="statistic-card-col">
+              <SLCFBarChartsStatComponent
+                id="total-programmes"
+                title={t('totalProgrammesByDateSLCF')}
+                options={totalProgrammesOptions}
+                series={totalProgrammesSeries}
+                // lastUpdate={lastUpdateProgrammesStatsC}
+                lastUpdate={'0'}
+                loading={loadingCharts}
+                toolTipText={t(
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? 'tTTotalProgrammesGovernment'
+                  //   :
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTTotalProgrammesProgrammeDevSLCF'
+                    : 'tTTotalProgrammesGovernmentSLCF'
+                )}
+                Chart={Chart}
+              />
+            </Col>
+          </Row>
+        </div>
+        <div className="statistics-and-charts-container center">
+          <Row gutter={[40, 40]} className="statistic-card-row">
+            <Col xxl={12} xl={12} md={12} className="statistic-card-col">
+              <SLCFBarChartsStatComponent
+                id="total-programmes"
+                title={t('totalProgrammesByDateSLCF')}
+                options={totalProgrammesOptions}
+                series={totalProgrammesSeries}
+                // lastUpdate={lastUpdateProgrammesStatsC}
+                lastUpdate={'0'}
+                loading={loadingCharts}
+                toolTipText={t(
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? 'tTTotalProgrammesGovernment'
+                  //   :
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTTotalProgrammesProgrammeDevSLCF'
+                    : 'tTTotalProgrammesGovernmentSLCF'
+                )}
+                Chart={Chart}
+              />
+            </Col>
+            <Col xxl={12} xl={12} md={12} className="statistic-card-col">
+              <SLCFBarChartsStatComponent
+                id="total-programmes-sector"
+                title={t('totalProgrammesSectorSLCF')}
+                options={totalProgrammesOptionsSub}
+                series={totalProgrammesSectorSeries}
+                // lastUpdate={lastUpdateProgrammesSectorStatsC}
+                lastUpdate={'0'}
+                loading={loadingCharts}
+                toolTipText={t(
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? 'tTTotalProgrammesSectorGovernment'
+                  //   :
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTTotalProgrammesSecProgrammeDevSLCF'
+                    : 'tTTotalProgrammesSectorGovernmentSLCF'
+                )}
+                Chart={Chart}
+              />
+            </Col>
+          </Row>
+        </div>
+        <div className="statistics-and-charts-container center">
+          <Row gutter={[40, 40]} className="statistic-card-row">
+            <Col xxl={12} xl={12} md={12} className="statistic-card-col">
+              <SLCFBarChartsStatComponent
+                id="total-credits"
+                title={t('totalCreditsByDateSLCF')}
+                options={totalCreditsOptions}
+                series={totalCreditsSeries}
+                // lastUpdate={lastUpdateTotalCredits}
+                lastUpdate={'0'}
+                loading={loadingCharts}
+                toolTipText={t(
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? 'tTTotalCreditsGovernment'
+                  //   :
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTTotalCreditsProgrammeDevSLCF'
+                    : 'tTTotalCreditsGovernmentSLCF'
+                )}
+                Chart={Chart}
+              />
+            </Col>
+            {/* <Col xxl={12} xl={12} md={12} className="statistic-card-col">
             <SLCFBarChartsStatComponent
               id="total-credits-certified"
               title={t('totalCreditsCertified')}
@@ -2292,56 +2318,56 @@ ${total}
               Chart={Chart}
             />
           </Col> */}
-          {mapType !== MapTypes.None ? (
-            <Col xxl={12} xl={12} md={12} className="stastic-card-col">
-              <div className="stastics-and-pie-card height-map-rem">
-                <div className="pie-charts-top">
-                  <div className="pie-charts-title">{t('programmeLocationsSLCF')}</div>
-                  <div className="info-container">
+            {mapType !== MapTypes.None ? (
+              <Col xxl={12} xl={12} md={12} className="statistic-card-col">
+                <div className="statistics-and-pie-card height-map-rem">
+                  <div className="pie-charts-top">
+                    <div className="pie-charts-title">{t('programmeLocationsSLCF')}</div>
                     <div className="info-container">
-                      <Tooltip
-                        arrowPointAtCenter
-                        placement="bottomRight"
-                        trigger="hover"
-                        title={t(
-                          // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                          //   ? 'tTProgrammeLocationsGovernment'
-                          //   :
-                          userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                            ? 'tTProgrammeLocationsProgrammeDevSLCF'
-                            : 'tTProgrammeLocationsGovernmentSLCF'
-                        )}
-                      >
-                        <InfoCircle color="#000000" size={17} />
-                      </Tooltip>
+                      <div className="info-container">
+                        <Tooltip
+                          arrowPointAtCenter
+                          placement="bottomRight"
+                          trigger="hover"
+                          title={t(
+                            // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                            //   ? 'tTProgrammeLocationsGovernment'
+                            //   :
+                            userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                              ? 'tTProgrammeLocationsProgrammeDevSLCF'
+                              : 'tTProgrammeLocationsGovernmentSLCF'
+                          )}
+                        >
+                          <InfoCircle color="#000000" size={17} />
+                        </Tooltip>
+                      </div>
                     </div>
                   </div>
-                </div>
-                {loadingCharts ? (
-                  <div className="margin-top-2">
-                    <Skeleton active />
-                    <Skeleton active />
-                  </div>
-                ) : (
-                  <>
-                    <div className="map-content">
-                      <MapComponent
-                        mapType={mapType}
-                        center={programmeLocationsMapCenter}
-                        zoom={6}
-                        mapSource={programmeLocationsMapSource}
-                        layer={programmeLocationsMapLayer}
-                        height={340}
-                        style="mapbox://styles/mapbox/light-v11"
-                        onRender={programmeLocationsMapOnRender}
-                        accessToken={accessToken}
-                      ></MapComponent>
+                  {loadingCharts ? (
+                    <div className="margin-top-2">
+                      <Skeleton active />
+                      <Skeleton active />
                     </div>
-                    <div className="stage-legends">
-                      <LegendItem text="Authorised" color="#6ACDFF" />
-                      <LegendItem text="Pending" color="#CDCDCD" />
-                      <LegendItem text="Rejected" color="#FF8183" />
-                      {/* {!(
+                  ) : (
+                    <>
+                      <div className="map-content">
+                        <MapComponent
+                          mapType={mapType}
+                          center={programmeLocationsMapCenter}
+                          zoom={6}
+                          mapSource={programmeLocationsMapSource}
+                          layer={programmeLocationsMapLayer}
+                          height={340}
+                          style="mapbox://styles/mapbox/light-v11"
+                          onRender={programmeLocationsMapOnRender}
+                          accessToken={accessToken}
+                        ></MapComponent>
+                      </div>
+                      <div className="stage-legends">
+                        <LegendItem text="Authorised" color="#6ACDFF" />
+                        <LegendItem text="Pending" color="#CDCDCD" />
+                        <LegendItem text="Rejected" color="#FF8183" />
+                        {/* {!(
                         userInfoState?.companyRole === CompanyRole.CERTIFIER &&
                         categoryType === 'mine'
                       ) && (
@@ -2352,26 +2378,26 @@ ${total}
                           <LegendItem text="Approved" color="#B7A4FE" />
                         </>
                       )} */}
-                    </div>
-                    <div className="updated-on margin-top-1">
-                      <div className="updated-moment-container">
-                        {lastUpdateProgrammesStatsC !== '0' && lastUpdateProgrammesStatsC}
                       </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </Col>
-          ) : (
-            ''
-          )}
-        </Row>
-      </div>
-      {/* {mapType !== MapTypes.None ? (
+                      <div className="updated-on margin-top-1">
+                        <div className="updated-moment-container">
+                          {lastUpdateProgrammesStatsC !== '0' && lastUpdateProgrammesStatsC}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </Col>
+            ) : (
+              ''
+            )}
+          </Row>
+        </div>
+        {/* {mapType !== MapTypes.None ? (
         <div className="stastics-and-charts-container center">
-          <Row gutter={[40, 40]} className="stastic-card-row">
-            <Col xxl={12} xl={12} md={12} className="stastic-card-col">
-              <div className="stastics-and-pie-card height-map-rem">
+          <Row gutter={[40, 40]} className="statistic-card-row">
+            <Col xxl={12} xl={12} md={12} className="statistic-card-col">
+              <div className="statistics-and-pie-card height-map-rem">
                 <div className="pie-charts-top">
                   <div className="pie-charts-title">{t('programmeLocationsSLCF')}</div>
                   <div className="info-container">
@@ -2439,8 +2465,8 @@ ${total}
                 )}
               </div>
             </Col>
-           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
-              <div className="stastics-and-pie-card height-map-rem">
+           <Col xxl={12} xl={12} md={12} className="statistic-card-col">
+              <div className="statistics-and-pie-card height-map-rem">
                 <div className="pie-charts-top">
                   <div className="pie-charts-title">{t('trasnferLocations')}</div>
                   <div className="info-container">
@@ -2498,6 +2524,7 @@ ${total}
       ) : (
         ''
       )} */}
+      </div>
     </div>
   );
 };

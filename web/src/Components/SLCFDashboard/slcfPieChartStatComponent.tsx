@@ -17,7 +17,7 @@ export interface PieChartStatsProps {
 export const SLCFPieChartsStatComponent: FC<PieChartStatsProps> = (props: PieChartStatsProps) => {
   const { id, title, options, series, lastUpdate, loading, toolTipText, Chart } = props;
   return (
-    <div className="stastics-and-pie-card height-pie-rem">
+    <div className="statistics-and-pie-card height-pie-rem">
       {loading ? (
         <div className="margin-top-2">
           <Skeleton active />
