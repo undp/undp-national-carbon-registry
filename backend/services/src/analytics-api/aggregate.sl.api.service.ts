@@ -1518,11 +1518,61 @@ export class AggregateSlAPIService {
       .createQueryBuilder("pr")
       .select("pr.projectProposalStage", "projectProposalStage")
       .addSelect("COUNT(*)", "count")
+      .addSelect("MAX(pr.proposalStageUpdatedTime)", "latestProposalStageUpdatedTime")
       .where(this.helperService.generateWhereSQL(query, null))
       .groupBy("pr.projectProposalStage")
       .getRawMany();
 
-    return new DataResponseDto(HttpStatus.OK, resp);
+    let latestUpdatedTime = 0;
+    resp.forEach((row) => {
+      let latestProposalStageUpdatedTime = parseInt(row.latestProposalStageUpdatedTime);
+      if (latestProposalStageUpdatedTime > latestUpdatedTime) {
+        latestUpdatedTime = latestProposalStageUpdatedTime;
+      }
+    });
+
+    let result = {};
+
+    result["proposalStageData"] = resp;
+
+    result["latestUpdatedTime"] = latestUpdatedTime;
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async queryProgrammesByCategory(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: "companyId",
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+    let resp = await this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("pr.projectCategory", "projectCategory")
+      .addSelect("COUNT(*)", "count")
+      .addSelect("MAX(pr.createdTime)", "latestCreatedTime")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("pr.projectCategory")
+      .getRawMany();
+
+    let latestUpdatedTime = 0;
+    resp.forEach((row) => {
+      let latestCreatedTime = parseInt(row.latestCreatedTime);
+      if (latestCreatedTime > latestUpdatedTime) {
+        latestUpdatedTime = latestCreatedTime;
+      }
+    });
+
+    let result = {};
+
+    result["projectCategoryData"] = resp;
+
+    result["latestUpdatedTime"] = latestUpdatedTime;
+
+    return new DataResponseDto(HttpStatus.OK, result);
   }
 
   async getEmissions(stat, companyId, abilityCondition, lastTimeForWhere, statCache) {
