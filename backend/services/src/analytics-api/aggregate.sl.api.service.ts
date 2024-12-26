@@ -1518,11 +1518,26 @@ export class AggregateSlAPIService {
       .createQueryBuilder("pr")
       .select("pr.projectProposalStage", "projectProposalStage")
       .addSelect("COUNT(*)", "count")
+      .addSelect("MAX(pr.proposalStageUpdatedTime)", "latestProposalStageUpdatedTime")
       .where(this.helperService.generateWhereSQL(query, null))
       .groupBy("pr.projectProposalStage")
       .getRawMany();
 
-    return new DataResponseDto(HttpStatus.OK, resp);
+    let latestUpdatedTime = 0;
+    resp.forEach((row) => {
+      let latestProposalStageUpdatedTime = parseInt(row.latestProposalStageUpdatedTime);
+      if (latestProposalStageUpdatedTime > latestUpdatedTime) {
+        latestUpdatedTime = latestProposalStageUpdatedTime;
+      }
+    });
+
+    let result = {};
+
+    result["proposalStageData"] = resp;
+
+    result["latestUpdatedTime"] = latestUpdatedTime;
+
+    return new DataResponseDto(HttpStatus.OK, result);
   }
 
   async getEmissions(stat, companyId, abilityCondition, lastTimeForWhere, statCache) {
