@@ -78,6 +78,13 @@ export class ProgrammeController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard)
+  @Post("queryProgrammesByCategory")
+  async queryProgrammesByCategory(@Body() query: QueryDto, @Request() req) {
+    return this.aggSlService.queryProgrammesByCategory(query, req.user);
+  }
+
+  @ApiBearerAuth()
   // @UseGuards(JwtAuthGuard)
   @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Stat, true, true))
   @Get("verifications")

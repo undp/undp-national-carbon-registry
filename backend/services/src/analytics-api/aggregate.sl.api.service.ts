@@ -1540,6 +1540,41 @@ export class AggregateSlAPIService {
     return new DataResponseDto(HttpStatus.OK, result);
   }
 
+  async queryProgrammesByCategory(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: "companyId",
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+    let resp = await this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("pr.projectCategory", "projectCategory")
+      .addSelect("COUNT(*)", "count")
+      .addSelect("MAX(pr.createdTime)", "latestCreatedTime")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("pr.projectCategory")
+      .getRawMany();
+
+    let latestUpdatedTime = 0;
+    resp.forEach((row) => {
+      let latestCreatedTime = parseInt(row.latestCreatedTime);
+      if (latestCreatedTime > latestUpdatedTime) {
+        latestUpdatedTime = latestCreatedTime;
+      }
+    });
+
+    let result = {};
+
+    result["projectCategoryData"] = resp;
+
+    result["latestUpdatedTime"] = latestUpdatedTime;
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
   async getEmissions(stat, companyId, abilityCondition, lastTimeForWhere, statCache) {
     console.log("get Emissions", stat, companyId);
     if ([StatType.MY_TOTAL_EMISSIONS].includes(stat.type)) {
