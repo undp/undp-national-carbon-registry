@@ -1,4 +1,4 @@
-@import "../../Styles/variables.scss";
+@import '../../Styles/variables.scss';
 
 .mapboxgl-popup-content {
   background-color: $white !important;
@@ -12,7 +12,7 @@
 .mapboxgl-popup-close-button,
 .mapboxgl-popup-close-button:hover {
   display: none;
-  // z-index: -1 !important; 
+  // z-index: -1 !important;
 }
 
 .total-container {
@@ -20,21 +20,17 @@
   flex-direction: column;
   border: 1px solid gray;
 }
-.annual-report{
-  display:flex;
-  margin-top:30px;
-  margin-left:22px;
+.annual-report {
+  display: flex;
+  margin-top: 30px;
+  margin-left: 22px;
 }
-.ant-btn.annual-report-downloadbutton{
-
-  border-radius:0px 5px 5px 0px !important;
-
+.ant-btn.annual-report-downloadbutton {
+  border-radius: 0px 5px 5px 0px !important;
 }
-.ant-btn.annual-report-dropdownbutton{
-
-  margin-left:20px; 
-  border-radius:5px 0px 0px 0px !important;
-
+.ant-btn.annual-report-dropdownbutton {
+  margin-left: 20px;
+  border-radius: 5px 0px 0px 0px !important;
 }
 .margin-top-6 {
   margin-top: 7.5rem;
@@ -61,7 +57,7 @@
 }
 
 .cards-title {
-  font-family: "Inter";
+  font-family: 'Inter';
   align-items: flex-start;
   justify-content: flex-start;
   font-style: normal;
@@ -89,7 +85,7 @@
     flex-direction: row;
     width: 100%;
     padding: 0 15px 0 15px;
-    font-family: "Inter-Regular";
+    font-family: 'Inter-Regular';
     font-size: 1.4rem;
     font-weight: 600;
   }
@@ -175,7 +171,7 @@
   }
 
   .height-pie-rem {
-    height: 26.2rem;
+    height: 31rem;
 
     .apexcharts-legend {
       display: flex;
@@ -191,12 +187,128 @@
   }
 
   .height-bar-rem {
-    height: 29rem;
+    height: 31rem;
+  }
+
+  .project-details-bar-chart {
+    ul {
+      padding-left: 20px;
+      list-style-type: none;
+    }
+    .list-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: rgba(140, 140, 140, 1);
+      margin-bottom: 10px;
+    }
+    .list-item {
+      list-style-type: none;
+      font-size: 0.75rem;
+      font-weight: 400;
+    }
+    // .details-bar-chart-pending-list li::marker {
+    //   color: rgba(72, 150, 254, 1); /* Change the marker color */
+    //   font-size: 45px; /* Change the marker size */
+    // }
+    .details-bar-chart-pending-list {
+      margin-top: 10px;
+      line-height: 23px;
+    }
+    .details-bar-chart-rejected-list,
+    .details-bar-chart-authorised-list {
+      margin-top: 25px;
+      line-height: 23px;
+    }
+
+    .details-bar-chart-pending-list .list-title::before {
+      content: '•';
+      position: absolute;
+      color: rgba(72, 150, 254, 1);
+      font-size: 40px;
+      line-height: 1;
+      margin-left: -22px;
+      margin-top: -13px;
+    }
+    .pie-charts-section {
+      display: flex;
+      align-items: start !important;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .details-bar-chart-rejected-list .list-title::before {
+      content: '•';
+      position: absolute;
+      color: rgba(255, 99, 97, 1);
+      font-size: 40px;
+      line-height: 1;
+      margin-left: -22px;
+      margin-top: -13px;
+    }
+
+    .details-bar-chart-authorised-list .list-title::before {
+      content: '•';
+      position: absolute;
+      color: rgba(22, 200, 199, 1);
+      font-size: 40px;
+      line-height: 1;
+      margin-left: -22px;
+      margin-top: -13px;
+    }
+    // .pie-charts-top {
+    //   display: flex;
+    //   flex-direction: row;
+    //   justify-content: flex-start !important;
+    //   padding: 0 1rem 0 1rem;
+    // }
+    // .info-container {
+    //   padding-left: 20px;
+    // }
   }
 
   .height-map-rem {
     // height: 510px;
     height: 464px;
+  }
+
+  .credits-by-status-container {
+    padding: 0 20px;
+
+    
+
+    .credits-by-status-row {
+      border: 1px solid #d8d8d8;
+      border-radius: 8px;
+      padding: 30px 11px;
+      width: 100%;
+
+      .credits-by-status-top {
+        display: flex;
+        padding: 0 26px 15px;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: rgba(58, 53, 65, 0.8);
+      }
+
+      .info-container {
+        margin-left: 10px;
+      }
+
+      .statistic-card-row {
+        padding-left: 24px;
+        // padding-right: 24px;
+      }
+    }
+
+    
+
+    
+  }
+
+  .credits-by-date-chart-col, .retirements-by-date-chart-col {
+    rect {
+      stroke: none !important;
+    }
   }
 
   .statistics-and-charts-container {
@@ -208,6 +320,8 @@
 
     .statistic-card-row {
       width: 100%;
+      padding-left: 10px;
+      padding-right: 10px;
       .statistic-card-col {
         .statistics-and-pie-card {
           display: flex;
@@ -232,7 +346,7 @@
             padding: 1rem 1rem 0 1rem;
 
             .title {
-              font-family: "Inter";
+              font-family: 'Inter';
               font-style: normal;
               font-weight: 600;
               width: 90%;
@@ -267,7 +381,7 @@
               padding: 0 1rem 0 0.8rem;
 
               .detail {
-                font-family: "Inter";
+                font-family: 'Inter';
                 font-style: normal;
                 font-weight: 400;
                 font-size: 0.875rem;
@@ -278,7 +392,7 @@
               }
 
               .value {
-                font-family: "Inter";
+                font-family: 'Inter';
                 font-style: normal;
                 font-weight: 600;
                 font-size: 2rem;
@@ -365,7 +479,7 @@
                   justify-content: space-between;
 
                   .label {
-                    font-family: "Inter";
+                    font-family: 'Inter';
                     font-style: normal;
                     font-weight: 400;
                     font-size: 0.875rem;
@@ -373,7 +487,7 @@
                   }
 
                   .value {
-                    font-family: "Inter";
+                    font-family: 'Inter';
                     font-style: normal;
                     font-weight: 400;
                     height: 30px;
@@ -398,7 +512,7 @@
             display: flex;
             flex-direction: row;
             align-items: flex-end;
-            justify-content: flex-start;
+            justify-content: flex-end;
             padding: 0 1rem 0 0.8rem;
             height: 50px;
 
@@ -416,12 +530,12 @@
           .pie-charts-top {
             display: flex;
             flex-direction: row;
-            justify-content: space-between;
+            // justify-content: space-between;
             padding: 0 1rem 0 1rem;
             .pie-charts-title {
               display: flex;
               flex-direction: row;
-              font-family: "Inter";
+              font-family: 'Inter';
               align-items: flex-start;
               justify-content: flex-start;
               font-style: normal;
@@ -434,7 +548,7 @@
               .unit {
                 display: flex;
                 margin: 0 0 0 0.5rem;
-                font-family: "Inter";
+                font-family: 'Inter';
                 font-size: 1.15rem;
                 font-weight: 500;
                 color: rgba(58, 53, 65, 0.5);
@@ -445,6 +559,7 @@
               display: flex;
               flex-direction: row;
               align-items: center;
+              padding-left: 20px;
             }
           }
 

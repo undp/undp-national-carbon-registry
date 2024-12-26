@@ -44,7 +44,14 @@ export const SLCFPieChartsStatComponent: FC<PieChartStatsProps> = (props: PieCha
             </div>
           </div>
           <div className="pie-charts-section">
-            <Chart id={id} options={options} series={series} type="donut" height="320px" />
+            <Chart
+              id={id}
+              options={options}
+              series={series}
+              type="donut"
+              height="370px"
+              width="400px"
+            />
           </div>
           <div className="updated-on margin-top-2">
             {lastUpdate !== '0' && <div className="updated-moment-container">{lastUpdate}</div>}

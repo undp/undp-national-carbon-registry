@@ -11,10 +11,13 @@ export interface BarChartStatsProps {
   loading: boolean;
   toolTipText: string;
   Chart: any;
+  height: string;
+  width: string;
 }
 
 export const SLCFBarChartsStatComponent: FC<BarChartStatsProps> = (props: BarChartStatsProps) => {
-  const { id, title, options, series, lastUpdate, loading, toolTipText, Chart } = props;
+  const { id, title, options, series, lastUpdate, loading, toolTipText, Chart, height, width } =
+    props;
   return (
     <div className="statistics-and-pie-card height-bar-rem">
       <div className="pie-charts-top">
@@ -38,8 +41,8 @@ export const SLCFBarChartsStatComponent: FC<BarChartStatsProps> = (props: BarCha
               options={options}
               series={series}
               type="bar"
-              height="350px"
-              width="490px"
+              height={height}
+              width={width}
             />
           </div>
           <div className="updated-on">

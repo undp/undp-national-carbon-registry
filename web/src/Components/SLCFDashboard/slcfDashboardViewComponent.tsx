@@ -27,6 +27,8 @@ import {
   InfoCircle,
   FileEarmarkCheck,
   CreditCard2Back,
+  HandThumbsUp,
+  BoxArrowLeft,
 } from 'react-bootstrap-icons';
 import {
   ChartSeriesItem,
@@ -36,12 +38,14 @@ import {
   getTotalProgrammesSectorInitialValues,
 } from './dashboardTypesInitialValues';
 import {
+  creditsByDateOptions,
   optionDonutPieA,
-  optionDonutPieB,
-  totalCreditsCertifiedOptions,
-  totalCreditsOptions,
+  // optionDonutPieB,
+  retirementsByDateOptions,
+  // totalCreditsCertifiedOptions,
+  // totalCreditsOptions,
   totalProgrammesOptions,
-  totalProgrammesOptionsSub,
+  // totalProgrammesOptionsSub,
 } from './slcfChartOptions';
 import { ProgrammeRejectAndTransferComponent } from './programmeRejectAndTransferComponent';
 import { SLCFPieChartsStatComponent } from './slcfPieChartStatComponent';
@@ -58,19 +62,25 @@ import {
   getStageEnumVal,
   addRoundNumber,
   addCommSep,
+  getCreditTypeName,
 } from '../../Definitions/Definitions/programme.definitions';
 import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
 import {
+  CreditType,
   getProjectCategory,
   ProgrammeCategory,
   ProgrammeSLStageR,
   ProgrammeStageLegend,
+  ProjectProposalStage,
+  ProjectProposalStageMap,
 } from '../../Definitions/Enums/programmeStage.enum';
 // import { Sector, SlProjectCategory } from '../../Definitions/Enums/sector.enum';
 import { LegendItem } from '../LegendItem/legendItem';
 import { MapComponent } from '../Maps/mapComponent';
 import { StasticCard } from '../StatisticsCard/statisticsCard';
 import { SLStatisticsCard } from './SlStatisticsCard/slStatisticsCard';
+import { CreditTypeSl } from '../../Definitions/Enums/creditTypeSl.enum';
+import { SLCFDetailsBarChartsStatComponent } from './slcfDetailsBarChartStatsComponent';
 const { RangePicker } = DatePicker;
 
 export const SLCFDashboardComponent = (props: any) => {
@@ -205,10 +215,367 @@ export const SLCFDashboardComponent = (props: any) => {
   const [fileList, setFileList] = useState<any[]>([]);
   const [selectedFile, setSelectedFile] = useState('-');
   const [selectedurl, setSelectedurl] = useState<string>('');
-  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'Mapbox';
+
+  //MARK: SL states
+  const [totalProgrammesCount, setTotalProgrammesCount] = useState<number>(0);
+  const [totalProgrammesCountLastUpdated, setTotalProgrammesCountLastUpdated] =
+    useState<string>('0');
+
+  const [totalCredits, setTotalCredits] = useState<number>(0);
+  const [totalCreditsLastUpdated, setTotalCreditsLastUpdated] = useState<string>('0');
+
+  const [totalRetiredCreditsCount, setTotalRetiredCreditsCount] = useState<number>(0);
+  const [totalRetiredCreditsLastUpdated, setTotalRetiredCreditsLastUpdated] = useState<string>('0');
+
+  const [programmeCategory, setProgrammeCategory] = useState<string>();
+  const [creditType, setCreditType] = useState<string>();
+
+  const [programmeByStatueData, setProgrammeByStatueData] = useState<any>();
+  const [chartWidth, setChartWidth] = useState(window.innerWidth > 1600 ? '750px' : '600px');
+  const [retirementsByDateChartWidth, setRetirementsByDateChartWidth] = useState(
+    window.innerWidth > 1600 ? '850px' : '650px'
+  );
+
+  // const [programmeByCategoryData, setProgrammeByCategoryData] = useState<any>();
+  const [programmeByCategoryPieSeries, setProgrammeByCategoryPieSeries] = useState<number[]>([
+    1, 1, 0, 0,
+  ]);
+
+  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     : '';
+
+  //MARK: getTotalProgrammeCount
+  const getTotalProgrammeCount = async () => {
+    setLoadingWithoutTimeRange(true);
+    try {
+      const response: any = await post(
+        'stats/programme/totalSLProjects',
+        null,
+        undefined,
+        statServerUrl
+      );
+      if (response) {
+        setTotalProgrammesCount(response?.data?.count);
+        setTotalProgrammesCountLastUpdated(response?.data?.latestUpdatedTime);
+      }
+    } catch (error: any) {
+      console.log('Error in getting users', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoadingWithoutTimeRange(false);
+    }
+  };
+
+  //MARK: getTotalIssuedCredits
+  const getTotalIssuedCredits = async () => {
+    setLoadingWithoutTimeRange(true);
+    try {
+      const response: any = await post(
+        'stats/programme/totalIssuedCredits',
+        null,
+        undefined,
+        statServerUrl
+      );
+      if (response) {
+        setTotalCredits(response?.data?.totalCreditIssued);
+        setTotalCreditsLastUpdated(response?.data?.latestUpdatedTime);
+      }
+    } catch (error: any) {
+      console.log('Error in getting users', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoadingWithoutTimeRange(false);
+    }
+  };
+
+  //MARK: getTotalRetiredCredits
+  const getTotalRetiredCredits = async () => {
+    setLoadingWithoutTimeRange(true);
+    try {
+      const response: any = await post(
+        'stats/programme/totalRetiredCredits',
+        null,
+        undefined,
+        statServerUrl
+      );
+      if (response) {
+        setTotalRetiredCreditsCount(
+          response?.data?.totalCreditRetired + response?.data?.totalCreditTransferred
+        );
+        setTotalRetiredCreditsLastUpdated(response?.data?.latestUpdatedTime);
+      }
+    } catch (error: any) {
+      console.log('Error in getting users', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoadingWithoutTimeRange(false);
+    }
+  };
+
+  const onCategoryChanged = (value: string) => {
+    console.log('changed', value);
+    setProgrammeCategory(value);
+  };
+
+  const onCreditTypeChanged = (value: string) => {
+    console.log('changed', value);
+    setCreditType(value);
+  };
+
+  const getFilters = () => {
+    const andFilter = [];
+    if (startTime !== 0 && endTime !== 0) {
+      andFilter.push(
+        {
+          key: 'createdTime',
+          operation: '>',
+          value: startTime,
+        },
+        {
+          key: 'createdTime',
+          operation: '<=',
+          value: endTime,
+        }
+      );
+    }
+
+    if (programmeCategory) {
+      andFilter.push({
+        key: 'projectCategory',
+        operation: '=',
+        value: programmeCategory,
+      });
+    }
+
+    if (creditType) {
+      andFilter.push({
+        key: 'purposeOfCreditDevelopment',
+        operation: '=',
+        value: creditType,
+      });
+    }
+    return andFilter;
+  };
+
+  //MARK: getProgrammeDataByStatus
+  const getProgrammeDataByStatus = async () => {
+    setLoading(true);
+    try {
+      const response: any = await post(
+        'stats/programme/queryProgrammesByStatus',
+        { filterAnd: getFilters() },
+        undefined,
+        statServerUrl
+      );
+      if (response) {
+        setProgrammeByStatueData(response?.data);
+      }
+    } catch (error: any) {
+      console.log('Error in getting users', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //MARK: getTotalAuthorisedProgrammes
+  const getTotalAuthorisedProgrammes = () => {
+    if (
+      programmeByStatueData &&
+      programmeByStatueData.proposalStageData &&
+      programmeByStatueData.proposalStageData.length > 0
+    ) {
+      const authorised = programmeByStatueData.proposalStageData.find(
+        (item: any) => item.projectProposalStage === 'AUTHORISED'
+      );
+      return authorised ? parseInt(authorised.count, 10) : 0;
+    } else {
+      return 0;
+    }
+  };
+
+  //MARK: getProgrammeStatusChartData
+  const getProgrammeStatusChartData = () => {
+    if (programmeByStatueData?.proposalStageData) {
+      const combinedStage = 'PROPOSAL_PENDING';
+      const combinedStages = [
+        ProjectProposalStage.SUBMITTED_COST_QUOTATION,
+        ProjectProposalStage.SUBMITTED_PROPOSAL,
+        ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT,
+      ];
+
+      const processedData = [
+        ...programmeByStatueData.proposalStageData.filter(
+          (item: any) => !combinedStages.includes(item.projectProposalStage as ProjectProposalStage)
+        ),
+        {
+          projectProposalStage: combinedStage,
+          count: combinedStages
+            .map((stage) =>
+              parseInt(
+                programmeByStatueData.proposalStageData.find(
+                  (item: any) => item.projectProposalStage === stage
+                )?.count || '0',
+                10
+              )
+            )
+            .reduce((sum, count) => sum + count, 0)
+            .toString(),
+        },
+      ];
+
+      // Get the list of all stages, including `PROPOSAL_PENDING` inserted after `REJECTED_INF`
+      const allStages: any = [
+        ...Object.values(ProjectProposalStage).filter((stage) => !combinedStages.includes(stage)),
+      ];
+      const rejectedInfIndex = allStages.indexOf(ProjectProposalStage.REJECTED_INF);
+      allStages.splice(rejectedInfIndex + 1, 0, combinedStage); // Insert after REJECTED_INF
+
+      // Generate the result array
+      const result = allStages.map((stage: any) => {
+        const dataArray = allStages.map((_: any, index: any) => {
+          const matchedItem = processedData.find((item) => item.projectProposalStage === stage);
+          return index === allStages.indexOf(stage)
+            ? matchedItem
+              ? parseInt(matchedItem.count, 10)
+              : 0
+            : 0;
+        });
+
+        return {
+          name: ProjectProposalStageMap[stage as keyof typeof ProjectProposalStageMap],
+          data: dataArray,
+        };
+      });
+
+      console.log(result);
+      totalProgrammesOptions.xaxis.categories = allStages.map(
+        (stage: keyof typeof ProjectProposalStageMap) => {
+          return ProjectProposalStageMap[stage] || stage;
+        }
+      );
+      console.log('Counts--------', result, allStages, totalProgrammesOptions.xaxis.categories);
+      return result;
+    } else {
+      return [];
+    }
+  };
+
+  //MARK: getProgrammeDataByCategory
+  const getProgrammeDataByCategory = async () => {
+    setLoading(true);
+    try {
+      const response: any = await post(
+        'stats/programme/queryProgrammesByCategory',
+        { filterAnd: getFilters() },
+        undefined,
+        statServerUrl
+      );
+      if (response) {
+        // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
+        setProjectsByCategoryDonutValues(response?.data?.projectCategoryData);
+      }
+    } catch (error: any) {
+      console.log('Error in getting users', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //MARK: Update the chart width on screen resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 1600) {
+        setChartWidth('750px');
+        setRetirementsByDateChartWidth('850px');
+      } else if (window.innerWidth > 1200) {
+        setChartWidth('600px');
+        setRetirementsByDateChartWidth('650px');
+      } else {
+        setChartWidth('600px');
+        setRetirementsByDateChartWidth('650px');
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const setProjectsByCategoryDonutValues = (programmeByCategoryData: any) => {
+    const pieSeriesCreditsData: any[] = [];
+
+    const renewableEngCount = programmeByCategoryData?.find(
+      (item: any) => item.projectCategory === 'RENEWABLE_ENERGY'
+    )?.count;
+
+    const countsArray = Object.values(ProgrammeCategory).map((category) => {
+      const matchingItem = programmeByCategoryData?.find(
+        (item: any) => item.projectCategory === category
+      );
+      return matchingItem ? parseInt(matchingItem.count, 10) : 0; // Default to 0 if no match
+    });
+
+    const totalCount = programmeByCategoryData?.reduce(
+      (sum: any, item: any) => sum + parseInt(item.count, 10),
+      0
+    );
+
+    // pieSeriesCreditsData.push(addRoundNumber(programmeByCategoryData));
+    //   pieSeriesCreditsData.push(addRoundNumber(totalIssuedCredits));
+    //   pieSeriesCreditsData.push(addRoundNumber(totalTxCredits));
+    //   pieSeriesCreditsData.push(addRoundNumber(totalRetiredCredits));
+    // pieSeriesCreditsData.push(addRoundNumber(totalFrozenCredits));
+
+    // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalCertifiedCredit));
+    // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalUnCertifiedredit));
+    // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalRevokedCredits));
+    // const totalCreditsCertified = addRoundNumber(
+    //   totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits
+    // );
+    setCreditsPieChartTotal(String(addCommSep(totalCount)) !== 'NaN' ? addCommSep(totalCount) : 0);
+    // setCertifiedCreditsPieChartTotal(addCommSep(totalCreditsCertified));
+    // const output = '<p>' + 'ITMOs' + '</p><p>' + addCommSep(totalCreditsCertified) + '</p>';
+    optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
+      '' + String(addCommSep(totalCount)) !== 'NaN' ? addCommSep(totalCount) : 0;
+    // optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
+    //   '' + addCommSep(totalCreditsCertified);
+    setCreditPieSeries(countsArray);
+    // setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
+  };
+
+  //==================================================================
 
   const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
     return {
@@ -820,8 +1187,8 @@ export const SLCFDashboardComponent = (props: any) => {
           });
         });
         setTotalProgrammesSeries(totalProgrammesValues);
-        totalProgrammesOptions.xaxis.categories = formattedTimeLabelDataStatus;
-
+        // totalProgrammesOptions.xaxis.categories = formattedTimeLabelDataStatus;
+        console.log('totalProgrammesValues------', totalProgrammesValues);
         const totalCreditsValues: ChartSeriesItem[] = [
           {
             name: 'Authorised',
@@ -845,8 +1212,36 @@ export const SLCFDashboardComponent = (props: any) => {
           },
         ];
         setTotalCreditsSeries(totalCreditsValues);
-        totalCreditsOptions.xaxis.categories = formattedTimeLabelDataStatus;
-        totalCreditsOptions.yaxis.max = totalCreditsSeries ? undefined : 25;
+        creditsByDateOptions.xaxis.categories = formattedTimeLabelDataStatus;
+        creditsByDateOptions.yaxis.max = totalCreditsSeries ? undefined : 25;
+
+        //MARK: Adding annotation to stacked bar chart
+        // NEED TO IMPLEMENT WITH NEW BE EP
+        // Dynamically calculate totals for each stack and format as 'k'
+        const totals1 = totalCreditsValues?.[0].data.map((_: any, index: any) =>
+          totalCreditsValues?.reduce((sum: any, series: any) => sum + series.data[index], 0)
+        );
+        const totalAnnotations1 = totals1.map((total: any, index: any) => ({
+          x: creditsByDateOptions.xaxis.categories[index],
+          y: total,
+          marker: {
+            size: 0, // Remove the circle marker
+          },
+          label: {
+            text: total >= 1000 ? `${(total / 1000).toFixed(1)}k` : `${total}`,
+            style: {
+              fontSize: '12px',
+              color: '#000',
+              background: 'transparent',
+              stroke: 'none !important',
+              borderRadius: 0, // No rounded corners
+              borderColor: 'transparent', // Remove the border
+            },
+          },
+        }));
+
+        // Add totals as annotations
+        creditsByDateOptions.annotations.points = totalAnnotations1;
       }
       if (programmesAggBySector) {
         timeLabelDataSector = programmesAggByStatus?.timeLabel;
@@ -855,7 +1250,7 @@ export const SLCFDashboardComponent = (props: any) => {
         });
         setTotalProgrammesSectorOptionsLabels(formattedTimeLabelDataSector);
         const progarmmesSectorSeriesData: ChartSeriesItem[] = [];
-        const sectorsArray = Object.values(ProgrammeCategory);
+        const sectorsArray = Object.values(ProgrammeCategory).slice(0, 2); //TODO: Limiting to 2 for testing UI. REMOVE THIS
         sectorsArray?.map((sector: any) => {
           if (programmesAggBySector[sector] !== undefined) {
             progarmmesSectorSeriesData.push({
@@ -865,7 +1260,36 @@ export const SLCFDashboardComponent = (props: any) => {
           }
         });
         setTotalProgrammesSectorSeries(progarmmesSectorSeriesData);
-        totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector;
+
+        //MARK: Adding annotation to stacked bar chart
+        // NEED TO IMPLEMENT WITH NEW BE EP
+        // Dynamically calculate totals for each stack and format as 'k'
+        const totals = progarmmesSectorSeriesData?.[0].data.map((_: any, index: any) =>
+          progarmmesSectorSeriesData?.reduce((sum: any, series: any) => sum + series.data[index], 0)
+        );
+        const totalAnnotations = totals.map((total: any, index: any) => ({
+          x: retirementsByDateOptions.xaxis.categories[index],
+          y: total,
+          marker: {
+            size: 0, // Remove the circle marker
+          },
+          label: {
+            text: total >= 1000 ? `${(total / 1000).toFixed(1)}k` : `${total}`,
+            style: {
+              fontSize: '12px',
+              color: '#000',
+              background: 'transparent',
+              stroke: 'none !important',
+              borderRadius: 0, // No rounded corners
+              borderColor: 'transparent', // Remove the border
+            },
+          },
+        }));
+
+        // Add totals as annotations
+        retirementsByDateOptions.annotations.points = totalAnnotations;
+        // totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector; //NOT NEEDED ANYMORE
+        retirementsByDateOptions.xaxis.categories = formattedTimeLabelDataSector;
       }
       if (totalCreditsCertifiedStats) {
         timeLabelCertifiedCreditsStats = totalCreditsCertifiedStats?.timeLabel;
@@ -891,7 +1315,7 @@ export const SLCFDashboardComponent = (props: any) => {
         setTotalCertifiedCreditsSeries(totalCertifiedCreditsSeriesValues);
         setTotalCertifiedCreditsOptionsLabels(formattedTimeLabelCertifiedCreditsStats);
 
-        totalCreditsCertifiedOptions.xaxis.categories = formattedTimeLabelCertifiedCreditsStats;
+        // totalCreditsCertifiedOptions.xaxis.categories = formattedTimeLabelCertifiedCreditsStats; //NOT NEEDED ANYMORE
       }
       if (transferLocationsStats) {
         setProgrammeTransferLocations(transferLocationsStats);
@@ -976,8 +1400,8 @@ export const SLCFDashboardComponent = (props: any) => {
       pieSeriesCreditTypeData.push(track1Credits);
       pieSeriesCreditTypeData.push(track2Credits);
       setAuthCreditsByTypePieSeries(pieSeriesCreditTypeData);
-      optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
-        '' + addCommSep(track1Credits + track2Credits);
+      // optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
+      //   '' + addCommSep(track1Credits + track2Credits); //NOT NEEDED ANYMORE
     } catch (error: any) {
       console.log('Error in getting pending retirement requests', error);
       message.open({
@@ -1318,15 +1742,15 @@ export const SLCFDashboardComponent = (props: any) => {
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
       }
       let totalProgrammes: any = 0;
-      let totalEstCredits: any = 0;
-      let totalIssuedCredits: any = 0;
-      let totalRetiredCredits: any = 0;
-      let totalBalancecredit: any = 0;
-      let totalTxCredits: any = 0;
-      let totalFrozenCredits: any = 0;
-      let totalCertifiedCredit: any = 0;
-      let totalUnCertifiedredit: any = 0;
-      let totalRevokedCredits: any = 0;
+      // let totalEstCredits: any = 0;
+      // let totalIssuedCredits: any = 0;
+      // let totalRetiredCredits: any = 0;
+      // let totalBalancecredit: any = 0;
+      // let totalTxCredits: any = 0;
+      // let totalFrozenCredits: any = 0;
+      // let totalCertifiedCredit: any = 0;
+      // let totalUnCertifiedredit: any = 0;
+      // let totalRevokedCredits: any = 0;
       let pendingProgrammesC: any = 0;
       let authorisedProgrammesC: any = 0;
       let rejectedProgrammesC: any = 0;
@@ -1348,59 +1772,59 @@ export const SLCFDashboardComponent = (props: any) => {
             authorisedProgrammesC = parseInt(responseItem?.count);
           }
         });
-        setTotalProjects(totalProgrammes);
-        setPendingProjects(pendingProgrammesC);
-        setAuthorisedProjects(authorisedProgrammesC);
-        setRejectedProjects(rejectedProgrammesC);
+        // setTotalProjects(totalProgrammes);
+        // setPendingProjects(pendingProgrammesC);
+        // setAuthorisedProjects(authorisedProgrammesC);
+        // setRejectedProjects(rejectedProgrammesC);
       } else {
-        setPendingProjects(0);
-        setAuthorisedProjects(0);
-        setRejectedProjects(0);
-        setTotalProjects(0);
+        // setPendingProjects(0);
+        // setAuthorisedProjects(0);
+        // setRejectedProjects(0);
+        // setTotalProjects(0);
       }
-      if (programmeByStatusAuthAggregationResponse?.length > 0) {
-        programmeByStatusAuthAggregationResponse?.map((responseItem: any) => {
-          totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
-          totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
-          totalRetiredCredits = totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
-          totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
-          totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
-          totalFrozenCredits = totalFrozenCredits + parseFloat(responseItem?.totalfreezecredit);
-        });
-      }
-      if (certifiedRevokedAggregationResponse) {
-        totalCertifiedCredit = parseFloat(certifiedRevokedAggregationResponse?.certifiedSum);
-        totalUnCertifiedredit = parseFloat(certifiedRevokedAggregationResponse?.uncertifiedSum);
-        totalRevokedCredits = parseFloat(certifiedRevokedAggregationResponse?.revokedSum);
-      }
-      setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
-      const creditAuthorized =
-        totalEstCredits - (totalIssuedCredits + totalTxCredits + totalRetiredCredits);
-      // const creditIssued =
-      //   totalIssuedCredits - totalTxCredits - totalRetiredCredits - totalFrozenCredits; //TODO; Fi
-      pieSeriesCreditsData.push(addRoundNumber(creditAuthorized));
-      pieSeriesCreditsData.push(addRoundNumber(totalIssuedCredits));
-      pieSeriesCreditsData.push(addRoundNumber(totalTxCredits));
-      pieSeriesCreditsData.push(addRoundNumber(totalRetiredCredits));
-      // pieSeriesCreditsData.push(addRoundNumber(totalFrozenCredits));
+      // if (programmeByStatusAuthAggregationResponse?.length > 0) {
+      //   programmeByStatusAuthAggregationResponse?.map((responseItem: any) => {
+      //     totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
+      //     totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
+      //     totalRetiredCredits = totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
+      //     totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
+      //     totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
+      //     totalFrozenCredits = totalFrozenCredits + parseFloat(responseItem?.totalfreezecredit);
+      //   });
+      // }
+      // if (certifiedRevokedAggregationResponse) {
+      //   totalCertifiedCredit = parseFloat(certifiedRevokedAggregationResponse?.certifiedSum);
+      //   totalUnCertifiedredit = parseFloat(certifiedRevokedAggregationResponse?.uncertifiedSum);
+      //   totalRevokedCredits = parseFloat(certifiedRevokedAggregationResponse?.revokedSum);
+      // }
+      // setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
+      // const creditAuthorized =
+      //   totalEstCredits - (totalIssuedCredits + totalTxCredits + totalRetiredCredits);
+      // // const creditIssued =
+      // //   totalIssuedCredits - totalTxCredits - totalRetiredCredits - totalFrozenCredits; //TODO; Fi
+      // pieSeriesCreditsData.push(addRoundNumber(creditAuthorized));
+      // pieSeriesCreditsData.push(addRoundNumber(totalIssuedCredits));
+      // pieSeriesCreditsData.push(addRoundNumber(totalTxCredits));
+      // pieSeriesCreditsData.push(addRoundNumber(totalRetiredCredits));
+      // // pieSeriesCreditsData.push(addRoundNumber(totalFrozenCredits));
 
-      // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalCertifiedCredit));
-      // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalUnCertifiedredit));
-      // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalRevokedCredits));
-      // const totalCreditsCertified = addRoundNumber(
-      //   totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits
-      // );
-      setCreditsPieChartTotal(
-        String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0
-      );
-      // setCertifiedCreditsPieChartTotal(addCommSep(totalCreditsCertified));
-      // const output = '<p>' + 'ITMOs' + '</p><p>' + addCommSep(totalCreditsCertified) + '</p>';
-      optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
-        '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
-      // optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
-      //   '' + addCommSep(totalCreditsCertified);
-      setCreditPieSeries(pieSeriesCreditsData);
-      // setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
+      // // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalCertifiedCredit));
+      // // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalUnCertifiedredit));
+      // // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalRevokedCredits));
+      // // const totalCreditsCertified = addRoundNumber(
+      // //   totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits
+      // // );
+      // // setCreditsPieChartTotal(
+      // //   String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0
+      // // );
+      // // setCertifiedCreditsPieChartTotal(addCommSep(totalCreditsCertified));
+      // // const output = '<p>' + 'ITMOs' + '</p><p>' + addCommSep(totalCreditsCertified) + '</p>';
+      // optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
+      //   '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
+      // // optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
+      // //   '' + addCommSep(totalCreditsCertified);
+      // // setCreditPieSeries(pieSeriesCreditsData);
+      // // setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
     } catch (error: any) {
       console.log('Error in getting users', error);
       message.open({
@@ -1414,6 +1838,7 @@ export const SLCFDashboardComponent = (props: any) => {
     }
   };
 
+  //MARK: USE EFFECT Without filters
   useEffect(() => {
     getAllProgrammeAnalyticsStatsWithoutTimeRange();
     if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
@@ -1421,19 +1846,26 @@ export const SLCFDashboardComponent = (props: any) => {
     }
     getPendingVerificationRequests();
     getPendingRetirementRequests();
+    getTotalProgrammeCount();
+    getTotalIssuedCredits();
+    getTotalRetiredCredits();
+    getProgrammeDataByStatus();
+    getProgrammeDataByCategory();
   }, []);
 
   useEffect(() => {
     getAllProgrammeAnalyticsStats();
     getAllProgrammesAggChartStats();
     getAuthorisedCreditsTotalByType();
-  }, [startTime, endTime, categoryType]);
+    getProgrammeDataByStatus();
+    getProgrammeDataByCategory();
+  }, [startTime, endTime, categoryType, programmeCategory, creditType]);
 
   useEffect(() => {
-    ApexCharts.exec('total-programmes-sector', 'updateSeries', {
+    ApexCharts.exec('total-retirement-by-date', 'updateSeries', {
       data: totalProgrammesSectorSeries,
     });
-    ApexCharts.exec('total-programmes-sector', 'updateOptions', {
+    ApexCharts.exec('total-retirement-by-date', 'updateOptions', {
       xaxis: {
         categories: totalProgrammesSectorOptionsLabels,
       },
@@ -1905,6 +2337,7 @@ ${total}
     onClick: handleMenuClick,
   };
 
+  //MARK: HTML PART
   return (
     <div className="slcf-dashboard-main-container">
       <div className="dashboard-inner-container">
@@ -1924,200 +2357,69 @@ ${total}
           <Row gutter={[40, 40]} className="statistics-card-row">
             <Col xxl={8} xl={8} md={12} className="statistics-card-col">
               <SLStatisticsCard
-                value={
-                  pendingProjectsWithoutTimeRange
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? pendingProjectsWithoutTimeRange
-                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  //   ? transferRequestReceived
-                  //   : programmesUnCertifed
-                }
-                title={
-                  'Total Projects'
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? 'programmesPending'
-                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  //   ? 'trasnferReqReceived'
-                  //   : 'programmesUnCertified'
-                }
+                value={totalProgrammesCount}
+                title={'Total Projects'}
                 updatedDate={
-                  moment(parseInt('1734671412000')).fromNow()
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? lastUpdateProgrammesStats
-                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  //   ? lastUpdatePendingTransferReceived
-                  //   : lastUpdateProgrammesCertifiable
+                  // eslint-disable-next-line eqeqeq
+                  totalProgrammesCountLastUpdated != null
+                    ? moment(parseInt(totalProgrammesCountLastUpdated)).fromNow()
+                    : '0'
                 }
-                icon={
-                  <AppstoreOutlined />
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
-                  //   <ClockHistory color="#16B1FF" size={80} />
-                  // ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
-                  //   <BoxArrowInRight color="#16B1FF" size={80} />
-                  // ) : (
-                  //   <ShieldX color="#16B1FF" size={80} />
-                  // )
-                }
+                icon={<AppstoreOutlined />}
                 loading={loadingWithoutTimeRange}
                 backgroundColorClass="background-purple"
-                tooltip={
-                  t(
-                    userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                      ? 'tTprogrammespendingProgrammeDevSLCF'
-                      : 'tTprogrammespendingGovermentSLCF'
-                  )
-                  //   t(userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //     ? 'tTprogrammespendingGoverment'
-                  //     : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  //     ? 'tTTransferReqRecProgrammeDev'
-                  //     : 'tTProgrammesUnCertiCertifier'
-                  // )
-                }
+                tooltip={t(
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTTotalProjectsDevSLCF'
+                    : 'tTTotalProjectsSLCF'
+                )}
                 t={t}
               />
             </Col>
             <Col xxl={8} xl={8} md={12} className="statistic-card-col">
               <SLStatisticsCard
-                value={
-                  verificationRequestPending
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? transferRequestSent
-                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  //   ? transferRequestSent
-                  //   : programmesCertifed
-                }
-                title={
-                  'Total Credits'
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? 'trasnferReqInit'
-                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  //   ? 'trasnferReqInit'
-                  //   : 'programmesCertified'
-                }
+                value={totalCredits}
+                title={'Total Credits'}
                 updatedDate={
-                  moment(parseInt('1734671412000')).fromNow()
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? lastUpdatePendingTransferSent
-                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  //   ? lastUpdatePendingTransferSent
-                  //   : lastUpdateProgrammesCertified
+                  // eslint-disable-next-line eqeqeq
+                  totalCreditsLastUpdated != null
+                    ? moment(parseInt(totalCreditsLastUpdated)).fromNow()
+                    : '0'
                 }
-                icon={
-                  <CreditCard2Back />
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
-                  //   <BoxArrowRight color="#16B1FF" size={80} />
-                  // ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
-                  //   <BoxArrowRight color="#16B1FF" size={80} />
-                  // ) : (
-                  //   <ShieldCheck color="#16B1FF" size={80} />
-                  // )
-                }
+                icon={<CreditCard2Back />}
                 loading={loadingWithoutTimeRange}
                 backgroundColorClass="background-blue"
-                tooltip={
-                  t(
-                    userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                      ? 'tTVerificationsPendingProgrammeDevSLCF'
-                      : 'tTVerificationsPendingGovernmentSLCF'
-                  )
-                  //   t(userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //     ? 'tTTransferReqSentGovernment'
-                  //     : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  //     ? 'tTTransferReqInitProgrammeDev'
-                  //     : 'tTProgrammesCertiCertifier'
-                  // )
-                }
+                tooltip={t(
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTTotalCreditsDevSLCF'
+                    : 'tTTotalCreditsSLCF'
+                )}
                 t={t}
               />
             </Col>
             <Col xxl={8} xl={8} md={12} className="statistic-card-col">
               <SLStatisticsCard
-                value={
-                  transferRequestSent
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? transferRequestSent
-                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  //   ? transferRequestSent
-                  //   : programmesCertifed
-                }
-                title={
-                  'Total Retired Credits'
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? 'trasnferReqInit'
-                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  //   ? 'trasnferReqInit'
-                  //   : 'programmesCertified'
-                }
+                value={totalRetiredCreditsCount}
+                title={'Total Retired Credits'}
                 updatedDate={
-                  moment(parseInt('1734671412000')).fromNow()
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? lastUpdatePendingTransferSent
-                  //   : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  //   ? lastUpdatePendingTransferSent
-                  //   : lastUpdateProgrammesCertified
+                  // eslint-disable-next-line eqeqeq
+                  totalRetiredCreditsLastUpdated != null
+                    ? moment(parseInt(totalRetiredCreditsLastUpdated)).fromNow()
+                    : '0'
                 }
-                icon={
-                  <ClockHistory />
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
-                  //   <BoxArrowRight color="#16B1FF" size={80} />
-                  // ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
-                  //   <BoxArrowRight color="#16B1FF" size={80} />
-                  // ) : (
-                  //   <ShieldCheck color="#16B1FF" size={80} />
-                  // )
-                }
+                icon={<ClockHistory />}
                 loading={loadingWithoutTimeRange}
                 backgroundColorClass="background-green"
-                tooltip={
-                  t(
-                    userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                      ? 'tTTransfersPendingProgrammeDevSLCF'
-                      : 'tTTransfersPendingGovernmentSLCF'
-                  )
-                  //   t(userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //     ? 'tTTransferReqSentGovernment'
-                  //     : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  //     ? 'tTTransferReqInitProgrammeDev'
-                  //     : 'tTProgrammesCertiCertifier'
-                  // )
-                }
+                tooltip={t(
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTTotalRetiredCreditsDevSLCF'
+                    : 'tTTotalRetiredCreditsSLCF'
+                )}
                 t={t}
               />
             </Col>
           </Row>
         </div>
-        {/* {(userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
-        userInfoState?.companyRole === CompanyRole.CERTIFIER ||
-        userInfoState?.companyRole === CompanyRole.MINISTRY) &&
-        fileList.length > 0 && (
-          <div className="annual-report">
-            <div>Annual Statistics Report</div>
-            <Dropdown menu={menuProps}>
-              <Button className="annual-report-dropdownbutton">
-                <Space>
-                  {selectedFile}
-                  <CaretDownOutlined />
-                </Space>
-              </Button>
-            </Dropdown>
-            {selectedurl.trim().length === 0 && (
-              <Button className="annual-report-downloadbutton">
-                <Space>
-                  <BookOutlined className="common-progress-icon" style={{ color: '#3F3A47' }} />
-                </Space>
-              </Button>
-            )}
-            {selectedurl.trim().length > 0 && (
-              <a href={selectedurl} target="_blank" rel="noopener noreferrer" download>
-                <Button className="annual-report-downloadbutton">
-                  <Space>
-                    <BookOutlined className="common-progress-icon" style={{ color: '#3F3A47' }} />
-                  </Space>
-                </Button>
-              </a>
-            )}
-          </div>
-        )} */}
         <div className="filter-container">
           <div className="date-filter">
             <RangePicker
@@ -2137,104 +2439,279 @@ ${total}
             <Select
               style={{ width: 270 }}
               placeholder="Product Category"
-              options={[{ value: 'lucy', label: 'Lucy' }]}
+              options={Object.keys(ProgrammeCategory).map((key) => ({
+                value: ProgrammeCategory[key as keyof typeof ProgrammeCategory],
+                label: getProjectCategory[key],
+              }))}
+              onChange={onCategoryChanged}
+              allowClear
             />
           </div>
           <div className="credit-type-filter">
             <Select
               style={{ width: 200 }}
               placeholder="Credit Type"
-              options={[{ value: 'lucy', label: 'Lucy' }]}
+              options={Object.keys(CreditTypeSl).map((key) => ({
+                value: CreditTypeSl[key as keyof typeof CreditTypeSl],
+                label: getCreditTypeName(CreditTypeSl[key as keyof typeof CreditTypeSl]),
+              }))}
+              onChange={onCreditTypeChanged}
+              allowClear
             />
           </div>
         </div>
         <div className="statistics-and-charts-container center">
-          <Row gutter={[40, 40]} className="statistic-card-row">
+          <Row gutter={[20, 20]} className="statistic-card-row">
             <Col xxl={8} xl={8} md={12} className="statistic-card-col">
               <ProgrammeRejectAndTransferComponent
-                totalProgrammes={totalProjects}
-                pending={pendingProjects}
-                rejected={rejectedProjects}
-                authorized={authorisedProjects}
-                updatedDate={'0'}
-                // updatedDate={lastUpdateProgrammesStatsC}
+                totalProgrammes={programmeByStatueData?.proposalStageData?.reduce(
+                  (total: any, item: any) => total + parseInt(item.count, 10),
+                  0
+                )}
+                pending={programmeByStatueData?.proposalStageData
+                  ?.filter(
+                    (item: any) =>
+                      item.projectProposalStage !== 'REJECTED_PROPOSAL' &&
+                      item.projectProposalStage !== 'REJECTED_INF' &&
+                      item.projectProposalStage !== 'AUTHORISED'
+                  )
+                  .reduce((total: any, item: any) => total + parseInt(item.count, 10), 0)}
+                rejected={programmeByStatueData?.proposalStageData
+                  ?.filter(
+                    (item: any) =>
+                      item.projectProposalStage === 'REJECTED_PROPOSAL' ||
+                      item.projectProposalStage === 'REJECTED_INF'
+                  )
+                  .reduce((total: any, item: any) => total + parseInt(item.count, 10), 0)}
+                authorized={getTotalAuthorisedProgrammes()}
+                updatedDate={
+                  // eslint-disable-next-line eqeqeq
+                  programmeByStatueData?.latestUpdatedTime != null &&
+                  // eslint-disable-next-line eqeqeq
+                  programmeByStatueData?.latestUpdatedTime != 0
+                    ? moment(parseInt(programmeByStatueData?.latestUpdatedTime)).fromNow()
+                    : '0'
+                }
                 loading={loading}
                 toolTipText={t(
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? 'tTProgrammesGoverment'
-                  //   :
                   userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                    ? 'tTProgrammesProgrammeDevSLCF'
-                    : 'tTProgrammesGovernmentSLCF'
+                    ? 'tTProjectSummeryDevSLCF'
+                    : 'tTProjectSummerySLCF'
                 )}
                 t={t}
               />
             </Col>
-            {/* <Col xxl={8} xl={8} md={12} className="statistic-card-col pie">
+            <Col xxl={16} xl={16} md={12} className="statistic-card-col">
+              <SLCFDetailsBarChartsStatComponent
+                id="total-programmes"
+                title={t('totalProgrammesByStatusSLCF')}
+                options={totalProgrammesOptions}
+                series={getProgrammeStatusChartData()}
+                lastUpdate={'0'} //TODO
+                loading={loadingCharts}
+                toolTipText={t(
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTTotalProjectDetailsDevSLCF'
+                    : 'tTTotalProjectDetailsSLCF'
+                )}
+                Chart={Chart}
+                height="400px"
+                width={chartWidth}
+              />
+            </Col>
+          </Row>
+        </div>
+        <div className="statistics-and-charts-container center">
+          <Row gutter={[20, 20]} className="statistic-card-row">
+            <Col xxl={9} xl={9} md={12} className="statistic-card-col pie">
               <SLCFPieChartsStatComponent
                 id="credits"
-                title={t('creditsByStatusSLCF')}
+                title={t('projectsByCategorySLCF')}
                 options={optionDonutPieA}
                 series={creditsPieSeries}
                 // lastUpdate={lastUpdateProgrammesCreditsStats}
-                lastUpdate={'0'}
+                lastUpdate={moment(parseInt('1734847443000')).fromNow()}
                 loading={loading}
                 toolTipText={t(
                   // userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   //   ? 'tTCreditsGovernment'
                   //   :
                   userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                    ? 'tTCreditsProgrammeDevSLCF'
-                    : 'tTCreditsGovernmentSLCF'
+                    ? 'tTProjectsByCategoryDevSLCF'
+                    : 'tTProjectsByCategorySLCF'
                 )}
                 Chart={Chart}
               />
             </Col>
-            <Col xxl={8} xl={8} md={12} className="statistic-card-col">
-              <SLCFPieChartsStatComponent
-                id="auth-credits-by-type"
-                title={t('creditDevelopmentPurpose')}
-                options={optionDonutPieB}
-                series={authCreditsByTypePieSeries}
-                // lastUpdate={lastUpdateCertifiedCreditsStats}
-                lastUpdate={'0'}
-                loading={loading}
-                toolTipText={t(
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? 'tTCertifiedCreditsGovernment'
-                  //   :
-                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                    ? 'tTAuthCreditByTypeProgrammeDev'
-                    : 'tTAuthCreditByTypeGovernment'
-                )}
-                Chart={Chart}
-              />
-            </Col> */}
-            <Col xxl={16} xl={16} md={12} className="statistic-card-col">
+            <Col
+              xxl={15}
+              xl={15}
+              md={12}
+              className="statistic-card-col retirements-by-date-chart-col"
+            >
               <SLCFBarChartsStatComponent
-                id="total-programmes"
-                title={t('totalProgrammesByDateSLCF')}
-                options={totalProgrammesOptions}
-                series={totalProgrammesSeries}
-                // lastUpdate={lastUpdateProgrammesStatsC}
+                id="total-retirement-by-date"
+                title={t('retirementsByDateSLCF')}
+                options={retirementsByDateOptions}
+                series={totalProgrammesSectorSeries}
+                // lastUpdate={lastUpdateProgrammesSectorStatsC}
                 lastUpdate={'0'}
                 loading={loadingCharts}
                 toolTipText={t(
                   // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? 'tTTotalProgrammesGovernment'
+                  //   ? 'tTTotalProgrammesSectorGovernment'
                   //   :
                   userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                    ? 'tTTotalProgrammesProgrammeDevSLCF'
-                    : 'tTTotalProgrammesGovernmentSLCF'
+                    ? 'tTRetirementsByDateDevSLCF'
+                    : 'tTRetirementsByDateSLCF'
                 )}
                 Chart={Chart}
+                height="400px"
+                width={retirementsByDateChartWidth}
               />
             </Col>
           </Row>
         </div>
+        <div className="statistics-and-charts-container center credits-by-status-container">
+          <div className="credits-by-status-row">
+            <div className="credits-by-status-top">
+              <div className="credits-by-status-title">{t('creditsByStatusSLCF')}</div>
+              <div className="info-container">
+                <Tooltip
+                  arrowPointAtCenter
+                  placement="bottomRight"
+                  trigger="hover"
+                  title={'toolTipText'}
+                >
+                  <InfoCircle color="#000000" size={17} />
+                </Tooltip>
+              </div>
+            </div>
+            <Row gutter={[20, 20]} className="statistic-card-row">
+              <Col xxl={6} xl={6} md={12} className="statistic-card-col">
+                <SLStatisticsCard
+                  value={totalCredits}
+                  title={'Authorised'}
+                  updatedDate={moment(parseInt('1734847443000')).fromNow()}
+                  icon={<HandThumbsUp />}
+                  loading={loadingWithoutTimeRange}
+                  backgroundColorClass="background-green"
+                  tooltip={t(
+                    userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                      ? 'tTAuthorisedCreditsDevSLCF'
+                      : 'tTAuthorisedCreditsSLCF'
+                  )}
+                  t={t}
+                />
+              </Col>
+              <Col xxl={6} xl={6} md={12} className="statistic-card-col">
+                <SLStatisticsCard
+                  value={totalCredits}
+                  title={'Issued'}
+                  updatedDate={moment(parseInt('1734847443000')).fromNow()}
+                  icon={<FileEarmarkCheck />}
+                  loading={loadingWithoutTimeRange}
+                  backgroundColorClass="background-blue"
+                  tooltip={t(
+                    userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                      ? 'tTIssuedCreditsDevSLCF'
+                      : 'tTIssuedCreditsSLCF'
+                  )}
+                  t={t}
+                />
+              </Col>
+              <Col xxl={6} xl={6} md={12} className="statistic-card-col">
+                <SLStatisticsCard
+                  value={totalCredits}
+                  title={'Transferred'}
+                  updatedDate={moment(parseInt('1734847443000')).fromNow()}
+                  icon={<BoxArrowRight />}
+                  loading={loadingWithoutTimeRange}
+                  backgroundColorClass="background-purple"
+                  tooltip={t(
+                    userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                      ? 'tTTransferredCreditsDevSLCF'
+                      : 'tTTransferredCreditsSLCF'
+                  )}
+                  t={t}
+                />
+              </Col>
+              <Col xxl={6} xl={6} md={12} className="statistic-card-col">
+                <SLStatisticsCard
+                  value={totalCredits}
+                  title={'Retired'}
+                  updatedDate={moment(parseInt('1734847443000')).fromNow()}
+                  icon={<ClockHistory />}
+                  loading={loadingWithoutTimeRange}
+                  backgroundColorClass="background-red"
+                  tooltip={t(
+                    userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                      ? 'tTRetiredCreditsDevSLCF'
+                      : 'tTRetiredCreditsSLCF'
+                  )}
+                  t={t}
+                />
+              </Col>
+            </Row>
+          </div>
+        </div>
+        <div className="statistics-and-charts-container center">
+          <Row gutter={[20, 20]} className="statistic-card-row">
+            <Col xxl={12} xl={12} md={12} className="statistic-card-col credits-by-date-chart-col">
+              <SLCFBarChartsStatComponent
+                id="total-credits"
+                title={t('totalCreditsByDateSLCF')}
+                options={creditsByDateOptions}
+                series={totalCreditsSeries}
+                // lastUpdate={lastUpdateTotalCredits}
+                lastUpdate={'0'}
+                loading={loadingCharts}
+                toolTipText={t(
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? 'tTTotalCreditsGovernment'
+                  //   :
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTTotalCreditsByDateDevSLCF'
+                    : 'tTTotalCreditsByDateSLCF'
+                )}
+                Chart={Chart}
+                height="400px"
+                width="490px"
+              />
+            </Col>
+            <Col
+              xxl={12}
+              xl={12}
+              md={12}
+              className="statistic-card-col credits-by-purpose-chart-col"
+            >
+              <SLCFBarChartsStatComponent
+                id="total-credits-by-purpose"
+                title={t('totalCreditsByDateSLCF')}
+                options={creditsByDateOptions}
+                series={totalCreditsSeries}
+                // lastUpdate={lastUpdateTotalCredits}
+                lastUpdate={'0'}
+                loading={loadingCharts}
+                toolTipText={t(
+                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
+                  //   ? 'tTTotalCreditsGovernment'
+                  //   :
+                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                    ? 'tTTotalCreditsByPurposeDevSLCF'
+                    : 'tTTotalCreditsByPurposeSLCF'
+                )}
+                Chart={Chart}
+                height="400px"
+                width="490px"
+              />
+            </Col>
+          </Row>
+        </div>
+
         <div className="statistics-and-charts-container center">
           <Row gutter={[40, 40]} className="statistic-card-row">
-            <Col xxl={12} xl={12} md={12} className="statistic-card-col">
+            {/* <Col xxl={12} xl={12} md={12} className="statistic-card-col">
               <SLCFBarChartsStatComponent
                 id="total-programmes"
                 title={t('totalProgrammesByDateSLCF')}
@@ -2252,9 +2729,11 @@ ${total}
                     : 'tTTotalProgrammesGovernmentSLCF'
                 )}
                 Chart={Chart}
+                height="350px"
+                width="490px"
               />
-            </Col>
-            <Col xxl={12} xl={12} md={12} className="statistic-card-col">
+            </Col> */}
+            {/* <Col xxl={12} xl={12} md={12} className="statistic-card-col">
               <SLCFBarChartsStatComponent
                 id="total-programmes-sector"
                 title={t('totalProgrammesSectorSLCF')}
@@ -2272,13 +2751,15 @@ ${total}
                     : 'tTTotalProgrammesSectorGovernmentSLCF'
                 )}
                 Chart={Chart}
+                height="350px"
+                width="490px"
               />
-            </Col>
+            </Col> */}
           </Row>
         </div>
         <div className="statistics-and-charts-container center">
           <Row gutter={[40, 40]} className="statistic-card-row">
-            <Col xxl={12} xl={12} md={12} className="statistic-card-col">
+            {/* <Col xxl={12} xl={12} md={12} className="statistic-card-col">
               <SLCFBarChartsStatComponent
                 id="total-credits"
                 title={t('totalCreditsByDateSLCF')}
@@ -2296,8 +2777,10 @@ ${total}
                     : 'tTTotalCreditsGovernmentSLCF'
                 )}
                 Chart={Chart}
+                height="350px"
+                width="490px"
               />
-            </Col>
+            </Col> */}
             {/* <Col xxl={12} xl={12} md={12} className="statistic-card-col">
             <SLCFBarChartsStatComponent
               id="total-credits-certified"
@@ -2318,7 +2801,7 @@ ${total}
               Chart={Chart}
             />
           </Col> */}
-            {mapType !== MapTypes.None ? (
+            {/* {mapType !== MapTypes.None ? (
               <Col xxl={12} xl={12} md={12} className="statistic-card-col">
                 <div className="statistics-and-pie-card height-map-rem">
                   <div className="pie-charts-top">
@@ -2367,17 +2850,6 @@ ${total}
                         <LegendItem text="Authorised" color="#6ACDFF" />
                         <LegendItem text="Pending" color="#CDCDCD" />
                         <LegendItem text="Rejected" color="#FF8183" />
-                        {/* {!(
-                        userInfoState?.companyRole === CompanyRole.CERTIFIER &&
-                        categoryType === 'mine'
-                      ) && (
-                        <>
-                          <LegendItem text="Pending" color="#CDCDCD" />
-                          <LegendItem text="Rejected" color="#FF8183" />
-
-                          <LegendItem text="Approved" color="#B7A4FE" />
-                        </>
-                      )} */}
                       </div>
                       <div className="updated-on margin-top-1">
                         <div className="updated-moment-container">
@@ -2390,7 +2862,7 @@ ${total}
               </Col>
             ) : (
               ''
-            )}
+            )} */}
           </Row>
         </div>
         {/* {mapType !== MapTypes.None ? (

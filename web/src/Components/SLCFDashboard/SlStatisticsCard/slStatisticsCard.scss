@@ -24,6 +24,14 @@
   }
 }
 
+.background-red {
+  background: rgba(255, 99, 97, 0.3) !important;
+  .icon-section {
+    background: rgba(255, 99, 97, 1);
+    border-radius: 7px;
+  }
+}
+
 
 .statistic-card-main-container {
   display: flex;
