@@ -43,6 +43,7 @@ import { User } from "../entities/user.entity";
 import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
 import { SLDashboardProjectStage } from "../enum/slDashboardProjectStage.enum";
 import { DataResponseDto } from "src/dto/data.response.dto";
+import { CreditRetirementSlView } from "src/entities/creditRetirementSl.view.entity";
 
 @Injectable()
 export class AggregateSlAPIService {
@@ -75,7 +76,9 @@ export class AggregateSlAPIService {
     @InjectRepository(VerificationRequestEntity)
     private verificationRequestRepo: Repository<VerificationRequestEntity>,
     @InjectRepository(CreditRetirementSl)
-    private creditRetirementSlRequestRepo: Repository<CreditRetirementSl>
+    private creditRetirementSlRequestRepo: Repository<CreditRetirementSl>,
+    @InjectRepository(CreditRetirementSlView)
+    private creditRetirementSlViewRepo: Repository<CreditRetirementSlView>
   ) {}
 
   private getFilterAndByStatFilter(
@@ -1575,8 +1578,48 @@ export class AggregateSlAPIService {
     return new DataResponseDto(HttpStatus.OK, result);
   }
 
+  async queryRetirementsByDate(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const fromCompanyId = {
+        key: 'cr"."fromCompanyId',
+        operation: "=",
+        value: user.companyId,
+      };
+      const toCompanyId = {
+        key: 'cr"."toCompanyId',
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterOr.push(fromCompanyId);
+      query.filterOr.push(toCompanyId);
+    }
+
+    const creditRetirementStatus = {
+      key: 'cr"."status',
+      operation: "=",
+      value: "Approved",
+    };
+
+    query.filterAnd.push(creditRetirementStatus);
+
+    const result = await this.creditRetirementSlViewRepo
+      .createQueryBuilder("cr")
+      .select(
+        "TO_CHAR(TO_TIMESTAMP(CAST(cr.approvedTime AS BIGINT)/1000), 'YYYY-MM-DD')",
+        "approvedDate"
+      )
+      .addSelect("cr.creditType", "creditType")
+      .addSelect("SUM(cr.creditAmount)", "totalCreditAmount")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(CAST(cr.approvedTime AS BIGINT)/1000), 'YYYY-MM-DD')")
+      .addGroupBy("cr.creditType")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(CAST(cr.approvedTime AS BIGINT)/1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
   async getEmissions(stat, companyId, abilityCondition, lastTimeForWhere, statCache) {
-    console.log("get Emissions", stat, companyId);
     if ([StatType.MY_TOTAL_EMISSIONS].includes(stat.type)) {
       stat.statFilter ? (stat.statFilter.onlyMine = true) : (stat.statFilter = { onlyMine: true });
     }
