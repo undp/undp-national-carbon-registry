@@ -85,6 +85,13 @@ export class ProgrammeController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard)
+  @Post("queryRetirementsByDate")
+  async queryRetirementsByDate(@Body() query: QueryDto, @Request() req) {
+    return this.aggSlService.queryRetirementsByDate(query, req.user);
+  }
+
+  @ApiBearerAuth()
   // @UseGuards(JwtAuthGuard)
   @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Stat, true, true))
   @Get("verifications")
