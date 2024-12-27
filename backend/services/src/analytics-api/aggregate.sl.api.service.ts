@@ -1619,6 +1619,42 @@ export class AggregateSlAPIService {
     return new DataResponseDto(HttpStatus.OK, result);
   }
 
+  async queryCreditsByStatus(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: "companyId",
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+
+    const projectAuthorisedStage = {
+      key: 'pr"."projectProposalStage',
+      operation: "=",
+      value: ProjectProposalStage.AUTHORISED,
+    };
+
+    query.filterAnd.push(projectAuthorisedStage);
+
+    let resp = await this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("pr.projectProposalStage", "projectProposalStage")
+      .addSelect("SUM(pr.creditEst)", "totalCreditAuthorised")
+      .addSelect("SUM(pr.creditIssued)", "totalCreditIssued")
+      .addSelect("SUM(pr.creditRetired)", "totalCreditRetired")
+      .addSelect("SUM(pr.creditTransferred)", "totalCreditTransferred")
+      .addSelect("MAX(pr.authorisedCreditUpdatedTime)", "latestAuthorisedCreditUpdatedTime")
+      .addSelect("MAX(pr.issuedCreditUpdatedTime)", "latestIssuedCreditUpdatedTime")
+      .addSelect("MAX(pr.transferredCreditUpdatedTime)", "latestTransferredCreditUpdatedTime")
+      .addSelect("MAX(pr.retiredCreditUpdatedTime)", "latestRetiredCreditUpdatedTime")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("pr.projectProposalStage")
+      .getRawOne();
+
+    return new DataResponseDto(HttpStatus.OK, resp);
+  }
+
   async getEmissions(stat, companyId, abilityCondition, lastTimeForWhere, statCache) {
     if ([StatType.MY_TOTAL_EMISSIONS].includes(stat.type)) {
       stat.statFilter ? (stat.statFilter.onlyMine = true) : (stat.statFilter = { onlyMine: true });
