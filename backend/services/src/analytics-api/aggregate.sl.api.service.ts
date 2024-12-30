@@ -1778,6 +1778,52 @@ export class AggregateSlAPIService {
     return new DataResponseDto(HttpStatus.OK, result);
   }
 
+  async queryCreditsByPurpose(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: 'programme"."companyId',
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+
+    if (query.filterAnd && query.filterAnd.length > 0) {
+      query.filterAnd.map((filter) => {
+        if (filter.key === "createdTime") {
+          filter.key = 'audit_log"."createdTime';
+        } else if (filter.key === "projectCategory") {
+          filter.key = 'programme"."projectCategory';
+        } else if (filter.key === "purposeOfCreditDevelopment") {
+          filter.key = 'programme"."purposeOfCreditDevelopment';
+        }
+        return filter;
+      });
+    }
+
+    const issuedLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "CREDIT_ISSUED",
+    };
+
+    query.filterAnd.push(issuedLogType);
+
+    const issuedCreditsByDate = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "logDate")
+      .addSelect("SUM((audit_log.data->>'creditIssued')::numeric)", "totalCreditIssued")
+      .addSelect("programme.purposeOfCreditDevelopment", "creditType")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .addGroupBy("programme.purposeOfCreditDevelopment")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    return new DataResponseDto(HttpStatus.OK, issuedCreditsByDate);
+  }
+
   async getEmissions(stat, companyId, abilityCondition, lastTimeForWhere, statCache) {
     if ([StatType.MY_TOTAL_EMISSIONS].includes(stat.type)) {
       stat.statFilter ? (stat.statFilter.onlyMine = true) : (stat.statFilter = { onlyMine: true });
