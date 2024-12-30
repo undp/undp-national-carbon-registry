@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -42,6 +42,9 @@ import { VerificationRequestEntity } from "../entities/verification.request.enti
 import { User } from "../entities/user.entity";
 import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
 import { SLDashboardProjectStage } from "../enum/slDashboardProjectStage.enum";
+import { DataResponseDto } from "src/dto/data.response.dto";
+import { CreditRetirementSlView } from "src/entities/creditRetirementSl.view.entity";
+import { ProgrammeAuditLogSl } from "src/entities/programmeAuditLogSl.entity";
 
 @Injectable()
 export class AggregateSlAPIService {
@@ -74,7 +77,11 @@ export class AggregateSlAPIService {
     @InjectRepository(VerificationRequestEntity)
     private verificationRequestRepo: Repository<VerificationRequestEntity>,
     @InjectRepository(CreditRetirementSl)
-    private creditRetirementSlRequestRepo: Repository<CreditRetirementSl>
+    private creditRetirementSlRequestRepo: Repository<CreditRetirementSl>,
+    @InjectRepository(CreditRetirementSlView)
+    private creditRetirementSlViewRepo: Repository<CreditRetirementSlView>,
+    @InjectRepository(ProgrammeAuditLogSl)
+    private programmeSlAuditLogRepo: Repository<ProgrammeAuditLogSl>
   ) {}
 
   private getFilterAndByStatFilter(
@@ -1462,8 +1469,366 @@ export class AggregateSlAPIService {
     return new DataCountResponseDto(results);
   }
 
+  async getTotalSLProjects(user: User) {
+    const query = this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("COUNT(*)", "count") // Select count
+      .addSelect("MAX(pr.createdTime)", "latestUpdatedTime"); // Select latest updated time
+
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      query.where("pr.companyId = :companyId", { companyId: user.companyId });
+    }
+    const result = await query.getRawOne();
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async getTotalIssuedCredits(user: User) {
+    const query = this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("COALESCE(CAST(SUM(pr.creditIssued) AS INTEGER),0)", "totalCreditIssued") // Select count
+      .addSelect("MAX(pr.issuedCreditUpdatedTime)", "latestUpdatedTime"); // Select latest updated time
+
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      query.andWhere("pr.companyId = :companyId", { companyId: user.companyId });
+    }
+    const result = await query.getRawOne();
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async getTotalRetiredCredits(user: User) {
+    const query = this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("COALESCE(CAST(SUM(pr.creditRetired) AS INTEGER),0)", "totalCreditRetired")
+      .addSelect("COALESCE(CAST(SUM(pr.creditTransferred) AS INTEGER),0)", "totalCreditTransferred")
+      .addSelect("MAX(pr.creditUpdatedTime)", "latestUpdatedTime");
+
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      query.andWhere("pr.companyId = :companyId", { companyId: user.companyId });
+    }
+    const result = await query.getRawOne();
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async queryProgrammesByStatus(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: "companyId",
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+    let resp = await this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("pr.projectProposalStage", "projectProposalStage")
+      .addSelect("COUNT(*)", "count")
+      .addSelect("MAX(pr.proposalStageUpdatedTime)", "latestProposalStageUpdatedTime")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("pr.projectProposalStage")
+      .getRawMany();
+
+    let latestUpdatedTime = 0;
+    resp.forEach((row) => {
+      let latestProposalStageUpdatedTime = parseInt(row.latestProposalStageUpdatedTime);
+      if (latestProposalStageUpdatedTime > latestUpdatedTime) {
+        latestUpdatedTime = latestProposalStageUpdatedTime;
+      }
+    });
+
+    let result = {};
+
+    result["proposalStageData"] = resp;
+
+    result["latestUpdatedTime"] = latestUpdatedTime;
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async queryProgrammesByCategory(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: "companyId",
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+    let resp = await this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("pr.projectCategory", "projectCategory")
+      .addSelect("COUNT(*)", "count")
+      .addSelect("MAX(pr.createdTime)", "latestCreatedTime")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("pr.projectCategory")
+      .getRawMany();
+
+    let latestUpdatedTime = 0;
+    resp.forEach((row) => {
+      let latestCreatedTime = parseInt(row.latestCreatedTime);
+      if (latestCreatedTime > latestUpdatedTime) {
+        latestUpdatedTime = latestCreatedTime;
+      }
+    });
+
+    let result = {};
+
+    result["projectCategoryData"] = resp;
+
+    result["latestUpdatedTime"] = latestUpdatedTime;
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async queryRetirementsByDate(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const fromCompanyId = {
+        key: 'cr"."fromCompanyId',
+        operation: "=",
+        value: user.companyId,
+      };
+      const toCompanyId = {
+        key: 'cr"."toCompanyId',
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterOr.push(fromCompanyId);
+      query.filterOr.push(toCompanyId);
+    }
+
+    const creditRetirementStatus = {
+      key: 'cr"."status',
+      operation: "=",
+      value: "Approved",
+    };
+
+    query.filterAnd.push(creditRetirementStatus);
+
+    const result = await this.creditRetirementSlViewRepo
+      .createQueryBuilder("cr")
+      .select(
+        "TO_CHAR(TO_TIMESTAMP(CAST(cr.approvedTime AS BIGINT)/1000), 'YYYY-MM-DD')",
+        "approvedDate"
+      )
+      .addSelect("cr.creditType", "creditType")
+      .addSelect("SUM(cr.creditAmount)", "totalCreditAmount")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(CAST(cr.approvedTime AS BIGINT)/1000), 'YYYY-MM-DD')")
+      .addGroupBy("cr.creditType")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(CAST(cr.approvedTime AS BIGINT)/1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async queryCreditsByStatus(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: "companyId",
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+
+    const projectAuthorisedStage = {
+      key: 'pr"."projectProposalStage',
+      operation: "=",
+      value: ProjectProposalStage.AUTHORISED,
+    };
+
+    query.filterAnd.push(projectAuthorisedStage);
+
+    let resp = await this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("pr.projectProposalStage", "projectProposalStage")
+      .addSelect("SUM(pr.creditEst)", "totalCreditAuthorised")
+      .addSelect("SUM(pr.creditIssued)", "totalCreditIssued")
+      .addSelect("SUM(pr.creditRetired)", "totalCreditRetired")
+      .addSelect("SUM(pr.creditTransferred)", "totalCreditTransferred")
+      .addSelect("MAX(pr.authorisedCreditUpdatedTime)", "latestAuthorisedCreditUpdatedTime")
+      .addSelect("MAX(pr.issuedCreditUpdatedTime)", "latestIssuedCreditUpdatedTime")
+      .addSelect("MAX(pr.transferredCreditUpdatedTime)", "latestTransferredCreditUpdatedTime")
+      .addSelect("MAX(pr.retiredCreditUpdatedTime)", "latestRetiredCreditUpdatedTime")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("pr.projectProposalStage")
+      .getRawOne();
+
+    return new DataResponseDto(HttpStatus.OK, resp);
+  }
+
+  async queryCreditsByDate(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: 'programme"."companyId',
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+
+    if (query.filterAnd && query.filterAnd.length > 0) {
+      query.filterAnd.map((filter) => {
+        if (filter.key === "createdTime") {
+          filter.key = 'audit_log"."createdTime';
+        } else if (filter.key === "projectCategory") {
+          filter.key = 'programme"."projectCategory';
+        } else if (filter.key === "purposeOfCreditDevelopment") {
+          filter.key = 'programme"."purposeOfCreditDevelopment';
+        }
+        return filter;
+      });
+    }
+
+    const authorisedLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "AUTHORISED",
+    };
+
+    query.filterAnd.push(authorisedLogType);
+
+    const authorisedCreditsByDate = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
+      .addSelect("SUM(programme.creditEst)", "total_credit_authorised")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    const issuedLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "CREDIT_ISSUED",
+    };
+
+    query.filterAnd.pop();
+    query.filterAnd.push(issuedLogType);
+
+    const issuedCreditsByDate = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
+      .addSelect("SUM((audit_log.data->>'creditIssued')::numeric)", "total_credit_issued")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    const transferredLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "TRANSFER_APPROVED",
+    };
+
+    query.filterAnd.pop();
+    query.filterAnd.push(transferredLogType);
+
+    const transferredCreditsByDate = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
+      .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "total_credit_transferred")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    const retiredLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "RETIRE_APPROVED",
+    };
+    query.filterAnd.pop();
+    query.filterAnd.push(retiredLogType);
+
+    const retiredCreditsByDate = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
+      .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "total_credit_retired")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    const data = {
+      authorised: authorisedCreditsByDate,
+      issued: issuedCreditsByDate,
+      transferred: transferredCreditsByDate,
+      retired: retiredCreditsByDate,
+    };
+
+    const groupedData = {};
+
+    ["authorised", "issued", "transferred", "retired"].forEach((key) => {
+      data[key].forEach((entry) => {
+        const { log_date, ...values } = entry;
+        if (!groupedData[log_date]) {
+          groupedData[log_date] = { log_date };
+        }
+        Object.assign(groupedData[log_date], values);
+      });
+    });
+
+    const result = Object.values(groupedData).sort((a: any, b: any) => {
+      const dateA = new Date(a.log_date);
+      const dateB = new Date(b.log_date);
+      return dateA.getTime() - dateB.getTime();
+    });
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async queryCreditsByPurpose(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: 'programme"."companyId',
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+
+    if (query.filterAnd && query.filterAnd.length > 0) {
+      query.filterAnd.map((filter) => {
+        if (filter.key === "createdTime") {
+          filter.key = 'audit_log"."createdTime';
+        } else if (filter.key === "projectCategory") {
+          filter.key = 'programme"."projectCategory';
+        } else if (filter.key === "purposeOfCreditDevelopment") {
+          filter.key = 'programme"."purposeOfCreditDevelopment';
+        }
+        return filter;
+      });
+    }
+
+    const issuedLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "CREDIT_ISSUED",
+    };
+
+    query.filterAnd.push(issuedLogType);
+
+    const issuedCreditsByDate = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "logDate")
+      .addSelect("SUM((audit_log.data->>'creditIssued')::numeric)", "totalCreditIssued")
+      .addSelect("programme.purposeOfCreditDevelopment", "creditType")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .addGroupBy("programme.purposeOfCreditDevelopment")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    return new DataResponseDto(HttpStatus.OK, issuedCreditsByDate);
+  }
+
   async getEmissions(stat, companyId, abilityCondition, lastTimeForWhere, statCache) {
-    console.log("get Emissions", stat, companyId);
     if ([StatType.MY_TOTAL_EMISSIONS].includes(stat.type)) {
       stat.statFilter ? (stat.statFilter.onlyMine = true) : (stat.statFilter = { onlyMine: true });
     }

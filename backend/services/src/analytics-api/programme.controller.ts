@@ -8,6 +8,7 @@ import { Stat } from "../dto/stat.dto";
 import { AggregateAPIService } from "./aggregate.api.service";
 import { AggregateSlAPIService } from "./aggregate.sl.api.service";
 import { StatFilter } from "../dto/stat.filter";
+import { QueryDto } from "src/dto/query.dto";
 // import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 
 @ApiTags("Programme")
@@ -46,6 +47,69 @@ export class ProgrammeController {
       req.user?.companyRole,
       query.system
     );
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Stat, true, true))
+  @Post("totalSLProjects")
+  async totalProjects(@Request() req) {
+    return this.aggSlService.getTotalSLProjects(req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Stat, true, true))
+  @Post("totalIssuedCredits")
+  async totalIssuedCredits(@Request() req) {
+    return this.aggSlService.getTotalIssuedCredits(req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Stat, true, true))
+  @Post("totalRetiredCredits")
+  async totalRetiredCredits(@Request() req) {
+    return this.aggSlService.getTotalRetiredCredits(req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard)
+  @Post("queryProgrammesByStatus")
+  async queryProgrammesByStatus(@Body() query: QueryDto, @Request() req) {
+    return this.aggSlService.queryProgrammesByStatus(query, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard)
+  @Post("queryProgrammesByCategory")
+  async queryProgrammesByCategory(@Body() query: QueryDto, @Request() req) {
+    return this.aggSlService.queryProgrammesByCategory(query, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard)
+  @Post("queryRetirementsByDate")
+  async queryRetirementsByDate(@Body() query: QueryDto, @Request() req) {
+    return this.aggSlService.queryRetirementsByDate(query, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard)
+  @Post("queryCreditsByStatus")
+  async queryCreditsByStatus(@Body() query: QueryDto, @Request() req) {
+    return this.aggSlService.queryCreditsByStatus(query, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard)
+  @Post("queryCreditsByDate")
+  async queryCreditsByDate(@Body() query: QueryDto, @Request() req) {
+    return this.aggSlService.queryCreditsByDate(query, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard)
+  @Post("queryCreditsByPurpose")
+  async queryCreditsByPurpose(@Body() query: QueryDto, @Request() req) {
+    return this.aggSlService.queryCreditsByPurpose(query, req.user);
   }
 
   @ApiBearerAuth()
