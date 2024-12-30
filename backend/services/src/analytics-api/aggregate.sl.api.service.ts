@@ -1689,6 +1689,19 @@ export class AggregateSlAPIService {
       query.filterAnd.push(filterAnd);
     }
 
+    if (query.filterAnd && query.filterAnd.length > 0) {
+      query.filterAnd.map((filter) => {
+        if (filter.key === "createdTime") {
+          filter.key = 'audit_log"."createdTime';
+        } else if (filter.key === "projectCategory") {
+          filter.key = 'programme"."projectCategory';
+        } else if (filter.key === "purposeOfCreditDevelopment") {
+          filter.key = 'programme"."purposeOfCreditDevelopment';
+        }
+        return filter;
+      });
+    }
+
     let authorisedQuery = query,
       issuedQuery = query,
       transferredQuery = query,
