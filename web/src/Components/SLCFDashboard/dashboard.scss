@@ -299,13 +299,9 @@
         // padding-right: 24px;
       }
     }
-
-    
-
-    
   }
 
-  .credits-by-date-chart-col, .retirements-by-date-chart-col {
+  .credits-by-date-chart-col, .retirements-by-date-chart-col, .credits-by-purpose-chart-col {
     rect {
       stroke: none !important;
     }

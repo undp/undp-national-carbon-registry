@@ -81,6 +81,17 @@ const LayoutSider = (props: LayoutSiderProps) => {
   //   );
   // }
 
+  if (userInfoState?.companyRole !== CompanyRole.PROGRAMME_DEVELOPER) {
+    items.splice(
+      4,
+      0,
+      getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
+      getItem(t('nav:cdmTransitionProjects'), 'cdmManagement/viewAll', <UnorderedListOutlined />),
+      getItem(t('nav:verra'), 'verraManagement/viewAll', <AppstoreOutlined />),
+      getItem(t('nav:goldStandards'), 'goldStandardManagement/viewAll', <AppstoreOutlined />)
+    );
+  }
+
   if (userInfoState?.userRole === Role.Root) {
     items.push(getItem(t('nav:settings'), 'settings', <SettingOutlined />));
   }

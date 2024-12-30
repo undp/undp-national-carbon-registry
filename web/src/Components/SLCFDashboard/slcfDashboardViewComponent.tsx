@@ -39,6 +39,7 @@ import {
 } from './dashboardTypesInitialValues';
 import {
   creditsByDateOptions,
+  creditsByPurposeOptions,
   optionDonutPieA,
   // optionDonutPieB,
   retirementsByDateOptions,
@@ -236,21 +237,21 @@ export const SLCFDashboardComponent = (props: any) => {
   const [retirementsByDateData, setRetirementsByDateData] = useState<any>();
 
   const [creditsByStatusData, setCreditsByStatusData] = useState<any>();
+  const [creditsByDateData, setCreditsByDateData] = useState<any>();
+  const [creditsByPurposeData, setCreditsByPurposeData] = useState<any>();
 
   const [chartWidth, setChartWidth] = useState(window.innerWidth > 1600 ? '750px' : '600px');
   const [retirementsByDateChartWidth, setRetirementsByDateChartWidth] = useState(
     window.innerWidth > 1600 ? '850px' : '650px'
+  );
+  const [creditByChartWidth, setCreditByChartWidth] = useState(
+    window.innerWidth > 1600 ? '650px' : '500px'
   );
 
   // const [programmeByCategoryData, setProgrammeByCategoryData] = useState<any>();
   const [programmeByCategoryPieSeries, setProgrammeByCategoryPieSeries] = useState<number[]>([
     1, 1, 0, 0,
   ]);
-
-  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
-  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    : '';
 
   //MARK: getTotalProgrammeCount
   const getTotalProgrammeCount = async () => {
@@ -267,7 +268,7 @@ export const SLCFDashboardComponent = (props: any) => {
         setTotalProgrammesCountLastUpdated(response?.data?.latestUpdatedTime);
       }
     } catch (error: any) {
-      console.log('Error in getting users', error);
+      console.log('Error in getting Total Programme Count', error);
       message.open({
         type: 'error',
         content: error.message,
@@ -294,7 +295,7 @@ export const SLCFDashboardComponent = (props: any) => {
         setTotalCreditsLastUpdated(response?.data?.latestUpdatedTime);
       }
     } catch (error: any) {
-      console.log('Error in getting users', error);
+      console.log('Error in getting Total Issued Credits', error);
       message.open({
         type: 'error',
         content: error.message,
@@ -323,7 +324,7 @@ export const SLCFDashboardComponent = (props: any) => {
         setTotalRetiredCreditsLastUpdated(response?.data?.latestUpdatedTime);
       }
     } catch (error: any) {
-      console.log('Error in getting users', error);
+      console.log('Error in getting Total Retired Credits', error);
       message.open({
         type: 'error',
         content: error.message,
@@ -332,6 +333,25 @@ export const SLCFDashboardComponent = (props: any) => {
       });
     } finally {
       setLoadingWithoutTimeRange(false);
+    }
+  };
+
+  const onChangeRange = async (dateMoment: any, dateString: any) => {
+    try {
+      if (!dateMoment) {
+        setStartTime(0);
+        setEndTime(0);
+      }
+      if (dateMoment !== null && dateMoment[1] !== null) {
+        setStartTime(Date.parse(String(moment(dateMoment[0]?._d).startOf('day'))));
+        setEndTime(Date.parse(String(moment(dateMoment[1]?._d).endOf('day'))));
+      } else {
+        setStartTime(0);
+        setEndTime(0);
+      }
+    } catch (e: any) {
+      setStartTime(0);
+      setEndTime(0);
     }
   };
 
@@ -394,7 +414,7 @@ export const SLCFDashboardComponent = (props: any) => {
         setProgrammeByStatueData(response?.data);
       }
     } catch (error: any) {
-      console.log('Error in getting users', error);
+      console.log('Error in getting Programme Data By Status', error);
       message.open({
         type: 'error',
         content: error.message,
@@ -503,7 +523,7 @@ export const SLCFDashboardComponent = (props: any) => {
         setProjectsByCategoryLastUpdated(response?.data?.latestUpdatedTime);
       }
     } catch (error: any) {
-      console.log('Error in getting users', error);
+      console.log('Error in getting Programme By Category', error);
       message.open({
         type: 'error',
         content: error.message,
@@ -529,7 +549,7 @@ export const SLCFDashboardComponent = (props: any) => {
         setRetirementsByDateData(response.data);
       }
     } catch (error: any) {
-      console.log('Error in getting users', error);
+      console.log('Error in getting Retirements Data By Date', error);
       message.open({
         type: 'error',
         content: error.message,
@@ -603,11 +623,10 @@ export const SLCFDashboardComponent = (props: any) => {
         statServerUrl
       );
       if (response) {
-        // setRetirementsByDateData(response.data);
         setCreditsByStatusData(response.data);
       }
     } catch (error: any) {
-      console.log('Error in getting users', error);
+      console.log('Error in getting Credits By Status', error);
       message.open({
         type: 'error',
         content: error.message,
@@ -619,18 +638,186 @@ export const SLCFDashboardComponent = (props: any) => {
     }
   };
 
+  //MARK: getCreditsByDateData
+  const getCreditsByDateData = async () => {
+    setLoading(true);
+    try {
+      const response: any = await post(
+        'stats/programme/queryCreditsByDate',
+        { filterAnd: getFilters() },
+        undefined,
+        statServerUrl
+      );
+      if (response) {
+        setCreditsByDateData(response.data);
+      }
+    } catch (error: any) {
+      console.log('Error in getting Credits By Date', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //MARK: getRetirementByDateChartSeries
+  const getCreditsByDateChartSeries = () => {
+    // Extract unique dates for x axis labels
+    const categories = [...new Set(creditsByDateData?.map((item: any) => item.log_date))];
+
+    // Define the credit types and their corresponding series names
+    const creditStatuses = [
+      { key: 'total_credit_authorised', name: 'Authorised' },
+      { key: 'total_credit_issued', name: 'Issued' },
+      { key: 'total_credit_transferred', name: 'Transferred' },
+      { key: 'total_credit_retired', name: 'Retired' },
+    ];
+
+    const series = creditStatuses.map((creditStatusObj) => {
+      return {
+        name: creditStatusObj.name, // Format stack names
+        data: categories.map((date) => {
+          // Find matching entry for this date
+          const entry = creditsByDateData.find((item: any) => item.log_date === date);
+          return entry && entry[creditStatusObj.key] ? parseFloat(entry[creditStatusObj.key]) : 0; // Use value or default to 0
+        }),
+      };
+    });
+
+    // Format the dates
+    const formattedCategories = categories.map((date: any) => moment(date).format('DD-MM-YYYY'));
+    creditsByDateOptions.xaxis.categories = formattedCategories;
+
+    // Set total of stacked bars as annotations on top of each bar
+    const totals = series?.[0].data.map((_: any, index: any) =>
+      series?.reduce((sum: any, seriesArr: any) => sum + seriesArr.data[index], 0)
+    );
+    const totalAnnotations = totals.map((total: any, index: any) => ({
+      x: creditsByDateOptions.xaxis.categories[index],
+      y: total,
+      marker: {
+        size: 0, // Remove the circle marker
+      },
+      label: {
+        text: total >= 1000 ? `${(total / 1000).toFixed(1)}k` : `${total}`,
+        style: {
+          fontSize: '12px',
+          color: '#000',
+          background: 'transparent',
+          stroke: 'none !important',
+          borderRadius: 0, // No rounded corners
+          borderColor: 'transparent', // Remove the border
+        },
+      },
+    }));
+
+    // Add totals as annotations
+    creditsByDateOptions.annotations.points = totalAnnotations;
+
+    return series;
+  };
+
+  //MARK: getCreditsByPurposeData
+  const getCreditsByPurposeData = async () => {
+    setLoading(true);
+    try {
+      const response: any = await post(
+        'stats/programme/queryCreditsByPurpose',
+        { filterAnd: getFilters() },
+        undefined,
+        statServerUrl
+      );
+      if (response) {
+        setCreditsByPurposeData(response.data);
+      }
+    } catch (error: any) {
+      console.log('Error in getting Credits By Purpose', error);
+      message.open({
+        type: 'error',
+        content: error.message,
+        duration: 3,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //MARK: getCreditsByPurposeChartSeries
+  const getCreditsByPurposeChartSeries = () => {
+    // Extract unique dates for x axis labels
+    const categories = [...new Set(creditsByPurposeData?.map((item: any) => item.logDate))];
+
+    // Define the credit types and their corresponding series names
+    const creditTypes = [
+      { key: 'TRACK_1', name: 'SLCER+' },
+      { key: 'TRACK_2', name: 'SLCER' },
+    ];
+
+    const series = creditTypes.map((creditTypeObj) => {
+      return {
+        name: creditTypeObj.name, // Format stack names
+        data: categories.map((date) => {
+          const total = creditsByPurposeData
+            ?.filter((item: any) => item.logDate === date && item.creditType === creditTypeObj.key)
+            ?.reduce((sum: number, item: any) => sum + parseFloat(item.totalCreditIssued || 0), 0);
+          return total; // Return total or 0 if no match
+        }),
+      };
+    });
+
+    // Format the dates
+    const formattedCategories = categories.map((date: any) => moment(date).format('DD-MM-YYYY'));
+    creditsByPurposeOptions.xaxis.categories = formattedCategories;
+
+    // Set total of stacked bars as annotations on top of each bar
+    const totals = series?.[0].data.map((_: any, index: any) =>
+      series?.reduce((sum: any, seriesArr: any) => sum + seriesArr.data[index], 0)
+    );
+    const totalAnnotations = totals.map((total: any, index: any) => ({
+      x: creditsByPurposeOptions.xaxis.categories[index],
+      y: total,
+      marker: {
+        size: 0, // Remove the circle marker
+      },
+      label: {
+        text: total >= 1000 ? `${(total / 1000).toFixed(1)}k` : `${total}`,
+        style: {
+          fontSize: '12px',
+          color: '#000',
+          background: 'transparent',
+          stroke: 'none !important',
+          borderRadius: 0, // No rounded corners
+          borderColor: 'transparent', // Remove the border
+        },
+      },
+    }));
+
+    // Add totals as annotations
+    creditsByPurposeOptions.annotations.points = totalAnnotations;
+
+    return series;
+  };
+
   //MARK: Update the chart width on screen resize
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 1600) {
         setChartWidth('750px');
         setRetirementsByDateChartWidth('850px');
+        setCreditByChartWidth('700px');
       } else if (window.innerWidth > 1200) {
         setChartWidth('600px');
         setRetirementsByDateChartWidth('650px');
+        setCreditByChartWidth('500px');
       } else {
         setChartWidth('600px');
         setRetirementsByDateChartWidth('650px');
+        setCreditByChartWidth('500px');
       }
     };
 
@@ -642,6 +829,7 @@ export const SLCFDashboardComponent = (props: any) => {
     };
   }, []);
 
+  //MARK: setProjectsByCategoryDonutValues
   const setProjectsByCategoryDonutValues = (programmeByCategoryData: any) => {
     const countsArray = Object.values(ProgrammeCategory).map((category) => {
       const matchingItem = programmeByCategoryData?.find(
@@ -663,1274 +851,1255 @@ export const SLCFDashboardComponent = (props: any) => {
 
   //==================================================================
 
-  const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
-    return {
-      system: SystemNames.CARBON_REGISTRY,
-      stats: [
-        {
-          type: 'AGG_PROGRAMME_BY_STATUS',
-        },
-        {
-          type: 'MY_AGG_PROGRAMME_BY_STATUS',
-        },
-        {
-          type: 'PENDING_TRANSFER_INIT',
-        },
-        {
-          type: 'MY_CREDIT',
-        },
-        {
-          type: 'PENDING_TRANSFER_RECV',
-        },
-        {
-          type: 'UNCERTIFIED_BY_ME',
-        },
-        {
-          type: 'CERTIFIED_BY_ME',
-        },
-      ],
-    };
-  };
-  const getAllProgrammeAnalyticsStatsParams = () => {
-    if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      return {
-        system: SystemNames.CARBON_REGISTRY,
-        stats: [
-          {
-            type: 'MY_AGG_PROGRAMME_BY_STATUS',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-          {
-            type: 'MY_AGG_AUTH_PROGRAMME_BY_STATUS',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-          {
-            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-        ],
-      };
-    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'mine') {
-      return {
-        system: SystemNames.CARBON_REGISTRY,
-        stats: [
-          {
-            type: 'CERTIFIED_BY_ME_BY_STATE',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-          {
-            type: 'AUTH_CERTIFIED_BY_ME_BY_STATE',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-          {
-            type: 'CERTIFIED_REVOKED_BY_ME',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-        ],
-      };
-    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'overall') {
-      return {
-        system: SystemNames.CARBON_REGISTRY,
-        stats: [
-          {
-            type: 'AGG_PROGRAMME_BY_STATUS',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-          {
-            type: 'AGG_AUTH_PROGRAMME_BY_STATUS',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-          {
-            type: 'CERTIFIED_REVOKED_PROGRAMMES',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-        ],
-      };
-    } else {
-      return {
-        system: SystemNames.CARBON_REGISTRY,
-        stats: [
-          {
-            type: 'AGG_PROGRAMME_BY_STATUS',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-          {
-            type: 'AGG_AUTH_PROGRAMME_BY_STATUS',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-          {
-            type: 'CERTIFIED_REVOKED_PROGRAMMES',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-        ],
-      };
-    }
-  };
+  // const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
+  //   return {
+  //     system: SystemNames.CARBON_REGISTRY,
+  //     stats: [
+  //       {
+  //         type: 'AGG_PROGRAMME_BY_STATUS',
+  //       },
+  //       {
+  //         type: 'MY_AGG_PROGRAMME_BY_STATUS',
+  //       },
+  //       {
+  //         type: 'PENDING_TRANSFER_INIT',
+  //       },
+  //       {
+  //         type: 'MY_CREDIT',
+  //       },
+  //       {
+  //         type: 'PENDING_TRANSFER_RECV',
+  //       },
+  //       {
+  //         type: 'UNCERTIFIED_BY_ME',
+  //       },
+  //       {
+  //         type: 'CERTIFIED_BY_ME',
+  //       },
+  //     ],
+  //   };
+  // };
+  // const getAllProgrammeAnalyticsStatsParams = () => {
+  //   if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+  //     return {
+  //       system: SystemNames.CARBON_REGISTRY,
+  //       stats: [
+  //         {
+  //           type: 'MY_AGG_PROGRAMME_BY_STATUS',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //         {
+  //           type: 'MY_AGG_AUTH_PROGRAMME_BY_STATUS',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //         {
+  //           type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //       ],
+  //     };
+  //   } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'mine') {
+  //     return {
+  //       system: SystemNames.CARBON_REGISTRY,
+  //       stats: [
+  //         {
+  //           type: 'CERTIFIED_BY_ME_BY_STATE',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //         {
+  //           type: 'AUTH_CERTIFIED_BY_ME_BY_STATE',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //         {
+  //           type: 'CERTIFIED_REVOKED_BY_ME',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //       ],
+  //     };
+  //   } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'overall') {
+  //     return {
+  //       system: SystemNames.CARBON_REGISTRY,
+  //       stats: [
+  //         {
+  //           type: 'AGG_PROGRAMME_BY_STATUS',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //         {
+  //           type: 'AGG_AUTH_PROGRAMME_BY_STATUS',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //         {
+  //           type: 'CERTIFIED_REVOKED_PROGRAMMES',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //       ],
+  //     };
+  //   } else {
+  //     return {
+  //       system: SystemNames.CARBON_REGISTRY,
+  //       stats: [
+  //         {
+  //           type: 'AGG_PROGRAMME_BY_STATUS',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //         {
+  //           type: 'AGG_AUTH_PROGRAMME_BY_STATUS',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //         {
+  //           type: 'CERTIFIED_REVOKED_PROGRAMMES',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //       ],
+  //     };
+  //   }
+  // };
 
-  const getAllChartsParams = () => {
-    if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      return {
-        system: SystemNames.CARBON_REGISTRY,
-        stats: [
-          {
-            type: 'MY_AGG_PROGRAMME_BY_STATUS',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
-            },
-          },
-          {
-            type: 'MY_AGG_PROGRAMME_BY_SECTOR',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
-            },
-          },
-          {
-            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
-            },
-          },
-          {
-            type: 'MY_TRANSFER_LOCATION',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-          {
-            type: 'MY_PROGRAMME_LOCATION',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-        ],
-      };
-    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'mine') {
-      return {
-        system: SystemNames.CARBON_REGISTRY,
-        stats: [
-          {
-            type: 'CERTIFIED_BY_ME_BY_STATE',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
-            },
-          },
-          {
-            type: 'CERTIFIED_BY_ME_BY_SECTOR',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
-            },
-          },
-          {
-            type: 'CERTIFIED_REVOKED_BY_ME',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
-            },
-          },
-          {
-            type: 'MY_TRANSFER_LOCATION',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-          {
-            type: 'MY_PROGRAMME_LOCATION',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-        ],
-      };
-    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'overall') {
-      return {
-        system: SystemNames.CARBON_REGISTRY,
-        stats: [
-          {
-            type: 'AGG_PROGRAMME_BY_STATUS',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
-            },
-          },
-          {
-            type: 'AGG_PROGRAMME_BY_SECTOR',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
-            },
-          },
-          {
-            type: 'CERTIFIED_REVOKED_PROGRAMMES',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
-            },
-          },
-          {
-            type: 'ALL_TRANSFER_LOCATION',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-          {
-            type: 'ALL_PROGRAMME_LOCATION',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-        ],
-      };
-    } else {
-      return {
-        system: SystemNames.CARBON_REGISTRY,
-        stats: [
-          {
-            type: 'AGG_PROGRAMME_BY_STATUS',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
-            },
-          },
-          {
-            type: 'AGG_PROGRAMME_BY_SECTOR',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
-            },
-          },
-          {
-            type: 'CERTIFIED_REVOKED_PROGRAMMES',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-              timeGroup: true,
-            },
-          },
-          {
-            type: 'ALL_TRANSFER_LOCATION',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-          {
-            type: 'ALL_PROGRAMME_LOCATION',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-        ],
-      };
-    }
-  };
+  // const getAllChartsParams = () => {
+  //   if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+  //     return {
+  //       system: SystemNames.CARBON_REGISTRY,
+  //       stats: [
+  //         {
+  //           type: 'MY_AGG_PROGRAMME_BY_STATUS',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //             timeGroup: true,
+  //           },
+  //         },
+  //         {
+  //           type: 'MY_AGG_PROGRAMME_BY_SECTOR',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //             timeGroup: true,
+  //           },
+  //         },
+  //         {
+  //           type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //             timeGroup: true,
+  //           },
+  //         },
+  //         {
+  //           type: 'MY_TRANSFER_LOCATION',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //         {
+  //           type: 'MY_PROGRAMME_LOCATION',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //       ],
+  //     };
+  //   } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'mine') {
+  //     return {
+  //       system: SystemNames.CARBON_REGISTRY,
+  //       stats: [
+  //         {
+  //           type: 'CERTIFIED_BY_ME_BY_STATE',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //             timeGroup: true,
+  //           },
+  //         },
+  //         {
+  //           type: 'CERTIFIED_BY_ME_BY_SECTOR',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //             timeGroup: true,
+  //           },
+  //         },
+  //         {
+  //           type: 'CERTIFIED_REVOKED_BY_ME',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //             timeGroup: true,
+  //           },
+  //         },
+  //         {
+  //           type: 'MY_TRANSFER_LOCATION',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //         {
+  //           type: 'MY_PROGRAMME_LOCATION',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //       ],
+  //     };
+  //   } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'overall') {
+  //     return {
+  //       system: SystemNames.CARBON_REGISTRY,
+  //       stats: [
+  //         {
+  //           type: 'AGG_PROGRAMME_BY_STATUS',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //             timeGroup: true,
+  //           },
+  //         },
+  //         {
+  //           type: 'AGG_PROGRAMME_BY_SECTOR',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //             timeGroup: true,
+  //           },
+  //         },
+  //         {
+  //           type: 'CERTIFIED_REVOKED_PROGRAMMES',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //             timeGroup: true,
+  //           },
+  //         },
+  //         {
+  //           type: 'ALL_TRANSFER_LOCATION',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //         {
+  //           type: 'ALL_PROGRAMME_LOCATION',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //       ],
+  //     };
+  //   } else {
+  //     return {
+  //       system: SystemNames.CARBON_REGISTRY,
+  //       stats: [
+  //         {
+  //           type: 'AGG_PROGRAMME_BY_STATUS',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //             timeGroup: true,
+  //           },
+  //         },
+  //         {
+  //           type: 'AGG_PROGRAMME_BY_SECTOR',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //             timeGroup: true,
+  //           },
+  //         },
+  //         {
+  //           type: 'CERTIFIED_REVOKED_PROGRAMMES',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //             timeGroup: true,
+  //           },
+  //         },
+  //         {
+  //           type: 'ALL_TRANSFER_LOCATION',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //         {
+  //           type: 'ALL_PROGRAMME_LOCATION',
+  //           statFilter: {
+  //             startTime: startTime !== 0 ? startTime : undefined,
+  //             endTime: endTime !== 0 ? endTime : undefined,
+  //           },
+  //         },
+  //       ],
+  //     };
+  //   }
+  // };
 
-  const onChangeRange = async (dateMoment: any, dateString: any) => {
-    try {
-      if (!dateMoment) {
-        setStartTime(0);
-        setEndTime(0);
-      }
-      if (dateMoment !== null && dateMoment[1] !== null) {
-        setStartTime(Date.parse(String(moment(dateMoment[0]?._d).startOf('day'))));
-        setEndTime(Date.parse(String(moment(dateMoment[1]?._d).endOf('day'))));
-      } else {
-        setStartTime(0);
-        setEndTime(0);
-      }
-    } catch (e: any) {
-      setStartTime(0);
-      setEndTime(0);
-    }
-  };
+  // const firstLower = (lower: any) => {
+  //   return (lower && lower[0].toLowerCase() + lower.slice(1)) || lower;
+  // };
 
-  const firstLower = (lower: any) => {
-    return (lower && lower[0].toLowerCase() + lower.slice(1)) || lower;
-  };
+  // const getAllProgrammesAggChartStats = async () => {
+  //   setLoadingCharts(true);
+  //   try {
+  //     const response: any = await post(
+  //       'stats/programme/aggSl',
+  //       getAllChartsParams(),
+  //       undefined,
+  //       statServerUrl
+  //     );
+  //     let programmesAggByStatus: any;
+  //     let programmesAggBySector: any;
+  //     let totalCreditsCertifiedStats: any;
+  //     let programmeLocationsStats: any;
+  //     let transferLocationsStats: any;
+  //     if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+  //       if (
+  //         response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
+  //         String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
+  //       ) {
+  //         setLastUpdateTotalCreditsEpoch(
+  //           parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+  //         );
+  //         setLastUpdateTotalCredits(
+  //           moment(
+  //             parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+  //           ).fromNow()
+  //         );
+  //       }
+  //       programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
+  //       if (
+  //         response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime &&
+  //         String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime) !== '0'
+  //       ) {
+  //         setLastUpdateProgrammesSectorStatsCEpoch(
+  //           parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
+  //         );
+  //         setLastUpdateProgrammesSectorStatsC(
+  //           moment(
+  //             parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
+  //           ).fromNow()
+  //         );
+  //       }
+  //       programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
+  //       if (
+  //         response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last &&
+  //         String(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+  //       ) {
+  //         setLastUpdateTotalCreditsCertifiedEpoch(
+  //           parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)
+  //         );
+  //         setLastUpdateTotalCreditsCertified(
+  //           moment(parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+  //         );
+  //       }
+  //       totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+  //       if (
+  //         response?.data?.stats?.MY_TRANSFER_LOCATION?.last &&
+  //         String(response?.data?.stats?.MY_TRANSFER_LOCATION?.last) !== '0'
+  //       ) {
+  //         setLastUpdateTransferLocationsEpoch(
+  //           parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)
+  //         );
+  //         setLastUpdateTransferLocations(
+  //           moment(parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)).fromNow()
+  //         );
+  //       }
+  //       transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
+  //       programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
+  //       // } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
+  //       //   if (
+  //       //     response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last &&
+  //       //     String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last) !== '0'
+  //       //   ) {
+  //       //     setLastUpdateTotalCreditsEpoch(
+  //       //       parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last)
+  //       //     );
+  //       //     setLastUpdateTotalCredits(
+  //       //       moment(parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last)).fromNow()
+  //       //     );
+  //       //   } else {
+  //       //     setLastUpdateTotalCredits('0');
+  //       //     setLastUpdateTotalCreditsEpoch(0);
+  //       //   }
+  //       //   programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
+  //       //   if (
+  //       //     response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime &&
+  //       //     String(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime) !== '0'
+  //       //   ) {
+  //       //     setLastUpdateProgrammesSectorStatsCEpoch(
+  //       //       parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime)
+  //       //     );
+  //       //     setLastUpdateProgrammesSectorStatsC(
+  //       //       moment(
+  //       //         parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime)
+  //       //       ).fromNow()
+  //       //     );
+  //       //   } else {
+  //       //     setLastUpdateProgrammesSectorStatsCEpoch(0);
+  //       //     setLastUpdateProgrammesSectorStatsC('0');
+  //       //   }
+  //       //   programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
+  //       //   if (
+  //       //     response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last &&
+  //       //     String(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last) !== '0'
+  //       //   ) {
+  //       //     setLastUpdateTotalCreditsCertifiedEpoch(
+  //       //       parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)
+  //       //     );
+  //       //     setLastUpdateTotalCreditsCertified(
+  //       //       moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)).fromNow()
+  //       //     );
+  //       //   } else {
+  //       //     setLastUpdateTotalCreditsCertifiedEpoch(0);
+  //       //     setLastUpdateTotalCreditsCertified('0');
+  //       //   }
+  //       //   totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
+  //       //   if (
+  //       //     response?.data?.stats?.MY_TRANSFER_LOCATION?.last &&
+  //       //     String(response?.data?.stats?.MY_TRANSFER_LOCATION?.last) !== '0'
+  //       //   ) {
+  //       //     setLastUpdateTransferLocationsEpoch(
+  //       //       parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)
+  //       //     );
+  //       //     setLastUpdateTransferLocations(
+  //       //       moment(parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)).fromNow()
+  //       //     );
+  //       //   } else {
+  //       //     setLastUpdateTransferLocationsEpoch(0);
+  //       //     setLastUpdateTransferLocations('0');
+  //       //   }
+  //       //   transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
+  //       //   programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
+  //       // } else if (
+  //       //   userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+  //       //   categoryType === 'overall'
+  //       // ) {
+  //       //   if (
+  //       //     response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
+  //       //     String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
+  //       //   ) {
+  //       //     setLastUpdateTotalCreditsEpoch(
+  //       //       parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+  //       //     );
+  //       //     setLastUpdateTotalCredits(
+  //       //       moment(
+  //       //         parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+  //       //       ).fromNow()
+  //       //     );
+  //       //   }
+  //       //   programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+  //       //   if (
+  //       //     response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime &&
+  //       //     String(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime) !== '0'
+  //       //   ) {
+  //       //     setLastUpdateProgrammesSectorStatsCEpoch(
+  //       //       parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
+  //       //     );
+  //       //     setLastUpdateProgrammesSectorStatsC(
+  //       //       moment(
+  //       //         parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
+  //       //       ).fromNow()
+  //       //     );
+  //       //   }
+  //       //   programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
+  //       //   if (
+  //       //     response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
+  //       //     String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+  //       //   ) {
+  //       //     setLastUpdateTotalCreditsCertifiedEpoch(
+  //       //       parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
+  //       //     );
+  //       //     setLastUpdateTotalCreditsCertified(
+  //       //       moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+  //       //     );
+  //       //   }
+  //       //   totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+  //       //   if (
+  //       //     response?.data?.stats?.ALL_TRANSFER_LOCATION?.last &&
+  //       //     String(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last) !== '0'
+  //       //   ) {
+  //       //     setLastUpdateTransferLocationsEpoch(
+  //       //       parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)
+  //       //     );
+  //       //     setLastUpdateTransferLocations(
+  //       //       moment(parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)).fromNow()
+  //       //     );
+  //       //   }
+  //       //   transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
+  //       //   programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
+  //     } else {
+  //       if (
+  //         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
+  //         String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
+  //       ) {
+  //         setLastUpdateTotalCreditsEpoch(
+  //           parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+  //         );
+  //         setLastUpdateTotalCredits(
+  //           moment(
+  //             parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+  //           ).fromNow()
+  //         );
+  //       }
+  //       programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+  //       if (
+  //         response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime &&
+  //         String(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime) !== '0'
+  //       ) {
+  //         setLastUpdateProgrammesSectorStatsCEpoch(
+  //           parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
+  //         );
+  //         setLastUpdateProgrammesSectorStatsC(
+  //           moment(
+  //             parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
+  //           ).fromNow()
+  //         );
+  //       }
+  //       programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
+  //       if (
+  //         response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
+  //         String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+  //       ) {
+  //         setLastUpdateTotalCreditsCertifiedEpoch(
+  //           parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
+  //         );
+  //         setLastUpdateTotalCreditsCertified(
+  //           moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+  //         );
+  //       }
+  //       // totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+  //       if (
+  //         response?.data?.stats?.ALL_TRANSFER_LOCATION?.last &&
+  //         String(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last) !== '0'
+  //       ) {
+  //         setLastUpdateTransferLocationsEpoch(
+  //           parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)
+  //         );
+  //         setLastUpdateTransferLocations(
+  //           moment(parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)).fromNow()
+  //         );
+  //       }
+  //       // transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
+  //       // programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
+  //     }
+  //     let timeLabelDataStatus = [];
+  //     let formattedTimeLabelDataStatus: any = [];
+  //     // let timeLabelDataSector = [];
+  //     // let formattedTimeLabelDataSector: any = [];
+  //     // let timeLabelCertifiedCreditsStats = [];
+  //     // let formattedTimeLabelCertifiedCreditsStats: any = [];
+  //     if (programmesAggByStatus) {
+  //       timeLabelDataStatus = programmesAggByStatus?.timeLabel;
+  //       formattedTimeLabelDataStatus = timeLabelDataStatus?.map((item: any) => {
+  //         return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
+  //       });
+  //       setTotalProgrammesOptionsLabels(formattedTimeLabelDataStatus);
+  //       setTotalCreditsOptionsLabels(formattedTimeLabelDataStatus);
+  //       const statusArray = Object.values(ProgrammeStageLegend);
+  //       const totalProgrammesValues: ChartSeriesItem[] = [];
+  //       //TODO: WIdget 7 & 9
+  //       statusArray?.map((status: any) => {
+  //         totalProgrammesValues.push({
+  //           name: status === 'AwaitingAuthorization' ? 'Pending' : status,
+  //           data: programmesAggByStatus[firstLower(status)],
+  //         });
+  //       });
+  //       setTotalProgrammesSeries(totalProgrammesValues);
+  //       // totalProgrammesOptions.xaxis.categories = formattedTimeLabelDataStatus;
+  //       console.log('totalProgrammesValues------', totalProgrammesValues);
+  //       const totalCreditsValues: ChartSeriesItem[] = [
+  //         {
+  //           name: 'Authorised',
+  //           data: programmesAggByStatus?.authorisedCredits,
+  //         },
+  //         {
+  //           name: 'Issued',
+  //           data: programmesAggByStatus?.issuedCredits,
+  //         },
+  //         {
+  //           name: 'Transferred',
+  //           data: programmesAggByStatus?.transferredCredits,
+  //         },
+  //         {
+  //           name: 'Retired',
+  //           data: programmesAggByStatus?.retiredCredits,
+  //         },
+  //         {
+  //           name: 'Frozen',
+  //           data: programmesAggByStatus?.frozenCredits,
+  //         },
+  //       ];
+  //       setTotalCreditsSeries(totalCreditsValues);
+  //       creditsByDateOptions.xaxis.categories = formattedTimeLabelDataStatus;
+  //       creditsByDateOptions.yaxis.max = totalCreditsSeries ? undefined : 25;
 
-  const getAllProgrammesAggChartStats = async () => {
-    setLoadingCharts(true);
-    try {
-      const response: any = await post(
-        'stats/programme/aggSl',
-        getAllChartsParams(),
-        undefined,
-        statServerUrl
-      );
-      let programmesAggByStatus: any;
-      let programmesAggBySector: any;
-      let totalCreditsCertifiedStats: any;
-      let programmeLocationsStats: any;
-      let transferLocationsStats: any;
-      if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-        if (
-          response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
-          String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
-        ) {
-          setLastUpdateTotalCreditsEpoch(
-            parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
-          );
-          setLastUpdateTotalCredits(
-            moment(
-              parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
-            ).fromNow()
-          );
-        }
-        programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
-        if (
-          response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime &&
-          String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime) !== '0'
-        ) {
-          setLastUpdateProgrammesSectorStatsCEpoch(
-            parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
-          );
-          setLastUpdateProgrammesSectorStatsC(
-            moment(
-              parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
-            ).fromNow()
-          );
-        }
-        programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
-        if (
-          response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last &&
-          String(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
-        ) {
-          setLastUpdateTotalCreditsCertifiedEpoch(
-            parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)
-          );
-          setLastUpdateTotalCreditsCertified(
-            moment(parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
-          );
-        }
-        totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
-        if (
-          response?.data?.stats?.MY_TRANSFER_LOCATION?.last &&
-          String(response?.data?.stats?.MY_TRANSFER_LOCATION?.last) !== '0'
-        ) {
-          setLastUpdateTransferLocationsEpoch(
-            parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)
-          );
-          setLastUpdateTransferLocations(
-            moment(parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)).fromNow()
-          );
-        }
-        transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
-        programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
-        // } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
-        //   if (
-        //     response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last &&
-        //     String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last) !== '0'
-        //   ) {
-        //     setLastUpdateTotalCreditsEpoch(
-        //       parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last)
-        //     );
-        //     setLastUpdateTotalCredits(
-        //       moment(parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last)).fromNow()
-        //     );
-        //   } else {
-        //     setLastUpdateTotalCredits('0');
-        //     setLastUpdateTotalCreditsEpoch(0);
-        //   }
-        //   programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
-        //   if (
-        //     response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime &&
-        //     String(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime) !== '0'
-        //   ) {
-        //     setLastUpdateProgrammesSectorStatsCEpoch(
-        //       parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime)
-        //     );
-        //     setLastUpdateProgrammesSectorStatsC(
-        //       moment(
-        //         parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime)
-        //       ).fromNow()
-        //     );
-        //   } else {
-        //     setLastUpdateProgrammesSectorStatsCEpoch(0);
-        //     setLastUpdateProgrammesSectorStatsC('0');
-        //   }
-        //   programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
-        //   if (
-        //     response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last &&
-        //     String(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last) !== '0'
-        //   ) {
-        //     setLastUpdateTotalCreditsCertifiedEpoch(
-        //       parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)
-        //     );
-        //     setLastUpdateTotalCreditsCertified(
-        //       moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)).fromNow()
-        //     );
-        //   } else {
-        //     setLastUpdateTotalCreditsCertifiedEpoch(0);
-        //     setLastUpdateTotalCreditsCertified('0');
-        //   }
-        //   totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
-        //   if (
-        //     response?.data?.stats?.MY_TRANSFER_LOCATION?.last &&
-        //     String(response?.data?.stats?.MY_TRANSFER_LOCATION?.last) !== '0'
-        //   ) {
-        //     setLastUpdateTransferLocationsEpoch(
-        //       parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)
-        //     );
-        //     setLastUpdateTransferLocations(
-        //       moment(parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)).fromNow()
-        //     );
-        //   } else {
-        //     setLastUpdateTransferLocationsEpoch(0);
-        //     setLastUpdateTransferLocations('0');
-        //   }
-        //   transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
-        //   programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
-        // } else if (
-        //   userInfoState?.companyRole === CompanyRole.CERTIFIER &&
-        //   categoryType === 'overall'
-        // ) {
-        //   if (
-        //     response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
-        //     String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
-        //   ) {
-        //     setLastUpdateTotalCreditsEpoch(
-        //       parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
-        //     );
-        //     setLastUpdateTotalCredits(
-        //       moment(
-        //         parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
-        //       ).fromNow()
-        //     );
-        //   }
-        //   programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
-        //   if (
-        //     response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime &&
-        //     String(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime) !== '0'
-        //   ) {
-        //     setLastUpdateProgrammesSectorStatsCEpoch(
-        //       parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
-        //     );
-        //     setLastUpdateProgrammesSectorStatsC(
-        //       moment(
-        //         parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
-        //       ).fromNow()
-        //     );
-        //   }
-        //   programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
-        //   if (
-        //     response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
-        //     String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
-        //   ) {
-        //     setLastUpdateTotalCreditsCertifiedEpoch(
-        //       parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
-        //     );
-        //     setLastUpdateTotalCreditsCertified(
-        //       moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
-        //     );
-        //   }
-        //   totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
-        //   if (
-        //     response?.data?.stats?.ALL_TRANSFER_LOCATION?.last &&
-        //     String(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last) !== '0'
-        //   ) {
-        //     setLastUpdateTransferLocationsEpoch(
-        //       parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)
-        //     );
-        //     setLastUpdateTransferLocations(
-        //       moment(parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)).fromNow()
-        //     );
-        //   }
-        //   transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
-        //   programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
-      } else {
-        if (
-          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
-          String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
-        ) {
-          setLastUpdateTotalCreditsEpoch(
-            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
-          );
-          setLastUpdateTotalCredits(
-            moment(
-              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
-            ).fromNow()
-          );
-        }
-        programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
-        if (
-          response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime &&
-          String(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime) !== '0'
-        ) {
-          setLastUpdateProgrammesSectorStatsCEpoch(
-            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
-          );
-          setLastUpdateProgrammesSectorStatsC(
-            moment(
-              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
-            ).fromNow()
-          );
-        }
-        programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
-        if (
-          response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
-          String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
-        ) {
-          setLastUpdateTotalCreditsCertifiedEpoch(
-            parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
-          );
-          setLastUpdateTotalCreditsCertified(
-            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
-          );
-        }
-        // totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
-        if (
-          response?.data?.stats?.ALL_TRANSFER_LOCATION?.last &&
-          String(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last) !== '0'
-        ) {
-          setLastUpdateTransferLocationsEpoch(
-            parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)
-          );
-          setLastUpdateTransferLocations(
-            moment(parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)).fromNow()
-          );
-        }
-        // transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
-        // programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
-      }
-      let timeLabelDataStatus = [];
-      let formattedTimeLabelDataStatus: any = [];
-      // let timeLabelDataSector = [];
-      // let formattedTimeLabelDataSector: any = [];
-      // let timeLabelCertifiedCreditsStats = [];
-      // let formattedTimeLabelCertifiedCreditsStats: any = [];
-      if (programmesAggByStatus) {
-        timeLabelDataStatus = programmesAggByStatus?.timeLabel;
-        formattedTimeLabelDataStatus = timeLabelDataStatus?.map((item: any) => {
-          return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
-        });
-        setTotalProgrammesOptionsLabels(formattedTimeLabelDataStatus);
-        setTotalCreditsOptionsLabels(formattedTimeLabelDataStatus);
-        const statusArray = Object.values(ProgrammeStageLegend);
-        const totalProgrammesValues: ChartSeriesItem[] = [];
-        //TODO: WIdget 7 & 9
-        statusArray?.map((status: any) => {
-          totalProgrammesValues.push({
-            name: status === 'AwaitingAuthorization' ? 'Pending' : status,
-            data: programmesAggByStatus[firstLower(status)],
-          });
-        });
-        setTotalProgrammesSeries(totalProgrammesValues);
-        // totalProgrammesOptions.xaxis.categories = formattedTimeLabelDataStatus;
-        console.log('totalProgrammesValues------', totalProgrammesValues);
-        const totalCreditsValues: ChartSeriesItem[] = [
-          {
-            name: 'Authorised',
-            data: programmesAggByStatus?.authorisedCredits,
-          },
-          {
-            name: 'Issued',
-            data: programmesAggByStatus?.issuedCredits,
-          },
-          {
-            name: 'Transferred',
-            data: programmesAggByStatus?.transferredCredits,
-          },
-          {
-            name: 'Retired',
-            data: programmesAggByStatus?.retiredCredits,
-          },
-          {
-            name: 'Frozen',
-            data: programmesAggByStatus?.frozenCredits,
-          },
-        ];
-        setTotalCreditsSeries(totalCreditsValues);
-        creditsByDateOptions.xaxis.categories = formattedTimeLabelDataStatus;
-        creditsByDateOptions.yaxis.max = totalCreditsSeries ? undefined : 25;
+  //       //MARK: Adding annotation to stacked bar chart
+  //       // NEED TO IMPLEMENT WITH NEW BE EP
+  //       // Dynamically calculate totals for each stack and format as 'k'
+  //       const totals1 = totalCreditsValues?.[0].data.map((_: any, index: any) =>
+  //         totalCreditsValues?.reduce((sum: any, series: any) => sum + series.data[index], 0)
+  //       );
+  //       const totalAnnotations1 = totals1.map((total: any, index: any) => ({
+  //         x: creditsByDateOptions.xaxis.categories[index],
+  //         y: total,
+  //         marker: {
+  //           size: 0, // Remove the circle marker
+  //         },
+  //         label: {
+  //           text: total >= 1000 ? `${(total / 1000).toFixed(1)}k` : `${total}`,
+  //           style: {
+  //             fontSize: '12px',
+  //             color: '#000',
+  //             background: 'transparent',
+  //             stroke: 'none !important',
+  //             borderRadius: 0, // No rounded corners
+  //             borderColor: 'transparent', // Remove the border
+  //           },
+  //         },
+  //       }));
 
-        //MARK: Adding annotation to stacked bar chart
-        // NEED TO IMPLEMENT WITH NEW BE EP
-        // Dynamically calculate totals for each stack and format as 'k'
-        const totals1 = totalCreditsValues?.[0].data.map((_: any, index: any) =>
-          totalCreditsValues?.reduce((sum: any, series: any) => sum + series.data[index], 0)
-        );
-        const totalAnnotations1 = totals1.map((total: any, index: any) => ({
-          x: creditsByDateOptions.xaxis.categories[index],
-          y: total,
-          marker: {
-            size: 0, // Remove the circle marker
-          },
-          label: {
-            text: total >= 1000 ? `${(total / 1000).toFixed(1)}k` : `${total}`,
-            style: {
-              fontSize: '12px',
-              color: '#000',
-              background: 'transparent',
-              stroke: 'none !important',
-              borderRadius: 0, // No rounded corners
-              borderColor: 'transparent', // Remove the border
-            },
-          },
-        }));
+  //       // Add totals as annotations
+  //       creditsByDateOptions.annotations.points = totalAnnotations1;
+  //     }
+  //     if (programmesAggBySector) {
+  //       // timeLabelDataSector = programmesAggByStatus?.timeLabel;
+  //       // formattedTimeLabelDataSector = timeLabelDataSector?.map((item: any) => {
+  //       //   return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
+  //       // });
+  //       // setTotalProgrammesSectorOptionsLabels(formattedTimeLabelDataSector);
+  //       // const progarmmesSectorSeriesData: ChartSeriesItem[] = [];
+  //       // const sectorsArray = Object.values(ProgrammeCategory).slice(0, 2); //TODO: Limiting to 2 for testing UI. REMOVE THIS
+  //       // sectorsArray?.map((sector: any) => {
+  //       //   if (programmesAggBySector[sector] !== undefined) {
+  //       //     progarmmesSectorSeriesData.push({
+  //       //       name: getProjectCategory[sector],
+  //       //       data: programmesAggBySector[sector],
+  //       //     });
+  //       //   }
+  //       // });
+  //       // console.log('progarmmesSectorSeriesData', progarmmesSectorSeriesData);
+  //       // setTotalProgrammesSectorSeries(progarmmesSectorSeriesData);
+  //       //MARK: Adding annotation to stacked bar chart
+  //       // NEED TO IMPLEMENT WITH NEW BE EP
+  //       // Dynamically calculate totals for each stack and format as 'k'
+  //       // const totals = progarmmesSectorSeriesData?.[0].data.map((_: any, index: any) =>
+  //       //   progarmmesSectorSeriesData?.reduce((sum: any, series: any) => sum + series.data[index], 0)
+  //       // );
+  //       // const totalAnnotations = totals.map((total: any, index: any) => ({
+  //       //   x: retirementsByDateOptions.xaxis.categories[index],
+  //       //   y: total,
+  //       //   marker: {
+  //       //     size: 0, // Remove the circle marker
+  //       //   },
+  //       //   label: {
+  //       //     text: total >= 1000 ? `${(total / 1000).toFixed(1)}k` : `${total}`,
+  //       //     style: {
+  //       //       fontSize: '12px',
+  //       //       color: '#000',
+  //       //       background: 'transparent',
+  //       //       stroke: 'none !important',
+  //       //       borderRadius: 0, // No rounded corners
+  //       //       borderColor: 'transparent', // Remove the border
+  //       //     },
+  //       //   },
+  //       // }));
+  //       // // Add totals as annotations
+  //       // // retirementsByDateOptions.annotations.points = totalAnnotations;
+  //       // // totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector; //NOT NEEDED ANYMORE
+  //       // retirementsByDateOptions.xaxis.categories = formattedTimeLabelDataSector;
+  //     }
+  //     // if (totalCreditsCertifiedStats) {
+  //     //   timeLabelCertifiedCreditsStats = totalCreditsCertifiedStats?.timeLabel;
+  //     //   formattedTimeLabelCertifiedCreditsStats = timeLabelCertifiedCreditsStats?.map(
+  //     //     (item: any) => {
+  //     //       return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
+  //     //     }
+  //     //   );
+  //     //   const totalCertifiedCreditsSeriesValues = [
+  //     //     {
+  //     //       name: 'Certified',
+  //     //       data: totalCreditsCertifiedStats?.certifiedSum,
+  //     //     },
+  //     //     {
+  //     //       name: 'Uncertified',
+  //     //       data: totalCreditsCertifiedStats?.uncertifiedSum,
+  //     //     },
+  //     //     {
+  //     //       name: 'Revoked',
+  //     //       data: totalCreditsCertifiedStats?.revokedSum,
+  //     //     },
+  //     //   ];
+  //     //   setTotalCertifiedCreditsSeries(totalCertifiedCreditsSeriesValues);
+  //     //   setTotalCertifiedCreditsOptionsLabels(formattedTimeLabelCertifiedCreditsStats);
 
-        // Add totals as annotations
-        creditsByDateOptions.annotations.points = totalAnnotations1;
-      }
-      if (programmesAggBySector) {
-        // timeLabelDataSector = programmesAggByStatus?.timeLabel;
-        // formattedTimeLabelDataSector = timeLabelDataSector?.map((item: any) => {
-        //   return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
-        // });
-        // setTotalProgrammesSectorOptionsLabels(formattedTimeLabelDataSector);
-        // const progarmmesSectorSeriesData: ChartSeriesItem[] = [];
-        // const sectorsArray = Object.values(ProgrammeCategory).slice(0, 2); //TODO: Limiting to 2 for testing UI. REMOVE THIS
-        // sectorsArray?.map((sector: any) => {
-        //   if (programmesAggBySector[sector] !== undefined) {
-        //     progarmmesSectorSeriesData.push({
-        //       name: getProjectCategory[sector],
-        //       data: programmesAggBySector[sector],
-        //     });
-        //   }
-        // });
-        // console.log('progarmmesSectorSeriesData', progarmmesSectorSeriesData);
-        // setTotalProgrammesSectorSeries(progarmmesSectorSeriesData);
-        //MARK: Adding annotation to stacked bar chart
-        // NEED TO IMPLEMENT WITH NEW BE EP
-        // Dynamically calculate totals for each stack and format as 'k'
-        // const totals = progarmmesSectorSeriesData?.[0].data.map((_: any, index: any) =>
-        //   progarmmesSectorSeriesData?.reduce((sum: any, series: any) => sum + series.data[index], 0)
-        // );
-        // const totalAnnotations = totals.map((total: any, index: any) => ({
-        //   x: retirementsByDateOptions.xaxis.categories[index],
-        //   y: total,
-        //   marker: {
-        //     size: 0, // Remove the circle marker
-        //   },
-        //   label: {
-        //     text: total >= 1000 ? `${(total / 1000).toFixed(1)}k` : `${total}`,
-        //     style: {
-        //       fontSize: '12px',
-        //       color: '#000',
-        //       background: 'transparent',
-        //       stroke: 'none !important',
-        //       borderRadius: 0, // No rounded corners
-        //       borderColor: 'transparent', // Remove the border
-        //     },
-        //   },
-        // }));
-        // // Add totals as annotations
-        // // retirementsByDateOptions.annotations.points = totalAnnotations;
-        // // totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector; //NOT NEEDED ANYMORE
-        // retirementsByDateOptions.xaxis.categories = formattedTimeLabelDataSector;
-      }
-      // if (totalCreditsCertifiedStats) {
-      //   timeLabelCertifiedCreditsStats = totalCreditsCertifiedStats?.timeLabel;
-      //   formattedTimeLabelCertifiedCreditsStats = timeLabelCertifiedCreditsStats?.map(
-      //     (item: any) => {
-      //       return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
-      //     }
-      //   );
-      //   const totalCertifiedCreditsSeriesValues = [
-      //     {
-      //       name: 'Certified',
-      //       data: totalCreditsCertifiedStats?.certifiedSum,
-      //     },
-      //     {
-      //       name: 'Uncertified',
-      //       data: totalCreditsCertifiedStats?.uncertifiedSum,
-      //     },
-      //     {
-      //       name: 'Revoked',
-      //       data: totalCreditsCertifiedStats?.revokedSum,
-      //     },
-      //   ];
-      //   setTotalCertifiedCreditsSeries(totalCertifiedCreditsSeriesValues);
-      //   setTotalCertifiedCreditsOptionsLabels(formattedTimeLabelCertifiedCreditsStats);
+  //     //   // totalCreditsCertifiedOptions.xaxis.categories = formattedTimeLabelCertifiedCreditsStats; //NOT NEEDED ANYMORE
+  //     // }
+  //     // if (transferLocationsStats) {
+  //     //   setProgrammeTransferLocations(transferLocationsStats);
+  //     // }
+  //     // if (programmeLocationsStats) {
+  //     //   setProgrammeLocations(programmeLocationsStats);
+  //     // }
+  //   } catch (error: any) {
+  //     console.log('Error in getting users', error);
+  //     message.open({
+  //       type: 'error',
+  //       content: error.message,
+  //       duration: 3,
+  //       style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+  //     });
+  //   } finally {
+  //     setLoadingCharts(false);
+  //   }
+  // };
 
-      //   // totalCreditsCertifiedOptions.xaxis.categories = formattedTimeLabelCertifiedCreditsStats; //NOT NEEDED ANYMORE
-      // }
-      // if (transferLocationsStats) {
-      //   setProgrammeTransferLocations(transferLocationsStats);
-      // }
-      // if (programmeLocationsStats) {
-      //   setProgrammeLocations(programmeLocationsStats);
-      // }
-    } catch (error: any) {
-      console.log('Error in getting users', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-    } finally {
-      setLoadingCharts(false);
-    }
-  };
+  // const getPendingVerificationRequests = async () => {
+  //   setLoadingWithoutTimeRange(true);
 
-  const getPendingVerificationRequests = async () => {
-    setLoadingWithoutTimeRange(true);
+  //   try {
+  //     const response: any = await get('stats/programme/verifications', undefined, statServerUrl);
+  //     console.log(response);
+  //     setVerificationRequestPending(response?.data?.count);
+  //   } catch (error: any) {
+  //     console.log('Error in getting pending verification requests', error);
+  //     message.open({
+  //       type: 'error',
+  //       content: error.message,
+  //       duration: 3,
+  //       style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+  //     });
+  //   } finally {
+  //     setLoadingWithoutTimeRange(false);
+  //   }
+  // };
 
-    try {
-      const response: any = await get('stats/programme/verifications', undefined, statServerUrl);
-      console.log(response);
-      setVerificationRequestPending(response?.data?.count);
-    } catch (error: any) {
-      console.log('Error in getting pending verification requests', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-    } finally {
-      setLoadingWithoutTimeRange(false);
-    }
-  };
+  // const getPendingRetirementRequests = async () => {
+  //   setLoadingWithoutTimeRange(true);
 
-  const getPendingRetirementRequests = async () => {
-    setLoadingWithoutTimeRange(true);
+  //   try {
+  //     const response: any = await get('stats/programme/retirements', undefined, statServerUrl);
+  //     console.log(response);
+  //     setTransferRequestSent(response?.data?.count);
+  //   } catch (error: any) {
+  //     console.log('Error in getting pending retirement requests', error);
+  //     message.open({
+  //       type: 'error',
+  //       content: error.message,
+  //       duration: 3,
+  //       style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+  //     });
+  //   } finally {
+  //     setLoadingWithoutTimeRange(false);
+  //   }
+  // };
 
-    try {
-      const response: any = await get('stats/programme/retirements', undefined, statServerUrl);
-      console.log(response);
-      setTransferRequestSent(response?.data?.count);
-    } catch (error: any) {
-      console.log('Error in getting pending retirement requests', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-    } finally {
-      setLoadingWithoutTimeRange(false);
-    }
-  };
+  // const getAuthorisedCreditsTotalByType = async () => {
+  //   setLoadingWithoutTimeRange(true);
 
-  const getAuthorisedCreditsTotalByType = async () => {
-    setLoadingWithoutTimeRange(true);
+  //   try {
+  //     // const response: any = await get('stats/programme/retirements', undefined, statServerUrl);
+  //     const response: any = await post(
+  //       'stats/programme/authCreditsByCreditType',
+  //       {
+  //         startTime: startTime !== 0 ? startTime : undefined,
+  //         endTime: endTime !== 0 ? endTime : undefined,
+  //       },
+  //       undefined,
+  //       statServerUrl
+  //     );
+  //     console.log(response);
 
-    try {
-      // const response: any = await get('stats/programme/retirements', undefined, statServerUrl);
-      const response: any = await post(
-        'stats/programme/authCreditsByCreditType',
-        {
-          startTime: startTime !== 0 ? startTime : undefined,
-          endTime: endTime !== 0 ? endTime : undefined,
-        },
-        undefined,
-        statServerUrl
-      );
-      console.log(response);
+  //     const track1Credits = response?.data?.TRACK_1 ? Number(response?.data?.TRACK_1) : 0;
+  //     const track2Credits = response?.data?.TRACK_2 ? Number(response?.data?.TRACK_2) : 0;
+  //     // const totalAuthCredits = addRoundNumber(track1Credits + track2Credits);
 
-      const track1Credits = response?.data?.TRACK_1 ? Number(response?.data?.TRACK_1) : 0;
-      const track2Credits = response?.data?.TRACK_2 ? Number(response?.data?.TRACK_2) : 0;
-      // const totalAuthCredits = addRoundNumber(track1Credits + track2Credits);
+  //     const pieSeriesCreditTypeData: any[] = [];
+  //     pieSeriesCreditTypeData.push(track1Credits);
+  //     pieSeriesCreditTypeData.push(track2Credits);
+  //     setAuthCreditsByTypePieSeries(pieSeriesCreditTypeData);
+  //     // optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
+  //     //   '' + addCommSep(track1Credits + track2Credits); //NOT NEEDED ANYMORE
+  //   } catch (error: any) {
+  //     console.log('Error in getting pending retirement requests', error);
+  //     message.open({
+  //       type: 'error',
+  //       content: error.message,
+  //       duration: 3,
+  //       style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+  //     });
+  //   } finally {
+  //     setLoadingWithoutTimeRange(false);
+  //   }
+  // };
 
-      const pieSeriesCreditTypeData: any[] = [];
-      pieSeriesCreditTypeData.push(track1Credits);
-      pieSeriesCreditTypeData.push(track2Credits);
-      setAuthCreditsByTypePieSeries(pieSeriesCreditTypeData);
-      // optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
-      //   '' + addCommSep(track1Credits + track2Credits); //NOT NEEDED ANYMORE
-    } catch (error: any) {
-      console.log('Error in getting pending retirement requests', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-    } finally {
-      setLoadingWithoutTimeRange(false);
-    }
-  };
+  // const getAllProgrammeAnalyticsStatsWithoutTimeRange = async () => {
+  //   setLoadingWithoutTimeRange(true);
+  //   try {
+  //     const response: any = await post(
+  //       'stats/programme/aggSl',
+  //       getAllProgrammeAnalyticsStatsParamsWithoutTimeRange(),
+  //       undefined,
+  //       statServerUrl
+  //     );
 
-  const getAllProgrammeAnalyticsStatsWithoutTimeRange = async () => {
-    setLoadingWithoutTimeRange(true);
-    try {
-      const response: any = await post(
-        'stats/programme/aggSl',
-        getAllProgrammeAnalyticsStatsParamsWithoutTimeRange(),
-        undefined,
-        statServerUrl
-      );
+  //     let programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS;
+  //     if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+  //       programmeByStatusAggregationResponse = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS;
+  //     }
+  //     const pendingTransferInitAggregationResponse =
+  //       response?.data?.stats?.PENDING_TRANSFER_INIT?.data;
+  //     const pendingTransferReceivedAggregationResponse =
+  //       response?.data?.stats?.PENDING_TRANSFER_RECV?.data;
+  //     const myCreditAggregationResponse = response?.data?.stats?.MY_CREDIT?.data;
+  //     const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_BY_ME?.data[0];
+  //     const unCertifiedByMeAggregationResponse = response?.data?.stats?.UNCERTIFIED_BY_ME?.data;
+  //     programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
+  //       if (responseItem?.currentStage === 'awaitingAuthorization') {
+  //         //TODO: Widget 1 change needed sum the count of all status
+  //         setPendingProjectsWithoutTimeRange(parseInt(responseItem?.count));
+  //       }
+  //     });
+  //     // if (pendingTransferInitAggregationResponse) {
+  //     //   setTransferRequestSent(parseInt(pendingTransferInitAggregationResponse[0]?.count));
+  //     // }
+  //     if (myCreditAggregationResponse) {
+  //       setCreditBalanceWithoutTimeRange(myCreditAggregationResponse?.primary);
+  //     }
+  //     if (pendingTransferReceivedAggregationResponse) {
+  //       setTransferRequestReceived(parseInt(pendingTransferReceivedAggregationResponse[0]?.count));
+  //     }
+  //     if (certifiedByMeAggregationResponse) {
+  //       setProgrammesCertifed(parseInt(certifiedByMeAggregationResponse?.count));
+  //       setCreditCertifiedBalanceWithoutTimeRange(
+  //         certifiedByMeAggregationResponse?.certifiedSum === null
+  //           ? 0
+  //           : parseFloat(certifiedByMeAggregationResponse?.sum)
+  //       );
+  //     }
+  //     if (unCertifiedByMeAggregationResponse) {
+  //       setProgrammesUnCertifed(parseInt(unCertifiedByMeAggregationResponse?.uncertifiedCount));
+  //     }
+  //     if (
+  //       response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
+  //       String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
+  //     ) {
+  //       setLastUpdateProgrammesStatsEpoch(
+  //         parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+  //       );
+  //       setLastUpdateProgrammesStats(
+  //         moment(
+  //           parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+  //         ).fromNow()
+  //       );
+  //     }
+  //     if (
+  //       response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime &&
+  //       String(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime) !== '0'
+  //     ) {
+  //       setLastUpdatePendingTransferSentEpoch(
+  //         parseInt(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime)
+  //       );
+  //       setLastUpdatePendingTransferSent(
+  //         moment(parseInt(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime)).fromNow()
+  //       );
+  //     }
+  //     if (
+  //       response?.data?.stats?.MY_CREDIT?.last &&
+  //       String(response?.data?.stats?.MY_CREDIT?.last) !== '0'
+  //     ) {
+  //       setLastUpdateCreditBalanceEpoch(parseInt(response?.data?.stats?.MY_CREDIT?.last));
+  //       setLastUpdateCreditBalance(
+  //         moment(parseInt(response?.data?.stats?.MY_CREDIT?.last)).fromNow()
+  //       );
+  //     }
+  //     if (
+  //       response?.data?.stats?.UNCERTIFIED_BY_ME?.last &&
+  //       String(response?.data?.stats?.UNCERTIFIED_BY_ME?.last) !== '0'
+  //     ) {
+  //       setLastUpdateProgrammesCertifiableEpoch(
+  //         parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)
+  //       );
+  //       setLastUpdateProgrammesCertifiable(
+  //         moment(parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)).fromNow()
+  //       );
+  //     }
+  //     if (
+  //       response?.data?.stats?.CERTIFIED_BY_ME?.last &&
+  //       String(response?.data?.stats?.CERTIFIED_BY_ME?.last) !== '0'
+  //     ) {
+  //       setLastUpdateProgrammesCertifiedEpoch(
+  //         parseInt(response?.data?.stats?.CERTIFIED_BY_ME?.last)
+  //       );
+  //       setLastUpdateProgrammesCertified(
+  //         moment(parseInt(response?.data?.stats?.CERTIFIED_BY_ME?.last)).fromNow()
+  //       );
+  //     }
+  //     if (
+  //       response?.data?.stats?.PENDING_TRANSFER_RECV?.last &&
+  //       String(response?.data?.stats?.PENDING_TRANSFER_RECV?.last) !== '0'
+  //     ) {
+  //       setLastUpdatePendingTransferReceivedEpoch(
+  //         parseInt(response?.data?.stats?.PENDING_TRANSFER_RECV?.last)
+  //       );
+  //       setLastUpdatePendingTransferReceived(
+  //         moment(parseInt(response?.data?.stats?.PENDING_TRANSFER_RECV?.last)).fromNow()
+  //       );
+  //     }
+  //   } catch (error: any) {
+  //     console.log('Error in getting users', error);
+  //     message.open({
+  //       type: 'error',
+  //       content: error.message,
+  //       duration: 3,
+  //       style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+  //     });
+  //   } finally {
+  //     setLoadingWithoutTimeRange(false);
+  //   }
+  // };
 
-      let programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS;
-      if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-        programmeByStatusAggregationResponse = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS;
-      }
-      const pendingTransferInitAggregationResponse =
-        response?.data?.stats?.PENDING_TRANSFER_INIT?.data;
-      const pendingTransferReceivedAggregationResponse =
-        response?.data?.stats?.PENDING_TRANSFER_RECV?.data;
-      const myCreditAggregationResponse = response?.data?.stats?.MY_CREDIT?.data;
-      const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_BY_ME?.data[0];
-      const unCertifiedByMeAggregationResponse = response?.data?.stats?.UNCERTIFIED_BY_ME?.data;
-      programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
-        if (responseItem?.currentStage === 'awaitingAuthorization') {
-          //TODO: Widget 1 change needed sum the count of all status
-          setPendingProjectsWithoutTimeRange(parseInt(responseItem?.count));
-        }
-      });
-      // if (pendingTransferInitAggregationResponse) {
-      //   setTransferRequestSent(parseInt(pendingTransferInitAggregationResponse[0]?.count));
-      // }
-      if (myCreditAggregationResponse) {
-        setCreditBalanceWithoutTimeRange(myCreditAggregationResponse?.primary);
-      }
-      if (pendingTransferReceivedAggregationResponse) {
-        setTransferRequestReceived(parseInt(pendingTransferReceivedAggregationResponse[0]?.count));
-      }
-      if (certifiedByMeAggregationResponse) {
-        setProgrammesCertifed(parseInt(certifiedByMeAggregationResponse?.count));
-        setCreditCertifiedBalanceWithoutTimeRange(
-          certifiedByMeAggregationResponse?.certifiedSum === null
-            ? 0
-            : parseFloat(certifiedByMeAggregationResponse?.sum)
-        );
-      }
-      if (unCertifiedByMeAggregationResponse) {
-        setProgrammesUnCertifed(parseInt(unCertifiedByMeAggregationResponse?.uncertifiedCount));
-      }
-      if (
-        response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
-        String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
-      ) {
-        setLastUpdateProgrammesStatsEpoch(
-          parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
-        );
-        setLastUpdateProgrammesStats(
-          moment(
-            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
-          ).fromNow()
-        );
-      }
-      if (
-        response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime &&
-        String(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime) !== '0'
-      ) {
-        setLastUpdatePendingTransferSentEpoch(
-          parseInt(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime)
-        );
-        setLastUpdatePendingTransferSent(
-          moment(parseInt(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime)).fromNow()
-        );
-      }
-      if (
-        response?.data?.stats?.MY_CREDIT?.last &&
-        String(response?.data?.stats?.MY_CREDIT?.last) !== '0'
-      ) {
-        setLastUpdateCreditBalanceEpoch(parseInt(response?.data?.stats?.MY_CREDIT?.last));
-        setLastUpdateCreditBalance(
-          moment(parseInt(response?.data?.stats?.MY_CREDIT?.last)).fromNow()
-        );
-      }
-      if (
-        response?.data?.stats?.UNCERTIFIED_BY_ME?.last &&
-        String(response?.data?.stats?.UNCERTIFIED_BY_ME?.last) !== '0'
-      ) {
-        setLastUpdateProgrammesCertifiableEpoch(
-          parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)
-        );
-        setLastUpdateProgrammesCertifiable(
-          moment(parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)).fromNow()
-        );
-      }
-      if (
-        response?.data?.stats?.CERTIFIED_BY_ME?.last &&
-        String(response?.data?.stats?.CERTIFIED_BY_ME?.last) !== '0'
-      ) {
-        setLastUpdateProgrammesCertifiedEpoch(
-          parseInt(response?.data?.stats?.CERTIFIED_BY_ME?.last)
-        );
-        setLastUpdateProgrammesCertified(
-          moment(parseInt(response?.data?.stats?.CERTIFIED_BY_ME?.last)).fromNow()
-        );
-      }
-      if (
-        response?.data?.stats?.PENDING_TRANSFER_RECV?.last &&
-        String(response?.data?.stats?.PENDING_TRANSFER_RECV?.last) !== '0'
-      ) {
-        setLastUpdatePendingTransferReceivedEpoch(
-          parseInt(response?.data?.stats?.PENDING_TRANSFER_RECV?.last)
-        );
-        setLastUpdatePendingTransferReceived(
-          moment(parseInt(response?.data?.stats?.PENDING_TRANSFER_RECV?.last)).fromNow()
-        );
-      }
-    } catch (error: any) {
-      console.log('Error in getting users', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-    } finally {
-      setLoadingWithoutTimeRange(false);
-    }
-  };
+  // const getAllProgrammeAnalyticsStats = async () => {
+  //   setLoading(true);
+  //   const pieSeriesCreditsData: any[] = [];
+  //   // const pieSeriesCreditsCerifiedData: any[] = [];
+  //   try {
+  //     const response: any = await post(
+  //       'stats/programme/aggSl',
+  //       getAllProgrammeAnalyticsStatsParams(),
+  //       undefined,
+  //       statServerUrl
+  //     );
+  //     let programmeByStatusAggregationResponse: any;
+  //     let programmeByStatusAuthAggregationResponse: any;
+  //     let certifiedRevokedAggregationResponse: any;
+  //     if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+  //       if (
+  //         response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
+  //         String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
+  //       ) {
+  //         setLastUpdateProgrammesStatsCEpoch(
+  //           parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+  //         );
+  //         setLastUpdateProgrammesStatsC(
+  //           moment(
+  //             parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+  //           ).fromNow()
+  //         );
+  //       }
+  //       programmeByStatusAggregationResponse = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS;
+  //       if (
+  //         response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
+  //         String(response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !==
+  //           '0'
+  //       ) {
+  //         setLastUpdateProgrammesCreditsStatsEpoch(
+  //           parseInt(response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+  //         );
+  //         setLastUpdateProgrammesCreditsStats(
+  //           moment(
+  //             parseInt(
+  //               response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime
+  //             )
+  //           ).fromNow()
+  //         );
+  //       }
+  //       programmeByStatusAuthAggregationResponse =
+  //         response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS;
+  //       if (
+  //         response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last &&
+  //         String(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+  //       ) {
+  //         setLastUpdateCertifiedCreditsStatsEpoch(
+  //           parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)
+  //         );
+  //         setLastUpdateCertifiedCreditsStats(
+  //           moment(parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+  //         );
+  //       }
+  //       certifiedRevokedAggregationResponse =
+  //         response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+  //       // } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
+  //       //   if (
+  //       //     response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime &&
+  //       //     String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime) !== '0'
+  //       //   ) {
+  //       //     setLastUpdateProgrammesStatsCEpoch(
+  //       //       parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
+  //       //     );
+  //       //     setLastUpdateProgrammesStatsC(
+  //       //       moment(
+  //       //         parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
+  //       //       ).fromNow()
+  //       //     );
+  //       //   } else {
+  //       //     setLastUpdateProgrammesStatsCEpoch(0);
+  //       //     setLastUpdateProgrammesStatsC('0');
+  //       //   }
+  //       //   programmeByStatusAggregationResponse =
+  //       //     response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
+  //       //   if (
+  //       //     response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last &&
+  //       //     String(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last) !== '0'
+  //       //   ) {
+  //       //     setLastUpdateProgrammesCreditsStatsEpoch(
+  //       //       parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last)
+  //       //     );
+  //       //     setLastUpdateProgrammesCreditsStats(
+  //       //       moment(parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last)).fromNow()
+  //       //     );
+  //       // } else {
+  //       //   setLastUpdateProgrammesCreditsStatsEpoch(0);
+  //       //   setLastUpdateProgrammesCreditsStats('0');
+  //       // }
+  //       // programmeByStatusAuthAggregationResponse =
+  //       //   response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.data;
+  //       // if (
+  //       //   response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last &&
+  //       //   String(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last) !== '0'
+  //       // ) {
+  //       //   setLastUpdateCertifiedCreditsStatsEpoch(
+  //       //     parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)
+  //       //   );
+  //       //   setLastUpdateCertifiedCreditsStats(
+  //       //     moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)).fromNow()
+  //       //   );
+  //       // } else {
+  //       //   setLastUpdateCertifiedCreditsStatsEpoch(0);
+  //       //   setLastUpdateCertifiedCreditsStats('0');
+  //       // }
+  //       // certifiedRevokedAggregationResponse = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
+  //       // } else if (
+  //       //   userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+  //       //   categoryType === 'overall'
+  //       // ) {
+  //       //   if (
+  //       //     response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
+  //       //     String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
+  //       //   ) {
+  //       //     setLastUpdateProgrammesStatsCEpoch(
+  //       //       parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+  //       //     );
+  //       //     setLastUpdateProgrammesStatsC(
+  //       //       moment(
+  //       //         parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+  //       //       ).fromNow()
+  //       //     );
+  //       //   }
+  //       //   programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+  //       //   if (
+  //       //     response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
+  //       //     String(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
+  //       //   ) {
+  //       //     setLastUpdateProgrammesCreditsStatsEpoch(
+  //       //       parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+  //       //     );
+  //       //     setLastUpdateProgrammesCreditsStats(
+  //       //       moment(
+  //       //         parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+  //       //       ).fromNow()
+  //       //     );
+  //       //   }
+  //       //   programmeByStatusAuthAggregationResponse =
+  //       //     response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.data;
+  //       //   if (
+  //       //     response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
+  //       //     String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+  //       //   ) {
+  //       //     setLastUpdateCertifiedCreditsStatsEpoch(
+  //       //       parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
+  //       //     );
+  //       //     setLastUpdateCertifiedCreditsStats(
+  //       //       moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+  //       //     );
+  //       //   }
+  //       //   certifiedRevokedAggregationResponse =
+  //       //     response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+  //     } else {
+  //       if (
+  //         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
+  //         String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
+  //       ) {
+  //         setLastUpdateProgrammesStatsCEpoch(
+  //           parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+  //         );
+  //         setLastUpdateProgrammesStatsC(
+  //           moment(
+  //             parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+  //           ).fromNow()
+  //         );
+  //       }
+  //       programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS;
+  //       if (
+  //         response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
+  //         String(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
+  //       ) {
+  //         setLastUpdateProgrammesCreditsStatsEpoch(
+  //           parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+  //         );
+  //         setLastUpdateProgrammesCreditsStats(
+  //           moment(
+  //             parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+  //           ).fromNow()
+  //         );
+  //       }
+  //       programmeByStatusAuthAggregationResponse =
+  //         response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS;
+  //       if (
+  //         response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
+  //         String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+  //       ) {
+  //         setLastUpdateCertifiedCreditsStatsEpoch(
+  //           parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
+  //         );
+  //         setLastUpdateCertifiedCreditsStats(
+  //           moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+  //         );
+  //       }
+  //       certifiedRevokedAggregationResponse =
+  //         response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+  //     }
+  //     let totalProgrammes: any = 0;
+  //     // let totalEstCredits: any = 0;
+  //     // let totalIssuedCredits: any = 0;
+  //     // let totalRetiredCredits: any = 0;
+  //     // let totalBalancecredit: any = 0;
+  //     // let totalTxCredits: any = 0;
+  //     // let totalFrozenCredits: any = 0;
+  //     // let totalCertifiedCredit: any = 0;
+  //     // let totalUnCertifiedredit: any = 0;
+  //     // let totalRevokedCredits: any = 0;
+  //     let pendingProgrammesC: any = 0;
+  //     let authorisedProgrammesC: any = 0;
+  //     let rejectedProgrammesC: any = 0;
+  //     const programmeStatusA = Object.values(ProgrammeStageLegend);
+  //     if (programmeByStatusAggregationResponse?.length > 0) {
+  //       programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
+  //         if (
+  //           ProgrammeSLStageR.AwaitingAuthorization === getStageEnumVal(responseItem?.currentStage)
+  //         ) {
+  //           totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
+  //           pendingProgrammesC = parseInt(responseItem?.count);
+  //         }
+  //         if ([ProgrammeSLStageR.Rejected].includes(responseItem?.currentStage)) {
+  //           totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
+  //           rejectedProgrammesC = parseInt(responseItem?.count);
+  //         }
+  //         if ([ProgrammeSLStageR.Authorised].includes(responseItem?.currentStage)) {
+  //           totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
+  //           authorisedProgrammesC = parseInt(responseItem?.count);
+  //         }
+  //       });
+  //       // setTotalProjects(totalProgrammes);
+  //       // setPendingProjects(pendingProgrammesC);
+  //       // setAuthorisedProjects(authorisedProgrammesC);
+  //       // setRejectedProjects(rejectedProgrammesC);
+  //     } else {
+  //       // setPendingProjects(0);
+  //       // setAuthorisedProjects(0);
+  //       // setRejectedProjects(0);
+  //       // setTotalProjects(0);
+  //     }
+  //     // if (programmeByStatusAuthAggregationResponse?.length > 0) {
+  //     //   programmeByStatusAuthAggregationResponse?.map((responseItem: any) => {
+  //     //     totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
+  //     //     totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
+  //     //     totalRetiredCredits = totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
+  //     //     totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
+  //     //     totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
+  //     //     totalFrozenCredits = totalFrozenCredits + parseFloat(responseItem?.totalfreezecredit);
+  //     //   });
+  //     // }
+  //     // if (certifiedRevokedAggregationResponse) {
+  //     //   totalCertifiedCredit = parseFloat(certifiedRevokedAggregationResponse?.certifiedSum);
+  //     //   totalUnCertifiedredit = parseFloat(certifiedRevokedAggregationResponse?.uncertifiedSum);
+  //     //   totalRevokedCredits = parseFloat(certifiedRevokedAggregationResponse?.revokedSum);
+  //     // }
+  //     // setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
+  //     // const creditAuthorized =
+  //     //   totalEstCredits - (totalIssuedCredits + totalTxCredits + totalRetiredCredits);
+  //     // // const creditIssued =
+  //     // //   totalIssuedCredits - totalTxCredits - totalRetiredCredits - totalFrozenCredits; //TODO; Fi
+  //     // pieSeriesCreditsData.push(addRoundNumber(creditAuthorized));
+  //     // pieSeriesCreditsData.push(addRoundNumber(totalIssuedCredits));
+  //     // pieSeriesCreditsData.push(addRoundNumber(totalTxCredits));
+  //     // pieSeriesCreditsData.push(addRoundNumber(totalRetiredCredits));
+  //     // // pieSeriesCreditsData.push(addRoundNumber(totalFrozenCredits));
 
-  const getAllProgrammeAnalyticsStats = async () => {
-    setLoading(true);
-    const pieSeriesCreditsData: any[] = [];
-    // const pieSeriesCreditsCerifiedData: any[] = [];
-    try {
-      const response: any = await post(
-        'stats/programme/aggSl',
-        getAllProgrammeAnalyticsStatsParams(),
-        undefined,
-        statServerUrl
-      );
-      let programmeByStatusAggregationResponse: any;
-      let programmeByStatusAuthAggregationResponse: any;
-      let certifiedRevokedAggregationResponse: any;
-      if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-        if (
-          response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
-          String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
-        ) {
-          setLastUpdateProgrammesStatsCEpoch(
-            parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
-          );
-          setLastUpdateProgrammesStatsC(
-            moment(
-              parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
-            ).fromNow()
-          );
-        }
-        programmeByStatusAggregationResponse = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS;
-        if (
-          response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
-          String(response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !==
-            '0'
-        ) {
-          setLastUpdateProgrammesCreditsStatsEpoch(
-            parseInt(response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
-          );
-          setLastUpdateProgrammesCreditsStats(
-            moment(
-              parseInt(
-                response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime
-              )
-            ).fromNow()
-          );
-        }
-        programmeByStatusAuthAggregationResponse =
-          response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS;
-        if (
-          response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last &&
-          String(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
-        ) {
-          setLastUpdateCertifiedCreditsStatsEpoch(
-            parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)
-          );
-          setLastUpdateCertifiedCreditsStats(
-            moment(parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
-          );
-        }
-        certifiedRevokedAggregationResponse =
-          response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
-        // } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
-        //   if (
-        //     response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime &&
-        //     String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime) !== '0'
-        //   ) {
-        //     setLastUpdateProgrammesStatsCEpoch(
-        //       parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
-        //     );
-        //     setLastUpdateProgrammesStatsC(
-        //       moment(
-        //         parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
-        //       ).fromNow()
-        //     );
-        //   } else {
-        //     setLastUpdateProgrammesStatsCEpoch(0);
-        //     setLastUpdateProgrammesStatsC('0');
-        //   }
-        //   programmeByStatusAggregationResponse =
-        //     response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
-        //   if (
-        //     response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last &&
-        //     String(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last) !== '0'
-        //   ) {
-        //     setLastUpdateProgrammesCreditsStatsEpoch(
-        //       parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last)
-        //     );
-        //     setLastUpdateProgrammesCreditsStats(
-        //       moment(parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last)).fromNow()
-        //     );
-        // } else {
-        //   setLastUpdateProgrammesCreditsStatsEpoch(0);
-        //   setLastUpdateProgrammesCreditsStats('0');
-        // }
-        // programmeByStatusAuthAggregationResponse =
-        //   response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.data;
-        // if (
-        //   response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last &&
-        //   String(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last) !== '0'
-        // ) {
-        //   setLastUpdateCertifiedCreditsStatsEpoch(
-        //     parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)
-        //   );
-        //   setLastUpdateCertifiedCreditsStats(
-        //     moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)).fromNow()
-        //   );
-        // } else {
-        //   setLastUpdateCertifiedCreditsStatsEpoch(0);
-        //   setLastUpdateCertifiedCreditsStats('0');
-        // }
-        // certifiedRevokedAggregationResponse = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
-        // } else if (
-        //   userInfoState?.companyRole === CompanyRole.CERTIFIER &&
-        //   categoryType === 'overall'
-        // ) {
-        //   if (
-        //     response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
-        //     String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
-        //   ) {
-        //     setLastUpdateProgrammesStatsCEpoch(
-        //       parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
-        //     );
-        //     setLastUpdateProgrammesStatsC(
-        //       moment(
-        //         parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
-        //       ).fromNow()
-        //     );
-        //   }
-        //   programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
-        //   if (
-        //     response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
-        //     String(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
-        //   ) {
-        //     setLastUpdateProgrammesCreditsStatsEpoch(
-        //       parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
-        //     );
-        //     setLastUpdateProgrammesCreditsStats(
-        //       moment(
-        //         parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
-        //       ).fromNow()
-        //     );
-        //   }
-        //   programmeByStatusAuthAggregationResponse =
-        //     response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.data;
-        //   if (
-        //     response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
-        //     String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
-        //   ) {
-        //     setLastUpdateCertifiedCreditsStatsEpoch(
-        //       parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
-        //     );
-        //     setLastUpdateCertifiedCreditsStats(
-        //       moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
-        //     );
-        //   }
-        //   certifiedRevokedAggregationResponse =
-        //     response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
-      } else {
-        if (
-          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
-          String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
-        ) {
-          setLastUpdateProgrammesStatsCEpoch(
-            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
-          );
-          setLastUpdateProgrammesStatsC(
-            moment(
-              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
-            ).fromNow()
-          );
-        }
-        programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS;
-        if (
-          response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
-          String(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
-        ) {
-          setLastUpdateProgrammesCreditsStatsEpoch(
-            parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
-          );
-          setLastUpdateProgrammesCreditsStats(
-            moment(
-              parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
-            ).fromNow()
-          );
-        }
-        programmeByStatusAuthAggregationResponse =
-          response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS;
-        if (
-          response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
-          String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
-        ) {
-          setLastUpdateCertifiedCreditsStatsEpoch(
-            parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
-          );
-          setLastUpdateCertifiedCreditsStats(
-            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
-          );
-        }
-        certifiedRevokedAggregationResponse =
-          response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
-      }
-      let totalProgrammes: any = 0;
-      // let totalEstCredits: any = 0;
-      // let totalIssuedCredits: any = 0;
-      // let totalRetiredCredits: any = 0;
-      // let totalBalancecredit: any = 0;
-      // let totalTxCredits: any = 0;
-      // let totalFrozenCredits: any = 0;
-      // let totalCertifiedCredit: any = 0;
-      // let totalUnCertifiedredit: any = 0;
-      // let totalRevokedCredits: any = 0;
-      let pendingProgrammesC: any = 0;
-      let authorisedProgrammesC: any = 0;
-      let rejectedProgrammesC: any = 0;
-      const programmeStatusA = Object.values(ProgrammeStageLegend);
-      if (programmeByStatusAggregationResponse?.length > 0) {
-        programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
-          if (
-            ProgrammeSLStageR.AwaitingAuthorization === getStageEnumVal(responseItem?.currentStage)
-          ) {
-            totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-            pendingProgrammesC = parseInt(responseItem?.count);
-          }
-          if ([ProgrammeSLStageR.Rejected].includes(responseItem?.currentStage)) {
-            totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-            rejectedProgrammesC = parseInt(responseItem?.count);
-          }
-          if ([ProgrammeSLStageR.Authorised].includes(responseItem?.currentStage)) {
-            totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-            authorisedProgrammesC = parseInt(responseItem?.count);
-          }
-        });
-        // setTotalProjects(totalProgrammes);
-        // setPendingProjects(pendingProgrammesC);
-        // setAuthorisedProjects(authorisedProgrammesC);
-        // setRejectedProjects(rejectedProgrammesC);
-      } else {
-        // setPendingProjects(0);
-        // setAuthorisedProjects(0);
-        // setRejectedProjects(0);
-        // setTotalProjects(0);
-      }
-      // if (programmeByStatusAuthAggregationResponse?.length > 0) {
-      //   programmeByStatusAuthAggregationResponse?.map((responseItem: any) => {
-      //     totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
-      //     totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
-      //     totalRetiredCredits = totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
-      //     totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
-      //     totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
-      //     totalFrozenCredits = totalFrozenCredits + parseFloat(responseItem?.totalfreezecredit);
-      //   });
-      // }
-      // if (certifiedRevokedAggregationResponse) {
-      //   totalCertifiedCredit = parseFloat(certifiedRevokedAggregationResponse?.certifiedSum);
-      //   totalUnCertifiedredit = parseFloat(certifiedRevokedAggregationResponse?.uncertifiedSum);
-      //   totalRevokedCredits = parseFloat(certifiedRevokedAggregationResponse?.revokedSum);
-      // }
-      // setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
-      // const creditAuthorized =
-      //   totalEstCredits - (totalIssuedCredits + totalTxCredits + totalRetiredCredits);
-      // // const creditIssued =
-      // //   totalIssuedCredits - totalTxCredits - totalRetiredCredits - totalFrozenCredits; //TODO; Fi
-      // pieSeriesCreditsData.push(addRoundNumber(creditAuthorized));
-      // pieSeriesCreditsData.push(addRoundNumber(totalIssuedCredits));
-      // pieSeriesCreditsData.push(addRoundNumber(totalTxCredits));
-      // pieSeriesCreditsData.push(addRoundNumber(totalRetiredCredits));
-      // // pieSeriesCreditsData.push(addRoundNumber(totalFrozenCredits));
-
-      // // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalCertifiedCredit));
-      // // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalUnCertifiedredit));
-      // // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalRevokedCredits));
-      // // const totalCreditsCertified = addRoundNumber(
-      // //   totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits
-      // // );
-      // // setCreditsPieChartTotal(
-      // //   String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0
-      // // );
-      // // setCertifiedCreditsPieChartTotal(addCommSep(totalCreditsCertified));
-      // // const output = '<p>' + 'ITMOs' + '</p><p>' + addCommSep(totalCreditsCertified) + '</p>';
-      // optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
-      //   '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
-      // // optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
-      // //   '' + addCommSep(totalCreditsCertified);
-      // // setCreditPieSeries(pieSeriesCreditsData);
-      // // setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
-    } catch (error: any) {
-      console.log('Error in getting users', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     // // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalCertifiedCredit));
+  //     // // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalUnCertifiedredit));
+  //     // // pieSeriesCreditsCerifiedData.push(addRoundNumber(totalRevokedCredits));
+  //     // // const totalCreditsCertified = addRoundNumber(
+  //     // //   totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits
+  //     // // );
+  //     // // setCreditsPieChartTotal(
+  //     // //   String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0
+  //     // // );
+  //     // // setCertifiedCreditsPieChartTotal(addCommSep(totalCreditsCertified));
+  //     // // const output = '<p>' + 'ITMOs' + '</p><p>' + addCommSep(totalCreditsCertified) + '</p>';
+  //     // optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
+  //     //   '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
+  //     // // optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
+  //     // //   '' + addCommSep(totalCreditsCertified);
+  //     // // setCreditPieSeries(pieSeriesCreditsData);
+  //     // // setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
+  //   } catch (error: any) {
+  //     console.log('Error in getting users', error);
+  //     message.open({
+  //       type: 'error',
+  //       content: error.message,
+  //       duration: 3,
+  //       style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   //MARK: USE EFFECT Without filters
   useEffect(() => {
-    getAllProgrammeAnalyticsStatsWithoutTimeRange();
-    if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      setCategoryType('mine');
-    }
-    getPendingVerificationRequests();
-    getPendingRetirementRequests();
+    // getAllProgrammeAnalyticsStatsWithoutTimeRange();
+    // if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    //   setCategoryType('mine');
+    // }
+    // getPendingVerificationRequests();
+    // getPendingRetirementRequests();
     getTotalProgrammeCount();
     getTotalIssuedCredits();
     getTotalRetiredCredits();
@@ -1938,50 +2107,54 @@ export const SLCFDashboardComponent = (props: any) => {
     getProgrammeDataByCategory();
     getRetirementsDataByDate();
     getCreditsByStatusData();
+    getCreditsByDateData();
+    getCreditsByPurposeData();
   }, []);
 
   useEffect(() => {
-    getAllProgrammeAnalyticsStats();
-    getAllProgrammesAggChartStats();
-    getAuthorisedCreditsTotalByType();
+    // getAllProgrammeAnalyticsStats();
+    // getAllProgrammesAggChartStats();
+    // getAuthorisedCreditsTotalByType();
     getProgrammeDataByStatus();
     getProgrammeDataByCategory();
     getRetirementsDataByDate();
     getCreditsByStatusData();
+    getCreditsByDateData();
+    getCreditsByPurposeData();
   }, [startTime, endTime, categoryType, programmeCategory, creditType]);
 
-  useEffect(() => {
-    ApexCharts.exec('total-retirement-by-date', 'updateSeries', {
-      data: totalProgrammesSectorSeries,
-    });
-    ApexCharts.exec('total-retirement-by-date', 'updateOptions', {
-      xaxis: {
-        categories: totalProgrammesSectorOptionsLabels,
-      },
-    });
-  }, [totalProgrammesSectorSeries, categoryType, totalProgrammesSectorOptionsLabels]);
+  // useEffect(() => {
+  //   ApexCharts.exec('total-retirement-by-date', 'updateSeries', {
+  //     data: totalProgrammesSectorSeries,
+  //   });
+  //   ApexCharts.exec('total-retirement-by-date', 'updateOptions', {
+  //     xaxis: {
+  //       categories: totalProgrammesSectorOptionsLabels,
+  //     },
+  //   });
+  // }, [totalProgrammesSectorSeries, categoryType, totalProgrammesSectorOptionsLabels]);
 
-  useEffect(() => {
-    ApexCharts.exec('total-programmes', 'updateSeries', {
-      data: totalProgrammesSeries,
-    });
-    ApexCharts.exec('total-programmes', 'updateOptions', {
-      xaxis: {
-        categories: totalProgrammesOptionsLabels,
-      },
-    });
-  }, [totalProgrammesSeries, categoryType, totalProgrammesOptionsLabels]);
+  // useEffect(() => {
+  //   ApexCharts.exec('total-programmes', 'updateSeries', {
+  //     data: totalProgrammesSeries,
+  //   });
+  //   ApexCharts.exec('total-programmes', 'updateOptions', {
+  //     xaxis: {
+  //       categories: totalProgrammesOptionsLabels,
+  //     },
+  //   });
+  // }, [totalProgrammesSeries, categoryType, totalProgrammesOptionsLabels]);
 
-  useEffect(() => {
-    ApexCharts.exec('total-credits', 'updateSeries', {
-      data: totalCreditsSeries,
-    });
-    ApexCharts.exec('total-credits', 'updateOptions', {
-      xaxis: {
-        categories: totalCreditsOptionsLabels,
-      },
-    });
-  }, [totalCreditsSeries, categoryType, totalCreditsOptionsLabels]);
+  // useEffect(() => {
+  //   ApexCharts.exec('total-credits', 'updateSeries', {
+  //     data: totalCreditsSeries,
+  //   });
+  //   ApexCharts.exec('total-credits', 'updateOptions', {
+  //     xaxis: {
+  //       categories: totalCreditsOptionsLabels,
+  //     },
+  //   });
+  // }, [totalCreditsSeries, categoryType, totalCreditsOptionsLabels]);
 
   // useEffect(() => {
   //   ApexCharts.exec('total-credits-certified', 'updateSeries', {
@@ -2011,89 +2184,89 @@ export const SLCFDashboardComponent = (props: any) => {
   //   });
   // }, [creditsPieSeries, categoryType, creditsPieChartTotal]);
 
-  useEffect(() => {
-    ApexCharts.exec('auth-credits-by-type', 'updateSeries', {
-      series: authCreditsByTypePieSeries,
-    });
-    // ApexCharts.exec('credits', 'updateOptions', {
-    //   plotOptions: {
-    //     pie: {
-    //       labels: {
-    //         total: {
-    //           formatter: () => certifiedCreditsPieChartTotal,
-    //         },
-    //       },
-    //     },
-    //   },
-    // });
-  }, [authCreditsByTypePieSeries, categoryType, certifiedCreditsPieChartTotal]);
+  // useEffect(() => {
+  //   ApexCharts.exec('auth-credits-by-type', 'updateSeries', {
+  //     series: authCreditsByTypePieSeries,
+  //   });
+  //   // ApexCharts.exec('credits', 'updateOptions', {
+  //   //   plotOptions: {
+  //   //     pie: {
+  //   //       labels: {
+  //   //         total: {
+  //   //           formatter: () => certifiedCreditsPieChartTotal,
+  //   //         },
+  //   //       },
+  //   //     },
+  //   //   },
+  //   // });
+  // }, [authCreditsByTypePieSeries, categoryType, certifiedCreditsPieChartTotal]);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (lastUpdateProgrammesStatsEpoch !== 0) {
-        setLastUpdateProgrammesStats(moment(lastUpdateProgrammesStatsEpoch).fromNow());
-      }
-      if (lastUpdateProgrammesStatsCEpoch !== 0) {
-        setLastUpdateProgrammesStatsC(moment(lastUpdateProgrammesStatsCEpoch).fromNow());
-      }
-      if (lastUpdatePendingTransferSentEpoch !== 0) {
-        setLastUpdatePendingTransferSent(moment(lastUpdatePendingTransferSentEpoch).fromNow());
-      }
-      if (lastUpdateCreditBalanceEpoch !== 0) {
-        setLastUpdateCreditBalance(moment(lastUpdateCreditBalanceEpoch).fromNow());
-      }
-      if (lastUpdatePendingTransferReceivedEpoch !== 0) {
-        setLastUpdatePendingTransferReceived(
-          moment(lastUpdatePendingTransferReceivedEpoch).fromNow()
-        );
-      }
-      if (lastUpdateProgrammesCertifiableEpoch !== 0) {
-        setLastUpdateProgrammesCertifiable(moment(lastUpdateProgrammesCertifiableEpoch).fromNow());
-      }
-      if (lastUpdateProgrammesCertifiedEpoch !== 0) {
-        setLastUpdateProgrammesCertified(moment(lastUpdateProgrammesCertifiedEpoch).fromNow());
-      }
-      if (lastUpdateCertifiedCreditsStatsEpoch !== 0) {
-        setLastUpdateCertifiedCreditsStats(moment(lastUpdateCertifiedCreditsStatsEpoch).fromNow());
-      }
-      if (lastUpdateProgrammesCreditsStatsEpoch !== 0) {
-        setLastUpdateProgrammesCreditsStats(
-          moment(lastUpdateProgrammesCreditsStatsEpoch).fromNow()
-        );
-      }
-      if (lastUpdateProgrammesSectorStatsCEpoch !== 0) {
-        setLastUpdateProgrammesSectorStatsC(
-          moment(lastUpdateProgrammesSectorStatsCEpoch).fromNow()
-        );
-      }
-      if (lastUpdateTotalCreditsEpoch !== 0) {
-        setLastUpdateTotalCredits(moment(lastUpdateTotalCreditsEpoch).fromNow());
-      }
-      if (lastUpdateTotalCreditsCertifiedEpoch !== 0) {
-        setLastUpdateTotalCreditsCertified(moment(lastUpdateTotalCreditsCertifiedEpoch).fromNow());
-      }
-      if (lastUpdateTransferLocationsEpoch !== 0) {
-        setLastUpdateTransferLocations(moment(lastUpdateTransferLocationsEpoch).fromNow());
-      }
-    }, 60 * 1000);
-    return () => {
-      clearInterval(timer);
-    };
-  }, [
-    lastUpdateProgrammesStatsEpoch,
-    lastUpdateProgrammesStatsCEpoch,
-    lastUpdatePendingTransferSentEpoch,
-    lastUpdateCreditBalanceEpoch,
-    lastUpdatePendingTransferReceivedEpoch,
-    lastUpdateProgrammesCertifiableEpoch,
-    lastUpdateProgrammesCertifiedEpoch,
-    lastUpdateProgrammesCreditsStatsEpoch,
-    lastUpdateCertifiedCreditsStatsEpoch,
-    lastUpdateProgrammesSectorStatsCEpoch,
-    lastUpdateTotalCreditsEpoch,
-    lastUpdateTotalCreditsCertifiedEpoch,
-    lastUpdateTransferLocationsEpoch,
-  ]);
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     if (lastUpdateProgrammesStatsEpoch !== 0) {
+  //       setLastUpdateProgrammesStats(moment(lastUpdateProgrammesStatsEpoch).fromNow());
+  //     }
+  //     if (lastUpdateProgrammesStatsCEpoch !== 0) {
+  //       setLastUpdateProgrammesStatsC(moment(lastUpdateProgrammesStatsCEpoch).fromNow());
+  //     }
+  //     if (lastUpdatePendingTransferSentEpoch !== 0) {
+  //       setLastUpdatePendingTransferSent(moment(lastUpdatePendingTransferSentEpoch).fromNow());
+  //     }
+  //     if (lastUpdateCreditBalanceEpoch !== 0) {
+  //       setLastUpdateCreditBalance(moment(lastUpdateCreditBalanceEpoch).fromNow());
+  //     }
+  //     if (lastUpdatePendingTransferReceivedEpoch !== 0) {
+  //       setLastUpdatePendingTransferReceived(
+  //         moment(lastUpdatePendingTransferReceivedEpoch).fromNow()
+  //       );
+  //     }
+  //     if (lastUpdateProgrammesCertifiableEpoch !== 0) {
+  //       setLastUpdateProgrammesCertifiable(moment(lastUpdateProgrammesCertifiableEpoch).fromNow());
+  //     }
+  //     if (lastUpdateProgrammesCertifiedEpoch !== 0) {
+  //       setLastUpdateProgrammesCertified(moment(lastUpdateProgrammesCertifiedEpoch).fromNow());
+  //     }
+  //     if (lastUpdateCertifiedCreditsStatsEpoch !== 0) {
+  //       setLastUpdateCertifiedCreditsStats(moment(lastUpdateCertifiedCreditsStatsEpoch).fromNow());
+  //     }
+  //     if (lastUpdateProgrammesCreditsStatsEpoch !== 0) {
+  //       setLastUpdateProgrammesCreditsStats(
+  //         moment(lastUpdateProgrammesCreditsStatsEpoch).fromNow()
+  //       );
+  //     }
+  //     if (lastUpdateProgrammesSectorStatsCEpoch !== 0) {
+  //       setLastUpdateProgrammesSectorStatsC(
+  //         moment(lastUpdateProgrammesSectorStatsCEpoch).fromNow()
+  //       );
+  //     }
+  //     if (lastUpdateTotalCreditsEpoch !== 0) {
+  //       setLastUpdateTotalCredits(moment(lastUpdateTotalCreditsEpoch).fromNow());
+  //     }
+  //     if (lastUpdateTotalCreditsCertifiedEpoch !== 0) {
+  //       setLastUpdateTotalCreditsCertified(moment(lastUpdateTotalCreditsCertifiedEpoch).fromNow());
+  //     }
+  //     if (lastUpdateTransferLocationsEpoch !== 0) {
+  //       setLastUpdateTransferLocations(moment(lastUpdateTransferLocationsEpoch).fromNow());
+  //     }
+  //   }, 60 * 1000);
+  //   return () => {
+  //     clearInterval(timer);
+  //   };
+  // }, [
+  //   lastUpdateProgrammesStatsEpoch,
+  //   lastUpdateProgrammesStatsCEpoch,
+  //   lastUpdatePendingTransferSentEpoch,
+  //   lastUpdateCreditBalanceEpoch,
+  //   lastUpdatePendingTransferReceivedEpoch,
+  //   lastUpdateProgrammesCertifiableEpoch,
+  //   lastUpdateProgrammesCertifiedEpoch,
+  //   lastUpdateProgrammesCreditsStatsEpoch,
+  //   lastUpdateCertifiedCreditsStatsEpoch,
+  //   lastUpdateProgrammesSectorStatsCEpoch,
+  //   lastUpdateTotalCreditsEpoch,
+  //   lastUpdateTotalCreditsCertifiedEpoch,
+  //   lastUpdateTransferLocationsEpoch,
+  // ]);
 
   const countS = ['all', ['>=', ['get', 'count'], 0]];
   const pending = ['all', ['==', ['get', 'stage'], 'awaitingAuthorization']];
@@ -2122,309 +2295,309 @@ export const SLCFDashboardComponent = (props: any) => {
   };
 
   // code for creating an SVG donut chart from feature properties
-  const createMapCircleChart = (properties: any) => {
-    const offsets = [];
-    const offsetsStage = [];
-    let counts: any = [];
-    let programmeStageCounts: any = [];
-    if (properties.count) {
-      counts = [properties.count];
-    }
+  //   const createMapCircleChart = (properties: any) => {
+  //     const offsets = [];
+  //     const offsetsStage = [];
+  //     let counts: any = [];
+  //     let programmeStageCounts: any = [];
+  //     if (properties.count) {
+  //       counts = [properties.count];
+  //     }
 
-    if (properties.cluster_id) {
-      programmeStageCounts = [
-        properties.authorised,
-        properties.rejected,
-        properties.pending,
-        properties.new,
-      ];
-    } else {
-      if (properties?.stage === 'awaitingAuthorization') {
-        programmeStageCounts = [0, 0, properties.count, 0];
-      } else if (properties?.stage === 'authorised') {
-        programmeStageCounts = [properties.count, 0, 0, 0];
-      } else if (properties?.stage === 'rejected') {
-        programmeStageCounts = [0, properties.count, 0, 0];
-      } else if (properties?.stage === 'new') {
-        programmeStageCounts = [0, 0, 0, properties.count];
-      }
-    }
-    let total = 0;
-    for (const count of counts) {
-      offsets.push(total);
-      total += count;
-    }
-    let totalStage = 0;
-    for (const count of programmeStageCounts) {
-      offsetsStage.push(totalStage);
-      totalStage += count;
-    }
-    const fontSize = total >= 1000 ? 22 : total >= 500 ? 20 : total >= 100 ? 18 : 16;
-    const r = total >= 1000 ? 52 : total >= 500 ? 36 : total >= 100 ? 30 : 18;
-    const r0 = Math.round(r * 0.6);
-    const w = r * 2;
+  //     if (properties.cluster_id) {
+  //       programmeStageCounts = [
+  //         properties.authorised,
+  //         properties.rejected,
+  //         properties.pending,
+  //         properties.new,
+  //       ];
+  //     } else {
+  //       if (properties?.stage === 'awaitingAuthorization') {
+  //         programmeStageCounts = [0, 0, properties.count, 0];
+  //       } else if (properties?.stage === 'authorised') {
+  //         programmeStageCounts = [properties.count, 0, 0, 0];
+  //       } else if (properties?.stage === 'rejected') {
+  //         programmeStageCounts = [0, properties.count, 0, 0];
+  //       } else if (properties?.stage === 'new') {
+  //         programmeStageCounts = [0, 0, 0, properties.count];
+  //       }
+  //     }
+  //     let total = 0;
+  //     for (const count of counts) {
+  //       offsets.push(total);
+  //       total += count;
+  //     }
+  //     let totalStage = 0;
+  //     for (const count of programmeStageCounts) {
+  //       offsetsStage.push(totalStage);
+  //       totalStage += count;
+  //     }
+  //     const fontSize = total >= 1000 ? 22 : total >= 500 ? 20 : total >= 100 ? 18 : 16;
+  //     const r = total >= 1000 ? 52 : total >= 500 ? 36 : total >= 100 ? 30 : 18;
+  //     const r0 = Math.round(r * 0.6);
+  //     const w = r * 2;
 
-    let html = `<div>
-<svg width="${w}" height="${w}" viewbox="0 0 ${w} ${w}" text-anchor="middle" style="font: ${fontSize}px sans-serif; display: block">`;
+  //     let html = `<div>
+  // <svg width="${w}" height="${w}" viewbox="0 0 ${w} ${w}" text-anchor="middle" style="font: ${fontSize}px sans-serif; display: block">`;
 
-    for (let i = 0; i < programmeStageCounts?.length; i++) {
-      if (programmeStageCounts[i] !== 0) {
-        html += donutSegment(
-          offsetsStage[i] === 0 ? 0 : offsetsStage[i] / totalStage,
-          (offsetsStage[i] + programmeStageCounts[i]) / totalStage,
-          r,
-          r0,
-          colors[i]
-        );
-      }
-    }
-    html += `<circle cx="${r}" cy="${r}" r="${r0}" fill="white" />
-<text dominant-baseline="central" transform="translate(${r}, ${r})">
-${total}
-</text>
-</svg>
-</div>`;
+  //     for (let i = 0; i < programmeStageCounts?.length; i++) {
+  //       if (programmeStageCounts[i] !== 0) {
+  //         html += donutSegment(
+  //           offsetsStage[i] === 0 ? 0 : offsetsStage[i] / totalStage,
+  //           (offsetsStage[i] + programmeStageCounts[i]) / totalStage,
+  //           r,
+  //           r0,
+  //           colors[i]
+  //         );
+  //       }
+  //     }
+  //     html += `<circle cx="${r}" cy="${r}" r="${r0}" fill="white" />
+  // <text dominant-baseline="central" transform="translate(${r}, ${r})">
+  // ${total}
+  // </text>
+  // </svg>
+  // </div>`;
 
-    const el = document.createElement('div');
-    el.innerHTML = html;
-    return el.firstChild;
-  };
+  //     const el = document.createElement('div');
+  //     el.innerHTML = html;
+  //     return el.firstChild;
+  //   };
 
-  useEffect(() => {
-    setTimeout(() => {
-      const mapSource: MapSourceData = {
-        key: 'countries',
-        data: {
-          type: 'vector',
-          url: 'mapbox://mapbox.country-boundaries-v1',
-        },
-      };
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     const mapSource: MapSourceData = {
+  //       key: 'countries',
+  //       data: {
+  //         type: 'vector',
+  //         url: 'mapbox://mapbox.country-boundaries-v1',
+  //       },
+  //     };
 
-      setTransferLocationsMapSource(mapSource);
+  //     setTransferLocationsMapSource(mapSource);
 
-      // Build a GL match expression that defines the color for every vector tile feature
-      // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
-      const matchExpression: any = ['match', ['get', 'iso_3166_1']];
-      const txLocationMap: any = {};
+  //     // Build a GL match expression that defines the color for every vector tile feature
+  //     // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
+  //     const matchExpression: any = ['match', ['get', 'iso_3166_1']];
+  //     const txLocationMap: any = {};
 
-      if (programmeTransferLocations) {
-        const transferLocations: any = [...programmeTransferLocations];
+  //     if (programmeTransferLocations) {
+  //       const transferLocations: any = [...programmeTransferLocations];
 
-        // Calculate color values for each country based on 'hdi' value
-        for (const row of transferLocations) {
-          // Convert the range of data values to a suitable color
-          // const blue = row.ratio * 255;
+  //       // Calculate color values for each country based on 'hdi' value
+  //       for (const row of transferLocations) {
+  //         // Convert the range of data values to a suitable color
+  //         // const blue = row.ratio * 255;
 
-          const color =
-            row.count < 2
-              ? `#4da6ff`
-              : row.count < 10
-              ? '#0080ff'
-              : row.count < 50
-              ? '#0059b3'
-              : row.count < 100
-              ? '#003366'
-              : '#000d1a';
+  //         const color =
+  //           row.count < 2
+  //             ? `#4da6ff`
+  //             : row.count < 10
+  //             ? '#0080ff'
+  //             : row.count < 50
+  //             ? '#0059b3'
+  //             : row.count < 100
+  //             ? '#003366'
+  //             : '#000d1a';
 
-          matchExpression.push(row.country, color);
-          txLocationMap[row.country] = row.count;
-        }
-      }
+  //         matchExpression.push(row.country, color);
+  //         txLocationMap[row.country] = row.count;
+  //       }
+  //     }
 
-      setTxLocationMapData(txLocationMap);
+  //     setTxLocationMapData(txLocationMap);
 
-      matchExpression.push('rgba(0, 0, 0, 0)');
+  //     matchExpression.push('rgba(0, 0, 0, 0)');
 
-      setTransferLocationsMapLayer({
-        id: 'countries-join',
-        type: 'fill',
-        source: 'countries',
-        'source-layer': 'country_boundaries',
-        paint: {
-          'fill-color': matchExpression,
-        },
-      });
-    }, 1000);
-  }, [programmeTransferLocations]);
+  //     setTransferLocationsMapLayer({
+  //       id: 'countries-join',
+  //       type: 'fill',
+  //       source: 'countries',
+  //       'source-layer': 'country_boundaries',
+  //       paint: {
+  //         'fill-color': matchExpression,
+  //       },
+  //     });
+  //   }, 1000);
+  // }, [programmeTransferLocations]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setProgrammeLocationsMapCenter(
-        programmeLocations?.features && programmeLocations?.features[0]?.geometry?.coordinates
-          ? programmeLocations?.features[0]?.geometry?.coordinates
-          : [80.7718, 7.8731]
-      );
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setProgrammeLocationsMapCenter(
+  //       programmeLocations?.features && programmeLocations?.features[0]?.geometry?.coordinates
+  //         ? programmeLocations?.features[0]?.geometry?.coordinates
+  //         : [80.7718, 7.8731]
+  //     );
 
-      const mapSource: MapSourceData = {
-        key: 'programmeLocations',
-        data: {
-          type: 'geojson',
-          data: programmeLocations,
-          cluster: true,
-          clusterRadius: 40,
-          clusterProperties: {
-            // keep separate counts for each programmeStage category in a cluster
-            count: ['+', ['case', countS, ['get', 'count'], 0]],
-            pending: ['+', ['case', pending, ['get', 'count'], 0]],
-            authorised: ['+', ['case', authorised, ['get', 'count'], 0]],
-            rejected: ['+', ['case', rejected, ['get', 'count'], 0]],
-            new: ['+', ['case', news, ['get', 'count'], 0]],
-          },
-        },
-      };
+  //     const mapSource: MapSourceData = {
+  //       key: 'programmeLocations',
+  //       data: {
+  //         type: 'geojson',
+  //         data: programmeLocations,
+  //         cluster: true,
+  //         clusterRadius: 40,
+  //         clusterProperties: {
+  //           // keep separate counts for each programmeStage category in a cluster
+  //           count: ['+', ['case', countS, ['get', 'count'], 0]],
+  //           pending: ['+', ['case', pending, ['get', 'count'], 0]],
+  //           authorised: ['+', ['case', authorised, ['get', 'count'], 0]],
+  //           rejected: ['+', ['case', rejected, ['get', 'count'], 0]],
+  //           new: ['+', ['case', news, ['get', 'count'], 0]],
+  //         },
+  //       },
+  //     };
 
-      setProgrammeLocationsMapSource(mapSource);
+  //     setProgrammeLocationsMapSource(mapSource);
 
-      setProgrammeLocationsMapLayer({
-        id: 'programmes_circle',
-        type: 'circle',
-        source: 'programmeLocations',
-        filter: ['!=', 'cluster', true],
-        paint: {
-          // 'circle-color': [
-          //   'case',
-          //   pending,
-          //   colors[0],
-          //   rejected,
-          //   colors[1],
-          //   authorised,
-          //   colors[1],
-          //   colors[2],
-          // ],
-          // 'circle-color': [
-          //   'case',
-          //   ['==', ['get', 'programmeStage'], 'pending'],
-          //   colors[0],
-          //   ['==', ['get', 'programmeStage'], 'authorised'],
-          //   colors[1],
-          //   ['==', ['get', 'programmeStage'], 'rejected'],
-          //   colors[4],
-          //   colors[3], // Default
-          // ],
-          'circle-opacity': 1,
-          'circle-radius': 10,
-        },
-      });
-    }, 1000);
-  }, [programmeLocations]);
+  //     setProgrammeLocationsMapLayer({
+  //       id: 'programmes_circle',
+  //       type: 'circle',
+  //       source: 'programmeLocations',
+  //       filter: ['!=', 'cluster', true],
+  //       paint: {
+  //         // 'circle-color': [
+  //         //   'case',
+  //         //   pending,
+  //         //   colors[0],
+  //         //   rejected,
+  //         //   colors[1],
+  //         //   authorised,
+  //         //   colors[1],
+  //         //   colors[2],
+  //         // ],
+  //         // 'circle-color': [
+  //         //   'case',
+  //         //   ['==', ['get', 'programmeStage'], 'pending'],
+  //         //   colors[0],
+  //         //   ['==', ['get', 'programmeStage'], 'authorised'],
+  //         //   colors[1],
+  //         //   ['==', ['get', 'programmeStage'], 'rejected'],
+  //         //   colors[4],
+  //         //   colors[3], // Default
+  //         // ],
+  //         'circle-opacity': 1,
+  //         'circle-radius': 10,
+  //       },
+  //     });
+  //   }, 1000);
+  // }, [programmeLocations]);
 
-  const onChangeCategory = (event: any) => {
-    setCategoryType(event?.target?.value);
-  };
+  // const onChangeCategory = (event: any) => {
+  //   setCategoryType(event?.target?.value);
+  // };
 
-  const transferLocationsMapOnClick = function (map: any, e: any) {
-    if (!map) return;
-    const features = map.queryRenderedFeatures(e.point, {
-      layers: ['countries-join'],
-    });
-    if (!features.length) {
-      return;
-    }
+  // const transferLocationsMapOnClick = function (map: any, e: any) {
+  //   if (!map) return;
+  //   const features = map.queryRenderedFeatures(e.point, {
+  //     layers: ['countries-join'],
+  //   });
+  //   if (!features.length) {
+  //     return;
+  //   }
 
-    const feature = features[0];
-    if (!txLocationMapData[feature.properties?.iso_3166_1]) {
-      return;
-    }
+  //   const feature = features[0];
+  //   if (!txLocationMapData[feature.properties?.iso_3166_1]) {
+  //     return;
+  //   }
 
-    return `${feature.properties?.name_en} : ${txLocationMapData[feature.properties?.iso_3166_1]}`;
-  };
+  //   return `${feature.properties?.name_en} : ${txLocationMapData[feature.properties?.iso_3166_1]}`;
+  // };
 
   // Use the same approach as above to indicate that the symbols are clickable
   // by changing the cursor style to 'pointer'.
-  const transferLocationsMapOnMouseMove = function (map: any, e: any) {
-    if (!map) return;
-    const features = map.queryRenderedFeatures(e.point, {
-      layers: ['countries-join'],
-    });
-    map.getCanvas().style.cursor =
-      features.length > 0 && txLocationMapData[features[0].properties?.iso_3166_1] ? 'pointer' : '';
-  };
+  // const transferLocationsMapOnMouseMove = function (map: any, e: any) {
+  //   if (!map) return;
+  //   const features = map.queryRenderedFeatures(e.point, {
+  //     layers: ['countries-join'],
+  //   });
+  //   map.getCanvas().style.cursor =
+  //     features.length > 0 && txLocationMapData[features[0].properties?.iso_3166_1] ? 'pointer' : '';
+  // };
 
-  const programmeLocationsMapOnRender = function (map: any) {
-    if (!map.isSourceLoaded('programmeLocations')) return;
+  // const programmeLocationsMapOnRender = function (map: any) {
+  //   if (!map.isSourceLoaded('programmeLocations')) return;
 
-    const currentMarkers: MarkerData[] = [];
-    const features: any = map.querySourceFeatures('programmeLocations');
+  //   const currentMarkers: MarkerData[] = [];
+  //   const features: any = map.querySourceFeatures('programmeLocations');
 
-    // for every cluster on the screen, create an HTML marker for it (if we didn't yet),
-    // and add it to the map if it's not there already
-    for (const feature of features) {
-      const coords = feature.geometry.coordinates;
-      const properties = feature.properties;
-      const id = properties.cluster_id ? properties.cluster_id : Number(properties.id);
+  //   // for every cluster on the screen, create an HTML marker for it (if we didn't yet),
+  //   // and add it to the map if it's not there already
+  //   for (const feature of features) {
+  //     const coords = feature.geometry.coordinates;
+  //     const properties = feature.properties;
+  //     const id = properties.cluster_id ? properties.cluster_id : Number(properties.id);
 
-      const el: any = createMapCircleChart(properties);
-      const marker = {
-        id: id,
-        element: el,
-        location: coords,
-      };
+  //     const el: any = createMapCircleChart(properties);
+  //     const marker = {
+  //       id: id,
+  //       element: el,
+  //       location: coords,
+  //     };
 
-      currentMarkers.push(marker);
-    }
+  //     currentMarkers.push(marker);
+  //   }
 
-    return currentMarkers;
-  };
-  const fetchProgrammeIds = async () => {
-    try {
-      const responses = await post('national/programme/queryDocs', {
-        page: 1,
-        size: 100,
-        filterAnd: [
-          {
-            key: 'type',
-            operation: '=',
-            value: '6',
-          },
-        ],
-      });
-      // eslint-disable-next-line prefer-const
-      let data = await responses.data;
-      if (data && data.length > 0) {
-        // response.data.map((item:any)=>{
-        //   setFileList(item?.programmeId)
-        //   setSelectedurl(item?.url)
-        // })
-        // setFileList(responses.data[0] ?? [])
+  //   return currentMarkers;
+  // };
+  // const fetchProgrammeIds = async () => {
+  //   try {
+  //     const responses = await post('national/programme/queryDocs', {
+  //       page: 1,
+  //       size: 100,
+  //       filterAnd: [
+  //         {
+  //           key: 'type',
+  //           operation: '=',
+  //           value: '6',
+  //         },
+  //       ],
+  //     });
+  //     // eslint-disable-next-line prefer-const
+  //     let data = await responses.data;
+  //     if (data && data.length > 0) {
+  //       // response.data.map((item:any)=>{
+  //       //   setFileList(item?.programmeId)
+  //       //   setSelectedurl(item?.url)
+  //       // })
+  //       // setFileList(responses.data[0] ?? [])
 
-        const initlist = [];
-        for (let i = 0; i < data.length; i++) {
-          const newreports = {
-            label: data[i].programmeId.slice(2),
-            key: data[i].url,
-          };
-          initlist.push(newreports);
-        }
-        setFileList(initlist);
-      }
-    } catch (error) {
-      console.error('Error fetching AnnualReports:', error);
-    }
-  };
-  useEffect(() => {
-    if (userInfoState?.companyRole !== CompanyRole.PROGRAMME_DEVELOPER) {
-      fetchProgrammeIds();
-    }
-  }, []);
-  const fileListFlat = fileList.flat();
-  const items: MenuProps['items'] = fileListFlat.map((item) => ({
-    label: item.label,
-    key: item.key,
-  }));
+  //       const initlist = [];
+  //       for (let i = 0; i < data.length; i++) {
+  //         const newreports = {
+  //           label: data[i].programmeId.slice(2),
+  //           key: data[i].url,
+  //         };
+  //         initlist.push(newreports);
+  //       }
+  //       setFileList(initlist);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching AnnualReports:', error);
+  //   }
+  // };
+  // useEffect(() => {
+  //   if (userInfoState?.companyRole !== CompanyRole.PROGRAMME_DEVELOPER) {
+  //     fetchProgrammeIds();
+  //   }
+  // }, []);
+  // const fileListFlat = fileList.flat();
+  // const items: MenuProps['items'] = fileListFlat.map((item) => ({
+  //   label: item.label,
+  //   key: item.key,
+  // }));
 
-  const handleMenuClick: MenuProps['onClick'] = (e) => {
-    setSelectedurl(String(e.key));
-    const parts = String(e.key).split('/');
-    const fileName = parts[parts.length - 1];
-    const fileNameWithoutExtension = fileName.replace('.pdf', '');
-    const lastFourElements = fileNameWithoutExtension.slice(-4);
-    setSelectedFile(lastFourElements);
-  };
+  // const handleMenuClick: MenuProps['onClick'] = (e) => {
+  //   setSelectedurl(String(e.key));
+  //   const parts = String(e.key).split('/');
+  //   const fileName = parts[parts.length - 1];
+  //   const fileNameWithoutExtension = fileName.replace('.pdf', '');
+  //   const lastFourElements = fileNameWithoutExtension.slice(-4);
+  //   setSelectedFile(lastFourElements);
+  // };
 
-  const menuProps = {
-    items,
-    onClick: handleMenuClick,
-  };
+  // const menuProps = {
+  //   items,
+  //   onClick: handleMenuClick,
+  // };
 
   //MARK: HTML PART
   return (
@@ -2803,7 +2976,7 @@ ${total}
                 id="total-credits"
                 title={t('totalCreditsByDateSLCF')}
                 options={creditsByDateOptions}
-                series={totalCreditsSeries}
+                series={getCreditsByDateChartSeries()}
                 // lastUpdate={lastUpdateTotalCredits}
                 lastUpdate={'0'}
                 loading={loadingCharts}
@@ -2817,7 +2990,7 @@ ${total}
                 )}
                 Chart={Chart}
                 height="400px"
-                width="490px"
+                width={creditByChartWidth}
               />
             </Col>
             <Col
@@ -2828,315 +3001,23 @@ ${total}
             >
               <SLCFBarChartsStatComponent
                 id="total-credits-by-purpose"
-                title={t('totalCreditsByDateSLCF')}
-                options={creditsByDateOptions}
-                series={totalCreditsSeries}
-                // lastUpdate={lastUpdateTotalCredits}
+                title={t('totalCreditsByPurposeSLCF')}
+                options={creditsByPurposeOptions}
+                series={getCreditsByPurposeChartSeries()}
                 lastUpdate={'0'}
                 loading={loadingCharts}
                 toolTipText={t(
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? 'tTTotalCreditsGovernment'
-                  //   :
                   userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                     ? 'tTTotalCreditsByPurposeDevSLCF'
                     : 'tTTotalCreditsByPurposeSLCF'
                 )}
                 Chart={Chart}
                 height="400px"
-                width="490px"
+                width={creditByChartWidth}
               />
             </Col>
           </Row>
         </div>
-
-        <div className="statistics-and-charts-container center">
-          <Row gutter={[40, 40]} className="statistic-card-row">
-            {/* <Col xxl={12} xl={12} md={12} className="statistic-card-col">
-              <SLCFBarChartsStatComponent
-                id="total-programmes"
-                title={t('totalProgrammesByDateSLCF')}
-                options={totalProgrammesOptions}
-                series={totalProgrammesSeries}
-                // lastUpdate={lastUpdateProgrammesStatsC}
-                lastUpdate={'0'}
-                loading={loadingCharts}
-                toolTipText={t(
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? 'tTTotalProgrammesGovernment'
-                  //   :
-                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                    ? 'tTTotalProgrammesProgrammeDevSLCF'
-                    : 'tTTotalProgrammesGovernmentSLCF'
-                )}
-                Chart={Chart}
-                height="350px"
-                width="490px"
-              />
-            </Col> */}
-            {/* <Col xxl={12} xl={12} md={12} className="statistic-card-col">
-              <SLCFBarChartsStatComponent
-                id="total-programmes-sector"
-                title={t('totalProgrammesSectorSLCF')}
-                options={totalProgrammesOptionsSub}
-                series={totalProgrammesSectorSeries}
-                // lastUpdate={lastUpdateProgrammesSectorStatsC}
-                lastUpdate={'0'}
-                loading={loadingCharts}
-                toolTipText={t(
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? 'tTTotalProgrammesSectorGovernment'
-                  //   :
-                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                    ? 'tTTotalProgrammesSecProgrammeDevSLCF'
-                    : 'tTTotalProgrammesSectorGovernmentSLCF'
-                )}
-                Chart={Chart}
-                height="350px"
-                width="490px"
-              />
-            </Col> */}
-          </Row>
-        </div>
-        <div className="statistics-and-charts-container center">
-          <Row gutter={[40, 40]} className="statistic-card-row">
-            {/* <Col xxl={12} xl={12} md={12} className="statistic-card-col">
-              <SLCFBarChartsStatComponent
-                id="total-credits"
-                title={t('totalCreditsByDateSLCF')}
-                options={totalCreditsOptions}
-                series={totalCreditsSeries}
-                // lastUpdate={lastUpdateTotalCredits}
-                lastUpdate={'0'}
-                loading={loadingCharts}
-                toolTipText={t(
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? 'tTTotalCreditsGovernment'
-                  //   :
-                  userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                    ? 'tTTotalCreditsProgrammeDevSLCF'
-                    : 'tTTotalCreditsGovernmentSLCF'
-                )}
-                Chart={Chart}
-                height="350px"
-                width="490px"
-              />
-            </Col> */}
-            {/* <Col xxl={12} xl={12} md={12} className="statistic-card-col">
-            <SLCFBarChartsStatComponent
-              id="total-credits-certified"
-              title={t('totalCreditsCertified')}
-              options={totalCreditsCertifiedOptions}
-              series={totalCertifiedCreditsSeries}
-              lastUpdate={lastUpdateTotalCreditsCertified}
-              loading={loadingCharts}
-              toolTipText={t(
-                userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTTotalCreditsCertifiedGovernment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTTotalCertifiedCreditsProgrammeDev'
-                  : categoryType === 'mine'
-                  ? 'tTTotalCertifiedCreditsCertifierMine'
-                  : 'tTTotalCertifiedCreditsCertifierOverall'
-              )}
-              Chart={Chart}
-            />
-          </Col> */}
-            {/* {mapType !== MapTypes.None ? (
-              <Col xxl={12} xl={12} md={12} className="statistic-card-col">
-                <div className="statistics-and-pie-card height-map-rem">
-                  <div className="pie-charts-top">
-                    <div className="pie-charts-title">{t('programmeLocationsSLCF')}</div>
-                    <div className="info-container">
-                      <div className="info-container">
-                        <Tooltip
-                          arrowPointAtCenter
-                          placement="bottomRight"
-                          trigger="hover"
-                          title={t(
-                            // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                            //   ? 'tTProgrammeLocationsGovernment'
-                            //   :
-                            userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                              ? 'tTProgrammeLocationsProgrammeDevSLCF'
-                              : 'tTProgrammeLocationsGovernmentSLCF'
-                          )}
-                        >
-                          <InfoCircle color="#000000" size={17} />
-                        </Tooltip>
-                      </div>
-                    </div>
-                  </div>
-                  {loadingCharts ? (
-                    <div className="margin-top-2">
-                      <Skeleton active />
-                      <Skeleton active />
-                    </div>
-                  ) : (
-                    <>
-                      <div className="map-content">
-                        <MapComponent
-                          mapType={mapType}
-                          center={programmeLocationsMapCenter}
-                          zoom={6}
-                          mapSource={programmeLocationsMapSource}
-                          layer={programmeLocationsMapLayer}
-                          height={340}
-                          style="mapbox://styles/mapbox/light-v11"
-                          onRender={programmeLocationsMapOnRender}
-                          accessToken={accessToken}
-                        ></MapComponent>
-                      </div>
-                      <div className="stage-legends">
-                        <LegendItem text="Authorised" color="#6ACDFF" />
-                        <LegendItem text="Pending" color="#CDCDCD" />
-                        <LegendItem text="Rejected" color="#FF8183" />
-                      </div>
-                      <div className="updated-on margin-top-1">
-                        <div className="updated-moment-container">
-                          {lastUpdateProgrammesStatsC !== '0' && lastUpdateProgrammesStatsC}
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </Col>
-            ) : (
-              ''
-            )} */}
-          </Row>
-        </div>
-        {/* {mapType !== MapTypes.None ? (
-        <div className="stastics-and-charts-container center">
-          <Row gutter={[40, 40]} className="statistic-card-row">
-            <Col xxl={12} xl={12} md={12} className="statistic-card-col">
-              <div className="statistics-and-pie-card height-map-rem">
-                <div className="pie-charts-top">
-                  <div className="pie-charts-title">{t('programmeLocationsSLCF')}</div>
-                  <div className="info-container">
-                    <div className="info-container">
-                      <Tooltip
-                        arrowPointAtCenter
-                        placement="bottomRight"
-                        trigger="hover"
-                        title={t(
-                          // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                          //   ? 'tTProgrammeLocationsGovernment'
-                          //   :
-                          userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                            ? 'tTProgrammeLocationsProgrammeDevSLCF'
-                            : 'tTProgrammeLocationsGovernmentSLCF'
-                        )}
-                      >
-                        <InfoCircle color="#000000" size={17} />
-                      </Tooltip>
-                    </div>
-                  </div>
-                </div>
-                {loadingCharts ? (
-                  <div className="margin-top-2">
-                    <Skeleton active />
-                    <Skeleton active />
-                  </div>
-                ) : (
-                  <>
-                    <div className="map-content">
-                      <MapComponent
-                        mapType={mapType}
-                        center={programmeLocationsMapCenter}
-                        zoom={6}
-                        mapSource={programmeLocationsMapSource}
-                        layer={programmeLocationsMapLayer}
-                        height={360}
-                        style="mapbox://styles/mapbox/light-v11"
-                        onRender={programmeLocationsMapOnRender}
-                        accessToken={accessToken}
-                      ></MapComponent>
-                    </div>
-                    <div className="stage-legends">
-                      <LegendItem text="Authorised" color="#6ACDFF" />
-                      <LegendItem text="Pending" color="#CDCDCD" />
-                      <LegendItem text="Rejected" color="#FF8183" />
-                      {/* {!(
-                        userInfoState?.companyRole === CompanyRole.CERTIFIER &&
-                        categoryType === 'mine'
-                      ) && (
-                        <>
-                          <LegendItem text="Pending" color="#CDCDCD" />
-                          <LegendItem text="Rejected" color="#FF8183" />
-
-                          <LegendItem text="Approved" color="#B7A4FE" />
-                        </>
-                      )}
-                    </div>
-                    <div className="updated-on margin-top-1">
-                      <div className="updated-moment-container">
-                        {lastUpdateProgrammesStatsC !== '0' && lastUpdateProgrammesStatsC}
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </Col>
-           <Col xxl={12} xl={12} md={12} className="statistic-card-col">
-              <div className="statistics-and-pie-card height-map-rem">
-                <div className="pie-charts-top">
-                  <div className="pie-charts-title">{t('trasnferLocations')}</div>
-                  <div className="info-container">
-                    <Tooltip
-                      arrowPointAtCenter
-                      placement="bottomRight"
-                      trigger="hover"
-                      title={t(
-                        userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                          ? 'tTTransferLocationsGovernment'
-                          : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                          ? 'tTTrasnferLocationsProgrammeDev'
-                          : categoryType === 'mine'
-                          ? 'tTTrasnferLocationsCertifierMine'
-                          : 'tTTrasnferLocationsCertifierOverall'
-                      )}
-                    >
-                      <InfoCircle color="#000000" size={17} />
-                    </Tooltip>
-                  </div>
-                </div>
-                {loadingCharts ? (
-                  <div className="margin-top-2">
-                    <Skeleton active />
-                    <Skeleton active />
-                  </div>
-                ) : (
-                  <>
-                    <div className="map-content">
-                      <MapComponent
-                        mapType={mapType}
-                        center={[12, 50]}
-                        zoom={0.5}
-                        mapSource={transferLocationsMapSource}
-                        onClick={transferLocationsMapOnClick}
-                        showPopupOnClick={true}
-                        onMouseMove={transferLocationsMapOnMouseMove}
-                        layer={transferLocationsMapLayer}
-                        height={360}
-                        style="mapbox://styles/mapbox/streets-v11"
-                        accessToken={accessToken}
-                      ></MapComponent>
-                    </div>
-                    <div className="updated-on margin-top-2">
-                      <div className="updated-moment-container">
-                        {lastUpdateTransferLocations !== '0' && lastUpdateTransferLocations}
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </Col>
-          </Row>
-        </div>
-      ) : (
-        ''
-      )} */}
       </div>
     </div>
   );
