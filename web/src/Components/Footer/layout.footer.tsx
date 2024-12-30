@@ -17,8 +17,8 @@ const LayoutFooter = () => {
             </div>
             <div>
               <div style={{ display: 'flex' }}>
-                <div className="title">{'CARBON'}</div>
-                <div className="title-sub">{'REGISTRY'}</div>
+                <div className="title">{'CARBON MARKET DIGITAL PLATFORM'}</div>
+                {/* <div className="title-sub">{'REGISTRY'}</div> */}
               </div>
               <div className="footer-country-name">
                 {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}

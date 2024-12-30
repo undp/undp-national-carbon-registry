@@ -1580,6 +1580,7 @@ export class AggregateSlAPIService {
 
   async queryRetirementsByDate(query: QueryDto, user: User): Promise<DataResponseDto> {
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterOr = [];
       const fromCompanyId = {
         key: 'cr"."fromCompanyId',
         operation: "=",
@@ -1590,8 +1591,10 @@ export class AggregateSlAPIService {
         operation: "=",
         value: user.companyId,
       };
-      query.filterOr.push(fromCompanyId);
-      query.filterOr.push(toCompanyId);
+      filterOr.push(fromCompanyId);
+      filterOr.push(toCompanyId);
+
+      query.filterOr = filterOr
     }
 
     const creditRetirementStatus = {

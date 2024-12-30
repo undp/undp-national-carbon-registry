@@ -67,6 +67,7 @@ export const totalProgrammesOptions: any = {
   },
   yaxis: {
     show: true,
+    min: 0,
     axisBorder: {
       show: true, // Enable the Y-axis line
       width: 1, // Thickness of the axis line

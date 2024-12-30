@@ -124,6 +124,11 @@
   "tTTotalCreditsByPurposeSLCF": "Displays the distribution of credits and their type in the system by date.",
 
   "creditsByStatusSLCF": "Credits by Status",
+  "authorisedCreditsTotal": "Authorised",
+  "issuedCreditsTotal": "Issued",
+  "transferredCreditsTotal": "Transferred",
+  "retiredCreditsTotal": "Retired",
+
   "tTCreditsProgrammeDevSLCF": "Number of credits issued for projects within the selected time period in your organisation and their current status.",
   "tTCreditsGovernmentSLCF": "Number of credits issued for projects within the selected time period and their current status.",
   "creditDevelopmentPurpose": "Credits by Purpose",
