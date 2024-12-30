@@ -1702,24 +1702,20 @@ export class AggregateSlAPIService {
       });
     }
 
-    let authorisedQuery = query,
-      issuedQuery = query,
-      transferredQuery = query,
-      retiredQuery = query;
     const authorisedLogType = {
       key: 'audit_log"."logType',
       operation: "=",
       value: "AUTHORISED",
     };
 
-    authorisedQuery.filterAnd.push(authorisedLogType);
+    query.filterAnd.push(authorisedLogType);
 
     const authorisedCreditsByDate = await this.programmeSlAuditLogRepo
       .createQueryBuilder("audit_log")
       .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
       .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
       .addSelect("SUM(programme.creditEst)", "total_credit_authorised")
-      .where(this.helperService.generateWhereSQL(authorisedQuery, null))
+      .where(this.helperService.generateWhereSQL(query, null))
       .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
       .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
       .getRawMany();
@@ -1730,14 +1726,15 @@ export class AggregateSlAPIService {
       value: "CREDIT_ISSUED",
     };
 
-    issuedQuery.filterAnd.push(issuedLogType);
+    query.filterAnd.pop();
+    query.filterAnd.push(issuedLogType);
 
     const issuedCreditsByDate = await this.programmeSlAuditLogRepo
       .createQueryBuilder("audit_log")
       .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
       .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
       .addSelect("SUM((audit_log.data->>'creditIssued')::numeric)", "total_credit_issued")
-      .where(this.helperService.generateWhereSQL(issuedQuery, null))
+      .where(this.helperService.generateWhereSQL(query, null))
       .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
       .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
       .getRawMany();
@@ -1748,14 +1745,15 @@ export class AggregateSlAPIService {
       value: "TRANSFER_APPROVED",
     };
 
-    transferredQuery.filterAnd.push(transferredLogType);
+    query.filterAnd.pop();
+    query.filterAnd.push(transferredLogType);
 
     const transferredCreditsByDate = await this.programmeSlAuditLogRepo
       .createQueryBuilder("audit_log")
       .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
       .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
       .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "total_credit_transferred")
-      .where(this.helperService.generateWhereSQL(transferredQuery, null))
+      .where(this.helperService.generateWhereSQL(query, null))
       .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
       .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
       .getRawMany();
@@ -1765,14 +1763,15 @@ export class AggregateSlAPIService {
       operation: "=",
       value: "RETIRE_APPROVED",
     };
+    query.filterAnd.pop();
+    query.filterAnd.push(retiredLogType);
 
-    retiredQuery.filterAnd.push(retiredLogType);
     const retiredCreditsByDate = await this.programmeSlAuditLogRepo
       .createQueryBuilder("audit_log")
       .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
       .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
       .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "total_credit_retired")
-      .where(this.helperService.generateWhereSQL(retiredQuery, null))
+      .where(this.helperService.generateWhereSQL(query, null))
       .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
       .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
       .getRawMany();
@@ -1796,7 +1795,6 @@ export class AggregateSlAPIService {
       });
     });
 
-    // Convert groupedData object to an array
     const result = Object.values(groupedData);
     return new DataResponseDto(HttpStatus.OK, result);
   }
