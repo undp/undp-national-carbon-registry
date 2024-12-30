@@ -1600,6 +1600,24 @@ export class AggregateSlAPIService {
       query.filterOr = filterOr
     }
 
+     const filterAnd = query.filterAnd.map((filter) => {
+      let newKey = filter.key;
+  
+      // Remap keys
+      if (newKey === "createdTime") {
+        newKey = "approvedTime";
+      } else if (newKey === "purposeOfCreditDevelopment") {
+        newKey = "creditType";
+      } else if (newKey === "projectCategory") {
+        newKey = "programmeCategory"
+      }
+  
+      return {
+        ...filter,
+        key: `cr\".\"${newKey}`,
+      };
+    });
+    query.filterAnd = filterAnd;
     const creditRetirementStatus = {
       key: 'cr"."status',
       operation: "=",
