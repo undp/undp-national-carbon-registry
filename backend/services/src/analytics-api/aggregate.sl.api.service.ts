@@ -1717,7 +1717,7 @@ export class AggregateSlAPIService {
       .addSelect("SUM(programme.creditEst)", "total_credit_authorised")
       .where(this.helperService.generateWhereSQL(query, null))
       .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
-      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .orderBy("log_date", "ASC")
       .getRawMany();
 
     const issuedLogType = {
@@ -1736,7 +1736,7 @@ export class AggregateSlAPIService {
       .addSelect("SUM((audit_log.data->>'creditIssued')::numeric)", "total_credit_issued")
       .where(this.helperService.generateWhereSQL(query, null))
       .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
-      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .orderBy("log_date", "ASC")
       .getRawMany();
 
     const transferredLogType = {
@@ -1755,7 +1755,7 @@ export class AggregateSlAPIService {
       .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "total_credit_transferred")
       .where(this.helperService.generateWhereSQL(query, null))
       .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
-      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .orderBy("log_date", "ASC")
       .getRawMany();
 
     const retiredLogType = {
@@ -1773,7 +1773,7 @@ export class AggregateSlAPIService {
       .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "total_credit_retired")
       .where(this.helperService.generateWhereSQL(query, null))
       .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
-      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .orderBy("log_date", "ASC")
       .getRawMany();
 
     const data = {
@@ -1795,7 +1795,11 @@ export class AggregateSlAPIService {
       });
     });
 
-    const result = Object.values(groupedData);
+    const result = Object.values(groupedData).sort((a: any, b: any) => {
+      const dateA = new Date(a.log_date);
+      const dateB = new Date(b.log_date);
+      return dateA.getTime() - dateB.getTime();
+    });
     return new DataResponseDto(HttpStatus.OK, result);
   }
 
@@ -1839,7 +1843,7 @@ export class AggregateSlAPIService {
       .where(this.helperService.generateWhereSQL(query, null))
       .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
       .addGroupBy("programme.purposeOfCreditDevelopment")
-      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .orderBy("logDate", "ASC")
       .getRawMany();
 
     return new DataResponseDto(HttpStatus.OK, issuedCreditsByDate);
