@@ -106,6 +106,13 @@ export class ProgrammeController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard)
+  @Post("queryCreditsByPurpose")
+  async queryCreditsByPurpose(@Body() query: QueryDto, @Request() req) {
+    return this.aggSlService.queryCreditsByPurpose(query, req.user);
+  }
+
+  @ApiBearerAuth()
   // @UseGuards(JwtAuthGuard)
   @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Stat, true, true))
   @Get("verifications")
