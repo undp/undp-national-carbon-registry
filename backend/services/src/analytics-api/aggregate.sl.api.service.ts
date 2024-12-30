@@ -44,6 +44,7 @@ import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
 import { SLDashboardProjectStage } from "../enum/slDashboardProjectStage.enum";
 import { DataResponseDto } from "src/dto/data.response.dto";
 import { CreditRetirementSlView } from "src/entities/creditRetirementSl.view.entity";
+import { ProgrammeAuditLogSl } from "src/entities/programmeAuditLogSl.entity";
 
 @Injectable()
 export class AggregateSlAPIService {
@@ -78,7 +79,9 @@ export class AggregateSlAPIService {
     @InjectRepository(CreditRetirementSl)
     private creditRetirementSlRequestRepo: Repository<CreditRetirementSl>,
     @InjectRepository(CreditRetirementSlView)
-    private creditRetirementSlViewRepo: Repository<CreditRetirementSlView>
+    private creditRetirementSlViewRepo: Repository<CreditRetirementSlView>,
+    @InjectRepository(ProgrammeAuditLogSl)
+    private programmeSlAuditLogRepo: Repository<ProgrammeAuditLogSl>
   ) {}
 
   private getFilterAndByStatFilter(
@@ -1656,6 +1659,115 @@ export class AggregateSlAPIService {
       .getRawOne();
 
     return new DataResponseDto(HttpStatus.OK, resp);
+  }
+
+  async queryCreditsByDate(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: 'programme"."companyId',
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+
+    let authorisedQuery = query,
+      issuedQuery = query,
+      transferredQuery = query,
+      retiredQuery = query;
+    const authorisedLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "AUTHORISED",
+    };
+
+    authorisedQuery.filterAnd.push(authorisedLogType);
+
+    const authorisedCreditsByDate = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
+      .addSelect("SUM(programme.creditEst)", "total_credit_authorised")
+      .where(this.helperService.generateWhereSQL(authorisedQuery, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    const issuedLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "CREDIT_ISSUED",
+    };
+
+    issuedQuery.filterAnd.push(issuedLogType);
+
+    const issuedCreditsByDate = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
+      .addSelect("SUM((audit_log.data->>'creditIssued')::numeric)", "total_credit_issued")
+      .where(this.helperService.generateWhereSQL(issuedQuery, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    const transferredLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "TRANSFER_APPROVED",
+    };
+
+    transferredQuery.filterAnd.push(transferredLogType);
+
+    const transferredCreditsByDate = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
+      .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "total_credit_transferred")
+      .where(this.helperService.generateWhereSQL(transferredQuery, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    const retiredLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "RETIRE_APPROVED",
+    };
+
+    retiredQuery.filterAnd.push(retiredLogType);
+    const retiredCreditsByDate = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
+      .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "total_credit_retired")
+      .where(this.helperService.generateWhereSQL(retiredQuery, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    const data = {
+      authorised: authorisedCreditsByDate,
+      issued: issuedCreditsByDate,
+      transferred: transferredCreditsByDate,
+      retired: retiredCreditsByDate,
+    };
+
+    const groupedData = {};
+
+    ["authorised", "issued", "transferred", "retired"].forEach((key) => {
+      data[key].forEach((entry) => {
+        const { log_date, ...values } = entry;
+        if (!groupedData[log_date]) {
+          groupedData[log_date] = { log_date };
+        }
+        Object.assign(groupedData[log_date], values);
+      });
+    });
+
+    // Convert groupedData object to an array
+    const result = Object.values(groupedData);
+    return new DataResponseDto(HttpStatus.OK, result);
   }
 
   async getEmissions(stat, companyId, abilityCondition, lastTimeForWhere, statCache) {

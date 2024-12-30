@@ -99,6 +99,13 @@ export class ProgrammeController {
   }
 
   @ApiBearerAuth()
+  @UseGuards(ApiKeyJwtAuthGuard)
+  @Post("queryCreditsByDate")
+  async queryCreditsByDate(@Body() query: QueryDto, @Request() req) {
+    return this.aggSlService.queryCreditsByDate(query, req.user);
+  }
+
+  @ApiBearerAuth()
   // @UseGuards(JwtAuthGuard)
   @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Stat, true, true))
   @Get("verifications")
