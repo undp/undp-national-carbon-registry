@@ -109,6 +109,11 @@
     }
   }
 
+  .ant-progress-success-bg,
+  .ant-progress-bg {
+    background-color: transparent !important;
+  }
+
   .filter-container {
     display: flex;
     flex-direction: row;

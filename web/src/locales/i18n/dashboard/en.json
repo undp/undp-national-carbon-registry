@@ -100,7 +100,7 @@
   "tTTotalCreditsSLCF": "Displays the total number of credits issued in the system.",
   "tTTotalRetiredCreditsDevSLCF": "Displays the total number of credits retired in the system for the projects owned by your organisation.",
   "tTTotalRetiredCreditsSLCF": "Displays the total number of credits retired in the system.",
-  "programmesByStatusSLCF": "Projects by Status - Summery",
+  "programmesByStatusSLCF": "Projects by Status - Summary",
   "totalProgrammesByStatusSLCF": "Projects by Status - Details",
   "tTProjectSummeryDevSLCF": "Displays the total number of projects in the system owned by your organisation and their current statuses for a specified time period.",
   "tTProjectSummerySLCF": "Displays the total number of projects in the system and their current statuses.",
