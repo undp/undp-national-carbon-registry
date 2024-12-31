@@ -1597,21 +1597,21 @@ export class AggregateSlAPIService {
       filterOr.push(fromCompanyId);
       filterOr.push(toCompanyId);
 
-      query.filterOr = filterOr
+      query.filterOr = filterOr;
     }
 
-     const filterAnd = query.filterAnd.map((filter) => {
+    const filterAnd = query.filterAnd.map((filter) => {
       let newKey = filter.key;
-  
+
       // Remap keys
       if (newKey === "createdTime") {
         newKey = "approvedTime";
       } else if (newKey === "purposeOfCreditDevelopment") {
         newKey = "creditType";
       } else if (newKey === "projectCategory") {
-        newKey = "programmeCategory"
+        newKey = "programmeCategory";
       }
-  
+
       return {
         ...filter,
         key: `cr\".\"${newKey}`,
@@ -1714,7 +1714,7 @@ export class AggregateSlAPIService {
       .createQueryBuilder("audit_log")
       .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
       .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
-      .addSelect("SUM(programme.creditEst)", "total_credit_authorised")
+      .addSelect("CAST(SUM(programme.creditEst) AS INTEGER)", "total_credit_authorised")
       .where(this.helperService.generateWhereSQL(query, null))
       .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
       .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
