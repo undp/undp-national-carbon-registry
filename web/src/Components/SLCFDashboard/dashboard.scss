@@ -1,4 +1,4 @@
-@import "../../Styles/variables.scss";
+@import '../../Styles/variables.scss';
 
 .mapboxgl-popup-content {
   background-color: $white !important;
@@ -12,7 +12,7 @@
 .mapboxgl-popup-close-button,
 .mapboxgl-popup-close-button:hover {
   display: none;
-  // z-index: -1 !important; 
+  // z-index: -1 !important;
 }
 
 .total-container {
@@ -20,21 +20,17 @@
   flex-direction: column;
   border: 1px solid gray;
 }
-.annual-report{
-  display:flex;
-  margin-top:30px;
-  margin-left:22px;
+.annual-report {
+  display: flex;
+  margin-top: 30px;
+  margin-left: 22px;
 }
-.ant-btn.annual-report-downloadbutton{
-
-  border-radius:0px 5px 5px 0px !important;
-
+.ant-btn.annual-report-downloadbutton {
+  border-radius: 0px 5px 5px 0px !important;
 }
-.ant-btn.annual-report-dropdownbutton{
-
-  margin-left:20px; 
-  border-radius:5px 0px 0px 0px !important;
-
+.ant-btn.annual-report-dropdownbutton {
+  margin-left: 20px;
+  border-radius: 5px 0px 0px 0px !important;
 }
 .margin-top-6 {
   margin-top: 7.5rem;
@@ -61,7 +57,7 @@
 }
 
 .cards-title {
-  font-family: "Inter";
+  font-family: 'Inter';
   align-items: flex-start;
   justify-content: flex-start;
   font-style: normal;
@@ -72,34 +68,39 @@
   color: $card-title;
 }
 
-.dashboard-main-container {
+.slcf-dashboard-main-container {
   width: 100%;
   display: flex;
   flex-direction: column;
   border-radius: 5px;
   padding: 0 2rem 0 2rem;
 
+  .dashboard-inner-container {
+    background: white;
+    padding-top: 60px;
+  }
+
   .header-and-title {
     display: flex;
     flex-direction: row;
     width: 100%;
     padding: 0 15px 0 15px;
-    font-family: "Inter-Regular";
+    font-family: 'Inter-Regular';
     font-size: 1.4rem;
     font-weight: 600;
   }
 
-  .stastics-cards-container {
+  .statistics-cards-container {
     display: flex;
     flex-direction: row;
     width: 100%;
     align-items: center;
     justify-content: center;
 
-    .stastic-card-row {
+    .statistics-card-row {
       width: 100%;
 
-      .stastic-card-col {
+      .statistics-card-col {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
@@ -108,42 +109,65 @@
     }
   }
 
+  .ant-progress-success-bg,
+  .ant-progress-bg {
+    background-color: transparent !important;
+  }
+
   .filter-container {
     display: flex;
     flex-direction: row;
     width: 100%;
     align-items: center;
-    justify-content: space-between;
+    // justify-content: space-between;
     margin-top: 2rem;
     padding: 0 1.2rem 0 1.2rem;
 
-    .radio-selection {
-      .ant-radio-button-wrapper {
+    .category-filter {
+      padding-left: 25px;
+
+      .ant-select-selector {
+        border-radius: 5px !important;
         height: 35px !important;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        color: rgba(58, 53, 65, 0.5);
-      }
-      .ant-radio-button-checked {
-        background-color: $primary-blue !important;
-      }
-
-      .ant-radio-button-wrapper-checked:not(
-          .ant-radio-button-wrapper-disabled
-        )::before {
-        background-color: $primary-blue !important;
-      }
-
-      .overall {
-        border-radius: 5px 0 0 5px !important;
-      }
-
-      .mine {
-        border-radius: 0 5px 5px 0 !important;
       }
     }
+
+    .credit-type-filter {
+      padding-left: 25px;
+
+      .ant-select-selector {
+        border-radius: 5px !important;
+        height: 35px !important;
+      }
+    }
+
+    // .radio-selection {
+    //   .ant-radio-button-wrapper {
+    //     height: 35px !important;
+    //     display: flex;
+    //     flex-direction: row;
+    //     align-items: center;
+    //     justify-content: center;
+    //     color: rgba(58, 53, 65, 0.5);
+    //   }
+    //   .ant-radio-button-checked {
+    //     background-color: $primary-blue !important;
+    //   }
+
+    //   .ant-radio-button-wrapper-checked:not(
+    //       .ant-radio-button-wrapper-disabled
+    //     )::before {
+    //     background-color: $primary-blue !important;
+    //   }
+
+    //   .overall {
+    //     border-radius: 5px 0 0 5px !important;
+    //   }
+
+    //   .mine {
+    //     border-radius: 0 5px 5px 0 !important;
+    //   }
+    // }
   }
 
   .center {
@@ -152,7 +176,7 @@
   }
 
   .height-pie-rem {
-    height: 26.2rem;
+    height: 31rem;
 
     .apexcharts-legend {
       display: flex;
@@ -168,7 +192,83 @@
   }
 
   .height-bar-rem {
-    height: 29rem;
+    height: 31rem;
+  }
+
+  .project-details-bar-chart {
+    ul {
+      padding-left: 20px;
+      list-style-type: none;
+    }
+    .list-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: rgba(140, 140, 140, 1);
+      margin-bottom: 10px;
+    }
+    .list-item {
+      list-style-type: none;
+      font-size: 0.75rem;
+      font-weight: 400;
+    }
+    // .details-bar-chart-pending-list li::marker {
+    //   color: rgba(72, 150, 254, 1); /* Change the marker color */
+    //   font-size: 45px; /* Change the marker size */
+    // }
+    .details-bar-chart-pending-list {
+      margin-top: 10px;
+      line-height: 23px;
+    }
+    .details-bar-chart-rejected-list,
+    .details-bar-chart-authorised-list {
+      margin-top: 25px;
+      line-height: 23px;
+    }
+
+    .details-bar-chart-pending-list .list-title::before {
+      content: '•';
+      position: absolute;
+      color: rgba(72, 150, 254, 1);
+      font-size: 40px;
+      line-height: 1;
+      margin-left: -22px;
+      margin-top: -13px;
+    }
+    .pie-charts-section {
+      display: flex;
+      align-items: start !important;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .details-bar-chart-rejected-list .list-title::before {
+      content: '•';
+      position: absolute;
+      color: rgba(255, 99, 97, 1);
+      font-size: 40px;
+      line-height: 1;
+      margin-left: -22px;
+      margin-top: -13px;
+    }
+
+    .details-bar-chart-authorised-list .list-title::before {
+      content: '•';
+      position: absolute;
+      color: rgba(22, 200, 199, 1);
+      font-size: 40px;
+      line-height: 1;
+      margin-left: -22px;
+      margin-top: -13px;
+    }
+    // .pie-charts-top {
+    //   display: flex;
+    //   flex-direction: row;
+    //   justify-content: flex-start !important;
+    //   padding: 0 1rem 0 1rem;
+    // }
+    // .info-container {
+    //   padding-left: 20px;
+    // }
   }
 
   .height-map-rem {
@@ -176,23 +276,62 @@
     height: 464px;
   }
 
-  .stastics-and-charts-container {
+  .credits-by-status-container {
+    padding: 0 20px;
+
+    
+
+    .credits-by-status-row {
+      border: 1px solid #d8d8d8;
+      border-radius: 8px;
+      padding: 30px 11px;
+      width: 100%;
+
+      .credits-by-status-top {
+        display: flex;
+        padding: 0 26px 15px;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: rgba(58, 53, 65, 0.8);
+      }
+
+      .info-container {
+        margin-left: 10px;
+      }
+
+      .statistic-card-row {
+        padding-left: 24px;
+        // padding-right: 24px;
+      }
+    }
+  }
+
+  .credits-by-date-chart-col, .retirements-by-date-chart-col, .credits-by-purpose-chart-col {
+    rect {
+      stroke: none !important;
+    }
+  }
+
+  .statistics-and-charts-container {
     display: flex;
     flex-direction: row;
     width: 100%;
     margin-top: 2rem;
     margin-bottom: 2rem;
 
-    .stastic-card-row {
+    .statistic-card-row {
       width: 100%;
-      .stastic-card-col {
-        .stastics-and-pie-card {
+      padding-left: 10px;
+      padding-right: 10px;
+      .statistic-card-col {
+        .statistics-and-pie-card {
           display: flex;
           flex-direction: column;
           background-color: $white;
           border-radius: 10px;
           padding: 0 1rem 0.7rem 1rem;
           width: 100%;
+          border: 1px solid rgba(216, 216, 216, 1);
 
           .margin-top-2 {
             width: 100%;
@@ -208,7 +347,7 @@
             padding: 1rem 1rem 0 1rem;
 
             .title {
-              font-family: "Inter";
+              font-family: 'Inter';
               font-style: normal;
               font-weight: 600;
               width: 90%;
@@ -236,12 +375,14 @@
 
             .details {
               display: flex;
-              flex-direction: column;
-              width: 70%;
+              justify-content: space-between;
+              width: 100%;
+              // flex-direction: column;
+              // width: 70%;
               padding: 0 1rem 0 0.8rem;
 
               .detail {
-                font-family: "Inter";
+                font-family: 'Inter';
                 font-style: normal;
                 font-weight: 400;
                 font-size: 0.875rem;
@@ -252,14 +393,14 @@
               }
 
               .value {
-                font-family: "Inter";
+                font-family: 'Inter';
                 font-style: normal;
                 font-weight: 600;
-                font-size: 1.6rem;
+                font-size: 2rem;
                 line-height: 22px;
                 padding-left: 0.125rem;
                 padding: 0;
-                color: $primary-blue;
+                color: rgba(72, 150, 254, 1);
               }
             }
 
@@ -305,8 +446,8 @@
                   align-items: center;
                   justify-content: center;
                   border-radius: 50px;
-                  width: 2.813rem;
-                  height: 2.813rem;
+                  width: 2.188rem;
+                  height: 2.188rem;
                 }
 
                 .reject {
@@ -318,11 +459,11 @@
                 }
 
                 .pending {
-                  background-color: rgba(164, 162, 168, 0.5);
+                  background-color: rgba(201, 224, 255, 1);
                 }
 
                 .authorized {
-                  background-color: rgba(185, 226, 244, 0.4);
+                  background-color: rgba(22, 200, 199, 0.3);
                 }
               }
 
@@ -339,7 +480,7 @@
                   justify-content: space-between;
 
                   .label {
-                    font-family: "Inter";
+                    font-family: 'Inter';
                     font-style: normal;
                     font-weight: 400;
                     font-size: 0.875rem;
@@ -347,7 +488,7 @@
                   }
 
                   .value {
-                    font-family: "Inter";
+                    font-family: 'Inter';
                     font-style: normal;
                     font-weight: 400;
                     height: 30px;
@@ -372,7 +513,7 @@
             display: flex;
             flex-direction: row;
             align-items: flex-end;
-            justify-content: flex-start;
+            justify-content: flex-end;
             padding: 0 1rem 0 0.8rem;
             height: 50px;
 
@@ -390,12 +531,12 @@
           .pie-charts-top {
             display: flex;
             flex-direction: row;
-            justify-content: space-between;
+            // justify-content: space-between;
             padding: 0 1rem 0 1rem;
             .pie-charts-title {
               display: flex;
               flex-direction: row;
-              font-family: "Inter";
+              font-family: 'Inter';
               align-items: flex-start;
               justify-content: flex-start;
               font-style: normal;
@@ -408,7 +549,7 @@
               .unit {
                 display: flex;
                 margin: 0 0 0 0.5rem;
-                font-family: "Inter";
+                font-family: 'Inter';
                 font-size: 1.15rem;
                 font-weight: 500;
                 color: rgba(58, 53, 65, 0.5);
@@ -419,6 +560,7 @@
               display: flex;
               flex-direction: row;
               align-items: center;
+              padding-left: 20px;
             }
           }
 
@@ -433,7 +575,7 @@
     }
   }
 
-  .stastics-and-pie-card:hover {
+  .statistics-and-pie-card:hover {
     box-shadow: rgba(0, 5, 18, 0.2) 0px 8px 24px;
   }
 

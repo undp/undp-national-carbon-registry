@@ -308,7 +308,6 @@ export const AddCostQuotationForm = (props: any) => {
                       <Input size="large" disabled />
                     </Form.Item>
                   </Col>
-                  ;
                 </Row>
                 {/* Cost Quotation table start */}
                 <div className="costQuotationTable">
