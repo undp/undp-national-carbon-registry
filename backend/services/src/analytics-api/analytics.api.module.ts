@@ -24,6 +24,8 @@ import { ProgrammeSl } from "../entities/programmeSl.entity";
 import { AggregateSlAPIService } from "./aggregate.sl.api.service";
 import { VerificationRequestEntity } from "../entities/verification.request.entity";
 import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
+import { CreditRetirementSlView } from "src/entities/creditRetirementSl.view.entity";
+import { ProgrammeAuditLogSl } from "src/entities/programmeAuditLogSl.entity";
 
 @Module({
   imports: [
@@ -48,7 +50,9 @@ import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
       EventLog,
       ProgrammeSl,
       VerificationRequestEntity,
-      CreditRetirementSl
+      CreditRetirementSl,
+      CreditRetirementSlView,
+      ProgrammeAuditLogSl,
     ]),
     AuthModule,
     CaslModule,

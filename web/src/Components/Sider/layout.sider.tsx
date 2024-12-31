@@ -58,10 +58,10 @@ const LayoutSider = (props: LayoutSiderProps) => {
     ),
     getItem(t('nav:projectList'), 'programmeManagementSLCF/viewAll', <UnorderedListOutlined />),
     getItem(t('nav:retirements'), 'retirementManagement/viewAll', <SplitCellsOutlined />),
-    getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
-    getItem(t('nav:cdmTransitionProjects'), 'cdmManagement/viewAll', <UnorderedListOutlined />),
-    getItem(t('nav:verra'), 'verraManagement/viewAll', <AppstoreOutlined />),
-    getItem(t('nav:goldStandards'), 'goldStandardManagement/viewAll', <AppstoreOutlined />),
+    // getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
+    // getItem(t('nav:cdmTransitionProjects'), 'cdmManagement/viewAll', <UnorderedListOutlined />),
+    // getItem(t('nav:verra'), 'verraManagement/viewAll', <AppstoreOutlined />),
+    // getItem(t('nav:goldStandards'), 'goldStandardManagement/viewAll', <AppstoreOutlined />),
     // getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),
     // getItem(t('nav:investments'), 'investmentManagement/viewAll', <Icon.Cash />),
     // getItem(t('nav:transfers'), 'creditTransfers/viewAll', <Icon.ArrowLeftRight />),
@@ -80,6 +80,17 @@ const LayoutSider = (props: LayoutSiderProps) => {
   //     getItem(t('nav:nationalAccounting'), 'nationalAccounting', <Icon.GraphUpArrow />)
   //   );
   // }
+
+  if (userInfoState?.companyRole !== CompanyRole.PROGRAMME_DEVELOPER) {
+    items.splice(
+      4,
+      0,
+      getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
+      getItem(t('nav:cdmTransitionProjects'), 'cdmManagement/viewAll', <UnorderedListOutlined />),
+      getItem(t('nav:verra'), 'verraManagement/viewAll', <AppstoreOutlined />),
+      getItem(t('nav:goldStandards'), 'goldStandardManagement/viewAll', <AppstoreOutlined />)
+    );
+  }
 
   if (userInfoState?.userRole === Role.Root) {
     items.push(getItem(t('nav:settings'), 'settings', <SettingOutlined />));
@@ -106,9 +117,9 @@ const LayoutSider = (props: LayoutSiderProps) => {
           </div>
           {!collapsed && (
             <div>
-              <div style={{ display: 'flex' }}>
-                <div className="title">{collapsed ? '' : 'CARBON'}</div>
-                <div className="title-sub">{collapsed ? '' : 'REGISTRY'}</div>
+              <div>
+                <div className="title">{collapsed ? '' : 'CARBON MARKET'}</div>
+                <div className="title-sub">{collapsed ? '' : 'DIGITAL PLATFORM'}</div>
               </div>
               <div className="country-name">{process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}</div>
             </div>
@@ -141,9 +152,10 @@ const LayoutSider = (props: LayoutSiderProps) => {
                   item?.key === 'investmentManagement/viewAll' ||
                   item?.key === 'retirementManagement/viewAll' ||
                   item?.key === 'programmeManagementSLCF/viewAll' ||
-                  item?.key === 'cdmManagement/viewAll' ||
                   item?.key === 'creditTransfers/viewAll'
                     ? 'custom-padding-left'
+                    : item?.key === 'cdmManagement/viewAll'
+                    ? 'custom-padding-left wrap-content-overflow'
                     : ''
                 }
                 disabled={

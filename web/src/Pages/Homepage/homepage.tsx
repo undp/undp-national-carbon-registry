@@ -72,8 +72,8 @@ const Homepage = () => {
                   </div>
                   <div>
                     <div style={{ display: 'flex' }}>
-                      <div className="title">{'CARBON'}</div>
-                      <div className="title-sub">{'REGISTRY'}</div>
+                      <div className="title">{'CARBON MARKET DIGITAL PLATFORM'}</div>
+                      {/* <div className="title-sub">{'REGISTRY'}</div> */}
                     </div>
                     <div className="country-name">
                       {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}
@@ -118,7 +118,7 @@ const Homepage = () => {
           </div>
         </Col>
       </Row>
-      <Row gutter={[8, 8]}>
+      {/* <Row gutter={[8, 8]}>
         <Col md={24} lg={24} flex="auto">
           <div className="homepage-content-containerwhite">
             <div id="scrollhome" className="title">
@@ -476,19 +476,11 @@ const Homepage = () => {
                 </div>
               </Col>
               <Col flex={3} md={8} lg={8}>
-                {/* <ImgWithFallback
-                  className="forest-image"
-                  src={forestfall}
-                  fallbackSrc={forestfall}
-                  mediaType="image/webp"
-                  alt="forestry"
-                /> */}
-                {/* <img className="image" src={forest} alt="forest" /> */}
               </Col>
             </Row>
           </div>
         </Col>
-      </Row>
+      </Row> */}
       <LayoutFooter />
     </div>
   );

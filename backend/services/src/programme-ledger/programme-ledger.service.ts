@@ -142,6 +142,7 @@ export class ProgrammeLedgerService {
           txTime: programme.txTime,
           txType: programme.txType,
           updatedTime: programme.updatedTime,
+          proposalStageUpdatedTime: programme.txTime,
         };
 
         switch (txType) {
@@ -183,6 +184,8 @@ export class ProgrammeLedgerService {
             uPayload["serialNo"] = data?.serialNo;
             uPayload["registrationCertificateUrl"] = data?.registrationCertificateUrl;
             uPayload["creditEst"] = data?.creditEst;
+            uPayload["creditUpdatedTime"] = programme.txTime;
+            uPayload["authorisedCreditUpdatedTime"] = programme.txTime;
             uPayload["projectProposalStage"] = ProjectProposalStage.AUTHORISED;
             break;
           case TxType.REJECT_VALIDATION:
@@ -260,10 +263,16 @@ export class ProgrammeLedgerService {
           ? Number(programme.creditBalance) + Number(verificationRequest.creditAmount)
           : Number(verificationRequest.creditAmount);
 
+        programme.creditIssued = programme.creditIssued
+          ? Number(programme.creditIssued) + Number(verificationRequest.creditAmount)
+          : Number(verificationRequest.creditAmount);
+
         programme.creditChange = Number(verificationRequest.creditAmount);
         programme.txType = TxType.ISSUE_SL;
         programme.txRef = txRef;
         programme.txTime = new Date().getTime();
+        programme.creditUpdatedTime = programme.txTime;
+        programme.issuedCreditUpdatedTime = programme.txTime;
 
         updatedProgramme = programme;
         const uPayload = {
@@ -273,6 +282,9 @@ export class ProgrammeLedgerService {
           creditChange: programme.creditChange,
           creditBalance: programme.creditBalance,
           companyId: programme.companyId,
+          creditIssued: programme.creditIssued,
+          creditUpdatedTime: programme.creditUpdatedTime,
+          issuedCreditUpdatedTime: programme.issuedCreditUpdatedTime,
         };
 
         if (
@@ -394,12 +406,21 @@ export class ProgrammeLedgerService {
         const programme = programmes[0];
         const prvTxTime = programme.txTime;
 
-        programme.creditBalance =  Number(programme.creditBalance) -  Number(retirementRequest.creditAmount);
+        programme.creditBalance =
+          Number(programme.creditBalance) - Number(retirementRequest.creditAmount);
 
-        programme.creditChange =  Number(retirementRequest.creditAmount);
+        programme.creditChange = Number(retirementRequest.creditAmount);
         programme.txType = txType;
         programme.txRef = txRef;
         programme.txTime = new Date().getTime();
+        programme.creditUpdatedTime = programme.txTime;
+
+        if (retirementRequest.creditType === CreditType.TRACK_1) {
+          programme.transferredCreditUpdatedTime = programme.txTime;
+        } else {
+          programme.retiredCreditUpdatedTime = programme.txTime;
+        }
+
         programme.creditStartSerialNumber = this.serialNumberGenerator.calculateCreditSerialNumber(
           programme.creditStartSerialNumber,
           retirementRequest.creditAmount
@@ -414,6 +435,9 @@ export class ProgrammeLedgerService {
           creditBalance: programme.creditBalance,
           companyId: programme.companyId,
           creditStartSerialNumber: programme.creditStartSerialNumber,
+          creditUpdatedTime: programme.creditUpdatedTime,
+          transferredCreditUpdatedTime: programme.transferredCreditUpdatedTime,
+          retiredCreditUpdatedTime: programme.retiredCreditUpdatedTime,
         };
 
         if (retirementRequest.creditType === CreditType.TRACK_1) {
