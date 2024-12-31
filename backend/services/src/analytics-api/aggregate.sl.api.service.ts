@@ -1583,6 +1583,7 @@ export class AggregateSlAPIService {
 
   async queryRetirementsByDate(query: QueryDto, user: User): Promise<DataResponseDto> {
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterOr = [];
       const fromCompanyId = {
         key: 'cr"."fromCompanyId',
         operation: "=",
@@ -1593,10 +1594,30 @@ export class AggregateSlAPIService {
         operation: "=",
         value: user.companyId,
       };
-      query.filterOr.push(fromCompanyId);
-      query.filterOr.push(toCompanyId);
+      filterOr.push(fromCompanyId);
+      filterOr.push(toCompanyId);
+
+      query.filterOr = filterOr;
     }
 
+    const filterAnd = query.filterAnd.map((filter) => {
+      let newKey = filter.key;
+
+      // Remap keys
+      if (newKey === "createdTime") {
+        newKey = "approvedTime";
+      } else if (newKey === "purposeOfCreditDevelopment") {
+        newKey = "creditType";
+      } else if (newKey === "projectCategory") {
+        newKey = "programmeCategory";
+      }
+
+      return {
+        ...filter,
+        key: `cr\".\"${newKey}`,
+      };
+    });
+    query.filterAnd = filterAnd;
     const creditRetirementStatus = {
       key: 'cr"."status',
       operation: "=",
@@ -1643,10 +1664,10 @@ export class AggregateSlAPIService {
     let resp = await this.programmeSlRepo
       .createQueryBuilder("pr")
       .select("pr.projectProposalStage", "projectProposalStage")
-      .addSelect("SUM(pr.creditEst)", "totalCreditAuthorised")
-      .addSelect("SUM(pr.creditIssued)", "totalCreditIssued")
-      .addSelect("SUM(pr.creditRetired)", "totalCreditRetired")
-      .addSelect("SUM(pr.creditTransferred)", "totalCreditTransferred")
+      .addSelect("CAST(SUM(pr.creditEst) AS INTEGER)", "totalCreditAuthorised")
+      .addSelect("CAST(SUM(pr.creditIssued) AS INTEGER)", "totalCreditIssued")
+      .addSelect("CAST(SUM(pr.creditRetired) AS INTEGER)", "totalCreditRetired")
+      .addSelect("CAST(SUM(pr.creditTransferred) AS INTEGER)", "totalCreditTransferred")
       .addSelect("MAX(pr.authorisedCreditUpdatedTime)", "latestAuthorisedCreditUpdatedTime")
       .addSelect("MAX(pr.issuedCreditUpdatedTime)", "latestIssuedCreditUpdatedTime")
       .addSelect("MAX(pr.transferredCreditUpdatedTime)", "latestTransferredCreditUpdatedTime")
@@ -1693,7 +1714,7 @@ export class AggregateSlAPIService {
       .createQueryBuilder("audit_log")
       .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
       .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
-      .addSelect("SUM(programme.creditEst)", "total_credit_authorised")
+      .addSelect("CAST(SUM(programme.creditEst) AS INTEGER)", "total_credit_authorised")
       .where(this.helperService.generateWhereSQL(query, null))
       .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
       .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")

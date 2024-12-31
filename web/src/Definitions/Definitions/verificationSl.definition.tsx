@@ -112,7 +112,7 @@ export const getVerificationContent = (stage: VerificationRequestStatusEnum) => 
       return {
         statusKey: '',
         icon: <CloseOutlined />,
-        className: 'verification-pending',
+        className: 'verification-pending monitoring-rejected-verification',
       };
     case VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED:
       return {
