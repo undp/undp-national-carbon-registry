@@ -108,11 +108,11 @@ export const AppendixStep = (props: any) => {
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
-                <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
+                <Button onClick={prev} disabled={false}>
                   Back
                 </Button>
                 {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE && (
-                  <Button style={{ margin: '0 8px' }} onClick={cancel} disabled={false}>
+                  <Button onClick={cancel} disabled={false}>
                     Cancel
                   </Button>
                 )}
