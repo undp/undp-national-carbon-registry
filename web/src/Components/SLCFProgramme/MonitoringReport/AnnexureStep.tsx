@@ -108,10 +108,10 @@ export const AnnexureStep = (props: any) => {
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
-                <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
+                <Button onClick={prev} disabled={false}>
                   Back
                 </Button>
-                <Button style={{ margin: '0 8px' }} onClick={cancel} disabled={false}>
+                <Button onClick={cancel} disabled={false}>
                   Cancel
                 </Button>
                 {userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
