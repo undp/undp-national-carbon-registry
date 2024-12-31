@@ -245,7 +245,7 @@ export const SLCFDashboardComponent = (props: any) => {
     window.innerWidth > 1600 ? '850px' : '650px'
   );
   const [creditByChartWidth, setCreditByChartWidth] = useState(
-    window.innerWidth > 1600 ? '650px' : '500px'
+    window.innerWidth > 1600 ? '650px' : '450px'
   );
 
   // const [programmeByCategoryData, setProgrammeByCategoryData] = useState<any>();
@@ -2990,7 +2990,7 @@ export const SLCFDashboardComponent = (props: any) => {
                 )}
                 Chart={Chart}
                 height="400px"
-                width={creditByChartWidth}
+                width="550px"
               />
             </Col>
             <Col
@@ -3013,7 +3013,7 @@ export const SLCFDashboardComponent = (props: any) => {
                 )}
                 Chart={Chart}
                 height="400px"
-                width={creditByChartWidth}
+                width="550px"
               />
             </Col>
           </Row>
