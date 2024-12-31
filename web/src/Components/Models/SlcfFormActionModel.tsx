@@ -1,5 +1,5 @@
 import { Alert, Button, Checkbox, Col, Form, Input, Modal, Row } from 'antd';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 export interface SlcfFormActionModelProps {
   icon: any;
@@ -33,6 +33,13 @@ export const SlcfFormActionModel: FC<SlcfFormActionModelProps> = (
   const [popupError, setPopupError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
   const [checked, setChecked] = useState<boolean>(false);
+
+  // Reset the `checked` state whenever the modal opens
+  useEffect(() => {
+    if (openModal) {
+      setChecked(false);
+    }
+  }, [openModal]);
 
   return (
     <Modal
