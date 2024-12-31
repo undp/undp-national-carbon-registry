@@ -1,5 +1,5 @@
 import { Alert, Button, Checkbox, Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { creditUnit } from '../../Definitions/Definitions/common.definitions';
 import { addCommSep } from '../../Definitions/Definitions/programme.definitions';
 import { CreditRetirementSl } from '../../Definitions/Entities/creditRetirementSl';
@@ -41,6 +41,13 @@ export const CreditRetirementSlActionModel: FC<CreditRetirementSlActionModelProp
   const [popupError, setPopupError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
   const [checked, setChecked] = useState<boolean>(false);
+
+  // Reset the `checked` state whenever the modal opens
+  useEffect(() => {
+    if (openModal) {
+      setChecked(false);
+    }
+  }, [openModal]);
 
   const companyList =
     CreditTypeSl.TRACK_1 === transfer.creditType

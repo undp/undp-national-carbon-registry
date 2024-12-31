@@ -40,6 +40,7 @@ export const CarbonNeutralConfirmationModelSl: FC<CarbonNeutralConfirmationProps
     setStartDate(null);
     setEndDate(null);
     setYear(null);
+    setChecked(false);
   }, [openModal]);
 
   return (
