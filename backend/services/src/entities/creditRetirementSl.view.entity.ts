@@ -8,6 +8,7 @@ import { CreditRetirementSl } from "./creditRetirementSl.entity";
             PSL."programmeId",
             PSL."title" AS "programmeTitle",
             PSL."serialNo" AS "programmeSerialNo",
+            PSL."projectCategory" AS "programmeCategory",
             "creditType",
             CRSL."fromCompanyId",
             CRSL."toCompanyId",
@@ -29,6 +30,7 @@ import { CreditRetirementSl } from "./creditRetirementSl.entity";
             PSL."programmeId",
             PSL."title",
             PSL."serialNo",
+            PSL."projectCategory",
             CRSL."creditType",
             CRSL."creditAmount",
             CRSL."comment",
@@ -49,6 +51,9 @@ export class CreditRetirementSlView extends CreditRetirementSl {
 
   @ViewColumn()
   programmeSerialNo: string;
+
+  @ViewColumn()
+  programmeCategory: string;
 
   @ViewColumn()
   fromCompany: Company[];

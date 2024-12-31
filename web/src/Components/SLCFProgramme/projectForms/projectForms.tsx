@@ -352,35 +352,6 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  {/* <EyeOutlined
-                    className="common-progress-icon"
-                    style={
-                      formViewPermission(
-                        userInfoState,
-                        DocType.COST_QUOTATION,
-                        projectProposalStage
-                      )
-                        ? {
-                            color: '#3F3A47',
-                            cursor: 'pointer',
-                            margin: '0px 0px 1.5px 0px',
-                            fontSize: '110%',
-                          }
-                        : {
-                            color: '#cacaca',
-                            cursor: 'default',
-                            margin: '0px 0px 1.5px 0px',
-                            fontSize: '110%',
-                          }
-                    }
-                    onClick={() =>
-                      formViewPermission(
-                        userInfoState,
-                        DocType.COST_QUOTATION,
-                        projectProposalStage
-                      ) && navigateToCostQuotationView()
-                    }
-                  /> */}
                   <Button
                     type="default"
                     onClick={() => navigateToCostQuotationView()}
@@ -415,35 +386,6 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                     }
                     overlayClassName="custom-tooltip"
                   >
-                    {/* <PlusOutlined
-                      className="common-progress-icon"
-                      style={
-                        formCreatePermission(
-                          userInfoState,
-                          DocType.COST_QUOTATION,
-                          projectProposalStage
-                        )
-                          ? {
-                              color: '#3F3A47',
-                              cursor: 'pointer',
-                              margin: '0px 0px 1.5px 0px',
-                              fontSize: '110%',
-                            }
-                          : {
-                              color: '#cacaca',
-                              cursor: 'default',
-                              margin: '0px 0px 1.5px 0px',
-                              fontSize: '110%',
-                            }
-                      }
-                      onClick={() =>
-                        formCreatePermission(
-                          userInfoState,
-                          DocType.COST_QUOTATION,
-                          projectProposalStage
-                        ) && navigateToCostQuotationCreate()
-                      }
-                    /> */}
                     <Button
                       type="default"
                       onClick={() => navigateToCostQuotationCreate()}
@@ -469,12 +411,6 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
               <div className="label-container">
                 <div className="label">{t('projectDetailsView:proposalForm')}</div>
               </div>
-              {/* {designDocUrl !== '' && (
-                <div className="time">
-                  {moment(parseInt(designDocDate)).format('DD MMMM YYYY @ HH:mm')}
-                  {' ~ ' + designDocversion}
-                </div>
-              )} */}
             </Col>
             <Col span={6} className="field-value">
               <>
@@ -488,28 +424,6 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  {/* <EyeOutlined
-                    className="common-progress-icon"
-                    style={
-                      formViewPermission(userInfoState, DocType.PROPOSAL, projectProposalStage)
-                        ? {
-                            color: '#3F3A47',
-                            cursor: 'pointer',
-                            margin: '0px 0px 1.5px 0px',
-                            fontSize: '110%',
-                          }
-                        : {
-                            color: '#cacaca',
-                            cursor: 'default',
-                            margin: '0px 0px 1.5px 0px',
-                            fontSize: '110%',
-                          }
-                    }
-                    onClick={() =>
-                      formViewPermission(userInfoState, DocType.PROPOSAL, projectProposalStage) &&
-                      navigateToProposalView()
-                    }
-                  /> */}
                   <Button
                     type="default"
                     onClick={() => navigateToProposalView()}
@@ -540,31 +454,6 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                     }
                     overlayClassName="custom-tooltip"
                   >
-                    {/* <PlusOutlined
-                      className="common-progress-icon"
-                      style={
-                        formCreatePermission(userInfoState, DocType.PROPOSAL, projectProposalStage)
-                          ? {
-                              color: '#3F3A47',
-                              cursor: 'pointer',
-                              margin: '0px 0px 1.5px 0px',
-                              fontSize: '110%',
-                            }
-                          : {
-                              color: '#cacaca',
-                              cursor: 'default',
-                              margin: '0px 0px 1.5px 0px',
-                              fontSize: '110%',
-                            }
-                      }
-                      onClick={() =>
-                        formCreatePermission(
-                          userInfoState,
-                          DocType.PROPOSAL,
-                          projectProposalStage
-                        ) && navigateToProposalCreate()
-                      }
-                    /> */}
                     <Button
                       type="default"
                       onClick={() => navigateToProposalCreate()}
@@ -586,12 +475,6 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
               <div className="label-container">
                 <div className="label">{t('projectDetailsView:validationAgreementForm')}</div>
               </div>
-              {/* {designDocUrl !== '' && (
-                <div className="time">
-                  {moment(parseInt(designDocDate)).format('DD MMMM YYYY @ HH:mm')}
-                  {' ~ ' + designDocversion}
-                </div>
-              )} */}
             </Col>
             <Col span={6} className="field-value">
               <>
@@ -608,35 +491,6 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                   }
                   overlayClassName="custom-tooltip"
                 >
-                  {/* <EyeOutlined
-                    className="common-progress-icon"
-                    style={
-                      formViewPermission(
-                        userInfoState,
-                        DocType.VALIDATION_AGREEMENT,
-                        projectProposalStage
-                      )
-                        ? {
-                            color: '#3F3A47',
-                            cursor: 'pointer',
-                            margin: '0px 0px 1.5px 0px',
-                            fontSize: '110%',
-                          }
-                        : {
-                            color: '#cacaca',
-                            cursor: 'default',
-                            margin: '0px 0px 1.5px 0px',
-                            fontSize: '110%',
-                          }
-                    }
-                    onClick={() =>
-                      formViewPermission(
-                        userInfoState,
-                        DocType.VALIDATION_AGREEMENT,
-                        projectProposalStage
-                      ) && navigateToValidationAgreementView()
-                    }
-                  /> */}
                   <Button
                     type="default"
                     onClick={() => navigateToValidationAgreementView()}
@@ -1140,33 +994,6 @@ export const ProjectForms: FC<ProjectFormProps> = (props: ProjectFormProps) => {
                     }
                     overlayClassName="custom-tooltip"
                   >
-                    {/* <EditOutlined
-                      className="common-progress-icon"
-                      style={
-                        formEditPermission(
-                          userInfoState,
-                          DocType.VALIDATION_REPORT,
-                          projectProposalStage
-                        )
-                          ? {
-                              color: '#3F3A47',
-                              cursor: 'pointer',
-                              margin: '0px 0px 1.5px 0px',
-                            }
-                          : {
-                              color: '#cacaca',
-                              cursor: 'default',
-                              margin: '0px 0px 1.5px 0px',
-                            }
-                      }
-                      onClick={() =>
-                        formEditPermission(
-                          userInfoState,
-                          DocType.VALIDATION_REPORT,
-                          projectProposalStage
-                        ) && navigateToValidationReportEdit()
-                      }
-                    /> */}
                     <Button
                       type="default"
                       onClick={() => navigateToValidationReportEdit()}
