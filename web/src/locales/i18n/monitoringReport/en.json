@@ -168,5 +168,6 @@
   "rejectMonitoringModalTitle": "Are you sure you want to reject this Monitoring Report?",
   "btnReject": "Reject",
   "btnApprove": "Approve",
-  "approveMonitoringModalTitle": "Are you sure you want to approve this Monitoring Report?"
+  "approveMonitoringModalTitle": "Are you sure you want to approve this Monitoring Report?",
+  "reportID": "Report ID"
 }

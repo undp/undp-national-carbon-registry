@@ -339,18 +339,14 @@ const ProjectDetails = (props: ValidationStepsProps) => {
 
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('validationReport:reportNo')}
-                      name="reportNo"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('validationReport:reportNo')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size={'large'} disabled />
-                    </Form.Item>
+                    {FormMode.VIEW === formMode ? (
+                      <Form.Item label={t('validationReport:reportID')} name="reportID">
+                        <Input size={'large'} disabled />
+                      </Form.Item>
+                    ) : (
+                      ''
+                    )}
+
                     <Form.Item
                       label={t('validationReport:workApprovedBy')}
                       name="workApprovedBy"

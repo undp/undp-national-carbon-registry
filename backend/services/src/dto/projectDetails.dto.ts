@@ -53,4 +53,6 @@ export class ProjectDetails {
   @IsString()
   @IsUrl()
   website: string;
+
+  reportID: string;
 }

@@ -6,6 +6,7 @@ export const projectDetailsDataMapToFields = (vals: any) => {
   const tempValues = {
     ...vals,
     dateOfIssue: vals?.dateOfIssue ? moment.unix(vals?.dateOfIssue) : undefined,
+    reportID: vals?.reportID,
   };
 
   return tempValues;

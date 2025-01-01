@@ -28,6 +28,7 @@ import {
   quantificationOfGHGDataMapToFields,
 } from './viewDataMap';
 import { Loading } from '../Loading/loading';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 const CMA_STEPS = {};
 
@@ -298,6 +299,7 @@ const StepperComponent = (props: any) => {
           countries={countries}
           handleValuesUpdate={handleValuesUpdate}
           disableFields={disableFields}
+          formMode={isView ? FormMode.VIEW : isEdit ? FormMode.EDIT : FormMode.CREATE}
         />
       ),
     },

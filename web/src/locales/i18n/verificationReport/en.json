@@ -55,7 +55,7 @@
   "shouldBeInteger": "Credit should be a positive integer",
   "summary": "Summary",
   "projectTitle": "Project Title",
-  "reportNo": "Report No",
+  "reportID": "Report ID",
   "workCarriedOutBy": "Work Carried Out by",
   "workApprovedBy": "Work Approved by",
   "pd_projectTitle": "Project Title",
