@@ -235,9 +235,10 @@ export const SLCFDashboardComponent = (props: any) => {
   const [projectsByCategorySeries, setProjectsByCategorySeries] = useState<number[]>([1, 1, 0, 0]);
   const [projectsByCategoryLastUpdated, setProjectsByCategoryLastUpdated] = useState<string>('0');
   const [retirementsByDateData, setRetirementsByDateData] = useState<any>();
-  // // states for totalProgrammes sub sector chart
-  // const [retirementsByDateSeries, setRetirementsByDateSeries] = useState<ChartSeriesItem[]>([]);
-  // const [retirementsByDateOptionsLabels, setRetirementsByDateOptionsLabels] = useState<any[]>([]);
+  // states for totalProgrammes sub sector chart
+  const [retirementsByDateSeries, setRetirementsByDateSeries] = useState<ChartSeriesItem[]>([]);
+  const [retirementsByDateOptionsLabels, setRetirementsByDateOptionsLabels] = useState<any[]>([]);
+  const [retirementsByDateAnnotations, setRetirementsByDateAnnotations] = useState<any[]>([]);
 
   const [creditsByStatusData, setCreditsByStatusData] = useState<any>();
   const [creditsByDateData, setCreditsByDateData] = useState<any>();
@@ -542,29 +543,32 @@ export const SLCFDashboardComponent = (props: any) => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log(
-  //     'REFRESHED=====================',
-  //     retirementsByDateSeries,
-  //     retirementsByDateOptionsLabels
-  //   );
-  //   ApexCharts.exec('total-retirement-by-date', 'updateSeries', retirementsByDateSeries);
-  //   // ApexCharts.exec('total-retirement-by-date', 'updateSeries', {
-  //   //   data: totalProgrammesSectorSeries,
-  //   // });
-  //   ApexCharts.exec('total-retirement-by-date', 'updateOptions', {
-  //     xaxis: {
-  //       categories: retirementsByDateOptionsLabels,
-  //     },
-  //   });
-  //   retirementsByDateOptions.xaxis.categories = retirementsByDateOptionsLabels;
-  // }, [retirementsByDateSeries, retirementsByDateOptionsLabels]);
+  useEffect(() => {
+    console.log(
+      'REFRESHED=====================',
+      retirementsByDateSeries,
+      retirementsByDateOptionsLabels
+    );
+    ApexCharts.exec('total-retirement-by-date', 'updateSeries', retirementsByDateSeries);
+    // ApexCharts.exec('total-retirement-by-date', 'updateSeries', {
+    //   data: totalProgrammesSectorSeries,
+    // });
+    ApexCharts.exec('total-retirement-by-date', 'updateOptions', {
+      xaxis: {
+        categories: retirementsByDateOptionsLabels,
+      },
+    });
+    retirementsByDateOptions.xaxis.categories = retirementsByDateOptionsLabels;
+    // retirementsByDateOptions.annotations.points = retirementsByDateAnnotations;
+  }, [retirementsByDateSeries, retirementsByDateOptionsLabels]);
 
   //MARK: getRetirementByDateChartSeries
-  const getRetirementByDateChartSeries = () => {
-    if (retirementsByDateData) {
+  const getRetirementByDateChartSeries = (retirementsByDateData2: any) => {
+    if (retirementsByDateData2) {
       // Extract unique dates for x axis labels
-      const categories = [...new Set(retirementsByDateData?.map((item: any) => item.approvedDate))];
+      const categories = [
+        ...new Set(retirementsByDateData2?.map((item: any) => item.approvedDate)),
+      ];
 
       // create bar chart series data arrays
       const creditTypes = ['TRACK_2', 'TRACK_1'];
@@ -572,7 +576,7 @@ export const SLCFDashboardComponent = (props: any) => {
         return {
           name: creditTypeKey === 'TRACK_2' ? 'Retirements' : 'Transfers',
           data: categories.map((date) => {
-            return retirementsByDateData
+            return retirementsByDateData2
               ?.filter(
                 (item: any) => item.creditType === creditTypeKey && item.approvedDate === date
               )
@@ -609,11 +613,12 @@ export const SLCFDashboardComponent = (props: any) => {
       retirementsByDateOptions.xaxis.categories = formattedCategories;
 
       // Add totals as annotations
-      retirementsByDateOptions.annotations.points = totalAnnotations;
+      // retirementsByDateOptions.annotations.points = totalAnnotations;
 
-      // setRetirementsByDateSeries(series);
-      // setRetirementsByDateOptionsLabels(formattedCategories);
-      return series;
+      setRetirementsByDateSeries(series);
+      setRetirementsByDateOptionsLabels(formattedCategories);
+      setRetirementsByDateAnnotations(totalAnnotations);
+      // return series;
     } else {
       return [];
     }
@@ -633,6 +638,58 @@ export const SLCFDashboardComponent = (props: any) => {
       if (response) {
         setRetirementsByDateData(response.data);
         // getRetirementByDateChartSeries(response.data);
+        const categories = [...new Set(response.data?.map((item: any) => item.approvedDate))];
+
+        // create bar chart series data arrays
+        const creditTypes = ['TRACK_2', 'TRACK_1'];
+        const series = creditTypes.map((creditTypeKey) => {
+          return {
+            name: creditTypeKey === 'TRACK_2' ? 'Retirements' : 'Transfers',
+            data: categories.map((date) => {
+              return response.data
+                ?.filter(
+                  (item: any) => item.creditType === creditTypeKey && item.approvedDate === date
+                )
+                .reduce((sum: any, item: any) => sum + item.totalCreditAmount, 0);
+            }),
+          };
+        });
+
+        // Set total of stacked bars as annotations on top of each bar
+        const totals = series?.[0].data.map((_: any, index: any) =>
+          series?.reduce((sum: any, seriesArr: any) => sum + seriesArr.data[index], 0)
+        );
+        const totalAnnotations = totals.map((total: any, index: any) => ({
+          x: retirementsByDateOptions.xaxis.categories[index],
+          y: total,
+          marker: {
+            size: 0, // Remove the circle marker
+          },
+          label: {
+            text: total >= 1000 ? `${(total / 1000).toFixed(1)}k` : `${total}`,
+            style: {
+              fontSize: '12px',
+              color: '#000',
+              background: 'transparent',
+              stroke: 'none !important',
+              borderRadius: 0, // No rounded corners
+              borderColor: 'transparent', // Remove the border
+            },
+          },
+        }));
+
+        // Format the dates
+        const formattedCategories = categories.map((date: any) =>
+          moment(date).format('DD-MM-YYYY')
+        );
+        retirementsByDateOptions.xaxis.categories = formattedCategories;
+
+        // Add totals as annotations
+        // retirementsByDateOptions.annotations.points = totalAnnotations;
+
+        setRetirementsByDateSeries(series);
+        setRetirementsByDateOptionsLabels(formattedCategories);
+        setRetirementsByDateAnnotations(totalAnnotations);
       }
     } catch (error: any) {
       console.log('Error in getting Retirements Data By Date', error);
@@ -676,6 +733,7 @@ export const SLCFDashboardComponent = (props: any) => {
 
   //MARK: getCreditsByDateData
   const getCreditsByDateData = async () => {
+    setLoadingCharts(true);
     setLoading(true);
     try {
       const response: any = await post(
@@ -697,6 +755,7 @@ export const SLCFDashboardComponent = (props: any) => {
       });
     } finally {
       setLoading(false);
+      setLoadingCharts(false);
     }
   };
 
@@ -760,6 +819,7 @@ export const SLCFDashboardComponent = (props: any) => {
   //MARK: getCreditsByPurposeData
   const getCreditsByPurposeData = async () => {
     setLoading(true);
+    setLoadingCharts(true);
     try {
       const response: any = await post(
         'stats/programme/queryCreditsByPurpose',
@@ -780,6 +840,7 @@ export const SLCFDashboardComponent = (props: any) => {
       });
     } finally {
       setLoading(false);
+      setLoadingCharts(false);
     }
   };
 
@@ -2855,8 +2916,8 @@ export const SLCFDashboardComponent = (props: any) => {
                 id="total-retirement-by-date"
                 title={t('retirementsByDateSLCF')}
                 options={retirementsByDateOptions}
-                // series={retirementsByDateSeries}
-                series={getRetirementByDateChartSeries()}
+                series={retirementsByDateSeries}
+                // series={getRetirementByDateChartSeries()}
                 // lastUpdate={lastUpdateProgrammesSectorStatsC}
                 lastUpdate={'0'}
                 loading={loadingCharts}
@@ -2867,8 +2928,8 @@ export const SLCFDashboardComponent = (props: any) => {
                 )}
                 Chart={Chart}
                 height="400px"
-                // width="650px"
-                width={retirementsByDateChartWidth}
+                width="650px"
+                // width={retirementsByDateChartWidth}
               />
             </Col>
           </Row>
