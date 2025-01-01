@@ -288,6 +288,9 @@ const StepperComponent = (props: any) => {
             versionDate: moment(content?.projectDetails?.versionDate),
             monitoringPeriodStart: moment(content?.projectDetails?.monitoringPeriodStart),
             monitoringPeriodEnd: moment(content?.projectDetails?.monitoringPeriodEnd),
+            reportID: data?.content?.projectDetails?.reportID
+              ? data?.content?.projectDetails?.reportID
+              : data?.content?.projectDetails?.reportNo,
           });
           introductionForm.setFieldsValue({
             ...content?.introduction,
