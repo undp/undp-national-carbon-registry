@@ -1790,12 +1790,12 @@ ${total}
       {isMultipleDashboardsVisible && (
         <div className="systemchange-container" style={{ marginLeft: `20px` }}>
           <ButtonGroup>
+            <Link to="/dashboard">
+              <Button className="rgdefault">SLCF PROJECTS</Button>
+            </Link>
             <Button type="primary" className="rgprimary">
               ARTICLE 6.4 PROJECTS
             </Button>
-            <Link to="/dashboard/slcf">
-              <Button className="rgdefault">SLCF PROJECTS</Button>
-            </Link>
           </ButtonGroup>
         </div>
       )}
