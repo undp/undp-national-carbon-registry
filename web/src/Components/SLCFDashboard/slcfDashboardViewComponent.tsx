@@ -637,7 +637,59 @@ export const SLCFDashboardComponent = (props: any) => {
       );
       if (response) {
         setRetirementsByDateData(response.data);
-        getRetirementByDateChartSeries(response.data);
+        // getRetirementByDateChartSeries(response.data);
+        const categories = [...new Set(response.data?.map((item: any) => item.approvedDate))];
+
+        // create bar chart series data arrays
+        const creditTypes = ['TRACK_2', 'TRACK_1'];
+        const series = creditTypes.map((creditTypeKey) => {
+          return {
+            name: creditTypeKey === 'TRACK_2' ? 'Retirements' : 'Transfers',
+            data: categories.map((date) => {
+              return response.data
+                ?.filter(
+                  (item: any) => item.creditType === creditTypeKey && item.approvedDate === date
+                )
+                .reduce((sum: any, item: any) => sum + item.totalCreditAmount, 0);
+            }),
+          };
+        });
+
+        // Set total of stacked bars as annotations on top of each bar
+        const totals = series?.[0].data.map((_: any, index: any) =>
+          series?.reduce((sum: any, seriesArr: any) => sum + seriesArr.data[index], 0)
+        );
+        const totalAnnotations = totals.map((total: any, index: any) => ({
+          x: retirementsByDateOptions.xaxis.categories[index],
+          y: total,
+          marker: {
+            size: 0, // Remove the circle marker
+          },
+          label: {
+            text: total >= 1000 ? `${(total / 1000).toFixed(1)}k` : `${total}`,
+            style: {
+              fontSize: '12px',
+              color: '#000',
+              background: 'transparent',
+              stroke: 'none !important',
+              borderRadius: 0, // No rounded corners
+              borderColor: 'transparent', // Remove the border
+            },
+          },
+        }));
+
+        // Format the dates
+        const formattedCategories = categories.map((date: any) =>
+          moment(date).format('DD-MM-YYYY')
+        );
+        retirementsByDateOptions.xaxis.categories = formattedCategories;
+
+        // Add totals as annotations
+        // retirementsByDateOptions.annotations.points = totalAnnotations;
+
+        setRetirementsByDateSeries(series);
+        setRetirementsByDateOptionsLabels(formattedCategories);
+        setRetirementsByDateAnnotations(totalAnnotations);
       }
     } catch (error: any) {
       console.log('Error in getting Retirements Data By Date', error);
@@ -681,6 +733,7 @@ export const SLCFDashboardComponent = (props: any) => {
 
   //MARK: getCreditsByDateData
   const getCreditsByDateData = async () => {
+    setLoadingCharts(true);
     setLoading(true);
     try {
       const response: any = await post(
@@ -702,6 +755,7 @@ export const SLCFDashboardComponent = (props: any) => {
       });
     } finally {
       setLoading(false);
+      setLoadingCharts(false);
     }
   };
 
@@ -765,6 +819,7 @@ export const SLCFDashboardComponent = (props: any) => {
   //MARK: getCreditsByPurposeData
   const getCreditsByPurposeData = async () => {
     setLoading(true);
+    setLoadingCharts(true);
     try {
       const response: any = await post(
         'stats/programme/queryCreditsByPurpose',
@@ -785,6 +840,7 @@ export const SLCFDashboardComponent = (props: any) => {
       });
     } finally {
       setLoading(false);
+      setLoadingCharts(false);
     }
   };
 
