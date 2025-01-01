@@ -239,10 +239,23 @@ export const SLCFDashboardComponent = (props: any) => {
   const [retirementsByDateSeries, setRetirementsByDateSeries] = useState<ChartSeriesItem[]>([]);
   const [retirementsByDateOptionsLabels, setRetirementsByDateOptionsLabels] = useState<any[]>([]);
   const [retirementsByDateAnnotations, setRetirementsByDateAnnotations] = useState<any[]>([]);
+  const [loadingRetirementsByDateCharts, setLoadingRetirementsByDateCharts] =
+    useState<boolean>(false);
 
   const [creditsByStatusData, setCreditsByStatusData] = useState<any>();
+
   const [creditsByDateData, setCreditsByDateData] = useState<any>();
+  const [creditsByDateSeries, setCreditsByDateSeries] = useState<ChartSeriesItem[]>([]);
+  const [creditsByDateOptionsLabels, setCreditsByDateOptionsLabels] = useState<any[]>([]);
+  const [creditsByDateAnnotations, setCreditsByDateAnnotations] = useState<any[]>([]);
+  const [loadingCreditsByDateCharts, setLoadingCreditsByDateCharts] = useState<boolean>(false);
+
   const [creditsByPurposeData, setCreditsByPurposeData] = useState<any>();
+  const [creditsByPurposeSeries, setCreditsByPurposeSeries] = useState<ChartSeriesItem[]>([]);
+  const [creditsByPurposeOptionsLabels, setCreditsByPurposeOptionsLabels] = useState<any[]>([]);
+  const [creditsByPurposeAnnotations, setCreditsByPurposeAnnotations] = useState<any[]>([]);
+  const [loadingCreditsByPurposeCharts, setLoadingCreditsByPurposeCharts] =
+    useState<boolean>(false);
 
   const [chartWidth, setChartWidth] = useState(window.innerWidth > 1600 ? '750px' : '600px');
   const [retirementsByDateChartWidth, setRetirementsByDateChartWidth] = useState(
@@ -626,7 +639,7 @@ export const SLCFDashboardComponent = (props: any) => {
 
   //MARK: getRetirementsDataByDate
   const getRetirementsDataByDate = async () => {
-    setLoadingCharts(true);
+    setLoadingRetirementsByDateCharts(true);
     setLoading(true);
     try {
       const response: any = await post(
@@ -701,7 +714,7 @@ export const SLCFDashboardComponent = (props: any) => {
       });
     } finally {
       setLoading(false);
-      setLoadingCharts(false);
+      setLoadingRetirementsByDateCharts(false);
     }
   };
 
@@ -733,8 +746,8 @@ export const SLCFDashboardComponent = (props: any) => {
 
   //MARK: getCreditsByDateData
   const getCreditsByDateData = async () => {
-    setLoadingCharts(true);
-    setLoading(true);
+    setLoadingCreditsByDateCharts(true);
+    // setLoading(true);
     try {
       const response: any = await post(
         'stats/programme/queryCreditsByDate',
@@ -744,6 +757,63 @@ export const SLCFDashboardComponent = (props: any) => {
       );
       if (response) {
         setCreditsByDateData(response.data);
+        // Extract unique dates for x axis labels
+        const categories = [...new Set(response.data?.map((item: any) => item.log_date))];
+
+        // Define the credit types and their corresponding series names
+        const creditStatuses = [
+          { key: 'total_credit_authorised', name: 'Authorised' },
+          { key: 'total_credit_issued', name: 'Issued' },
+          { key: 'total_credit_transferred', name: 'Transferred' },
+          { key: 'total_credit_retired', name: 'Retired' },
+        ];
+
+        const series = creditStatuses.map((creditStatusObj) => {
+          return {
+            name: creditStatusObj.name, // Format stack names
+            data: categories.map((date) => {
+              // Find matching entry for this date
+              const entry = response.data?.find((item: any) => item.log_date === date);
+              return entry && entry[creditStatusObj.key]
+                ? parseFloat(entry[creditStatusObj.key])
+                : 0; // Use value or default to 0
+            }),
+          };
+        });
+
+        // Format the dates
+        const formattedCategories = categories.map((date: any) =>
+          moment(date).format('DD-MM-YYYY')
+        );
+        creditsByDateOptions.xaxis.categories = formattedCategories;
+
+        // Set total of stacked bars as annotations on top of each bar
+        const totals = series?.[0].data.map((_: any, index: any) =>
+          series?.reduce((sum: any, seriesArr: any) => sum + seriesArr.data[index], 0)
+        );
+        const totalAnnotations = totals.map((total: any, index: any) => ({
+          x: creditsByDateOptions.xaxis.categories[index],
+          y: total,
+          marker: {
+            size: 0, // Remove the circle marker
+          },
+          label: {
+            text: total >= 1000 ? `${(total / 1000).toFixed(1)}k` : `${total}`,
+            style: {
+              fontSize: '12px',
+              color: '#000',
+              background: 'transparent',
+              stroke: 'none !important',
+              borderRadius: 0, // No rounded corners
+              borderColor: 'transparent', // Remove the border
+            },
+          },
+        }));
+
+        // Add totals as annotations
+        creditsByDateOptions.annotations.points = totalAnnotations;
+        setCreditsByDateSeries(series);
+        setCreditsByDateOptionsLabels(formattedCategories);
       }
     } catch (error: any) {
       console.log('Error in getting Credits By Date', error);
@@ -754,8 +824,8 @@ export const SLCFDashboardComponent = (props: any) => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setLoading(false);
-      setLoadingCharts(false);
+      // setLoading(false);
+      setLoadingCreditsByDateCharts(false);
     }
   };
 
@@ -818,8 +888,8 @@ export const SLCFDashboardComponent = (props: any) => {
 
   //MARK: getCreditsByPurposeData
   const getCreditsByPurposeData = async () => {
-    setLoading(true);
-    setLoadingCharts(true);
+    // setLoading(true);
+    setLoadingCreditsByPurposeCharts(true);
     try {
       const response: any = await post(
         'stats/programme/queryCreditsByPurpose',
@@ -829,6 +899,64 @@ export const SLCFDashboardComponent = (props: any) => {
       );
       if (response) {
         setCreditsByPurposeData(response.data);
+        const categories = [...new Set(response.data?.map((item: any) => item.logDate))];
+
+        // Define the credit types and their corresponding series names
+        const creditTypes = [
+          { key: 'TRACK_1', name: 'SLCER+' },
+          { key: 'TRACK_2', name: 'SLCER' },
+        ];
+
+        const series = creditTypes.map((creditTypeObj) => {
+          return {
+            name: creditTypeObj.name, // Format stack names
+            data: categories.map((date) => {
+              const total = response.data
+                ?.filter(
+                  (item: any) => item.logDate === date && item.creditType === creditTypeObj.key
+                )
+                ?.reduce(
+                  (sum: number, item: any) => sum + parseFloat(item.totalCreditIssued || 0),
+                  0
+                );
+              return total; // Return total or 0 if no match
+            }),
+          };
+        });
+
+        // Format the dates
+        const formattedCategories = categories.map((date: any) =>
+          moment(date).format('DD-MM-YYYY')
+        );
+        creditsByPurposeOptions.xaxis.categories = formattedCategories;
+
+        // Set total of stacked bars as annotations on top of each bar
+        const totals = series?.[0].data.map((_: any, index: any) =>
+          series?.reduce((sum: any, seriesArr: any) => sum + seriesArr.data[index], 0)
+        );
+        const totalAnnotations = totals.map((total: any, index: any) => ({
+          x: creditsByPurposeOptions.xaxis.categories[index],
+          y: total,
+          marker: {
+            size: 0, // Remove the circle marker
+          },
+          label: {
+            text: total >= 1000 ? `${(total / 1000).toFixed(1)}k` : `${total}`,
+            style: {
+              fontSize: '12px',
+              color: '#000',
+              background: 'transparent',
+              stroke: 'none !important',
+              borderRadius: 0, // No rounded corners
+              borderColor: 'transparent', // Remove the border
+            },
+          },
+        }));
+
+        // Add totals as annotations
+        creditsByPurposeOptions.annotations.points = totalAnnotations;
+        setCreditsByPurposeSeries(series);
+        setCreditsByPurposeOptionsLabels(formattedCategories);
       }
     } catch (error: any) {
       console.log('Error in getting Credits By Purpose', error);
@@ -839,8 +967,8 @@ export const SLCFDashboardComponent = (props: any) => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setLoading(false);
-      setLoadingCharts(false);
+      // setLoading(false);
+      setLoadingCreditsByPurposeCharts(false);
     }
   };
 
@@ -2920,7 +3048,7 @@ export const SLCFDashboardComponent = (props: any) => {
                 // series={getRetirementByDateChartSeries()}
                 // lastUpdate={lastUpdateProgrammesSectorStatsC}
                 lastUpdate={'0'}
-                loading={loadingCharts}
+                loading={loadingRetirementsByDateCharts}
                 toolTipText={t(
                   userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                     ? 'tTRetirementsByDateDevSLCF'
@@ -3076,10 +3204,10 @@ export const SLCFDashboardComponent = (props: any) => {
                 id="total-credits"
                 title={t('totalCreditsByDateSLCF')}
                 options={creditsByDateOptions}
-                series={getCreditsByDateChartSeries()}
+                series={creditsByDateSeries}
                 // lastUpdate={lastUpdateTotalCredits}
                 lastUpdate={'0'}
-                loading={loadingCharts}
+                loading={loadingCreditsByDateCharts}
                 toolTipText={t(
                   // userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   //   ? 'tTTotalCreditsGovernment'
@@ -3103,9 +3231,9 @@ export const SLCFDashboardComponent = (props: any) => {
                 id="total-credits-by-purpose"
                 title={t('totalCreditsByPurposeSLCF')}
                 options={creditsByPurposeOptions}
-                series={getCreditsByPurposeChartSeries()}
+                series={creditsByPurposeSeries}
                 lastUpdate={'0'}
-                loading={loadingCharts}
+                loading={loadingCreditsByPurposeCharts}
                 toolTipText={t(
                   userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                     ? 'tTTotalCreditsByPurposeDevSLCF'
