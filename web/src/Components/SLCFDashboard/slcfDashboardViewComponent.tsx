@@ -3124,8 +3124,8 @@ export const SLCFDashboardComponent = (props: any) => {
                 )}
                 Chart={Chart}
                 height="400px"
-                width="650px"
-                // width={retirementsByDateChartWidth}
+                // width="650px"
+                width={retirementsByDateChartWidth}
               />
             </Col>
           </Row>
@@ -3286,7 +3286,8 @@ export const SLCFDashboardComponent = (props: any) => {
                 )}
                 Chart={Chart}
                 height="400px"
-                width="550px"
+                // width="550px"
+                width={creditByChartWidth}
               />
             </Col>
             <Col
@@ -3309,7 +3310,8 @@ export const SLCFDashboardComponent = (props: any) => {
                 )}
                 Chart={Chart}
                 height="400px"
-                width="550px"
+                // width="550px"
+                width={creditByChartWidth}
               />
             </Col>
           </Row>
