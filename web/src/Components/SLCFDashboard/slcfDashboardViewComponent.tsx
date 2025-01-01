@@ -89,7 +89,7 @@ export const SLCFDashboardComponent = (props: any) => {
   const { get, post, delete: del, statServerUrl } = useConnection();
   const { userInfoState } = useUserContext();
   const [loadingWithoutTimeRange, setLoadingWithoutTimeRange] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+
   const [loadingCharts, setLoadingCharts] = useState<boolean>(false);
   const [totalProjects, setTotalProjects] = useState<number>(0);
   const [pendingProjectsWithoutTimeRange, setPendingProjectsWithoutTimeRange] = useState<number>(0);
@@ -228,14 +228,20 @@ export const SLCFDashboardComponent = (props: any) => {
   const [totalRetiredCreditsCount, setTotalRetiredCreditsCount] = useState<number>(0);
   const [totalRetiredCreditsLastUpdated, setTotalRetiredCreditsLastUpdated] = useState<string>('0');
 
+  const [loading, setLoading] = useState<boolean>(false);
+  const [loadingPieChart, setLoadingPieChart] = useState<boolean>(false);
+
   const [programmeCategory, setProgrammeCategory] = useState<string>();
   const [creditType, setCreditType] = useState<string>();
 
   const [programmeByStatueData, setProgrammeByStatueData] = useState<any>();
+  const [programmeByStatueSeries, setProgrammeByStatueSeries] = useState<ChartSeriesItem[]>([]);
+  const [programmeByStatueOptionsLabels, setProgrammeByStatueOptionsLabels] = useState<any[]>([]);
+
   const [projectsByCategorySeries, setProjectsByCategorySeries] = useState<number[]>([1, 1, 0, 0]);
   const [projectsByCategoryLastUpdated, setProjectsByCategoryLastUpdated] = useState<string>('0');
+
   const [retirementsByDateData, setRetirementsByDateData] = useState<any>();
-  // states for totalProgrammes sub sector chart
   const [retirementsByDateSeries, setRetirementsByDateSeries] = useState<ChartSeriesItem[]>([]);
   const [retirementsByDateOptionsLabels, setRetirementsByDateOptionsLabels] = useState<any[]>([]);
   const [retirementsByDateAnnotations, setRetirementsByDateAnnotations] = useState<any[]>([]);
@@ -419,7 +425,7 @@ export const SLCFDashboardComponent = (props: any) => {
 
   //MARK: getProgrammeDataByStatus
   const getProgrammeDataByStatus = async () => {
-    setLoading(true);
+    // setLoading(true);
     setLoadingCharts(true);
     try {
       const response: any = await post(
@@ -430,6 +436,68 @@ export const SLCFDashboardComponent = (props: any) => {
       );
       if (response) {
         setProgrammeByStatueData(response?.data);
+        if (response?.data?.proposalStageData) {
+          const combinedStage = 'PROPOSAL_PENDING';
+          const combinedStages = [
+            ProjectProposalStage.SUBMITTED_COST_QUOTATION,
+            ProjectProposalStage.SUBMITTED_PROPOSAL,
+            ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT,
+          ];
+
+          const processedData = [
+            ...response.data.proposalStageData.filter(
+              (item: any) =>
+                !combinedStages.includes(item.projectProposalStage as ProjectProposalStage)
+            ),
+            {
+              projectProposalStage: combinedStage,
+              count: combinedStages
+                .map((stage) =>
+                  parseInt(
+                    response.data.proposalStageData.find(
+                      (item: any) => item.projectProposalStage === stage
+                    )?.count || '0',
+                    10
+                  )
+                )
+                .reduce((sum, count) => sum + count, 0)
+                .toString(),
+            },
+          ];
+
+          // Get the list of all stages, including `PROPOSAL_PENDING` inserted after `REJECTED_INF`
+          const allStages: any = [
+            ...Object.values(ProjectProposalStage).filter(
+              (stage) => !combinedStages.includes(stage)
+            ),
+          ];
+          const rejectedInfIndex = allStages.indexOf(ProjectProposalStage.REJECTED_INF);
+          allStages.splice(rejectedInfIndex + 1, 0, combinedStage); // Insert after REJECTED_INF
+
+          // Generate the result array
+          const result = allStages.map((stage: any) => {
+            const dataArray = allStages.map((_: any, index: any) => {
+              const matchedItem = processedData.find((item) => item.projectProposalStage === stage);
+              return index === allStages.indexOf(stage)
+                ? matchedItem
+                  ? parseInt(matchedItem.count, 10)
+                  : 0
+                : 0;
+            });
+
+            return {
+              name: ProjectProposalStageMap[stage as keyof typeof ProjectProposalStageMap],
+              data: dataArray,
+            };
+          });
+
+          totalProgrammesOptions.xaxis.categories = allStages.map(
+            (stage: keyof typeof ProjectProposalStageMap) => {
+              return ProjectProposalStageMap[stage] || stage;
+            }
+          );
+          setProgrammeByStatueSeries(result);
+        }
       }
     } catch (error: any) {
       console.log('Error in getting Programme Data By Status', error);
@@ -440,7 +508,7 @@ export const SLCFDashboardComponent = (props: any) => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setLoading(false);
+      // setLoading(false);
       setLoadingCharts(false);
     }
   };
@@ -528,8 +596,8 @@ export const SLCFDashboardComponent = (props: any) => {
 
   //MARK: getProgrammeDataByCategory
   const getProgrammeDataByCategory = async () => {
-    setLoading(true);
-    setLoadingCharts(true);
+    setLoadingPieChart(true);
+    // setLoadingCharts(true);
     try {
       const response: any = await post(
         'stats/programme/queryProgrammesByCategory',
@@ -551,29 +619,29 @@ export const SLCFDashboardComponent = (props: any) => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setLoading(false);
-      setLoadingCharts(false);
+      setLoadingPieChart(false);
+      // setLoadingCharts(false);
     }
   };
 
-  useEffect(() => {
-    console.log(
-      'REFRESHED=====================',
-      retirementsByDateSeries,
-      retirementsByDateOptionsLabels
-    );
-    ApexCharts.exec('total-retirement-by-date', 'updateSeries', retirementsByDateSeries);
-    // ApexCharts.exec('total-retirement-by-date', 'updateSeries', {
-    //   data: totalProgrammesSectorSeries,
-    // });
-    ApexCharts.exec('total-retirement-by-date', 'updateOptions', {
-      xaxis: {
-        categories: retirementsByDateOptionsLabels,
-      },
-    });
-    retirementsByDateOptions.xaxis.categories = retirementsByDateOptionsLabels;
-    // retirementsByDateOptions.annotations.points = retirementsByDateAnnotations;
-  }, [retirementsByDateSeries, retirementsByDateOptionsLabels]);
+  // useEffect(() => {
+  //   console.log(
+  //     'REFRESHED=====================',
+  //     retirementsByDateSeries,
+  //     retirementsByDateOptionsLabels
+  //   );
+  //   ApexCharts.exec('total-retirement-by-date', 'updateSeries', retirementsByDateSeries);
+  //   // ApexCharts.exec('total-retirement-by-date', 'updateSeries', {
+  //   //   data: totalProgrammesSectorSeries,
+  //   // });
+  //   ApexCharts.exec('total-retirement-by-date', 'updateOptions', {
+  //     xaxis: {
+  //       categories: retirementsByDateOptionsLabels,
+  //     },
+  //   });
+  //   retirementsByDateOptions.xaxis.categories = retirementsByDateOptionsLabels;
+  //   // retirementsByDateOptions.annotations.points = retirementsByDateAnnotations;
+  // }, [retirementsByDateSeries, retirementsByDateOptionsLabels]);
 
   //MARK: getRetirementByDateChartSeries
   const getRetirementByDateChartSeries = (retirementsByDateData2: any) => {
@@ -640,7 +708,7 @@ export const SLCFDashboardComponent = (props: any) => {
   //MARK: getRetirementsDataByDate
   const getRetirementsDataByDate = async () => {
     setLoadingRetirementsByDateCharts(true);
-    setLoading(true);
+    // setLoading(true);
     try {
       const response: any = await post(
         'stats/programme/queryRetirementsByDate',
@@ -713,7 +781,7 @@ export const SLCFDashboardComponent = (props: any) => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      setLoading(false);
+      // setLoading(false);
       setLoadingRetirementsByDateCharts(false);
     }
   };
@@ -2993,7 +3061,7 @@ export const SLCFDashboardComponent = (props: any) => {
                 id="total-programmes"
                 title={t('totalProgrammesByStatusSLCF')}
                 options={totalProgrammesOptions}
-                series={getProgrammeStatusChartData()}
+                series={programmeByStatueSeries}
                 lastUpdate={'0'} //TODO
                 loading={loadingCharts}
                 toolTipText={t(
@@ -3025,7 +3093,7 @@ export const SLCFDashboardComponent = (props: any) => {
                     ? moment(parseInt(projectsByCategoryLastUpdated)).fromNow()
                     : '0'
                 }
-                loading={loading}
+                loading={loadingPieChart}
                 toolTipText={t(
                   userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                     ? 'tTProjectsByCategoryDevSLCF'
