@@ -74,15 +74,6 @@ export class CadtApiService {
     return "Reduction - technical";
   }
 
-  // private getUnitType(typeOfMitigation: TypeOfMitigation) {
-  //   switch(typeOfMitigation) {
-  //       case TypeOfMitigation.FORESTRY:
-  //           return "Removal Nature";
-  //       default:
-  //           return "Reduction Technical";
-  //   }
-  // }
-
   private getUnitStatus(txType: TxType) {
     switch(txType) {
         case TxType.ISSUE:

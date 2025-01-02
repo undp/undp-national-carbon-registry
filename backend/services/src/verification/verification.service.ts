@@ -307,7 +307,6 @@ export class VerificationService {
     });
 
     //send email to Project Participant
-    // if (verifyReportDto.verify) {
     await this.emailHelperService.sendEmailToProjectParticipant(
       verifyReportDto.verify
         ? EmailTemplates.MONITORING_APPROVED
@@ -315,13 +314,6 @@ export class VerificationService {
       verifyReportDto.remark ? { remark: verifyReportDto.remark } : null,
       verificationRequest.programmeId
     );
-    // } else {
-    //   await this.emailHelperService.sendEmailToProjectParticipant(
-    //     EmailTemplates.MONITORING_REJECTED,
-    //     null,
-    //     verificationRequest.programmeId
-    //   );
-    // }
   }
 
   //MARK: create Verification Report
