@@ -141,5 +141,6 @@
   "bundlingCriteria": "Bundling Criteria",
   "calculationMethod": "Calculation Method",
   "goBackProjectDetails": "Back To Project Details",
-  "estimatedNetGHGEmissionShouldHavePositive": "should have positive value"
+  "estimatedNetGHGEmissionShouldHavePositive": "should have positive value",
+  "reportID": "Report ID"
 }

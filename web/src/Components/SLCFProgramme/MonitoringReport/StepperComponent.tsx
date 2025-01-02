@@ -321,6 +321,7 @@ const StepperComponent = (props: any) => {
           projectDetailsForm.setFieldsValue({
             ...data?.content?.projectDetails,
             dateOfIssue: moment(data?.content?.projectDetails?.dateOfIssue),
+            reportID: data?.content?.projectDetails?.reportID,
           });
 
           projectActivityForm.setFieldsValue({

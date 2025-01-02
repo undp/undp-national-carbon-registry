@@ -698,7 +698,7 @@ const StepperComponent = (props: any) => {
         dateOfIssue: moment(projectDetails?.dateOfIssue),
         email: projectDetails?.email,
         projectTitle: projectDetails?.projectTitle,
-        reportNo: projectDetails?.reportNo,
+        reportID: projectDetails?.reportID ? projectDetails?.reportID : projectDetails?.reportNo,
         telephone: projectDetails?.telephone,
         versionDate: moment(projectDetails?.versionDate),
         versionNo: projectDetails?.versionNo,

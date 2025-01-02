@@ -451,32 +451,13 @@ export const ProjectDetailsStep = (props: any) => {
                     >
                       <TextArea rows={3} disabled />
                     </Form.Item>
-                    <Form.Item
-                      label={t('verificationReport:reportNo')}
-                      name="reportNo"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('verificationReport:reportNo')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
+                    {FormMode.VIEW === formMode ? (
+                      <Form.Item label={t('verificationReport:reportID')} name="reportID">
+                        <Input size="large" />
+                      </Form.Item>
+                    ) : (
+                      ''
+                    )}
                   </div>
                 </Col>
 
