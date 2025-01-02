@@ -371,17 +371,13 @@ export const SLCFDashboardComponent = (props: any) => {
         statServerUrl
       );
       if (response) {
-        setTotalRetiredCreditsCount(
-          response?.data?.totalCreditRetired + response?.data?.totalCreditTransferred
-        );
+        setTotalRetiredCreditsCount(response?.data?.totalRetiredCredits);
         setTotalRetiredCreditsLastUpdatedEpoch(
-          response?.data?.latestUpdatedTime !== null
-            ? parseInt(response?.data?.latestUpdatedTime)
-            : 0
+          response?.data?.latestUpdatedTime !== null ? response?.data?.latestUpdatedTime : 0
         );
         setTotalRetiredCreditsLastUpdated(
           response?.data?.latestUpdatedTime !== null
-            ? moment(parseInt(response?.data?.latestUpdatedTime)).fromNow()
+            ? moment(response?.data?.latestUpdatedTime).fromNow()
             : '0'
         );
       }

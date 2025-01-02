@@ -1501,12 +1501,28 @@ export class AggregateSlAPIService {
       .createQueryBuilder("pr")
       .select("COALESCE(CAST(SUM(pr.creditRetired) AS INTEGER),0)", "totalCreditRetired")
       .addSelect("COALESCE(CAST(SUM(pr.creditTransferred) AS INTEGER),0)", "totalCreditTransferred")
-      .addSelect("MAX(pr.creditUpdatedTime)", "latestUpdatedTime");
+      .addSelect("MAX(pr.retiredCreditUpdatedTime)", "latestRetiredCreditUpdatedTime")
+      .addSelect("MAX(pr.transferredCreditUpdatedTime)", "latestTransferredCreditUpdatedTime");
 
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       query.andWhere("pr.companyId = :companyId", { companyId: user.companyId });
     }
-    const result = await query.getRawOne();
+    let result = await query.getRawOne();
+
+    result.latestRetiredCreditUpdatedTime = result.latestRetiredCreditUpdatedTime
+      ? parseInt(result.latestRetiredCreditUpdatedTime)
+      : result.latestRetiredCreditUpdatedTime;
+    result.latestTransferredCreditUpdatedTime = result.latestTransferredCreditUpdatedTime
+      ? parseInt(result.latestTransferredCreditUpdatedTime)
+      : result.latestTransferredCreditUpdatedTime;
+    result = {
+      ...result,
+      latestUpdatedTime:
+        result.latestRetiredCreditUpdatedTime > result.latestTransferredCreditUpdatedTime
+          ? result.latestRetiredCreditUpdatedTime
+          : result.latestTransferredCreditUpdatedTime,
+      totalRetiredCredits: result.totalCreditRetired + result.totalCreditTransferred,
+    };
 
     return new DataResponseDto(HttpStatus.OK, result);
   }
@@ -1583,21 +1599,13 @@ export class AggregateSlAPIService {
 
   async queryRetirementsByDate(query: QueryDto, user: User): Promise<DataResponseDto> {
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      const filterOr = [];
       const fromCompanyId = {
         key: 'cr"."fromCompanyId',
         operation: "=",
         value: user.companyId,
       };
-      const toCompanyId = {
-        key: 'cr"."toCompanyId',
-        operation: "=",
-        value: user.companyId,
-      };
-      filterOr.push(fromCompanyId);
-      filterOr.push(toCompanyId);
 
-      query.filterOr = filterOr;
+      query.filterAnd.push(fromCompanyId);
     }
 
     const filterAnd = query.filterAnd.map((filter) => {
