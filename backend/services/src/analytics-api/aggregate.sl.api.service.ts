@@ -1509,11 +1509,16 @@ export class AggregateSlAPIService {
     }
     let result = await query.getRawOne();
 
+    result.latestRetiredCreditUpdatedTime = result.latestRetiredCreditUpdatedTime
+      ? parseInt(result.latestRetiredCreditUpdatedTime)
+      : result.latestRetiredCreditUpdatedTime;
+    result.latestTransferredCreditUpdatedTime = result.latestTransferredCreditUpdatedTime
+      ? parseInt(result.latestTransferredCreditUpdatedTime)
+      : result.latestTransferredCreditUpdatedTime;
     result = {
       ...result,
       latestUpdatedTime:
-        parseInt(result.latestRetiredCreditUpdatedTime) >
-        parseInt(result.latestTransferredCreditUpdatedTime)
+        result.latestRetiredCreditUpdatedTime > result.latestTransferredCreditUpdatedTime
           ? result.latestRetiredCreditUpdatedTime
           : result.latestTransferredCreditUpdatedTime,
       totalRetiredCredits: result.totalCreditRetired + result.totalCreditTransferred,
