@@ -19,10 +19,6 @@ export class CounterService {
       };
 
     async incrementCount(type: CounterType, length: number, increment: number = 1): Promise<string> {
-        // const resp = await this.counterRepo.increment({ id: type }, "counter", increment)
-        // if (resp.affected <= 0) {
-        //     throw Error("Unexpected behavior on counter increase")
-        // }
 
         const resp = await this.counterRepo
         .createQueryBuilder()

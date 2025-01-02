@@ -59,26 +59,14 @@ import { CreditRetirementSlService } from "../creditRetirement-sl/creditRetireme
 @Injectable()
 export class ProgrammeSlService {
   constructor(
-    private authLetterGen: AuthorizationLetterGen,
     private programmeLedger: ProgrammeLedgerService,
     private counterService: CounterService,
     private configService: ConfigService,
     private companyService: CompanyService,
-    private userService: UserService,
-    private locationService: LocationInterface,
     private helperService: HelperService,
     private emailHelperService: EmailHelperService,
-    private readonly countryService: CountryService,
-    private letterGen: ObjectionLetterGen,
-    private logger: Logger,
-    private asyncOperationsInterface: AsyncOperationsInterface,
     @InjectEntityManager() private entityManager: EntityManager,
     private fileHandler: FileHandlerInterface,
-    private letterOfIntentRequestGen: LetterOfIntentRequestGen,
-    private letterOfIntentResponseGen: LetterOfIntentResponseGen,
-    private letterOfAuthorisationRequestGen: LetterOfAuthorisationRequestGen,
-    private letterSustainableDevSupportLetterGen: LetterSustainableDevSupportLetterGen,
-    private dataExportService: DataExportService,
     @InjectRepository(DocumentEntity)
     private documentRepo: Repository<DocumentEntity>,
     @InjectRepository(ProgrammeSl)
@@ -1084,30 +1072,6 @@ export class ProgrammeSlService {
 
     await this.documentRepo.insert(siteVisitChecklistDoc);
 
-    // const getDoctDto = {
-    //   programmeId: programmeId,
-    //   docType: DocumentTypeEnum.CMA,
-    // };
-    // const cmaDoc = await this.getDocLastVersion(getDoctDto, user);
-    // let parsedCMADoc;
-    // let data;
-    // if (cmaDoc.data && cmaDoc.data.content) {
-    //   parsedCMADoc = JSON.parse(cmaDoc.data.content);
-    // }
-
-    // if (
-    //   parsedCMADoc &&
-    //   parsedCMADoc.quantificationOfGHG &&
-    //   parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions &&
-    //   parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions.totalNetEmissionReductions
-    // ) {
-    //   data = {
-    //     creditEst: Number(
-    //       parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions.totalNetEmissionReductions
-    //     ),
-    //   };
-    // }
-
     const updateProgrammeSlProposalStage = {
       programmeId: programmeId,
       txType: TxType.APPROVE_CMA,
@@ -1520,12 +1484,6 @@ export class ProgrammeSlService {
 
       await this.programmeAuditSlRepo.save(logs);
 
-      // const log = new ProgrammeAuditLogSl();
-      // log.programmeId = programmeId;
-      // log.logType = ProgrammeAuditLogType.VALIDATION_REPORT_APPROVED;
-      // log.userId = user.id;
-
-      // await this.programmeAuditSlRepo.save(log);
     }
 
     return new DataResponseDto(HttpStatus.OK, response);
@@ -2058,42 +2016,7 @@ export class ProgrammeSlService {
     const totalCount = parseInt(totalResult[0].count, 10);
     return new DataListResponseDto(resp.length > 0 ? resp : undefined, totalCount);
   }
-  // async query(
-  //   query: QueryDto,
-  //   abilityCondition: string
-  // ): Promise<DataListResponseDto> {
-  //   const skip = query.size * query.page - query.size;
-  //   let resp = await this.programmeSlRepo
-  //     .createQueryBuilder("programme_sl")
-  //     .innerJoinAndSelect(
-  //       "company",
-  //       "c",
-  //       "programme_sl.companyId = c.companyId"
-  //     )
-  //     .where(this.helperService.generateWhereSQL(query, null))
-  //     .orderBy(
-  //       query?.sort?.key &&
-  //         `"programme_sl".${this.helperService.generateSortCol(
-  //           query?.sort?.key
-  //         )}`,
-  //       query?.sort?.order,
-  //       query?.sort?.nullFirst !== undefined
-  //         ? query?.sort?.nullFirst === true
-  //           ? "NULLS FIRST"
-  //           : "NULLS LAST"
-  //         : undefined
-  //     )
-  //     .offset(skip)
-  //     .limit(query.size)
-  //     .getManyAndCount();
-  //   console.log(resp[0]);
-
-  //   return new DataListResponseDto(
-  //     resp.length > 0 ? resp[0] : undefined,
-  //     resp.length > 1 ? resp[1] : undefined
-  //   );
-  // }
-
+ 
   // MARK: getProjectById
   async getProjectById(programmeId: string): Promise<any> {
     let project: ProgrammeSl = await this.programmeLedgerService.getProgrammeSlById(programmeId);

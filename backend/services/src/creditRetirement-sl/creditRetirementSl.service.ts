@@ -219,19 +219,6 @@ export class CreditRetirementSlService {
         )
       );
 
-    // if (
-    //   query.filterBy !== null &&
-    //   query.filterBy !== undefined &&
-    //   query.filterBy.key === "ministryLevel"
-    // ) {
-    //   queryBuilder = queryBuilder.andWhere(
-    //     "programme_transfer.programmeSectoralScope IN (:...allowedScopes)",
-    //     {
-    //       allowedScopes: query.filterBy.value,
-    //     }
-    //   );
-    // }
-
     const resp = await queryBuilder
       .orderBy(
         query?.sort?.key && this.helperService.generateSortCol(query?.sort?.key),
@@ -250,11 +237,6 @@ export class CreditRetirementSlService {
       for (const e of resp[0]) {
         e.toCompany = e.toCompany.length > 0 && e.toCompany[0] === null ? [] : e.toCompany;
 
-        // if (e.toCompanyMeta && e.toCompanyMeta.country) {
-        //   e.toCompanyMeta["countryName"] = await this.countryService.getCountryName(
-        //     e.toCompanyMeta.country
-        //   );
-        // }
       }
     }
 

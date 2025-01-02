@@ -9,8 +9,6 @@ import { AggregateAPIService } from "./aggregate.api.service";
 import { AggregateSlAPIService } from "./aggregate.sl.api.service";
 import { StatFilter } from "../dto/stat.filter";
 import { QueryDto } from "src/dto/query.dto";
-// import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
-
 @ApiTags("Programme")
 @ApiBearerAuth()
 @Controller("programme")
