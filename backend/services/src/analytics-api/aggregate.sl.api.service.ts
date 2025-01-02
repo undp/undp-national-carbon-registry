@@ -1507,6 +1507,7 @@ export class AggregateSlAPIService {
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       query.andWhere("pr.companyId = :companyId", { companyId: user.companyId });
     }
+
     let result = await query.getRawOne();
 
     result = {
