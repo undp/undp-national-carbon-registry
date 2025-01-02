@@ -1,12 +1,6 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import { Progress, Skeleton, Tooltip } from 'antd';
-import {
-  ClockHistory,
-  HandThumbsUp,
-  XCircle,
-  Clipboard2Pulse,
-  InfoCircle,
-} from 'react-bootstrap-icons';
+import { ClockHistory, HandThumbsUp, XCircle, InfoCircle } from 'react-bootstrap-icons';
 
 export interface ProgrammeRejectAndTransferCardItemProps {
   totalProgrammes: number;
@@ -49,12 +43,9 @@ export const ProgrammeRejectAndTransferComponent: FC<ProgrammeRejectAndTransferC
           </div>
           <div className="total-programme-details">
             <div className="details">
-              <div className="detail">Total</div>
+              <div className="detail">Total Projects</div>
               <div className="value">{totalProgrammes}</div>
             </div>
-            {/* <div className="icon">
-              <Clipboard2Pulse color="#16B1FF" size={80} />
-            </div> */}
           </div>
           <div className="total-programme-extra-details">
             <div className="rejected-details margin-top-1">

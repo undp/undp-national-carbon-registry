@@ -1,7 +1,6 @@
-import React, { FC } from 'react';
-import { DatePicker, Skeleton, Tooltip } from 'antd';
+import { FC } from 'react';
+import { Skeleton, Tooltip } from 'antd';
 import { InfoCircle } from 'react-bootstrap-icons';
-import { StatsCardsTypes } from '../../Definitions/Enums/statsCards.type.enum';
 
 export interface PieChartStatsProps {
   id: string;
@@ -26,12 +25,7 @@ export const SLCFPieChartsStatComponent: FC<PieChartStatsProps> = (props: PieCha
       ) : (
         <>
           <div className="pie-charts-top">
-            <div className="pie-charts-title">
-              {title}
-              {/* {[StatsCardsTypes.CREDITS, StatsCardsTypes.CERTIFIED_CREDITS].includes(title) && (
-                <div className="unit">(ITMOs)</div>
-              )} */}
-            </div>
+            <div className="pie-charts-title">{title}</div>
             <div className="info-container">
               <Tooltip
                 arrowPointAtCenter
