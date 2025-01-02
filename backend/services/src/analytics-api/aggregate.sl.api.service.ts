@@ -1501,12 +1501,23 @@ export class AggregateSlAPIService {
       .createQueryBuilder("pr")
       .select("COALESCE(CAST(SUM(pr.creditRetired) AS INTEGER),0)", "totalCreditRetired")
       .addSelect("COALESCE(CAST(SUM(pr.creditTransferred) AS INTEGER),0)", "totalCreditTransferred")
-      .addSelect("MAX(pr.creditUpdatedTime)", "latestUpdatedTime");
+      .addSelect("MAX(pr.retiredCreditUpdatedTime)", "latestRetiredCreditUpdatedTime")
+      .addSelect("MAX(pr.transferredCreditUpdatedTime)", "latestTransferredCreditUpdatedTime");
 
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       query.andWhere("pr.companyId = :companyId", { companyId: user.companyId });
     }
-    const result = await query.getRawOne();
+    let result = await query.getRawOne();
+
+    result = {
+      ...result,
+      latestUpdatedTime:
+        parseInt(result.latestRetiredCreditUpdatedTime) >
+        parseInt(result.latestTransferredCreditUpdatedTime)
+          ? result.latestRetiredCreditUpdatedTime
+          : result.latestTransferredCreditUpdatedTime,
+      totalRetiredCredits: result.totalCreditRetired + result.totalCreditTransferred,
+    };
 
     return new DataResponseDto(HttpStatus.OK, result);
   }
