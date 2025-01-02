@@ -54,10 +54,7 @@ export class ValidationReportProjectDetails {
   @IsString()
   projectTitle: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  reportNo: string;
+  reportID: string;
 
   @ApiProperty()
   @IsNotEmpty()

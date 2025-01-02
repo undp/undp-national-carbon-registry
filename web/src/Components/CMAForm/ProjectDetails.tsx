@@ -11,9 +11,11 @@ import PhoneInput, {
   formatPhoneNumberIntl,
   isPossiblePhoneNumber,
 } from 'react-phone-number-input';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 const ProjectDetails = (props: CustomStepsProps) => {
-  const { next, form, current, t, countries, handleValuesUpdate, disableFields, prev } = props;
+  const { next, form, current, t, countries, handleValuesUpdate, disableFields, prev, formMode } =
+    props;
 
   const { get, post } = useConnection();
 
@@ -263,6 +265,14 @@ const ProjectDetails = (props: CustomStepsProps) => {
                     >
                       <Input size="large" disabled={disableFields} />
                     </Form.Item>
+
+                    {formMode === FormMode.VIEW ? (
+                      <Form.Item label={t('CMAForm:reportID')} name="reportID">
+                        <Input size={'large'} disabled />
+                      </Form.Item>
+                    ) : (
+                      ''
+                    )}
                   </div>
                 </Col>
               </Row>

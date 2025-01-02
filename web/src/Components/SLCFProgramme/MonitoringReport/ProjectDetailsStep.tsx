@@ -185,6 +185,13 @@ export const ProjectDetailsStep = (props: any) => {
                     >
                       <Input size="large" disabled />
                     </Form.Item>
+                    {FormMode.VIEW === formMode ? (
+                      <Form.Item label={t('monitoringReport:reportID')} name="reportID">
+                        <Input size={'large'} disabled />
+                      </Form.Item>
+                    ) : (
+                      ''
+                    )}
                   </div>
                 </Col>
 

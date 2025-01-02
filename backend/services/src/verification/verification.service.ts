@@ -146,7 +146,6 @@ export class VerificationService {
       monitoringReportDocument.type = DocumentTypeEnum.MONITORING_REPORT;
       monitoringReportDocument.createdTime = new Date().getTime();
       monitoringReportDocument.updatedTime = new Date().getTime();
-      monitoringReportDocument.content = docContent;
 
       const verificationRequest: VerificationRequestEntity =
         await this.verificationRequestRepository.findOne({
@@ -196,6 +195,14 @@ export class VerificationService {
         monitoringReportDocument.verificationRequestId = saved.id;
         monitoringReportDocument.version = 1;
       }
+
+      //updating monitoring report id
+      docContent.projectDetails.reportID = `SLCCS/MR/${new Date().getFullYear()}/${
+        monitoringReportDocument.programmeId
+      }/${monitoringReportDocument.verificationRequestId}/${monitoringReportDocument.version}`;
+
+      monitoringReportDocument.content = docContent;
+
       return await em.save(monitoringReportDocument);
     });
 
@@ -448,7 +455,6 @@ export class VerificationService {
     verificationReportDocument.type = DocumentTypeEnum.VERIFICATION_REPORT;
     verificationReportDocument.createdTime = new Date().getTime();
     verificationReportDocument.updatedTime = new Date().getTime();
-    verificationReportDocument.content = docContent;
 
     const savedReport = await this.entityManager.transaction(async (em) => {
       const verificationRequest = await this.verificationRequestRepository.findOne({
@@ -501,6 +507,11 @@ export class VerificationService {
           HttpStatus.BAD_REQUEST
         );
       }
+      verificationReportDocument.content = docContent;
+      //updating verification report id
+      docContent.projectDetails.reportID = `SLCCS/VRR/${new Date().getFullYear()}/${
+        verificationReportDocument.programmeId
+      }/${verificationReportDocument.verificationRequestId}/${verificationReportDocument.version}`;
       return await em.save(verificationReportDocument);
     });
 

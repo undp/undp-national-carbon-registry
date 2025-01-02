@@ -90,7 +90,7 @@ export class ProgrammeSlService {
     @InjectRepository(ProgrammeAuditLogSl)
     private programmeAuditSlRepo: Repository<ProgrammeAuditLogSl>,
     private carbonNeutralCertificateGenerator: CarbonNeutralCertificateGenerator,
-    private creditRetirementSlService: CreditRetirementSlService,
+    private creditRetirementSlService: CreditRetirementSlService
   ) {}
 
   // MARK: Create Programme
@@ -980,7 +980,6 @@ export class ProgrammeSlService {
     }
 
     const cmaDoc = new DocumentEntity();
-    cmaDoc.content = JSON.stringify(cmaDto.content);
     cmaDoc.programmeId = cmaDto.programmeId;
     cmaDoc.companyId = user.companyId;
     cmaDoc.userId = user.id;
@@ -988,6 +987,11 @@ export class ProgrammeSlService {
 
     const lastVersion = await this.getLastDocumentVersion(DocumentTypeEnum.CMA, cmaDto.programmeId);
     cmaDoc.version = lastVersion + 1;
+    //updating cma report ID
+    cmaDto.content.projectDetails.reportID = `SLCCS/CMA/${new Date().getFullYear()}/${
+      cmaDoc.programmeId
+    }/${cmaDoc.version}`;
+    cmaDoc.content = JSON.stringify(cmaDto.content);
     cmaDoc.status = DocumentStatus.PENDING;
     cmaDoc.createdTime = new Date().getTime();
     cmaDoc.updatedTime = cmaDoc.createdTime;
@@ -1348,7 +1352,6 @@ export class ProgrammeSlService {
     }
 
     const validationReportDoc = new DocumentEntity();
-    validationReportDoc.content = JSON.stringify(validationReportDto.content);
     validationReportDoc.programmeId = validationReportDto.programmeId;
     validationReportDoc.companyId = companyId;
     validationReportDoc.userId = user.id;
@@ -1359,6 +1362,11 @@ export class ProgrammeSlService {
       validationReportDto.programmeId
     );
     validationReportDoc.version = lastVersion + 1;
+    //updating validation report ID
+    validationReportDto.content.projectDetails.reportID = `SLCCS/VDR/${new Date().getFullYear()}/${
+      validationReportDoc.programmeId
+    }/${validationReportDoc.version}`;
+    validationReportDoc.content = JSON.stringify(validationReportDto.content);
     validationReportDoc.status = DocumentStatus.PENDING;
     validationReportDoc.createdTime = new Date().getTime();
     validationReportDoc.updatedTime = validationReportDoc.createdTime;
@@ -1940,7 +1948,7 @@ export class ProgrammeSlService {
     };
 
     if (!cNCertificateIssueDto.approve)
-      certificateContent['remark'] = cNCertificateIssueDto.orgBoundary
+      certificateContent["remark"] = cNCertificateIssueDto.orgBoundary;
 
     const updatedRequest = await this.documentRepo.update(
       {
