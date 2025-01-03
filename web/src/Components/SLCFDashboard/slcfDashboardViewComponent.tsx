@@ -709,8 +709,8 @@ export const SLCFDashboardComponent = (props: any) => {
 
         // Define the credit types and their corresponding series names
         const creditTypes = [
-          { key: 'TRACK_1', name: 'SLCER+' },
           { key: 'TRACK_2', name: 'SLCER' },
+          { key: 'TRACK_1', name: 'SLCER+' },
         ];
 
         const series = creditTypes.map((creditTypeObj) => {
