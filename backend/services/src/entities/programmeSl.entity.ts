@@ -179,16 +179,6 @@ export class ProgrammeSl implements EntitySubject {
   @Column({ type: "bigint", nullable: true })
   proposalStageUpdatedTime?: number;
 
-  // @BeforeInsert()
-  // async createTime() {
-  //   this.createdTime = new Date().getTime();
-  // }
-
-  // @BeforeUpdate()
-  // async updateTime() {
-  //   this.updatedTime = new Date().getTime();
-  // }
-
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
