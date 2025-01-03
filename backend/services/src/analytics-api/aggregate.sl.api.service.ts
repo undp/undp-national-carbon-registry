@@ -502,7 +502,6 @@ export class AggregateSlAPIService {
         dTimeGrouped = await this.getTimeGroupedDataSectorConverted(d);
       }
     } else if (timeGroupingCol && timeGroupingAccuracy) {
-      console.log("coming into this condition ---- !groupBy[0]");
       const map = {};
       for (const en of d) {
         if (!map[en.time_group]) {
