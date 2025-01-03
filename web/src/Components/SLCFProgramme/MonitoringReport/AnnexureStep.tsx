@@ -11,6 +11,7 @@ import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
 import { DocumentStatus } from '../../../Definitions/Enums/document.status';
+import { useState } from 'react';
 export const AnnexureStep = (props: any) => {
   const {
     useLocation,
@@ -25,6 +26,7 @@ export const AnnexureStep = (props: any) => {
     onFinish,
     status,
   } = props;
+  const [loading, setLoading] = useState(false);
   const { userInfoState } = useUserContext();
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
@@ -36,6 +38,16 @@ export const AnnexureStep = (props: any) => {
     return e?.fileList;
   };
   const t = translator.t;
+
+  const handleFormSubmit = async (values: any) => {
+    setLoading(true);
+    try {
+      await onFinish({ annexures: values });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       {current === 6 && (
@@ -49,9 +61,10 @@ export const AnnexureStep = (props: any) => {
               requiredMark={true}
               form={form}
               disabled={FormMode.VIEW === formMode}
-              onFinish={async (values: any) => {
-                onFinish({ annexures: values });
-              }}
+              // onFinish={async (values: any) => {
+              //   onFinish({ annexures: values });
+              // }}
+              onFinish={handleFormSubmit}
             >
               <Row className="row" gutter={[40, 16]}>
                 <Col xl={24} md={24}>
@@ -116,7 +129,7 @@ export const AnnexureStep = (props: any) => {
                 </Button>
                 {userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
                   FormMode.VIEW !== formMode && (
-                    <Button type="primary" htmlType="submit" disabled={false}>
+                    <Button type="primary" htmlType="submit" disabled={loading}>
                       <span>Submit</span>
                     </Button>
                   )}

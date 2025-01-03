@@ -1,84 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Col,
-  DatePicker,
-  Radio,
-  Row,
-  Skeleton,
-  Tooltip,
-  message,
-  Dropdown,
-  Space,
-  MenuProps,
-  Select,
-} from 'antd';
+import { useEffect, useState } from 'react';
+import { Button, Col, DatePicker, Row, Tooltip, message, Select } from 'antd';
 import './dashboard.scss';
-import { AppstoreOutlined, VerifiedOutlined } from '@ant-design/icons';
+import { AppstoreOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import {
   ClockHistory,
-  BoxArrowInRight,
-  ShieldX,
-  ShieldExclamation,
   BoxArrowRight,
-  ShieldCheck,
-  Gem,
   InfoCircle,
   FileEarmarkCheck,
   CreditCard2Back,
   HandThumbsUp,
-  BoxArrowLeft,
 } from 'react-bootstrap-icons';
-import {
-  ChartSeriesItem,
-  totalCertifiedCreditsSeriesInitialValues,
-  totalCreditsSeriesInitialValues,
-  getTotalProgrammesInitialValues,
-  getTotalProgrammesSectorInitialValues,
-} from './dashboardTypesInitialValues';
+import { ChartSeriesItem } from './dashboardTypesInitialValues';
 import {
   creditsByDateOptions,
   creditsByPurposeOptions,
   optionDonutPieA,
-  // optionDonutPieB,
   retirementsByDateOptions,
-  // totalCreditsCertifiedOptions,
-  // totalCreditsOptions,
   totalProgrammesOptions,
-  // totalProgrammesOptionsSub,
 } from './slcfChartOptions';
 import { ProgrammeRejectAndTransferComponent } from './programmeRejectAndTransferComponent';
 import { SLCFPieChartsStatComponent } from './slcfPieChartStatComponent';
 import { SLCFBarChartsStatComponent } from './slcfBarChartStatsComponent';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { SystemNames } from '../../Definitions/Enums/statsCards.type.enum';
-import {
-  MapSourceData,
-  MapTypes,
-  MarkerData,
-} from '../../Definitions/Definitions/mapComponent.definitions';
-import {
-  getStageEnumVal,
-  addRoundNumber,
-  addCommSep,
-  getCreditTypeName,
-} from '../../Definitions/Definitions/programme.definitions';
+import { addCommSep, getCreditTypeName } from '../../Definitions/Definitions/programme.definitions';
 import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
 import {
-  CreditType,
   getProjectCategory,
   ProgrammeCategory,
-  ProgrammeSLStageR,
-  ProgrammeStageLegend,
   ProjectProposalStage,
   ProjectProposalStageMap,
 } from '../../Definitions/Enums/programmeStage.enum';
-// import { Sector, SlProjectCategory } from '../../Definitions/Enums/sector.enum';
-import { LegendItem } from '../LegendItem/legendItem';
-import { MapComponent } from '../Maps/mapComponent';
-import { StasticCard } from '../StatisticsCard/statisticsCard';
 import { SLStatisticsCard } from './SlStatisticsCard/slStatisticsCard';
 import { CreditTypeSl } from '../../Definitions/Enums/creditTypeSl.enum';
 import { SLCFDetailsBarChartsStatComponent } from './slcfDetailsBarChartStatsComponent';
@@ -86,136 +39,17 @@ const { RangePicker } = DatePicker;
 
 export const SLCFDashboardComponent = (props: any) => {
   const { Chart, t, ButtonGroup, Link, isMultipleDashboardsVisible = false } = props;
-  const { get, post, delete: del, statServerUrl } = useConnection();
+  const { post, statServerUrl } = useConnection();
   const { userInfoState } = useUserContext();
   const [loadingWithoutTimeRange, setLoadingWithoutTimeRange] = useState<boolean>(false);
 
   const [loadingCharts, setLoadingCharts] = useState<boolean>(false);
-  const [totalProjects, setTotalProjects] = useState<number>(0);
-  const [pendingProjectsWithoutTimeRange, setPendingProjectsWithoutTimeRange] = useState<number>(0);
-  const [pendingProjects, setPendingProjects] = useState<number>(0);
-  const [rejectedProjects, setRejectedProjects] = useState<number>(0);
-  const [authorisedProjects, setAuthorisedProjects] = useState<number>(0);
-  const [creditBalance, setCreditBalance] = useState<number>(0);
-  const [creditBalanceWithoutTimeRange, setCreditBalanceWithoutTimeRange] = useState<number>(0);
-  const [creditCertiedBalanceWithoutTimeRange, setCreditCertifiedBalanceWithoutTimeRange] =
-    useState<number>(0);
-
-  const [authCreditsByTypePieSeries, setAuthCreditsByTypePieSeries] = useState<number[]>([1, 1, 0]);
   const [creditsPieChartTotal, setCreditsPieChartTotal] = useState<any>(0);
-  const [certifiedCreditsPieChartTotal, setCertifiedCreditsPieChartTotal] = useState<any>(0);
 
   const [startTime, setStartTime] = useState<number>(
     Date.parse(String(moment().subtract('13', 'days').startOf('day')))
   );
   const [endTime, setEndTime] = useState<number>(Date.parse(String(moment().endOf('day'))));
-  const [categoryType, setCategoryType] = useState<string>('overall');
-
-  // states for totalProgrammes chart
-  const [totalProgrammesSeries, setTotalProgrammesSeries] = useState<ChartSeriesItem[]>(
-    getTotalProgrammesInitialValues()
-  );
-  const [totalProgrammesOptionsLabels, setTotalProgrammesOptionsLabels] = useState<any[]>([]);
-
-  // states for totalProgrammes sub sector chart
-  const [totalProgrammesSectorSeries, setTotalProgrammesSectorSeries] = useState<ChartSeriesItem[]>(
-    getTotalProgrammesSectorInitialValues()
-  );
-  const [totalProgrammesSectorOptionsLabels, setTotalProgrammesSectorOptionsLabels] = useState<
-    any[]
-  >([]);
-  // states for totalCredits chart
-  const [totalCreditsSeries, setTotalCreditsSeries] = useState<ChartSeriesItem[]>(
-    totalCreditsSeriesInitialValues
-  );
-  const [totalCreditsOptionsLabels, setTotalCreditsOptionsLabels] = useState<any[]>([]);
-
-  // states for totalCreditsCertified chart
-  const [totalCertifiedCreditsSeries, setTotalCertifiedCreditsSeries] = useState<ChartSeriesItem[]>(
-    totalCertifiedCreditsSeriesInitialValues
-  );
-  const [totalCertifiedCreditsOptionsLabels, setTotalCertifiedCreditsOptionsLabels] = useState<
-    any[]
-  >([]);
-
-  // locations of programmes
-  const [programmeLocations, setProgrammeLocations] = useState<any>();
-  const [programmeTransferLocations, setProgrammeTransferLocations] = useState<any>();
-
-  //certifier view states
-  const [programmesCertifed, setProgrammesCertifed] = useState<number>(0);
-  const [programmesUnCertifed, setProgrammesUnCertifed] = useState<number>(0);
-
-  //programmeDeveloper
-  const [transferRequestSent, setTransferRequestSent] = useState<number>(0);
-  const [verificationRequestPending, setVerificationRequestPending] = useState<number>(0);
-  const [transferRequestReceived, setTransferRequestReceived] = useState<number>(0);
-
-  //last time updates
-  const [lastUpdateProgrammesStatsEpoch, setLastUpdateProgrammesStatsEpoch] = useState<number>(0);
-  const [lastUpdateProgrammesStats, setLastUpdateProgrammesStats] = useState<string>('0');
-
-  const [lastUpdatePendingTransferSentEpoch, setLastUpdatePendingTransferSentEpoch] =
-    useState<number>(0);
-  const [lastUpdatePendingTransferSent, setLastUpdatePendingTransferSent] = useState<string>('0');
-
-  const [lastUpdateCreditBalanceEpoch, setLastUpdateCreditBalanceEpoch] = useState<number>(0);
-  const [lastUpdateCreditBalance, setLastUpdateCreditBalance] = useState<string>('0');
-
-  const [lastUpdatePendingTransferReceivedEpoch, setLastUpdatePendingTransferReceivedEpoch] =
-    useState<number>(0);
-  const [lastUpdatePendingTransferReceived, setLastUpdatePendingTransferReceived] =
-    useState<string>('0');
-
-  const [lastUpdateProgrammesCertifiableEpoch, setLastUpdateProgrammesCertifiableEpoch] =
-    useState<number>(0);
-  const [lastUpdateProgrammesCertifiable, setLastUpdateProgrammesCertifiable] =
-    useState<string>('0');
-
-  const [lastUpdateCertifiedCreditsStatsEpoch, setLastUpdateCertifiedCreditsStatsEpoch] =
-    useState<number>(0);
-  const [lastUpdateCertifiedCreditsStats, setLastUpdateCertifiedCreditsStats] =
-    useState<string>('0');
-
-  const [lastUpdateProgrammesCertifiedEpoch, setLastUpdateProgrammesCertifiedEpoch] =
-    useState<number>(0);
-  const [lastUpdateProgrammesCertified, setLastUpdateProgrammesCertified] = useState<string>('0');
-
-  const [lastUpdateProgrammesStatsCEpoch, setLastUpdateProgrammesStatsCEpoch] = useState<number>(0);
-  const [lastUpdateProgrammesStatsC, setLastUpdateProgrammesStatsC] = useState<string>('0');
-
-  const [lastUpdateProgrammesCreditsStatsEpoch, setLastUpdateProgrammesCreditsStatsEpoch] =
-    useState<number>(0);
-  const [lastUpdateProgrammesCreditsStats, setLastUpdateProgrammesCreditsStats] =
-    useState<string>('0');
-
-  const [lastUpdateProgrammesSectorStatsCEpoch, setLastUpdateProgrammesSectorStatsCEpoch] =
-    useState<number>(0);
-  const [lastUpdateProgrammesSectorStatsC, setLastUpdateProgrammesSectorStatsC] =
-    useState<string>('0');
-  const [lastUpdateTotalCreditsEpoch, setLastUpdateTotalCreditsEpoch] = useState<number>(0);
-  const [lastUpdateTotalCredits, setLastUpdateTotalCredits] = useState<string>('0');
-
-  const [lastUpdateTotalCreditsCertifiedEpoch, setLastUpdateTotalCreditsCertifiedEpoch] =
-    useState<number>(0);
-  const [lastUpdateTotalCreditsCertified, setLastUpdateTotalCreditsCertified] =
-    useState<string>('0');
-
-  const [lastUpdateTransferLocationsEpoch, setLastUpdateTransferLocationsEpoch] =
-    useState<number>(0);
-  const [lastUpdateTransferLocations, setLastUpdateTransferLocations] = useState<string>('0');
-
-  const [transferLocationsMapSource, setTransferLocationsMapSource] = useState<MapSourceData>();
-  const [txLocationMapData, setTxLocationMapData] = useState<any>();
-  const [transferLocationsMapLayer, setTransferLocationsMapLayer] = useState<any>();
-
-  const [programmeLocationsMapCenter, setProgrammeLocationsMapCenter] = useState<number[]>([]);
-  const [programmeLocationsMapSource, setProgrammeLocationsMapSource] = useState<MapSourceData>();
-  const [programmeLocationsMapLayer, setProgrammeLocationsMapLayer] = useState<any>();
-
-  const [fileList, setFileList] = useState<any[]>([]);
-  const [selectedFile, setSelectedFile] = useState('-');
-  const [selectedurl, setSelectedurl] = useState<string>('');
 
   //MARK: SL states
   const [totalProgrammesCount, setTotalProgrammesCount] = useState<number>(0);
@@ -282,11 +116,6 @@ export const SLCFDashboardComponent = (props: any) => {
   const [creditByChartWidth, setCreditByChartWidth] = useState(
     window.innerWidth > 1600 ? '650px' : '450px'
   );
-
-  // const [programmeByCategoryData, setProgrammeByCategoryData] = useState<any>();
-  const [programmeByCategoryPieSeries, setProgrammeByCategoryPieSeries] = useState<number[]>([
-    1, 1, 0, 0,
-  ]);
 
   //MARK: getTotalProgrammeCount
   const getTotalProgrammeCount = async () => {
@@ -573,70 +402,25 @@ export const SLCFDashboardComponent = (props: any) => {
     }
   };
 
-  // //MARK: getProgrammeStatusChartData
-  // const getProgrammeStatusChartData = () => {
-  //   if (programmeByStatueData?.proposalStageData) {
-  //     const combinedStage = 'PROPOSAL_PENDING';
-  //     const combinedStages = [
-  //       ProjectProposalStage.SUBMITTED_COST_QUOTATION,
-  //       ProjectProposalStage.SUBMITTED_PROPOSAL,
-  //       ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT,
-  //     ];
+  //MARK: setProjectsByCategoryDonutValues
+  const setProjectsByCategoryDonutValues = (programmeByCategoryData: any) => {
+    const countsArray = Object.values(ProgrammeCategory).map((category) => {
+      const matchingItem = programmeByCategoryData?.find(
+        (item: any) => item.projectCategory === category
+      );
+      return matchingItem ? parseInt(matchingItem.count, 10) : 0; // Default to 0 if no match
+    });
 
-  //     const processedData = [
-  //       ...programmeByStatueData.proposalStageData.filter(
-  //         (item: any) => !combinedStages.includes(item.projectProposalStage as ProjectProposalStage)
-  //       ),
-  //       {
-  //         projectProposalStage: combinedStage,
-  //         count: combinedStages
-  //           .map((stage) =>
-  //             parseInt(
-  //               programmeByStatueData.proposalStageData.find(
-  //                 (item: any) => item.projectProposalStage === stage
-  //               )?.count || '0',
-  //               10
-  //             )
-  //           )
-  //           .reduce((sum, count) => sum + count, 0)
-  //           .toString(),
-  //       },
-  //     ];
+    const totalCount = programmeByCategoryData?.reduce(
+      (sum: any, item: any) => sum + parseInt(item.count, 10),
+      0
+    );
 
-  //     // Get the list of all stages, including `PROPOSAL_PENDING` inserted after `REJECTED_INF`
-  //     const allStages: any = [
-  //       ...Object.values(ProjectProposalStage).filter((stage) => !combinedStages.includes(stage)),
-  //     ];
-  //     const rejectedInfIndex = allStages.indexOf(ProjectProposalStage.REJECTED_INF);
-  //     allStages.splice(rejectedInfIndex + 1, 0, combinedStage); // Insert after REJECTED_INF
-
-  //     // Generate the result array
-  //     const result = allStages.map((stage: any) => {
-  //       const dataArray = allStages.map((_: any, index: any) => {
-  //         const matchedItem = processedData.find((item) => item.projectProposalStage === stage);
-  //         return index === allStages.indexOf(stage)
-  //           ? matchedItem
-  //             ? parseInt(matchedItem.count, 10)
-  //             : 0
-  //           : 0;
-  //       });
-
-  //       return {
-  //         name: ProjectProposalStageMap[stage as keyof typeof ProjectProposalStageMap],
-  //         data: dataArray,
-  //       };
-  //     });
-
-  //     totalProgrammesOptions.xaxis.categories = allStages.map(
-  //       (stage: keyof typeof ProjectProposalStageMap) => {
-  //         return ProjectProposalStageMap[stage] || stage;
-  //       }
-  //     );
-  //     return result;
-  //   } else {
-  //     return [];
-  //   }
-  // };
+    setCreditsPieChartTotal(String(addCommSep(totalCount)) !== 'NaN' ? addCommSep(totalCount) : 0);
+    optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
+      '' + String(addCommSep(totalCount)) !== 'NaN' ? addCommSep(totalCount) : 0;
+    setProjectsByCategorySeries(countsArray);
+  };
 
   //MARK: getProgrammeDataByCategory
   const getProgrammeDataByCategory = async () => {
@@ -649,7 +433,6 @@ export const SLCFDashboardComponent = (props: any) => {
         statServerUrl
       );
       if (response) {
-        // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
         setProjectsByCategoryDonutValues(response?.data?.projectCategoryData);
         setProjectsByCategoryLastUpdatedEpoch(
           response?.data?.latestUpdatedTime !== null && response?.data?.latestUpdatedTime !== 0
@@ -674,87 +457,6 @@ export const SLCFDashboardComponent = (props: any) => {
       setLoadingPieChart(false);
     }
   };
-
-  // useEffect(() => {
-  //   console.log(
-  //     'REFRESHED=====================',
-  //     retirementsByDateSeries,
-  //     retirementsByDateOptionsLabels
-  //   );
-  //   ApexCharts.exec('total-retirement-by-date', 'updateSeries', retirementsByDateSeries);
-  //   // ApexCharts.exec('total-retirement-by-date', 'updateSeries', {
-  //   //   data: totalProgrammesSectorSeries,
-  //   // });
-  //   ApexCharts.exec('total-retirement-by-date', 'updateOptions', {
-  //     xaxis: {
-  //       categories: retirementsByDateOptionsLabels,
-  //     },
-  //   });
-  //   retirementsByDateOptions.xaxis.categories = retirementsByDateOptionsLabels;
-  //   // retirementsByDateOptions.annotations.points = retirementsByDateAnnotations;
-  // }, [retirementsByDateSeries, retirementsByDateOptionsLabels]);
-
-  // //MARK: getRetirementByDateChartSeries
-  // const getRetirementByDateChartSeries = (retirementsByDateData2: any) => {
-  //   if (retirementsByDateData2) {
-  //     // Extract unique dates for x axis labels
-  //     const categories = [
-  //       ...new Set(retirementsByDateData2?.map((item: any) => item.approvedDate)),
-  //     ];
-
-  //     // create bar chart series data arrays
-  //     const creditTypes = ['TRACK_2', 'TRACK_1'];
-  //     const series = creditTypes.map((creditTypeKey) => {
-  //       return {
-  //         name: creditTypeKey === 'TRACK_2' ? 'Retirements' : 'Transfers',
-  //         data: categories.map((date) => {
-  //           return retirementsByDateData2
-  //             ?.filter(
-  //               (item: any) => item.creditType === creditTypeKey && item.approvedDate === date
-  //             )
-  //             .reduce((sum: any, item: any) => sum + item.totalCreditAmount, 0);
-  //         }),
-  //       };
-  //     });
-
-  //     // Set total of stacked bars as annotations on top of each bar
-  //     const totals = series?.[0].data.map((_: any, index: any) =>
-  //       series?.reduce((sum: any, seriesArr: any) => sum + seriesArr.data[index], 0)
-  //     );
-  //     const totalAnnotations = totals.map((total: any, index: any) => ({
-  //       x: retirementsByDateOptions.xaxis.categories[index],
-  //       y: total,
-  //       marker: {
-  //         size: 0, // Remove the circle marker
-  //       },
-  //       label: {
-  //         text: total >= 1000 ? `${(total / 1000).toFixed(1)}k` : `${total}`,
-  //         style: {
-  //           fontSize: '12px',
-  //           color: '#000',
-  //           background: 'transparent',
-  //           stroke: 'none !important',
-  //           borderRadius: 0, // No rounded corners
-  //           borderColor: 'transparent', // Remove the border
-  //         },
-  //       },
-  //     }));
-
-  //     // Format the dates
-  //     const formattedCategories = categories.map((date: any) => moment(date).format('DD-MM-YYYY'));
-  //     retirementsByDateOptions.xaxis.categories = formattedCategories;
-
-  //     // Add totals as annotations
-  //     // retirementsByDateOptions.annotations.points = totalAnnotations;
-
-  //     setRetirementsByDateSeries(series);
-  //     setRetirementsByDateOptionsLabels(formattedCategories);
-  //     setRetirementsByDateAnnotations(totalAnnotations);
-  //     // return series;
-  //   } else {
-  //     return [];
-  //   }
-  // };
 
   //MARK: getRetirementsDataByDate
   const getRetirementsDataByDate = async () => {
@@ -818,8 +520,6 @@ export const SLCFDashboardComponent = (props: any) => {
         // retirementsByDateOptions.annotations.points = totalAnnotations;
 
         setRetirementsByDateSeries(series);
-        // setRetirementsByDateOptionsLabels(formattedCategories);
-        // setRetirementsByDateAnnotations(totalAnnotations);
       }
     } catch (error: any) {
       console.log('Error in getting Retirements Data By Date', error);
@@ -992,63 +692,6 @@ export const SLCFDashboardComponent = (props: any) => {
     }
   };
 
-  // //MARK: getRetirementByDateChartSeries
-  // const getCreditsByDateChartSeries = () => {
-  //   // Extract unique dates for x axis labels
-  //   const categories = [...new Set(creditsByDateData?.map((item: any) => item.log_date))];
-
-  //   // Define the credit types and their corresponding series names
-  //   const creditStatuses = [
-  //     { key: 'total_credit_authorised', name: 'Authorised' },
-  //     { key: 'total_credit_issued', name: 'Issued' },
-  //     { key: 'total_credit_transferred', name: 'Transferred' },
-  //     { key: 'total_credit_retired', name: 'Retired' },
-  //   ];
-
-  //   const series = creditStatuses.map((creditStatusObj) => {
-  //     return {
-  //       name: creditStatusObj.name, // Format stack names
-  //       data: categories.map((date) => {
-  //         // Find matching entry for this date
-  //         const entry = creditsByDateData.find((item: any) => item.log_date === date);
-  //         return entry && entry[creditStatusObj.key] ? parseFloat(entry[creditStatusObj.key]) : 0; // Use value or default to 0
-  //       }),
-  //     };
-  //   });
-
-  //   // Format the dates
-  //   const formattedCategories = categories.map((date: any) => moment(date).format('DD-MM-YYYY'));
-  //   creditsByDateOptions.xaxis.categories = formattedCategories;
-
-  //   // Set total of stacked bars as annotations on top of each bar
-  //   const totals = series?.[0].data.map((_: any, index: any) =>
-  //     series?.reduce((sum: any, seriesArr: any) => sum + seriesArr.data[index], 0)
-  //   );
-  //   const totalAnnotations = totals.map((total: any, index: any) => ({
-  //     x: creditsByDateOptions.xaxis.categories[index],
-  //     y: total,
-  //     marker: {
-  //       size: 0, // Remove the circle marker
-  //     },
-  //     label: {
-  //       text: total >= 1000 ? `${(total / 1000).toFixed(1)}k` : `${total}`,
-  //       style: {
-  //         fontSize: '12px',
-  //         color: '#000',
-  //         background: 'transparent',
-  //         stroke: 'none !important',
-  //         borderRadius: 0, // No rounded corners
-  //         borderColor: 'transparent', // Remove the border
-  //       },
-  //     },
-  //   }));
-
-  //   // Add totals as annotations
-  //   creditsByDateOptions.annotations.points = totalAnnotations;
-
-  //   return series;
-  // };
-
   //MARK: getCreditsByPurposeData
   const getCreditsByPurposeData = async () => {
     // setLoading(true);
@@ -1119,7 +762,6 @@ export const SLCFDashboardComponent = (props: any) => {
         // Add totals as annotations
         creditsByPurposeOptions.annotations.points = totalAnnotations;
         setCreditsByPurposeSeries(series);
-        // setCreditsByPurposeOptionsLabels(formattedCategories);
       }
     } catch (error: any) {
       console.log('Error in getting Credits By Purpose', error);
@@ -1130,66 +772,9 @@ export const SLCFDashboardComponent = (props: any) => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      // setLoading(false);
       setLoadingCreditsByPurposeCharts(false);
     }
   };
-
-  // //MARK: getCreditsByPurposeChartSeries
-  // const getCreditsByPurposeChartSeries = () => {
-  //   // Extract unique dates for x axis labels
-  //   const categories = [...new Set(creditsByPurposeData?.map((item: any) => item.logDate))];
-
-  //   // Define the credit types and their corresponding series names
-  //   const creditTypes = [
-  //     { key: 'TRACK_1', name: 'SLCER+' },
-  //     { key: 'TRACK_2', name: 'SLCER' },
-  //   ];
-
-  //   const series = creditTypes.map((creditTypeObj) => {
-  //     return {
-  //       name: creditTypeObj.name, // Format stack names
-  //       data: categories.map((date) => {
-  //         const total = creditsByPurposeData
-  //           ?.filter((item: any) => item.logDate === date && item.creditType === creditTypeObj.key)
-  //           ?.reduce((sum: number, item: any) => sum + parseFloat(item.totalCreditIssued || 0), 0);
-  //         return total; // Return total or 0 if no match
-  //       }),
-  //     };
-  //   });
-
-  //   // Format the dates
-  //   const formattedCategories = categories.map((date: any) => moment(date).format('DD-MM-YYYY'));
-  //   creditsByPurposeOptions.xaxis.categories = formattedCategories;
-
-  //   // Set total of stacked bars as annotations on top of each bar
-  //   const totals = series?.[0].data.map((_: any, index: any) =>
-  //     series?.reduce((sum: any, seriesArr: any) => sum + seriesArr.data[index], 0)
-  //   );
-  //   const totalAnnotations = totals.map((total: any, index: any) => ({
-  //     x: creditsByPurposeOptions.xaxis.categories[index],
-  //     y: total,
-  //     marker: {
-  //       size: 0, // Remove the circle marker
-  //     },
-  //     label: {
-  //       text: total >= 1000 ? `${(total / 1000).toFixed(1)}k` : `${total}`,
-  //       style: {
-  //         fontSize: '12px',
-  //         color: '#000',
-  //         background: 'transparent',
-  //         stroke: 'none !important',
-  //         borderRadius: 0, // No rounded corners
-  //         borderColor: 'transparent', // Remove the border
-  //       },
-  //     },
-  //   }));
-
-  //   // Add totals as annotations
-  //   creditsByPurposeOptions.annotations.points = totalAnnotations;
-
-  //   return series;
-  // };
 
   //MARK: Update the chart width on screen resize
   useEffect(() => {
@@ -1216,26 +801,6 @@ export const SLCFDashboardComponent = (props: any) => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
-  //MARK: setProjectsByCategoryDonutValues
-  const setProjectsByCategoryDonutValues = (programmeByCategoryData: any) => {
-    const countsArray = Object.values(ProgrammeCategory).map((category) => {
-      const matchingItem = programmeByCategoryData?.find(
-        (item: any) => item.projectCategory === category
-      );
-      return matchingItem ? parseInt(matchingItem.count, 10) : 0; // Default to 0 if no match
-    });
-
-    const totalCount = programmeByCategoryData?.reduce(
-      (sum: any, item: any) => sum + parseInt(item.count, 10),
-      0
-    );
-
-    setCreditsPieChartTotal(String(addCommSep(totalCount)) !== 'NaN' ? addCommSep(totalCount) : 0);
-    optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
-      '' + String(addCommSep(totalCount)) !== 'NaN' ? addCommSep(totalCount) : 0;
-    setProjectsByCategorySeries(countsArray);
-  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -1324,7 +889,7 @@ export const SLCFDashboardComponent = (props: any) => {
     getCreditsByStatusData();
     getCreditsByDateData();
     getCreditsByPurposeData();
-  }, [startTime, endTime, categoryType, programmeCategory, creditType]);
+  }, [startTime, endTime, programmeCategory, creditType]);
 
   const countS = ['all', ['>=', ['get', 'count'], 0]];
   const pending = ['all', ['==', ['get', 'stage'], 'awaitingAuthorization']];
@@ -1352,7 +917,7 @@ export const SLCFDashboardComponent = (props: any) => {
     } A ${r0} ${r0} 0 ${largeArc} 0 ${r + r0 * x0} ${r + r0 * y0}" fill="${color}" />`;
   };
 
-  //MARK: HTML PART
+  //MARK: HTML
   return (
     <div className="slcf-dashboard-main-container">
       <div className="dashboard-inner-container">
@@ -1372,7 +937,7 @@ export const SLCFDashboardComponent = (props: any) => {
           <Row gutter={[40, 40]} className="statistics-card-row">
             <Col xxl={8} xl={8} md={12} className="statistics-card-col">
               <SLStatisticsCard
-                value={totalProgrammesCount}
+                value={String(totalProgrammesCount)}
                 title={'Total Projects'}
                 updatedDate={
                   // eslint-disable-next-line eqeqeq
@@ -1391,7 +956,9 @@ export const SLCFDashboardComponent = (props: any) => {
             </Col>
             <Col xxl={8} xl={8} md={12} className="statistic-card-col">
               <SLStatisticsCard
-                value={totalCredits}
+                value={
+                  totalCredits !== 0 && !Number.isNaN(totalCredits) ? addCommSep(totalCredits) : '0'
+                }
                 title={'Total Credits'}
                 updatedDate={
                   // eslint-disable-next-line eqeqeq
@@ -1410,7 +977,11 @@ export const SLCFDashboardComponent = (props: any) => {
             </Col>
             <Col xxl={8} xl={8} md={12} className="statistic-card-col">
               <SLStatisticsCard
-                value={totalRetiredCreditsCount}
+                value={
+                  totalRetiredCreditsCount !== 0 && !Number.isNaN(totalRetiredCreditsCount)
+                    ? addCommSep(totalRetiredCreditsCount)
+                    : '0'
+                }
                 title={'Total Retired Credits'}
                 updatedDate={
                   // eslint-disable-next-line eqeqeq
@@ -1593,7 +1164,11 @@ export const SLCFDashboardComponent = (props: any) => {
                   arrowPointAtCenter
                   placement="bottomRight"
                   trigger="hover"
-                  title={'toolTipText'}
+                  title={t(
+                    userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                      ? 'tTCreditsByStatusDevSLCF'
+                      : 'tTCreditsByStatusSLCF'
+                  )}
                 >
                   <InfoCircle color="#000000" size={17} />
                 </Tooltip>
@@ -1603,9 +1178,11 @@ export const SLCFDashboardComponent = (props: any) => {
               <Col xxl={6} xl={6} md={12} className="statistic-card-col">
                 <SLStatisticsCard
                   value={
-                    creditsByStatusData?.totalCreditAuthorised
-                      ? creditsByStatusData?.totalCreditAuthorised
-                      : 0
+                    creditsByStatusData?.totalCreditAuthorised &&
+                    creditsByStatusData?.totalCreditAuthorised !== 0 &&
+                    !Number.isNaN(creditsByStatusData?.totalCreditAuthorised)
+                      ? addCommSep(creditsByStatusData?.totalCreditAuthorised)
+                      : '0'
                   }
                   title={t('authorisedCreditsTotal')}
                   updatedDate={
@@ -1627,9 +1204,11 @@ export const SLCFDashboardComponent = (props: any) => {
               <Col xxl={6} xl={6} md={12} className="statistic-card-col">
                 <SLStatisticsCard
                   value={
-                    creditsByStatusData?.totalCreditIssued
-                      ? creditsByStatusData?.totalCreditIssued
-                      : 0
+                    creditsByStatusData?.totalCreditIssued &&
+                    creditsByStatusData?.totalCreditIssued !== 0 &&
+                    !Number.isNaN(creditsByStatusData?.totalCreditIssued)
+                      ? addCommSep(creditsByStatusData?.totalCreditIssued)
+                      : '0'
                   }
                   title={t('issuedCreditsTotal')}
                   updatedDate={
@@ -1651,9 +1230,11 @@ export const SLCFDashboardComponent = (props: any) => {
               <Col xxl={6} xl={6} md={12} className="statistic-card-col">
                 <SLStatisticsCard
                   value={
-                    creditsByStatusData?.totalCreditTransferred
-                      ? creditsByStatusData?.totalCreditTransferred
-                      : 0
+                    creditsByStatusData?.totalCreditTransferred &&
+                    creditsByStatusData?.totalCreditTransferred !== 0 &&
+                    !Number.isNaN(creditsByStatusData?.totalCreditTransferred)
+                      ? addCommSep(creditsByStatusData?.totalCreditTransferred)
+                      : '0'
                   }
                   title={t('transferredCreditsTotal')}
                   updatedDate={
@@ -1675,9 +1256,11 @@ export const SLCFDashboardComponent = (props: any) => {
               <Col xxl={6} xl={6} md={12} className="statistic-card-col">
                 <SLStatisticsCard
                   value={
-                    creditsByStatusData?.totalCreditRetired
-                      ? creditsByStatusData?.totalCreditRetired
-                      : 0
+                    creditsByStatusData?.totalCreditRetired &&
+                    creditsByStatusData?.totalCreditRetired !== 0 &&
+                    !Number.isNaN(creditsByStatusData?.totalCreditRetired)
+                      ? addCommSep(creditsByStatusData?.totalCreditRetired)
+                      : '0'
                   }
                   title={t('retiredCreditsTotal')}
                   updatedDate={
@@ -1707,20 +1290,15 @@ export const SLCFDashboardComponent = (props: any) => {
                 title={t('totalCreditsByDateSLCF')}
                 options={creditsByDateOptions}
                 series={creditsByDateSeries}
-                // lastUpdate={lastUpdateTotalCredits}
                 lastUpdate={'0'}
                 loading={loadingCreditsByDateCharts}
                 toolTipText={t(
-                  // userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  //   ? 'tTTotalCreditsGovernment'
-                  //   :
                   userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
                     ? 'tTTotalCreditsByDateDevSLCF'
                     : 'tTTotalCreditsByDateSLCF'
                 )}
                 Chart={Chart}
                 height="400px"
-                // width="550px"
                 width={creditByChartWidth}
               />
             </Col>

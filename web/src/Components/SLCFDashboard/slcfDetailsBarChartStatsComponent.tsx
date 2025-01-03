@@ -47,33 +47,23 @@ export const SLCFDetailsBarChartsStatComponent: FC<DetailsBarChartStatsProps> = 
               width={width}
             />
             <div className="details-bar-chart-legends">
-              {/* Pending Group */}
-              {/* <div style={{ color: 'blue', fontWeight: 'bold', marginBottom: '5px' }}>Pending</div> */}
-              {/* <div className="details-bar-chart-pending-title">Pending</div> */}
-              {/* <ul style={{ listStyleType: 'none', padding: '0', margin: '0 0 10px 0' }}> */}
               <ul className="details-bar-chart-pending-list">
                 <li className="list-title">Pending</li>
                 <li className="list-item">INF Pending</li>
-                <li className="list-item">Proposal Pending</li>
                 <li className="list-item">INF Approved</li>
+                <li className="list-item">Proposal Pending</li>
                 <li className="list-item">Proposal Accepted</li>
                 <li className="list-item">CMA Pending</li>
+                <li className="list-item">CMA Rejected</li>
+                <li className="list-item">CMA Approved</li>
                 <li className="list-item">Validation Pending</li>
+                <li className="list-item">Validation Rejected</li>
               </ul>
-
-              {/* Rejected Group */}
-              {/* <div style={{ color: 'red', fontWeight: 'bold', marginBottom: '5px' }}>Rejected</div> */}
-              {/* <div className="details-bar-chart-rejected-title">Rejected</div> */}
-              {/* <ul style={{ listStyleType: 'none', padding: '0', margin: '0 0 10px 0' }}> */}
               <ul className="details-bar-chart-rejected-list">
                 <li className="list-title">Rejected</li>
                 <li className="list-item">INF Rejected</li>
                 <li className="list-item">Proposal Rejected</li>
-                <li className="list-item">Validation Rejected</li>
               </ul>
-
-              {/* Authorized Group */}
-              {/* <div className="details-bar-chart-authorised-title">Authorized</div> */}
               <ul className="details-bar-chart-authorised-list">
                 <li className="list-title">Authorised</li>
                 <li className="list-item">Project Authorised</li>
