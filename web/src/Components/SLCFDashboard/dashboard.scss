@@ -12,7 +12,6 @@
 .mapboxgl-popup-close-button,
 .mapboxgl-popup-close-button:hover {
   display: none;
-  // z-index: -1 !important;
 }
 
 .total-container {
@@ -120,7 +119,6 @@
     flex-direction: row;
     width: 100%;
     align-items: center;
-    // justify-content: space-between;
     margin-top: 2rem;
     padding: 0 1.2rem 0 1.2rem;
 
@@ -141,34 +139,6 @@
         height: 35px !important;
       }
     }
-
-    // .radio-selection {
-    //   .ant-radio-button-wrapper {
-    //     height: 35px !important;
-    //     display: flex;
-    //     flex-direction: row;
-    //     align-items: center;
-    //     justify-content: center;
-    //     color: rgba(58, 53, 65, 0.5);
-    //   }
-    //   .ant-radio-button-checked {
-    //     background-color: $primary-blue !important;
-    //   }
-
-    //   .ant-radio-button-wrapper-checked:not(
-    //       .ant-radio-button-wrapper-disabled
-    //     )::before {
-    //     background-color: $primary-blue !important;
-    //   }
-
-    //   .overall {
-    //     border-radius: 5px 0 0 5px !important;
-    //   }
-
-    //   .mine {
-    //     border-radius: 0 5px 5px 0 !important;
-    //   }
-    // }
   }
 
   .center {
@@ -205,24 +175,19 @@
       font-size: 0.75rem;
       font-weight: 700;
       color: rgba(140, 140, 140, 1);
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
     .list-item {
       list-style-type: none;
       font-size: 0.75rem;
       font-weight: 400;
     }
-    // .details-bar-chart-pending-list li::marker {
-    //   color: rgba(72, 150, 254, 1); /* Change the marker color */
-    //   font-size: 45px; /* Change the marker size */
-    // }
     .details-bar-chart-pending-list {
-      margin-top: 10px;
+      // margin-top: 10px;
       line-height: 23px;
     }
     .details-bar-chart-rejected-list,
     .details-bar-chart-authorised-list {
-      margin-top: 25px;
       line-height: 23px;
     }
 
@@ -261,19 +226,9 @@
       margin-left: -22px;
       margin-top: -13px;
     }
-    // .pie-charts-top {
-    //   display: flex;
-    //   flex-direction: row;
-    //   justify-content: flex-start !important;
-    //   padding: 0 1rem 0 1rem;
-    // }
-    // .info-container {
-    //   padding-left: 20px;
-    // }
   }
 
   .height-map-rem {
-    // height: 510px;
     height: 464px;
   }
 
@@ -302,7 +257,6 @@
 
       .statistic-card-row {
         padding-left: 24px;
-        // padding-right: 24px;
       }
     }
   }
@@ -576,7 +530,8 @@
     }
   }
 
-  .statistics-and-pie-card:hover {
+  .statistics-and-pie-card:hover,
+  .statistic-card-main-container:hover {
     box-shadow: rgba(0, 5, 18, 0.2) 0px 8px 24px;
   }
 

@@ -1,11 +1,10 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import './slStatisticsCard.scss';
 import { Skeleton, Tooltip } from 'antd';
-import { ClockHistory, BoxArrowRight, Diamond, Gem, InfoCircle } from 'react-bootstrap-icons';
-import { addCommSep } from '../../../Definitions/Definitions/programme.definitions';
+import { InfoCircle } from 'react-bootstrap-icons';
 
 export interface SLStatisticsCardItemProps {
-  value: number;
+  value: string;
   title: string;
   updatedDate: any;
   icon: any;
@@ -40,13 +39,7 @@ export const SLStatisticsCard: FC<SLStatisticsCardItemProps> = (
           </div>
           <div className="values-section">
             <div className="values-and-unit">
-              <div className="value">
-                {title.includes('credit')
-                  ? value === 0 || String(value) === 'NaN'
-                    ? 0
-                    : addCommSep(value)
-                  : value}
-              </div>
+              <div className="value">{value}</div>
             </div>
           </div>
           {updatedDate !== '0' && (

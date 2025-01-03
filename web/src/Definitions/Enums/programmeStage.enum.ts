@@ -30,7 +30,7 @@ export enum ProjectProposalStage {
 }
 
 export enum ProjectProposalStageMap {
-  SUBMITTED_INF = 'INF Submitted',
+  SUBMITTED_INF = 'INF Pending',
   APPROVED_INF = 'INF Approved',
   REJECTED_INF = 'INF Rejected',
   PROPOSAL_PENDING = 'Proposal Pending',
@@ -41,7 +41,7 @@ export enum ProjectProposalStageMap {
   APPROVED_CMA = 'CMA Approved',
   VALIDATION_PENDING = 'Validation Pending',
   REJECTED_VALIDATION = 'Validation Rejected',
-  AUTHORISED = 'Authorised',
+  AUTHORISED = 'Project Authorised',
 }
 
 export enum CreditType {
