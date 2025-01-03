@@ -495,7 +495,6 @@ export class AggregateSlAPIService {
       }
     }
     if (timeGroupingCol && timeGroupingAccuracy && groupBy) {
-      console.log("coming into this condition ---- groupBy[0]", groupBy[0]);
       if (groupBy[0] === "projectProposalStage") {
         dTimeGrouped = await this.getTimeGroupedDataStatusConverted(d);
       } else if (groupBy[0] === "projectCategory") {
