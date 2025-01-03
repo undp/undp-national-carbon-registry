@@ -233,6 +233,9 @@ export const retirementsByDateOptions: any = {
     height: 400,
     stacked: true,
     stackType: 'normal',
+    toolbar: {
+      show: false, // Disables the toolbar, removing zoom, pan, and home icons
+    },
   },
   responsive: [
     {
@@ -604,7 +607,7 @@ export const creditsByPurposeOptions: any = {
   },
   fill: {
     opacity: 1,
-    colors: ['rgba(72, 150, 254, 1)', 'rgba(255, 99, 97, 1)'],
+    colors: ['rgba(255, 99, 97, 1)', 'rgba(72, 150, 254, 1)'],
   },
   title: {
     text: '',
@@ -648,7 +651,7 @@ export const creditsByPurposeOptions: any = {
       height: 8,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: ['rgba(72, 150, 254, 1)', 'rgba(255, 99, 97, 1)'],
+      fillColors: ['rgba(255, 99, 97, 1)', 'rgba(72, 150, 254, 1)'],
       radius: 2,
       customHTML: undefined,
       onClick: undefined,
