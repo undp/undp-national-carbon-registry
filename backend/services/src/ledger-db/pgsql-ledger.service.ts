@@ -118,7 +118,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     tableName?: string
   ): Promise<void> {
     return null;
-    // await (await this.execute(`create index on ${tableName ? tableName : this.tableName} (${indexCol})`));
   }
 
   public async insertRecord(
@@ -156,9 +155,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     const whereClause = Object.keys(where)
       .map((k, i) => `data->>'${k}' = $${i + 1}`)
       .join(" and ");
-    // const fieldList = Object.keys(where)
-    //   .map((k) => `data->>'${k}'`)
-    //   .join(", ");
+
     const t = tableName ? tableName : this.tableName;
     return (
       await this.execute([
@@ -199,12 +196,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     where: Record<string, any>,
     tableName?: string
   ): Promise<dom.Value[]> {
-    // const whereClause = Object.keys(where)
-    //   .map((k) => `${k} = ?`)
-    //   .join(" and ");
-    // const updateClause = Object.keys(update)
-    //   .map((k) => `${k} = ?`)
-    //   .join(",");
     const table = tableName ? tableName : this.tableName;
     const getQueries = {};
     getQueries[table] = where;
@@ -286,14 +277,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
               return `data->>'${k}' = $${j}`;
             })
             .join(" and ");
-          // const fieldList = Object.keys(getQueries[t])
-          //   .map((k) => {
-          //     if (isHistoryQuery) {
-          //       k = k.replace("data.", "");
-          //     }
-          //     return `data->>'${k}'`;
-          //   })
-          //   .join(", ");
 
           let sql = "";
           if (isHistoryQuery) {
@@ -348,9 +331,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
                 return `data->>'${k}' = $${j}`;
               })
               .join(" and ");
-            // const fieldList = Object.keys(updateWhere[t])
-            //   .map((k) => `data->>'${k}'`)
-            //   .join(", ");
+
             updateGetElements[t] = {
               sql: `select * from (SELECT DISTINCT ON (${this.getUniqueIndex(
                 tableName
@@ -389,7 +370,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
       }
 
       const updateTxElements = {};
-      // this.logger.log(`Insert queries`, JSON.stringify(insert));
       for (const qk in insert) {
         const tableName = qk.split("#")[0];
         if (insert.hasOwnProperty(qk)) {

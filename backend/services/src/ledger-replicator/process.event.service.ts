@@ -95,14 +95,7 @@ export class ProcessEventService {
           programme.updatedAt = new Date(programme.txTime);
           programme.createdAt = new Date(programme.createdTime);
           const columns = this.programmeRepo.manager.connection.getMetadata("Programme").columns;
-          // const columnNames = columns
-          //   .filter(function (item) {
-          //     return (
-          //       item.propertyName !== "programmeId" &&
-          //       item.propertyName !== "geographicalLocationCordintes"
-          //     );
-          //   })
-          //   .map((e) => e.propertyName);
+
           const columnNames = columns
             .filter(function (item) {
               return programme[item.propertyName] != undefined;

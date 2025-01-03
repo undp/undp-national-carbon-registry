@@ -35,10 +35,6 @@ export class User  implements EntitySubject{
     @Column({nullable: true})
     companyId: number;
 
-    // @ManyToOne(() => Company, (company) => company.companyId)
-    // @JoinColumn({name: "companyId"})
-    // company: Company | null;
-
     @Column({
         type: "enum",
         enum: CompanyRole,
