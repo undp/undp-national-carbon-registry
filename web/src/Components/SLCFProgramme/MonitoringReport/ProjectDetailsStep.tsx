@@ -77,32 +77,6 @@ export const ProjectDetailsStep = (props: any) => {
                     >
                       <Input size="large" disabled />
                     </Form.Item>
-                    <Form.Item
-                      label={t('monitoringReport:pd_reportID')}
-                      name="reportID"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('monitoringReport:pd_reportID')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
 
                     <Form.Item
                       label={t('monitoringReport:pd_projectProponents')}
@@ -185,13 +159,33 @@ export const ProjectDetailsStep = (props: any) => {
                     >
                       <Input size="large" disabled />
                     </Form.Item>
-                    {FormMode.VIEW === formMode ? (
-                      <Form.Item label={t('monitoringReport:reportID')} name="reportID">
-                        <Input size={'large'} disabled />
-                      </Form.Item>
-                    ) : (
-                      ''
-                    )}
+
+                    <Form.Item
+                      label={t('monitoringReport:pd_website')}
+                      name="website"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('monitoringReport:pd_website')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input size="large" disabled />
+                    </Form.Item>
                   </div>
                 </Col>
 
@@ -355,32 +349,13 @@ export const ProjectDetailsStep = (props: any) => {
                     >
                       <Input size="large" disabled />
                     </Form.Item>
-                    <Form.Item
-                      label={t('monitoringReport:pd_website')}
-                      name="website"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('monitoringReport:pd_website')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" disabled />
-                    </Form.Item>
+                    {FormMode.VIEW === formMode ? (
+                      <Form.Item label={t('monitoringReport:reportID')} name="reportID">
+                        <Input size={'large'} disabled />
+                      </Form.Item>
+                    ) : (
+                      ''
+                    )}
                   </div>
                 </Col>
               </Row>
