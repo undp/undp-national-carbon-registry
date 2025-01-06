@@ -1273,37 +1273,100 @@ export class AggregateSlAPIService {
   async queryCreditsByStatus(query: QueryDto, user: User): Promise<DataResponseDto> {
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       const filterAnd = {
-        key: "companyId",
+        key: 'programme"."companyId',
         operation: "=",
         value: user.companyId,
       };
       query.filterAnd.push(filterAnd);
     }
 
-    const projectAuthorisedStage = {
-      key: 'pr"."projectProposalStage',
+    if (query.filterAnd && query.filterAnd.length > 0) {
+      query.filterAnd.map((filter) => {
+        if (filter.key === "createdTime") {
+          filter.key = 'audit_log"."createdTime';
+        } else if (filter.key === "projectCategory") {
+          filter.key = 'programme"."projectCategory';
+        } else if (filter.key === "purposeOfCreditDevelopment") {
+          filter.key = 'programme"."purposeOfCreditDevelopment';
+        }
+        return filter;
+      });
+    }
+
+    const authorisedLogType = {
+      key: 'audit_log"."logType',
       operation: "=",
-      value: ProjectProposalStage.AUTHORISED,
+      value: "AUTHORISED",
     };
 
-    query.filterAnd.push(projectAuthorisedStage);
+    query.filterAnd.push(authorisedLogType);
 
-    let resp = await this.programmeSlRepo
-      .createQueryBuilder("pr")
-      .select("pr.projectProposalStage", "projectProposalStage")
-      .addSelect("CAST(SUM(pr.creditEst) AS INTEGER)", "totalCreditAuthorised")
-      .addSelect("CAST(SUM(pr.creditIssued) AS INTEGER)", "totalCreditIssued")
-      .addSelect("CAST(SUM(pr.creditRetired) AS INTEGER)", "totalCreditRetired")
-      .addSelect("CAST(SUM(pr.creditTransferred) AS INTEGER)", "totalCreditTransferred")
-      .addSelect("MAX(pr.authorisedCreditUpdatedTime)", "latestAuthorisedCreditUpdatedTime")
-      .addSelect("MAX(pr.issuedCreditUpdatedTime)", "latestIssuedCreditUpdatedTime")
-      .addSelect("MAX(pr.transferredCreditUpdatedTime)", "latestTransferredCreditUpdatedTime")
-      .addSelect("MAX(pr.retiredCreditUpdatedTime)", "latestRetiredCreditUpdatedTime")
+    const authorisedCredits = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("MAX(audit_log.createdTime)", "latestAuthorisedCreditUpdatedTime")
+      .addSelect("CAST(SUM(programme.creditEst) AS INTEGER)", "totalCreditAuthorised")
       .where(this.helperService.generateWhereSQL(query, null))
-      .groupBy("pr.projectProposalStage")
       .getRawOne();
 
-    return new DataResponseDto(HttpStatus.OK, resp);
+    const issuedLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "CREDIT_ISSUED",
+    };
+
+    query.filterAnd.pop();
+    query.filterAnd.push(issuedLogType);
+
+    const issuedCredits = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("MAX(audit_log.createdTime)", "latestIssuedCreditUpdatedTime")
+      .addSelect("SUM((audit_log.data->>'creditIssued')::numeric)", "totalCreditIssued")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .getRawOne();
+
+    const transferredLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "TRANSFER_APPROVED",
+    };
+
+    query.filterAnd.pop();
+    query.filterAnd.push(transferredLogType);
+
+    const transferredCredits = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("MAX(audit_log.createdTime)", "latestTransferredCreditUpdatedTime")
+      .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "totalCreditTransferred")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .getRawOne();
+
+    const retiredLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "RETIRE_APPROVED",
+    };
+    query.filterAnd.pop();
+    query.filterAnd.push(retiredLogType);
+
+    const retiredCredits = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("MAX(audit_log.createdTime)", "latestRetiredCreditUpdatedTime")
+      .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "totalCreditRetired")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .getRawOne();
+
+    const result = {
+      ...authorisedCredits,
+      ...issuedCredits,
+      ...transferredCredits,
+      ...retiredCredits,
+    };
+
+    return new DataResponseDto(HttpStatus.OK, result);
   }
 
   async queryCreditsByDate(query: QueryDto, user: User): Promise<DataResponseDto> {
