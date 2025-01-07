@@ -239,6 +239,9 @@ const StepperComponent = (props: any) => {
 
       form3.setFieldsValue({
         creditingPeriod: Number(projectContent?.projectActivity?.totalCreditingYears),
+        startDateCreditingPeriod: moment(
+          projectContent?.projectActivity?.creditingPeriodStartDate * 1000
+        ),
         locationsOfProjectActivity: projectContent?.projectActivity.locationsOfProjectActivity.map(
           (location: any) => {
             return {

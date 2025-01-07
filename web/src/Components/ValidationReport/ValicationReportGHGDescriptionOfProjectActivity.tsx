@@ -432,7 +432,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                     <Input size="large" />
                   </Form.Item>
                   <Form.Item
-                    label={`${t('validationReport:creditingPeriod')}`}
+                    label={`${t('validationReport:totalCreditingYears')}`}
                     name="creditingPeriod"
                     rules={[
                       {
@@ -456,7 +456,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                       },
                     ]}
                   >
-                    <DatePicker size="large" />
+                    <DatePicker size="large" disabled />
                   </Form.Item>
                 </div>
               </div>

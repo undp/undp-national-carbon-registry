@@ -50,8 +50,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
   const [dsDivisions, setDsDivisions] = useState<{ [key: number]: string[] }>({});
   const [cities, setCities] = useState<{ [key: number]: string[] }>({});
 
-  const [selectedYears, setSelectedYears] = useState<any[]>([]);
-
   const getProvinces = async () => {
     try {
       const { data } = await post('national/location/province');
@@ -121,9 +119,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
   useEffect(() => {
     getProvinces();
-    // getCities();
-    // form.setFieldValue('totalCreditingYears', 1)
-    form.setFieldValue('totalEstimatedGHGERs', 0);
   }, []);
 
   const onProvinceSelect = async (value: any, index: number) => {
@@ -149,17 +144,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
     }
   };
 
-  const onEmissionsYearChange = (value: any, fieldCounts: number) => {
-    let totalCreditingYears = form.getFieldValue('totalCreditingYears') || 0;
-    if (value && totalCreditingYears < fieldCounts) {
-      totalCreditingYears += 1;
-    } else if (value === null && totalCreditingYears !== 0) {
-      totalCreditingYears -= 1;
-    }
-    form.setFieldValue('totalCreditingYears', totalCreditingYears);
-    calculateAvgAnnualERs();
-  };
-
   const onEmissionsValueChange = (value?: any) => {
     const val1 = form.getFieldValue('estimatedAnnualGHGEmissionsValue') || 0;
     const listVals = form.getFieldValue('extraGHGEmmissions');
@@ -171,6 +155,28 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
     }
     form.setFieldValue('totalEstimatedGHGERs', String(tempTotal));
     calculateAvgAnnualERs();
+  };
+
+  const handleCreditingPeriodDateChange = () => {
+    const startDate = form.getFieldValue('creditingPeriodStartDate');
+    const endDate = form.getFieldValue('creditingPeriodEndDate');
+
+    if (startDate && endDate) {
+      const startYear = moment(startDate).year();
+      const endYear = moment(endDate).year();
+      const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
+
+      form.setFieldsValue({
+        extraGHGEmmissions: years.map((year) => ({
+          estimatedAnnualGHGEmissionsYear: moment().year(year),
+          estimatedAnnualGHGEmissionsValue: '',
+        })),
+        totalCreditingYears: years.length,
+        totalEstimatedGHGERs: 0,
+        avgAnnualERs: 0,
+      });
+      calculateAvgAnnualERs();
+    }
   };
 
   const onFinish = async (values: any) => {
@@ -296,12 +302,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
       projectScaleType: values?.projectScale,
       estimatedAnnualGHGEmissions: (function () {
         const tempList: any = [];
-        const firstObj = {
-          year: moment(values?.estimatedAnnualGHGEmissionsYear).startOf('year').unix(),
-          ghgEmissionReduction: Number(values?.estimatedAnnualGHGEmissionsValue),
-        };
-
-        tempList.push(firstObj);
 
         if (values?.extraGHGEmmissions) {
           values?.extraGHGEmmissions.forEach((item: any) => {
@@ -2249,6 +2249,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         placeholder="Start Date"
                         disabled={disableFields}
                         disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                        onChange={handleCreditingPeriodDateChange}
                       />
                     </Form.Item>
                     <p>to</p>
@@ -2282,6 +2283,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         placeholder="End Date"
                         disabled={disableFields}
                         disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                        onChange={handleCreditingPeriodDateChange}
                       />
                     </Form.Item>
                   </div>
@@ -2331,69 +2333,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
                 {/* Estimated Annual GHG Emissions Years Start */}
                 <div className="annualGHGEmissions">
-                  <Row gutter={15} align={'middle'}>
-                    <Col md={6} xl={6}>
-                      <Form.Item
-                        name="estimatedAnnualGHGEmissionsYear"
-                        rules={[
-                          {
-                            required: true,
-                            message: `${t('CMAForm:required')}`,
-                          },
-                        ]}
-                      >
-                        <DatePicker
-                          size="large"
-                          picker="year"
-                          disabled={disableFields}
-                          onChange={(value) => {
-                            onEmissionsYearChange(value, 1);
-                            const year = moment(value).year();
-                            console.log('------year--------', year);
-                            setSelectedYears((prevYrs) => [...prevYrs, year]);
-                          }}
-                          disabledDate={(currYrs) => selectedYears.includes(moment(currYrs).year())}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col md={10}>
-                      <p className="list-item-title">
-                        {t('CMAForm:estimatedGHGEmissionsReductions')}
-                      </p>
-                    </Col>
-                    <Col md={4} xl={4}>
-                      <Form.Item
-                        name="estimatedAnnualGHGEmissionsValue"
-                        rules={[
-                          {
-                            required: true,
-                            message: `${t('CMAForm:required')}`,
-                          },
-                          {
-                            validator(rule, value) {
-                              if (!value) {
-                                return Promise.resolve();
-                              }
-
-                              // eslint-disable-next-line no-restricted-globals
-                              if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be a number'));
-                              }
-
-                              return Promise.resolve();
-                            },
-                          },
-                        ]}
-                      >
-                        <Input
-                          size="large"
-                          onChange={(val) => onEmissionsValueChange(val)}
-                          disabled={disableFields}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-
                   <Form.List name="extraGHGEmmissions">
                     {(fields, { add, remove }) => (
                       <>
@@ -2410,20 +2349,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <DatePicker
-                                    size="large"
-                                    picker="year"
-                                    disabled={disableFields}
-                                    onChange={(value) => {
-                                      onEmissionsYearChange(value, fields.length + 1);
-                                      const year = moment(value).year();
-                                      console.log('------year--------', year);
-                                      setSelectedYears((prevYrs) => [...prevYrs, year]);
-                                    }}
-                                    disabledDate={(currYrs) =>
-                                      selectedYears.includes(moment(currYrs).year())
-                                    }
-                                  />
+                                  <DatePicker size="large" picker="year" disabled />
                                 </Form.Item>
                               </Col>
                               <Col md={10}>
@@ -2462,46 +2388,9 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   />
                                 </Form.Item>
                               </Col>
-
-                              <Col md={2} xl={2}>
-                                <Form.Item>
-                                  <Button
-                                    // type="dashed"
-                                    onClick={() => {
-                                      // reduceTotalCreditingYears()
-                                      remove(name);
-                                      onEmissionsValueChange();
-                                      onEmissionsYearChange(null, fields.length + 1);
-                                    }}
-                                    size="large"
-                                    className="addMinusBtn"
-                                    disabled={disableFields}
-                                    icon={<MinusOutlined />}
-                                  >
-                                    {/* Add Entity */}
-                                  </Button>
-                                </Form.Item>
-                              </Col>
                             </Row>
                           </>
                         ))}
-                        <div className="form-list-actions">
-                          <Form.Item>
-                            <Button
-                              // type="dashed"
-                              onClick={() => {
-                                // addTotalCreditingYears()
-                                add();
-                              }}
-                              size="large"
-                              className="addMinusBtn"
-                              disabled={disableFields}
-                              icon={<PlusOutlined />}
-                            >
-                              {/* Add Entity */}
-                            </Button>
-                          </Form.Item>
-                        </div>
                       </>
                     )}
                   </Form.List>
