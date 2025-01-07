@@ -257,13 +257,15 @@ export class ProcessEventService {
             .orUpdate(columnNames, ["programmeId"])
             .execute();
 
-          await em
-            .getRepository(Company)
-            .createQueryBuilder()
-            .update(Company)
-            .set({ programmeCount: () => `"programmeCount" + 1` })
-            .where("companyId = :id", { id: programme.companyId })
-            .execute();
+          if (!previousProgramme) {
+            await em
+              .getRepository(Company)
+              .createQueryBuilder()
+              .update(Company)
+              .set({ programmeCount: () => `"programmeCount" + 1` })
+              .where("companyId = :id", { id: programme.companyId })
+              .execute();
+          }
         });
       } else {
         this.logger.error(
