@@ -26,6 +26,7 @@ import { VerificationController } from "./verification/verification.controller";
 import { VerificationModule } from "src/verification/verification.module";
 import { ProgrammeAuditSlModule } from "../programme-audit-sl/programme-audit-sl.module";
 import { ProgrammeAuditSlController } from "./programmeAuditSl/programmeAuditSl.controller";
+import { RateLimiterModule } from "nestjs-rate-limiter";
 
 @Module({
   imports: [
@@ -33,6 +34,9 @@ import { ProgrammeAuditSlController } from "./programmeAuditSl/programmeAuditSl.
       isGlobal: true,
       load: [configuration],
       envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
+    }),
+    RateLimiterModule.register({
+      type: 'Memory',   // In-memory store for rate limiting
     }),
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from "@nestjs/common";
 import { instanceToPlain, plainToClass } from "class-transformer";
 import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
 import { EntityManager, In, QueryFailedError, Repository } from "typeorm";
@@ -55,6 +55,7 @@ import { ProgrammeAuditLogType } from "../enum/programmeAuditLogType.enum";
 import { CNCertificateIssueDto } from "../dto/cncertificateIssue.dto";
 import { CarbonNeutralCertificateGenerator } from "../util/carbonNeutralCertificate.gen";
 import { CreditRetirementSlService } from "../creditRetirement-sl/creditRetirementSl.service";
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class ProgrammeSlService {
@@ -78,7 +79,8 @@ export class ProgrammeSlService {
     @InjectRepository(ProgrammeAuditLogSl)
     private programmeAuditSlRepo: Repository<ProgrammeAuditLogSl>,
     private carbonNeutralCertificateGenerator: CarbonNeutralCertificateGenerator,
-    private creditRetirementSlService: CreditRetirementSlService
+    private creditRetirementSlService: CreditRetirementSlService,
+    @Inject('CACHE_MANAGER') private cacheManager: Cache,
   ) {}
 
   // MARK: Create Programme
@@ -2015,6 +2017,69 @@ export class ProgrammeSlService {
     const totalResult = await this.programmeSlRepo.query(totalQuery);
     const totalCount = parseInt(totalResult[0].count, 10);
     return new DataListResponseDto(resp.length > 0 ? resp : undefined, totalCount);
+  }
+
+  // MARK: publicProgrammeDetails
+  async getPublicProjectDetails(query: QueryDto) {
+    const cacheKey = `programme_${JSON.stringify(query)}`;
+
+    const cachedData = await this.cacheManager.get<DataListResponseDto>(cacheKey);
+    if (cachedData) {
+      console.log('Get project public data from cache');
+      return cachedData;
+    }
+    console.log('Project data not in cache');
+
+    const skip = query.size * query.page - query.size;
+    const limit = query.size || 10;
+    const offset = skip || 0;
+    const sortKey = query?.sort?.key
+      ? `programme_sl."${query.sort.key}"`
+      : `"programme_sl"."createdTime"`;
+    const sortOrder = query?.sort?.order || "DESC";
+
+    const rawQuery = `
+      SELECT 
+        programme_sl.*, 
+        json_build_object(
+                'companyId', c."companyId",
+                'name', c."name",
+                'companyRole', c."companyRole",
+                'logo', c."logo",
+                'email', c."email"
+              ) as company
+      FROM 
+        programme_sl
+      INNER JOIN 
+        company c 
+      ON 
+        "programme_sl"."companyId" = c."companyId"
+      WHERE
+        "projectProposalStage" = 'AUTHORISED'
+      ORDER BY 
+        ${sortKey} ${sortOrder}
+      LIMIT ${limit}
+      OFFSET ${offset};
+    `;
+    const resp = await this.programmeSlRepo.query(rawQuery);
+    const totalQuery = `
+      SELECT COUNT(*) 
+      FROM 
+        programme_sl
+      INNER JOIN 
+        company c 
+      ON 
+        "programme_sl"."companyId" = c."companyId"
+      WHERE
+        "projectProposalStage" = 'AUTHORISED'
+    `;
+
+    const totalResult = await this.programmeSlRepo.query(totalQuery);
+    const totalCount = parseInt(totalResult[0].count, 10);
+    const result = new DataListResponseDto(resp.length > 0 ? resp : undefined, totalCount);
+    // Cache set
+    await this.cacheManager.set(cacheKey, result);
+    return result
   }
  
   // MARK: getProjectById
