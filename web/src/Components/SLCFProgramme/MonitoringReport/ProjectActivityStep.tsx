@@ -468,7 +468,7 @@ export const ProjectActivityStep = (props: any) => {
                                           },
                                         ]}
                                       >
-                                        <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
+                                        <TextArea rows={4} disabled />
                                       </Form.Item>
 
                                       <Form.Item
@@ -758,6 +758,7 @@ export const ProjectActivityStep = (props: any) => {
                                     disabledDate={(currentDate: any) =>
                                       currentDate < moment().startOf('day')
                                     }
+                                    disabled
                                   />
                                 </Form.Item>
                               </Col>
