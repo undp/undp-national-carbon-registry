@@ -13,6 +13,7 @@ import {
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { ApiKeyJwtAuthGuard } from "src/auth/guards/api-jwt-key.guard";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
+import { OrganisationRateLimiterGuard } from "src/auth/guards/organisation-rate-limiter.guard";
 import { Action } from "src/casl/action.enum";
 import { CaslAbilityFactory } from "src/casl/casl-ability.factory";
 import { PoliciesGuardEx } from "src/casl/policy.guard";
@@ -151,5 +152,11 @@ export class CompanyController {
   @Get("getMinistries")
   getMinistryUser(@Request() req) {
     return this.companyService.getMinistries();
+  }
+
+  @UseGuards(OrganisationRateLimiterGuard)
+  @Post("public/get")
+  async getOrganisationPublicDetails(@Body() query: QueryDto) {
+    return this.companyService.queryOrganisationPublicDetails(query);
   }
 }

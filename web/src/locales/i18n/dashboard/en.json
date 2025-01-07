@@ -120,8 +120,8 @@
   "tTTransferredCreditsSLCF": "Displays the total number of transferred credits in the system.",
   "tTRetiredCreditsDevSLCF": "Displays the total number of retired credits in the system for the projects owned by your organisation.",
   "tTRetiredCreditsSLCF": "Displays the total number of retired credits in the system.",
-  "tTTotalCreditsByDateDevSLCF": "Displays the distribution of credits and their statuses in the system by date for the projects owned by your organisation.",
-  "tTTotalCreditsByDateSLCF": "Displays the distribution of credits and their statuses in the system by date.",
+  "tTTotalCreditsByDateDevSLCF": "Displays the change in credit amounts across different statuses on a specified date for the projects owned by your organisation.",
+  "tTTotalCreditsByDateSLCF": "Displays the change in credit amounts across different statuses on a specified date.",
   "tTTotalCreditsByPurposeDevSLCF": "Displays the distribution of credits and their type in the system by date for the projects owned by your organisation.",
   "tTTotalCreditsByPurposeSLCF": "Displays the distribution of credits and their type in the system by date.",
 

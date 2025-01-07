@@ -57,6 +57,18 @@ services:
       BACKEND_HOST: "http://192.168.1.16:3000"
       CONTACT_EMAIL: countryx@email.com
       MINISTER_NAME_AND_DESIGNATION : "\nHonorable Minister X\nMinister\nMinistry of Environment, Forestry & Tourism"
+      CACHE_PROJECT_TTL: 60000
+      CACHE_PROJECT_MAX: 100
+      CACHE_RETIREMENT_TTL: 60000
+      CACHE_RETIREMENT_MAX: 100
+      CACHE_ORGANISATION_TTL: 60000
+      CACHE_ORGANISATION_MAX: 100
+      RATE_LIMIT_PROJECT_LIMIT: 100
+      RATE_LIMIT_PROJECT_DURATION: 60
+      RATE_LIMIT_RETIREMENT_LIMIT: 100
+      RATE_LIMIT_RETIREMENT_DURATION: 60
+      RATE_LIMIT_ORGANISATION_LIMIT: 100
+      RATE_LIMIT_ORGANISATION_DURATION: 60
     volumes:
       - filestore:/app/backend/services/public
       - ./users.csv:/app/backend/services/users.csv

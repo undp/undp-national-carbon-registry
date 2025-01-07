@@ -20,6 +20,8 @@ import { ProgrammeSlService } from "./programme-sl.service";
 import { DocumentEntity } from "src/entities/document.entity";
 import { ProgrammeAuditLogSl } from "../entities/programmeAuditLogSl.entity";
 import { CreditRetirementSlModule } from "../creditRetirement-sl/creditRetirementSl.module";
+import { CacheModule } from "@nestjs/cache-manager";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 
 @Module({
   imports: [
@@ -34,6 +36,16 @@ import { CreditRetirementSlModule } from "../creditRetirement-sl/creditRetiremen
     AsyncOperationsModule,
     FileHandlerModule,
     CreditRetirementSlModule,
+    ConfigModule,
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        store: 'memory',
+        ttl: parseInt(configService.get<string>('cache.project.ttl'), 10),
+        max: parseInt(configService.get<string>('cache.project.max'), 10),
+      }),
+    }),
   ],
   providers: [Logger, ProgrammeSlService],
   exports: [ProgrammeSlService],
