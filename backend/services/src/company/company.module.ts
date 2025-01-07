@@ -1,5 +1,5 @@
 import { forwardRef, Logger, Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Company } from "../entities/company.entity";
 import { CaslModule } from "../casl/casl.module";
@@ -12,9 +12,10 @@ import { ProgrammeTransfer } from "../entities/programme.transfer";
 import { EmailHelperModule } from "../email-helper/email-helper.module";
 import { FileHandlerModule } from "../file-handler/filehandler.module";
 import { UserModule } from "../user/user.module";
-import { AsyncOperationsModule } from '../async-operations/async-operations.module';
+import { AsyncOperationsModule } from "../async-operations/async-operations.module";
 import { LocationModule } from "../location/location.module";
 import { Investment } from "../entities/investment.entity";
+import { CacheModule } from "@nestjs/cache-manager";
 
 @Module({
   imports: [
@@ -27,6 +28,16 @@ import { Investment } from "../entities/investment.entity";
       useClass: TypeOrmConfigService,
       imports: undefined,
     }),
+
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        store: "memory",
+        ttl: parseInt(configService.get<string>("cache.organisation.ttl"), 10),
+        max: parseInt(configService.get<string>("cache.organisation.max"), 10),
+      }),
+    }),
     TypeOrmModule.forFeature([Company, ProgrammeTransfer, Investment]),
     CaslModule,
     UtilModule,
@@ -35,7 +46,7 @@ import { Investment } from "../entities/investment.entity";
     forwardRef(() => EmailHelperModule),
     forwardRef(() => UserModule),
     AsyncOperationsModule,
-    LocationModule
+    LocationModule,
   ],
   providers: [CompanyService, Logger],
   exports: [CompanyService],

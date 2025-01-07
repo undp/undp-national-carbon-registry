@@ -105,7 +105,6 @@ export class FileLocationService implements LocationInterface {
     const entities = rows
       .map((row) => this.parseRow(row, dataIndexes, type))
       .filter((entity) => entity !== null);
-    console.log("entities------", entities);
     await repository.save(entities);
     this.logger.log(`${type} data loaded: ${entities.length}`);
   }
@@ -115,7 +114,6 @@ export class FileLocationService implements LocationInterface {
     indexes: any,
     type: LocationDataType
   ): Region | Province | District | DSDivision | null {
-    console.log("row------", row);
     const columns = row.replace("\r", "").split(",");
     if (columns.length !== Object.keys(indexes).length) return null;
 
