@@ -197,9 +197,13 @@ export class VerificationService {
       }
 
       //updating monitoring report id
-      docContent.projectDetails.reportID = `SLCCS/MR/${new Date().getFullYear()}/${
+      const currentYear = new Date().getFullYear();
+      const programmeId = monitoringReportDocument.programmeId;
+      const verificationRequestIdByProgramme = await this.getVerificationRequestIdByProgramme(
         monitoringReportDocument.programmeId
-      }/${monitoringReportDocument.verificationRequestId}/${monitoringReportDocument.version}`;
+      );
+      const version = monitoringReportDocument.version;
+      docContent.projectDetails.reportID = `SLCCS/MR/${currentYear}/${programmeId}/${verificationRequestIdByProgramme}/${version}`;
 
       monitoringReportDocument.content = docContent;
 
@@ -500,10 +504,15 @@ export class VerificationService {
         );
       }
       verificationReportDocument.content = docContent;
+
       //updating verification report id
-      docContent.projectDetails.reportID = `SLCCS/VRR/${new Date().getFullYear()}/${
+      const currentYear = new Date().getFullYear();
+      const programmeId = verificationReportDocument.programmeId;
+      const verificationRequestIdByProgramme = await this.getVerificationRequestIdByProgramme(
         verificationReportDocument.programmeId
-      }/${verificationReportDocument.verificationRequestId}/${verificationReportDocument.version}`;
+      );
+      const version = verificationReportDocument.version;
+      docContent.projectDetails.reportID = `SLCCS/VRR/${currentYear}/${programmeId}/${verificationRequestIdByProgramme}/${version}`;
       return await em.save(verificationReportDocument);
     });
 
@@ -881,4 +890,15 @@ export class VerificationService {
     fileType = this.fileExtensionMap.get(fileType);
     return fileType;
   };
+
+  private async getVerificationRequestIdByProgramme(programmeId: string) {
+    const count = await this.verificationRequestRepository.count({
+      where: {
+        programmeId: programmeId,
+        status: VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED,
+      },
+    });
+
+    return count + 1;
+  }
 }
