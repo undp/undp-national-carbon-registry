@@ -12,6 +12,8 @@ import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
 import { CreditRetirementSlService } from "./creditRetirementSl.service";
 import { CreditRetirementSlView } from "../entities/creditRetirementSl.view.entity";
 import { ProgrammeAuditLogSl } from "../entities/programmeAuditLogSl.entity";
+import { CacheModule } from "@nestjs/cache-manager";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 
 @Module({
   imports: [
@@ -24,6 +26,16 @@ import { ProgrammeAuditLogSl } from "../entities/programmeAuditLogSl.entity";
     EmailHelperModule,
     AsyncOperationsModule,
     FileHandlerModule,
+    ConfigModule,
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        store: "memory",
+        ttl: parseInt(configService.get<string>("cache.retirement.ttl"), 10),
+        max: parseInt(configService.get<string>("cache.retirement.max"), 10),
+      }),
+    }),
   ],
   providers: [Logger, CreditRetirementSlService],
   exports: [CreditRetirementSlService],

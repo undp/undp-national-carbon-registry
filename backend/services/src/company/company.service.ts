@@ -1,39 +1,32 @@
-import { PG_UNIQUE_VIOLATION } from '@drdgvhbh/postgres-error-codes';
-import {
-  forwardRef,
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { InjectRepository } from '@nestjs/typeorm';
-import { OrganisationDto } from '../dto/organisation.dto';
-import { QueryFailedError, Repository } from 'typeorm';
-import { Company } from '../entities/company.entity';
-import { CompanyRole } from '../enum/company.role.enum';
-import { QueryDto } from '../dto/query.dto';
-import { DataListResponseDto } from '../dto/data.list.response';
-import { BasicResponseDto } from '../dto/basic.response.dto';
-import { CompanyState } from '../enum/company.state.enum';
-import { HelperService } from '../util/helpers.service';
-import { FindOrganisationQueryDto } from '../dto/find.organisation.dto';
-import { ProgrammeLedgerService } from '../programme-ledger/programme-ledger.service';
-import { OrganisationUpdateDto } from '../dto/organisation.update.dto';
-import { DataResponseDto } from '../dto/data.response.dto';
-import { ProgrammeTransfer } from '../entities/programme.transfer';
-import { TransferStatus } from '../enum/transform.status.enum';
-import { User } from '../entities/user.entity';
-import { EmailHelperService } from '../email-helper/email-helper.service';
-import { Programme } from '../entities/programme.entity';
-import { EmailTemplates } from '../email-helper/email.template';
-import { SystemActionType } from '../enum/system.action.type';
-import { FileHandlerInterface } from '../file-handler/filehandler.interface';
-import { CounterType } from '../util/counter.type.enum';
-import { CounterService } from '../util/counter.service';
-import { FilterEntry } from '../dto/filter.entry';
-import { UserService } from '../user/user.service';
+import { PG_UNIQUE_VIOLATION } from "@drdgvhbh/postgres-error-codes";
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { InjectRepository } from "@nestjs/typeorm";
+import { OrganisationDto } from "../dto/organisation.dto";
+import { QueryFailedError, Repository } from "typeorm";
+import { Company } from "../entities/company.entity";
+import { CompanyRole } from "../enum/company.role.enum";
+import { QueryDto } from "../dto/query.dto";
+import { DataListResponseDto } from "../dto/data.list.response";
+import { BasicResponseDto } from "../dto/basic.response.dto";
+import { CompanyState } from "../enum/company.state.enum";
+import { HelperService } from "../util/helpers.service";
+import { FindOrganisationQueryDto } from "../dto/find.organisation.dto";
+import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
+import { OrganisationUpdateDto } from "../dto/organisation.update.dto";
+import { DataResponseDto } from "../dto/data.response.dto";
+import { ProgrammeTransfer } from "../entities/programme.transfer";
+import { TransferStatus } from "../enum/transform.status.enum";
+import { User } from "../entities/user.entity";
+import { EmailHelperService } from "../email-helper/email-helper.service";
+import { Programme } from "../entities/programme.entity";
+import { EmailTemplates } from "../email-helper/email.template";
+import { SystemActionType } from "../enum/system.action.type";
+import { FileHandlerInterface } from "../file-handler/filehandler.interface";
+import { CounterType } from "../util/counter.type.enum";
+import { CounterService } from "../util/counter.service";
+import { FilterEntry } from "../dto/filter.entry";
+import { UserService } from "../user/user.service";
 import {
   AsyncAction,
   AsyncOperationsInterface,
@@ -44,18 +37,19 @@ import { DataExportQueryDto } from "../dto/data.export.query.dto";
 import { DataExportService } from "../util/data.export.service";
 import { DataExportCompanyDto } from "../dto/data.export.company.dto";
 import { SYSTEM_TYPE } from "../enum/system.names.enum";
-import { SectoralScope } from '../enum/sectoral.scope.enum';
-import { GovDepartment, ministryOrgs } from '../enum/govDep.enum';
-import { Ministry } from '../enum/ministry.enum';
-import { InvestmentDto } from '../dto/investment.dto';
-import { plainToClass } from 'class-transformer';
-import { Investment } from '../entities/investment.entity';
-import { InvestmentStatus } from '../enum/investment.status';
-import { InvestmentCategoryEnum } from '../enum/investment.category.enum';
-import { InvestmentSyncDto } from '../dto/investment.sync.dto';
+import { SectoralScope } from "../enum/sectoral.scope.enum";
+import { GovDepartment, ministryOrgs } from "../enum/govDep.enum";
+import { Ministry } from "../enum/ministry.enum";
+import { InvestmentDto } from "../dto/investment.dto";
+import { plainToClass } from "class-transformer";
+import { Investment } from "../entities/investment.entity";
+import { InvestmentStatus } from "../enum/investment.status";
+import { InvestmentCategoryEnum } from "../enum/investment.category.enum";
+import { InvestmentSyncDto } from "../dto/investment.sync.dto";
 import { HttpUtilService } from "../util/http.util.service";
 import { OrganisationDuplicateCheckDto } from "../dto/organisation.duplicate.check.dto";
-import { OrganisationSyncRequestDto } from '../dto/organisation.sync.request.dto';
+import { OrganisationSyncRequestDto } from "../dto/organisation.sync.request.dto";
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class CompanyService {
@@ -78,35 +72,31 @@ export class CompanyService {
     @InjectRepository(Investment)
     private investmentRepo: Repository<Investment>,
     private dataExportService: DataExportService,
-    private httpUtilService: HttpUtilService
+    private httpUtilService: HttpUtilService,
+    @Inject('CACHE_MANAGER') private cacheManager: Cache,
   ) {}
 
   async suspend(
     companyId: number,
     user: any,
     remarks: string,
-    abilityCondition: string,
+    abilityCondition: string
   ): Promise<any> {
-    this.logger.verbose('Suspend company', companyId);
+    this.logger.verbose("Suspend company", companyId);
     const company = await this.companyRepo
       .createQueryBuilder()
       .where(
         `"companyId" = '${companyId}' and state = '1' ${
           abilityCondition
-            ? ' AND (' +
-              this.helperService.parseMongoQueryToSQL(abilityCondition) +
-              ')'
-            : ''
-        }`,
+            ? " AND (" + this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
+            : ""
+        }`
       )
       .getOne();
     if (!company) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          'company.noActiveCompany',
-          [],
-        ),
-        HttpStatus.UNAUTHORIZED,
+        this.helperService.formatReqMessagesString("company.noActiveCompany", []),
+        HttpStatus.UNAUTHORIZED
       );
     }
     const result = await this.companyRepo
@@ -117,7 +107,7 @@ export class CompanyService {
         {
           state: CompanyState.SUSPENDED,
           remarks: remarks,
-        },
+        }
       )
       .catch((err: any) => {
         this.logger.error(err);
@@ -130,17 +120,17 @@ export class CompanyService {
         await this.programmeLedgerService.freezeCompany(
           companyId,
           this.getUserRefWithRemarks(user, `${remarks}#${company.name}`),
-          true,
+          true
         );
         await this.companyTransferCancel(
           companyId,
-          `${remarks}#${user.companyId}#${user.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${company.name}#${user.companyName}`,
+          `${remarks}#${user.companyId}#${user.id}#${SystemActionType.SUSPEND_AUTO_CANCEL}#${company.name}#${user.companyName}`
         );
         await this.emailHelperService.sendEmail(
           company.email,
           EmailTemplates.PROGRAMME_DEVELOPER_ORG_DEACTIVATION,
           {},
-          user.companyId,
+          user.companyId
         );
       } else if (company.companyRole === CompanyRole.CERTIFIER) {
         await this.programmeLedgerService.revokeCompanyCertifications(
@@ -171,32 +161,26 @@ export class CompanyService {
           company.email,
           EmailTemplates.CERTIFIER_ORG_DEACTIVATION,
           {},
-          user.companyId,
+          user.companyId
         );
       }
       return new BasicResponseDto(
         HttpStatus.OK,
-        this.helperService.formatReqMessagesString(
-          'company.suspendCompanySuccess',
-          [],
-        ),
+        this.helperService.formatReqMessagesString("company.suspendCompanySuccess", [])
       );
     }
     throw new HttpException(
-      this.helperService.formatReqMessagesString('company.suspendFailed', []),
-      HttpStatus.INTERNAL_SERVER_ERROR,
+      this.helperService.formatReqMessagesString("company.suspendFailed", []),
+      HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
 
-  async addNationalInvestment(
-    req: InvestmentDto,
-    requester: User,
-  ): Promise<any> {
+  async addNationalInvestment(req: InvestmentDto, requester: User): Promise<any> {
     //validations
     this.logger.log(
       `National investment request by ${requester.companyId}-${
         requester.id
-      } received ${JSON.stringify(req)}`,
+      } received ${JSON.stringify(req)}`
     );
     //requester validations
     if (
@@ -206,21 +190,18 @@ export class CompanyService {
     ) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          'company.cannotAddNationalInvestmentOnOtherCompanies',
-          [],
+          "company.cannotAddNationalInvestmentOnOtherCompanies",
+          []
         ),
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.BAD_REQUEST
       );
     }
     //to company validations
     const companyDetails = await this.findByCompanyId(req.toCompanyId);
-    if (
-      companyDetails &&
-      companyDetails.companyRole !== CompanyRole.PROGRAMME_DEVELOPER
-    ) {
+    if (companyDetails && companyDetails.companyRole !== CompanyRole.PROGRAMME_DEVELOPER) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString('user.investerUserAuth', []),
-        HttpStatus.FORBIDDEN,
+        this.helperService.formatReqMessagesString("user.investerUserAuth", []),
+        HttpStatus.FORBIDDEN
       );
     }
     //add investment
@@ -234,18 +215,14 @@ export class CompanyService {
     investment.amount = Math.round(req.amount);
     investment.status = InvestmentStatus.APPROVED;
     investment.category = InvestmentCategoryEnum.National;
-    investment.nationalInvestmentId = null
-    const results = await this.investmentRepo
-      .insert([investment])
-      .catch((err: any) => {
-        this.logger.error(err);
-        return err;
-      });
+    investment.nationalInvestmentId = null;
+    const results = await this.investmentRepo.insert([investment]).catch((err: any) => {
+      this.logger.error(err);
+      return err;
+    });
     investment.requestId = results.identifiers[0].requestId;
     investment.investmentName = `${companyDetails.name}_${
-      req.instrument && req.instrument.length
-        ? `${req.instrument.join('&')}_`
-        : ''
+      req.instrument && req.instrument.length ? `${req.instrument.join("&")}_` : ""
     }${investment.requestId}`;
     const result = await this.investmentRepo
       .update(
@@ -254,7 +231,7 @@ export class CompanyService {
         },
         {
           investmentName: investment.investmentName,
-        },
+        }
       )
       .catch((err: any) => {
         this.logger.error(err);
@@ -270,12 +247,12 @@ export class CompanyService {
         txRef: `${investment.requestId}#${investment.investmentName}`,
       },
     });
-    if (this.configService.get('systemType') == SYSTEM_TYPE.CARBON_UNIFIED) {
+    if (this.configService.get("systemType") == SYSTEM_TYPE.CARBON_UNIFIED) {
       await this.programmeLedgerService.addCompanyInvestment(
         investment.requestId,
         investment.toCompanyId,
         investment.amount,
-        `${investment.requestId}#${investment.investmentName}`,
+        `${investment.requestId}#${investment.investmentName}`
       );
     }
     return new DataResponseDto(HttpStatus.OK, investment);
@@ -285,18 +262,15 @@ export class CompanyService {
     const compo = await this.findByTaxId(investment.investorTaxId);
     if (!compo) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          'programme.proponentTaxIdNotInSystem',
-          [],
-        ),
-        HttpStatus.BAD_REQUEST,
+        this.helperService.formatReqMessagesString("programme.proponentTaxIdNotInSystem", []),
+        HttpStatus.BAD_REQUEST
       );
     }
     const resp = await this.programmeLedgerService.addCompanyInvestment(
       investment.requestId,
       compo.companyId,
       investment.amount,
-      investment.txRef,
+      investment.txRef
     );
     return new DataResponseDto(HttpStatus.OK, resp);
   }
@@ -305,28 +279,23 @@ export class CompanyService {
     companyId: number,
     user: User,
     remarks: string,
-    abilityCondition: string,
+    abilityCondition: string
   ): Promise<any> {
-    this.logger.verbose('revoke company', companyId);
+    this.logger.verbose("revoke company", companyId);
     const company = await this.companyRepo
       .createQueryBuilder()
       .where(
         `"companyId" = '${companyId}' and state = '0' ${
           abilityCondition
-            ? ' AND (' +
-              this.helperService.parseMongoQueryToSQL(abilityCondition) +
-              ')'
-            : ''
-        }`,
+            ? " AND (" + this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
+            : ""
+        }`
       )
       .getOne();
     if (!company) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          'company.noSuspendedCompany',
-          [],
-        ),
-        HttpStatus.UNAUTHORIZED,
+        this.helperService.formatReqMessagesString("company.noSuspendedCompany", []),
+        HttpStatus.UNAUTHORIZED
       );
     }
     const result = await this.companyRepo
@@ -336,7 +305,7 @@ export class CompanyService {
         },
         {
           state: CompanyState.ACTIVE,
-        },
+        }
       )
       .catch((err: any) => {
         this.logger.error(err);
@@ -347,52 +316,41 @@ export class CompanyService {
       await this.programmeLedgerService.freezeCompany(
         companyId,
         this.getUserRefWithRemarks(user, `${remarks}#${company.name}`),
-        false,
+        false
       );
       await this.emailHelperService.sendEmail(
         company.email,
         EmailTemplates.ORG_REACTIVATION,
         {},
-        user.companyId,
+        user.companyId
       );
       return new BasicResponseDto(
         HttpStatus.OK,
-        this.helperService.formatReqMessagesString(
-          'company.companyActivationSuccess',
-          [],
-        ),
+        this.helperService.formatReqMessagesString("company.companyActivationSuccess", [])
       );
     }
     throw new HttpException(
-      this.helperService.formatReqMessagesString(
-        'company.companyActivationFailed',
-        [],
-      ),
-      HttpStatus.INTERNAL_SERVER_ERROR,
+      this.helperService.formatReqMessagesString("company.companyActivationFailed", []),
+      HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
 
   async approve(companyId: number, abilityCondition: string): Promise<any> {
-    this.logger.verbose('approve company', companyId);
+    this.logger.verbose("approve company", companyId);
     const company = await this.companyRepo
       .createQueryBuilder()
       .where(
         `"companyId" = '${companyId}' and (state ='2' or  state ='3') ${
           abilityCondition
-            ? ' AND (' +
-              this.helperService.parseMongoQueryToSQL(abilityCondition) +
-              ')'
-            : ''
-        }`,
+            ? " AND (" + this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
+            : ""
+        }`
       )
       .getOne();
     if (!company) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          'company.noPendingCompany',
-          [],
-        ),
-        HttpStatus.UNAUTHORIZED,
+        this.helperService.formatReqMessagesString("company.noPendingCompany", []),
+        HttpStatus.UNAUTHORIZED
       );
     }
     const result = await this.companyRepo
@@ -402,7 +360,7 @@ export class CompanyService {
         },
         {
           state: CompanyState.ACTIVE,
-        },
+        }
       )
       .catch((err: any) => {
         this.logger.error(err);
@@ -411,15 +369,15 @@ export class CompanyService {
 
     if (result.affected > 0) {
       try {
-        const hostAddress = this.configService.get('host');
+        const hostAddress = this.configService.get("host");
         const res = await this.userService.approveUser(company);
         const templateData = {
           organisationName: company.name,
-          countryName: this.configService.get('systemCountryName'),
-          systemName: this.configService.get('systemName'),
+          countryName: this.configService.get("systemCountryName"),
+          systemName: this.configService.get("systemName"),
           organisationRole:
             company.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-              ? 'Programme Developer'
+              ? "Programme Developer"
               : company.companyRole,
           home: hostAddress,
         };
@@ -430,41 +388,32 @@ export class CompanyService {
             emailType: EmailTemplates.ORGANISATION_CREATE.id,
             sender: company.email,
             subject: this.helperService.getEmailTemplateMessage(
-              EmailTemplates.ORGANISATION_CREATE['subject'],
+              EmailTemplates.ORGANISATION_CREATE["subject"],
               templateData,
-              true,
+              true
             ),
             emailBody: this.helperService.getEmailTemplateMessage(
-              EmailTemplates.ORGANISATION_CREATE['html'],
+              EmailTemplates.ORGANISATION_CREATE["html"],
               templateData,
-              false,
+              false
             ),
           },
         };
         await this.asyncOperationsInterface.AddAction(action);
       } catch (error) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            'company.companyApprovalFailed',
-            [],
-          ),
-          HttpStatus.INTERNAL_SERVER_ERROR,
+          this.helperService.formatReqMessagesString("company.companyApprovalFailed", []),
+          HttpStatus.INTERNAL_SERVER_ERROR
         );
       }
       return new BasicResponseDto(
         HttpStatus.OK,
-        this.helperService.formatReqMessagesString(
-          'company.companyApprovalSuccess',
-          [],
-        ),
+        this.helperService.formatReqMessagesString("company.companyApprovalSuccess", [])
       );
     }
     throw new HttpException(
-      this.helperService.formatReqMessagesString(
-        'company.companyApprovalFailed',
-        [],
-      ),
-      HttpStatus.INTERNAL_SERVER_ERROR,
+      this.helperService.formatReqMessagesString("company.companyApprovalFailed", []),
+      HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
 
@@ -472,28 +421,23 @@ export class CompanyService {
     companyId: number,
     user: User,
     remarks: string,
-    abilityCondition: string,
+    abilityCondition: string
   ): Promise<any> {
-    this.logger.verbose('approve company', companyId);
+    this.logger.verbose("approve company", companyId);
     const company = await this.companyRepo
       .createQueryBuilder()
       .where(
         `"companyId" = '${companyId}' and state = '2' ${
           abilityCondition
-            ? ' AND (' +
-              this.helperService.parseMongoQueryToSQL(abilityCondition) +
-              ')'
-            : ''
-        }`,
+            ? " AND (" + this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
+            : ""
+        }`
       )
       .getOne();
     if (!company) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          'company.noPendingCompany',
-          [],
-        ),
-        HttpStatus.UNAUTHORIZED,
+        this.helperService.formatReqMessagesString("company.noPendingCompany", []),
+        HttpStatus.UNAUTHORIZED
       );
     }
     const result = await this.companyRepo
@@ -503,7 +447,7 @@ export class CompanyService {
         },
         {
           state: CompanyState.REJECTED,
-        },
+        }
       )
       .catch((err: any) => {
         this.logger.error(err);
@@ -511,16 +455,16 @@ export class CompanyService {
       });
 
     if (result.affected > 0) {
-      const hostAddress = this.configService.get('host');
+      const hostAddress = this.configService.get("host");
       const templateData = {
         name: company.name,
-        countryName: this.configService.get('systemCountryName'),
+        countryName: this.configService.get("systemCountryName"),
         organisationRole:
           company.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-            ? 'Programme Developer'
+            ? "Programme Developer"
             : company.companyRole,
         remarks: remarks,
-        systemName: this.configService.get('systemName'),
+        systemName: this.configService.get("systemName"),
         home: hostAddress,
       };
 
@@ -530,14 +474,14 @@ export class CompanyService {
           emailType: EmailTemplates.ORGANISATION_REGISTRATION_REJECTED.id,
           sender: company.email,
           subject: this.helperService.getEmailTemplateMessage(
-            EmailTemplates.ORGANISATION_REGISTRATION_REJECTED['subject'],
+            EmailTemplates.ORGANISATION_REGISTRATION_REJECTED["subject"],
             templateData,
-            true,
+            true
           ),
           emailBody: this.helperService.getEmailTemplateMessage(
-            EmailTemplates.ORGANISATION_REGISTRATION_REJECTED['html'],
+            EmailTemplates.ORGANISATION_REGISTRATION_REJECTED["html"],
             templateData,
-            false,
+            false
           ),
         },
       };
@@ -545,26 +489,16 @@ export class CompanyService {
 
       return new BasicResponseDto(
         HttpStatus.OK,
-        this.helperService.formatReqMessagesString(
-          'company.companyRejectionSuccess',
-          [],
-        ),
+        this.helperService.formatReqMessagesString("company.companyRejectionSuccess", [])
       );
     }
     throw new HttpException(
-      this.helperService.formatReqMessagesString(
-        'company.companyRejectionFailed',
-        [],
-      ),
-      HttpStatus.INTERNAL_SERVER_ERROR,
+      this.helperService.formatReqMessagesString("company.companyRejectionFailed", []),
+      HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
 
-  async query(
-    query: QueryDto,
-    abilityCondition: string,
-    companyRole: string,
-  ): Promise<any> {
+  async query(query: QueryDto, abilityCondition: string, companyRole: string): Promise<any> {
     let filterWithCompanyStatesIn: number[];
 
     if (companyRole === CompanyRole.GOVERNMENT || companyRole === CompanyRole.CLIMATE_FUND) {
@@ -575,15 +509,15 @@ export class CompanyService {
 
     if (query.filterAnd) {
       query.filterAnd.push({
-        key: 'state',
-        operation: 'in',
+        key: "state",
+        operation: "in",
         value: filterWithCompanyStatesIn,
       });
     } else {
       const filterAnd: FilterEntry[] = [];
       filterAnd.push({
-        key: 'state',
-        operation: 'in',
+        key: "state",
+        operation: "in",
         value: filterWithCompanyStatesIn,
       });
       query.filterAnd = filterAnd;
@@ -594,17 +528,17 @@ export class CompanyService {
       .where(
         this.helperService.generateWhereSQL(
           query,
-          this.helperService.parseMongoQueryToSQL(abilityCondition),
-        ),
+          this.helperService.parseMongoQueryToSQL(abilityCondition)
+        )
       )
       .orderBy(
         query?.sort?.key && `"${query?.sort?.key}"`,
         query?.sort?.order,
         query?.sort?.nullFirst !== undefined
           ? query?.sort?.nullFirst === true
-            ? 'NULLS FIRST'
-            : 'NULLS LAST'
-          : undefined,
+            ? "NULLS FIRST"
+            : "NULLS LAST"
+          : undefined
       )
       .offset(query.size * query.page - query.size)
       .limit(query.size)
@@ -612,15 +546,48 @@ export class CompanyService {
 
     return new DataListResponseDto(
       resp.length > 0 ? resp[0] : undefined,
-      resp.length > 1 ? resp[1] : undefined,
+      resp.length > 1 ? resp[1] : undefined
     );
   }
 
-  async download(
-    queryData: DataExportQueryDto,
-    abilityCondition: string,
-    companyRole: string,
-  ) {
+  // MARK: Query Organisation Public Details
+  async queryOrganisationPublicDetails(query: QueryDto): Promise<any> {
+    const cacheKey = `programme_${JSON.stringify(query)}`;
+
+    const cachedData = await this.cacheManager.get<DataListResponseDto>(cacheKey);
+    if (cachedData) {
+      console.log('Get public org data from cache');
+      return cachedData;
+    }
+    console.log('Org data not in cache');
+
+    const resp = await this.companyRepo
+      .createQueryBuilder()
+      .where("state = :state", { state: "1"})
+      .orderBy(
+        query?.sort?.key && `"${query?.sort?.key}"`,
+        query?.sort?.order,
+        query?.sort?.nullFirst !== undefined
+          ? query?.sort?.nullFirst === true
+            ? "NULLS FIRST"
+            : "NULLS LAST"
+          : undefined
+      )
+      .offset(query.size * query.page - query.size)
+      .limit(query.size)
+      .getManyAndCount();
+
+    const result = new DataListResponseDto(
+      resp.length > 0 ? resp[0] : undefined,
+      resp.length > 1 ? resp[1] : undefined
+    );
+
+    // Cache set
+    await this.cacheManager.set(cacheKey, result);
+    return result;
+  }
+
+  async download(queryData: DataExportQueryDto, abilityCondition: string, companyRole: string) {
     const queryDto = new QueryDto();
     queryDto.filterAnd = queryData.filterAnd;
     queryDto.filterOr = queryData.filterOr;
@@ -636,24 +603,24 @@ export class CompanyService {
 
     if (queryDto.filterAnd) {
       queryDto.filterAnd.push({
-        key: 'state',
-        operation: 'in',
+        key: "state",
+        operation: "in",
         value: filterWithCompanyStatesIn,
       });
     } else {
       const filterAnd: FilterEntry[] = [];
       filterAnd.push({
-        key: 'state',
-        operation: 'in',
+        key: "state",
+        operation: "in",
         value: filterWithCompanyStatesIn,
       });
       queryDto.filterAnd = filterAnd;
     }
 
     queryDto.filterAnd.push({
-      key: 'companyRole',
-      operation: '!=',
-      value: 'API',
+      key: "companyRole",
+      operation: "!=",
+      value: "API",
     });
 
     const resp = await this.companyRepo
@@ -661,17 +628,17 @@ export class CompanyService {
       .where(
         this.helperService.generateWhereSQL(
           queryDto,
-          this.helperService.parseMongoQueryToSQL(abilityCondition),
-        ),
+          this.helperService.parseMongoQueryToSQL(abilityCondition)
+        )
       )
       .orderBy(
         queryDto?.sort?.key && `"${queryDto?.sort?.key}"`,
         queryDto?.sort?.order,
         queryDto?.sort?.nullFirst !== undefined
           ? queryDto?.sort?.nullFirst === true
-            ? 'NULLS FIRST'
-            : 'NULLS LAST'
-          : undefined,
+            ? "NULLS FIRST"
+            : "NULLS LAST"
+          : undefined
       )
       .getMany();
 
@@ -680,30 +647,19 @@ export class CompanyService {
       let headers: string[] = [];
       const titleKeys = Object.keys(prepData[0]);
       for (const key of titleKeys) {
-        headers.push(
-          this.helperService.formatReqMessagesString(
-            'companyExport.' + key,
-            [],
-          ),
-        );
+        headers.push(this.helperService.formatReqMessagesString("companyExport." + key, []));
       }
       const path = await this.dataExportService.generateCsv(
         prepData,
         headers,
-        this.helperService.formatReqMessagesString(
-          'companyExport.organisations',
-          [],
-        ),
+        this.helperService.formatReqMessagesString("companyExport.organisations", [])
       );
       return path;
     }
 
     throw new HttpException(
-      this.helperService.formatReqMessagesString(
-        'companyExport.nothingToExport',
-        [],
-      ),
-      HttpStatus.BAD_REQUEST,
+      this.helperService.formatReqMessagesString("companyExport.nothingToExport", []),
+      HttpStatus.BAD_REQUEST
     );
   }
 
@@ -717,15 +673,13 @@ export class CompanyService {
       if (company.sectoralScope && company.sectoralScope.length > 0) {
         orgSectoralScopeKey = company.sectoralScope
           .map((sectoralScope) => {
-            return Object.keys(SectoralScope).find(
-              (key) => SectoralScope[key] === sectoralScope,
-            );
+            return Object.keys(SectoralScope).find((key) => SectoralScope[key] === sectoralScope);
           })
-          .join(', ');
+          .join(", ");
       }
 
       const orgStateKey = Object.keys(CompanyState).find(
-        (key) => CompanyState[key] === company.state,
+        (key) => CompanyState[key] === company.state
       );
 
       const secondaryAccountBalanceLocal =
@@ -741,21 +695,21 @@ export class CompanyService {
       dto.website = company.website;
       dto.address = company.address;
       dto.country = company.country;
-      dto.companyRole = this.helperService.formatReqMessagesString("companyExport." + company.companyRole, []);
+      dto.companyRole = this.helperService.formatReqMessagesString(
+        "companyExport." + company.companyRole,
+        []
+      );
       dto.state = orgStateKey;
       dto.creditBalance = company.creditBalance;
       dto.secondaryAccountBalanceLocal = secondaryAccountBalanceLocal
         ? secondaryAccountBalanceLocal
-        : '';
+        : "";
       dto.secondaryAccountBalanceInternational =
         company.secondaryAccountBalance?.international?.total;
-      dto.secondaryAccountBalanceOmge =
-        company.secondaryAccountBalance?.omge?.total;
+      dto.secondaryAccountBalanceOmge = company.secondaryAccountBalance?.omge?.total;
       dto.programmeCount = company.programmeCount;
       dto.lastUpdateVersion = company.lastUpdateVersion;
-      dto.creditTxTime = this.helperService.formatTimestamp(
-        company.creditTxTime,
-      );
+      dto.creditTxTime = this.helperService.formatTimestamp(company.creditTxTime);
       dto.remarks = company.remarks;
       dto.createdTime = this.helperService.formatTimestamp(company.createdTime);
       dto.geographicalLocationCordintes = company.geographicalLocationCordintes;
@@ -771,15 +725,15 @@ export class CompanyService {
   async queryNames(query: QueryDto, abilityCondition: string): Promise<any> {
     if (query.filterAnd) {
       query.filterAnd.push({
-        key: 'state',
-        operation: 'in',
+        key: "state",
+        operation: "in",
         value: [1],
       });
     } else {
       const filterAnd: FilterEntry[] = [];
       filterAnd.push({
-        key: 'state',
-        operation: 'in',
+        key: "state",
+        operation: "in",
         value: [1],
       });
       query.filterAnd = filterAnd;
@@ -791,8 +745,8 @@ export class CompanyService {
       .where(
         this.helperService.generateWhereSQL(
           query,
-          this.helperService.parseMongoQueryToSQL(abilityCondition),
-        ),
+          this.helperService.parseMongoQueryToSQL(abilityCondition)
+        )
       )
       .orderBy(query?.sort?.key && `"${query?.sort?.key}"`, query?.sort?.order)
       .offset(query.size * query.page - query.size)
@@ -844,13 +798,11 @@ export class CompanyService {
     return companies && companies.length > 0 ? companies[0] : undefined;
   }
 
-  async findByCompanyIds(
-    req: FindOrganisationQueryDto,
-  ): Promise<Company[] | undefined> {
+  async findByCompanyIds(req: FindOrganisationQueryDto): Promise<Company[] | undefined> {
     const data: Company[] = [];
 
     if (!(req.companyIds instanceof Array)) {
-      throw new HttpException('Invalid companyId list', HttpStatus.BAD_REQUEST);
+      throw new HttpException("Invalid companyId list", HttpStatus.BAD_REQUEST);
     }
     for (let i = 0; i < req.companyIds.length; i++) {
       const companies = await this.companyRepo.find({
@@ -873,7 +825,10 @@ export class CompanyService {
     return companies && companies.length > 0 ? companies[0] : undefined;
   }
 
-  async findOrganizationByCountryAndCompanyRole(countryCode: string, companyRole: CompanyRole): Promise<Company | undefined> {
+  async findOrganizationByCountryAndCompanyRole(
+    countryCode: string,
+    companyRole: CompanyRole
+  ): Promise<Company | undefined> {
     const companies = await this.companyRepo.find({
       where: {
         country: countryCode,
@@ -884,11 +839,11 @@ export class CompanyService {
   }
 
   async create(companyDto: OrganisationDto): Promise<Company | undefined> {
-    this.logger.verbose('Company create received', companyDto.email);
+    this.logger.verbose("Company create received", companyDto.email);
 
     if (!companyDto.companyId) {
       companyDto.companyId = parseInt(
-        await this.counterService.incrementCount(CounterType.COMPANY, 3),
+        await this.counterService.incrementCount(CounterType.COMPANY, 3)
       );
     }
 
@@ -897,11 +852,8 @@ export class CompanyService {
         switch (err.driverError.code) {
           case PG_UNIQUE_VIOLATION:
             throw new HttpException(
-              this.helperService.formatReqMessagesString(
-                'company.companyTaxIdExist',
-                [],
-              ),
-              HttpStatus.BAD_REQUEST,
+              this.helperService.formatReqMessagesString("company.companyTaxIdExist", []),
+              HttpStatus.BAD_REQUEST
             );
         }
       }
@@ -911,39 +863,33 @@ export class CompanyService {
 
   async update(
     companyUpdateDto: OrganisationUpdateDto,
-    abilityCondition: string,
+    abilityCondition: string
   ): Promise<DataResponseDto | undefined> {
     const company = await this.companyRepo
       .createQueryBuilder()
       .where(
         `"companyId" = '${companyUpdateDto.companyId}' ${
           abilityCondition
-            ? ' AND (' +
-              this.helperService.parseMongoQueryToSQL(abilityCondition) +
-              ')'
-            : ''
-        }`,
+            ? " AND (" + this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
+            : ""
+        }`
       )
       .getOne();
     if (!company) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          'company.noActiveCompany',
-          [],
-        ),
-        HttpStatus.BAD_REQUEST,
+        this.helperService.formatReqMessagesString("company.noActiveCompany", []),
+        HttpStatus.BAD_REQUEST
       );
     }
 
-    if (company.companyRole !== CompanyRole.GOVERNMENT && 
-      company.companyRole !== CompanyRole.MINISTRY && 
-      company.taxId !== companyUpdateDto.taxId) {
+    if (
+      company.companyRole !== CompanyRole.GOVERNMENT &&
+      company.companyRole !== CompanyRole.MINISTRY &&
+      company.taxId !== companyUpdateDto.taxId
+    ) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          'company.companyTaxIdCannotUpdate',
-          [],
-        ),
-        HttpStatus.BAD_REQUEST,
+        this.helperService.formatReqMessagesString("company.companyTaxIdCannotUpdate", []),
+        HttpStatus.BAD_REQUEST
       );
     }
 
@@ -958,31 +904,30 @@ export class CompanyService {
       if (
         !ministryOrgs[ministrykey].includes(
           Object.keys(GovDepartment)[
-            Object.values(GovDepartment).indexOf(
-              companyUpdateDto.govDep as GovDepartment,
-            )
-          ],
+            Object.values(GovDepartment).indexOf(companyUpdateDto.govDep as GovDepartment)
+          ]
         )
       ) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            'company.wrongMinistryAndGovDep',
-            [],
-          ),
-          HttpStatus.BAD_REQUEST,
+          this.helperService.formatReqMessagesString("company.wrongMinistryAndGovDep", []),
+          HttpStatus.BAD_REQUEST
         );
       }
     }
-    if (company.companyRole == CompanyRole.MINISTRY || company.companyRole == CompanyRole.GOVERNMENT){
-      const ministry = await this.findMinistryByDepartment(
-        companyUpdateDto.govDep
-      );
-      if (company.govDep!=companyUpdateDto.govDep && company.ministry!=companyUpdateDto.ministry && ministry && ministry.ministry==companyUpdateDto.ministry && ministry.govDep==companyUpdateDto.govDep) {
+    if (
+      company.companyRole == CompanyRole.MINISTRY ||
+      company.companyRole == CompanyRole.GOVERNMENT
+    ) {
+      const ministry = await this.findMinistryByDepartment(companyUpdateDto.govDep);
+      if (
+        company.govDep != companyUpdateDto.govDep &&
+        company.ministry != companyUpdateDto.ministry &&
+        ministry &&
+        ministry.ministry == companyUpdateDto.ministry &&
+        ministry.govDep == companyUpdateDto.govDep
+      ) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "company.MinistryDepartmentAlreadyExist",
-            []
-          ),
+          this.helperService.formatReqMessagesString("company.MinistryDepartmentAlreadyExist", []),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -990,35 +935,35 @@ export class CompanyService {
 
     if (companyUpdateDto.logo) {
       const response: any = await this.fileHandler.uploadFile(
-        `profile_images/${
-          companyUpdateDto.companyId
-        }_${new Date().getTime()}.png`,
-        companyUpdateDto.logo,
+        `profile_images/${companyUpdateDto.companyId}_${new Date().getTime()}.png`,
+        companyUpdateDto.logo
       );
 
       if (response) {
         companyUpdateDto.logo = response;
       } else {
         throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            'company.companyUpdateFailed',
-            [],
-          ),
-          HttpStatus.INTERNAL_SERVER_ERROR,
+          this.helperService.formatReqMessagesString("company.companyUpdateFailed", []),
+          HttpStatus.INTERNAL_SERVER_ERROR
         );
       }
     }
 
     if (companyUpdateDto.regions) {
-      companyUpdateDto.geographicalLocationCordintes =
-        await this.locationService
-          .getCoordinatesForRegion(companyUpdateDto.regions)
-          .then((response: any) => {
-            return [...response];
-          });
+      companyUpdateDto.geographicalLocationCordintes = await this.locationService
+        .getCoordinatesForRegion(companyUpdateDto.regions)
+        .then((response: any) => {
+          return [...response];
+        });
     }
-    if ((company.companyRole == CompanyRole.MINISTRY)){
-      companyUpdateDto.taxId = "00000"+this.configService.get("systemCountry")+"-"+companyUpdateDto.ministry+"-"+companyUpdateDto.govDep
+    if (company.companyRole == CompanyRole.MINISTRY) {
+      companyUpdateDto.taxId =
+        "00000" +
+        this.configService.get("systemCountry") +
+        "-" +
+        companyUpdateDto.ministry +
+        "-" +
+        companyUpdateDto.govDep;
     }
     const { companyId, nationalSopValue, ...companyUpdateFields } = companyUpdateDto;
     if (!companyUpdateFields.hasOwnProperty("website")) {
@@ -1034,9 +979,9 @@ export class CompanyService {
         {
           companyId: company.companyId,
         },
-        this.configService.get('systemType') !== SYSTEM_TYPE.CARBON_REGISTRY
+        this.configService.get("systemType") !== SYSTEM_TYPE.CARBON_REGISTRY
           ? { ...companyUpdateFields, nationalSopValue }
-          : { ...companyUpdateFields },
+          : { ...companyUpdateFields }
       )
       .catch((err: any) => {
         this.logger.error(err);
@@ -1044,31 +989,22 @@ export class CompanyService {
       });
 
     if (result.affected > 0) {
-
       const organisationSyncRequestDto: OrganisationSyncRequestDto = {
         organizationIdentifierId: company.taxId,
-        organisationUpdateDto: companyUpdateDto
-      }
+        organisationUpdateDto: companyUpdateDto,
+      };
 
       const companySyncAction: AsyncAction = {
         actionType: AsyncActionType.CompanyUpdate,
         actionProps: organisationSyncRequestDto,
       };
-      await this.asyncOperationsInterface.AddAction(
-        companySyncAction
-      );
+      await this.asyncOperationsInterface.AddAction(companySyncAction);
 
-      return new DataResponseDto(
-        HttpStatus.OK,
-        await this.findByCompanyId(company.companyId)
-      );
+      return new DataResponseDto(HttpStatus.OK, await this.findByCompanyId(company.companyId));
     }
 
     throw new HttpException(
-      this.helperService.formatReqMessagesString(
-        "company.companyUpdateFailed",
-        []
-      ),
+      this.helperService.formatReqMessagesString("company.companyUpdateFailed", []),
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
@@ -1077,34 +1013,28 @@ export class CompanyService {
     organisationSyncRequest: OrganisationSyncRequestDto,
     abilityCondition: string
   ): Promise<DataResponseDto | undefined> {
-    const {organizationIdentifierId, organisationUpdateDto:companyUpdateDto} = organisationSyncRequest;
+    const { organizationIdentifierId, organisationUpdateDto: companyUpdateDto } =
+      organisationSyncRequest;
     const company = await this.companyRepo
       .createQueryBuilder()
       .where(
         `"taxId" = '${organizationIdentifierId}' ${
           abilityCondition
-            ? " AND (" +
-              this.helperService.parseMongoQueryToSQL(abilityCondition) +
-              ")"
+            ? " AND (" + this.helperService.parseMongoQueryToSQL(abilityCondition) + ")"
             : ""
         }`
       )
       .getOne();
     if (!company) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "company.noActiveCompany",
-          []
-        ),
+        this.helperService.formatReqMessagesString("company.noActiveCompany", []),
         HttpStatus.BAD_REQUEST
       );
     }
 
     if (companyUpdateDto.logo) {
       const response: any = await this.fileHandler.uploadFile(
-        `profile_images/${
-          company.companyId
-        }_${new Date().getTime()}.png`,
+        `profile_images/${company.companyId}_${new Date().getTime()}.png`,
         companyUpdateDto.logo
       );
 
@@ -1112,21 +1042,18 @@ export class CompanyService {
         companyUpdateDto.logo = response;
       } else {
         throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "company.companyUpdateFailed",
-            []
-          ),
+          this.helperService.formatReqMessagesString("company.companyUpdateFailed", []),
           HttpStatus.INTERNAL_SERVER_ERROR
         );
       }
     }
 
-    if(companyUpdateDto.regions){
+    if (companyUpdateDto.regions) {
       companyUpdateDto.geographicalLocationCordintes = await this.locationService
-      .getCoordinatesForRegion(companyUpdateDto.regions)
-      .then((response: any) => {
-        return  [...response];
-      });
+        .getCoordinatesForRegion(companyUpdateDto.regions)
+        .then((response: any) => {
+          return [...response];
+        });
     }
 
     const { nationalSopValue, ...companyUpdateFields } = companyUpdateDto;
@@ -1138,7 +1065,9 @@ export class CompanyService {
         {
           taxId: company.taxId,
         },
-        this.configService.get('systemType')!==SYSTEM_TYPE.CARBON_REGISTRY?{...companyUpdateFields,nationalSopValue}:{...companyUpdateFields}
+        this.configService.get("systemType") !== SYSTEM_TYPE.CARBON_REGISTRY
+          ? { ...companyUpdateFields, nationalSopValue }
+          : { ...companyUpdateFields }
       )
       .catch((err: any) => {
         this.logger.error(err);
@@ -1146,18 +1075,12 @@ export class CompanyService {
       });
 
     if (result.affected > 0) {
-      return new DataResponseDto(
-        HttpStatus.OK,
-        await this.findByCompanyId(company.companyId),
-      );
+      return new DataResponseDto(HttpStatus.OK, await this.findByCompanyId(company.companyId));
     }
 
     throw new HttpException(
-      this.helperService.formatReqMessagesString(
-        'company.companyUpdateFailed',
-        [],
-      ),
-      HttpStatus.INTERNAL_SERVER_ERROR,
+      this.helperService.formatReqMessagesString("company.companyUpdateFailed", []),
+      HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
 
@@ -1170,13 +1093,10 @@ export class CompanyService {
         txRef: remark,
         txTime: new Date().getTime(),
       })
-      .where(
-        '(fromCompanyId = :companyId OR toCompanyId = :companyId) AND status = :status',
-        {
-          companyId: companyId,
-          status: TransferStatus.PENDING,
-        },
-      )
+      .where("(fromCompanyId = :companyId OR toCompanyId = :companyId) AND status = :status", {
+        companyId: companyId,
+        status: TransferStatus.PENDING,
+      })
       .execute()
       .catch((err: any) => {
         this.logger.error(err);
@@ -1199,7 +1119,7 @@ export class CompanyService {
         },
         {
           programmeCount: programmeCount,
-        },
+        }
       )
       .catch((err: any) => {
         this.logger.error(err);
@@ -1212,12 +1132,9 @@ export class CompanyService {
   async getSectoralScopeMinistry(sectorId: any) {
     const resp = await this.companyRepo
       .createQueryBuilder()
-      .where(
-        `"companyRole" = 'Ministry' AND :sectorId = ANY("sectoralScope")`,
-        {
-          sectorId: sectorId,
-        },
-      )
+      .where(`"companyRole" = 'Ministry' AND :sectorId = ANY("sectoralScope")`, {
+        sectorId: sectorId,
+      })
       .getMany();
 
     return resp;
@@ -1225,15 +1142,12 @@ export class CompanyService {
 
   async getMinistries() {
     const result = await this.companyRepo
-      .createQueryBuilder('company')
-      .where(
-        'company.companyRole= :companyRole AND company.state= :activeState',
-        {
-          companyRole: CompanyRole.MINISTRY,
-          activeState: CompanyState.ACTIVE,
-        },
-      )
-      .select(['company.name', 'company.companyId'])
+      .createQueryBuilder("company")
+      .where("company.companyRole= :companyRole AND company.state= :activeState", {
+        companyRole: CompanyRole.MINISTRY,
+        activeState: CompanyState.ACTIVE,
+      })
+      .select(["company.name", "company.companyId"])
       .getRawMany();
 
     return result;
@@ -1242,8 +1156,11 @@ export class CompanyService {
   public async checkCompanyExistOnOtherSystem(
     organisationDuplicateCheckDto: OrganisationDuplicateCheckDto
   ) {
-    const resp = await this.httpUtilService.sendHttp("/national/organisation/exists", organisationDuplicateCheckDto);
-    if (typeof resp === 'boolean') {
+    const resp = await this.httpUtilService.sendHttp(
+      "/national/organisation/exists",
+      organisationDuplicateCheckDto
+    );
+    if (typeof resp === "boolean") {
       return resp;
     } else {
       return resp.data;
@@ -1253,23 +1170,20 @@ export class CompanyService {
   async findCompanyByTaxIdPaymentIdOrEmail(
     orgDuplicateCheckDto: OrganisationDuplicateCheckDto
   ): Promise<Company | undefined> {
-    const company = await this.companyRepo.createQueryBuilder('company')
-      .where('company.taxId = :taxId OR company.paymentId = :paymentId OR company.email = :email', {
+    const company = await this.companyRepo
+      .createQueryBuilder("company")
+      .where("company.taxId = :taxId OR company.paymentId = :paymentId OR company.email = :email", {
         taxId: orgDuplicateCheckDto.taxId,
         paymentId: orgDuplicateCheckDto.paymentId,
-        email: orgDuplicateCheckDto.email
+        email: orgDuplicateCheckDto.email,
       })
       .getOne();
     return company;
   }
-  
+
   async checkForCompanyDuplicates(email: any, taxId: any, paymentId: any) {
     const companies = await this.companyRepo.find({
-      where: [
-        { email: email },
-        { taxId: taxId },
-        { paymentId: paymentId }
-      ]
+      where: [{ email: email }, { taxId: taxId }, { paymentId: paymentId }],
     });
 
     return companies && companies.length > 0 ? companies[0] : undefined;

@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Post, Put, Query, UseGuards, Request } from "@nestjs/common";
+import { Body, Controller, Post, UseGuards, Request } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { Action } from "src/casl/action.enum";
 import { AppAbility } from "src/casl/casl-ability.factory";
 import { CheckPolicies } from "src/casl/policy.decorator";
-import { PoliciesGuard, PoliciesGuardEx } from "src/casl/policy.guard";
+import { PoliciesGuard } from "src/casl/policy.guard";
 import { ProgrammeSl } from "../entities/programmeSl.entity";
 import { ProgrammeSlService } from "../programme-sl/programme-sl.service";
 import { ProgrammeSlDto } from "../dto/programmeSl.dto";
@@ -12,14 +12,13 @@ import { CMADto } from "src/dto/cma.dto";
 import { GetDocDto } from "src/dto/getDoc.dto";
 import { QueryDto } from "src/dto/query.dto";
 import { CostQuotationDto } from "src/dto/costQuotation.dto";
-import { TxType } from "src/enum/txtype.enum";
-import { CompanyRole } from "src/enum/company.role.enum";
 import { ProjectProposalDto } from "src/dto/projectProposal.dto";
 import { ValidationAgreementDto } from "src/dto/validationAgreement.dto";
 import { DocumentEntity } from "src/entities/document.entity";
 import { CMAApproveDto } from "src/dto/cmaApprove.dto";
 import { ValidationReportDto } from "src/dto/validationReport.dto";
 import { CNCertificateIssueDto } from "src/dto/cncertificateIssue.dto";
+import { ProjectRateLimiterGuard } from "src/auth/guards/project-rate-limiter.guard";
 
 @ApiTags("ProgrammeSl")
 @ApiBearerAuth()
@@ -239,5 +238,11 @@ export class ProgrammeSlController {
   @Post("issueCarbonNeutralCertificate")
   async approveCarbonNeutralCertificate(@Body() cNCertificateIssueDto: CNCertificateIssueDto, @Request() req) {
     return this.programmeService.approveCarbonNeutralCertificate(cNCertificateIssueDto, req.user);
+  }
+
+  @UseGuards(ProjectRateLimiterGuard)
+  @Post("public/get")
+  async getPublicProjectDetails(@Body() query: QueryDto, @Request() req) {
+    return this.programmeService.getPublicProjectDetails(query);
   }
 }
