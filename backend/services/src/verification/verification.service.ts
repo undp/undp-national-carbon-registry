@@ -199,7 +199,9 @@ export class VerificationService {
       //updating monitoring report id
       docContent.projectDetails.reportID = `SLCCS/MR/${new Date().getFullYear()}/${
         monitoringReportDocument.programmeId
-      }/${monitoringReportDocument.verificationRequestId}/${monitoringReportDocument.version}`;
+      }/${await this.getVerificationRequestIdByProgramme(monitoringReportDocument.programmeId)}/${
+        monitoringReportDocument.version
+      }`;
 
       monitoringReportDocument.content = docContent;
 
@@ -503,7 +505,9 @@ export class VerificationService {
       //updating verification report id
       docContent.projectDetails.reportID = `SLCCS/VRR/${new Date().getFullYear()}/${
         verificationReportDocument.programmeId
-      }/${verificationReportDocument.verificationRequestId}/${verificationReportDocument.version}`;
+      }/${await this.getVerificationRequestIdByProgramme(verificationReportDocument.programmeId)}/${
+        verificationReportDocument.version
+      }`;
       return await em.save(verificationReportDocument);
     });
 
@@ -881,4 +885,15 @@ export class VerificationService {
     fileType = this.fileExtensionMap.get(fileType);
     return fileType;
   };
+
+  private async getVerificationRequestIdByProgramme(programmeId: string) {
+    const count = await this.verificationRequestRepository.count({
+      where: {
+        programmeId: programmeId,
+        status: VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED,
+      },
+    });
+
+    return count + 1;
+  }
 }
