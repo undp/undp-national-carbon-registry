@@ -69,6 +69,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
         organizationName: data?.company?.name,
         projectTrack: data?.purposeOfCreditDevelopment,
         location: data?.geographicalLocationCoordinates,
+        projectStartDate: moment.unix(data?.startDate),
       };
 
       form.setFieldsValue(tempValues);
@@ -541,7 +542,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <DatePicker size="large" disabled={disableFields} />
+                  <DatePicker size="large" disabled />
                 </Form.Item>
 
                 <div className="projectTrack mg-bottom-1">
@@ -605,59 +606,9 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 >
                   <Input size="large" disabled={disableFields} addonAfter="%" />
                 </Form.Item>
-
-                <Form.Item
-                  label="Leakage Emission"
-                  name="leakageEmission"
-                  rules={[
-                    {
-                      required: true,
-                      message: ``,
-                    },
-                    {
-                      validator: async (rule: any, value: any) => {
-                        if (
-                          String(value).trim() === '' ||
-                          String(value).trim() === undefined ||
-                          value === null ||
-                          value === undefined
-                        ) {
-                          throw new Error(`Leakage Emission ${t('isRequired')}`);
-                        }
-                      },
-                    },
-                  ]}
-                >
-                  <Input size="large" disabled={disableFields} />
-                </Form.Item>
               </Col>
 
               <Col md={12} xl={12}>
-                <Form.Item
-                  label="Project Commission Date"
-                  name="projectCommissionDate"
-                  rules={[
-                    {
-                      required: true,
-                      message: ``,
-                    },
-                    {
-                      validator: async (rule: any, value: any) => {
-                        if (
-                          String(value).trim() === '' ||
-                          String(value).trim() === undefined ||
-                          value === null ||
-                          value === undefined
-                        ) {
-                          throw new Error(`Project Commision Date ${t('isRequired')}`);
-                        }
-                      },
-                    },
-                  ]}
-                >
-                  <DatePicker size="large" disabled={disableFields} />
-                </Form.Item>
-
                 <Form.Item
                   label="Project Capacity"
                   name="projectCapacity"
@@ -716,6 +667,31 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                         // if (isNaN(value)) {
                         //   return Promise.reject(new Error('Should be a number!'));
                         // }
+                      },
+                    },
+                  ]}
+                >
+                  <Input size="large" disabled={disableFields} />
+                </Form.Item>
+
+                <Form.Item
+                  label="Leakage Emission"
+                  name="leakageEmission"
+                  rules={[
+                    {
+                      required: true,
+                      message: ``,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`Leakage Emission ${t('isRequired')}`);
+                        }
                       },
                     },
                   ]}

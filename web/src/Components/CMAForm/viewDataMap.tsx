@@ -45,11 +45,6 @@ export const descriptionOfProjectActivityDataMapToFields = (vals: any) => {
       ? vals?.locationsOfProjectActivity.shift()
       : undefined;
 
-  const firstGHGEmissionReduction =
-    vals?.estimatedAnnualGHGEmissions && vals?.estimatedAnnualGHGEmissions?.length > 0
-      ? vals?.estimatedAnnualGHGEmissions.shift()
-      : undefined;
-
   const tempValues = {
     introduction: vals?.introduction,
     sectoralScope: vals?.sectoralScope,
@@ -136,10 +131,6 @@ export const descriptionOfProjectActivityDataMapToFields = (vals: any) => {
       : undefined,
     creditingPeriodDescription: vals?.creditingPeriodDescription,
     projectScale: vals?.projectScaleType,
-    estimatedAnnualGHGEmissionsYear: firstGHGEmissionReduction?.year
-      ? moment.unix(firstGHGEmissionReduction?.year)
-      : undefined,
-    estimatedAnnualGHGEmissionsValue: firstGHGEmissionReduction?.ghgEmissionReduction,
     extraGHGEmmissions: (function () {
       const emmissions = vals?.estimatedAnnualGHGEmissions;
 

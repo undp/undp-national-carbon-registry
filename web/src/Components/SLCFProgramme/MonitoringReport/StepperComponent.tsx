@@ -224,8 +224,11 @@ const StepperComponent = (props: any) => {
           programmeId: programId,
           docType: DocumentTypeEnum.CMA,
         });
+        const { data: projectDetails } = await post('national/programmeSL/getProjectById', {
+          programmeId: id,
+        });
 
-        if (data && data?.content) {
+        if (data && data?.content && projectDetails) {
           const cmaData = JSON.parse(data?.content);
 
           projectDetailsForm.setFieldsValue({
@@ -249,6 +252,7 @@ const StepperComponent = (props: any) => {
               return {
                 ...entity,
                 organizationName: entity?.orgainzationName,
+                roleInTheProject: entity?.role,
               };
             }),
             creditingPeriodFromDate: moment(
@@ -256,6 +260,7 @@ const StepperComponent = (props: any) => {
             ),
             creditingPeriodToDate: moment(cmaData?.projectActivity?.creditingPeriodEndDate * 1000),
             creditingPeriodComment: cmaData?.projectActivity?.creditingPeriodDescription,
+            registrationDateOfTheActivity: moment(projectDetails?.authorisedCreditUpdatedTime),
             projectTrackAndCreditUse: cmaData?.projectActivity?.projectTrack,
             projectActivityLocationsList: cmaData?.projectActivity?.locationsOfProjectActivity?.map(
               (location: any) => {
