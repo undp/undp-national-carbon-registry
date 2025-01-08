@@ -1,44 +1,15 @@
 import { Button, Col, Row, Skeleton, Steps, Tag, Tooltip, message } from 'antd';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import './projectForms.scss';
-import Icon, {
-  CheckCircleOutlined,
-  DislikeOutlined,
-  ExclamationCircleOutlined,
-  PlusOutlined,
-  LikeOutlined,
-  BookOutlined,
-  FolderViewOutlined,
-  VerifiedOutlined,
-  DownloadOutlined,
-  EyeOutlined,
-  EditOutlined,
-  CheckOutlined,
-  CheckCircleTwoTone,
-  CloseOutlined,
-  CloseCircleOutlined,
-  ExclamationCircleTwoTone,
-  SendOutlined,
-} from '@ant-design/icons';
-import { RcFile } from 'antd/lib/upload';
+import { VerifiedOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { RejectDocumentationConfirmationModel } from '../../Models/rejectDocumenConfirmationModel';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
-import { ProgrammeStageUnified } from '../../../Definitions/Enums/programmeStage.enum';
 import { DocType, DocumentTypeEnum } from '../../../Definitions/Enums/document.type';
-import { Role } from '../../../Definitions/Enums/role.enum';
-import { isValidateFileType } from '../../../Utils/DocumentValidator';
-import { DocumentStatus } from '../../../Definitions/Enums/document.status';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
-import {
-  formCreatePermission,
-  formViewPermission,
-  linkDocVisible,
-} from '../../../Utils/documentsPermissionSl';
+import { formCreatePermission, formViewPermission } from '../../../Utils/documentsPermissionSl';
 import { useNavigate } from 'react-router-dom';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
-import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
 import { addSpaces } from '../../../Definitions/Definitions/programme.definitions';
 import {
   getIssuerCertificateContent,
@@ -49,10 +20,6 @@ import {
   getVerificationTimelineCurrentStep,
 } from '../../../Definitions/Definitions/verificationSl.definition';
 import { VerificationRequest } from '../../../Definitions/Entities/verificationRequest';
-import {
-  CarbonNeutralConfirmationModelSl,
-  CarbonNeutralConfirmationPopupInfo,
-} from '../../Models/carbonNeutralConfirmationModelSl';
 
 export interface VerificationFormsProps {
   data: any;
@@ -67,16 +34,6 @@ export interface VerificationFormsProps {
   translator: any;
   projectProposalStage?: any;
 }
-
-// type PopupInfo = {
-//   headerText: string;
-//   icon: any;
-//   text: any;
-//   actionBtnText: string;
-//   okAction: any;
-//   type: 'primary' | 'danger';
-//   remarkRequired: boolean;
-// };
 
 export const VerificationForms: FC<VerificationFormsProps> = (props: VerificationFormsProps) => {
   const {
@@ -95,13 +52,8 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
   const { userInfoState } = useUserContext();
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
-  const { delete: del, post } = useConnection();
   const [docData, setDocData] = useState<any[]>([]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [selectedReq, setSelectedReq] = useState<VerificationRequest>();
-  const [popupInfo, setPopupInfo] = useState<any>({});
-  const [actionInfo, setActionInfo] = useState<any>({});
-  const [rejectDocData, setRejectDocData] = useState<any>({});
 
   useEffect(() => {
     setDocData(data);
@@ -289,7 +241,6 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                 current={getVerificationTimelineCurrentStep(item.status)}
                 items={[
                   {
-                    // title: 'Finished',
                     icon: (
                       <div
                         className={`${getMonitoringContent(item.status).className} timeline-icon`}

@@ -501,9 +501,6 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                             )}
                           </div>
                           <div className="form-section">
-                            {/* <h4 className="form-section-title">
-                              {`1.5 ${t('validationReport:locationOfProjectActivity')}`}
-                            </h4> */}
                             <Row
                               justify={'space-between'}
                               gutter={[40, 16]}
@@ -632,10 +629,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                               </Col>
 
                               <Col xl={12} md={24}>
-                                <Form.Item
-                                  label={t('validationReport:setLocation')}
-                                  // name={[name, 'geographicalLocationCoordinates']}
-                                >
+                                <Form.Item label={t('validationReport:setLocation')}>
                                   <GetLocationMapComponent
                                     form={form}
                                     formItemName={[name, 'geographicalLocationCoordinates']}
@@ -685,7 +679,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                       icon={<UploadOutlined />}
                                       disabled
                                     >
-                                      Upload
+                                      {t('validationReport:upload')}
                                     </Button>
                                   </Upload>
                                 </Form.Item>
@@ -750,15 +744,6 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                               </Col>
                                               <Col span={4}></Col>
                                             </Row>
-                                            {/* <div className="technical-project-grid-title">
-                                              <p style={{ height: 10 }}>
-                                                {t('validationReport:parameter')}
-                                              </p>
-                                              <p style={{ height: 10 }}>
-                                                {t('validationReport:value')}
-                                              </p>
-                                              <span></span>
-                                            </div> */}
                                             <Form.List name={[itemName, 'parameterValue']}>
                                               {(
                                                 parameterValueList,
@@ -933,32 +918,11 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                 </Form.List>
               </>
 
-              {/* Section 2.3 Technical project description */}
-              {/* <>
-                <h4 className="form-section-title custom-required">{`2.3 ${t(
-                  'validationReport:technicalProjectDescription'
-                )}`}</h4>
-
-                <div></div>
-              </> */}
-
               <Row justify={'end'} className="step-actions-end">
                 <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  disabled={false}
-                  // onClick={() => {
-                  //   console.log(form.getFieldsValue());
-
-                  //   // next()
-                  // }}
-                  // onClick={next}
-
-                  htmlType="submit"
-                >
+                <Button type="primary" size={'large'} disabled={false} htmlType="submit">
                   {t('validationReport:next')}
                 </Button>
               </Row>

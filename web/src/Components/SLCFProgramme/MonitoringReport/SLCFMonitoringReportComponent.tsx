@@ -12,7 +12,7 @@ export const SLCFMonitoringReportComponent = (props: any) => {
   const [countries, setCountries] = useState<[]>([]);
   const { put, get, post } = useConnection();
 
-  const { useLocation, onNavigateToProgrammeView, translator } = props;
+  const { useLocation, translator } = props;
 
   const { id, verificationRequestId } = useParams();
   const { state } = useLocation();

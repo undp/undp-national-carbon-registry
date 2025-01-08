@@ -169,5 +169,12 @@
   "btnReject": "Reject",
   "btnApprove": "Approve",
   "approveMonitoringModalTitle": "Are you sure you want to approve this Monitoring Report?",
-  "reportID": "Report ID"
+  "reportID": "Report ID",
+  "upload": "Upload",
+  "cancel": "Cancel",
+  "submit": "Submit",
+  "reject": "Reject",
+  "approve": "Approve",
+  "next": "Next"
+
 }

@@ -1,4 +1,3 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Row } from 'antd';
 
 import TextArea from 'antd/lib/input/TextArea';
@@ -79,10 +78,10 @@ export const ImplementationStatusStep = (props: any) => {
               </Row>
               <Row justify={'end'} className="step-actions-end">
                 <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
-                  Back
+                  {t('monitoringReport:back')}
                 </Button>
                 <Button type="primary" htmlType="submit" disabled={false}>
-                  Next
+                  {t('monitoringReport:next')}
                 </Button>
               </Row>
             </Form>

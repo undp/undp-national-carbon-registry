@@ -1,15 +1,9 @@
-import { InfoCircleOutlined, MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Col, DatePicker, Form, Input, Row, Select, Upload } from 'antd';
-import FormItemLabel from 'antd/es/form/FormItemLabel';
 
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
-import { isValidateFileType } from '../../../Utils/DocumentValidator';
-import { DocType } from '../../../Definitions/Enums/document.type';
-import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
-import { RcFile } from 'antd/lib/upload';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
-import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
 
 export const VerificationFindingStep = (props: any) => {
   const { useLocation, translator, current, form, formMode, next, prev, onValueChange } = props;
@@ -457,8 +451,8 @@ export const VerificationFindingStep = (props: any) => {
                       ]}
                     >
                       <Select size="large" placeholder={t('verificationReport:selectYourAnswer')}>
-                        <Select.Option value="yes">Yes</Select.Option>
-                        <Select.Option value="no">No</Select.Option>
+                        <Select.Option value="yes">{t('verificationReport:yes')}</Select.Option>
+                        <Select.Option value="no">{t('verificationReport:no')}</Select.Option>
                       </Select>
                     </Form.Item>
 
@@ -499,7 +493,7 @@ export const VerificationFindingStep = (props: any) => {
                   <div className="step-form-left-col">
                     <Row>
                       <Col xl={12} md={24} style={{ paddingTop: '8px' }}>
-                        <label> The approach mentioned above is</label>
+                        <label>{t('verificationReport:approachMentionedAbove')}</label>
                       </Col>
                       <Col xl={12} md={24}>
                         <Form.Item
@@ -522,23 +516,17 @@ export const VerificationFindingStep = (props: any) => {
                 <Col xl={12} md={24}></Col>
                 <Col xl={24} md={24}>
                   <h4 className="form-section-title">
-                    <b>Project Emissions</b>
+                    <b>{t('verificationReport:projectEmissions')}</b>
                   </h4>
-                  Project emission may include the emissions associated with the project
-                  installation, operation and maintenance. As per the methodology applied, these
-                  emissions are not significant and attributable to the project activity, hence
-                  project emissions are reported as zero.
+                  {t('verificationReport:projectEmissionsContent')}
                   <h4 className="form-section-title">
-                    <b>Leakage Emissions</b>
+                    <b>{t('verificationReport:leakageEmissions')}</b>
                   </h4>
-                  There are no leakages associated with movement of old equipment that need to be
-                  assessed as per the methodology AMS-I.D, Version18. Thus, there is no leakage
-                  emission form the project activity for this monitoring period.
+                  {t('verificationReport:leakageEmissionsContent')}
                   <h4 className="form-section-title">
-                    <b>Emission Reductions</b>
+                    <b>{t('verificationReport:emissionReductions')}</b>
                   </h4>
-                  Therefore, the emission reductions in this monitoring period are: ERy = BEy - PEy
-                  - LEy
+                  {t('verificationReport:emissionReductionsContent')}
                 </Col>
                 <Col xl={8} md={24}>
                   <div className="step-form-left-col">
@@ -641,7 +629,7 @@ export const VerificationFindingStep = (props: any) => {
                         // maxCount={1}
                       >
                         <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
-                          Upload
+                          {t('verificationReport:upload')}
                         </Button>
                       </Upload>
                     </Form.Item>
@@ -877,7 +865,7 @@ export const VerificationFindingStep = (props: any) => {
                           // block
                           icon={<PlusOutlined />}
                         >
-                          Add Finding
+                          {t('verificationReport:addFinding')}
                         </Button>
                       </Form.Item>
                     </div>
@@ -887,10 +875,10 @@ export const VerificationFindingStep = (props: any) => {
 
               <Row justify={'end'} className="step-actions-end">
                 <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
-                  Back
+                  {t('verificationReport:back')}
                 </Button>
                 <Button type="primary" htmlType="submit" disabled={false}>
-                  Next
+                  {t('verificationReport:next')}
                 </Button>
               </Row>
             </Form>
