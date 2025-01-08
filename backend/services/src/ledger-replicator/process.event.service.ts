@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
+import { Repository, EntityManager } from "typeorm";
 import { TxType } from "../enum/txtype.enum";
 import { Company } from "../entities/company.entity";
 import { Programme } from "../entities/programme.entity";
@@ -20,7 +20,8 @@ export class ProcessEventService {
     @InjectRepository(Company) private companyRepo: Repository<Company>,
     @InjectRepository(ProgrammeSl) private programmeSlRepo: Repository<ProgrammeSl>,
     private asyncOperationsInterface: AsyncOperationsInterface,
-    private locationService: LocationInterface
+    private locationService: LocationInterface,
+    @InjectEntityManager() private entityManager: EntityManager
   ) {}
 
   async process(
@@ -247,13 +248,25 @@ export class ProcessEventService {
           .map((e) => e.propertyName);
 
         this.logger.debug(`${columnNames} ${JSON.stringify(programme)}`);
+        await this.entityManager.transaction(async (em) => {
+          await em
+            .getRepository(ProgrammeSl)
+            .createQueryBuilder()
+            .insert()
+            .values(programme)
+            .orUpdate(columnNames, ["programmeId"])
+            .execute();
 
-        return await this.programmeSlRepo
-          .createQueryBuilder()
-          .insert()
-          .values(programme)
-          .orUpdate(columnNames, ["programmeId"])
-          .execute();
+          if (!previousProgramme) {
+            await em
+              .getRepository(Company)
+              .createQueryBuilder()
+              .update(Company)
+              .set({ programmeCount: () => `"programmeCount" + 1` })
+              .where("companyId = :id", { id: programme.companyId })
+              .execute();
+          }
+        });
       } else {
         this.logger.error(
           `Skipping the programme due to old record ${JSON.stringify(
