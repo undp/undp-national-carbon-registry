@@ -262,7 +262,7 @@ export class ProcessEventService {
               .getRepository(Company)
               .createQueryBuilder()
               .update(Company)
-              .set({ programmeCount: () => `"programmeCount" + 1` })
+              .set({ programmeCount: () => `COALESCE("programmeCount", 0) + 1` })
               .where("companyId = :id", { id: programme.companyId })
               .execute();
           }
