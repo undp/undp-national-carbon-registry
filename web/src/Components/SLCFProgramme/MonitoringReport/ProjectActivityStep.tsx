@@ -10,25 +10,16 @@ import PhoneInput, {
 import moment from 'moment';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import TextArea from 'antd/lib/input/TextArea';
-import { InfoCircleOutlined, MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import LocationMapComponent from './LocationMapComponent';
-import { DocType } from '../../../Definitions/Enums/document.type';
-import { isValidateFileType } from '../../../Utils/DocumentValidator';
-import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
-import { RcFile } from 'antd/lib/upload';
+import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import GetLocationMapComponent from '../../Maps/GetLocationMapComponent';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 import LabelWithTooltip, { TooltipPostion } from '../../LabelWithTooltip/LabelWithTooltip';
-import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
 export const ProjectActivityStep = (props: any) => {
   const { useLocation, translator, current, form, formMode, next, countries, prev, onValueChange } =
     props;
 
   const { post } = useConnection();
   const [contactNoInput] = useState<any>();
-  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    : 'pk.eyJ1IjoicGFsaW5kYSIsImEiOiJjbGMyNTdqcWEwZHBoM3FxdHhlYTN4ZmF6In0.KBvFaMTjzzvoRCr1Z1dN_g';
 
   const [provinces, setProvinces] = useState<string[]>([]);
   const [districts, setDistricts] = useState<{ [key: number]: string[] }>({});
@@ -112,7 +103,6 @@ export const ProjectActivityStep = (props: any) => {
           },
         ],
       });
-      // const { data } = await post('national/location/city');
 
       const tempCities = data.map((cityData: any) => cityData.cityName);
       setCities((prev3) => ({ ...prev3, [index]: tempCities }));
@@ -123,7 +113,6 @@ export const ProjectActivityStep = (props: any) => {
 
   useEffect(() => {
     getProvinces();
-    // getCities();
   }, []);
 
   const onProvinceSelect = async (value: any, index: number) => {
@@ -1020,7 +1009,7 @@ export const ProjectActivityStep = (props: any) => {
                                     icon={<UploadOutlined />}
                                     disabled
                                   >
-                                    Upload
+                                    {t('monitoringReport:upload')}
                                   </Button>
                                 </Upload>
                               </Form.Item>
@@ -1197,10 +1186,10 @@ export const ProjectActivityStep = (props: any) => {
               </Row>
               <Row justify={'end'} className="step-actions-end">
                 <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
-                  Back
+                  {t('monitoringReport:back')}
                 </Button>
                 <Button type="primary" htmlType="submit" disabled={false}>
-                  Next
+                  {t('monitoringReport:next')}
                 </Button>
               </Row>
             </Form>

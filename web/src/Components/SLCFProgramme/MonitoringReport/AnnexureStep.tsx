@@ -1,15 +1,10 @@
 import { Button, Col, Form, Row, Upload } from 'antd';
 
 import TextArea from 'antd/lib/input/TextArea';
-import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import { UploadOutlined } from '@ant-design/icons';
-import { DocType } from '../../../Definitions/Enums/document.type';
-import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
-import { RcFile } from 'antd/lib/upload';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
-import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
 import { DocumentStatus } from '../../../Definitions/Enums/document.status';
 import { useState } from 'react';
 export const AnnexureStep = (props: any) => {
@@ -61,9 +56,6 @@ export const AnnexureStep = (props: any) => {
               requiredMark={true}
               form={form}
               disabled={FormMode.VIEW === formMode}
-              // onFinish={async (values: any) => {
-              //   onFinish({ annexures: values });
-              // }}
               onFinish={handleFormSubmit}
             >
               <Row className="row" gutter={[40, 16]}>
@@ -110,10 +102,9 @@ export const AnnexureStep = (props: any) => {
                         action="/upload.do"
                         listType="picture"
                         multiple={false}
-                        // maxCount={1}
                       >
                         <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
-                          Upload
+                          {t('monitoringReport:upload')}
                         </Button>
                       </Upload>
                     </Form.Item>
@@ -122,28 +113,28 @@ export const AnnexureStep = (props: any) => {
               </Row>
               <Row justify={'end'} className="step-actions-end">
                 <Button onClick={prev} disabled={false}>
-                  Back
+                  {t('monitoringReport:back')}
                 </Button>
                 <Button onClick={cancel} disabled={false}>
-                  Cancel
+                  {t('monitoringReport:cancel')}
                 </Button>
                 {userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
                   FormMode.VIEW !== formMode && (
                     <Button type="primary" htmlType="submit" disabled={loading}>
-                      <span>Submit</span>
+                      <span>{t('monitoringReport:submit')}</span>
                     </Button>
                   )}
 
                 {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
                   status === DocumentStatus.PENDING && (
                     <Button danger onClick={reject} disabled={false}>
-                      <span>Reject</span>
+                      <span>{t('monitoringReport:reject')}</span>
                     </Button>
                   )}
                 {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
                   status === DocumentStatus.PENDING && (
                     <Button type="primary" onClick={approve} disabled={false}>
-                      <span>Approve</span>
+                      <span>{t('monitoringReport:approve')}</span>
                     </Button>
                   )}
               </Row>

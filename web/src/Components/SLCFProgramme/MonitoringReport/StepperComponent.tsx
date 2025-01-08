@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Steps, Button, Form, message } from 'antd';
+import { useEffect, useRef, useState } from 'react';
+import { Steps, message } from 'antd';
 import { ProjectDetailsStep } from './ProjectDetailsStep';
 import './MonitoringReport.scss';
 import { ProjectActivityStep } from './ProjectActivityStep';
@@ -18,7 +18,6 @@ import {
   extractFilePropertiesFromLink,
   fileUploadValueExtract,
 } from '../../../Utils/utilityHelper';
-import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
 import { SlcfFormActionModel } from '../../Models/SlcfFormActionModel';
 import { PopupInfo } from '../../../Definitions/Definitions/ndcDetails.definitions';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
@@ -26,7 +25,6 @@ const StepperComponent = (props: any) => {
   const navigate = useNavigate();
   const { useLocation, translator, countries, selectedVersion, handleDocumentStatus } = props;
   const [current, setCurrent] = useState(0);
-  // const [verificationRequestId, setVerificationRequestId] = useState(0);
   const [reportId, setReportId] = useState(0);
   const [status, setStatus] = useState(null);
   const [formValues, setFormValues] = useState({});
@@ -298,10 +296,6 @@ const StepperComponent = (props: any) => {
           ],
         });
       } else if (mode === FormMode.VIEW || mode === FormMode.EDIT) {
-        // const { data } = await post('national/programmeSl/getDocumentById', {
-        //   docId: docId,
-        // });
-
         const { data } =
           mode === FormMode.VIEW && selectedVersion
             ? await post('national/programmeSl/getVerificationDocByVersion', {
@@ -322,7 +316,6 @@ const StepperComponent = (props: any) => {
         if (data && data?.content) {
           setReportId(data?.id);
           setStatus(data?.status);
-          // setVerificationRequestId(data?.verificationRequestId);
           projectDetailsForm.setFieldsValue({
             ...data?.content?.projectDetails,
             dateOfIssue: moment(data?.content?.projectDetails?.dateOfIssue),
@@ -421,7 +414,6 @@ const StepperComponent = (props: any) => {
     {
       title: (
         <div ref={scrollSection} className="stepper-title-container">
-          {/* <div className="step-count"></div> */}
           <div className="title">{t('monitoringReport:title01')}</div>
         </div>
       ),

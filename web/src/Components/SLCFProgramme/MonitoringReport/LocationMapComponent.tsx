@@ -85,12 +85,9 @@ const LocationMapComponent = (props: MapComponentProps) => {
 
   const onPolygonComplete = function (data: any) {
     if (data.features.length > 0) {
-      // console.log('-----polygon complete func running------', formItemName);
       const coordinates = data.features[0].geometry.coordinates[0];
-      // formOne.setFieldValue('projectLocation', coordinates);
       if (listName !== undefined) {
         const listFields = form.getFieldValue(listName);
-        // console.log('----------listName------------', listFields);
         if (listFields[formItemName[0]] !== undefined) {
           listFields[formItemName[0]][formItemName[1]] = coordinates;
         } else {
@@ -98,10 +95,6 @@ const LocationMapComponent = (props: MapComponentProps) => {
             [formItemName[1]]: coordinates,
           };
         }
-        // console.log('-----------list fields after filling-----------', listFields);
-        // form.setFieldValue({
-        //   listName: form.getFieldValue(listName)
-        // })
         form.setFieldValue(listName, listFields);
       } else {
         form.setFieldValue(formItemName, coordinates);

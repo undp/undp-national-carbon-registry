@@ -7,7 +7,6 @@ import PhoneInput, {
 } from 'react-phone-number-input';
 
 import moment from 'moment';
-import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 
 export const ProjectDetailsStep = (props: any) => {
@@ -23,11 +22,7 @@ export const ProjectDetailsStep = (props: any) => {
     onValueChange,
   } = props;
 
-  const { post } = useConnection();
   const [contactNoInput] = useState<any>();
-  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    : 'pk.eyJ1IjoicGFsaW5kYSIsImEiOiJjbGMyNTdqcWEwZHBoM3FxdHhlYTN4ZmF6In0.KBvFaMTjzzvoRCr1Z1dN_g';
 
   const t = translator.t;
   return (
@@ -191,33 +186,6 @@ export const ProjectDetailsStep = (props: any) => {
 
                 <Col xl={12} md={24}>
                   <div className="step-form-right-col">
-                    {/* <Form.Item
-                      label={t('monitoringReport:pd_version')}
-                      name="version"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('monitoringReport:pd_version')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item> */}
-
                     <Form.Item
                       label={t('monitoringReport:pd_reportTitle')}
                       name="reportTitle"
@@ -361,10 +329,10 @@ export const ProjectDetailsStep = (props: any) => {
               </Row>
               <Row justify={'end'} className="step-actions-end">
                 <Button danger size={'large'} onClick={cancel} disabled={false}>
-                  Cancel
+                  {t('monitoringReport:cancel')}
                 </Button>
                 <Button type="primary" htmlType="submit" disabled={false}>
-                  Next
+                  {t('monitoringReport:next')}
                 </Button>
               </Row>
             </Form>
