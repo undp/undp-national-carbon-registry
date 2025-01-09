@@ -74,7 +74,7 @@ export const MethodologyStep = (props: any) => {
                   </div>
                 </Col>
 
-                <Col xl={4} md={24}>
+                <Col xl={5} md={24}>
                   <div className="step-form-right-col">
                     <h4>{t('verificationReport:company')}</h4>
                   </div>
@@ -91,7 +91,7 @@ export const MethodologyStep = (props: any) => {
                     <h4>{t('verificationReport:taskPerformed')}</h4>
                   </div>
                 </Col>
-                <Col xl={3} md={24}></Col>
+                <Col xl={2} md={24}></Col>
               </Row>
 
               <Form.List name="verificationTeamList">
@@ -115,7 +115,7 @@ export const MethodologyStep = (props: any) => {
                               </Form.Item>
                             </div>
                           </Col>
-                          <Col xl={4} md={24}>
+                          <Col xl={5} md={24}>
                             <div className="step-form-right-col">
                               <Form.Item
                                 name={[name, 'company']}
@@ -192,7 +192,7 @@ export const MethodologyStep = (props: any) => {
                               </Form.Item>
                             </div>
                           </Col>
-                          <Col md={3} xl={3} style={{ verticalAlign: 'top' }}>
+                          <Col md={24} xl={2} style={{ verticalAlign: 'top' }}>
                             <Form.Item>
                               {fields.length > 1 && (
                                 <Button
