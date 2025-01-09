@@ -480,10 +480,10 @@ export const ProjectDetailsStep = (props: any) => {
               </Row>
               <Row justify={'end'} className="step-actions-end">
                 <Button danger size={'large'} onClick={cancel} disabled={false}>
-                  Cancel
+                  {t('verificationReport:cancel')}
                 </Button>
                 <Button type="primary" htmlType="submit" disabled={false}>
-                  Next
+                  {t('verificationReport:next')}
                 </Button>
               </Row>
             </Form>

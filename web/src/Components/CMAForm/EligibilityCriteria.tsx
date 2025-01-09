@@ -35,7 +35,6 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
       bundlingCriteria426IsAgreed: values?.bundlingCriteria426IsAgreed,
     };
 
-    console.log('--temp value------', tempValues);
     handleValuesUpdate({ eligibilityCriteria: tempValues });
   };
   return (
@@ -65,16 +64,16 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                 <div className="eligibility-table-form">
                   <Row className="header" gutter={24}>
                     <Col md={4} xl={4}>
-                      Sub Section
+                      {t('CMAForm:subSection')}
                     </Col>
                     <Col md={10} xl={10}>
-                      Eligibility Criteria
+                      {t('CMAForm:eligibilityCriteria')}
                     </Col>
                     <Col md={6} xl={6}>
-                      Project Activity
+                      {t('CMAForm:eligibilityCriteriaProjectActivityHeader')}
                     </Col>
                     <Col md={4} xl={4}>
-                      Yes/No
+                      {t('CMAForm:yesNoHeader')}
                     </Col>
                   </Row>
 
@@ -83,9 +82,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.1
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      The project activity shall be a new project, which will reduce/absorb GHG
-                      emissions or the project activity shall be a project, which was implemented on
-                      or after 2010 in order to offset GHG emission within the organisation.
+                      {t('CMAForm:criteria01')}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -123,8 +120,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>Yes</Select.Option>
-                          <Select.Option value={false}>No</Select.Option>
+                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
+                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -135,7 +132,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.2
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      The project activity shall be located in Sri Lanka.
+                      {t('CMAForm:criteria02')}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -173,8 +170,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>Yes</Select.Option>
-                          <Select.Option value={false}>No</Select.Option>
+                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
+                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -185,9 +182,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.3
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      The project activity shall not happen in the absence of benefits received from
-                      trading Sri Lanka Certified Emission Reduction units (SCERs). (This is not
-                      applicable Track II)
+                      {t('CMAForm:criteria03')}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -225,8 +220,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>Yes</Select.Option>
-                          <Select.Option value={false}>No</Select.Option>
+                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
+                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -237,8 +232,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.4
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      The project shall be implemented voluntarily by the project owner but not
-                      implemented based on legislation or regulations in the country
+                      {t('CMAForm:criteria04')}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -276,8 +270,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>Yes</Select.Option>
-                          <Select.Option value={false}>No</Select.Option>
+                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
+                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -288,8 +282,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.5
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      The project activity satisfies environmental standard and regulations of the
-                      country
+                      {t('CMAForm:criteria05')}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -327,8 +320,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>Yes</Select.Option>
-                          <Select.Option value={false}>No</Select.Option>
+                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
+                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -339,10 +332,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.6
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      The project shall not have been registered under any other national or
-                      international scheme. However, if a registered project under other scheme is
-                      willing to register with SLCCS, then, such project shall be deregistered from
-                      the other scheme in order to be eligible
+                      {t('CMAForm:criteria06')}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -380,8 +370,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>Yes</Select.Option>
-                          <Select.Option value={false}>No</Select.Option>
+                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
+                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -397,16 +387,16 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                 <div className="eligibility-table-form">
                   <Row className="header" gutter={24}>
                     <Col md={4} xl={4}>
-                      Sub Section
+                      {t('CMAForm:subSection')}
                     </Col>
                     <Col md={10} xl={10}>
-                      Eligibility Criteria
+                      {t('CMAForm:eligibilityCriteria')}
                     </Col>
                     <Col md={6} xl={6}>
-                      Project Activity
+                      {t('CMAForm:eligibilityCriteriaProjectActivityHeader')}
                     </Col>
                     <Col md={4} xl={4}>
-                      Yes/No
+                      {t('CMAForm:yesNoHeader')}
                     </Col>
                   </Row>
 
@@ -415,7 +405,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.2.1
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      The composition of bundles shall not change over time
+                      {t('CMAForm:criteria07')}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -453,8 +443,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>Yes</Select.Option>
-                          <Select.Option value={false}>No</Select.Option>
+                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
+                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -465,7 +455,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.2.2
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      All project activities in the bundle shall have the same crediting period
+                      {t('CMAForm:criteria08')}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -503,8 +493,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>Yes</Select.Option>
-                          <Select.Option value={false}>No</Select.Option>
+                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
+                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -515,7 +505,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.2.3
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      All project activities in the bundle shall have the same baseline.
+                      {t('CMAForm:criteria09')}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -553,8 +543,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>Yes</Select.Option>
-                          <Select.Option value={false}>No</Select.Option>
+                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
+                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -565,8 +555,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.2.4
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      All project activities in the bundle shall have the same project type,
-                      methodologies and technology/measure
+                      {t('CMAForm:criteria10')}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -604,8 +593,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>Yes</Select.Option>
-                          <Select.Option value={false}>No</Select.Option>
+                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
+                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -616,7 +605,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.2.5
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      Maximum number of project activities per bundle shall be seven.
+                      {t('CMAForm:criteria11')}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -654,8 +643,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>Yes</Select.Option>
-                          <Select.Option value={false}>No</Select.Option>
+                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
+                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -666,8 +655,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.2.6
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      Maximum capacity of a project activity of the bundle shall be less than 1.5
-                      MW.
+                      {t('CMAForm:criteria12')}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -705,8 +693,8 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         ]}
                       >
                         <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>Yes</Select.Option>
-                          <Select.Option value={false}>No</Select.Option>
+                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
+                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>

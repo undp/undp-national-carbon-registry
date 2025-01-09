@@ -23,5 +23,9 @@
   "upload": "Upload",
   "invalidFileFormat": "Unsupported file format",
   "estimatedNetGHGEmissionShouldHavePositive": "should have positive value",
-  "required": "Required!"
+  "required": "Required!",
+  "total": "Total",
+  "totalCreditingYears": "Total number of crediting years",
+  "averageCreditingPeriod": "Annual average over the crediting period"
+
 }

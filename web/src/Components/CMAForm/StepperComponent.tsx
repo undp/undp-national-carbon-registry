@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Steps, Button, Form, message } from 'antd';
+import { useEffect, useRef, useState } from 'react';
+import { Steps, message } from 'antd';
 import './CMAForm.scss';
-// import './SLCFMonitoringReportComponent.scss';
 
 import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
@@ -11,7 +10,6 @@ import QuantificationOfEmissions from './QuantificationOfEmissions';
 import ProjectDetails from './ProjectDetails';
 import DescriptionOfProjectActivity from './DescriptionOfProjectActivity';
 import EnvironmentImpacts from './EnvironmentImpacts';
-import Monitoring from './Monitoring';
 import Appendix from './Appendix';
 import LocalStakeholderConsultation from './LocalStakeholderConsultation';
 import moment from 'moment';
@@ -418,26 +416,6 @@ const StepperComponent = (props: any) => {
         />
       ),
     },
-    // {
-    //   title: (
-    //     <div className="stepper-title-container">
-    //       <div className="step-count">07</div>
-    //       <div className="title">{t('CMAForm:form08Title')}</div>
-    //     </div>
-    //   ),
-    //   description: (
-    //     <Monitoring
-    //       next={next}
-    //       prev={prev}
-    //       form={form8}
-    //       current={current}
-    //       t={t}
-    //       projectCategory={projectCategory}
-    //       handleValuesUpdate={handleValuesUpdate}
-    //       disableFields={disableFields}
-    //     />
-    //   ),
-    // },
     {
       title: (
         <div className="stepper-title-container">

@@ -1,26 +1,11 @@
-import { useState } from 'react';
-import { Button, Col, DatePicker, Form, Input, Row } from 'antd';
-import PhoneInput, {
-  formatPhoneNumber,
-  formatPhoneNumberIntl,
-  isPossiblePhoneNumber,
-} from 'react-phone-number-input';
+import { Button, Col, Form, Input, Row } from 'antd';
 
-import moment from 'moment';
-import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import TextArea from 'antd/lib/input/TextArea';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 
 export const DataAndParametersStep = (props: any) => {
   const { useLocation, translator, current, form, formMode, next, countries, prev, onValueChange } =
     props;
-
-  const { post } = useConnection();
-  const [contactNoInput] = useState<any>();
-  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    : '';
 
   const t = translator.t;
   return (
@@ -593,10 +578,10 @@ export const DataAndParametersStep = (props: any) => {
               </Row>
               <Row justify={'end'} className="step-actions-end">
                 <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
-                  Back
+                  {t('monitoringReport:back')}
                 </Button>
                 <Button type="primary" htmlType="submit" disabled={false}>
-                  Next
+                  {t('monitoringReport:next')}
                 </Button>
               </Row>
             </Form>
