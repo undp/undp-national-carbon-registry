@@ -18,7 +18,6 @@ import {
   extractFilePropertiesFromLink,
   fileUploadValueExtract,
 } from '../../../Utils/utilityHelper';
-import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
 import { PopupInfo } from '../../../Definitions/Definitions/ndcDetails.definitions';
 import { SlcfFormActionModel } from '../../Models/SlcfFormActionModel';
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
@@ -27,7 +26,6 @@ const StepperComponent = (props: any) => {
   const navigationLocation = useLocation();
   const { mode, docId } = navigationLocation.state || {};
   const navigate = useNavigate();
-  // const [verificationRequestId, setVerificationRequestId] = useState(0);
   const [reportId, setReportId] = useState(0);
   const [status, setStatus] = useState(null);
   const [current, setCurrent] = useState(0);
@@ -37,9 +35,6 @@ const StepperComponent = (props: any) => {
   const { get, post } = useConnection();
   const { id, verificationRequestId } = useParams();
   const t = translator.t;
-  const reportVersion = process.env.VERIFICATION_REPORT_VERSION
-    ? process.env.VERIFICATION_REPORT_VERSION
-    : 'Version 03';
 
   const [popupInfo, setPopupInfo] = useState<PopupInfo>();
   const [slcfActionModalVisible, setSlcfActioModalVisible] = useState<boolean>(false);
@@ -254,10 +249,6 @@ const StepperComponent = (props: any) => {
 
   const getLatestReports = async (programId: any) => {
     try {
-      // if (docId) {
-      //   const { data } = await post('national/programmeSl/getDocumentById', {
-      //     docId: docId,
-      //   });
       if (mode === FormMode.VIEW || mode === FormMode.EDIT) {
         const { data } =
           mode === FormMode.VIEW && selectedVersion
@@ -280,7 +271,6 @@ const StepperComponent = (props: any) => {
         if (data && data?.content) {
           setReportId(data?.id);
           setStatus(data?.status);
-          // setVerificationRequestId(data?.verificationRequestId);
           const content = data?.content;
           projectDetailsForm.setFieldsValue({
             ...content?.projectDetails,
@@ -470,7 +460,6 @@ const StepperComponent = (props: any) => {
     {
       title: (
         <div className="stepper-title-container">
-          {/* <div className="step-count"></div> */}
           <div className="title">{t('verificationReport:title01')}</div>
         </div>
       ),

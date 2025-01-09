@@ -1,11 +1,6 @@
-import React from 'react';
-import { ValidationStepsProps } from './StepProps';
 import { Row, Button, Form, Upload } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { isValidateFileType } from '../../Utils/DocumentValidator';
-import { DocType } from '../../Definitions/Enums/document.type';
 import { CustomStepsProps } from '../CMAForm/StepProps';
-import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 import { UploadOutlined } from '@ant-design/icons';
 import { ProcessSteps } from './ValidationStepperComponent';
@@ -36,28 +31,6 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
     handleValuesUpdate({ [ProcessSteps.VR_APPENDIX]: appendixFormValues });
   };
 
-  // const onFinish = async (values: any) => {
-  //   console.log('-----values---------', values);
-  //   const tempValues = {
-  //     annexures: values?.additionalComments,
-  //     additionalDocuments: await (async function () {
-  //       const base64Docs: string[] = [];
-  //       if (values?.appendixDocuments && values?.appendixDocuments.length > 0) {
-  //         const docs = values.appendixDocuments;
-  //         for (let i = 0; i < docs.length; i++) {
-  //           const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-  //           base64Docs.push(temp); // No need for Promise.resolve
-  //         }
-  //       }
-  //       return base64Docs;
-  //     })(),
-  //   };
-
-  //   if (submitForm) {
-  //     submitForm(tempValues);
-  //   }
-  //   // handleValuesUpdate({ appendix: tempValues });
-  // };
   return (
     <>
       {current === 7 && (
@@ -72,13 +45,6 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
               form={form}
               onFinish={(values: any) => {
                 onFinish(values);
-
-                // if (submitForm) {
-                //   setTimeout(() => submitForm(), 1000);
-                // }
-                // if (next) {
-                //   next();
-                // }
               }}
               disabled={FormMode.VIEW === formMode}
             >
@@ -127,7 +93,7 @@ const ValidationReportAppendix = (props: CustomStepsProps) => {
                   // maxCount={1}
                 >
                   <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
-                    Upload
+                    {t('validationReport:upload')}
                   </Button>
                 </Upload>
               </Form.Item>

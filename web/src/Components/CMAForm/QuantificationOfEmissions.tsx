@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Form, Input, Row, StepProps } from 'antd';
+import { Button, Col, DatePicker, Form, Input, Row } from 'antd';
 import React, { useEffect } from 'react';
 import { CustomStepsProps } from './StepProps';
 import TextArea from 'antd/lib/input/TextArea';
@@ -133,7 +133,6 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
       totalCreditingYears -= 1;
     }
     form.setFieldValue('totalCreditingYears', totalCreditingYears);
-    // calculateAvgAnnualERs();
     calculateNetGHGEmissions(value);
     calculateTotalEmissions(value, 'baselineEmissionReductions', 'totalBaselineEmissionReductions');
     calculateTotalEmissions(value, 'projectEmissionReductions', 'totalProjectEmissionReductions');
@@ -192,7 +191,6 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
       })(),
     };
 
-    console.log('----------tempValues-----------', tempValues);
     handleValuesUpdate({ quantificationOfGHG: tempValues });
   };
 
@@ -244,39 +242,6 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                   disabled={disableFields}
                 />
               </Form.Item>
-
-              {/* Equation */}
-              {/* <div className="equation-container">
-                <p className="equation">
-                  <i>
-                    BE<sub>y</sub> = EG<sub>y</sub> x EF<sub>y</sub>
-                  </i>
-                </p>
-
-                <div className="equation-description">
-                  <p className="mg-top-1">where</p>
-
-                  <span>
-                    EG<sub>y</sub>= Quantity of net electricity supplied to the grid as a result of
-                    the implementation of the Clean Development Mechanism (CDM) project activity in
-                    year y (MWh).
-                  </span>
-                  <br />
-
-                  <span>
-                    EF<sub>y</sub> = Combined margin CO<sub>2</sub> Emission factor of the grid
-                    connected power generation in the year y calculated using the latest version of
-                    the “Tool to calculate the emission factor for an electricity system” (tCO
-                    <sub>2</sub>e/ MWh)
-                  </span>
-                  <br />
-
-                  <span>
-                    BE<sub>y</sub>= Baseline Emissions in year y (tCO<sub>2</sub>e)
-                  </span>
-                  <br />
-                </div>
-              </div> */}
               <Form.Item
                 className='className="full-width-form-item'
                 label={`6.2 ${t('CMAForm:projectEmissions')}`}

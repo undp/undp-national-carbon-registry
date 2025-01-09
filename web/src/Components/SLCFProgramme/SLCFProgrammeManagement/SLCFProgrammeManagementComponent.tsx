@@ -14,42 +14,33 @@ import {
   Tag,
   Tooltip,
 } from 'antd';
-import React, { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './SLCFProgrammeManagementComponent.scss';
 import '../../../Styles/common.table.scss';
 import { UserTableDataType } from '../../../Definitions/Definitions/userManagement.definitions';
 import { TooltipColor } from '../../../Styles/role.color.constants';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import {
-  addCommSep,
   addSpaces,
   getCompanyBgColor,
   getCreditTypeName,
   getCreditTypeTagType,
   getProjectProposalStage,
   getProjectProposalStageEnumVal,
-  getStageEnumVal,
-  getStageTagType,
-  getStageTagTypeMRV,
-  sumArray,
 } from '../../../Definitions/Definitions/programme.definitions';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ProgrammeManagementSlColumns } from '../../../Definitions/Enums/programme.management.sl.columns.enum';
-import { Action } from '../../../Definitions/Enums/action.enum';
-import { DownloadOutlined, PlusOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { PlusOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import * as Icon from 'react-bootstrap-icons';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import {
   getProjectCategory,
-  ProgrammeStageMRV,
-  ProgrammeStageR,
   ProgrammeStatus,
   ProjectProposalStage,
 } from '../../../Definitions/Enums/programmeStage.enum';
 import { ProfileIcon } from '../../IconComponents/ProfileIcon/profile.icon';
-import { ProgrammeEntity } from '../../../Definitions/Entities/programme';
 import { CreditTypeSl } from '../../../Definitions/Enums/creditTypeSl.enum';
 import { Role } from '../../../Definitions/Enums/role.enum';
 
@@ -213,7 +204,6 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       sorter: true,
       align: 'center' as const,
       render: (item: any) => {
-        // return <span>{t(`projectList:${item}`)}</span>;
         return (
           <Tag color={getProjectProposalStage(item as ProjectProposalStage)}>
             {t(`projectList:${getProjectProposalStageEnumVal(item as string)}`)}
@@ -302,16 +292,6 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       });
     }
 
-    // if (ministryLevelFilter) {
-    //   ministrySectoralScope?.map((secScope: any) => {
-    //     filterOr.push({
-    //       key: 'sectoralScope',
-    //       operation: '=',
-    //       value: secScope,
-    //     });
-    //   });
-    // }
-
     let sort: any;
     if (sortOrder && sortField) {
       sort = {
@@ -385,37 +365,37 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
     }
   };
 
-  const downloadProgrammeData = async () => {
-    setLoading(true);
+  // const downloadProgrammeData = async () => {
+  //   setLoading(true);
 
-    try {
-      const response: any = await post('national/programme/download', {
-        filterAnd: dataQuery.filterAnd,
-        filterOr: dataQuery.filterOr?.length > 0 ? dataQuery.filterOr : undefined,
-        sort: dataQuery.sort,
-      });
-      if (response && response.data) {
-        const url = response.data.url;
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = response.data.csvFile; // Specify the filename for the downloaded file
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a); // Clean up the created <a> element
-        window.URL.revokeObjectURL(url);
-      }
-      setLoading(false);
-    } catch (error: any) {
-      console.log('Error in exporting programmes', error);
-      message.open({
-        type: 'error',
-        content: error.message,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-      setLoading(false);
-    }
-  };
+  //   try {
+  //     const response: any = await post('national/programme/download', {
+  //       filterAnd: dataQuery.filterAnd,
+  //       filterOr: dataQuery.filterOr?.length > 0 ? dataQuery.filterOr : undefined,
+  //       sort: dataQuery.sort,
+  //     });
+  //     if (response && response.data) {
+  //       const url = response.data.url;
+  //       const a = document.createElement('a');
+  //       a.href = url;
+  //       a.download = response.data.csvFile; // Specify the filename for the downloaded file
+  //       document.body.appendChild(a);
+  //       a.click();
+  //       document.body.removeChild(a); // Clean up the created <a> element
+  //       window.URL.revokeObjectURL(url);
+  //     }
+  //     setLoading(false);
+  //   } catch (error: any) {
+  //     console.log('Error in exporting programmes', error);
+  //     message.open({
+  //       type: 'error',
+  //       content: error.message,
+  //       duration: 3,
+  //       style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+  //     });
+  //     setLoading(false);
+  //   }
+  // };
 
   const onSearch = async () => {
     setSearch(searchText);
@@ -501,44 +481,6 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
           </Col>
           <Col lg={{ span: 9 }} md={{ span: 10 }}>
             <div className="filter-section">
-              {/* <div className="search-filter">
-                <Checkbox
-                  className="label"
-                  onChange={(v) => {
-                    if (userInfoState?.companyRole === CompanyRole.MINISTRY) {
-                      if (v.target.checked) {
-                        setMinistryLevelFilter(true);
-                      } else {
-                        setMinistryLevelFilter(false);
-                      }
-                    } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER) {
-                      setDataFilter(
-                        v.target.checked
-                          ? {
-                              key: 'certifierId',
-                              operation: '=',
-                              value: userInfoState?.companyId,
-                            }
-                          : undefined
-                      );
-                    } else {
-                      setDataFilter(
-                        v.target.checked
-                          ? {
-                              key: 'companyId',
-                              operation: '=',
-                              value: userInfoState?.companyId,
-                            }
-                          : undefined
-                      );
-                    }
-                  }}
-                >
-                  {userInfoState?.companyRole === CompanyRole.MINISTRY
-                    ? t('view:ministryLevel')
-                    : t('view:seeMine')}
-                </Checkbox>
-              </div> */}
               <div className="search-bar">
                 <Search
                   onPressEnter={onSearch}
@@ -553,16 +495,6 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
                   style={{ width: 265 }}
                 />
               </div>
-              {/* <div className="download-data-btn">
-                <a onClick={downloadProgrammeData}>
-                  <DownloadOutlined
-                    style={{
-                      color: 'rgba(58, 53, 65, 0.3)',
-                      fontSize: '20px',
-                    }}
-                  />
-                </a>
-              </div> */}
             </div>
           </Col>
         </Row>
@@ -583,7 +515,6 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
                   onChange: onChange,
                 }}
                 onChange={(val: any, filter: any, sorter: any) => handleTableChange(val, sorter)}
-                // scroll={{ x: 1500 }}
                 locale={{
                   emptyText: (
                     <Empty

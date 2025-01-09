@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Col, Form, Input, Row, message, Typography, DatePicker, Upload } from 'antd';
 import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import './AddCostQuotationForm.scss';
@@ -10,7 +10,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import TextArea from 'antd/lib/input/TextArea';
 import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import { DocType } from '../../../Definitions/Enums/document.type';
-const { Text, Paragraph } = Typography;
+const { Text } = Typography;
 
 export const AddCostQuotationForm = (props: any) => {
   const { translator, programmeId } = props;
@@ -98,11 +98,6 @@ export const AddCostQuotationForm = (props: any) => {
     form.setFieldsValue(tempInialVals);
   };
 
-  // const convertFileToBase64 = async (image: any) => {
-  //   const res = await getBase64(image?.originFileObj as RcFile);
-  //   return res;
-  // };
-
   useEffect(() => {
     const getViewData = async () => {
       if (isView) {
@@ -150,10 +145,7 @@ export const AddCostQuotationForm = (props: any) => {
         base64Docs.push(temp);
       }
     }
-    // const base64Signature =
-    //   values?.signature && values?.signature[0]
-    //     ? await convertFileToBase64(values?.signature[0])
-    //     : undefined;
+
     if (values?.additionalServices && values?.additionalServices.length > 0) {
       const services = values.additionalServices;
       for (const service of services) {

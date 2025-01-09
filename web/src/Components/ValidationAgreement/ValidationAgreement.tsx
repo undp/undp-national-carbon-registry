@@ -10,7 +10,7 @@ import { isValidateFileType } from '../../Utils/DocumentValidator';
 import { DocType } from '../../Definitions/Enums/document.type';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getBase64, getFileName } from '../../Definitions/Definitions/programme.definitions';
-import { RcFile, UploadFile } from 'antd/lib/upload';
+import { RcFile } from 'antd/lib/upload';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import LabelWithTooltip from '../LabelWithTooltip/LabelWithTooltip';
 import { Loading } from '../Loading/loading';
@@ -224,7 +224,6 @@ const ValidationAgreement = (props: { translator: i18n }) => {
         climateFundWitnessSignature,
         climateFundWitnessName: values?.SLCFWitnessName,
         climateFundWitnessDesignation: values?.SLCFWitnessDesignation,
-        // witness2Label: values?.ClientWitness,
         projectParticipantWitnessSignature,
         projectParticipantWitnessName: values?.clientWitnessName,
         projectParticipantWitnessDesignation: values?.clientWitnessDesignation,
@@ -235,15 +234,9 @@ const ValidationAgreement = (props: { translator: i18n }) => {
       },
     };
 
-    // useEffect(() => {
-    //   form.setFieldValue('SLCFWitness', '');
-    // }, []);
-
     try {
       setLoading(true);
       const res = await post('national/programmeSl/createValidationAgreement', tempValues);
-
-      console.log('------------res---------', res);
       if (res?.statusText === 'SUCCESS') {
         message.open({
           type: 'success',
@@ -271,7 +264,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
   return (
     <div className="validation-agreement-container">
       <div className="title-container">
-        <div className="main">Validation Service Agreement</div>
+        <div className="main">{t('validationAgreement:title')}</div>
       </div>
 
       <div className="agreement-container">
@@ -283,7 +276,6 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           requiredMark={true}
           form={form}
           onFinish={(values) => {
-            console.log('------onFinish----', values);
             onFinish(values);
           }}
         >
@@ -372,42 +364,26 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           {/* section 1 start */}
           <>
             <h4 className="mg-top-1 section-title">
-              NOW THIS AGREEMENT THEREFORE WITNESSETH that the parties hereto agree as follows:{' '}
+              {t('validationAgreement:sectionTitlePart01')}
               <br />
-              1. Obligation of the Project Proponent with regard to the SLCCS Project development
-              referred to in (E).
+              {t('validationAgreement:sectionTitlePart02')}
             </h4>
 
             <div className="section-list mg-bottom-1">
               <ul>
+                <li className="mg-bottom-1">{t('validationAgreement:point1.1')}</li>
+                <li className="mg-bottom-1">{t('validationAgreement:point1.2')}</li>
                 <li className="mg-bottom-1">
-                  1.1 The Project Proponent shall provide all assistance to the Verifier to
-                  successfully complete the Verification procedure laid down in the SLCCS guideline.
-                </li>
-                <li className="mg-bottom-1">
-                  1.2 The Project Proponent shall assist the Verifier to prepare all documentation
-                  required for making the applications for verification, in accordance with the
-                  SLCCS guidelines.
-                </li>
-                <li className="mg-bottom-1">
-                  1.3 The Project Proponent shall also be responsible for providing necessary
-                  information after the signing this agreement for the Verification of project as
-                  per the SLCCS.
+                  {t('validationAgreement:point1.3')}
                   <ul className="inner-list">
-                    <li>(a) Information pertaining to locations of the projects.</li>
-                    <li>(b) Details of technology adopted for the project </li>
-                    <li>(c) Details of project developer and project collaborators.</li>
-                    <li>
-                      (d) Information used to calculate project emission and emission reduction
-                      values for the project.
-                    </li>
-                    <li>(e) Feasibility Report and other documents as mentioned by the Verifier</li>
+                    <li>{t('validationAgreement:point1.3Item01')}</li>
+                    <li>{t('validationAgreement:point1.3Item02')}</li>
+                    <li>{t('validationAgreement:point1.3Item03')}</li>
+                    <li>{t('validationAgreement:point1.3Item04')}</li>
+                    <li>{t('validationAgreement:point1.3Item05')}</li>
                   </ul>
                 </li>
-                <li>
-                  1.4 The Project Proponent shall bear the costs of verification and shall make the
-                  payment for this to the Verifier as per the 3rd Paragraph of this agreement.
-                </li>
+                <li>{t('validationAgreement:point1.4')}</li>
               </ul>
             </div>
           </>
@@ -415,24 +391,16 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           <br />
           {/* section 2 start */}
           <div></div>
-          <h4 className="section-title">
-            2. Obligations of the Verifier with regard to the SLCCS projects development referred to
-            in (B).
-          </h4>
+          <h4 className="section-title">{t('validationAgreement:point2')}</h4>
 
           <div className="section-list mg-bottom-1">
             <ul>
               <li>
-                {' '}
-                2.1 In order to obtain SCERs of the project, the Verifier undertakes to perform the
-                following activities:
+                {t('validationAgreement:point2.1')}
                 <ul className="inner-list">
-                  <li>
-                    a) Undertake verification by the SLCFV/V according to SLCCS standards and
-                    guidelines
-                  </li>
-                  <li>b) Present findings of verification for SLCCS EB approval</li>
-                  <li>c) If approved, issue SCERs to the account of Project Proponent</li>
+                  <li>{t('validationAgreement:point2.1Item01')}</li>
+                  <li>{t('validationAgreement:point2.1Item02')}</li>
+                  <li>{t('validationAgreement:point2.1Item03')}</li>
                 </ul>
               </li>
             </ul>
@@ -441,11 +409,11 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           <br />
           {/* section 3 start */}
           <>
-            <h4 className="section-title">3. Settlement of Fees</h4>
+            <h4 className="section-title">{t('validationAgreement:point3')}</h4>
             <div className="section-description mg-bottom-1">
-              <p className="settlement-fee-label">3.1 Verification fee</p>
+              <p className="settlement-fee-label">{t('validationAgreement:point3.1')}</p>
               <div className="mg-left-1 settlement-fee">
-                Project Proponent shall pay LKR
+                {t('validationAgreement:point3.1Label01')}
                 <Form.Item
                   name="settlementFee"
                   className="settlement-fee-input"
@@ -472,37 +440,25 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                 >
                   <Input disabled={isView} />
                 </Form.Item>
-                as validation fee to SLCF.
+                {t('validationAgreement:point3.1Label02')}
               </div>
 
-              <p>3.2 Payment Conditions</p>
-              <p className="no-margin-p">50% of the payment on upfront </p>
-              <p className="no-margin-p">
-                50% of the payment on issuance of project registration certificate
-              </p>
+              <p>{t('validationAgreement:point3.2')}</p>
+              <p className="no-margin-p">{t('validationAgreement:point3.2Item01')}</p>
+              <p className="no-margin-p">{t('validationAgreement:point3.2Item02')}</p>
             </div>
           </>
           {/* section 3 end */}
           <br />
           {/* section 4 start */}
-          <h4 className="section-title">4. Termination of Agreement</h4>
+          <h4 className="section-title">{t('validationAgreement:point4')}</h4>
           <div className="section-list">
             <ul>
               <li>
-                4.1 Project Proponent or the Validator shall have the right at any time during the
-                period of this Agreement by giving written notice to each party to terminate this
-                Agreement forthwith in any of the following events:
+                {t('validationAgreement:point4.1')}
                 <ul className="inner-list">
-                  <li className="mg-bottom-1">
-                    i) If a party enters into liquidation whether compulsory or voluntarily,
-                    (otherwise than for the purpose of amalgamation or reconstruction) or compounds
-                    with its creditors or has a receiver appointed over all or part of its assets;
-                  </li>
-                  <li className="mg-bottom-1">
-                    ii) If a party hereto is prevented by an event of Force Majeure from performing
-                    its obligations under this Agreement, if such event cannot be remedied within a
-                    reasonable time.
-                  </li>
+                  <li className="mg-bottom-1">{t('validationAgreement:point4.1Item01')}</li>
+                  <li className="mg-bottom-1">{t('validationAgreement:point4.1Item02')}</li>
                 </ul>
               </li>
             </ul>
@@ -511,12 +467,9 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
           {/* section 5 start */}
           <>
-            <h4 className="section-title">5. Indemnity</h4>
+            <h4 className="section-title">{t('validationAgreement:point5')}</h4>
             <div className="section-description mg-bottom-1">
-              5.1 The Project Proponent and the Validator shall indemnify and save harmless each
-              other against any claim, demand or proceedings brought against any of the parties
-              hereto, arising from any action taken for the achievements of the Objectives of this
-              Agreement.
+              {t('validationAgreement:point5.1')}
             </div>
           </>
           {/* section 5 end */}
@@ -524,84 +477,52 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
           {/* section 6 start */}
           <>
-            <h4 className="section-title">6. Cooperation</h4>
+            <h4 className="section-title">{t('validationAgreement:point6')}</h4>
             <div className="section-description mg-bottom-1">
-              6.1 During the continuance of the Agreement the Project Proponent and the Validator
-              shall fully and in good faith co-operate with each other in order to perform with all
-              possible expedition all their obligations hereunder and to take all reasonable action
-              as is necessary to enable each party to fulfil its obligations under the Agreement and
-              to benefit from its terms.
+              {t('validationAgreement:point6.1')}
             </div>
           </>
           {/* section 6 end */}
           <br />
           {/* section 7 start */}
           <>
-            <h4 className="section-title">7. Entire Agreement</h4>
+            <h4 className="section-title">{t('validationAgreement:point7')}</h4>
             <div className="section-description mg-bottom-1">
-              <p>
-                7.1 This Agreement contains the whole agreement between the parties hereto and
-                supersedes all previous agreements, memorandum of understandings, letters, writings,
-                arrangements and negotiations between the parties hereto.
-              </p>
-              <p>
-                7.2 No amendment to this Agreement shall be valid unless made by a written
-                instrument made in the same manner as these presents.
-              </p>
+              <p>{t('validationAgreement:point7.1')}</p>
+              <p>{t('validationAgreement:point7.2')}</p>
             </div>
           </>
           {/* section 7 end */}
           <br />
           {/* section 8 start */}
           <>
-            <h4 className="section-title">8. Resolution of Disputes</h4>
+            <h4 className="section-title">{t('validationAgreement:point8')}</h4>
             <div className="section-description mg-bottom-1">
-              <p>
-                8.1 Any dispute or difference between the parties hereto arising out of this
-                Agreement which cannot be amicably settled shall be referred to arbitration by a
-                sole Arbitrator.
-              </p>
-              <p>
-                8.2 Any party desiring Arbitration shall write to the other party or parties to the
-                dispute, nominating an arbitrator of their choice, and notify the other party who
-                shall have the right to either agree to the arbitrator already nominated to act as a
-                sole arbitrator or nominate another arbitrator of its choice.{' '}
-              </p>
-              <p>
-                8.3 All Arbitration proceedings shall be conducted in compliance with the provision
-                of the Arbitration Act No.11 of 1995.
-              </p>
+              <p>{t('validationAgreement:point8.1')}</p>
+              <p>{t('validationAgreement:point8.2')}</p>
+              <p>{t('validationAgreement:point8.3')}</p>
             </div>
           </>
           {/* section 8 end */}
           <br />
           {/* section 9 start */}
           <>
-            <h4 className="section-title">9. Notices</h4>
+            <h4 className="section-title">{t('validationAgreement:point9')}</h4>
             <div className="section-description mg-bottom-1">
-              <p>
-                9.1 Any notice required or authorized to be given hereunder and any process to be
-                served in relation to or arising out of this agreement shall be in writing and may
-                be served personally or sent by pre-paid recorded delivery letter or facsimile
-                addressed to the address of the relevant party as specified below or to such other
-                address as either party may from time to time notify to the other in writing
-              </p>
+              <p>{t('validationAgreement:point9.1')}</p>
             </div>
           </>
           {/* section 9 end */}
           <br />
           <br />
 
-          {/* Signatures and annexures start */}
+          {/* Signatures and annexure start */}
           <div className="signatures-annexures">
-            <h4 className="section-description">
-              IN WITNESS WHEREOF, the Parties hereto have caused this Contract to be signed in their
-              respective names as of the day and year first above written.
-            </h4>
+            <h4 className="section-description">{t('validationAgreement:inWitness')}</h4>
 
             <Row justify={'space-between'} gutter={40} className="mg-top-1">
               <Col md={24} xl={10}>
-                <p className="no-margin-p">On behalf Of;</p>
+                <p className="no-margin-p">{t('validationAgreement:onBehalf')}</p>
                 <p className="no-margin-p">Sri Lanka Climate Fund (Pvt) Ltd.</p>
 
                 <div className="signature-upload">
@@ -657,7 +578,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                         icon={<UploadOutlined />}
                         disabled={isView}
                       >
-                        Upload
+                        {t('validationAgreement:upload')}
                       </Button>
                     </Upload>
                   </Form.Item>
@@ -695,10 +616,8 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                   </div>
                   <Form.Item
                     name="clientSignature"
-                    // label="Signature"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
-                    // required={true}
                     rules={[
                       {
                         required: true,
@@ -734,7 +653,6 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       listType="picture"
                       multiple={false}
                       maxCount={1}
-                      // defaultFileList={form.getFieldValue('clientSignature') || []}
                       fileList={form.getFieldValue('clientSignature') || []}
                       disabled={isView}
                     >
@@ -744,7 +662,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                         icon={<UploadOutlined />}
                         disabled={isView}
                       >
-                        Upload
+                        {t('validationAgreement:upload')}
                       </Button>
                     </Upload>
                   </Form.Item>
@@ -778,10 +696,8 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                   <LabelWithTooltip label="Signature" required={true} />
                   <Form.Item
                     name="SLCFWitnessSignature"
-                    // label="Signature"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
-                    // required={true}
                     rules={[
                       {
                         required: true,
@@ -818,7 +734,6 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       multiple={false}
                       maxCount={1}
                       disabled={isView}
-                      // defaultFileList={form.getFieldValue('SLCFWitnessSignature') || []}
                       fileList={form.getFieldValue('SLCFWitnessSignature') || []}
                     >
                       <Button
@@ -827,7 +742,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                         icon={<UploadOutlined />}
                         disabled={isView}
                       >
-                        Upload
+                        {t('validationAgreement:upload')}
                       </Button>
                     </Upload>
                   </Form.Item>
@@ -927,7 +842,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                         icon={<UploadOutlined />}
                         disabled={isView}
                       >
-                        Upload
+                        {t('validationAgreement:upload')}
                       </Button>
                     </Upload>
                   </Form.Item>
@@ -961,7 +876,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
               </Col>
             </Row>
 
-            <h4 className="annexures">Annexure A</h4>
+            <h4 className="annexures">{t('validationAgreement:annexureA')}</h4>
 
             <Form.Item
               label="Additional Comments"
@@ -1008,14 +923,12 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                   beforeUpload={(file: any) => {
                     return false;
                   }}
-                  // className="design-upload-section"
                   name="design"
                   action="/upload.do"
                   listType="picture"
                   multiple={false}
                   maxCount={1}
                   disabled={isView}
-                  // defaultFileList={form.getFieldValue('annexureAadditionalDocs') || []}
                   fileList={form.getFieldValue('annexureAadditionalDocs') || []}
                 >
                   <Button
@@ -1024,13 +937,13 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     icon={<UploadOutlined />}
                     disabled={isView}
                   >
-                    Upload
+                    {t('validationAgreement:upload')}
                   </Button>
                 </Upload>
               </Form.Item>
             </>
 
-            <h4 className="annexures">Annexure B</h4>
+            <h4 className="annexures">{t('validationAgreement:annexureB')}</h4>
 
             <Form.Item
               label="Additional Comments"
@@ -1049,7 +962,6 @@ const ValidationAgreement = (props: { translator: i18n }) => {
               <LabelWithTooltip label="Upload your additional documents here" required={true} />
               <Form.Item
                 name="annexureBadditionalDocs"
-                // label="Upload your additional documents here"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
                 required={false}
@@ -1078,14 +990,12 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                   beforeUpload={(file: any) => {
                     return false;
                   }}
-                  // className="design-upload-section"
                   name="design"
                   action="/upload.do"
                   listType="picture"
                   multiple={false}
                   maxCount={1}
                   disabled={isView}
-                  // defaultFileList={form.getFieldValue('annexureBadditionalDocs') || []}
                   fileList={form.getFieldValue('annexureBadditionalDocs') || []}
                 >
                   <Button
@@ -1094,28 +1004,28 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     icon={<UploadOutlined />}
                     disabled={isView}
                   >
-                    Upload
+                    {t('validationAgreement:upload')}
                   </Button>
                 </Upload>
               </Form.Item>
             </>
           </div>
-          {/* Signatures and annexures end */}
+          {/* Signatures and annexure end */}
 
           <Row justify={'end'} className="step-actions-end">
             {isView ? (
               <>
                 <Button danger size={'large'} onClick={navigateToDetailsPage}>
-                  Back
+                  {t('validationAgreement:back')}
                 </Button>
               </>
             ) : (
               <>
                 <Button danger size={'large'} onClick={navigateToDetailsPage}>
-                  Cancel
+                  {t('validationAgreement:cancel')}
                 </Button>
                 <Button type="primary" size={'large'} htmlType="submit">
-                  submit
+                  {t('validationAgreement:submit')}
                 </Button>
               </>
             )}

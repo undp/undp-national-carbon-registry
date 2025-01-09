@@ -25,7 +25,6 @@ const NetEmissionReduction = (props: any) => {
     let projectEmissionReductionsVal = 0;
     let leakageEmissionReductionsVal = 0;
 
-    console.log('-------cal em is running----------', index);
     if (index === undefined) {
       baselineEmissionReductionsVal = Number(form.getFieldValue('baselineEmissionReductions') || 0);
       projectEmissionReductionsVal = Number(form.getFieldValue('projectEmissionReductions') || 0);
@@ -111,7 +110,6 @@ const NetEmissionReduction = (props: any) => {
   };
 
   const calculateTotalEmissions = (value: any, category: string, categoryToAdd: string) => {
-    // let tempTotal = Number(form.getFieldValue(category) || 0);
     const listVals = form.getFieldValue('estimatedNetEmissionReductions');
     if (typeof listVals === 'undefined' || typeof listVals[0] === 'undefined') {
       return;
@@ -158,14 +156,7 @@ const NetEmissionReduction = (props: any) => {
   };
 
   const onPeriodEndChange = (value: any, fieldCounts: number) => {
-    // let totalCreditingYears = form.getFieldValue('totalNumberOfCredingYears') || 0;
-    // if (value && totalCreditingYears < fieldCounts) {
-    //   totalCreditingYears += 1;
-    // } else if (value === null && totalCreditingYears !== 0) {
-    //   totalCreditingYears -= 1;
-    // }
     form.setFieldValue('totalNumberOfCredingYears', fieldCounts);
-    // calculateAvgAnnualERs();
   };
 
   return (
@@ -233,7 +224,6 @@ const NetEmissionReduction = (props: any) => {
                             placeholder="Start Date"
                             picker="month"
                             format="YYYY MMM"
-                            // disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
                             disabled={disableFields}
                           />
                         </Form.Item>
@@ -266,10 +256,6 @@ const NetEmissionReduction = (props: any) => {
                                 const duration = moment.duration(selectedDate.diff(startDate));
 
                                 const isOneYear = Math.round(duration.asMonths()) === 12;
-
-                                // if (!isOneYear) {
-                                //   throw new Error('Duration should be a year');
-                                // }
                               },
                             },
                           ]}
@@ -562,7 +548,7 @@ const NetEmissionReduction = (props: any) => {
         {/* calc Row 1 start */}
         <Row justify={'space-between'} align={'top'}>
           <Col md={6} xl={6}>
-            Total
+            {t('common:total')}
           </Col>
           <Col md={3} xl={3} className="total-cols">
             <Form.Item
@@ -711,7 +697,7 @@ const NetEmissionReduction = (props: any) => {
         {/* calc row 2 start */}
         <Row justify={'space-between'} align={'top'}>
           <Col md={6} xl={6}>
-            Total number of crediting years
+            {t('common:totalCreditingYears')}
           </Col>
           <Col md={3} xl={3} className="total-cols">
             <Form.Item
@@ -763,7 +749,7 @@ const NetEmissionReduction = (props: any) => {
         {/* calc row 3 start */}
         <Row justify={'space-between'} align={'top'}>
           <Col md={6} xl={6}>
-            Annual average over the crediting period
+            {t('common:averageCreditingPeriod')}
           </Col>
           <Col md={3} xl={3} className="total-cols">
             <Form.Item
