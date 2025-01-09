@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { ValidationStepsProps } from './StepProps';
 import {
   Row,
@@ -13,9 +12,8 @@ import {
   Radio,
 } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { ProcessSteps } from './ValidationStepperComponent';
-import moment from 'moment';
 import { requiredValidationRule } from '../../Utils/validationHelper';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
@@ -323,11 +321,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
       dataIndex: 'noOfFAR',
       key: 'noOfFAR',
       render: (_: any, record: any, index: number) => (
-        <Form.Item
-          // name={['validationCategory', index, 'noOfFAR']}
-          name={record.noOfFAR}
-          rules={[requiredValidationRule(t)]}
-        >
+        <Form.Item name={record.noOfFAR} rules={[requiredValidationRule(t)]}>
           <InputNumber
             disabled={
               index === deskReviewValidationDataSource.length - 1 || formMode === FormMode.VIEW
@@ -343,14 +337,6 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
   ];
 
   const onFinish = async (values: any) => {
-    // const validationMethodologyFormValues: any = {
-    //   appointmentTeamMembers: values?.vmAppointmentTeamMembers,
-    //   publicReview: values?.publicReview,
-    //   onSiteInspection: values?.onSiteInspection,
-    //   backgroundInvestigation: values?.backgroundInvestigation,
-    //   resolutionsOfFindings: values?.resolutionsOfFindings,
-    // };
-
     const validationMethodologyFormValues = {
       teamMembers: values?.teamMembers,
       cmaPublicReview: values?.cmaPublicReview,
@@ -470,12 +456,6 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
               <h4 className="custom-required">
                 3.1.1 {t('validationReport:appointmentOfTeamMembers')}
               </h4>
-              {/* <Table
-                    pagination={false}
-                    dataSource={appointmentTeamMembersDataSource}
-                    columns={appointmentTeamMembersTableColumns}
-                  ></Table> */}
-
               <Row className="table-header" justify={'space-between'} gutter={[16, 4]}>
                 <Col md={4} xl={4}>
                   {t('validationReport:name')}
@@ -777,12 +757,6 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                       related to project implementation should be reviewed during the first
                       verification.
                     </p>
-                    {/* <p>{t('validationReport:definitionOfClarificationRequest2')}</p> */}
-                    {/* <ul>
-                      <li>{t('validationReport:definitionOfClarificationRequest21')}</li>
-                      <li>{t('validationReport:definitionOfClarificationRequest22')}</li>
-                    </ul>
-                    <p>{t('validationReport:definitionOfClarificationRequest3')}</p> */}
                   </Form.Item>
                 </Col>
                 <Col md={24} xl={24}>
@@ -1036,17 +1010,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                 <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  disabled={false}
-                  // onClick={() => {
-                  //   console.log(form.getFieldsValue());
-                  // }}
-                  // onClick={next}
-
-                  htmlType="submit"
-                >
+                <Button type="primary" size={'large'} disabled={false} htmlType="submit">
                   {t('validationReport:next')}
                 </Button>
               </Row>

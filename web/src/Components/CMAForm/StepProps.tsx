@@ -1,5 +1,4 @@
 import { FormInstance } from 'antd';
-import { i18n } from 'i18next';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 export interface CustomStepsProps {

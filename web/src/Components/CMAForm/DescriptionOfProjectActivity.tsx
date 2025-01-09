@@ -1,13 +1,7 @@
-import { Button, Col, DatePicker, Form, Input, Radio, Row, Select, StepProps, Upload } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { Button, Col, DatePicker, Form, Input, Radio, Row, Select, Upload } from 'antd';
+import { useEffect, useState } from 'react';
 import { CustomStepsProps } from './StepProps';
-import {
-  InfoCircleFilled,
-  InfoCircleOutlined,
-  MinusOutlined,
-  PlusOutlined,
-  UploadOutlined,
-} from '@ant-design/icons';
+import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import TextArea from 'antd/lib/input/TextArea';
 import PhoneInput, {
   formatPhoneNumber,
@@ -18,9 +12,6 @@ import PhoneInput, {
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import GetLocationMapComponent from '../Maps/GetLocationMapComponent';
 import moment from 'moment';
-import { DocType } from '../../Definitions/Enums/document.type';
-import { isValidateFileType } from '../../Utils/DocumentValidator';
-import { Telephone } from 'react-bootstrap-icons';
 import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 import { PURPOSE_CREDIT_DEVELOPMENT } from '../SLCFProgramme/AddNewProgramme/SLCFProgrammeCreationComponent';
@@ -108,7 +99,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
           },
         ],
       });
-      // const { data } = await post('national/location/city');
 
       const tempCities = data.map((cityData: any) => cityData.cityName);
       setCities((prev3) => ({ ...prev3, [index]: tempCities }));
@@ -189,7 +179,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
         contactPerson: values?.contactPerson,
         title: values?.title,
         telephone: values?.telephone,
-        // fax: values?.fax,
         address: values?.address,
       },
       otherEntities: (function () {
@@ -201,7 +190,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
           contactPerson: values?.entityContactPerson,
           role: values?.entityRoleInTheProject,
           telephone: values?.entityTelephone,
-          // fax: values?.entityFax,
           address: values?.entityAddress,
         };
 
@@ -215,7 +203,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
               title: item?.title,
               role: item?.roleInTheProject,
               telephone: item?.telephone,
-              // fax: item?.fax,
               address: item?.address,
             };
 
@@ -576,55 +563,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                             disabled
                           />
                         </Form.Item>
-
-                        {/* <Form.Item
-                          label={t('CMAForm:fax')}
-                          name="fax"
-                          rules={[
-                            {
-                              required: true,
-                              message: ``,
-                            },
-                            {
-                              validator: async (rule: any, value: any) => {
-                                if (
-                                  String(value).trim() === '' ||
-                                  String(value).trim() === undefined ||
-                                  value === null ||
-                                  value === undefined
-                                ) {
-                                  throw new Error(`${t('CMAForm:fax')} ${t('isRequired')}`);
-                                } else {
-                                  const phoneNo = formatPhoneNumber(String(value));
-                                  if (String(value).trim() !== '') {
-                                    if (
-                                      phoneNo === null ||
-                                      phoneNo === '' ||
-                                      phoneNo === undefined
-                                    ) {
-                                      throw new Error(`${t('CMAForm:fax')} ${t('isRequired')}`);
-                                    } else {
-                                      if (!isPossiblePhoneNumber(String(value))) {
-                                        throw new Error(`${t('CMAForm:fax')} ${t('isInvalid')}`);
-                                      }
-                                    }
-                                  }
-                                }
-                              },
-                            },
-                          ]}
-                        >
-                          <PhoneInput
-                            // placeholder={t('CMAForm:telephone')}
-                            international
-                            value={formatPhoneNumberIntl(contactNoInput)}
-                            defaultCountry="LK"
-                            countryCallingCodeEditable={false}
-                            onChange={(v) => {}}
-                            countries={countries as Country[]}
-                            disabled={disableFields}
-                          />
-                        </Form.Item> */}
                       </div>
                     </Col>
 
@@ -936,51 +874,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                     >
                       <TextArea rows={4} disabled={disableFields} />
                     </Form.Item>
-
-                    {/* <Form.Item
-                      label={t('CMAForm:fax')}
-                      name="entityFax"
-                      rules={[
-                        {
-                          required: true,
-                          message: ``,
-                        },
-                        {
-                          validator: async (rule: any, value: any) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(`${t('CMAForm:fax')} ${t('isRequired')}`);
-                            } else {
-                              const phoneNo = formatPhoneNumber(String(value));
-                              if (String(value).trim() !== '') {
-                                if (phoneNo === null || phoneNo === '' || phoneNo === undefined) {
-                                  throw new Error(`${t('CMAForm:fax')} ${t('isRequired')}`);
-                                } else {
-                                  if (!isPossiblePhoneNumber(String(value))) {
-                                    throw new Error(`${t('CMAForm:fax')} ${t('isInvalid')}`);
-                                  }
-                                }
-                              }
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <PhoneInput
-                        // placeholder={t('CMAForm:telephone')}
-                        international
-                        value={formatPhoneNumberIntl(contactNoInput)}
-                        defaultCountry="LK"
-                        countryCallingCodeEditable={false}
-                        onChange={(v) => {}}
-                        countries={countries as Country[]}
-                        disabled={disableFields}
-                      />
-                    </Form.Item> */}
                   </Col>
                 </Row>
 
@@ -1237,59 +1130,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                               >
                                 <TextArea rows={4} disabled={disableFields} />
                               </Form.Item>
-
-                              {/* <Form.Item
-                                label={t('CMAForm:fax')}
-                                name={[name, 'fax']}
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: ``,
-                                  },
-                                  {
-                                    validator: async (rule: any, value: any) => {
-                                      if (
-                                        String(value).trim() === '' ||
-                                        String(value).trim() === undefined ||
-                                        value === null ||
-                                        value === undefined
-                                      ) {
-                                        throw new Error(`${t('CMAForm:fax')} ${t('isRequired')}`);
-                                      } else {
-                                        const phoneNo = formatPhoneNumber(String(value));
-                                        if (String(value).trim() !== '') {
-                                          if (
-                                            phoneNo === null ||
-                                            phoneNo === '' ||
-                                            phoneNo === undefined
-                                          ) {
-                                            throw new Error(
-                                              `${t('CMAForm:fax')} ${t('isRequired')}`
-                                            );
-                                          } else {
-                                            if (!isPossiblePhoneNumber(String(value))) {
-                                              throw new Error(
-                                                `${t('CMAForm:fax')} ${t('isInvalid')}`
-                                              );
-                                            }
-                                          }
-                                        }
-                                      }
-                                    },
-                                  },
-                                ]}
-                              >
-                                <PhoneInput
-                                  // placeholder={t('CMAForm:telephone')}
-                                  international
-                                  value={formatPhoneNumberIntl(contactNoInput)}
-                                  defaultCountry="LK"
-                                  countryCallingCodeEditable={false}
-                                  onChange={(v) => {}}
-                                  countries={countries as Country[]}
-                                  disabled={disableFields}
-                                />
-                              </Form.Item> */}
                             </Col>
                           </Row>
                         </>
@@ -1595,7 +1435,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                             icon={<UploadOutlined />}
                             disabled={disableFields}
                           >
-                            Upload
+                            {t('CMAForm:upload')}
                           </Button>
                         </Upload>
                       </Form.Item>
@@ -2183,23 +2023,12 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
                   <div className="form-item-flex-row">
                     <div className="half-width-form-item">
-                      <p className="custom-required project-track">Project Track</p>
+                      <p className="custom-required project-track">{t('CMAForm:projectTrack')}</p>
                       <Input
                         size="large"
                         disabled
                         value={PURPOSE_CREDIT_DEVELOPMENT[form.getFieldValue('projectTrack')]}
                       />
-                      {/* <Form.Item
-                        label={`1.10 ${t('CMAForm:projectTrack')}`}
-                        name="projectTrack"
-                        rules={[
-                          {
-                            required: true,
-                            message: `${t('CMAForm:projectTrack')} ${t('isRequired')}`,
-                          },
-                        ]}
-                      > */}
-                      {/* </Form.Item> */}
                     </div>
 
                     <div style={{ fontSize: '12px', marginLeft: '8px', marginTop: '36px' }}>
@@ -2323,9 +2152,9 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       ]}
                     >
                       <Radio.Group className="radio-btn-flex-row" disabled={disableFields}>
-                        <Radio value="MICRO">Micro</Radio>
-                        <Radio value="SMALL">Small</Radio>
-                        <Radio value="LARGE">Large</Radio>
+                        <Radio value="MICRO">{t('CMAForm:micro')}</Radio>
+                        <Radio value="SMALL">{t('CMAForm:small')}</Radio>
+                        <Radio value="LARGE">{t('CMAForm:large')}</Radio>
                       </Radio.Group>
                     </Form.Item>
                   </Col>
@@ -2617,7 +2446,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                     icon={<UploadOutlined />}
                     disabled={disableFields}
                   >
-                    Upload
+                    {t('CMAForm:upload')}
                   </Button>
                 </Upload>
               </Form.Item>
@@ -2683,31 +2512,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
               <Form.Item
                 label={`1.15 ${t('CMAForm:complianceWithLawsRegulatory')}`}
-                // tooltip={{
-                //   title: (
-                //     <div className="tooltip">
-                //       <p>
-                //         Describe the conditions existing prior to project initiation and demonstrate
-                //         that the project has not been implemented to generate GHG emissions for the
-                //         purpose of their subsequent reduction, removal or destruction.
-                //       </p>
-                //       <p>
-                //         Where the baseline scenario is the same as the conditions existing prior to
-                //         the project initiation, there is no need to repeat the description of the
-                //         scenarios (rather, just state that this is the case and refer the reader to
-                //         Section 3.4 (Baseline Scenario)).
-                //       </p>
-                //       <p>
-                //         For AFOLU projects, include the present and prior environmental conditions
-                //         of the project area, including as appropriate information on the climate,
-                //         hydrology, topography, relevant historic conditions, soils, vegetation and
-                //         ecosystems
-                //       </p>
-                //     </div>
-                //   ),
-                //   icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                //   placement: 'topLeft',
-                // }}
                 className="full-width-form-item"
                 name="complianceWithLaws"
                 rules={[

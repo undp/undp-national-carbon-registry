@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { CustomStepsProps } from './StepProps';
 import { Button, Col, DatePicker, Form, Input, Row } from 'antd';
 import moment from 'moment';
 import validator from 'validator';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-// import { t } from 'i18next';
 import PhoneInput, {
   Country,
   formatPhoneNumber,
@@ -17,13 +15,9 @@ const ProjectDetails = (props: CustomStepsProps) => {
   const { next, form, current, t, countries, handleValuesUpdate, disableFields, prev, formMode } =
     props;
 
-  const { get, post } = useConnection();
-
   const [contactNoInput] = useState<any>();
 
   const onFinish = (values: any) => {
-    console.log('-----values---------', values);
-
     const tempValues: any = {
       projectDetails: {
         title: values?.title,
@@ -167,19 +161,6 @@ const ProjectDetails = (props: CustomStepsProps) => {
 
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
-                    {/* <Form.Item
-                      label={t('CMAForm:version')}
-                      name="version"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('CMAForm:version')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item> */}
-
                     <Form.Item
                       label={t('CMAForm:proponents')}
                       name="projectProponent"
@@ -199,7 +180,6 @@ const ProjectDetails = (props: CustomStepsProps) => {
                       rules={[
                         {
                           required: true,
-                          // message: `${t('CMAForm:telephone')} ${t('isRequired')}`,
                           message: ``,
                         },
                         {
@@ -228,7 +208,6 @@ const ProjectDetails = (props: CustomStepsProps) => {
                       ]}
                     >
                       <PhoneInput
-                        // placeholder={t('addCompany:phoneNo')}
                         international
                         value={formatPhoneNumberIntl(contactNoInput)}
                         defaultCountry="LK"

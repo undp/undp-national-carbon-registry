@@ -503,7 +503,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   };
 
   const getCarbonNeutralCertificates = async (companyId: number) => {
-    // setLoading(true);
     try {
       const response: any = await post('national/programmeSl/getCarbonNeutralCertificates', {
         companyId: companyId,
@@ -520,14 +519,10 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 4,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
-    } finally {
-      // setLoading(false);
-      // setSlcfActionModalVisible(false);
     }
   };
 
   const requestCarbonNeutralCertificate = async () => {
-    // setLoading(true);
     try {
       const response: any = await post('national/programmeSl/requestCarbonNeutralCertificate', {
         companyId: data?.companyId,
@@ -552,7 +547,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
     } finally {
-      // setLoading(false);
       setSlcfActionModalVisible(false);
     }
   };
@@ -564,11 +558,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       return false;
     }
   }
-
-  // const showSlcfActionModalOnClick = (info: PopupInfo) => {
-  //   setSlcfActionModalVisible(true);
-  //   setSlcfActionModalInfo(info);
-  // };
 
   const approveNotificationForm = async () => {
     try {
@@ -765,187 +754,187 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     return parts.join('');
   };
 
-  const getTxActivityLog = (transfers: ProgrammeTransfer[], txDetails: any) => {
-    const hist: any = {};
-    for (const transfer of transfers) {
-      txDetails[transfer.requestId!] = transfer;
-      const createdTime = Number(transfer.createdTime ? transfer.createdTime : transfer.txTime!);
-      let d: any;
-      if (!transfer.isRetirement) {
-        d = {
-          status: 'process',
-          title: t('projectDetailsView:tlInitTitle'),
-          subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
-          description: (
-            <TimelineBody
-              text={formatString('projectDetailsView:tlInitDesc', [
-                addCommSep(transfer.creditAmount),
-                creditUnit,
-                transfer.sender[0]?.name,
-                transfer.receiver[0]?.name,
-                transfer.requester[0]?.name,
-              ])}
-              remark={transfer.comment}
-              via={transfer.userName}
-              t={t}
-            />
-          ),
-          icon: (
-            <span className="step-icon transfer-step">
-              <Icon.ClockHistory />
-            </span>
-          ),
-        };
-      } else {
-        d = {
-          status: 'process',
-          title: t('projectDetailsView:tlRetInit'),
-          subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
-          description: (
-            <TimelineBody
-              text={formatString('projectDetailsView:tlRetInitDesc', [
-                addCommSep(
-                  transfer.creditAmount
-                    ? transfer.retirementType === RetireType.CROSS_BORDER
-                      ? transfer.creditAmount -
-                        Number(((transfer.omgePercentage * transfer.creditAmount) / 100).toFixed(2))
-                      : transfer.creditAmount
-                    : transfer.creditAmount
-                ),
-                creditUnit,
-                transfer.sender[0]?.name,
-                `${
-                  transfer.toCompanyMeta?.countryName
-                    ? `to ${transfer.toCompanyMeta?.countryName} `
-                    : ''
-                }`,
-                transfer.retirementType === RetireType.CROSS_BORDER
-                  ? 'cross border transfer'
-                  : transfer.retirementType === RetireType.LEGAL_ACTION
-                  ? 'legal action'
-                  : 'other',
-                transfer.retirementType === RetireType.CROSS_BORDER && transfer.omgePercentage
-                  ? formatString('projectDetailsView:t1RetInitOmgeDesc', [
-                      addCommSep(
-                        transfer.creditAmount
-                          ? ((transfer.omgePercentage * transfer.creditAmount) / 100).toFixed(2)
-                          : undefined
-                      ),
-                    ])
-                  : '',
-                transfer.requester[0]?.name,
-              ])}
-              remark={transfer.comment}
-              via={transfer.userName}
-              t={t}
-            />
-          ),
-          icon: (
-            <span className="step-icon retire-step">
-              <Icon.ClockHistory />
-            </span>
-          ),
-        };
-      }
+  // const getTxActivityLog = (transfers: ProgrammeTransfer[], txDetails: any) => {
+  //   const hist: any = {};
+  //   for (const transfer of transfers) {
+  //     txDetails[transfer.requestId!] = transfer;
+  //     const createdTime = Number(transfer.createdTime ? transfer.createdTime : transfer.txTime!);
+  //     let d: any;
+  //     if (!transfer.isRetirement) {
+  //       d = {
+  //         status: 'process',
+  //         title: t('projectDetailsView:tlInitTitle'),
+  //         subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
+  //         description: (
+  //           <TimelineBody
+  //             text={formatString('projectDetailsView:tlInitDesc', [
+  //               addCommSep(transfer.creditAmount),
+  //               creditUnit,
+  //               transfer.sender[0]?.name,
+  //               transfer.receiver[0]?.name,
+  //               transfer.requester[0]?.name,
+  //             ])}
+  //             remark={transfer.comment}
+  //             via={transfer.userName}
+  //             t={t}
+  //           />
+  //         ),
+  //         icon: (
+  //           <span className="step-icon transfer-step">
+  //             <Icon.ClockHistory />
+  //           </span>
+  //         ),
+  //       };
+  //     } else {
+  //       d = {
+  //         status: 'process',
+  //         title: t('projectDetailsView:tlRetInit'),
+  //         subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
+  //         description: (
+  //           <TimelineBody
+  //             text={formatString('projectDetailsView:tlRetInitDesc', [
+  //               addCommSep(
+  //                 transfer.creditAmount
+  //                   ? transfer.retirementType === RetireType.CROSS_BORDER
+  //                     ? transfer.creditAmount -
+  //                       Number(((transfer.omgePercentage * transfer.creditAmount) / 100).toFixed(2))
+  //                     : transfer.creditAmount
+  //                   : transfer.creditAmount
+  //               ),
+  //               creditUnit,
+  //               transfer.sender[0]?.name,
+  //               `${
+  //                 transfer.toCompanyMeta?.countryName
+  //                   ? `to ${transfer.toCompanyMeta?.countryName} `
+  //                   : ''
+  //               }`,
+  //               transfer.retirementType === RetireType.CROSS_BORDER
+  //                 ? 'cross border transfer'
+  //                 : transfer.retirementType === RetireType.LEGAL_ACTION
+  //                 ? 'legal action'
+  //                 : 'other',
+  //               transfer.retirementType === RetireType.CROSS_BORDER && transfer.omgePercentage
+  //                 ? formatString('projectDetailsView:t1RetInitOmgeDesc', [
+  //                     addCommSep(
+  //                       transfer.creditAmount
+  //                         ? ((transfer.omgePercentage * transfer.creditAmount) / 100).toFixed(2)
+  //                         : undefined
+  //                     ),
+  //                   ])
+  //                 : '',
+  //               transfer.requester[0]?.name,
+  //             ])}
+  //             remark={transfer.comment}
+  //             via={transfer.userName}
+  //             t={t}
+  //           />
+  //         ),
+  //         icon: (
+  //           <span className="step-icon retire-step">
+  //             <Icon.ClockHistory />
+  //           </span>
+  //         ),
+  //       };
+  //     }
 
-      addElement(d, createdTime, hist);
+  //     addElement(d, createdTime, hist);
 
-      if (
-        transfer.status === CreditTransferStage.Rejected ||
-        transfer.status === CreditTransferStage.NotRecognised
-      ) {
-        const dx: any = {
-          status: 'process',
-          title: t(
-            transfer.isRetirement
-              ? 'projectDetailsView:tlRetRejectTitle'
-              : 'projectDetailsView:tlRejectTitle'
-          ),
-          subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(dateTimeFormat),
-          description: (
-            <TimelineBody
-              text={formatString(
-                transfer.isRetirement
-                  ? 'projectDetailsView:tlTxRetRejectDesc'
-                  : 'projectDetailsView:tlTxRejectDesc',
-                [
-                  addCommSep(transfer.creditAmount),
-                  creditUnit,
-                  transfer.sender[0]?.name,
-                  transfer.isRetirement && transfer.toCompanyMeta?.countryName
-                    ? transfer.toCompanyMeta?.countryName
-                    : transfer.receiver[0]?.name,
-                  transfer.isRetirement ? transfer.receiver[0]?.name : transfer.sender[0]?.name,
-                ]
-              )}
-              remark={transfer.txRef?.split('#')[0]}
-              via={transfer.userName}
-              t={t}
-            />
-          ),
-          icon: (
-            <span
-              className={`step-icon ${transfer.isRetirement ? 'retire-step' : 'transfer-step'}`}
-            >
-              <Icon.XOctagon />
-            </span>
-          ),
-        };
-        addElement(dx, Number(transfer.txTime!), hist);
-      } else if (transfer.status === CreditTransferStage.Cancelled) {
-        const systemCancel = transfer.txRef && transfer.txRef.indexOf('#SUSPEND_AUTO_CANCEL#') >= 0;
-        const lowCreditSystemCancel =
-          transfer.txRef && transfer.txRef.indexOf('#LOW_CREDIT_AUTO_CANCEL#') >= 0;
+  //     if (
+  //       transfer.status === CreditTransferStage.Rejected ||
+  //       transfer.status === CreditTransferStage.NotRecognised
+  //     ) {
+  //       const dx: any = {
+  //         status: 'process',
+  //         title: t(
+  //           transfer.isRetirement
+  //             ? 'projectDetailsView:tlRetRejectTitle'
+  //             : 'projectDetailsView:tlRejectTitle'
+  //         ),
+  //         subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(dateTimeFormat),
+  //         description: (
+  //           <TimelineBody
+  //             text={formatString(
+  //               transfer.isRetirement
+  //                 ? 'projectDetailsView:tlTxRetRejectDesc'
+  //                 : 'projectDetailsView:tlTxRejectDesc',
+  //               [
+  //                 addCommSep(transfer.creditAmount),
+  //                 creditUnit,
+  //                 transfer.sender[0]?.name,
+  //                 transfer.isRetirement && transfer.toCompanyMeta?.countryName
+  //                   ? transfer.toCompanyMeta?.countryName
+  //                   : transfer.receiver[0]?.name,
+  //                 transfer.isRetirement ? transfer.receiver[0]?.name : transfer.sender[0]?.name,
+  //               ]
+  //             )}
+  //             remark={transfer.txRef?.split('#')[0]}
+  //             via={transfer.userName}
+  //             t={t}
+  //           />
+  //         ),
+  //         icon: (
+  //           <span
+  //             className={`step-icon ${transfer.isRetirement ? 'retire-step' : 'transfer-step'}`}
+  //           >
+  //             <Icon.XOctagon />
+  //           </span>
+  //         ),
+  //       };
+  //       addElement(dx, Number(transfer.txTime!), hist);
+  //     } else if (transfer.status === CreditTransferStage.Cancelled) {
+  //       const systemCancel = transfer.txRef && transfer.txRef.indexOf('#SUSPEND_AUTO_CANCEL#') >= 0;
+  //       const lowCreditSystemCancel =
+  //         transfer.txRef && transfer.txRef.indexOf('#LOW_CREDIT_AUTO_CANCEL#') >= 0;
 
-        const dx: any = {
-          status: 'process',
-          title: t(
-            transfer.isRetirement
-              ? 'projectDetailsView:tlRetCancelTitle'
-              : 'projectDetailsView:tlTxCancelTitle'
-          ),
-          subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(dateTimeFormat),
-          description: (
-            <TimelineBody
-              text={formatString(
-                systemCancel
-                  ? 'projectDetailsView:tlTxCancelSystemDesc'
-                  : lowCreditSystemCancel
-                  ? 'projectDetailsView:tlTxLowCreditCancelSystemDesc'
-                  : 'projectDetailsView:tlTxCancelDesc',
-                [
-                  addCommSep(transfer.creditAmount),
-                  creditUnit,
-                  transfer.sender[0]?.name,
-                  transfer.isRetirement && transfer.toCompanyMeta?.countryName
-                    ? transfer.toCompanyMeta.countryName
-                    : transfer.receiver[0]?.name,
-                  systemCancel
-                    ? transfer.txRef?.split('#')[4]
-                    : lowCreditSystemCancel
-                    ? ''
-                    : transfer.requester[0]?.name,
-                  transfer.txRef?.split('#')[5],
-                ]
-              )}
-              remark={transfer.txRef?.split('#')[0]}
-              via={transfer.userName}
-              t={t}
-            />
-          ),
-          icon: (
-            <span
-              className={`step-icon ${transfer.isRetirement ? 'retire-step' : 'transfer-step'}`}
-            >
-              <Icon.ExclamationOctagon />
-            </span>
-          ),
-        };
-        addElement(dx, Number(transfer.txTime!), hist);
-      }
-    }
-    return hist;
-  };
+  //       const dx: any = {
+  //         status: 'process',
+  //         title: t(
+  //           transfer.isRetirement
+  //             ? 'projectDetailsView:tlRetCancelTitle'
+  //             : 'projectDetailsView:tlTxCancelTitle'
+  //         ),
+  //         subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(dateTimeFormat),
+  //         description: (
+  //           <TimelineBody
+  //             text={formatString(
+  //               systemCancel
+  //                 ? 'projectDetailsView:tlTxCancelSystemDesc'
+  //                 : lowCreditSystemCancel
+  //                 ? 'projectDetailsView:tlTxLowCreditCancelSystemDesc'
+  //                 : 'projectDetailsView:tlTxCancelDesc',
+  //               [
+  //                 addCommSep(transfer.creditAmount),
+  //                 creditUnit,
+  //                 transfer.sender[0]?.name,
+  //                 transfer.isRetirement && transfer.toCompanyMeta?.countryName
+  //                   ? transfer.toCompanyMeta.countryName
+  //                   : transfer.receiver[0]?.name,
+  //                 systemCancel
+  //                   ? transfer.txRef?.split('#')[4]
+  //                   : lowCreditSystemCancel
+  //                   ? ''
+  //                   : transfer.requester[0]?.name,
+  //                 transfer.txRef?.split('#')[5],
+  //               ]
+  //             )}
+  //             remark={transfer.txRef?.split('#')[0]}
+  //             via={transfer.userName}
+  //             t={t}
+  //           />
+  //         ),
+  //         icon: (
+  //           <span
+  //             className={`step-icon ${transfer.isRetirement ? 'retire-step' : 'transfer-step'}`}
+  //           >
+  //             <Icon.ExclamationOctagon />
+  //           </span>
+  //         ),
+  //       };
+  //       addElement(dx, Number(transfer.txTime!), hist);
+  //     }
+  //   }
+  //   return hist;
+  // };
 
   function updatePendingTimeLineForNdc(currentHistory: any) {
     const monitoringElIndex = currentHistory.findIndex(
@@ -1468,13 +1457,13 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   //   return null;
   // };
 
-  const updateProgrammeData = (response: any) => {
-    setData(response.data);
-    state.record = response.data;
-    navigate('.', { state: { record: response.data } });
-    genCerts(response.data, certTimes);
-    genPieData(response.data);
-  };
+  // const updateProgrammeData = (response: any) => {
+  //   setData(response.data);
+  //   state.record = response.data;
+  //   navigate('.', { state: { record: response.data } });
+  //   genCerts(response.data, certTimes);
+  //   genPieData(response.data);
+  // };
 
   const getDocuments = async (programmeId: string) => {
     setNdcActionDocumentDataLoaded(false);
@@ -1516,9 +1505,9 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     }
   };
 
-  const getSuccessMsg = (response: any, initMsg: string, successMsg: string) => {
-    return response.data instanceof Array ? initMsg : successMsg;
-  };
+  // const getSuccessMsg = (response: any, initMsg: string, successMsg: string) => {
+  //   return response.data instanceof Array ? initMsg : successMsg;
+  // };
 
   const updateCreditInfo = (response: any) => {
     if (!(response.data instanceof Array) && response.data && data) {
@@ -1532,41 +1521,41 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     }
   };
 
-  const onPopupAction = async (
-    body: any,
-    endpoint: any,
-    successMsg: any,
-    httpMode: any,
-    successCB: any
-  ) => {
-    body.programmeId = data?.programmeId;
-    let error;
-    try {
-      const response: any = await httpMode(`national/programme/${endpoint}`, body);
-      if (response.statusCode < 300 || response.status < 300) {
-        if (!response.data.certifier) {
-          response.data.certifier = [];
-        }
-        setOpenModal(false);
-        setComment(undefined);
-        error = undefined;
-        successCB(response);
-        message.open({
-          type: 'success',
-          content: typeof successMsg !== 'function' ? successMsg : successMsg(response),
-          duration: 3,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-        });
-      } else {
-        error = response.message;
-      }
-      await getProgrammeHistory(data?.programmeId as string);
-      return error;
-    } catch (e: any) {
-      error = e.message;
-      return error;
-    }
-  };
+  // const onPopupAction = async (
+  //   body: any,
+  //   endpoint: any,
+  //   successMsg: any,
+  //   httpMode: any,
+  //   successCB: any
+  // ) => {
+  //   body.programmeId = data?.programmeId;
+  //   let error;
+  //   try {
+  //     const response: any = await httpMode(`national/programme/${endpoint}`, body);
+  //     if (response.statusCode < 300 || response.status < 300) {
+  //       if (!response.data.certifier) {
+  //         response.data.certifier = [];
+  //       }
+  //       setOpenModal(false);
+  //       setComment(undefined);
+  //       error = undefined;
+  //       successCB(response);
+  //       message.open({
+  //         type: 'success',
+  //         content: typeof successMsg !== 'function' ? successMsg : successMsg(response),
+  //         duration: 3,
+  //         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+  //       });
+  //     } else {
+  //       error = response.message;
+  //     }
+  //     await getProgrammeHistory(data?.programmeId as string);
+  //     return error;
+  //   } catch (e: any) {
+  //     error = e.message;
+  //     return error;
+  //   }
+  // };
 
   const onCreditRetireTransferAction = async (body: any, successMsg: any, successCB: any) => {
     body.programmeId = data?.programmeId;
@@ -1588,7 +1577,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       } else {
         error = response.message;
       }
-      // getProgrammeById('id');
       await getProgrammeHistory(data?.programmeId as string);
       return error;
     } catch (e: any) {
@@ -1757,10 +1745,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   };
 
   useEffect(() => {
-    // if (state && state.record) {
-    //   setLoadingAll(false);
-    //   setData(state.record);
-    // } else {
     if (id) {
       getProgrammeById();
     } else {
@@ -1794,27 +1778,18 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           : 0
       );
       drawMap();
-      // for (const company of data.company) {
-      //   if (
-      //     parseInt(company.state) === CompanyState.ACTIVE.valueOf() &&
-      //     company.companyId !== userInfoState?.companyId
-      //   ) {
-      //     setIsAllOwnersDeactivated(false);
-      //     break;
-      //   }
-      // }
     }
   }, [data]);
 
-  const onClickedAddAction = () => {
-    navigate('/programmeManagement/addNdcAction', { state: { record: data } });
-  };
+  // const onClickedAddAction = () => {
+  //   navigate('/programmeManagement/addNdcAction', { state: { record: data } });
+  // };
 
-  const methodologyDocumentApproved = () => {
-    if (data) {
-      getProgrammeById();
-    }
-  };
+  // const methodologyDocumentApproved = () => {
+  //   if (data) {
+  //     getProgrammeById();
+  //   }
+  // };
 
   const getVerificationHistory = async (programmeId: string) => {
     setLoadingHistory(true);
@@ -1846,14 +1821,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     try {
       const response: any = await get(`national/logs?programmeId=${programmeId}`);
       if (response && response.data) {
-        // const items = response.data.map((log: any) => ({
-        //   title: log.logType.replace(/_/g, ' '), // Convert logType to a readable title
-        //   description: log.data
-        //     ? Object.entries(log.data)
-        //         .map(([key, value]) => `${key}: ${value}`)
-        //         .join(', ')
-        //     : 'No additional details', // Handle cases where data is null
-        // }));
         setProgrammeHistoryLogData(response.data);
         setProgrammeHistoryLogDataLoaded(true);
         console.log(response);
@@ -1997,7 +1964,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             danger
             onClick={() => {
-              // rejectProposal();
               showModalOnAction({
                 actionBtnText: t('projectDetailsView:btnReject'),
                 icon: <CloseCircleOutlined />,
@@ -2087,8 +2053,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             danger
             onClick={() => {
-              // rejectValidation();
-
               showModalOnAction({
                 actionBtnText: t('projectDetailsView:btnReject'),
                 icon: <CloseCircleOutlined />,
@@ -2109,7 +2073,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             type="primary"
             onClick={() => {
-              // approveValidation();
               showModalOnAction({
                 actionBtnText: t('projectDetailsView:btnApprove'),
                 icon: <CheckCircleOutlined />,
@@ -2251,7 +2214,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                             fontSize: '110%',
                             marginRight: 5,
                           }}
-                          // onClick={() => onclick()}
                         />
                         {`Document  ${index + 1}`}
                       </a>
@@ -2562,18 +2524,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                   </div>
                 </Card>
               )}
-            {/* {data.programmeProperties.projectMaterial &&
-              data.programmeProperties.projectMaterial.length > 0 && (
-                <Card className="card-container">
-                  <div className="info-view">
-                    <div className="title">
-                      <span className="title-icon">{<Icon.FileEarmarkText />}</span>
-                      <span className="title-text">{t('projectDetailsView:projectMaterial')}</span>
-                      <div>{getFileContent(data.programmeProperties.projectMaterial)}</div>
-                    </div>
-                  </div>
-                </Card>
-              )} */}
             <Card className="card-container">
               <div>
                 <InfoView

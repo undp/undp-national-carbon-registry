@@ -1,10 +1,8 @@
-import { Button, Col, DatePicker, Form, Input, Row, Select, StepProps } from 'antd';
-import React from 'react';
+import { Button, Form, Input, Row, Select } from 'antd';
 import { CustomStepsProps } from './StepProps';
 import { t } from 'i18next';
 import TextArea from 'antd/lib/input/TextArea';
-import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import moment from 'moment';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import LabelWithTooltip, { TooltipPostion } from '../LabelWithTooltip/LabelWithTooltip';
 
 const ApplicationOfMethodology = (props: CustomStepsProps) => {
@@ -91,7 +89,6 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
       })(),
     };
 
-    console.log('---------tempVal----------', tempValues);
     handleValuesUpdate({ applicationOfMethodology: tempValues });
   };
   return (
@@ -107,7 +104,6 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                console.log('-----values---------', values);
                 onFinish(values);
                 if (next) {
                   next();
@@ -652,14 +648,11 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                     <div className="col5 data-col">
                                       <Form.Item>
                                         <Button
-                                          // type="dashed"
                                           onClick={() => {
-                                            // reduceTotalCreditingYears()
                                             remove(name);
                                           }}
                                           size="middle"
                                           className="addMinusBtn"
-                                          // block
                                           icon={<MinusOutlined />}
                                           disabled={disableFields}
                                         >
@@ -674,9 +667,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
 
                             <Form.Item>
                               <Button
-                                // type="dashed"
                                 onClick={() => {
-                                  // reduceTotalCreditingYears()
                                   add();
                                 }}
                                 size="middle"
