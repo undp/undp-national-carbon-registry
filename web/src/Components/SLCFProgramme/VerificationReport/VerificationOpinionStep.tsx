@@ -1,21 +1,11 @@
 import { useState } from 'react';
 import { Button, Col, DatePicker, Form, Input, Row, Upload } from 'antd';
-import PhoneInput, {
-  formatPhoneNumber,
-  formatPhoneNumberIntl,
-  isPossiblePhoneNumber,
-} from 'react-phone-number-input';
 
 import moment from 'moment';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import TextArea from 'antd/lib/input/TextArea';
-import { InfoCircleOutlined, UploadOutlined } from '@ant-design/icons';
-import { isValidateFileType } from '../../../Utils/DocumentValidator';
-import { DocType } from '../../../Definitions/Enums/document.type';
-import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
-import { RcFile } from 'antd/lib/upload';
+import { UploadOutlined } from '@ant-design/icons';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
-import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
 
 export const VerificationOpinionStep = (props: any) => {
   const { useLocation, translator, current, form, formMode, next, countries, prev, onValueChange } =
@@ -29,11 +19,6 @@ export const VerificationOpinionStep = (props: any) => {
     }
     return e?.fileList;
   };
-  const { post } = useConnection();
-  const [contactNoInput] = useState<any>();
-  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    : 'pk.eyJ1IjoicGFsaW5kYSIsImEiOiJjbGMyNTdqcWEwZHBoM3FxdHhlYTN4ZmF6In0.KBvFaMTjzzvoRCr1Z1dN_g';
 
   const t = translator.t;
   return (
@@ -114,54 +99,10 @@ export const VerificationOpinionStep = (props: any) => {
                         // maxCount={1}
                       >
                         <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
-                          Upload
+                          {t('verificationReport:upload')}
                         </Button>
                       </Upload>
                     </Form.Item>
-                    {/* <Form.Item
-                      label={t('verificationReport:signature')}
-                      name="signature1"
-                      valuePropName="fileList"
-                      getValueFromEvent={normFile}
-                      required={FormMode.VIEW !== formMode}
-                      rules={
-                        FormMode.VIEW === formMode
-                          ? []
-                          : [
-                              {
-                                validator: async (rule, file) => {
-                                  if (file?.length > 0) {
-                                    if (file[0]?.size > maximumImageSize) {
-                                      // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                      throw new Error(`${t('common:maxSizeVal')}`);
-                                    }
-                                  } else {
-                                    throw new Error(
-                                      `${t('verificationReport:signature')} ${t('isRequired')}`
-                                    );
-                                  }
-                                },
-                              },
-                            ]
-                      }
-                    >
-                      <Upload
-                        accept=".doc, .docx, .pdf, .png, .jpg"
-                        beforeUpload={(file: any) => {
-                          return false;
-                        }}
-                        className="design-upload-section"
-                        name="design"
-                        action="/upload.do"
-                        listType="picture"
-                        multiple={false}
-                        // maxCount={1}
-                      >
-                        <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
-                          Upload
-                        </Button>
-                      </Upload>
-                    </Form.Item> */}
                     <Form.Item
                       label={t('verificationReport:name')}
                       name="name1"
@@ -282,7 +223,7 @@ export const VerificationOpinionStep = (props: any) => {
                         // maxCount={1}
                       >
                         <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
-                          Upload
+                          {t('verificationReport:upload')}
                         </Button>
                       </Upload>
                     </Form.Item>
@@ -372,10 +313,10 @@ export const VerificationOpinionStep = (props: any) => {
 
               <Row justify={'end'} className="step-actions-end">
                 <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
-                  Back
+                  {t('verificationReport:back')}
                 </Button>
                 <Button type="primary" htmlType="submit" disabled={false}>
-                  Next
+                  {t('verificationReport:next')}
                 </Button>
               </Row>
             </Form>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Button,
   Col,
@@ -12,20 +12,12 @@ import {
   Upload,
   message,
 } from 'antd';
-import {
-  InfoCircleOutlined,
-  MinusCircleOutlined,
-  MinusOutlined,
-  PlusOutlined,
-  UploadOutlined,
-} from '@ant-design/icons';
+import { InfoCircleOutlined, MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import './SLCFProgrammeCreationComponent.scss';
 import moment from 'moment';
 import TextArea from 'antd/lib/input/TextArea';
 import { isValidateFileType } from '../../../Utils/DocumentValidator';
 import { DocType } from '../../../Definitions/Enums/document.type';
-import { MapSourceData } from '../../../Definitions/Definitions/mapComponent.definitions';
-import { MapComponent } from '../../Maps/mapComponent';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
@@ -70,7 +62,7 @@ export const PURPOSE_CREDIT_DEVELOPMENT: { [key: string]: string } = {
 };
 
 export const SLCFProgrammeCreationComponent = (props: any) => {
-  const { useLocation, onNavigateToProgrammeView, translator } = props;
+  const { translator } = props;
   const [current, setCurrent] = useState<number>(0);
   const navigate = useNavigate();
   const { post, get } = useConnection();
@@ -146,7 +138,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
           },
         ],
       });
-      // const { data } = await post('national/location/city');
 
       const tempCities = data.map((cityData: any) => cityData.cityName);
       setCities(tempCities);
@@ -181,7 +172,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
   useEffect(() => {
     getProvinces();
     getCountryList();
-    // getCities();
   }, []);
 
   const onProvinceSelect = async (value: any) => {
@@ -323,7 +313,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
               {
                 title: (
                   <div className="step-title-container">
-                    <div className="title">Project Details</div>
+                    <div className="title">{t('addProgramme:projectDetails')}</div>
                   </div>
                 ),
                 description: current === 0 && (
@@ -345,7 +335,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                               <Form.Item
                                 label={t('addProgramme:title')}
                                 name="title"
-                                // initialValue={state?.record?.name}
                                 rules={[
                                   {
                                     required: true,
@@ -811,18 +800,6 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                         if (!value) {
                                           return Promise.resolve();
                                         }
-
-                                        // eslint-disable-next-line no-restricted-globals
-                                        // if (!Number.isInteger(Number(value))) {
-                                        //   return Promise.reject(
-                                        //     new Error(
-                                        //       `${t(
-                                        //         'addProgramme:projectCapacity'
-                                        //       )} should be an integer!`
-                                        //     )
-                                        //   );
-                                        // }
-
                                         return Promise.resolve();
                                       },
                                     },
@@ -895,7 +872,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
                                     size="large"
                                     icon={<UploadOutlined />}
                                   >
-                                    Upload
+                                    {t('addProgramme:upload')}
                                   </Button>
                                 </Upload>
                               </Form.Item>
@@ -1014,7 +991,7 @@ export const SLCFProgrammeCreationComponent = (props: any) => {
 
                         <div className="steps-actions">
                           <Button type="primary" htmlType="submit">
-                            Submit
+                            {t('addProgramme:submit')}
                           </Button>
                         </div>
                       </Form>

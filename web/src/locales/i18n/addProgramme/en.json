@@ -95,5 +95,9 @@
   "titleOfDocValue": "Initial Notification of Project Activity",
   "docTypeValue": "Form",
   "businessFunctionValue": "Registration of Project Activity",
-  "revision": "Revisions"
+  "revision": "Revisions",
+  "projectDetails": "Project Details",
+  "upload": "Upload",
+  "submit": "Submit"
+
 }
