@@ -110,11 +110,9 @@ export const AppendixStep = (props: any) => {
                 <Button onClick={prev} disabled={false}>
                   {t('verificationReport:back')}
                 </Button>
-                {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE && (
-                  <Button onClick={cancel} disabled={false}>
-                    {t('verificationReport:cancel')}
-                  </Button>
-                )}
+                <Button onClick={cancel} disabled={false}>
+                  {t('verificationReport:cancel')}
+                </Button>
                 {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
                   FormMode.VIEW !== formMode && (
                     <Button type="primary" htmlType="submit" disabled={false}>

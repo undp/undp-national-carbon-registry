@@ -497,7 +497,7 @@ export const VerificationForms: FC<VerificationFormsProps> = (props: Verificatio
                                       userInfoState,
                                       DocType.VERIFICATION_REPORT,
                                       projectProposalStage
-                                    ) && t('projectDetailsView:orgNotAuthCreate')
+                                    ) && t('projectDetailsView:orgNotAuthEdit')
                                   }
                                   overlayClassName="custom-tooltip"
                                 >
