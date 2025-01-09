@@ -39,7 +39,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
         form.setFields([
           {
             name: 'netEmissionReductions',
-            errors: [`${t('CMAForm:estimatedNetGHGEmissionShouldHavePositive')}`],
+            errors: [`${t('CMAForm:shouldHavePositive')}`],
           },
         ]);
       } else {
@@ -70,7 +70,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
           form.setFields([
             {
               name: ['extraEmissionReductions', index, 'netEmissionReductions'],
-              errors: [`${t('CMAForm:estimatedNetGHGEmissionShouldHavePositive')}`],
+              errors: [`${t('CMAForm:shouldHavePositive')}`],
             },
           ]);
         } else {
@@ -483,11 +483,12 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                 value === undefined
                               ) {
                                 throw new Error(`${t('CMAForm:required')}`);
-                              }
-
-                              // eslint-disable-next-line no-restricted-globals
-                              if (isNaN(value)) {
+                              } else if (isNaN(value)) {
                                 return Promise.reject(new Error('Should be a number'));
+                              } else if (Number(value) < 0) {
+                                return Promise.reject(
+                                  new Error(`${t('CMAForm:shouldHavePositive')}`)
+                                );
                               }
 
                               return Promise.resolve();
@@ -528,11 +529,12 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                 value === undefined
                               ) {
                                 throw new Error(`${t('CMAForm:required')}`);
-                              }
-
-                              // eslint-disable-next-line no-restricted-globals
-                              if (isNaN(value)) {
+                              } else if (isNaN(value)) {
                                 return Promise.reject(new Error('Should be a number'));
+                              } else if (Number(value) < 0) {
+                                return Promise.reject(
+                                  new Error(`${t('CMAForm:shouldHavePositive')}`)
+                                );
                               }
 
                               return Promise.resolve();
@@ -573,11 +575,12 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                 value === undefined
                               ) {
                                 throw new Error(`${t('CMAForm:required')}`);
-                              }
-
-                              // eslint-disable-next-line no-restricted-globals
-                              if (isNaN(value)) {
+                              } else if (isNaN(value)) {
                                 return Promise.reject(new Error('Should be a number'));
+                              } else if (Number(value) < 0) {
+                                return Promise.reject(
+                                  new Error(`${t('CMAForm:shouldHavePositive')}`)
+                                );
                               }
 
                               return Promise.resolve();
@@ -622,9 +625,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                 return Promise.reject(new Error('Should be a number'));
                               } else if (Number(value) < 0) {
                                 return Promise.reject(
-                                  new Error(
-                                    `${t('CMAForm:estimatedNetGHGEmissionShouldHavePositive')}`
-                                  )
+                                  new Error(`${t('CMAForm:shouldHavePositive')}`)
                                 );
                               }
 
@@ -759,11 +760,12 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                           value === undefined
                                         ) {
                                           throw new Error(`${t('CMAForm:required')}`);
-                                        }
-
-                                        // eslint-disable-next-line no-restricted-globals
-                                        if (isNaN(value)) {
+                                        } else if (isNaN(value)) {
                                           return Promise.reject(new Error('Should be a number'));
+                                        } else if (Number(value) < 0) {
+                                          return Promise.reject(
+                                            new Error(`${t('CMAForm:shouldHavePositive')}`)
+                                          );
                                         }
 
                                         return Promise.resolve();
@@ -806,11 +808,12 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                           value === undefined
                                         ) {
                                           throw new Error(`${t('CMAForm:required')}`);
-                                        }
-
-                                        // eslint-disable-next-line no-restricted-globals
-                                        if (isNaN(value)) {
+                                        } else if (isNaN(value)) {
                                           return Promise.reject(new Error('Should be a number'));
+                                        } else if (Number(value) < 0) {
+                                          return Promise.reject(
+                                            new Error(`${t('CMAForm:shouldHavePositive')}`)
+                                          );
                                         }
 
                                         return Promise.resolve();
@@ -853,11 +856,12 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                           value === undefined
                                         ) {
                                           throw new Error(`${t('CMAForm:required')}`);
-                                        }
-
-                                        // eslint-disable-next-line no-restricted-globals
-                                        if (isNaN(value)) {
+                                        } else if (isNaN(value)) {
                                           return Promise.reject(new Error('Should be a number'));
+                                        } else if (Number(value) < 0) {
+                                          return Promise.reject(
+                                            new Error(`${t('CMAForm:shouldHavePositive')}`)
+                                          );
                                         }
 
                                         return Promise.resolve();
@@ -904,11 +908,7 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                                           return Promise.reject(new Error('Should be a number'));
                                         } else if (Number(value) < 0) {
                                           return Promise.reject(
-                                            new Error(
-                                              `${t(
-                                                'CMAForm:estimatedNetGHGEmissionShouldHavePositive'
-                                              )}`
-                                            )
+                                            new Error(`${t('CMAForm:shouldHavePositive')}`)
                                           );
                                         }
 
