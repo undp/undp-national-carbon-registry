@@ -421,7 +421,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
         title: values?.projectTitle,
         proposalNo: values?.proposalNo,
         dateOfIssue: moment(values?.dateOfIssue).startOf('day').unix(),
-        revNo: values?.revNo,
+        revNo: Number(values?.revNo),
         durationOfService: values?.durationOfService,
         validityPeriodOfProposal: values?.validityPeriod,
         dateOfRevision: moment(values?.dateOfRevision).startOf('day').unix(),
@@ -735,11 +735,17 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                         ) {
                           throw new Error(`${t('projectProposal:revNo')} ${t('isRequired')}`);
                         }
+
+                        if (isNaN(value)) {
+                          return Promise.reject(new Error('Should be a number'));
+                        }
+
+                        return Promise.resolve();
                       },
                     },
                   ]}
                 >
-                  <Input size="large" disabled={disableFields} />
+                  <Input type="number" size="large" disabled={disableFields} />
                 </Form.Item>
               </div>
             </Col>
@@ -805,6 +811,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   label={t('projectProposal:dateOfRevision')}
                   name="dateOfRevision"
                   rules={[
+                    {
+                      required: true,
+                      message: '',
+                    },
                     {
                       validator: async (rule, value) => {
                         if (
@@ -1273,10 +1283,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           <div className="scope-table">
             <Row className="header">
               <Col md={12} xl={12} className="col-1">
-                Activity
+                <p style={{ fontWeight: 500, color: '#000000' }}>Activity</p>
               </Col>
               <Col md={12} xl={12} className="col-2">
-                Responsible
+                <p style={{ fontWeight: 500, color: '#000000' }}>Responsible</p>
               </Col>
             </Row>
             <Row className="data-row">
@@ -1582,7 +1592,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           {/* Scope table end */}
 
           <>
-            <h4 className="section-description-title" style={{ marginTop: '8px' }}>
+            <h4 className="section-description-title" style={{ marginTop: '8px', fontWeight: 500 }}>
               {t('projectProposal:cma')}
             </h4>
             <p className="section-description mg-bottom-1">
@@ -1593,7 +1603,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           </>
 
           <>
-            <h4 className="section-description-title">{t('projectProposal:validationoftheCMA')}</h4>
+            <h4 className="section-description-title" style={{ fontWeight: 500 }}>
+              {t('projectProposal:validationoftheCMA')}
+            </h4>
             <p className="section-description mg-bottom-1">
               Validation process would be done by Validation/Verification Team of Sri Lanka Climate
               Fund based on the CMA provided by PP or 3rd Party by reviewing required document on
@@ -1602,7 +1614,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           </>
 
           <>
-            <h4 className="section-description-title">
+            <h4 className="section-description-title" style={{ fontWeight: 500 }}>
               {t('projectProposal:projectRegistration')}
             </h4>
             <p className="section-description mg-bottom-1">
@@ -1613,7 +1625,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           </>
 
           <>
-            <h4 className="section-description-title">{t('projectProposal:monitoringReport')}</h4>
+            <h4 className="section-description-title" style={{ fontWeight: 500 }}>
+              {t('projectProposal:monitoringReport')}
+            </h4>
             <p className="section-description mg-bottom-1">
               Monitoring report is the document containing quantification of the emission reduction
               within the selected monitoring period to be submitted for verification. This document
@@ -1623,7 +1637,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           </>
 
           <>
-            <h4 className="section-description-title">{t('projectProposal:verificationOfMR')}</h4>
+            <h4 className="section-description-title" style={{ fontWeight: 500 }}>
+              {t('projectProposal:verificationOfMR')}
+            </h4>
             <p className="section-description mg-bottom-1">
               Verification process would be done by Verification Team of Sri Lanka Climate Fund
               based on the MR provided by PP or 3rd Party by reviewing required document on site and
@@ -1632,7 +1648,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           </>
 
           <>
-            <h4 className="section-description-title">{t('projectProposal:issuanceOfSCER')}</h4>
+            <h4 className="section-description-title" style={{ fontWeight: 500 }}>
+              {t('projectProposal:issuanceOfSCER')}
+            </h4>
             <p className="section-description mg-bottom-1">
               The amount of Sri Lankan Certified Emission Reduction (SCER) would be certified by
               SLCCS registry division and that amount would credited to PP.
@@ -2194,7 +2212,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input type="number" disabled={disableFields} />
+                  <Input type="number" disabled={disableFields} addonAfter={'tCO2e'} />
                 </Form.Item>
               </Col>
             </Row>
