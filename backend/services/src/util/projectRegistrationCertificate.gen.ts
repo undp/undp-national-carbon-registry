@@ -52,6 +52,9 @@ export class ProjectRegistrationCertificateGenerator {
     const startImageX = (doc.page.width - totalImageWidth) / 2;
     const startImageY = 50; // vertical position where images will be placed
 
+    doc.registerFont("Inter", "fonts/Inter-Regular.ttf");
+    doc.registerFont("Inter-Bold", "fonts/Inter-Bold.ttf");
+
     // Draw each image
     doc.image("images/sri-lanka-emblem.png", startImageX, startImageY, {
       width: image1Width,
@@ -71,8 +74,8 @@ export class ProjectRegistrationCertificateGenerator {
     // Title
     doc
       .fontSize(30)
-      .font("Helvetica-Bold")
-      .fillColor("#134e9e")
+      .font("Inter-Bold")
+      .fillColor("#1f4e79")
       .text("Project Registration Certificate", { align: "center" });
 
     if (isPreview) {
@@ -82,62 +85,62 @@ export class ProjectRegistrationCertificateGenerator {
     doc.moveDown(2).fontSize(16).fillColor("black");
 
     doc
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .fontSize(16)
-      .text("Sri Lanka Climate Fund (PVT) Ltd", 70, 180, { align: "center" });
+      .text("Sri Lanka Climate Fund (Pvt) Ltd", 70, 180, { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(14).text("registers", { align: "center" });
+    doc.font("Inter").fontSize(14).text("registers", { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica-Bold").fontSize(16).text(`${data.projectName}`, { align: "center" });
+    doc.font("Inter-Bold").fontSize(16).text(`${data.projectName}`, { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(14).text("developed by", { align: "center" });
+    doc.font("Inter").fontSize(14).text("developed by", { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(16).text(`${data.companyName}`, { align: "center" });
+    doc.font("Inter").fontSize(16).text(`${data.companyName}`, { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(14).text("under", { align: "center" });
+    doc.font("Inter").fontSize(14).text("under", { align: "center" });
 
     doc.moveDown(0.5);
 
     doc
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .fontSize(16)
-      .text(`${track} of Sri Lanka Carbon Credit Scheme`, { align: "center" });
+      .text(`${track} of Sri Lanka Carbon Crediting Scheme`, { align: "center" });
 
     doc.moveDown(0.5);
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(14)
-      .text("In accordance with the SLCCR eligibility criteria and", { align: "center" });
+      .text("In accordance with the SLCCS eligibility criteria and", { align: "center" });
 
     doc.moveDown(0.4);
 
-    doc.font("Helvetica").fontSize(14).text("approved CDM methodology", { align: "center" });
+    doc.font("Inter").fontSize(14).text("approved CDM methodology", { align: "center" });
 
     doc
       .fontSize(12)
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .text("Certificate No ", 170, 425, {
         continued: true,
       })
-      .text(`: ${data.certificateNo}`, 216, 425, {
+      .text(`: ${data.certificateNo}`, 215, 425, {
         continued: false,
       })
       .moveDown(1)
       .text("Date of registration ", 170, doc.y, {
         continued: true,
       })
-      .text(`: ${data.regDate}`, 185, doc.y, {
+      .text(`: ${data.regDate}`, 183.5, doc.y, {
         continued: false,
       })
       .moveDown(1)
@@ -151,22 +154,22 @@ export class ProjectRegistrationCertificateGenerator {
       .text("Sector ", 170, doc.y, {
         continued: true,
       })
-      .text(`: ${data.sector}`, 257, doc.y, {
+      .text(`: ${data.sector}`, 257.5, doc.y, {
         continued: false,
       })
       .moveDown(1)
       .text("Methodology ", 170, doc.y, {
         continued: true,
       })
-      .text(`: AMS I.D Version 18.0`, 220, doc.y, {
+      .text(`: AMS I.D Version 18.0`, 218.5, doc.y, {
         continued: false,
       })
       .moveDown(1);
 
     doc
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .fontSize(16)
-      .text(`Estimated Annual Emission Reductions: ${data.estimatedCredits} (tCO2eq)`, 100, doc.y);
+      .text(`Estimated Annual Emission Reductions: ${data.estimatedCredits} (tCO₂eq)`, 100, doc.y);
 
     // Chairman Signature
 
@@ -182,14 +185,14 @@ export class ProjectRegistrationCertificateGenerator {
     }
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(10)
-      .text("...............................", 130, 660, { align: "left" });
+      .text("...............................", 135, 660, { align: "left" });
 
-    doc.font("Helvetica").fontSize(10).text("Chairman", 154, 675);
+    doc.font("Inter").fontSize(10).text("Chairman", 154, 675);
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(10)
       .text("Sri Lanka Climate Fund (Pvt) Ltd.", 100, 690, { align: "left" });
 
@@ -212,19 +215,19 @@ export class ProjectRegistrationCertificateGenerator {
     }
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(10)
-      .text("...............................", 410, 660, { align: "left" });
+      .text("...............................", 415, 660, { align: "left" });
 
-    doc.font("Helvetica").fontSize(11).text("Chief Executive Officer", 400, 675);
+    doc.font("Inter").fontSize(11).text("Chief Executive Officer", 400, 675);
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(10)
       .text("Sri Lanka Climate Fund (Pvt) Ltd.", 378, 690, { align: "left" });
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(9)
       .text(
         "Sri Lanka Climate Fund (Pvt) Ltd, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.",
@@ -234,7 +237,7 @@ export class ProjectRegistrationCertificateGenerator {
       );
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(9)
       .text("Phone: 011 2053065  E-mail: info@climatefund.lk", 70, 730, { align: "center" });
 
