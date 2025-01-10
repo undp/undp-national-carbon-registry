@@ -200,7 +200,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   };
 
   const locationColors = ['#6ACDFF', '#FF923D', '#CDCDCD', '#FF8183', '#B7A4FE'];
-  console.log(JSON.stringify(userInfoState));
   const ministryLevelPermission =
     data &&
     userInfoState?.companyRole === CompanyRole.MINISTRY &&
