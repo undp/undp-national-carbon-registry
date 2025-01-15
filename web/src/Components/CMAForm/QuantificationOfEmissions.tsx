@@ -366,16 +366,16 @@ const QuantificationOfEmissions = (props: CustomStepsProps) => {
                       Year
                     </Col>
                     <Col md={3} xl={3}>
-                      Estimated baseline emissions or removals (tCO2e)
+                      Estimated Baseline Emissions Or Removals (tCO₂e)
                     </Col>
                     <Col md={3} xl={3}>
-                      Estimated project emissions or removals (tCO2e)
+                      Estimated Project Emissions Or Removals (tCO₂e)
                     </Col>
                     <Col md={3} xl={3}>
-                      Estimated leakage emissions (tCO2e)
+                      Estimated Leakage Emissions (tCO₂e)
                     </Col>
                     <Col md={3} xl={3}>
-                      Estimated net GHG emission reductions or removals (tCO2e)
+                      Estimated Net GHG Emission Reductions Or Removals (tCO₂e)
                     </Col>
                     <Col md={2} xl={2}>
                       {' '}

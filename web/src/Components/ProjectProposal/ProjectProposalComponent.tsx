@@ -1199,7 +1199,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
             >
               <TextArea
                 rows={4}
-                placeholder="Explain the Overall Project Background"
+                placeholder={`${t('projectProposal:overallProjectBackgroundPlaceHolder')}`}
                 disabled={disableFields}
               />
             </Form.Item>
@@ -2537,7 +2537,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           {/* Team members table start */}
           <>
-            <h4 className="section-title">Team members are given below:</h4>
+            <h4 className="section-title">{t('projectProposal:teamMembersGivenBelow')}:</h4>
             <div className="team-members-table">
               <Row className="header">
                 <Col md={11} xl={11} className="col-1">
@@ -3131,19 +3131,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           </Form.Item>
 
           <section className="mg-top-2" style={{ marginBottom: '48px' }}>
-            <h4 className="section-title">Document Information</h4>
+            <h4 className="section-title">{t('projectProposal:documentInfo')}</h4>
             <Row className="mg-top-1" justify={'space-between'}>
               <>
                 <Col md={4} xl={4} className="section-title">
-                  Title of document
+                  {t('projectProposal:documentTitleLabel')}
                 </Col>
                 <Col md={18} xl={18} className="section-title">
-                  Proposal
+                  {t('projectProposal:documentTitle')}
                 </Col>
               </>
               <>
                 <Col md={4} xl={4} className="mg-top-1">
-                  Document No
+                  {t('projectProposal:documentNoLabel')}
                 </Col>
                 <Col md={18} xl={18} className="mg-top-1">
                   SLCCS-PRO-FRM
@@ -3151,23 +3151,23 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               </>
               <>
                 <Col md={4} xl={4} className="mg-top-1">
-                  Document Type
+                  {t('projectProposal:documentTypeLabel')}
                 </Col>
                 <Col md={18} xl={18} className="mg-top-1">
-                  Form
+                  {t('projectProposal:documentType')}
                 </Col>
               </>
               <>
                 <Col md={4} xl={4} className="mg-top-1">
-                  Business Function
+                  {t('projectProposal:businessFunctionLabel')}
                 </Col>
                 <Col md={18} xl={18} className="mg-top-1">
-                  Clarification of the validation / verification process
+                  {t('projectProposal:businessFunction')}
                 </Col>
               </>
               <>
                 <Col md={4} xl={4} className="mg-top-1">
-                  Version
+                  {t('projectProposal:versionLabel')}
                 </Col>
                 <Col md={18} xl={18} className="mg-top-1">
                   02.1
@@ -3175,17 +3175,17 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               </>
             </Row>
 
-            <h4 className="section-title mg-top-2">Revisions</h4>
+            <h4 className="section-title mg-top-2"> {t('projectProposal:revisionLabel')}</h4>
             <Row className="mg-top-1" justify={'space-between'}>
               <>
                 <Col md={4} xl={4} className="section-title">
-                  Version
+                  {t('projectProposal:versionLabel')}
                 </Col>
                 <Col md={6} xl={6} className="section-title">
-                  Date
+                  {t('projectProposal:dateLabel')}
                 </Col>
                 <Col md={12} xl={12} className="section-title">
-                  Description
+                  {t('projectProposal:descriptionLabel')}
                 </Col>
               </>
               <>
