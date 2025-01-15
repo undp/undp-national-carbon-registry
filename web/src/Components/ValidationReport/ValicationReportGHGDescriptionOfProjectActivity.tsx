@@ -366,7 +366,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                 <Row gutter={[8, 16]}>
                   <Col span={24}>
                     <div className="custom-required">
-                      {t('validationReport:projectScopeUNFCC')}
+                      {t('validationReport:projectScopeUNFCC')} {'  '}
                       {t('validationReport:projectScopeUNFCCt2')}
                     </div>
                   </Col>

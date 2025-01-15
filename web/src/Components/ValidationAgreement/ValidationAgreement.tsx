@@ -892,7 +892,10 @@ const ValidationAgreement = (props: { translator: i18n }) => {
             </Form.Item>
 
             <>
-              <LabelWithTooltip label="Upload your additional documents here" required={true} />
+              <LabelWithTooltip
+                label={`${t('validationAgreement:uploadAdditionalDocuments')}`}
+                required={true}
+              />
               <Form.Item
                 name="annexureAadditionalDocs"
                 valuePropName="fileList"
@@ -959,7 +962,10 @@ const ValidationAgreement = (props: { translator: i18n }) => {
             </Form.Item>
 
             <>
-              <LabelWithTooltip label="Upload your additional documents here" required={true} />
+              <LabelWithTooltip
+                label={`${t('validationAgreement:uploadAdditionalDocuments')}`}
+                required={true}
+              />
               <Form.Item
                 name="annexureBadditionalDocs"
                 valuePropName="fileList"

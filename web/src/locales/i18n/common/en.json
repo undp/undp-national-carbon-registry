@@ -25,7 +25,7 @@
   "estimatedNetGHGEmissionShouldHavePositive": "should have positive value",
   "required": "Required!",
   "total": "Total",
-  "totalCreditingYears": "Total number of crediting years",
-  "averageCreditingPeriod": "Annual average over the crediting period"
+  "totalCreditingYears": "Total Number of Crediting Years",
+  "averageCreditingPeriod": "Annual Average Over the Crediting Period"
 
 }
