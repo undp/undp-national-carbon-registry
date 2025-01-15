@@ -301,12 +301,7 @@ export const ProjectDetailsStep = (props: any) => {
                             },
                           ]}
                         >
-                          <DatePicker
-                            size="large"
-                            disabledDate={(currentDate: any) =>
-                              currentDate < moment().startOf('day')
-                            }
-                          />
+                          <DatePicker size="large" />
                         </Form.Item>
                       </Col>
                       <Col xl={2} md={24}>
@@ -340,12 +335,7 @@ export const ProjectDetailsStep = (props: any) => {
                             },
                           ]}
                         >
-                          <DatePicker
-                            size="large"
-                            disabledDate={(currentDate: any) =>
-                              currentDate < moment().startOf('day')
-                            }
-                          />
+                          <DatePicker size="large" />
                         </Form.Item>
                       </Col>
                     </Row>
