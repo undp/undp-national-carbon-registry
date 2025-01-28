@@ -56,11 +56,13 @@ export class CarbonNeutralCertificateGenerator {
       height: image2Height,
     });
     doc.moveDown(2);
+    doc.registerFont("Inter", "fonts/Inter-Regular.ttf");
+    doc.registerFont("Inter-Bold", "fonts/Inter-Bold.ttf");
 
     // Title
     doc
       .fontSize(30)
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .fillColor("#134e9e")
       .text("Carbon Neutral Certificate", { align: "center" });
 
@@ -71,123 +73,123 @@ export class CarbonNeutralCertificateGenerator {
     doc.moveDown(2).fontSize(16).fillColor("black");
 
     doc
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .fontSize(14)
       .text(`Presented to: ${data.companyName}`, 70, 180, { align: "center" });
     doc.moveDown(0.5);
     doc
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .fontSize(14)
-      .text("Presented by: Zimbabwe Climate Fund (PVT) Ltd.", { align: "center" });
+      .text("Presented by: Sri Lanka Climate Fund (Pvt) Ltd.", { align: "center" });
 
     doc.moveDown(1);
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(12)
-      .text("Zimbabwe Climate Fund (PVT) Ltd. certifies that", { align: "center" });
+      .text("Sri Lanka Climate Fund (Pvt) Ltd. certifies that", { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(12).text(`${data.companyName}`, { align: "center" });
+    doc.font("Inter").fontSize(12).text(`${data.companyName}`, { align: "center" });
 
     doc.moveDown(0.5);
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(12)
-      .text(`has inset its ${data.scope} GHG Emissions of ${data.creditAmount} tCO2e`, {
+      .text(`has inset its ${data.scope} GHG Emissions of ${data.creditAmount} tCO₂e`, {
         align: "center",
       });
 
     doc.moveDown(0.5);
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(12)
-      .text(`quantified and verified for the calender year ${data.assessmentYear}`, {
+      .text(`quantified and verified for the calendar year ${data.assessmentYear}`, {
         align: "center",
       });
 
     doc.moveDown(0.5);
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(12)
       .text("Zimbabwen Certified Emission Reductions (SCER) of", { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(12).text(`${data.projectName}`, { align: "center" });
+    doc.font("Inter").fontSize(12).text(`${data.projectName}`, { align: "center" });
 
     doc.moveDown(0.5);
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(12)
       .text(`registered under Zimbabwe Carbon Crediting Scheme (SLCCS)`, { align: "center" });
 
     doc.moveDown(1);
     doc
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .fontSize(14)
       .text(`Assessment of ${data.scope} GHG Statement`, { align: "center" });
     doc.moveDown(1);
 
     doc
       .fontSize(11)
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .fillColor("green")
       .text("Scope ", 180, doc.y, {
         continued: true,
       })
-      .font("Helvetica")
+      .font("Inter")
       .text(`: ${data.scope}`, 291, doc.y, {
         continued: false,
       })
       .moveDown(0.4)
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .text("Methodology", 180, doc.y, {
         continued: true,
       })
-      .font("Helvetica")
-      .text(`: ISO 14064-1-2018`, 259, doc.y, {
+      .font("Inter")
+      .text(`: ISO 14064-1-2018`, 255.5, doc.y, {
         continued: false,
       })
       .moveDown(0.4)
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .text("Organization Boundary ", 180, doc.y, {
         continued: true,
       })
-      .text('')
-      .font("Helvetica")
+      .text("")
+      .font("Inter")
       .text(`: ${data.orgBoundary}`, 334, doc.y, {
         continued: false,
-        indent: -7
+        indent: -7,
       })
       .moveDown(0.4)
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .text("Period of Assessment ", 180, doc.y, {
         continued: true,
       })
-      .font("Helvetica")
-      .text(`: ${data.assessmentPeriod}`, 208, doc.y, {
+      .font("Inter")
+      .text(`: ${data.assessmentPeriod}`, 207, doc.y, {
         continued: false,
       })
       .moveDown(0.4)
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .text("Verified by ", 180, doc.y, {
         continued: true,
       })
-      .font("Helvetica")
-      .text(`: Zimbabwe Climate Fund (Pvt) Ltd.`, 268, doc.y, {
+      .font("Inter")
+      .text(`: Sri Lanka Climate Fund (Pvt) Ltd.`, 267, doc.y, {
         continued: false,
       })
       .moveDown(1);
 
     doc
       .fontSize(11)
-      .font("Helvetica")
+      .font("Inter")
       .fillColor("black")
       .text("Certificate No ", 200, doc.y, {
         continued: true,
@@ -199,7 +201,7 @@ export class CarbonNeutralCertificateGenerator {
       .text("Date of Issues ", 200, doc.y, {
         continued: true,
       })
-      .text(`: ${data.issueDate}`, 233, doc.y, {
+      .text(`: ${data.issueDate}`, 236, doc.y, {
         continued: false,
       })
       .moveDown(1);
@@ -217,14 +219,14 @@ export class CarbonNeutralCertificateGenerator {
     }
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(10)
-      .text("...............................", 130, 660, { align: "left" });
+      .text("...............................", 135, 660, { align: "left" });
 
-    doc.font("Helvetica").fontSize(10).text("Chairman", 154, 675);
+    doc.font("Inter").fontSize(10).text("Chairman", 154, 675);
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(10)
       .text("Zimbabwe Climate Fund (Pvt) Ltd.", 100, 690, { align: "left" });
 
@@ -248,19 +250,19 @@ export class CarbonNeutralCertificateGenerator {
     }
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(10)
-      .text("...............................", 410, 660, { align: "left" });
+      .text("...............................", 415, 660, { align: "left" });
 
-    doc.font("Helvetica").fontSize(11).text("Chief Executive Officer", 400, 675);
+    doc.font("Inter").fontSize(11).text("Chief Executive Officer", 400, 675);
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(10)
       .text("Zimbabwe Climate Fund (Pvt) Ltd.", 378, 690, { align: "left" });
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(9)
       .text(
         "Zimbabwe Climate Fund (Pvt) Ltd, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.",
@@ -270,7 +272,7 @@ export class CarbonNeutralCertificateGenerator {
       );
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(9)
       .text("Phone: 011 2053065  E-mail: info@climatefund.lk", 70, 730, { align: "center" });
 

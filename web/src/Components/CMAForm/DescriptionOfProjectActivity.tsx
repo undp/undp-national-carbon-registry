@@ -1,13 +1,7 @@
-import { Button, Col, DatePicker, Form, Input, Radio, Row, Select, StepProps, Upload } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { Button, Col, DatePicker, Form, Input, Radio, Row, Select, Upload } from 'antd';
+import { useEffect, useState } from 'react';
 import { CustomStepsProps } from './StepProps';
-import {
-  InfoCircleFilled,
-  InfoCircleOutlined,
-  MinusOutlined,
-  PlusOutlined,
-  UploadOutlined,
-} from '@ant-design/icons';
+import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import TextArea from 'antd/lib/input/TextArea';
 import PhoneInput, {
   formatPhoneNumber,
@@ -18,13 +12,11 @@ import PhoneInput, {
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import GetLocationMapComponent from '../Maps/GetLocationMapComponent';
 import moment from 'moment';
-import { DocType } from '../../Definitions/Enums/document.type';
-import { isValidateFileType } from '../../Utils/DocumentValidator';
-import { Telephone } from 'react-bootstrap-icons';
 import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
 import { PURPOSE_CREDIT_DEVELOPMENT } from '../SLCFProgramme/AddNewProgramme/SLCFProgrammeCreationComponent';
 import LabelWithTooltip, { TooltipPostion } from '../LabelWithTooltip/LabelWithTooltip';
+import { CMASectoralScope } from '../../Definitions/Enums/programmeStage.enum';
 
 const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
   const { next, prev, form, current, t, countries, handleValuesUpdate, disableFields } = props;
@@ -48,8 +40,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
   const [districts, setDistricts] = useState<{ [key: number]: string[] }>({});
   const [dsDivisions, setDsDivisions] = useState<{ [key: number]: string[] }>({});
   const [cities, setCities] = useState<{ [key: number]: string[] }>({});
-
-  const [selectedYears, setSelectedYears] = useState<any[]>([]);
 
   const getProvinces = async () => {
     try {
@@ -109,7 +99,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
           },
         ],
       });
-      // const { data } = await post('national/location/city');
 
       const tempCities = data.map((cityData: any) => cityData.cityName);
       setCities((prev3) => ({ ...prev3, [index]: tempCities }));
@@ -120,9 +109,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
   useEffect(() => {
     getProvinces();
-    // getCities();
-    // form.setFieldValue('totalCreditingYears', 1)
-    form.setFieldValue('totalEstimatedGHGERs', 0);
   }, []);
 
   const onProvinceSelect = async (value: any, index: number) => {
@@ -148,17 +134,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
     }
   };
 
-  const onEmissionsYearChange = (value: any, fieldCounts: number) => {
-    let totalCreditingYears = form.getFieldValue('totalCreditingYears') || 0;
-    if (value && totalCreditingYears < fieldCounts) {
-      totalCreditingYears += 1;
-    } else if (value === null && totalCreditingYears !== 0) {
-      totalCreditingYears -= 1;
-    }
-    form.setFieldValue('totalCreditingYears', totalCreditingYears);
-    calculateAvgAnnualERs();
-  };
-
   const onEmissionsValueChange = (value?: any) => {
     const val1 = form.getFieldValue('estimatedAnnualGHGEmissionsValue') || 0;
     const listVals = form.getFieldValue('extraGHGEmmissions');
@@ -172,17 +147,38 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
     calculateAvgAnnualERs();
   };
 
+  const handleCreditingPeriodDateChange = () => {
+    const startDate = form.getFieldValue('creditingPeriodStartDate');
+    const endDate = form.getFieldValue('creditingPeriodEndDate');
+
+    if (startDate && endDate) {
+      const startYear = moment(startDate).year();
+      const endYear = moment(endDate).year();
+      const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
+
+      form.setFieldsValue({
+        extraGHGEmmissions: years.map((year) => ({
+          estimatedAnnualGHGEmissionsYear: moment().year(year),
+          estimatedAnnualGHGEmissionsValue: '',
+        })),
+        totalCreditingYears: years.length,
+        totalEstimatedGHGERs: 0,
+        avgAnnualERs: 0,
+      });
+      calculateAvgAnnualERs();
+    }
+  };
+
   const onFinish = async (values: any) => {
     const tempValues: any = {
       introduction: values?.introduction,
-      sectoralScopeAndProjectType: values?.sectoralScopeAndProjectType,
+      sectoralScope: values?.sectoralScope,
       projectProponent: {
         organizationName: values?.organizationName,
         email: values?.email,
         contactPerson: values?.contactPerson,
         title: values?.title,
         telephone: values?.telephone,
-        fax: values?.fax,
         address: values?.address,
       },
       otherEntities: (function () {
@@ -194,7 +190,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
           contactPerson: values?.entityContactPerson,
           role: values?.entityRoleInTheProject,
           telephone: values?.entityTelephone,
-          fax: values?.entityFax,
           address: values?.entityAddress,
         };
 
@@ -208,7 +203,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
               title: item?.title,
               role: item?.roleInTheProject,
               telephone: item?.telephone,
-              fax: item?.fax,
               address: item?.address,
             };
 
@@ -295,12 +289,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
       projectScaleType: values?.projectScale,
       estimatedAnnualGHGEmissions: (function () {
         const tempList: any = [];
-        const firstObj = {
-          year: moment(values?.estimatedAnnualGHGEmissionsYear).startOf('year').unix(),
-          ghgEmissionReduction: Number(values?.estimatedAnnualGHGEmissionsValue),
-        };
-
-        tempList.push(firstObj);
 
         if (values?.extraGHGEmmissions) {
           values?.extraGHGEmmissions.forEach((item: any) => {
@@ -432,9 +420,9 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
               </>
 
               <Form.Item
-                className="full-width-form-item"
-                label={`1.2 ${t('CMAForm:sectoralScopeProjectType')}`}
-                name="sectoralScopeAndProjectType"
+                className="half-width-form-item"
+                label={`1.2 ${t('CMAForm:sectoralScope')}`}
+                name="sectoralScope"
                 rules={[
                   {
                     required: true,
@@ -448,19 +436,19 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         value === null ||
                         value === undefined
                       ) {
-                        throw new Error(
-                          `${t('CMAForm:sectoralScopeProjectType')} ${t('isRequired')}`
-                        );
+                        throw new Error(`${t('CMAForm:sectoralScope')} ${t('isRequired')}`);
                       }
                     },
                   },
                 ]}
               >
-                <TextArea
-                  rows={4}
-                  placeholder="Provide a summary description of the project to enable an understanding of the nature  of the project and its implementation"
-                  disabled={disableFields}
-                />
+                <Select size="large" disabled={disableFields}>
+                  {Object.values(CMASectoralScope).map((sectoralScope: string, index: number) => (
+                    <Select.Option value={sectoralScope} key={sectoralScope + index}>
+                      {sectoralScope}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
 
               <>
@@ -493,7 +481,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                             },
                           ]}
                         >
-                          <Input size="large" disabled={disableFields} />
+                          <Input size="large" disabled />
                         </Form.Item>
 
                         <Form.Item
@@ -520,7 +508,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                             },
                           ]}
                         >
-                          <Input size="large" disabled={disableFields} />
+                          <Input size="large" disabled />
                         </Form.Item>
 
                         <Form.Item
@@ -572,56 +560,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                             countryCallingCodeEditable={false}
                             onChange={(v) => {}}
                             countries={countries as Country[]}
-                            disabled={disableFields}
-                          />
-                        </Form.Item>
-
-                        <Form.Item
-                          label={t('CMAForm:fax')}
-                          name="fax"
-                          rules={[
-                            {
-                              required: true,
-                              message: ``,
-                            },
-                            {
-                              validator: async (rule: any, value: any) => {
-                                if (
-                                  String(value).trim() === '' ||
-                                  String(value).trim() === undefined ||
-                                  value === null ||
-                                  value === undefined
-                                ) {
-                                  throw new Error(`${t('CMAForm:fax')} ${t('isRequired')}`);
-                                } else {
-                                  const phoneNo = formatPhoneNumber(String(value));
-                                  if (String(value).trim() !== '') {
-                                    if (
-                                      phoneNo === null ||
-                                      phoneNo === '' ||
-                                      phoneNo === undefined
-                                    ) {
-                                      throw new Error(`${t('CMAForm:fax')} ${t('isRequired')}`);
-                                    } else {
-                                      if (!isPossiblePhoneNumber(String(value))) {
-                                        throw new Error(`${t('CMAForm:fax')} ${t('isInvalid')}`);
-                                      }
-                                    }
-                                  }
-                                }
-                              },
-                            },
-                          ]}
-                        >
-                          <PhoneInput
-                            // placeholder={t('CMAForm:telephone')}
-                            international
-                            value={formatPhoneNumberIntl(contactNoInput)}
-                            defaultCountry="LK"
-                            countryCallingCodeEditable={false}
-                            onChange={(v) => {}}
-                            countries={countries as Country[]}
-                            disabled={disableFields}
+                            disabled
                           />
                         </Form.Item>
                       </div>
@@ -658,7 +597,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <Input size="large" disabled={disableFields} />
+                        <Input size="large" disabled />
                       </Form.Item>
 
                       <Form.Item
@@ -708,7 +647,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                           },
                         ]}
                       >
-                        <TextArea rows={4} disabled={disableFields} />
+                        <TextArea rows={4} disabled />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -934,51 +873,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       ]}
                     >
                       <TextArea rows={4} disabled={disableFields} />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={t('CMAForm:fax')}
-                      name="entityFax"
-                      rules={[
-                        {
-                          required: true,
-                          message: ``,
-                        },
-                        {
-                          validator: async (rule: any, value: any) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(`${t('CMAForm:fax')} ${t('isRequired')}`);
-                            } else {
-                              const phoneNo = formatPhoneNumber(String(value));
-                              if (String(value).trim() !== '') {
-                                if (phoneNo === null || phoneNo === '' || phoneNo === undefined) {
-                                  throw new Error(`${t('CMAForm:fax')} ${t('isRequired')}`);
-                                } else {
-                                  if (!isPossiblePhoneNumber(String(value))) {
-                                    throw new Error(`${t('CMAForm:fax')} ${t('isInvalid')}`);
-                                  }
-                                }
-                              }
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <PhoneInput
-                        // placeholder={t('CMAForm:telephone')}
-                        international
-                        value={formatPhoneNumberIntl(contactNoInput)}
-                        defaultCountry="LK"
-                        countryCallingCodeEditable={false}
-                        onChange={(v) => {}}
-                        countries={countries as Country[]}
-                        disabled={disableFields}
-                      />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -1235,59 +1129,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                 ]}
                               >
                                 <TextArea rows={4} disabled={disableFields} />
-                              </Form.Item>
-
-                              <Form.Item
-                                label={t('CMAForm:fax')}
-                                name={[name, 'fax']}
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: ``,
-                                  },
-                                  {
-                                    validator: async (rule: any, value: any) => {
-                                      if (
-                                        String(value).trim() === '' ||
-                                        String(value).trim() === undefined ||
-                                        value === null ||
-                                        value === undefined
-                                      ) {
-                                        throw new Error(`${t('CMAForm:fax')} ${t('isRequired')}`);
-                                      } else {
-                                        const phoneNo = formatPhoneNumber(String(value));
-                                        if (String(value).trim() !== '') {
-                                          if (
-                                            phoneNo === null ||
-                                            phoneNo === '' ||
-                                            phoneNo === undefined
-                                          ) {
-                                            throw new Error(
-                                              `${t('CMAForm:fax')} ${t('isRequired')}`
-                                            );
-                                          } else {
-                                            if (!isPossiblePhoneNumber(String(value))) {
-                                              throw new Error(
-                                                `${t('CMAForm:fax')} ${t('isInvalid')}`
-                                              );
-                                            }
-                                          }
-                                        }
-                                      }
-                                    },
-                                  },
-                                ]}
-                              >
-                                <PhoneInput
-                                  // placeholder={t('CMAForm:telephone')}
-                                  international
-                                  value={formatPhoneNumberIntl(contactNoInput)}
-                                  defaultCountry="LK"
-                                  countryCallingCodeEditable={false}
-                                  onChange={(v) => {}}
-                                  countries={countries as Country[]}
-                                  disabled={disableFields}
-                                />
                               </Form.Item>
                             </Col>
                           </Row>
@@ -1594,7 +1435,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                             icon={<UploadOutlined />}
                             disabled={disableFields}
                           >
-                            Upload
+                            {t('CMAForm:upload')}
                           </Button>
                         </Upload>
                       </Form.Item>
@@ -2182,23 +2023,12 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
                   <div className="form-item-flex-row">
                     <div className="half-width-form-item">
-                      <p className="custom-required project-track">Project Track</p>
+                      <p className="custom-required project-track">{t('CMAForm:projectTrack')}</p>
                       <Input
                         size="large"
                         disabled
                         value={PURPOSE_CREDIT_DEVELOPMENT[form.getFieldValue('projectTrack')]}
                       />
-                      {/* <Form.Item
-                        label={`1.10 ${t('CMAForm:projectTrack')}`}
-                        name="projectTrack"
-                        rules={[
-                          {
-                            required: true,
-                            message: `${t('CMAForm:projectTrack')} ${t('isRequired')}`,
-                          },
-                        ]}
-                      > */}
-                      {/* </Form.Item> */}
                     </div>
 
                     <div style={{ fontSize: '12px', marginLeft: '8px', marginTop: '36px' }}>
@@ -2248,6 +2078,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         placeholder="Start Date"
                         disabled={disableFields}
                         disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                        onChange={handleCreditingPeriodDateChange}
                       />
                     </Form.Item>
                     <p>to</p>
@@ -2281,6 +2112,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         placeholder="End Date"
                         disabled={disableFields}
                         disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                        onChange={handleCreditingPeriodDateChange}
                       />
                     </Form.Item>
                   </div>
@@ -2320,8 +2152,9 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       ]}
                     >
                       <Radio.Group className="radio-btn-flex-row" disabled={disableFields}>
-                        <Radio value="SMALL">Small</Radio>
-                        <Radio value="LARGE">Large</Radio>
+                        <Radio value="MICRO">{t('CMAForm:micro')}</Radio>
+                        <Radio value="SMALL">{t('CMAForm:small')}</Radio>
+                        <Radio value="LARGE">{t('CMAForm:large')}</Radio>
                       </Radio.Group>
                     </Form.Item>
                   </Col>
@@ -2329,69 +2162,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
                 {/* Estimated Annual GHG Emissions Years Start */}
                 <div className="annualGHGEmissions">
-                  <Row gutter={15} align={'middle'}>
-                    <Col md={6} xl={6}>
-                      <Form.Item
-                        name="estimatedAnnualGHGEmissionsYear"
-                        rules={[
-                          {
-                            required: true,
-                            message: `${t('CMAForm:required')}`,
-                          },
-                        ]}
-                      >
-                        <DatePicker
-                          size="large"
-                          picker="year"
-                          disabled={disableFields}
-                          onChange={(value) => {
-                            onEmissionsYearChange(value, 1);
-                            const year = moment(value).year();
-                            console.log('------year--------', year);
-                            setSelectedYears((prevYrs) => [...prevYrs, year]);
-                          }}
-                          disabledDate={(currYrs) => selectedYears.includes(moment(currYrs).year())}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col md={10}>
-                      <p className="list-item-title">
-                        {t('CMAForm:estimatedGHGEmissionsReductions')}
-                      </p>
-                    </Col>
-                    <Col md={4} xl={4}>
-                      <Form.Item
-                        name="estimatedAnnualGHGEmissionsValue"
-                        rules={[
-                          {
-                            required: true,
-                            message: `${t('CMAForm:required')}`,
-                          },
-                          {
-                            validator(rule, value) {
-                              if (!value) {
-                                return Promise.resolve();
-                              }
-
-                              // eslint-disable-next-line no-restricted-globals
-                              if (isNaN(value)) {
-                                return Promise.reject(new Error('Should be a number'));
-                              }
-
-                              return Promise.resolve();
-                            },
-                          },
-                        ]}
-                      >
-                        <Input
-                          size="large"
-                          onChange={(val) => onEmissionsValueChange(val)}
-                          disabled={disableFields}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-
                   <Form.List name="extraGHGEmmissions">
                     {(fields, { add, remove }) => (
                       <>
@@ -2408,20 +2178,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <DatePicker
-                                    size="large"
-                                    picker="year"
-                                    disabled={disableFields}
-                                    onChange={(value) => {
-                                      onEmissionsYearChange(value, fields.length + 1);
-                                      const year = moment(value).year();
-                                      console.log('------year--------', year);
-                                      setSelectedYears((prevYrs) => [...prevYrs, year]);
-                                    }}
-                                    disabledDate={(currYrs) =>
-                                      selectedYears.includes(moment(currYrs).year())
-                                    }
-                                  />
+                                  <DatePicker size="large" picker="year" disabled />
                                 </Form.Item>
                               </Col>
                               <Col md={10}>
@@ -2460,46 +2217,9 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   />
                                 </Form.Item>
                               </Col>
-
-                              <Col md={2} xl={2}>
-                                <Form.Item>
-                                  <Button
-                                    // type="dashed"
-                                    onClick={() => {
-                                      // reduceTotalCreditingYears()
-                                      remove(name);
-                                      onEmissionsValueChange();
-                                      onEmissionsYearChange(null, fields.length + 1);
-                                    }}
-                                    size="large"
-                                    className="addMinusBtn"
-                                    disabled={disableFields}
-                                    icon={<MinusOutlined />}
-                                  >
-                                    {/* Add Entity */}
-                                  </Button>
-                                </Form.Item>
-                              </Col>
                             </Row>
                           </>
                         ))}
-                        <div className="form-list-actions">
-                          <Form.Item>
-                            <Button
-                              // type="dashed"
-                              onClick={() => {
-                                // addTotalCreditingYears()
-                                add();
-                              }}
-                              size="large"
-                              className="addMinusBtn"
-                              disabled={disableFields}
-                              icon={<PlusOutlined />}
-                            >
-                              {/* Add Entity */}
-                            </Button>
-                          </Form.Item>
-                        </div>
                       </>
                     )}
                   </Form.List>
@@ -2726,7 +2446,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                     icon={<UploadOutlined />}
                     disabled={disableFields}
                   >
-                    Upload
+                    {t('CMAForm:upload')}
                   </Button>
                 </Upload>
               </Form.Item>
@@ -2792,31 +2512,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
               <Form.Item
                 label={`1.15 ${t('CMAForm:complianceWithLawsRegulatory')}`}
-                // tooltip={{
-                //   title: (
-                //     <div className="tooltip">
-                //       <p>
-                //         Describe the conditions existing prior to project initiation and demonstrate
-                //         that the project has not been implemented to generate GHG emissions for the
-                //         purpose of their subsequent reduction, removal or destruction.
-                //       </p>
-                //       <p>
-                //         Where the baseline scenario is the same as the conditions existing prior to
-                //         the project initiation, there is no need to repeat the description of the
-                //         scenarios (rather, just state that this is the case and refer the reader to
-                //         Section 3.4 (Baseline Scenario)).
-                //       </p>
-                //       <p>
-                //         For AFOLU projects, include the present and prior environmental conditions
-                //         of the project area, including as appropriate information on the climate,
-                //         hydrology, topography, relevant historic conditions, soils, vegetation and
-                //         ecosystems
-                //       </p>
-                //     </div>
-                //   ),
-                //   icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                //   placement: 'topLeft',
-                // }}
                 className="full-width-form-item"
                 name="complianceWithLaws"
                 rules={[

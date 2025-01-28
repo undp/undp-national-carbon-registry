@@ -4357,12 +4357,6 @@ export class ProgrammeService {
     return new DataResponseDto(HttpStatus.OK, resp);
   }
 
-  // async addMitigation(mitigation: MitigationAddDto): Promise<DataResponseDto | undefined> {
-  //   this.logger.log('Add mitigation triggered')
-  //   const resp = await this.programmeLedger.addMitigation(mitigation.externalId, mitigation.mitigation);
-  //   return new DataResponseDto(HttpStatus.OK, resp);
-  // }
-
   async downloadProgrammes(queryData: DataExportQueryDto, abilityCondition: string) {
     const queryDto = new QueryDto();
     queryDto.filterAnd = queryData.filterAnd;
@@ -4778,9 +4772,6 @@ export class ProgrammeService {
       }
     }
 
-    // if (req.type === RetireType.CROSS_BORDER && !req.toCompanyMeta.country) {
-    //     throw new HttpException("Country is required for cross border retirement", HttpStatus.BAD_REQUEST)
-    // }
     let govProfile: Company = undefined;
     if (req.type == RetireType.CROSS_BORDER) {
       govProfile = await this.companyService.findGovByCountry(
@@ -5214,11 +5205,6 @@ export class ProgrammeService {
       });
     });
 
-    // const sqlProgram = await this.findById(program.programmeId);
-    // if (sqlProgram.cadtId) {
-    //   program.cadtId = sqlProgram.cadtId;
-    //   program.blockBounds = sqlProgram.blockBounds;
-
     await this.asyncOperationsInterface.AddAction({
       actionType: AsyncActionType.CADTCreditIssue,
       actionProps: {
@@ -5418,13 +5404,6 @@ export class ProgrammeService {
         txTime: new Date().getTime(),
       }
     );
-
-    // try{
-    //   const resp = await this.cadtService.issueCredit()
-    // }
-    // catch(error){
-    //   console.log("Issued Credit Added in CAD-Trust")
-    // }
 
     return new DataResponseDto(HttpStatus.OK, programme);
   }
@@ -5804,19 +5783,6 @@ export class ProgrammeService {
           HttpStatus.BAD_REQUEST
         );
       }
-
-      // if (user.companyRole === CompanyRole.MINISTRY) {
-      //   const permission = await this.findPermissionForMinistryUser(
-      //     user,
-      //     programme.sectoralScope
-      //   );
-      //   if (!permission) {
-      //     throw new HttpException(
-      //       this.helperService.formatReqMessagesString("user.userUnAUth", []),
-      //       HttpStatus.FORBIDDEN
-      //     );
-      //   }
-      // }
 
       const resp = await this.programmeRepo.update(
         {
@@ -6327,24 +6293,6 @@ export class ProgrammeService {
     const suspendedCompanies = companyData.filter(
       (company) => company.state == CompanyState.SUSPENDED
     );
-
-    // if (receiver.state == CompanyState.SUSPENDED) {
-    //   const updated = await this.programmeLedger.freezeIssuedCredit(
-    //     programme.programmeId,
-    //     programme.creditIssued,
-    //     "##",
-    //     suspendedCompanies
-    //   );
-
-    //   if (!updated) {
-    //     return new BasicResponseDto(
-    //       HttpStatus.BAD_REQUEST,
-    //       this.helperService.formatReqMessagesString("programme.internalErrorCreditFreezing", [
-    //         programme.programmeId,
-    //       ])
-    //     );
-    //   }
-    // }
 
     return transferResult;
   }

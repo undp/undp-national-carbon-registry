@@ -30,41 +30,24 @@ export const MethodologyStep = (props: any) => {
                 <Col xl={24} md={24}>
                   <div className="step-form-left-col">
                     <div>
-                      <h4>
-                        Verification was conducted using SLCCS procedures in line with the
-                        requirements specified in the CDM Modalities and Procedures, the latest
-                        version of the CDM Validation and Verification Standard. The verification
-                        consisted of the following phases:
-                      </h4>
+                      <h4>{t('verificationReport:methodologyHeader01')}</h4>
                       <ul>
-                        <li> Appointment of team members and technical reviewers </li>
-                        <li> Publication of the monitoring report </li>
-                        <li> Verification planning </li>
-                        <li> Desk review of the monitoring report and supporting documents </li>
-                        <li> On-Site assessment </li>
-                        <li>
-                          Background investigation and follow-up interviews with personnel of the
-                          project developer and its contractors
-                        </li>
-                        <li> Draft verification reporting </li>
-                        <li>
-                          The resolution of outstanding issues and corrective actions (if any)
-                        </li>
-                        <li> Final verification reporting </li>
-                        <li> Technical review </li>
-                        <li> Final approval of the certification</li>
+                        <li>{t('verificationReport:methodologyList01Item01')}</li>
+                        <li>{t('verificationReport:methodologyList01Item02')}</li>
+                        <li>{t('verificationReport:methodologyList01Item03')}</li>
+                        <li>{t('verificationReport:methodologyList01Item04')}</li>
+                        <li>{t('verificationReport:methodologyList01Item05')}</li>
+                        <li>{t('verificationReport:methodologyList01Item06')}</li>
+                        <li>{t('verificationReport:methodologyList01Item07')}</li>
+                        <li>{t('verificationReport:methodologyList01Item08')}</li>
+                        <li>{t('verificationReport:methodologyList01Item09')}</li>
+                        <li>{t('verificationReport:methodologyList01Item10')}</li>
+                        <li>{t('verificationReport:methodologyList01Item11')}</li>
                       </ul>
-                      <h4>
-                        The verification of the emission reductions has assessed all factors and
-                        issues that constitute the basis for emission reductions from the project.
-                        These include:
-                      </h4>
+                      <h4>{t('verificationReport:methodologyHeader02')}</h4>
                       <ul>
-                        <li>
-                          Electricity generation - net export to grid and auxiliary consumptions, on
-                          a monthly basis
-                        </li>
-                        <li> Grid emission factor </li>
+                        <li>{t('verificationReport:methodologyList02Item01')}</li>
+                        <li>{t('verificationReport:methodologyList02Item02')}</li>
                       </ul>
                     </div>
                   </div>
@@ -76,15 +59,9 @@ export const MethodologyStep = (props: any) => {
                   <div className="step-form-left-col">
                     <div>
                       <h3>
-                        <b>Verification Team</b>
+                        <b>{t('verificationReport:verificationTeam')}</b>
                       </h3>
-                      <h4>
-                        On the basis of a competence analysis and individual availabilities, a
-                        verification team, consisting of one team leader, one technical expert, one
-                        team member, as well as one technical reviewer was appointed. The list of
-                        involved personnel, the tasks assigned and the qualification status are
-                        summarized in the table in Appendix
-                      </h4>
+                      <h4>{t('verificationReport:verificationTeamSubTitle')}</h4>
                     </div>
                   </div>
                 </Col>
@@ -97,7 +74,7 @@ export const MethodologyStep = (props: any) => {
                   </div>
                 </Col>
 
-                <Col xl={4} md={24}>
+                <Col xl={5} md={24}>
                   <div className="step-form-right-col">
                     <h4>{t('verificationReport:company')}</h4>
                   </div>
@@ -114,7 +91,7 @@ export const MethodologyStep = (props: any) => {
                     <h4>{t('verificationReport:taskPerformed')}</h4>
                   </div>
                 </Col>
-                <Col xl={3} md={24}></Col>
+                <Col xl={2} md={24}></Col>
               </Row>
 
               <Form.List name="verificationTeamList">
@@ -138,7 +115,7 @@ export const MethodologyStep = (props: any) => {
                               </Form.Item>
                             </div>
                           </Col>
-                          <Col xl={4} md={24}>
+                          <Col xl={5} md={24}>
                             <div className="step-form-right-col">
                               <Form.Item
                                 name={[name, 'company']}
@@ -151,7 +128,7 @@ export const MethodologyStep = (props: any) => {
                                   },
                                 ]}
                               >
-                                <Input size="large" />
+                                <Input size="large" disabled />
                               </Form.Item>
                             </div>
                           </Col>
@@ -215,7 +192,7 @@ export const MethodologyStep = (props: any) => {
                               </Form.Item>
                             </div>
                           </Col>
-                          <Col md={3} xl={3} style={{ verticalAlign: 'top' }}>
+                          <Col md={24} xl={2} style={{ verticalAlign: 'top' }}>
                             <Form.Item>
                               {fields.length > 1 && (
                                 <Button
@@ -502,47 +479,26 @@ export const MethodologyStep = (props: any) => {
                       'verificationReport:reportingOfFindings'
                     )}`}</h4>
                     <div>
-                      <h4>
-                        A Clarification Request (CL) is raised where information is insufficient,
-                        unclear or not transparent enough to establish whether the applicable SLCCS
-                        requirements have been met.
-                      </h4>
-                      <h4>A Corrective Action Request (CAR) is issued where:</h4>
+                      <h4>{t('verificationReport:reportingFindingHeader01')}</h4>
+                      <h4>{t('verificationReport:reportingFindingHeader02')}</h4>
+                      <h4></h4>
                       <ul>
-                        <li>
-                          Non-conformities with the monitoring plan or methodology are found in
-                          monitoring and reporting, or if the evidence provided to prove conformity
-                          is insufficient
-                        </li>
-                        <li>
-                          Mistakes have been made in assumptions, application of the methodology or
-                          the project documentation which will have a direct influence the project
-                          results
-                        </li>
-                        <li>
-                          The requirements deemed relevant for verification of the project with
-                          certain characteristics have not been met or
-                        </li>
-                        <li>
-                          There is a risk that the project would not be registered by the SLCCS or
-                          that emission reductions would not be able to be verified and certified.
-                        </li>
+                        <li>{t('verificationReport:reportingFindingListItem01')}</li>
+                        <li>{t('verificationReport:reportingFindingListItem02')}</li>
+                        <li>{t('verificationReport:reportingFindingListItem03')}</li>
+                        <li>{t('verificationReport:reportingFindingListItem04')}</li>
                       </ul>
-                      <h4>
-                        A Forward Action Request (FAR) is issued for actions if the monitoring and
-                        reporting require attention and/or adjustment for the next verification
-                        period
-                      </h4>
+                      <h4>{t('verificationReport:reportingFindingHeader03')}</h4>
                     </div>
                   </div>
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
                 <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
-                  Back
+                  {t('verificationReport:back')}
                 </Button>
                 <Button type="primary" htmlType="submit" disabled={false}>
-                  Next
+                  {t('verificationReport:next')}
                 </Button>
               </Row>
             </Form>

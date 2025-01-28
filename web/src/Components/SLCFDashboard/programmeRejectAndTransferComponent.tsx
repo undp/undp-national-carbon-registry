@@ -1,15 +1,9 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import { Progress, Skeleton, Tooltip } from 'antd';
-import {
-  ClockHistory,
-  HandThumbsUp,
-  XCircle,
-  Clipboard2Pulse,
-  InfoCircle,
-} from 'react-bootstrap-icons';
+import { ClockHistory, HandThumbsUp, XCircle, InfoCircle } from 'react-bootstrap-icons';
 
 export interface ProgrammeRejectAndTransferCardItemProps {
-  totalPrgrammes: number;
+  totalProgrammes: number;
   authorized: number;
   pending: number;
   rejected: number;
@@ -22,11 +16,11 @@ export interface ProgrammeRejectAndTransferCardItemProps {
 export const ProgrammeRejectAndTransferComponent: FC<ProgrammeRejectAndTransferCardItemProps> = (
   props: ProgrammeRejectAndTransferCardItemProps
 ) => {
-  const { totalPrgrammes, pending, rejected, authorized, updatedDate, loading, toolTipText, t } =
+  const { totalProgrammes, pending, rejected, authorized, updatedDate, loading, toolTipText, t } =
     props;
 
   return (
-    <div className="stastics-and-pie-card height-pie-rem">
+    <div className="statistics-and-pie-card height-pie-rem">
       {loading ? (
         <div className="margin-top-2">
           <Skeleton active />
@@ -49,18 +43,15 @@ export const ProgrammeRejectAndTransferComponent: FC<ProgrammeRejectAndTransferC
           </div>
           <div className="total-programme-details">
             <div className="details">
-              <div className="detail">Total</div>
-              <div className="value">{totalPrgrammes}</div>
-            </div>
-            <div className="icon">
-              <Clipboard2Pulse color="#16B1FF" size={80} />
+              <div className="detail">Total Projects</div>
+              <div className="value">{totalProgrammes}</div>
             </div>
           </div>
           <div className="total-programme-extra-details">
             <div className="rejected-details margin-top-1">
               <div className="icon">
                 <div className="icon-container authorized">
-                  <HandThumbsUp color="#16B1FF" size={25} />
+                  <HandThumbsUp color="rgba(22, 200, 199, 1)" size={19} />
                 </div>
               </div>
               <div className="details">
@@ -71,9 +62,9 @@ export const ProgrammeRejectAndTransferComponent: FC<ProgrammeRejectAndTransferC
                 <div className="stastic-bar">
                   <Progress
                     showInfo={false}
-                    percent={(authorized / totalPrgrammes) * 100}
+                    percent={(authorized / totalProgrammes) * 100}
                     status="active"
-                    strokeColor={{ from: '#B9E2F4', to: '#6ACDFF' }}
+                    strokeColor={{ from: 'rgba(186, 239, 239, 1)', to: 'rgba(22, 200, 199, 1)' }}
                   />
                 </div>
               </div>
@@ -83,8 +74,8 @@ export const ProgrammeRejectAndTransferComponent: FC<ProgrammeRejectAndTransferC
                 <div className="icon-container reject">
                   <XCircle
                     style={{
-                      color: '#FF4D4F',
-                      fontSize: '25px',
+                      color: 'rgba(255, 99, 97, 1)',
+                      fontSize: '19px',
                     }}
                   />
                 </div>
@@ -97,9 +88,9 @@ export const ProgrammeRejectAndTransferComponent: FC<ProgrammeRejectAndTransferC
                 <div className="stastic-bar">
                   <Progress
                     showInfo={false}
-                    percent={(rejected / totalPrgrammes) * 100}
+                    percent={(rejected / totalProgrammes) * 100}
                     status="active"
-                    strokeColor={{ from: '#FFA6A6', to: '#FF8183' }}
+                    strokeColor={{ from: 'rgba(255, 99, 97, 0.22)', to: 'rgba(255, 99, 97, 1)' }}
                   />
                 </div>
               </div>
@@ -107,7 +98,7 @@ export const ProgrammeRejectAndTransferComponent: FC<ProgrammeRejectAndTransferC
             <div className="transfered-details margin-top-1">
               <div className="icon">
                 <div className="icon-container pending">
-                  <ClockHistory color="#6c6c6c" size={25} />
+                  <ClockHistory color="rgba(72, 150, 254, 1)" size={19} />
                 </div>
               </div>
               <div className="details">
@@ -118,9 +109,13 @@ export const ProgrammeRejectAndTransferComponent: FC<ProgrammeRejectAndTransferC
                 <div className="stastic-bar">
                   <Progress
                     showInfo={false}
-                    percent={(pending / totalPrgrammes) * 100}
+                    percent={(pending / totalProgrammes) * 100}
                     status="active"
-                    strokeColor={{ from: '#F0F0F0', to: '#D8D8D8' }}
+                    strokeColor={{
+                      '0%': 'rgba(106, 205, 255, 1)', // Starting color
+                      '50%': 'rgba(90, 179, 255, 1)', // Middle color
+                      '100%': 'rgba(72, 150, 254, 1)', // Ending color
+                    }}
                   />
                 </div>
               </div>

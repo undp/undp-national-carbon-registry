@@ -39,6 +39,7 @@ export class DocumentEntity implements EntitySubject {
   @Column({
     type: "jsonb",
     array: false,
+    nullable: true,
   })
   content: string;
 

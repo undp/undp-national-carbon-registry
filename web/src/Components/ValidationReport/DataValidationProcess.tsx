@@ -481,6 +481,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                         <InputNumber
                                           className="full-width-form-item"
                                           size="large"
+                                          disabled
                                         />
                                       </Form.Item>
                                     </Col>
@@ -492,7 +493,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                         rules={requiredRule}
                                         className="full-width-form-item"
                                       >
-                                        <Input size="large" />
+                                        <Input size="large" disabled />
                                       </Form.Item>
                                     </Col>
                                     <Col md={5} xl={5}>
@@ -520,6 +521,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                             className="addMinusBtn"
                                             style={{ marginRight: 2 }}
                                             icon={<MinusOutlined />}
+                                            disabled
                                           ></Button>
                                         )}
                                         {index + 1 === employedTechnology.length && (
@@ -530,6 +532,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                             size="large"
                                             className="addMinusBtn"
                                             icon={<PlusOutlined />}
+                                            disabled
                                           ></Button>
                                         )}
                                       </div>
@@ -542,25 +545,6 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                         )}
                       </Form.List>
                     </Col>
-                    {/* <Col
-                      md={2}
-                      xl={2}
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'flex-end',
-                      }}
-                    >
-                      <Button
-                        onClick={() => {
-                          addEmployedTechnologyRow();
-                        }}
-                        size="large"
-                        className="addMinusBtn"
-                        style={{ marginBottom: 26 }}
-                        icon={<PlusOutlined />}
-                      ></Button>
-                    </Col> */}
                   </Row>
                   <Row justify={'space-between'}>
                     <Col md={24} xl={24}>
@@ -695,7 +679,6 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   >
                     <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
                   </Form.Item>
-                  {/* TODO: sss */}
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <span>{t('validationReport:gridEmissionFactorEfcmGridY')}</span>
                     <div style={{ width: '150px' }}>
@@ -740,11 +723,6 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                   </Form.Item>
                   <h4 className="custom-required">{`${t('validationReport:baselineEmission')}`}</h4>
 
-                  {/* <Table
-                      dataSource={baselineEmissionDataSource}
-                      columns={baselineEmissionTableColumns}
-                      pagination={false}
-                    ></Table> */}
                   <div className="estimated-emmissions-table-form">
                     <Row className="header" justify={'space-between'} gutter={[4, 8]}>
                       <Col md={6} xl={6}></Col>
@@ -802,7 +780,13 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                       fieldKey={[name, 'location']}
                                       rules={[requiredValidationRule(t)]}
                                     >
-                                      {<Input size="large" className="full-width-form-item" />}
+                                      {
+                                        <Input
+                                          size="large"
+                                          className="full-width-form-item"
+                                          disabled
+                                        />
+                                      }
                                     </Form.Item>
                                   </Col>
                                   <Col md={3} xl={3}>
@@ -885,6 +869,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                         className="addMinusBtn"
                                         style={{ marginRight: 2 }}
                                         icon={<MinusOutlined />}
+                                        disabled
                                       ></Button>
                                     )}
                                     {index === baselineEmissions.length - 1 && (
@@ -896,6 +881,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                                         className="addMinusBtn"
                                         // block
                                         icon={<PlusOutlined />}
+                                        disabled
                                       >
                                         {/* Add Entity */}
                                       </Button>
@@ -943,6 +929,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                     form={form}
                     t={t}
                     projectCategory={projectCategory}
+                    disableFields={true}
                   ></NetEmissionReduction>
                   {/* </Form.Item> */}
                   <Form.Item
@@ -1031,16 +1018,7 @@ const DataValidationProcess = (props: ValidationStepsProps) => {
                 <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  disabled={false}
-                  // onClick={() => {
-                  //   console.log(form.getFieldsValue());
-                  // }}
-                  // onClick={next}
-                  htmlType="submit"
-                >
+                <Button type="primary" size={'large'} disabled={false} htmlType="submit">
                   {t('validationReport:next')}
                 </Button>
               </Row>

@@ -108,6 +108,9 @@ export class ProgrammeSl implements EntitySubject {
   @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true })
   creditChange: number;
 
+  @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true })
+  creditIssued?: number;
+
   @Column("real", { nullable: true })
   creditRetired: number;
 
@@ -143,21 +146,38 @@ export class ProgrammeSl implements EntitySubject {
   @Column({ nullable: true })
   registrationCertificateUrl: string;
 
+  @Column({ nullable: true })
+  contactName: string;
+
+  @Column({ nullable: true })
+  contactEmail: string;
+
+  @Column({ nullable: true })
+  contactPhoneNo: string;
+
   @Column({ type: "bigint" })
   createdTime: number;
 
   @Column({ type: "bigint" })
   updatedTime: number;
 
-  // @BeforeInsert()
-  // async createTime() {
-  //   this.createdTime = new Date().getTime();
-  // }
+  @Column({ type: "bigint", nullable: true })
+  creditUpdatedTime?: number;
 
-  // @BeforeUpdate()
-  // async updateTime() {
-  //   this.updatedTime = new Date().getTime();
-  // }
+  @Column({ type: "bigint", nullable: true })
+  authorisedCreditUpdatedTime?: number;
+
+  @Column({ type: "bigint", nullable: true })
+  issuedCreditUpdatedTime?: number;
+
+  @Column({ type: "bigint", nullable: true })
+  transferredCreditUpdatedTime?: number;
+
+  @Column({ type: "bigint", nullable: true })
+  retiredCreditUpdatedTime?: number;
+
+  @Column({ type: "bigint", nullable: true })
+  proposalStageUpdatedTime?: number;
 
   @CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;

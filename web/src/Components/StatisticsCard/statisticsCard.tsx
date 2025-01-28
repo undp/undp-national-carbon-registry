@@ -1,7 +1,7 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import './statisticsCard.scss';
 import { Skeleton, Tooltip } from 'antd';
-import { ClockHistory, BoxArrowRight, Diamond, Gem, InfoCircle } from 'react-bootstrap-icons';
+import { InfoCircle } from 'react-bootstrap-icons';
 import { addCommSep } from '../../Definitions/Definitions/programme.definitions';
 
 export interface StatisticsCardItemProps {
@@ -34,7 +34,6 @@ export const StasticCard: FC<StatisticsCardItemProps> = (props: StatisticsCardIt
           </div>
           <div className="values-section">
             <div className="values-and-unit">
-              {/* {title.includes('credit') && <div className="unit">ITMOs</div>} */}
               <div className="value">
                 {title.includes('credit')
                   ? value === 0 || String(value) === 'NaN'

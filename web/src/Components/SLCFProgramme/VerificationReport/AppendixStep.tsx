@@ -3,7 +3,6 @@ import { Button, Col, Form, Row, Upload } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { UploadOutlined } from '@ant-design/icons';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
-import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { DocumentStatus } from '../../../Definitions/Enums/document.status';
@@ -100,7 +99,7 @@ export const AppendixStep = (props: any) => {
                         // maxCount={1}
                       >
                         <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
-                          Upload
+                          {t('verificationReport:upload')}
                         </Button>
                       </Upload>
                     </Form.Item>
@@ -108,30 +107,28 @@ export const AppendixStep = (props: any) => {
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
-                <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
-                  Back
+                <Button onClick={prev} disabled={false}>
+                  {t('verificationReport:back')}
                 </Button>
-                {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE && (
-                  <Button style={{ margin: '0 8px' }} onClick={cancel} disabled={false}>
-                    Cancel
-                  </Button>
-                )}
+                <Button onClick={cancel} disabled={false}>
+                  {t('verificationReport:cancel')}
+                </Button>
                 {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
                   FormMode.VIEW !== formMode && (
                     <Button type="primary" htmlType="submit" disabled={false}>
-                      <span>Submit</span>
+                      <span>{t('verificationReport:submit')}</span>
                     </Button>
                   )}
                 {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE &&
                   status === DocumentStatus.PENDING && (
-                    <Button type="primary" onClick={reject} disabled={false}>
-                      <span>Reject</span>
+                    <Button danger onClick={reject} disabled={false}>
+                      <span>{t('verificationReport:reject')}</span>
                     </Button>
                   )}
                 {userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE &&
                   status === DocumentStatus.PENDING && (
                     <Button type="primary" onClick={approve} disabled={false}>
-                      <span>Approve</span>
+                      <span>{t('verificationReport:approve')}</span>
                     </Button>
                   )}
               </Row>

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from "@nestjs/common";
 import { CreditRetirementRequestSlDto } from "../dto/creditRetirementRequestSl.dto";
 import { User } from "../entities/user.entity";
 import { HelperService } from "../util/helpers.service";
@@ -29,6 +29,7 @@ import { DataListResponseDto } from "../dto/data.list.response";
 import { CreditRetirementSlView } from "../entities/creditRetirementSl.view.entity";
 import { ProgrammeAuditLogSl } from "../entities/programmeAuditLogSl.entity";
 import { ProgrammeAuditLogType } from "../enum/programmeAuditLogType.enum";
+import { Cache } from "cache-manager";
 
 @Injectable()
 export class CreditRetirementSlService {
@@ -48,6 +49,7 @@ export class CreditRetirementSlService {
     private voluntarilyCancellationCertificateGenerator: VoluntarilyCancellationCertificateGenerator,
     @InjectRepository(ProgrammeAuditLogSl)
     private programmeAuditSlRepo: Repository<ProgrammeAuditLogSl>,
+    @Inject("CACHE_MANAGER") private cacheManager: Cache
   ) {}
 
   //MARK: Create Retirement
@@ -198,8 +200,15 @@ export class CreditRetirementSlService {
 
       const log = new ProgrammeAuditLogSl();
       log.programmeId = creditRetirementRequest.programmeId;
-      log.logType = creditRetirementDto.creditType === CreditType.TRACK_1 ? ProgrammeAuditLogType.TRANSFER_REQUESTED : ProgrammeAuditLogType.RETIRE_REQUESTED;
-      log.data = { creditAmount: Number(creditRetirementRequest.creditAmount), ref: creditRetirementRequest.txRef, toCompanyId: creditRetirementRequest.toCompanyId }
+      log.logType =
+        creditRetirementDto.creditType === CreditType.TRACK_1
+          ? ProgrammeAuditLogType.TRANSFER_REQUESTED
+          : ProgrammeAuditLogType.RETIRE_REQUESTED;
+      log.data = {
+        creditAmount: Number(creditRetirementRequest.creditAmount),
+        ref: creditRetirementRequest.txRef,
+        toCompanyId: creditRetirementRequest.toCompanyId,
+      };
       log.userId = user.id;
 
       await this.programmeAuditSlRepo.save(log);
@@ -219,19 +228,6 @@ export class CreditRetirementSlService {
         )
       );
 
-    // if (
-    //   query.filterBy !== null &&
-    //   query.filterBy !== undefined &&
-    //   query.filterBy.key === "ministryLevel"
-    // ) {
-    //   queryBuilder = queryBuilder.andWhere(
-    //     "programme_transfer.programmeSectoralScope IN (:...allowedScopes)",
-    //     {
-    //       allowedScopes: query.filterBy.value,
-    //     }
-    //   );
-    // }
-
     const resp = await queryBuilder
       .orderBy(
         query?.sort?.key && this.helperService.generateSortCol(query?.sort?.key),
@@ -249,12 +245,6 @@ export class CreditRetirementSlService {
     if (resp && resp.length > 0) {
       for (const e of resp[0]) {
         e.toCompany = e.toCompany.length > 0 && e.toCompany[0] === null ? [] : e.toCompany;
-
-        // if (e.toCompanyMeta && e.toCompanyMeta.country) {
-        //   e.toCompanyMeta["countryName"] = await this.countryService.getCountryName(
-        //     e.toCompanyMeta.country
-        //   );
-        // }
       }
     }
 
@@ -262,6 +252,46 @@ export class CreditRetirementSlService {
       resp.length > 0 ? resp[0] : undefined,
       resp.length > 1 ? resp[1] : undefined
     );
+  }
+
+  //MARK: get Public Retirement details
+  async queryRetirementsPublicDetails(query: QueryDto): Promise<any> {
+    const cacheKey = `programme_${JSON.stringify(query)}`;
+
+    const cachedData = await this.cacheManager.get<DataListResponseDto>(cacheKey);
+    if (cachedData) {
+      console.log('Get retirement public data from cache');
+      return cachedData; // Return cached data
+    }
+    console.log('Retirement data not in cache');
+
+    let queryBuilder = await this.retirementViewRepo
+      .createQueryBuilder("credit_retirements")
+      .where("credit_retirements.status = :status", { status: "Approved" });
+
+    const resp = await queryBuilder
+      .orderBy(
+        query?.sort?.key && this.helperService.generateSortCol(query?.sort?.key),
+        query?.sort?.order,
+        query?.sort?.nullFirst !== undefined
+          ? query?.sort?.nullFirst === true
+            ? "NULLS FIRST"
+            : "NULLS LAST"
+          : undefined
+      )
+      .offset(query.size * query.page - query.size)
+      .limit(query.size)
+      .getManyAndCount();
+
+    const result = new DataListResponseDto(
+      resp.length > 0 ? resp[0] : undefined,
+      resp.length > 1 ? resp[1] : undefined
+    );
+
+    // Cache set
+    await this.cacheManager.set(cacheKey, result); // 60 seconds TTL
+
+    return result;
   }
 
   //MARK: get Credit Amount Sum
@@ -478,8 +508,15 @@ export class CreditRetirementSlService {
 
       const log = new ProgrammeAuditLogSl();
       log.programmeId = retirementRequest.programmeId;
-      log.logType = retirementRequest.creditType === CreditType.TRACK_1 ? ProgrammeAuditLogType.TRANSFER_APPROVED : ProgrammeAuditLogType.RETIRE_APPROVED;
-      log.data = { creditAmount: Number(retirementRequest.creditAmount), ref: retirementRequest.txRef, toCompanyId: retirementRequest.toCompanyId }
+      log.logType =
+        retirementRequest.creditType === CreditType.TRACK_1
+          ? ProgrammeAuditLogType.TRANSFER_APPROVED
+          : ProgrammeAuditLogType.RETIRE_APPROVED;
+      log.data = {
+        creditAmount: Number(retirementRequest.creditAmount),
+        ref: retirementRequest.txRef,
+        toCompanyId: retirementRequest.toCompanyId,
+      };
       log.userId = user.id;
 
       await this.programmeAuditSlRepo.save(log);
@@ -533,8 +570,16 @@ export class CreditRetirementSlService {
 
       const log = new ProgrammeAuditLogSl();
       log.programmeId = retirementRequest.programmeId;
-      log.logType = retirementRequest.creditType === CreditType.TRACK_1 ? ProgrammeAuditLogType.TRANSFER_REJECTED : ProgrammeAuditLogType.RETIRE_REJECTED;
-      log.data = { creditAmount: Number(retirementRequest.creditAmount), ref: retirementRequest.txRef, toCompanyId: retirementRequest.toCompanyId, remark }
+      log.logType =
+        retirementRequest.creditType === CreditType.TRACK_1
+          ? ProgrammeAuditLogType.TRANSFER_REJECTED
+          : ProgrammeAuditLogType.RETIRE_REJECTED;
+      log.data = {
+        creditAmount: Number(retirementRequest.creditAmount),
+        ref: retirementRequest.txRef,
+        toCompanyId: retirementRequest.toCompanyId,
+        remark,
+      };
       log.userId = user.id;
 
       await this.programmeAuditSlRepo.save(log);
@@ -586,8 +631,15 @@ export class CreditRetirementSlService {
 
       const log = new ProgrammeAuditLogSl();
       log.programmeId = retirementRequest.programmeId;
-      log.logType = retirementRequest.creditType === CreditType.TRACK_1 ? ProgrammeAuditLogType.TRANSFER_CANCELLED : ProgrammeAuditLogType.RETIRE_CANCELLED;
-      log.data = { creditAmount: Number(retirementRequest.creditAmount), ref: retirementRequest.txRef, toCompanyId: retirementRequest.toCompanyId }
+      log.logType =
+        retirementRequest.creditType === CreditType.TRACK_1
+          ? ProgrammeAuditLogType.TRANSFER_CANCELLED
+          : ProgrammeAuditLogType.RETIRE_CANCELLED;
+      log.data = {
+        creditAmount: Number(retirementRequest.creditAmount),
+        ref: retirementRequest.txRef,
+        toCompanyId: retirementRequest.toCompanyId,
+      };
       log.userId = user.id;
 
       await this.programmeAuditSlRepo.save(log);

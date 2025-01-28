@@ -3,8 +3,8 @@
   "ghgInventory": "GHG Inventory",
   "emissions" : "Emissions",
   "projections" : "Projections",
-  "slcfprogrammes": "SLCF Projects",
-  "programmes": "Article 6.4 Projects",
+  "slcfprogrammes": "SLCF",
+  "programmes": "Article 6.4",
   "transfers": "Transfers",
   "companies": "Organisations",
   "users": "Users",
@@ -18,6 +18,8 @@
   "nationalAccounting": "National Accounting",
   "retirements": "Retirements",
   "settings": "Settings",
-  "verra": "Verra Projects",
-  "projectList": "Projects"
+  "verra": "Verra",
+  "goldStandards": "Gold Standard",
+  "cdmTransitionProjects": "CDM Transition Requested Projects",
+  "projectList": "Project Details"
 }

@@ -105,6 +105,7 @@ export class ProgrammeLedgerService {
     return programme;
   }
 
+  //MARK: updateProgrammeSlProposalStage
   public async updateProgrammeSlProposalStage(
     programmeId: string,
     txType: TxType,
@@ -141,6 +142,7 @@ export class ProgrammeLedgerService {
           txTime: programme.txTime,
           txType: programme.txType,
           updatedTime: programme.updatedTime,
+          proposalStageUpdatedTime: programme.txTime,
         };
 
         switch (txType) {
@@ -170,7 +172,6 @@ export class ProgrammeLedgerService {
             uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED_PROPOSAL;
             break;
           case TxType.APPROVE_CMA:
-            uPayload["creditEst"] = data?.creditEst;
             uPayload["projectProposalStage"] = ProjectProposalStage.APPROVED_CMA;
             break;
           case TxType.REJECT_CMA:
@@ -182,6 +183,9 @@ export class ProgrammeLedgerService {
           case TxType.APPROVE_VALIDATION:
             uPayload["serialNo"] = data?.serialNo;
             uPayload["registrationCertificateUrl"] = data?.registrationCertificateUrl;
+            uPayload["creditEst"] = data?.creditEst;
+            uPayload["creditUpdatedTime"] = programme.txTime;
+            uPayload["authorisedCreditUpdatedTime"] = programme.txTime;
             uPayload["projectProposalStage"] = ProjectProposalStage.AUTHORISED;
             break;
           case TxType.REJECT_VALIDATION:
@@ -259,10 +263,16 @@ export class ProgrammeLedgerService {
           ? Number(programme.creditBalance) + Number(verificationRequest.creditAmount)
           : Number(verificationRequest.creditAmount);
 
+        programme.creditIssued = programme.creditIssued
+          ? Number(programme.creditIssued) + Number(verificationRequest.creditAmount)
+          : Number(verificationRequest.creditAmount);
+
         programme.creditChange = Number(verificationRequest.creditAmount);
         programme.txType = TxType.ISSUE_SL;
         programme.txRef = txRef;
         programme.txTime = new Date().getTime();
+        programme.creditUpdatedTime = programme.txTime;
+        programme.issuedCreditUpdatedTime = programme.txTime;
 
         updatedProgramme = programme;
         const uPayload = {
@@ -272,6 +282,9 @@ export class ProgrammeLedgerService {
           creditChange: programme.creditChange,
           creditBalance: programme.creditBalance,
           companyId: programme.companyId,
+          creditIssued: programme.creditIssued,
+          creditUpdatedTime: programme.creditUpdatedTime,
+          issuedCreditUpdatedTime: programme.issuedCreditUpdatedTime,
         };
 
         if (
@@ -305,7 +318,7 @@ export class ProgrammeLedgerService {
         if (companyCreditBalances[companyAccount] != undefined) {
           updateMap[this.ledger.companyTableName + "#" + companyAccount] = {
             credit: this.helperService.halfUpToPrecision(
-              companyCreditBalances[companyAccount] + verificationRequest.creditAmount
+              companyCreditBalances[companyAccount] + Number(verificationRequest.creditAmount)
             ),
             txRef: verificationRequest.id + "#" + programme.serialNo,
             txType: TxType.ISSUE_SL,
@@ -393,12 +406,21 @@ export class ProgrammeLedgerService {
         const programme = programmes[0];
         const prvTxTime = programme.txTime;
 
-        programme.creditBalance =  Number(programme.creditBalance) -  Number(retirementRequest.creditAmount);
+        programme.creditBalance =
+          Number(programme.creditBalance) - Number(retirementRequest.creditAmount);
 
-        programme.creditChange =  Number(retirementRequest.creditAmount);
+        programme.creditChange = Number(retirementRequest.creditAmount);
         programme.txType = txType;
         programme.txRef = txRef;
         programme.txTime = new Date().getTime();
+        programme.creditUpdatedTime = programme.txTime;
+
+        if (retirementRequest.creditType === CreditType.TRACK_1) {
+          programme.transferredCreditUpdatedTime = programme.txTime;
+        } else {
+          programme.retiredCreditUpdatedTime = programme.txTime;
+        }
+
         programme.creditStartSerialNumber = this.serialNumberGenerator.calculateCreditSerialNumber(
           programme.creditStartSerialNumber,
           retirementRequest.creditAmount
@@ -413,6 +435,9 @@ export class ProgrammeLedgerService {
           creditBalance: programme.creditBalance,
           companyId: programme.companyId,
           creditStartSerialNumber: programme.creditStartSerialNumber,
+          creditUpdatedTime: programme.creditUpdatedTime,
+          transferredCreditUpdatedTime: programme.transferredCreditUpdatedTime,
+          retiredCreditUpdatedTime: programme.retiredCreditUpdatedTime,
         };
 
         if (retirementRequest.creditType === CreditType.TRACK_1) {
@@ -575,12 +600,6 @@ export class ProgrammeLedgerService {
           programme.companyId = intCompanyIds;
           return programme;
         });
-        // if (programmes.length <= 0) {
-        //   throw new HttpException(
-        //     this.helperService.formatReqMessagesString("programme.programmeNotExist", []),
-        //     HttpStatus.BAD_REQUEST
-        //   );
-        // }
 
         if (programmes.length <= 0) {
           throw new HttpException(
@@ -686,9 +705,6 @@ export class ProgrammeLedgerService {
           );
         }
         if (isRetirement) {
-          // if (programme.creditBalance == transfer.creditAmount) {
-          //   programme.currentStage = ProgrammeStage.RETIRED;
-          // }
           programme.txType = TxType.RETIRE;
           if (!programme.creditRetired) {
             programme.creditRetired = new Array(programme.creditOwnerPercentage.length).fill(0);
@@ -921,10 +937,6 @@ export class ProgrammeLedgerService {
           }
           programme.certifierId.splice(index, 1);
 
-          // if (programme.certifierId.length === 0) {
-          //   programme.certifierId = undefined;
-          // }
-
           if (!programme.revokedCertifierId) {
             programme.revokedCertifierId = [certifierId];
           } else {
@@ -1021,7 +1033,6 @@ export class ProgrammeLedgerService {
 
           sendRevokeEmail(programme);
         }
-        // updatedProgramme = programme;
         return [updateMap, updateWhere, {}];
       }
     );
@@ -1112,7 +1123,6 @@ export class ProgrammeLedgerService {
 
           programmesId.push(programme.programmeId);
         }
-        // updatedProgramme = programme;
         return [updateMap, updateWhere, {}];
       }
     );
@@ -1192,7 +1202,6 @@ export class ProgrammeLedgerService {
             txTime: prvTxTime,
           };
         }
-        // updatedProgramme = programme;
         return [updateMap, updateWhere, {}];
       }
     );
@@ -1206,77 +1215,6 @@ export class ProgrammeLedgerService {
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
-
-  // public async retireProgramme(
-  //   programmeId: string,
-  //   reason: string,
-  //   user: string
-  // ): Promise<boolean> {
-  //   this.logger.log(`Retiring programme:${programmeId} reason:${reason} user:${user}`);
-  //   const getQueries = {};
-  //   getQueries[this.ledger.tableName] = {
-  //     programmeId: programmeId,
-  //   };
-
-  //   let updatedProgramme;
-  //   const resp = await this.ledger.getAndUpdateTx(
-  //     getQueries,
-  //     (results: Record<string, dom.Value[]>) => {
-  //       const programmes: Programme[] = results[this.ledger.tableName].map(
-  //         (domValue) => {
-  //           return plainToClass(
-  //             Programme,
-  //             JSON.parse(JSON.stringify(domValue))
-  //           );
-  //         }
-  //       );
-  //       if (programmes.length <= 0) {
-  //         throw new HttpException(
-  //           this.helperService.formatReqMessagesString("programme.programmeNotExist", []),
-  //           HttpStatus.BAD_REQUEST
-  //         );
-  //       }
-
-  //       let programme = programmes[0];
-  //       const prvTxTime = programme.txTime;
-  //       programme.currentStage = ProgrammeStage.RETIRED,
-  //       programme.txTime = new Date().getTime(),
-  //       programme.txRef = `${user}#${reason}`,
-  //       programme.txType = TxType.RETIRE
-  //       programme.creditRetired = programme.creditBalance;
-  //       programme.creditBalance = 0;
-  //       programme.creditChange = programme.creditRetired;
-
-  //       let updateMap = {};
-  //       let updateWhere = {};
-  //       updateMap[this.ledger.tableName] = {
-  //         currentStage: programme.currentStage,
-  //         txType: programme.txType,
-  //         txTime: programme.txTime,
-  //         txRef: programme.txRef,
-  //         creditRetired: programme.creditRetired,
-  //         creditBalance: programme.creditBalance,
-  //         creditChange: programme.creditChange
-  //       };
-  //       updateWhere[this.ledger.tableName] = {
-  //         programmeId: programme.programmeId,
-  //         txTime: prvTxTime
-  //       };
-
-  //       updatedProgramme = programme;
-  //       return [updateMap, updateWhere, {}];
-  //     }
-  //   );
-
-  //   const affected = resp[this.ledger.tableName];
-  //   if (affected && affected.length > 0) {
-  //     return updatedProgramme;
-  //   }
-  //   throw new HttpException(
-  //     this.helperService.formatReqMessagesString("programme.failedToUpdate", []),
-  //     HttpStatus.INTERNAL_SERVER_ERROR
-  //   );
-  // }
 
   public async updateProgrammeStatus(
     programmeId: string,
@@ -1313,6 +1251,7 @@ export class ProgrammeLedgerService {
     else return 0;
   }
 
+  // MARK: authProgrammeStatus
   public async authProgrammeStatus(
     programmeId: string,
     countryCodeA2: string,
@@ -1390,10 +1329,8 @@ export class ProgrammeLedgerService {
 
         if (!issueCredit) {
           programme.creditIssued = 0;
-          // programme.creditPending = 0
         } else {
           programme.creditIssued = this.helperService.halfUpToPrecision(issueCredit);
-          // programme.creditPending = programme.creditEst - issueCredit;
         }
         programme.creditBalance = programme.creditIssued;
         programme.creditChange = programme.creditIssued;
@@ -1529,13 +1466,11 @@ export class ProgrammeLedgerService {
             programme.creditEst - programme.creditIssued
           );
           programme.creditIssued = programme.creditEst;
-          // programme.creditPending = 0
         } else {
           programme.creditIssued = this.helperService.halfUpToPrecision(
             programme.creditIssued + issueCredit
           );
           programme.creditChange = issueCredit;
-          // programme.creditPending = programme.creditEst - issueCredit;
         }
         programme.emissionReductionAchieved = programme.creditIssued;
         const currentTotalBalance = programme.creditBalance;
@@ -1551,7 +1486,6 @@ export class ProgrammeLedgerService {
           const percentages = [];
 
           for (const i in programme.creditOwnerPercentage) {
-            //this.helperService.halfUpToPrecision
             const currentCredit = this.helperService.halfUpToPrecision(
               (currentTotalBalance * programme.creditOwnerPercentage[i]) / 100
             );
@@ -1977,7 +1911,6 @@ export class ProgrammeLedgerService {
         let updateWhereMap = {};
 
         const creditOwnership = {};
-        // const updatedCreditOwnership = {}
         let ownershipPercentage = {};
         let ownershipPercentageList = [];
 

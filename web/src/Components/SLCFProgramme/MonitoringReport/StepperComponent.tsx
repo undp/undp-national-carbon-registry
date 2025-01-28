@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Steps, Button, Form, message } from 'antd';
+import { useEffect, useRef, useState } from 'react';
+import { Steps, message } from 'antd';
 import { ProjectDetailsStep } from './ProjectDetailsStep';
 import './MonitoringReport.scss';
 import { ProjectActivityStep } from './ProjectActivityStep';
@@ -7,7 +7,7 @@ import { ImplementationStatusStep } from './ImplementationStatusStep';
 import { SafeguardsStep } from './SafeguardsStep';
 import { DataAndParametersStep } from './DataAndParametersStep';
 import { QualificationStep } from './QuantificationStep';
-import { AnnexuresStep } from './AnnexuresStep';
+import { AnnexureStep } from './AnnexureStep';
 import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -18,39 +18,49 @@ import {
   extractFilePropertiesFromLink,
   fileUploadValueExtract,
 } from '../../../Utils/utilityHelper';
-import { VerificationRequestStatusEnum } from '../../../Definitions/Enums/verification.request.status.enum';
+import { SlcfFormActionModel } from '../../Models/SlcfFormActionModel';
+import { PopupInfo } from '../../../Definitions/Definitions/ndcDetails.definitions';
+import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 const StepperComponent = (props: any) => {
   const navigate = useNavigate();
-  const { useLocation, translator, countries } = props;
+  const { useLocation, translator, countries, selectedVersion, handleDocumentStatus } = props;
   const [current, setCurrent] = useState(0);
-  const [verificationRequestId, setVerificationRequestId] = useState(0);
   const [reportId, setReportId] = useState(0);
+  const [status, setStatus] = useState(null);
   const [formValues, setFormValues] = useState({});
   const { get, post } = useConnection();
-  const { id } = useParams();
+  const { id, verificationRequestId } = useParams();
   const navigationLocation = useLocation();
   const [projectCategory, setProjectCategory] = useState<string>('');
   const { mode, docId } = navigationLocation.state || {};
   const t = translator.t;
-  const reportVersion = process.env.MONITORING_REPORT_VERSION
-    ? process.env.MONITORING_REPORT_VERSION
-    : 'Version 03';
+  const [popupInfo, setPopupInfo] = useState<PopupInfo>();
+  const [slcfActionModalVisible, setSlcfActioModalVisible] = useState<boolean>(false);
+
   const onValueChange = (newValues: any) => {
     setFormValues((prevValues) => ({
       ...prevValues,
       ...newValues,
     }));
-    console.log(JSON.stringify(formValues));
   };
+
+  const scrollSection = useRef({} as any);
 
   const navigateToDetailsPage = () => {
     navigate(`/programmeManagementSLCF/view/${id}`);
   };
-  const approve = async (verify: boolean) => {
+
+  const showModalOnAction = (info: PopupInfo) => {
+    setSlcfActioModalVisible(true);
+    setPopupInfo(info);
+  };
+
+  const approveOrReject = async (verify: boolean, remark?: string) => {
     const body = {
       verify: verify,
-      verificationRequestId: verificationRequestId,
+      verificationRequestId: Number(verificationRequestId),
       reportId: reportId,
+      remark,
     };
     try {
       const res = await post('national/verification/verifyMonitoringReport', body);
@@ -206,72 +216,73 @@ const StepperComponent = (props: any) => {
 
   const getLatestReports = async (programId: any) => {
     try {
-      const { data } = await post('national/programmeSl/getDocLastVersion', {
-        programmeId: programId,
-        docType: DocumentTypeEnum.CMA,
-      });
-
-      if (data && data?.content) {
-        const cmaData = JSON.parse(data?.content);
-
-        projectDetailsForm.setFieldsValue({
-          title: cmaData?.projectDetails?.title,
-          projectProponent: cmaData?.projectDetails?.projectProponent,
-          dateOfIssue: moment(cmaData?.projectDetails?.dateOfIssue),
-          version: reportVersion,
-          physicalAddress: cmaData?.projectDetails?.physicalAddress,
-          email: cmaData?.projectDetails?.email,
-          telephone: cmaData?.projectDetails?.telephone,
-          website: cmaData?.projectDetails?.website,
-          preparedBy: cmaData?.projectDetails?.preparedBy,
+      // if (docId === null) {
+      if (mode === FormMode.CREATE) {
+        const { data } = await post('national/programmeSl/getDocLastVersion', {
+          programmeId: programId,
+          docType: DocumentTypeEnum.CMA,
+        });
+        const { data: projectDetails } = await post('national/programmeSL/getProjectById', {
+          programmeId: id,
         });
 
-        qualificationForm.setFieldsValue({
-          estimatedNetEmissionReductions:
-            cmaData?.quantifications?.estimatedNetEmissionReductions.map((emissionData: any) => {
+        if (data && data?.content && projectDetails) {
+          const cmaData = JSON.parse(data?.content);
+
+          projectDetailsForm.setFieldsValue({
+            title: cmaData?.projectDetails?.title,
+            projectProponent: cmaData?.projectDetails?.projectProponent,
+            dateOfIssue: moment(Date.now()),
+            physicalAddress: cmaData?.projectDetails?.physicalAddress,
+            email: cmaData?.projectDetails?.email,
+            telephone: cmaData?.projectDetails?.telephone,
+            website: cmaData?.projectDetails?.website,
+            preparedBy: cmaData?.projectDetails?.preparedBy,
+          });
+
+          projectActivityForm.setFieldsValue({
+            pp_organizationName: cmaData?.projectActivity?.projectProponent?.organizationName,
+            pp_contactPerson: cmaData?.projectActivity?.projectProponent?.contactPerson,
+            pp_telephone: cmaData?.projectActivity?.projectProponent?.telephone,
+            pp_email: cmaData?.projectActivity?.projectProponent?.email,
+            pp_address: cmaData?.projectActivity?.projectProponent?.address,
+            projectProponentsList: cmaData?.projectActivity.otherEntities.map((entity: any) => {
               return {
-                startDate: moment(emissionData.startDate * 1000),
-                endDate: moment(emissionData.endDate * 1000),
-                baselineEmissionReductions: emissionData.baselineEmissionReductions,
-                projectEmissionReductions: emissionData.projectEmissionReductions,
-                leakageEmissionReductions: emissionData.leakageEmissionReductions,
-                netEmissionReductions: emissionData.netEmissionReductions,
+                ...entity,
+                organizationName: entity?.orgainzationName,
+                roleInTheProject: entity?.role,
               };
             }),
-        });
-      }
-    } catch (error) {
-      console.log('error');
-    }
+            creditingPeriodFromDate: moment(
+              cmaData?.projectActivity?.creditingPeriodStartDate * 1000
+            ),
+            creditingPeriodToDate: moment(cmaData?.projectActivity?.creditingPeriodEndDate * 1000),
+            creditingPeriodComment: cmaData?.projectActivity?.creditingPeriodDescription,
+            registrationDateOfTheActivity: moment(projectDetails?.authorisedCreditUpdatedTime),
+            projectTrackAndCreditUse: cmaData?.projectActivity?.projectTrack,
+            projectActivityLocationsList: cmaData?.projectActivity?.locationsOfProjectActivity?.map(
+              (location: any) => {
+                return {
+                  ...location,
+                  optionalDocuments:
+                    location.additionalDocuments && location.additionalDocuments?.length > 0
+                      ? location.additionalDocuments?.map((document: string, index: number) => {
+                          return {
+                            uid: index,
+                            name: extractFilePropertiesFromLink(document).fileName,
+                            status: 'done',
+                            url: document,
+                          };
+                        })
+                      : [],
+                  location: location?.geographicalLocationCoordinates,
+                  projectStartDate: moment(location?.startDate * 1000),
+                };
+              }
+            ),
+          });
+        }
 
-    try {
-      if (docId === null) {
-        projectActivityForm.setFieldsValue({
-          projectProponentsList: [
-            {
-              organizationName: '',
-              email: '',
-              telephone: '',
-              address: '',
-              designation: '',
-              contactPerson: '',
-              roleInTheProject: '',
-              fax: '',
-            },
-          ],
-          projectActivityLocationsList: [
-            {
-              locationOfProjectActivity: '',
-              province: '',
-              district: '',
-              dsDivision: '',
-              city: '',
-              community: '',
-              optionalDocuments: [],
-              projectStartDate: '',
-            },
-          ],
-        });
         qualificationForm.setFieldsValue({
           estimatedNetEmissionReductions: [
             {
@@ -284,16 +295,31 @@ const StepperComponent = (props: any) => {
             },
           ],
         });
-      } else {
-        const { data } = await post('national/programmeSl/getDocumentById', {
-          docId: docId,
-        });
+      } else if (mode === FormMode.VIEW || mode === FormMode.EDIT) {
+        const { data } =
+          mode === FormMode.VIEW && selectedVersion
+            ? await post('national/programmeSl/getVerificationDocByVersion', {
+                programmeId: id,
+                docType: DocumentTypeEnum.MONITORING_REPORT,
+                version: selectedVersion,
+                verificationRequestId: Number(verificationRequestId),
+              })
+            : await post('national/programmeSl/getVerificationDocLastVersion', {
+                programmeId: id,
+                docType: DocumentTypeEnum.MONITORING_REPORT,
+                verificationRequestId: Number(verificationRequestId),
+              });
+
+        if (mode === FormMode.VIEW) {
+          handleDocumentStatus(data.status);
+        }
         if (data && data?.content) {
           setReportId(data?.id);
-          setVerificationRequestId(data?.verificationRequestId);
+          setStatus(data?.status);
           projectDetailsForm.setFieldsValue({
             ...data?.content?.projectDetails,
             dateOfIssue: moment(data?.content?.projectDetails?.dateOfIssue),
+            reportID: data?.content?.projectDetails?.reportID,
           });
 
           projectActivityForm.setFieldsValue({
@@ -379,17 +405,15 @@ const StepperComponent = (props: any) => {
   useEffect(() => {
     getLatestReports(id);
     getProgrammeDetailsById();
-  }, []);
+  }, [selectedVersion]);
 
   useEffect(() => {
-    // loadProjectDetails();
-    // loadCMAForm();
+    getLatestReports(id);
   }, []);
   const steps = [
     {
       title: (
-        <div className="stepper-title-container">
-          {/* <div className="step-count"></div> */}
+        <div ref={scrollSection} className="stepper-title-container">
           <div className="title">{t('monitoringReport:title01')}</div>
         </div>
       ),
@@ -517,19 +541,38 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <AnnexuresStep
+        <AnnexureStep
           useLocation={useLocation}
           translator={translator}
           current={current}
+          status={status}
           form={annexuresForm}
           formMode={mode}
           prev={prev}
           cancel={navigateToDetailsPage}
           approve={() => {
-            approve(true);
+            showModalOnAction({
+              actionBtnText: t('monitoringReport:btnApprove'),
+              icon: <CheckCircleOutlined />,
+              title: t('monitoringReport:approveMonitoringModalTitle'),
+              okAction: () => {
+                approveOrReject(true);
+              },
+              remarkRequired: false,
+              type: 'primary',
+            });
           }}
           reject={() => {
-            approve(false);
+            showModalOnAction({
+              actionBtnText: t('monitoringReport:btnReject'),
+              icon: <CloseCircleOutlined />,
+              title: t('monitoringReport:rejectMonitoringModalTitle'),
+              okAction: (remark: string) => {
+                approveOrReject(false, remark);
+              },
+              remarkRequired: true,
+              type: 'danger',
+            });
           }}
           onFinish={onFinish}
         />
@@ -548,6 +591,22 @@ const StepperComponent = (props: any) => {
           description: step.description,
         }))}
       />
+      {popupInfo && (
+        <SlcfFormActionModel
+          onCancel={() => {
+            setSlcfActioModalVisible(false);
+          }}
+          actionBtnText={popupInfo!.actionBtnText}
+          onFinish={popupInfo!.okAction}
+          subText={''}
+          openModal={slcfActionModalVisible}
+          icon={popupInfo!.icon}
+          title={popupInfo!.title}
+          type={popupInfo!.type}
+          remarkRequired={popupInfo!.remarkRequired}
+          t={t}
+        />
+      )}
     </>
   );
 };

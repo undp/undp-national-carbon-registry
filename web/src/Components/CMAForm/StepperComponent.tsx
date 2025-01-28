@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Steps, Button, Form, message } from 'antd';
+import { useEffect, useRef, useState } from 'react';
+import { Steps, message } from 'antd';
 import './CMAForm.scss';
-// import './SLCFMonitoringReportComponent.scss';
 
 import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
@@ -11,7 +10,6 @@ import QuantificationOfEmissions from './QuantificationOfEmissions';
 import ProjectDetails from './ProjectDetails';
 import DescriptionOfProjectActivity from './DescriptionOfProjectActivity';
 import EnvironmentImpacts from './EnvironmentImpacts';
-import Monitoring from './Monitoring';
 import Appendix from './Appendix';
 import LocalStakeholderConsultation from './LocalStakeholderConsultation';
 import moment from 'moment';
@@ -28,6 +26,7 @@ import {
   quantificationOfGHGDataMapToFields,
 } from './viewDataMap';
 import { Loading } from '../Loading/loading';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 const CMA_STEPS = {};
 
@@ -105,7 +104,7 @@ const StepperComponent = (props: any) => {
   const getProgrammeDetailsById = async (programId: any) => {
     try {
       setLoading(true);
-      const { data } = await post('national/programmeSL/getProjectById', {
+      const { data } = await post('national/programmeSl/getProjectById', {
         programmeId: programId,
       });
 
@@ -117,7 +116,7 @@ const StepperComponent = (props: any) => {
         form1.setFieldsValue({
           title: data?.title,
           dateOfIssue: moment(),
-          preparedBy: user?.name,
+          preparedBy: data?.company?.name,
           physicalAddress: data?.company?.address,
           email: data?.company?.email,
           projectProponent: data?.company?.name,
@@ -133,6 +132,7 @@ const StepperComponent = (props: any) => {
           telephone: data?.company?.phoneNo,
           address: data?.company?.address,
           fax: data?.company?.faxNo,
+          contactPerson: data?.contactName,
         });
       }
 
@@ -153,18 +153,20 @@ const StepperComponent = (props: any) => {
         setLoading(true);
         let res;
         try {
-          if (isView) {
+          if (isView && selectedVersion) {
             res = await post('national/programmeSl/getDocByVersion', {
               programmeId: id,
               docType: 'cma',
               version: selectedVersion,
             });
-            handleDocumentStatus(res.data.status);
           } else {
             res = await post('national/programmeSl/getDocLastVersion', {
               programmeId: id,
               docType: 'cma',
             });
+          }
+          if (isView) {
+            handleDocumentStatus(res.data.status);
           }
 
           if (res?.statusText === 'SUCCESS') {
@@ -295,6 +297,7 @@ const StepperComponent = (props: any) => {
           countries={countries}
           handleValuesUpdate={handleValuesUpdate}
           disableFields={disableFields}
+          formMode={isView ? FormMode.VIEW : isEdit ? FormMode.EDIT : FormMode.CREATE}
         />
       ),
     },
@@ -413,26 +416,6 @@ const StepperComponent = (props: any) => {
         />
       ),
     },
-    // {
-    //   title: (
-    //     <div className="stepper-title-container">
-    //       <div className="step-count">07</div>
-    //       <div className="title">{t('CMAForm:form08Title')}</div>
-    //     </div>
-    //   ),
-    //   description: (
-    //     <Monitoring
-    //       next={next}
-    //       prev={prev}
-    //       form={form8}
-    //       current={current}
-    //       t={t}
-    //       projectCategory={projectCategory}
-    //       handleValuesUpdate={handleValuesUpdate}
-    //       disableFields={disableFields}
-    //     />
-    //   ),
-    // },
     {
       title: (
         <div className="stepper-title-container">

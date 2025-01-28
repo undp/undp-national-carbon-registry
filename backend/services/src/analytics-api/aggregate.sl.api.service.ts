@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -13,7 +13,6 @@ import { Company } from "../entities/company.entity";
 import { StatFilter } from "../dto/stat.filter";
 import { ProgrammeStage } from "../enum/programme-status.enum";
 import { Stat } from "../dto/stat.dto";
-import { Sector } from "../enum/sector.enum";
 import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
 import { HelperService } from "../util/helpers.service";
 import { Programme } from "../entities/programme.entity";
@@ -26,7 +25,6 @@ import { TransferStatus } from "../enum/transform.status.enum";
 import { DataCountResponseDto } from "../dto/data.count.response";
 import { InvestmentView } from "../entities/investment.view.entity";
 import { NDCActionViewEntity } from "../entities/ndc.view.entity";
-import { InvestmentStatus } from "../enum/investment.status";
 import { SYSTEM_TYPE } from "../enum/system.names.enum";
 import { Emission } from "src/entities/emission.entity";
 import { Projection } from "src/entities/projection.entity";
@@ -42,6 +40,9 @@ import { VerificationRequestEntity } from "../entities/verification.request.enti
 import { User } from "../entities/user.entity";
 import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
 import { SLDashboardProjectStage } from "../enum/slDashboardProjectStage.enum";
+import { DataResponseDto } from "src/dto/data.response.dto";
+import { CreditRetirementSlView } from "src/entities/creditRetirementSl.view.entity";
+import { ProgrammeAuditLogSl } from "src/entities/programmeAuditLogSl.entity";
 
 @Injectable()
 export class AggregateSlAPIService {
@@ -74,7 +75,11 @@ export class AggregateSlAPIService {
     @InjectRepository(VerificationRequestEntity)
     private verificationRequestRepo: Repository<VerificationRequestEntity>,
     @InjectRepository(CreditRetirementSl)
-    private creditRetirementSlRequestRepo: Repository<CreditRetirementSl>
+    private creditRetirementSlRequestRepo: Repository<CreditRetirementSl>,
+    @InjectRepository(CreditRetirementSlView)
+    private creditRetirementSlViewRepo: Repository<CreditRetirementSlView>,
+    @InjectRepository(ProgrammeAuditLogSl)
+    private programmeSlAuditLogRepo: Repository<ProgrammeAuditLogSl>
   ) {}
 
   private getFilterAndByStatFilter(
@@ -187,14 +192,10 @@ export class AggregateSlAPIService {
           authorisedCreditsSum = authorisedCreditsSum + 0;
         }
         issuedCreditsSum = issuedCreditsSum + parseFloat(timeGroupItem?.totalissuedcredit);
-        // -
-        // parseFloat(timeGroupItem?.totalretiredcredit) -
-        // parseFloat(timeGroupItem?.totaltxcredit) -
-        // parseFloat(timeGroupItem?.totalfreezecredit);
+
         transferredCreditsSum = transferredCreditsSum + parseFloat(timeGroupItem?.totaltxcredit);
         retiredCreditsSum = retiredCreditsSum + parseFloat(timeGroupItem?.totalretiredcredit);
         frozenCreditsSum = frozenCreditsSum + parseFloat(timeGroupItem?.totalfreezecredit);
-        // statusArray?.map((status) => {
         let count = 0;
         switch (timeGroupItem.projectProposalStage) {
           case "SUBMITTED_INF":
@@ -235,20 +236,8 @@ export class AggregateSlAPIService {
             result["authorised"].push(count + parseInt(timeGroupItem?.count));
             break;
         }
-        // if (timeGroupItem?.projectProposalStage === status) {
-        //   resultThere[this.firstLower(timeGroupItem?.projectProposalStage)] = true;
-
-        //   result[this.firstLower(timeGroupItem?.projectProposalStage)]?.push(
-        //     parseInt(timeGroupItem?.count)
-        //   );
-        // }
-        // });
       });
-      // statusArray?.map((status) => {
-      //   if (resultThere[this.firstLower(status)] === false) {
-      //     result[this.firstLower(status)]?.push(0);
-      //   }
-      // });
+
       result["authorisedCredits"]?.push(authorisedCreditsSum);
       result["issuedCredits"]?.push(issuedCreditsSum);
       result["transferredCredits"]?.push(transferredCreditsSum);
@@ -409,11 +398,6 @@ export class AggregateSlAPIService {
             queryBuild.andWhere(`${tableName}."companyId" = :mineCompanyId`, {
               mineCompanyId: a.mineCompanyId,
             });
-            // mineCompField = ["creditTransferred", "creditRetired", "creditFrozen"].includes(a.key)
-            //   ? `"${tableName}"."${a.key}"[array_position("${tableName}"."companyId", ${a.mineCompanyId})]`
-            //   : `"${tableName}"."${
-            //       a.key === "creditBalance" ? "creditOwnerPercentage" : "proponentPercentage"
-            //     }"[array_position("${tableName}"."companyId", ${a.mineCompanyId})]*${fieldCol}/100`;
           }
           return `${a.operation}(${mineCompField}) as ${a.fieldName}`;
         })
@@ -511,14 +495,12 @@ export class AggregateSlAPIService {
       }
     }
     if (timeGroupingCol && timeGroupingAccuracy && groupBy) {
-      console.log("coming into this condition ---- groupBy[0]", groupBy[0]);
       if (groupBy[0] === "projectProposalStage") {
         dTimeGrouped = await this.getTimeGroupedDataStatusConverted(d);
       } else if (groupBy[0] === "projectCategory") {
         dTimeGrouped = await this.getTimeGroupedDataSectorConverted(d);
       }
     } else if (timeGroupingCol && timeGroupingAccuracy) {
-      console.log("coming into this condition ---- !groupBy[0]");
       const map = {};
       for (const en of d) {
         if (!map[en.time_group]) {
@@ -769,138 +751,6 @@ export class AggregateSlAPIService {
     const key = stat.key ? stat.key : stat.type;
     console.log(stat.type);
     switch (system) {
-      // case SYSTEM_TYPE.CARBON_TRANSPARENCY:
-      //   switch (stat.type) {
-      //     case StatType.MY_AGG_PROGRAMME_BY_SECTOR:
-      //     case StatType.AGG_PROGRAMME_BY_SECTOR:
-      //       results[key] = await this.generateProgrammeAggregates(
-      //         stat,
-      //         frzAgg,
-      //         abilityCondition,
-      //         lastTimeForWhere,
-      //         statCache,
-      //         companyId
-      //       );
-      //       break;
-      //     case StatType.MY_AGG_INVESTMENT_BY_TYPE:
-      //     case StatType.AGG_INVESTMENT_BY_TYPE:
-      //       results[key] = await this.generateInvestmentAggregates(
-      //         stat,
-      //         abilityCondition,
-      //         lastTimeForWhere,
-      //         statCache,
-      //         companyId
-      //       );
-      //       break;
-      //     case StatType.MY_AGG_NDC_ACTION_BY_SECTOR:
-      //     case StatType.AGG_NDC_ACTION_BY_SECTOR:
-      //     case StatType.MY_AGG_NDC_ACTION_BY_TYPE:
-      //     case StatType.AGG_NDC_ACTION_BY_TYPE:
-      //       results[key] = await this.generateNDCAggregates(
-      //         stat,
-      //         abilityCondition,
-      //         lastTimeForWhere,
-      //         statCache,
-      //         companyId
-      //       );
-      //       break;
-      //     case StatType.MY_TOTAL_EMISSIONS:
-      //     case StatType.TOTAL_EMISSIONS:
-      //       results[key] = await this.getEmissions(
-      //         stat,
-      //         companyId,
-      //         abilityCondition,
-      //         lastTimeForWhere,
-      //         statCache
-      //       );
-      //       break;
-      //     case StatType.PROGRAMME_LOCATION:
-      //     case StatType.MY_PROGRAMME_LOCATION: //conflict with existing
-      //       if (stat.type === StatType.MY_PROGRAMME_LOCATION) {
-      //         stat.statFilter
-      //           ? (stat.statFilter.onlyMine = true)
-      //           : (stat.statFilter = { onlyMine: true });
-      //       }
-      //       const whereC = [];
-      //       whereC.push(`p."programmeId" != 'null'`);
-      //       if (stat.statFilter && stat.statFilter.onlyMine) {
-      //         whereC.push(
-      //           `(${companyId} = ANY(b."companyId") or ${companyId} = ANY(b."certifierId"))`
-      //         );
-      //       }
-      //       if (stat.statFilter && stat.statFilter.startTime) {
-      //         whereC.push(`"createdTime" >= ${stat.statFilter.startTime}`);
-      //       }
-      //       if (stat.statFilter && stat.statFilter.endTime) {
-      //         whereC.push(`"createdTime" <= ${stat.statFilter.endTime}`);
-      //       }
-
-      //       console.log(
-      //         "Query",
-      //         `SELECT p."programmeId" as loc, b."currentStage" as stage, count(*) AS count
-      //       FROM   programme b, jsonb_array_elements(b."geographicalLocationCordintes") p("programmeId")
-      //       ${whereC.length > 0 ? " where " : " "}
-      //       ${whereC.join(" and ")}
-      //       GROUP  BY p."programmeId", b."currentStage"`
-      //       );
-
-      //       const resultsProgrammeLocations = await this.programmeRepo.manager
-      //         .query(`SELECT p."programmeId" as loc, b."currentStage" as stage, count(*) AS count
-      //         FROM   programme b, jsonb_array_elements(b."geographicalLocationCordintes") p("programmeId")
-      //         ${whereC.length > 0 ? " where " : " "}
-      //         ${whereC.join(" and ")}
-      //         GROUP  BY p."programmeId", b."currentStage"`);
-      //       results[key] = await this.programmeLocationDataFormatter(
-      //         resultsProgrammeLocations,
-      //         "stage"
-      //       );
-      //       results[key]["last"] = await this.getProgrammeLocationTime(
-      //         whereC.slice(1),
-      //         lastTimeForWhere
-      //       );
-      //       break;
-      //     case StatType.INVESTMENT_LOCATION:
-      //     case StatType.MY_INVESTMENT_LOCATION:
-      //       if (stat.type === StatType.MY_INVESTMENT_LOCATION) {
-      //         stat.statFilter
-      //           ? (stat.statFilter.onlyMine = true)
-      //           : (stat.statFilter = { onlyMine: true });
-      //       }
-      //       const whereCW = [];
-      //       whereCW.push(`p."requestId" != 'null'`);
-      //       if (stat.statFilter && stat.statFilter.onlyMine) {
-      //         whereCW.push(`${companyId} = b."fromCompanyId"`);
-      //       }
-      //       if (stat.statFilter && stat.statFilter.startTime) {
-      //         whereCW.push(`"createdTime" >= ${stat.statFilter.startTime}`);
-      //       }
-      //       if (stat.statFilter && stat.statFilter.endTime) {
-      //         whereCW.push(`"createdTime" <= ${stat.statFilter.endTime}`);
-      //       }
-
-      //       whereCW.push(`status = '${InvestmentStatus.APPROVED}'`);
-
-      //       const query = `SELECT p."requestId" as loc, b."type" as type, count(*) AS count
-      //       FROM  investment_view b, jsonb_array_elements(b."toGeo") p("requestId")
-      //       ${whereCW.length > 0 ? " where " : " "}
-      //       ${whereCW.join(" and ")}
-      //       GROUP  BY p."requestId", b."type"`;
-
-      //       console.log("INVESTMENT_LOCATION query", query);
-      //       const resultsProgrammeLocationsI = await this.investmentRepo.manager.query(query);
-
-      //       console.log("INVESTMENT_LOCATION resp", resultsProgrammeLocationsI);
-      //       results[key] = await this.programmeLocationDataFormatter(
-      //         resultsProgrammeLocationsI,
-      //         "type"
-      //       );
-      //       results[key]["last"] = await this.getInvestmentLocationTime(
-      //         whereCW.slice(1),
-      //         lastTimeForWhere
-      //       );
-      //       break;
-      //   }
-      //   break;
       case SYSTEM_TYPE.CARBON_REGISTRY:
         switch (stat.type) {
           case StatType.AGG_PROGRAMME_BY_STATUS:
@@ -918,157 +768,6 @@ export class AggregateSlAPIService {
               companyId
             );
             break;
-          // case StatType.MY_CREDIT:
-          //   results[key] = await this.getCompanyCredits(companyId);
-          //   break;
-          // case StatType.PENDING_TRANSFER_INIT:
-          // case StatType.PENDING_TRANSFER_RECV:
-          //   results[key] = await this.getPendingTxStats(
-          //     stat,
-          //     companyId,
-          //     abilityCondition,
-          //     lastTimeForWhere,
-          //     statCache
-          //   );
-          //   break;
-          // case StatType.CERTIFIED_BY_ME:
-          // case StatType.REVOKED_BY_ME:
-          //   stat.statFilter
-          //     ? (stat.statFilter.onlyMine = true)
-          //     : (stat.statFilter = { onlyMine: true });
-          //   const d1 = await this.getCertifiedByMePrgrammes(
-          //     stat.statFilter,
-          //     companyId,
-          //     stat.type === StatType.CERTIFIED_BY_ME ? "certifierId" : "revokedCertifierId",
-          //     abilityCondition,
-          //     lastTimeForWhere,
-          //     statCache,
-          //     undefined
-          //   );
-          //   const d2 = await this.getCertifiedByMePrgrammes(
-          //     stat.statFilter,
-          //     companyId,
-          //     stat.type === StatType.CERTIFIED_BY_ME ? "revokedCertifierId" : "certifierId",
-          //     abilityCondition,
-          //     lastTimeForWhere,
-          //     statCache,
-          //     undefined
-          //   );
-          //   d1.last = Math.max(d1.last, d2.last);
-          //   results[key] = d1;
-          //   break;
-          // case StatType.CERTIFIED_REVOKED_BY_ME:
-          // case StatType.UNCERTIFIED_BY_ME:
-          //   if (stat.statFilter) {
-          //     stat.statFilter.onlyMine = true;
-          //   } else {
-          //     stat.statFilter = { onlyMine: true };
-          //   }
-          //   results[key] = await this.getCertifiedStatData(
-          //     results,
-          //     stat,
-          //     abilityCondition,
-          //     lastTimeForWhere,
-          //     statCache,
-          //     companyId,
-          //     StatType.UNCERTIFIED_BY_ME === stat.type,
-          //     companyRole
-          //   );
-          //   break;
-          // case StatType.ALL_AUTH_PROGRAMMES:
-          //   results[key] = await this.getAllAuthProgramme(
-          //     stat,
-          //     abilityCondition,
-          //     lastTimeForWhere,
-          //     statCache,
-          //     stat.statFilter.timeGroup
-          //   );
-          //   break;
-          // case StatType.CERTIFIED_REVOKED_PROGRAMMES:
-          // case StatType.MY_CERTIFIED_REVOKED_PROGRAMMES:
-          //   if (stat.type === StatType.MY_CERTIFIED_REVOKED_PROGRAMMES) {
-          //     stat.statFilter
-          //       ? (stat.statFilter.onlyMine = true)
-          //       : (stat.statFilter = { onlyMine: true });
-          //   }
-          //   results[key] = await this.getCertifiedRevokedAgg(
-          //     stat,
-          //     results,
-          //     abilityCondition,
-          //     lastTimeForWhere,
-          //     statCache,
-          //     companyId,
-          //     frzAgg,
-          //     companyRole
-          //   );
-          //   break;
-          // case StatType.CERTIFIED_BY_ME_BY_STATE:
-          // case StatType.CERTIFIED_BY_ME_BY_SECTOR:
-          // case StatType.AUTH_CERTIFIED_BY_ME_BY_STATE:
-          //   if (stat.statFilter) {
-          //     stat.statFilter.onlyMine = true;
-          //   } else {
-          //     stat.statFilter = { onlyMine: true };
-          //   }
-          //   let filtCState = this.getFilterAndByStatFilter(
-          //     stat.statFilter,
-          //     {
-          //       value: companyId,
-          //       key: "certifierId",
-          //       operation: "ANY",
-          //     },
-          //     "createdTime"
-          //   );
-
-          //   if (stat.type === StatType.AUTH_CERTIFIED_BY_ME_BY_STATE) {
-          //     if (!filtCState) {
-          //       filtCState = [];
-          //     }
-          //     filtCState.push({
-          //       value: ProgrammeStage.AUTHORISED,
-          //       key: "currentStage",
-          //       operation: "=",
-          //     });
-          //   }
-
-          //   results[key] = await this.genAggregateTypeOrmQuery(
-          //     this.programmeRepo,
-          //     "programme",
-          //     [StatType.AUTH_CERTIFIED_BY_ME_BY_STATE, StatType.CERTIFIED_BY_ME_BY_STATE].includes(
-          //       stat.type
-          //     )
-          //       ? ["currentStage"]
-          //       : ["sector"],
-          //     [
-          //       new AggrEntry("programmeId", "COUNT", "count"),
-          //       new AggrEntry("creditEst", "SUM", "totalEstCredit"),
-          //       new AggrEntry("creditIssued", "SUM", "totalIssuedCredit"),
-          //       new AggrEntry("creditBalance", "SUM", "totalBalanceCredit"),
-          //       {
-          //         key: "creditRetired",
-          //         operation: "SUM",
-          //         fieldName: "totalRetiredCredit",
-          //         outerQuery: "select sum(s) from unnest",
-          //       },
-          //       {
-          //         key: "creditTransferred",
-          //         operation: "SUM",
-          //         fieldName: "totalTxCredit",
-          //         outerQuery: "select sum(s) from unnest",
-          //       },
-          //       frzAgg,
-          //     ],
-          //     filtCState,
-          //     null,
-          //     null,
-          //     abilityCondition,
-          //     lastTimeForWhere,
-          //     statCache,
-          //     ["certifiedTime", "creditUpdateTime"],
-          //     stat.statFilter?.timeGroup ? "createdAt" : undefined,
-          //     stat.statFilter?.timeGroup ? "day" : undefined
-          //   );
-          //   break;
           case StatType.ALL_PROGRAMME_LOCATION:
           case StatType.MY_PROGRAMME_LOCATION:
             if (stat.type === StatType.MY_PROGRAMME_LOCATION) {
@@ -1087,12 +786,7 @@ export class AggregateSlAPIService {
             if (stat.statFilter && stat.statFilter.endTime) {
               whereC.push(`"createdTime" <= ${stat.statFilter.endTime}`);
             }
-            // const resultsProgrammeLocations = await this.programmeRepo.manager
-            //   .query(`SELECT p."programmeId" as loc, b."projectProposalStage" as stage, count(*) AS count
-            //     FROM   programme_sl b, jsonb_array_elements(b."geographicalLocationCordintes") p("programmeId")
-            //     ${whereC.length > 0 ? " where " : " "}
-            //     ${whereC.join(" and ")}
-            //     GROUP  BY p."programmeId", b."projectProposalStage"`);
+
             const resultsProgrammeLocations = await this.programmeRepo.manager
               .query(`SELECT d."geoCoordinates" as loc, b."projectProposalStage" as stage, count(*) AS count
                   FROM programme_sl b
@@ -1161,57 +855,6 @@ export class AggregateSlAPIService {
 
             results[key] = await this.programmeLocationDataFormatter(result);
             break;
-          // case StatType.ALL_TRANSFER_LOCATION:
-          // case StatType.MY_TRANSFER_LOCATION:
-          //   if (stat.type === StatType.MY_TRANSFER_LOCATION) {
-          //     stat.statFilter
-          //       ? (stat.statFilter.onlyMine = true)
-          //       : (stat.statFilter = { onlyMine: true });
-          //   }
-
-          //   let filtCom = this.getFilterAndByStatFilter(stat.statFilter, null, "txTime");
-          //   if (!filtCom) {
-          //     filtCom = [];
-          //   }
-          //   filtCom.push({
-          //     value: "0",
-          //     key: "retirementType",
-          //     operation: "=",
-          //   });
-          //   filtCom.push({
-          //     value: TransferStatus.RECOGNISED,
-          //     key: "status",
-          //     operation: "=",
-          //   });
-
-          //   let filterOr = undefined;
-          //   if (stat.statFilter && stat.statFilter.onlyMine) {
-          //     filterOr = [];
-          //     filterOr.push({
-          //       value: companyId,
-          //       key: "fromCompanyId",
-          //       operation: "=",
-          //     });
-          //     filterOr.push({
-          //       value: companyId,
-          //       key: "programmeCertifierId",
-          //       operation: "ANY",
-          //     });
-          //   }
-          //   results[key] = await this.genAggregateTypeOrmQuery(
-          //     this.programmeTransferRepo,
-          //     "transfer",
-          //     [`toCompanyMeta->>country`],
-          //     [new AggrEntry("requestId", "COUNT", "count")],
-          //     filtCom,
-          //     filterOr,
-          //     null,
-          //     abilityCondition,
-          //     lastTimeForWhere,
-          //     statCache,
-          //     ["authTime"]
-          //   );
-          //   break;
         }
         break;
     }
@@ -1423,15 +1066,6 @@ export class AggregateSlAPIService {
     }
   }
 
-  // async getMultipleStats(sourceStats: Stat[], newStat: Stat, results, frzAgg, abilityCondition, lastTimeForWhere, companyId, aggFunc: any) {
-  //   for (const s of sourceStats) {
-  //     if (!results[s.type]) {
-  //       results = this.calcStat(s, results, frzAgg, abilityCondition, lastTimeForWhere, companyId);
-  //     }
-  //   }
-  //   results[newStat.type] = aggFunc(results);
-  // }
-
   async getAggregateQuery(
     abilityCondition: string,
     query: StatList,
@@ -1442,9 +1076,6 @@ export class AggregateSlAPIService {
     let results = {};
     let lastTimeForWhere = {};
     let statCache = {};
-
-    // const frzAgg = new AggrEntry("creditFrozen", "SUM", "totalFreezeCredit");
-    // frzAgg.outerQuery = "select sum(s) from unnest";
 
     for (const stat of query.stats) {
       await this.calcStat(
@@ -1462,8 +1093,453 @@ export class AggregateSlAPIService {
     return new DataCountResponseDto(results);
   }
 
+  async getTotalSLProjects(user: User) {
+    const query = this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("COUNT(*)", "count") // Select count
+      .addSelect("MAX(pr.createdTime)", "latestUpdatedTime"); // Select latest updated time
+
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      query.where("pr.companyId = :companyId", { companyId: user.companyId });
+    }
+    const result = await query.getRawOne();
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async getTotalIssuedCredits(user: User) {
+    const query = this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("COALESCE(CAST(SUM(pr.creditIssued) AS INTEGER),0)", "totalCreditIssued") // Select count
+      .addSelect("MAX(pr.issuedCreditUpdatedTime)", "latestUpdatedTime"); // Select latest updated time
+
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      query.andWhere("pr.companyId = :companyId", { companyId: user.companyId });
+    }
+    const result = await query.getRawOne();
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async getTotalRetiredCredits(user: User) {
+    const query = this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("COALESCE(CAST(SUM(pr.creditRetired) AS INTEGER),0)", "totalCreditRetired")
+      .addSelect("COALESCE(CAST(SUM(pr.creditTransferred) AS INTEGER),0)", "totalCreditTransferred")
+      .addSelect("MAX(pr.retiredCreditUpdatedTime)", "latestRetiredCreditUpdatedTime")
+      .addSelect("MAX(pr.transferredCreditUpdatedTime)", "latestTransferredCreditUpdatedTime");
+
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      query.andWhere("pr.companyId = :companyId", { companyId: user.companyId });
+    }
+    let result = await query.getRawOne();
+
+    result.latestRetiredCreditUpdatedTime = result.latestRetiredCreditUpdatedTime
+      ? parseInt(result.latestRetiredCreditUpdatedTime)
+      : result.latestRetiredCreditUpdatedTime;
+    result.latestTransferredCreditUpdatedTime = result.latestTransferredCreditUpdatedTime
+      ? parseInt(result.latestTransferredCreditUpdatedTime)
+      : result.latestTransferredCreditUpdatedTime;
+    result = {
+      ...result,
+      latestUpdatedTime:
+        result.latestRetiredCreditUpdatedTime > result.latestTransferredCreditUpdatedTime
+          ? result.latestRetiredCreditUpdatedTime
+          : result.latestTransferredCreditUpdatedTime,
+      totalRetiredCredits: result.totalCreditRetired + result.totalCreditTransferred,
+    };
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async queryProgrammesByStatus(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: "companyId",
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+    let resp = await this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("pr.projectProposalStage", "projectProposalStage")
+      .addSelect("COUNT(*)", "count")
+      .addSelect("MAX(pr.proposalStageUpdatedTime)", "latestProposalStageUpdatedTime")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("pr.projectProposalStage")
+      .getRawMany();
+
+    let latestUpdatedTime = 0;
+    resp.forEach((row) => {
+      let latestProposalStageUpdatedTime = parseInt(row.latestProposalStageUpdatedTime);
+      if (latestProposalStageUpdatedTime > latestUpdatedTime) {
+        latestUpdatedTime = latestProposalStageUpdatedTime;
+      }
+    });
+
+    let result = {};
+
+    result["proposalStageData"] = resp;
+
+    result["latestUpdatedTime"] = latestUpdatedTime;
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async queryProgrammesByCategory(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: "companyId",
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+    let resp = await this.programmeSlRepo
+      .createQueryBuilder("pr")
+      .select("pr.projectCategory", "projectCategory")
+      .addSelect("COUNT(*)", "count")
+      .addSelect("MAX(pr.createdTime)", "latestCreatedTime")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("pr.projectCategory")
+      .getRawMany();
+
+    let latestUpdatedTime = 0;
+    resp.forEach((row) => {
+      let latestCreatedTime = parseInt(row.latestCreatedTime);
+      if (latestCreatedTime > latestUpdatedTime) {
+        latestUpdatedTime = latestCreatedTime;
+      }
+    });
+
+    let result = {};
+
+    result["projectCategoryData"] = resp;
+
+    result["latestUpdatedTime"] = latestUpdatedTime;
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async queryRetirementsByDate(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const fromCompanyId = {
+        key: 'cr"."fromCompanyId',
+        operation: "=",
+        value: user.companyId,
+      };
+
+      query.filterAnd.push(fromCompanyId);
+    }
+
+    if (query.filterAnd && query.filterAnd.length > 0) {
+      query.filterAnd.map((filter) => {
+        if (filter.key === "createdTime") {
+          filter.key = 'cr"."approvedTime';
+        } else if (filter.key === "purposeOfCreditDevelopment") {
+          filter.key = 'cr"."creditType';
+        } else if (filter.key === "projectCategory") {
+          filter.key = 'cr"."programmeCategory';
+        }
+        return filter;
+      });
+    }
+
+    const creditRetirementStatus = {
+      key: 'cr"."status',
+      operation: "=",
+      value: "Approved",
+    };
+
+    query.filterAnd.push(creditRetirementStatus);
+
+    const result = await this.creditRetirementSlViewRepo
+      .createQueryBuilder("cr")
+      .select(
+        "TO_CHAR(TO_TIMESTAMP(CAST(cr.approvedTime AS BIGINT)/1000), 'YYYY-MM-DD')",
+        "approvedDate"
+      )
+      .addSelect("cr.creditType", "creditType")
+      .addSelect("SUM(cr.creditAmount)", "totalCreditAmount")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(CAST(cr.approvedTime AS BIGINT)/1000), 'YYYY-MM-DD')")
+      .addGroupBy("cr.creditType")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(CAST(cr.approvedTime AS BIGINT)/1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async queryCreditsByStatus(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: 'programme"."companyId',
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+
+    if (query.filterAnd && query.filterAnd.length > 0) {
+      query.filterAnd.map((filter) => {
+        if (filter.key === "createdTime") {
+          filter.key = 'audit_log"."createdTime';
+        } else if (filter.key === "projectCategory") {
+          filter.key = 'programme"."projectCategory';
+        } else if (filter.key === "purposeOfCreditDevelopment") {
+          filter.key = 'programme"."purposeOfCreditDevelopment';
+        }
+        return filter;
+      });
+    }
+
+    const authorisedLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "AUTHORISED",
+    };
+
+    query.filterAnd.push(authorisedLogType);
+
+    const authorisedCredits = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("MAX(audit_log.createdTime)", "latestAuthorisedCreditUpdatedTime")
+      .addSelect("CAST(SUM(programme.creditEst) AS INTEGER)", "totalCreditAuthorised")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .getRawOne();
+
+    const issuedLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "CREDIT_ISSUED",
+    };
+
+    query.filterAnd.pop();
+    query.filterAnd.push(issuedLogType);
+
+    const issuedCredits = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("MAX(audit_log.createdTime)", "latestIssuedCreditUpdatedTime")
+      .addSelect("SUM((audit_log.data->>'creditIssued')::numeric)", "totalCreditIssued")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .getRawOne();
+
+    const transferredLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "TRANSFER_APPROVED",
+    };
+
+    query.filterAnd.pop();
+    query.filterAnd.push(transferredLogType);
+
+    const transferredCredits = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("MAX(audit_log.createdTime)", "latestTransferredCreditUpdatedTime")
+      .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "totalCreditTransferred")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .getRawOne();
+
+    const retiredLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "RETIRE_APPROVED",
+    };
+    query.filterAnd.pop();
+    query.filterAnd.push(retiredLogType);
+
+    const retiredCredits = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("MAX(audit_log.createdTime)", "latestRetiredCreditUpdatedTime")
+      .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "totalCreditRetired")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .getRawOne();
+
+    const result = {
+      ...authorisedCredits,
+      ...issuedCredits,
+      ...transferredCredits,
+      ...retiredCredits,
+    };
+
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async queryCreditsByDate(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: 'programme"."companyId',
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+
+    if (query.filterAnd && query.filterAnd.length > 0) {
+      query.filterAnd.map((filter) => {
+        if (filter.key === "createdTime") {
+          filter.key = 'audit_log"."createdTime';
+        } else if (filter.key === "projectCategory") {
+          filter.key = 'programme"."projectCategory';
+        } else if (filter.key === "purposeOfCreditDevelopment") {
+          filter.key = 'programme"."purposeOfCreditDevelopment';
+        }
+        return filter;
+      });
+    }
+
+    const authorisedLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "AUTHORISED",
+    };
+
+    query.filterAnd.push(authorisedLogType);
+
+    const authorisedCreditsByDate = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
+      .addSelect("CAST(SUM(programme.creditEst) AS INTEGER)", "total_credit_authorised")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    const issuedLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "CREDIT_ISSUED",
+    };
+
+    query.filterAnd.pop();
+    query.filterAnd.push(issuedLogType);
+
+    const issuedCreditsByDate = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
+      .addSelect("SUM((audit_log.data->>'creditIssued')::numeric)", "total_credit_issued")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    const transferredLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "TRANSFER_APPROVED",
+    };
+
+    query.filterAnd.pop();
+    query.filterAnd.push(transferredLogType);
+
+    const transferredCreditsByDate = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
+      .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "total_credit_transferred")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    const retiredLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "RETIRE_APPROVED",
+    };
+    query.filterAnd.pop();
+    query.filterAnd.push(retiredLogType);
+
+    const retiredCreditsByDate = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
+      .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "total_credit_retired")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    const data = {
+      authorised: authorisedCreditsByDate,
+      issued: issuedCreditsByDate,
+      transferred: transferredCreditsByDate,
+      retired: retiredCreditsByDate,
+    };
+
+    const groupedData = {};
+
+    ["authorised", "issued", "transferred", "retired"].forEach((key) => {
+      data[key].forEach((entry) => {
+        const { log_date, ...values } = entry;
+        if (!groupedData[log_date]) {
+          groupedData[log_date] = { log_date };
+        }
+        Object.assign(groupedData[log_date], values);
+      });
+    });
+
+    const result = Object.values(groupedData).sort((a: any, b: any) => {
+      const dateA = new Date(a.log_date);
+      const dateB = new Date(b.log_date);
+      return dateA.getTime() - dateB.getTime();
+    });
+    return new DataResponseDto(HttpStatus.OK, result);
+  }
+
+  async queryCreditsByPurpose(query: QueryDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const filterAnd = {
+        key: 'programme"."companyId',
+        operation: "=",
+        value: user.companyId,
+      };
+      query.filterAnd.push(filterAnd);
+    }
+
+    if (query.filterAnd && query.filterAnd.length > 0) {
+      query.filterAnd.map((filter) => {
+        if (filter.key === "createdTime") {
+          filter.key = 'audit_log"."createdTime';
+        } else if (filter.key === "projectCategory") {
+          filter.key = 'programme"."projectCategory';
+        } else if (filter.key === "purposeOfCreditDevelopment") {
+          filter.key = 'programme"."purposeOfCreditDevelopment';
+        }
+        return filter;
+      });
+    }
+
+    const issuedLogType = {
+      key: 'audit_log"."logType',
+      operation: "=",
+      value: "CREDIT_ISSUED",
+    };
+
+    query.filterAnd.push(issuedLogType);
+
+    const issuedCreditsByDate = await this.programmeSlAuditLogRepo
+      .createQueryBuilder("audit_log")
+      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "logDate")
+      .addSelect("SUM((audit_log.data->>'creditIssued')::numeric)", "totalCreditIssued")
+      .addSelect("programme.purposeOfCreditDevelopment", "creditType")
+      .where(this.helperService.generateWhereSQL(query, null))
+      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .addGroupBy("programme.purposeOfCreditDevelopment")
+      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .getRawMany();
+
+    return new DataResponseDto(HttpStatus.OK, issuedCreditsByDate);
+  }
+
   async getEmissions(stat, companyId, abilityCondition, lastTimeForWhere, statCache) {
-    console.log("get Emissions", stat, companyId);
     if ([StatType.MY_TOTAL_EMISSIONS].includes(stat.type)) {
       stat.statFilter ? (stat.statFilter.onlyMine = true) : (stat.statFilter = { onlyMine: true });
     }
@@ -1574,14 +1650,6 @@ export class AggregateSlAPIService {
       operation: "=",
     });
     let filterOr = undefined;
-    // if (stat.statFilter && stat.statFilter.onlyMine) {
-    //   filterOr = [];
-    //   filterOr.push({
-    //     value: companyId,
-    //     key: "fromCompanyId",
-    //     operation: "=",
-    //   });
-    // }
 
     const d = await this.genAggregateTypeOrmQuery(
       this.investmentRepo,
@@ -2337,9 +2405,6 @@ export class AggregateSlAPIService {
         startTime: statFilter.startTime,
         endTime: statFilter.endTime,
       });
-      // query
-      //   .andWhere("programme.createdTime >= :startTime", { startTime: statFilter.startTime })
-      //   .andWhere("programme.createdTime <= :endTime", { endTime: statFilter.endTime });
     }
     const result = await query.groupBy("programme.purposeOfCreditDevelopment").getRawMany();
 

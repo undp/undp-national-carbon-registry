@@ -24,17 +24,6 @@ export class ValidationReportProjectDetails {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  versionNo: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsPositive()
-  @IsInt()
-  versionDate: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
   @IsPhoneNumber()
   telephone: string;
 
@@ -65,10 +54,7 @@ export class ValidationReportProjectDetails {
   @IsString()
   projectTitle: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  reportNo: string;
+  reportID: string;
 
   @ApiProperty()
   @IsNotEmpty()

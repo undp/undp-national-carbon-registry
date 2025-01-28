@@ -193,21 +193,17 @@ const getLogDescription = (log: any, t: any) => {
     case 'TRANSFER_REQUESTED':
       return formatString(
         'slcfProgrammeTimeline:transferRequestedDescription',
-        [log.name, log.userCompanyName, log.data.creditAmount, log.toCompanyName],
-        t
-      );
-      break;
-    case 'TRANSFER_APPROVED':
-      return formatString(
-        'slcfProgrammeTimeline:transferApprovedDescription',
         [log.name, log.data.creditAmount, log.toCompanyName],
         t
       );
       break;
+    case 'TRANSFER_APPROVED':
+      return formatString('slcfProgrammeTimeline:transferApprovedDescription', [log.name], t);
+      break;
     case 'TRANSFER_CANCELLED':
       return formatString(
         'slcfProgrammeTimeline:transferCancelledDescription',
-        [log.name, log.userCompanyName, log.data.creditAmount, log.toCompanyName],
+        [log.name, log.data.creditAmount],
         t
       );
       break;
@@ -221,28 +217,24 @@ const getLogDescription = (log: any, t: any) => {
     case 'RETIRE_REQUESTED':
       return formatString(
         'slcfProgrammeTimeline:retireRequestedDescription',
-        [log.name, log.userCompanyName, log.data.creditAmount, log.programmeId],
+        [log.name, log.data.creditAmount],
         t
       );
       break;
     case 'RETIRE_APPROVED':
-      return formatString(
-        'slcfProgrammeTimeline:retireApprovedDescription',
-        [log.name, log.data.creditAmount, log.programmeId],
-        t
-      );
+      return formatString('slcfProgrammeTimeline:retireApprovedDescription', [log.name], t);
       break;
     case 'RETIRE_CANCELLED':
       return formatString(
         'slcfProgrammeTimeline:retireCancelledDescription',
-        [log.name, log.userCompanyName, log.data.creditAmount, log.programmeId],
+        [log.name, log.data.creditAmount],
         t
       );
       break;
     case 'RETIRE_REJECTED':
       return formatString(
         'slcfProgrammeTimeline:retireRejectedDescription',
-        [log.name, log.data.creditAmount, log.programmeId],
+        [log.name, log.data.creditAmount],
         t
       );
       break;

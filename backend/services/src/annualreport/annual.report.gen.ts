@@ -273,13 +273,6 @@ export class AnnualReportGen {
                     align: 'left',
                 });
             }
-            // doc
-            //   .fontSize(8)
-            //   .font('Times-Roman')
-            //   .text(cell, 30 + table.margin + columnIndex * 100, y, {
-            //     width: 100,
-            //     align: 'left',
-            //   });
             });
             y += maxCellHeight + 10;
             if (y > doc.page.height - 50) {

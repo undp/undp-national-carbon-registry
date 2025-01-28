@@ -100,7 +100,7 @@ export const IntroductionStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -127,7 +127,7 @@ export const IntroductionStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
                     <h4 className="form-section-title">
                       {`${t('verificationReport:creditionPeriod')}`}
@@ -165,6 +165,7 @@ export const IntroductionStep = (props: any) => {
                             disabledDate={(currentDate: any) =>
                               currentDate < moment().startOf('day')
                             }
+                            disabled
                           />
                         </Form.Item>
                       </Col>
@@ -204,6 +205,7 @@ export const IntroductionStep = (props: any) => {
                             disabledDate={(currentDate: any) =>
                               currentDate < moment().startOf('day')
                             }
+                            disabled
                           />
                         </Form.Item>
                       </Col>
@@ -236,7 +238,7 @@ export const IntroductionStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -265,7 +267,7 @@ export const IntroductionStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
                     <h4 className="form-section-title">
                       {`${t('verificationReport:periodVerified')}`}
@@ -298,12 +300,7 @@ export const IntroductionStep = (props: any) => {
                             },
                           ]}
                         >
-                          <DatePicker
-                            size="large"
-                            disabledDate={(currentDate: any) =>
-                              currentDate < moment().startOf('day')
-                            }
-                          />
+                          <DatePicker size="large" />
                         </Form.Item>
                       </Col>
                       <Col xl={2} md={24}>
@@ -337,12 +334,7 @@ export const IntroductionStep = (props: any) => {
                             },
                           ]}
                         >
-                          <DatePicker
-                            size="large"
-                            disabledDate={(currentDate: any) =>
-                              currentDate < moment().startOf('day')
-                            }
-                          />
+                          <DatePicker size="large" />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -372,10 +364,10 @@ export const IntroductionStep = (props: any) => {
 
               <Row justify={'end'} className="step-actions-end">
                 <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
-                  Back
+                  {t('verificationReport:back')}
                 </Button>
                 <Button type="primary" htmlType="submit" disabled={false}>
-                  Next
+                  {t('verificationReport:next')}
                 </Button>
               </Row>
             </Form>

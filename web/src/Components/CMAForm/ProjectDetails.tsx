@@ -1,27 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { CustomStepsProps } from './StepProps';
 import { Button, Col, DatePicker, Form, Input, Row } from 'antd';
 import moment from 'moment';
 import validator from 'validator';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-// import { t } from 'i18next';
 import PhoneInput, {
   Country,
   formatPhoneNumber,
   formatPhoneNumberIntl,
   isPossiblePhoneNumber,
 } from 'react-phone-number-input';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 const ProjectDetails = (props: CustomStepsProps) => {
-  const { next, form, current, t, countries, handleValuesUpdate, disableFields, prev } = props;
-
-  const { get, post } = useConnection();
+  const { next, form, current, t, countries, handleValuesUpdate, disableFields, prev, formMode } =
+    props;
 
   const [contactNoInput] = useState<any>();
 
   const onFinish = (values: any) => {
-    console.log('-----values---------', values);
-
     const tempValues: any = {
       projectDetails: {
         title: values?.title,
@@ -70,7 +66,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" disabled={disableFields} />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -112,7 +108,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" disabled={disableFields} />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -125,7 +121,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" disabled={disableFields} />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -158,26 +154,13 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" disabled={disableFields} />
+                      <Input size="large" disabled />
                     </Form.Item>
                   </div>
                 </Col>
 
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
-                    {/* <Form.Item
-                      label={t('CMAForm:version')}
-                      name="version"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('CMAForm:version')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item> */}
-
                     <Form.Item
                       label={t('CMAForm:proponents')}
                       name="projectProponent"
@@ -197,7 +180,6 @@ const ProjectDetails = (props: CustomStepsProps) => {
                       rules={[
                         {
                           required: true,
-                          // message: `${t('CMAForm:telephone')} ${t('isRequired')}`,
                           message: ``,
                         },
                         {
@@ -226,14 +208,13 @@ const ProjectDetails = (props: CustomStepsProps) => {
                       ]}
                     >
                       <PhoneInput
-                        // placeholder={t('addCompany:phoneNo')}
                         international
                         value={formatPhoneNumberIntl(contactNoInput)}
                         defaultCountry="LK"
                         countryCallingCodeEditable={false}
                         onChange={(v) => {}}
                         countries={countries as Country[]}
-                        disabled={disableFields}
+                        disabled
                       />
                     </Form.Item>
 
@@ -263,6 +244,14 @@ const ProjectDetails = (props: CustomStepsProps) => {
                     >
                       <Input size="large" disabled={disableFields} />
                     </Form.Item>
+
+                    {formMode === FormMode.VIEW ? (
+                      <Form.Item label={t('CMAForm:reportID')} name="reportID">
+                        <Input size={'large'} disabled />
+                      </Form.Item>
+                    ) : (
+                      ''
+                    )}
                   </div>
                 </Col>
               </Row>

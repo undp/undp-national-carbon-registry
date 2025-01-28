@@ -42,8 +42,8 @@ export class ProjectProposalContentDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
-  revNo: string;
+  @IsInt()
+  revNo: number;
 
   @ApiProperty()
   @IsNotEmpty()

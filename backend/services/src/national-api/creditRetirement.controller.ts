@@ -8,6 +8,8 @@ import { Action } from "../casl/action.enum";
 import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
 import { CreditRetirementStatusUpdateSlDto } from "../dto/creditRetirementStatusUpdateSl.dto";
 import { QueryDto } from "../dto/query.dto";
+import { ConfigService } from "@nestjs/config";
+import { RetirementRateLimiterGuard } from "src/auth/guards/retirement-rate-limiter.guard";
 
 @ApiTags("Credit Retire")
 @ApiBearerAuth()
@@ -37,5 +39,11 @@ export class CreditRetirementSlController {
   @Post("query")
   async queryCreditRetirementRequests(@Body() dto: QueryDto, @Request() req) {
     return await this.retirementService.queryRetirements(dto, req.abilityCondition, req.user);
+  }
+
+  @UseGuards(RetirementRateLimiterGuard)
+  @Post("public/get")
+  async getPublicProjectDetails(@Body() query: QueryDto) {
+    return this.retirementService.queryRetirementsPublicDetails(query);
   }
 }
