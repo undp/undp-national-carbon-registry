@@ -1,7 +1,6 @@
-import React, { FC } from 'react';
-import { DatePicker, Skeleton, Tooltip } from 'antd';
+import { FC } from 'react';
+import { Skeleton, Tooltip } from 'antd';
 import { InfoCircle } from 'react-bootstrap-icons';
-import { StatsCardsTypes } from '../../Definitions/Enums/statsCards.type.enum';
 
 export interface PieChartStatsProps {
   id: string;
@@ -17,7 +16,7 @@ export interface PieChartStatsProps {
 export const SLCFPieChartsStatComponent: FC<PieChartStatsProps> = (props: PieChartStatsProps) => {
   const { id, title, options, series, lastUpdate, loading, toolTipText, Chart } = props;
   return (
-    <div className="stastics-and-pie-card height-pie-rem">
+    <div className="statistics-and-pie-card height-pie-rem">
       {loading ? (
         <div className="margin-top-2">
           <Skeleton active />
@@ -26,12 +25,7 @@ export const SLCFPieChartsStatComponent: FC<PieChartStatsProps> = (props: PieCha
       ) : (
         <>
           <div className="pie-charts-top">
-            <div className="pie-charts-title">
-              {title}
-              {/* {[StatsCardsTypes.CREDITS, StatsCardsTypes.CERTIFIED_CREDITS].includes(title) && (
-                <div className="unit">(ITMOs)</div>
-              )} */}
-            </div>
+            <div className="pie-charts-title">{title}</div>
             <div className="info-container">
               <Tooltip
                 arrowPointAtCenter
@@ -44,7 +38,14 @@ export const SLCFPieChartsStatComponent: FC<PieChartStatsProps> = (props: PieCha
             </div>
           </div>
           <div className="pie-charts-section">
-            <Chart id={id} options={options} series={series} type="donut" height="320px" />
+            <Chart
+              id={id}
+              options={options}
+              series={series}
+              type="donut"
+              height="370px"
+              width="400px"
+            />
           </div>
           <div className="updated-on margin-top-2">
             {lastUpdate !== '0' && <div className="updated-moment-container">{lastUpdate}</div>}

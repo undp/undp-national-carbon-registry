@@ -7,7 +7,6 @@ import PhoneInput, {
 } from 'react-phone-number-input';
 
 import moment from 'moment';
-import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
 
 export const ProjectDetailsStep = (props: any) => {
@@ -23,11 +22,7 @@ export const ProjectDetailsStep = (props: any) => {
     onValueChange,
   } = props;
 
-  const { post } = useConnection();
   const [contactNoInput] = useState<any>();
-  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    : '';
 
   const t = translator.t;
   return (
@@ -75,33 +70,7 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
-                    </Form.Item>
-                    <Form.Item
-                      label={t('monitoringReport:pd_reportID')}
-                      name="reportID"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('monitoringReport:pd_reportID')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -128,7 +97,7 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
                     <Form.Item
                       label={t('monitoringReport:pd_dateOfIssue')}
@@ -183,8 +152,9 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
+
                     <Form.Item
                       label={t('monitoringReport:pd_website')}
                       name="website"
@@ -209,40 +179,13 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
                   </div>
                 </Col>
 
                 <Col xl={12} md={24}>
                   <div className="step-form-right-col">
-                    <Form.Item
-                      label={t('monitoringReport:pd_version')}
-                      name="version"
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(
-                                `${t('monitoringReport:pd_version')} ${t('isRequired')}`
-                              );
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-
                     <Form.Item
                       label={t('monitoringReport:pd_reportTitle')}
                       name="reportTitle"
@@ -294,7 +237,7 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
@@ -338,7 +281,7 @@ export const ProjectDetailsStep = (props: any) => {
                       ]}
                     >
                       <PhoneInput
-                        disabled={FormMode.VIEW === formMode}
+                        disabled
                         placeholder={t('monitoringReport:pd_telephone')}
                         international
                         value={formatPhoneNumberIntl(contactNoInput)}
@@ -372,17 +315,24 @@ export const ProjectDetailsStep = (props: any) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
+                    {FormMode.VIEW === formMode ? (
+                      <Form.Item label={t('monitoringReport:reportID')} name="reportID">
+                        <Input size={'large'} disabled />
+                      </Form.Item>
+                    ) : (
+                      ''
+                    )}
                   </div>
                 </Col>
               </Row>
               <Row justify={'end'} className="step-actions-end">
                 <Button danger size={'large'} onClick={cancel} disabled={false}>
-                  Cancel
+                  {t('monitoringReport:cancel')}
                 </Button>
                 <Button type="primary" htmlType="submit" disabled={false}>
-                  Next
+                  {t('monitoringReport:next')}
                 </Button>
               </Row>
             </Form>

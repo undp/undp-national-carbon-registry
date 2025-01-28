@@ -44,6 +44,8 @@ import {
   ReadOutlined,
   FileDoneOutlined,
   SafetyCertificateOutlined,
+  CheckCircleOutlined,
+  MailOutlined,
 } from '@ant-design/icons';
 import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
@@ -126,6 +128,8 @@ import LabelWithTooltip from '../../LabelWithTooltip/LabelWithTooltip';
 import ProgrammeHistoryStepsComponent from './programmeHistory/programmeHistoryStepComponent';
 import ProgrammeStatusTimelineComponent from './programmeStatusTimeline/programmeStatusTimelineComponent';
 import { OrganisationSlStatus } from '../../OrganisationSlStatus/organisationSlStatus';
+import { SlcfFormActionModel } from '../../Models/SlcfFormActionModel';
+import { PopupInfo } from '../../../Definitions/Definitions/ndcDetails.definitions';
 
 const SLCFProjectDetailsViewComponent = (props: any) => {
   const { onNavigateToProgrammeView, translator } = props;
@@ -182,6 +186,10 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   const [projectLocationMapLayer, setProjectLocationMapLayer] = useState<any>();
   const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();
   const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<number[]>([]);
+  const [slcfActionModalVisible, setSlcfActionModalVisible] = useState<boolean>(false);
+  const [popupInfo, setPopupInfo] = useState<PopupInfo>();
+  const [slcfActionModalInfo, setSlcfActionModalInfo] = useState<PopupInfo>();
+  const [carbonNeutralCertificateData, setCarbonNeutralCertificateData] = useState<any>();
 
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -192,7 +200,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   };
 
   const locationColors = ['#6ACDFF', '#FF923D', '#CDCDCD', '#FF8183', '#B7A4FE'];
-  console.log(JSON.stringify(userInfoState));
   const ministryLevelPermission =
     data &&
     userInfoState?.companyRole === CompanyRole.MINISTRY &&
@@ -255,16 +262,20 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
 
   const getPieChartData = (d: ProgrammeSlU) => {
     const frozen = d.creditFrozen ? Number(d.creditFrozen) : 0;
+    const authorised =
+      d.projectProposalStage.toString() === ProjectProposalStage.AUTHORISED && d.creditEst
+        ? Number(
+            (
+              numIsExist(d.creditEst) -
+              numIsExist(d?.creditBalance) -
+              numIsExist(d.creditTransferred) -
+              numIsExist(d.creditRetired) -
+              frozen
+            ).toFixed(2)
+          )
+        : 0;
     const dt = [
-      Number(
-        (
-          numIsExist(d.creditEst) -
-          numIsExist(d?.creditBalance) -
-          numIsExist(d.creditTransferred) -
-          numIsExist(d.creditRetired) -
-          frozen
-        ).toFixed(2)
-      ),
+      authorised,
       Number(numIsExist(d.creditBalance).toFixed(2)),
       Number(numIsExist(d.creditTransferred)),
       Number(numIsExist(d.creditRetired)),
@@ -462,10 +473,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     setLoadingAll(false);
   };
 
-  const rejectNotificationForm = async () => {
+  const rejectNotificationForm = async (remark: string) => {
     try {
       const response: any = await post('national/programmeSl/inf/reject', {
         programmeId: id,
+        remark,
       });
 
       if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
@@ -484,8 +496,67 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setSlcfActionModalVisible(false);
     }
   };
+
+  const getCarbonNeutralCertificates = async (companyId: number) => {
+    try {
+      const response: any = await post('national/programmeSl/getCarbonNeutralCertificates', {
+        companyId: companyId,
+      });
+      if (response.status === 200 || response.status === 201) {
+        console.log(response);
+        setCarbonNeutralCertificateData(response?.data);
+      }
+    } catch (err: any) {
+      console.log('Error in getting carbon neutral certificate data - ', err);
+      message.open({
+        type: 'error',
+        content: err.message,
+        duration: 4,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    }
+  };
+
+  const requestCarbonNeutralCertificate = async () => {
+    try {
+      const response: any = await post('national/programmeSl/requestCarbonNeutralCertificate', {
+        companyId: data?.companyId,
+        programmeId: data?.programmeId,
+      });
+      if (response.status === 200 || response.status === 201) {
+        message.open({
+          type: 'success',
+          content: `${t('projectDetailsView:requestCarbonNeutralCertificateSuccess')}`,
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+
+        if (data) getCarbonNeutralCertificates(data.companyId);
+      }
+    } catch (err: any) {
+      console.log('Error in getting documents - ', err);
+      message.open({
+        type: 'error',
+        content: err.message,
+        duration: 4,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setSlcfActionModalVisible(false);
+    }
+  };
+
+  function hasNoPendingStatus(): boolean {
+    if (carbonNeutralCertificateData) {
+      return carbonNeutralCertificateData.every((item: any) => item.status !== 'Pending');
+    } else {
+      return false;
+    }
+  }
 
   const approveNotificationForm = async () => {
     try {
@@ -509,13 +580,16 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setSlcfActionModalVisible(false);
     }
   };
 
-  const rejectProposal = async () => {
+  const rejectProposal = async (remark: string) => {
     try {
       const response: any = await post('national/programmeSl/proposal/reject', {
         programmeId: id,
+        remark,
       });
 
       if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
@@ -534,6 +608,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setSlcfActionModalVisible(false);
     }
   };
 
@@ -559,13 +635,16 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setSlcfActionModalVisible(false);
     }
   };
 
-  const rejectCMA = async () => {
+  const rejectCMA = async (remark: string) => {
     try {
       const response: any = await post('national/programmeSl/cma/reject', {
         programmeId: id,
+        remark,
       });
 
       if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
@@ -584,16 +663,19 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setSlcfActionModalVisible(false);
     }
   };
 
   const approveCMA = () => {
     navigate(`/programmeManagementSLCF/siteVisitCheckList/${id}`);
   };
-  const rejectValidation = async () => {
+  const rejectValidation = async (remark: string) => {
     try {
       const response: any = await post('national/programmeSl/validation/reject', {
         programmeId: id,
+        remark,
       });
 
       if (response?.response?.data?.statusCode === HttpStatusCode.Ok) {
@@ -612,6 +694,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setSlcfActionModalVisible(false);
     }
   };
 
@@ -646,6 +730,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
+    } finally {
+      setSlcfActionModalVisible(false);
     }
   };
   const addElement = (e: any, time: number, hist: any) => {
@@ -667,187 +753,187 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     return parts.join('');
   };
 
-  const getTxActivityLog = (transfers: ProgrammeTransfer[], txDetails: any) => {
-    const hist: any = {};
-    for (const transfer of transfers) {
-      txDetails[transfer.requestId!] = transfer;
-      const createdTime = Number(transfer.createdTime ? transfer.createdTime : transfer.txTime!);
-      let d: any;
-      if (!transfer.isRetirement) {
-        d = {
-          status: 'process',
-          title: t('projectDetailsView:tlInitTitle'),
-          subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
-          description: (
-            <TimelineBody
-              text={formatString('projectDetailsView:tlInitDesc', [
-                addCommSep(transfer.creditAmount),
-                creditUnit,
-                transfer.sender[0]?.name,
-                transfer.receiver[0]?.name,
-                transfer.requester[0]?.name,
-              ])}
-              remark={transfer.comment}
-              via={transfer.userName}
-              t={t}
-            />
-          ),
-          icon: (
-            <span className="step-icon transfer-step">
-              <Icon.ClockHistory />
-            </span>
-          ),
-        };
-      } else {
-        d = {
-          status: 'process',
-          title: t('projectDetailsView:tlRetInit'),
-          subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
-          description: (
-            <TimelineBody
-              text={formatString('projectDetailsView:tlRetInitDesc', [
-                addCommSep(
-                  transfer.creditAmount
-                    ? transfer.retirementType === RetireType.CROSS_BORDER
-                      ? transfer.creditAmount -
-                        Number(((transfer.omgePercentage * transfer.creditAmount) / 100).toFixed(2))
-                      : transfer.creditAmount
-                    : transfer.creditAmount
-                ),
-                creditUnit,
-                transfer.sender[0]?.name,
-                `${
-                  transfer.toCompanyMeta?.countryName
-                    ? `to ${transfer.toCompanyMeta?.countryName} `
-                    : ''
-                }`,
-                transfer.retirementType === RetireType.CROSS_BORDER
-                  ? 'cross border transfer'
-                  : transfer.retirementType === RetireType.LEGAL_ACTION
-                  ? 'legal action'
-                  : 'other',
-                transfer.retirementType === RetireType.CROSS_BORDER && transfer.omgePercentage
-                  ? formatString('projectDetailsView:t1RetInitOmgeDesc', [
-                      addCommSep(
-                        transfer.creditAmount
-                          ? ((transfer.omgePercentage * transfer.creditAmount) / 100).toFixed(2)
-                          : undefined
-                      ),
-                    ])
-                  : '',
-                transfer.requester[0]?.name,
-              ])}
-              remark={transfer.comment}
-              via={transfer.userName}
-              t={t}
-            />
-          ),
-          icon: (
-            <span className="step-icon retire-step">
-              <Icon.ClockHistory />
-            </span>
-          ),
-        };
-      }
+  // const getTxActivityLog = (transfers: ProgrammeTransfer[], txDetails: any) => {
+  //   const hist: any = {};
+  //   for (const transfer of transfers) {
+  //     txDetails[transfer.requestId!] = transfer;
+  //     const createdTime = Number(transfer.createdTime ? transfer.createdTime : transfer.txTime!);
+  //     let d: any;
+  //     if (!transfer.isRetirement) {
+  //       d = {
+  //         status: 'process',
+  //         title: t('projectDetailsView:tlInitTitle'),
+  //         subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
+  //         description: (
+  //           <TimelineBody
+  //             text={formatString('projectDetailsView:tlInitDesc', [
+  //               addCommSep(transfer.creditAmount),
+  //               creditUnit,
+  //               transfer.sender[0]?.name,
+  //               transfer.receiver[0]?.name,
+  //               transfer.requester[0]?.name,
+  //             ])}
+  //             remark={transfer.comment}
+  //             via={transfer.userName}
+  //             t={t}
+  //           />
+  //         ),
+  //         icon: (
+  //           <span className="step-icon transfer-step">
+  //             <Icon.ClockHistory />
+  //           </span>
+  //         ),
+  //       };
+  //     } else {
+  //       d = {
+  //         status: 'process',
+  //         title: t('projectDetailsView:tlRetInit'),
+  //         subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
+  //         description: (
+  //           <TimelineBody
+  //             text={formatString('projectDetailsView:tlRetInitDesc', [
+  //               addCommSep(
+  //                 transfer.creditAmount
+  //                   ? transfer.retirementType === RetireType.CROSS_BORDER
+  //                     ? transfer.creditAmount -
+  //                       Number(((transfer.omgePercentage * transfer.creditAmount) / 100).toFixed(2))
+  //                     : transfer.creditAmount
+  //                   : transfer.creditAmount
+  //               ),
+  //               creditUnit,
+  //               transfer.sender[0]?.name,
+  //               `${
+  //                 transfer.toCompanyMeta?.countryName
+  //                   ? `to ${transfer.toCompanyMeta?.countryName} `
+  //                   : ''
+  //               }`,
+  //               transfer.retirementType === RetireType.CROSS_BORDER
+  //                 ? 'cross border transfer'
+  //                 : transfer.retirementType === RetireType.LEGAL_ACTION
+  //                 ? 'legal action'
+  //                 : 'other',
+  //               transfer.retirementType === RetireType.CROSS_BORDER && transfer.omgePercentage
+  //                 ? formatString('projectDetailsView:t1RetInitOmgeDesc', [
+  //                     addCommSep(
+  //                       transfer.creditAmount
+  //                         ? ((transfer.omgePercentage * transfer.creditAmount) / 100).toFixed(2)
+  //                         : undefined
+  //                     ),
+  //                   ])
+  //                 : '',
+  //               transfer.requester[0]?.name,
+  //             ])}
+  //             remark={transfer.comment}
+  //             via={transfer.userName}
+  //             t={t}
+  //           />
+  //         ),
+  //         icon: (
+  //           <span className="step-icon retire-step">
+  //             <Icon.ClockHistory />
+  //           </span>
+  //         ),
+  //       };
+  //     }
 
-      addElement(d, createdTime, hist);
+  //     addElement(d, createdTime, hist);
 
-      if (
-        transfer.status === CreditTransferStage.Rejected ||
-        transfer.status === CreditTransferStage.NotRecognised
-      ) {
-        const dx: any = {
-          status: 'process',
-          title: t(
-            transfer.isRetirement
-              ? 'projectDetailsView:tlRetRejectTitle'
-              : 'projectDetailsView:tlRejectTitle'
-          ),
-          subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(dateTimeFormat),
-          description: (
-            <TimelineBody
-              text={formatString(
-                transfer.isRetirement
-                  ? 'projectDetailsView:tlTxRetRejectDesc'
-                  : 'projectDetailsView:tlTxRejectDesc',
-                [
-                  addCommSep(transfer.creditAmount),
-                  creditUnit,
-                  transfer.sender[0]?.name,
-                  transfer.isRetirement && transfer.toCompanyMeta?.countryName
-                    ? transfer.toCompanyMeta?.countryName
-                    : transfer.receiver[0]?.name,
-                  transfer.isRetirement ? transfer.receiver[0]?.name : transfer.sender[0]?.name,
-                ]
-              )}
-              remark={transfer.txRef?.split('#')[0]}
-              via={transfer.userName}
-              t={t}
-            />
-          ),
-          icon: (
-            <span
-              className={`step-icon ${transfer.isRetirement ? 'retire-step' : 'transfer-step'}`}
-            >
-              <Icon.XOctagon />
-            </span>
-          ),
-        };
-        addElement(dx, Number(transfer.txTime!), hist);
-      } else if (transfer.status === CreditTransferStage.Cancelled) {
-        const systemCancel = transfer.txRef && transfer.txRef.indexOf('#SUSPEND_AUTO_CANCEL#') >= 0;
-        const lowCreditSystemCancel =
-          transfer.txRef && transfer.txRef.indexOf('#LOW_CREDIT_AUTO_CANCEL#') >= 0;
+  //     if (
+  //       transfer.status === CreditTransferStage.Rejected ||
+  //       transfer.status === CreditTransferStage.NotRecognised
+  //     ) {
+  //       const dx: any = {
+  //         status: 'process',
+  //         title: t(
+  //           transfer.isRetirement
+  //             ? 'projectDetailsView:tlRetRejectTitle'
+  //             : 'projectDetailsView:tlRejectTitle'
+  //         ),
+  //         subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(dateTimeFormat),
+  //         description: (
+  //           <TimelineBody
+  //             text={formatString(
+  //               transfer.isRetirement
+  //                 ? 'projectDetailsView:tlTxRetRejectDesc'
+  //                 : 'projectDetailsView:tlTxRejectDesc',
+  //               [
+  //                 addCommSep(transfer.creditAmount),
+  //                 creditUnit,
+  //                 transfer.sender[0]?.name,
+  //                 transfer.isRetirement && transfer.toCompanyMeta?.countryName
+  //                   ? transfer.toCompanyMeta?.countryName
+  //                   : transfer.receiver[0]?.name,
+  //                 transfer.isRetirement ? transfer.receiver[0]?.name : transfer.sender[0]?.name,
+  //               ]
+  //             )}
+  //             remark={transfer.txRef?.split('#')[0]}
+  //             via={transfer.userName}
+  //             t={t}
+  //           />
+  //         ),
+  //         icon: (
+  //           <span
+  //             className={`step-icon ${transfer.isRetirement ? 'retire-step' : 'transfer-step'}`}
+  //           >
+  //             <Icon.XOctagon />
+  //           </span>
+  //         ),
+  //       };
+  //       addElement(dx, Number(transfer.txTime!), hist);
+  //     } else if (transfer.status === CreditTransferStage.Cancelled) {
+  //       const systemCancel = transfer.txRef && transfer.txRef.indexOf('#SUSPEND_AUTO_CANCEL#') >= 0;
+  //       const lowCreditSystemCancel =
+  //         transfer.txRef && transfer.txRef.indexOf('#LOW_CREDIT_AUTO_CANCEL#') >= 0;
 
-        const dx: any = {
-          status: 'process',
-          title: t(
-            transfer.isRetirement
-              ? 'projectDetailsView:tlRetCancelTitle'
-              : 'projectDetailsView:tlTxCancelTitle'
-          ),
-          subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(dateTimeFormat),
-          description: (
-            <TimelineBody
-              text={formatString(
-                systemCancel
-                  ? 'projectDetailsView:tlTxCancelSystemDesc'
-                  : lowCreditSystemCancel
-                  ? 'projectDetailsView:tlTxLowCreditCancelSystemDesc'
-                  : 'projectDetailsView:tlTxCancelDesc',
-                [
-                  addCommSep(transfer.creditAmount),
-                  creditUnit,
-                  transfer.sender[0]?.name,
-                  transfer.isRetirement && transfer.toCompanyMeta?.countryName
-                    ? transfer.toCompanyMeta.countryName
-                    : transfer.receiver[0]?.name,
-                  systemCancel
-                    ? transfer.txRef?.split('#')[4]
-                    : lowCreditSystemCancel
-                    ? ''
-                    : transfer.requester[0]?.name,
-                  transfer.txRef?.split('#')[5],
-                ]
-              )}
-              remark={transfer.txRef?.split('#')[0]}
-              via={transfer.userName}
-              t={t}
-            />
-          ),
-          icon: (
-            <span
-              className={`step-icon ${transfer.isRetirement ? 'retire-step' : 'transfer-step'}`}
-            >
-              <Icon.ExclamationOctagon />
-            </span>
-          ),
-        };
-        addElement(dx, Number(transfer.txTime!), hist);
-      }
-    }
-    return hist;
-  };
+  //       const dx: any = {
+  //         status: 'process',
+  //         title: t(
+  //           transfer.isRetirement
+  //             ? 'projectDetailsView:tlRetCancelTitle'
+  //             : 'projectDetailsView:tlTxCancelTitle'
+  //         ),
+  //         subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(dateTimeFormat),
+  //         description: (
+  //           <TimelineBody
+  //             text={formatString(
+  //               systemCancel
+  //                 ? 'projectDetailsView:tlTxCancelSystemDesc'
+  //                 : lowCreditSystemCancel
+  //                 ? 'projectDetailsView:tlTxLowCreditCancelSystemDesc'
+  //                 : 'projectDetailsView:tlTxCancelDesc',
+  //               [
+  //                 addCommSep(transfer.creditAmount),
+  //                 creditUnit,
+  //                 transfer.sender[0]?.name,
+  //                 transfer.isRetirement && transfer.toCompanyMeta?.countryName
+  //                   ? transfer.toCompanyMeta.countryName
+  //                   : transfer.receiver[0]?.name,
+  //                 systemCancel
+  //                   ? transfer.txRef?.split('#')[4]
+  //                   : lowCreditSystemCancel
+  //                   ? ''
+  //                   : transfer.requester[0]?.name,
+  //                 transfer.txRef?.split('#')[5],
+  //               ]
+  //             )}
+  //             remark={transfer.txRef?.split('#')[0]}
+  //             via={transfer.userName}
+  //             t={t}
+  //           />
+  //         ),
+  //         icon: (
+  //           <span
+  //             className={`step-icon ${transfer.isRetirement ? 'retire-step' : 'transfer-step'}`}
+  //           >
+  //             <Icon.ExclamationOctagon />
+  //           </span>
+  //         ),
+  //       };
+  //       addElement(dx, Number(transfer.txTime!), hist);
+  //     }
+  //   }
+  //   return hist;
+  // };
 
   function updatePendingTimeLineForNdc(currentHistory: any) {
     const monitoringElIndex = currentHistory.findIndex(
@@ -1370,13 +1456,13 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   //   return null;
   // };
 
-  const updateProgrammeData = (response: any) => {
-    setData(response.data);
-    state.record = response.data;
-    navigate('.', { state: { record: response.data } });
-    genCerts(response.data, certTimes);
-    genPieData(response.data);
-  };
+  // const updateProgrammeData = (response: any) => {
+  //   setData(response.data);
+  //   state.record = response.data;
+  //   navigate('.', { state: { record: response.data } });
+  //   genCerts(response.data, certTimes);
+  //   genPieData(response.data);
+  // };
 
   const getDocuments = async (programmeId: string) => {
     setNdcActionDocumentDataLoaded(false);
@@ -1418,9 +1504,9 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     }
   };
 
-  const getSuccessMsg = (response: any, initMsg: string, successMsg: string) => {
-    return response.data instanceof Array ? initMsg : successMsg;
-  };
+  // const getSuccessMsg = (response: any, initMsg: string, successMsg: string) => {
+  //   return response.data instanceof Array ? initMsg : successMsg;
+  // };
 
   const updateCreditInfo = (response: any) => {
     if (!(response.data instanceof Array) && response.data && data) {
@@ -1434,41 +1520,41 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     }
   };
 
-  const onPopupAction = async (
-    body: any,
-    endpoint: any,
-    successMsg: any,
-    httpMode: any,
-    successCB: any
-  ) => {
-    body.programmeId = data?.programmeId;
-    let error;
-    try {
-      const response: any = await httpMode(`national/programme/${endpoint}`, body);
-      if (response.statusCode < 300 || response.status < 300) {
-        if (!response.data.certifier) {
-          response.data.certifier = [];
-        }
-        setOpenModal(false);
-        setComment(undefined);
-        error = undefined;
-        successCB(response);
-        message.open({
-          type: 'success',
-          content: typeof successMsg !== 'function' ? successMsg : successMsg(response),
-          duration: 3,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-        });
-      } else {
-        error = response.message;
-      }
-      await getProgrammeHistory(data?.programmeId as string);
-      return error;
-    } catch (e: any) {
-      error = e.message;
-      return error;
-    }
-  };
+  // const onPopupAction = async (
+  //   body: any,
+  //   endpoint: any,
+  //   successMsg: any,
+  //   httpMode: any,
+  //   successCB: any
+  // ) => {
+  //   body.programmeId = data?.programmeId;
+  //   let error;
+  //   try {
+  //     const response: any = await httpMode(`national/programme/${endpoint}`, body);
+  //     if (response.statusCode < 300 || response.status < 300) {
+  //       if (!response.data.certifier) {
+  //         response.data.certifier = [];
+  //       }
+  //       setOpenModal(false);
+  //       setComment(undefined);
+  //       error = undefined;
+  //       successCB(response);
+  //       message.open({
+  //         type: 'success',
+  //         content: typeof successMsg !== 'function' ? successMsg : successMsg(response),
+  //         duration: 3,
+  //         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+  //       });
+  //     } else {
+  //       error = response.message;
+  //     }
+  //     await getProgrammeHistory(data?.programmeId as string);
+  //     return error;
+  //   } catch (e: any) {
+  //     error = e.message;
+  //     return error;
+  //   }
+  // };
 
   const onCreditRetireTransferAction = async (body: any, successMsg: any, successCB: any) => {
     body.programmeId = data?.programmeId;
@@ -1490,7 +1576,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       } else {
         error = response.message;
       }
-      // getProgrammeById('id');
       await getProgrammeHistory(data?.programmeId as string);
       return error;
     } catch (e: any) {
@@ -1659,10 +1744,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   };
 
   useEffect(() => {
-    // if (state && state.record) {
-    //   setLoadingAll(false);
-    //   setData(state.record);
-    // } else {
     if (id) {
       getProgrammeById();
     } else {
@@ -1677,6 +1758,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
 
   useEffect(() => {
     if (data) {
+      getCarbonNeutralCertificates(data.companyId);
       getInvestmentHistory(data?.programmeId);
       getProgrammeHistory(data.programmeId);
       getDocuments(data?.programmeId);
@@ -1695,27 +1777,18 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           : 0
       );
       drawMap();
-      // for (const company of data.company) {
-      //   if (
-      //     parseInt(company.state) === CompanyState.ACTIVE.valueOf() &&
-      //     company.companyId !== userInfoState?.companyId
-      //   ) {
-      //     setIsAllOwnersDeactivated(false);
-      //     break;
-      //   }
-      // }
     }
   }, [data]);
 
-  const onClickedAddAction = () => {
-    navigate('/programmeManagement/addNdcAction', { state: { record: data } });
-  };
+  // const onClickedAddAction = () => {
+  //   navigate('/programmeManagement/addNdcAction', { state: { record: data } });
+  // };
 
-  const methodologyDocumentApproved = () => {
-    if (data) {
-      getProgrammeById();
-    }
-  };
+  // const methodologyDocumentApproved = () => {
+  //   if (data) {
+  //     getProgrammeById();
+  //   }
+  // };
 
   const getVerificationHistory = async (programmeId: string) => {
     setLoadingHistory(true);
@@ -1747,14 +1820,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     try {
       const response: any = await get(`national/logs?programmeId=${programmeId}`);
       if (response && response.data) {
-        // const items = response.data.map((log: any) => ({
-        //   title: log.logType.replace(/_/g, ' '), // Convert logType to a readable title
-        //   description: log.data
-        //     ? Object.entries(log.data)
-        //         .map(([key, value]) => `${key}: ${value}`)
-        //         .join(', ')
-        //     : 'No additional details', // Handle cases where data is null
-        // }));
         setProgrammeHistoryLogData(response.data);
         setProgrammeHistoryLogDataLoaded(true);
         console.log(response);
@@ -1770,6 +1835,11 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     } finally {
       setLoadingHistory(false);
     }
+  };
+
+  const showModalOnAction = (info: PopupInfo) => {
+    setSlcfActionModalVisible(true);
+    setPopupInfo(info);
   };
 
   useEffect(() => {
@@ -1839,7 +1909,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   });
   // genCerts(data);
   const actionBtns = [];
-
+  // MARK: Action Buttons
   if (userInfoState?.userRole !== 'ViewOnly') {
     if (userInfoState && data.projectProposalStage === ProjectProposalStage.SUBMITTED_INF) {
       if (userInfoState?.companyRole === CompanyRole.CLIMATE_FUND) {
@@ -1847,7 +1917,16 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             danger
             onClick={() => {
-              rejectNotificationForm();
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnReject'),
+                icon: <CloseCircleOutlined />,
+                title: t('projectDetailsView:rejectInfModalTitle'),
+                okAction: (remark: string) => {
+                  rejectNotificationForm(remark);
+                },
+                remarkRequired: true,
+                type: 'danger',
+              });
             }}
           >
             {t('projectDetailsView:reject')}
@@ -1857,7 +1936,18 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             type="primary"
             onClick={() => {
-              approveNotificationForm();
+              // approveNotificationForm();
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnApprove'),
+                icon: <CheckCircleOutlined />,
+                title: t('projectDetailsView:approveInfModalTitle'),
+                okAction: () => {
+                  console.log('Approved');
+                  approveNotificationForm();
+                },
+                remarkRequired: false,
+                type: 'primary',
+              });
             }}
           >
             {t('projectDetailsView:approve')}
@@ -1873,7 +1963,17 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             danger
             onClick={() => {
-              rejectProposal();
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnReject'),
+                icon: <CloseCircleOutlined />,
+                title: t('projectDetailsView:rejectProposalTitle'),
+                okAction: (remark: string) => {
+                  console.log('rejected', remark);
+                  rejectProposal(remark);
+                },
+                remarkRequired: true,
+                type: 'danger',
+              });
             }}
           >
             {t('projectDetailsView:reject')}
@@ -1883,7 +1983,17 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             type="primary"
             onClick={() => {
-              approveProposal();
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnApprove'),
+                icon: <CheckCircleOutlined />,
+                title: t('projectDetailsView:approveProposalTitle'),
+                okAction: () => {
+                  console.log('Approved');
+                  approveProposal();
+                },
+                remarkRequired: false,
+                type: 'primary',
+              });
             }}
           >
             {t('projectDetailsView:accept')}
@@ -1896,7 +2006,17 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             danger
             onClick={() => {
-              rejectCMA();
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnReject'),
+                icon: <CloseCircleOutlined />,
+                title: t('projectDetailsView:rejectCMATitle'),
+                okAction: (remark: string) => {
+                  console.log('rejected', remark);
+                  rejectCMA(remark);
+                },
+                remarkRequired: true,
+                type: 'danger',
+              });
             }}
           >
             {t('projectDetailsView:reject')}
@@ -1906,7 +2026,17 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             type="primary"
             onClick={() => {
-              approveCMA();
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnApprove'),
+                icon: <CheckCircleOutlined />,
+                title: t('projectDetailsView:approveCMATitle'),
+                okAction: () => {
+                  console.log('Approved');
+                  approveCMA();
+                },
+                remarkRequired: false,
+                type: 'primary',
+              });
             }}
           >
             {t('projectDetailsView:accept')}
@@ -1922,7 +2052,17 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             danger
             onClick={() => {
-              rejectValidation();
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnReject'),
+                icon: <CloseCircleOutlined />,
+                title: t('projectDetailsView:rejectValidationTitle'),
+                okAction: (remark: string) => {
+                  console.log('rejected', remark);
+                  rejectValidation(remark);
+                },
+                remarkRequired: true,
+                type: 'danger',
+              });
             }}
           >
             {t('projectDetailsView:reject')}
@@ -1932,7 +2072,17 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           <Button
             type="primary"
             onClick={() => {
-              approveValidation();
+              showModalOnAction({
+                actionBtnText: t('projectDetailsView:btnApprove'),
+                icon: <CheckCircleOutlined />,
+                title: t('projectDetailsView:approveValidationTitle'),
+                okAction: () => {
+                  console.log('Approved');
+                  approveValidation();
+                },
+                remarkRequired: false,
+                type: 'primary',
+              });
             }}
           >
             {t('projectDetailsView:approve')}
@@ -1940,6 +2090,14 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         );
       }
     } else if (userInfoState && data.projectProposalStage === ProjectProposalStage.AUTHORISED) {
+      const totalCreditsToIssue = data.creditEst ? data.creditEst : 0;
+      const creditBalance = data.creditBalance ? data.creditBalance : 0;
+      const creditTransferred = data.creditTransferred ? data.creditTransferred : 0;
+      const creditRetired = data.creditRetired ? data.creditRetired : 0;
+      const creditFrozen = data.creditFrozen ? data.creditFrozen : 0;
+      const availableCreditsToIssue =
+        totalCreditsToIssue - (creditBalance + creditTransferred + creditRetired + creditFrozen);
+
       if (
         userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
         ((verificationHistoryData &&
@@ -1948,7 +2106,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED ||
             verificationHistoryData[verificationHistoryData.length - 1].status ===
               VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED)) ||
-          (!verificationHistoryData.length && verificationHistoryDataLoaded))
+          (!verificationHistoryData.length && verificationHistoryDataLoaded)) &&
+        availableCreditsToIssue > 0
       ) {
         actionBtns.push(
           <Button
@@ -1961,6 +2120,34 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           </Button>
         );
       }
+    }
+
+    if (
+      hasNoPendingStatus() &&
+      data.projectProposalStage === ProjectProposalStage.AUTHORISED &&
+      userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+    ) {
+      actionBtns.push(
+        <Button
+          className="mg-left-1"
+          type="primary"
+          onClick={() => {
+            showModalOnAction({
+              actionBtnText: t('projectDetailsView:btnRequest'),
+              icon: <CheckCircleOutlined />,
+              title: t('projectDetailsView:requestCarbonNeutralCertificateTitle'),
+              okAction: () => {
+                console.log('Approved');
+                requestCarbonNeutralCertificate();
+              },
+              remarkRequired: false,
+              type: 'primary',
+            });
+          }}
+        >
+          {t('projectDetailsView:requestCarbonNeutralCert')}
+        </Button>
+      );
     }
   }
 
@@ -2026,7 +2213,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                             fontSize: '110%',
                             marginRight: 5,
                           }}
-                          // onClick={() => onclick()}
                         />
                         {`Document  ${index + 1}`}
                       </a>
@@ -2041,6 +2227,18 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       }
     }
   });
+
+  const getContactPersonInfo = () => {
+    const nameText = t('projectDetailsView:contactName');
+    const emailText = t('projectDetailsView:contactEmail');
+    const phoneNoText = t('projectDetailsView:contactPhoneNo');
+
+    return {
+      [nameText]: data.contactName,
+      [emailText]: data.contactEmail,
+      [phoneNoText]: data.contactPhoneNo,
+    };
+  };
 
   return loadingAll ? (
     <Loading />
@@ -2070,6 +2268,197 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         </Row>
         <Row gutter={16}>
           <Col md={24} lg={10}>
+            {data.projectProposalStage === ProjectProposalStage.AUTHORISED && (
+              <Card className="card-container">
+                <div className="info-view">
+                  <div className="title">
+                    <span className="title-icon">{<BlockOutlined />}</span>
+                    <span className="title-text">{t('projectDetailsView:credits')}</span>
+                  </div>
+                  <div className="map-content">
+                    <Chart
+                      id={'creditChart'}
+                      options={{
+                        labels: ['Authorised', 'Issued', 'Transferred', 'Retired', 'Frozen'],
+                        legend: {
+                          position: 'bottom',
+                        },
+                        colors: ['#6ACDFF', '#D2FDBB', '#CDCDCD', '#FF8183', '#B7A4FE'],
+                        tooltip: {
+                          fillSeriesColor: false,
+                        },
+                        states: {
+                          normal: {
+                            filter: {
+                              type: 'none',
+                              value: 0,
+                            },
+                          },
+                          hover: {
+                            filter: {
+                              type: 'none',
+                              value: 0,
+                            },
+                          },
+                          active: {
+                            allowMultipleDataPointsSelection: true,
+                            filter: {
+                              type: 'darken',
+                              value: 0.7,
+                            },
+                          },
+                        },
+                        stroke: {
+                          colors: ['#00'],
+                        },
+                        plotOptions: {
+                          pie: {
+                            expandOnClick: false,
+                            donut: {
+                              labels: {
+                                show: true,
+                                total: {
+                                  showAlways: true,
+                                  show: true,
+                                  label: 'Total',
+                                  formatter: () => '' + data.creditEst,
+                                },
+                              },
+                            },
+                          },
+                        },
+                        dataLabels: {
+                          enabled: false,
+                        },
+                        responsive: [
+                          {
+                            breakpoint: 480,
+                            options: {
+                              chart: {
+                                width: '15vw',
+                              },
+                              legend: {
+                                position: 'bottom',
+                              },
+                            },
+                          },
+                        ],
+                      }}
+                      series={pieChartData}
+                      type="donut"
+                      width="100%"
+                      fontFamily="inter"
+                    />
+
+                    {userInfoState?.userRole !== 'ViewOnly' &&
+                      userInfoState?.companyRole !== 'Certifier' && (
+                        <div className="flex-display action-btns">
+                          {data.projectProposalStage.toString() ===
+                            ProjectProposalStage.AUTHORISED &&
+                            data.creditBalance - (data.creditFrozen ? data.creditFrozen : 0) > 0 &&
+                            !isTransferFrozen && (
+                              <div>
+                                {(!isAllOwnersDeactivated ||
+                                  (data.companyId === userInfoState!.companyId &&
+                                    userInfoState!.companyState !==
+                                      CompanyState.SUSPENDED.valueOf())) && (
+                                  <span>
+                                    {data.purposeOfCreditDevelopment === CreditType.TRACK_2 && (
+                                      <Button
+                                        danger
+                                        onClick={() => {
+                                          setActionInfo({
+                                            action: 'Retire',
+                                            text: t('projectDetailsView:popupText'),
+                                            title: t('projectDetailsView:retireTitle'),
+                                            type: 'primary',
+                                            remark: true,
+                                            icon: <Icon.Save />,
+                                            contentComp: (
+                                              <CreditRetirementSlRequestForm
+                                                hideType={
+                                                  userInfoState?.companyRole !==
+                                                    CompanyRole.GOVERNMENT &&
+                                                  userInfoState?.companyRole !==
+                                                    CompanyRole.MINISTRY
+                                                }
+                                                myCompanyId={userInfoState?.companyId}
+                                                programme={data}
+                                                onCancel={() => {
+                                                  setOpenModal(false);
+                                                  setComment(undefined);
+                                                }}
+                                                actionBtnText={t('projectDetailsView:retire')}
+                                                onFinish={(body: any) =>
+                                                  onCreditRetireTransferAction(
+                                                    body,
+                                                    t('projectDetailsView:successRetireInitSLCF'),
+                                                    updateCreditInfo
+                                                  )
+                                                }
+                                                translator={i18n}
+                                              />
+                                            ),
+                                          });
+                                          showModal();
+                                        }}
+                                      >
+                                        {t('projectDetailsView:retire')}
+                                      </Button>
+                                    )}
+                                    {data.purposeOfCreditDevelopment === CreditType.TRACK_1 && (
+                                      <Button
+                                        type="primary"
+                                        onClick={() => {
+                                          setActionInfo({
+                                            action: 'Send',
+                                            text: '',
+                                            title: t('projectDetailsView:sendCreditTitle'),
+                                            type: 'primary',
+                                            remark: true,
+                                            icon: <Icon.BoxArrowRight />,
+                                            contentComp: (
+                                              <CreditRetirementSlRequestForm
+                                                hideType={
+                                                  userInfoState?.companyRole !==
+                                                    CompanyRole.GOVERNMENT &&
+                                                  userInfoState?.companyRole !==
+                                                    CompanyRole.MINISTRY
+                                                }
+                                                myCompanyId={userInfoState?.companyId}
+                                                programme={data}
+                                                onCancel={() => {
+                                                  setOpenModal(false);
+                                                  setComment(undefined);
+                                                }}
+                                                actionBtnText={t('projectDetailsView:transferSl')}
+                                                onFinish={(body: any) =>
+                                                  onCreditRetireTransferAction(
+                                                    body,
+                                                    t('projectDetailsView:successTransferInitSLCF'),
+                                                    updateCreditInfo
+                                                  )
+                                                }
+                                                translator={i18n}
+                                              />
+                                            ),
+                                          });
+                                          showModal();
+                                        }}
+                                      >
+                                        {t('projectDetailsView:send')}
+                                      </Button>
+                                    )}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                        </div>
+                      )}
+                  </div>
+                </div>
+              </Card>
+            )}
             <Card className="card-container">
               <div>
                 <ProjectForms
@@ -2096,194 +2485,30 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 />
               </div>
             </Card>
-            <Card className="card-container">
-              <div className="info-view">
-                <div className="title">
-                  <span className="title-icon">{<BlockOutlined />}</span>
-                  <span className="title-text">{t('projectDetailsView:credits')}</span>
-                </div>
-                <div className="map-content">
-                  <Chart
-                    id={'creditChart'}
-                    options={{
-                      labels: ['Authorised', 'Issued', 'Transferred', 'Retired', 'Frozen'],
-                      legend: {
-                        position: 'bottom',
-                      },
-                      colors: ['#6ACDFF', '#D2FDBB', '#CDCDCD', '#FF8183', '#B7A4FE'],
-                      tooltip: {
-                        fillSeriesColor: false,
-                      },
-                      states: {
-                        normal: {
-                          filter: {
-                            type: 'none',
-                            value: 0,
-                          },
-                        },
-                        hover: {
-                          filter: {
-                            type: 'none',
-                            value: 0,
-                          },
-                        },
-                        active: {
-                          allowMultipleDataPointsSelection: true,
-                          filter: {
-                            type: 'darken',
-                            value: 0.7,
-                          },
-                        },
-                      },
-                      stroke: {
-                        colors: ['#00'],
-                      },
-                      plotOptions: {
-                        pie: {
-                          expandOnClick: false,
-                          donut: {
-                            labels: {
-                              show: true,
-                              total: {
-                                showAlways: true,
-                                show: true,
-                                label: 'Total',
-                                formatter: () => {
-                                  console.log('------data-------', data);
-                                  return data.creditEst ? '' + data.creditEst : '0';
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
-                      dataLabels: {
-                        enabled: false,
-                      },
-                      responsive: [
-                        {
-                          breakpoint: 480,
-                          options: {
-                            chart: {
-                              width: '15vw',
-                            },
-                            legend: {
-                              position: 'bottom',
-                            },
-                          },
-                        },
-                      ],
+            {verificationHistoryData && verificationHistoryData.length > 0 && (
+              <Card className="card-container">
+                <div>
+                  <VerificationForms
+                    data={verificationHistoryData}
+                    title={t('projectDetailsView:verificationPhaseForms')}
+                    icon={<QrcodeOutlined />}
+                    programmeId={data?.programmeId}
+                    companyId={data.companyId}
+                    programmeOwnerId={programmeOwnerId}
+                    getDocumentDetails={() => {
+                      getDocuments(data?.programmeId);
                     }}
-                    series={pieChartData}
-                    type="donut"
-                    width="100%"
-                    fontFamily="inter"
+                    getVerificationData={() => {
+                      getVerificationHistory(data?.programmeId);
+                    }}
+                    ministryLevelPermission={ministryLevelPermission}
+                    translator={i18n}
+                    projectProposalStage={data?.projectProposalStage}
                   />
-                  {userInfoState?.userRole !== 'ViewOnly' &&
-                    userInfoState?.companyRole !== 'Certifier' && (
-                      <div className="flex-display action-btns">
-                        {data.projectProposalStage.toString() === ProjectProposalStage.AUTHORISED &&
-                          data.creditBalance - (data.creditFrozen ? data.creditFrozen : 0) > 0 &&
-                          !isTransferFrozen && (
-                            <div>
-                              {(!isAllOwnersDeactivated ||
-                                (data.companyId === userInfoState!.companyId &&
-                                  userInfoState!.companyState !==
-                                    CompanyState.SUSPENDED.valueOf())) && (
-                                <span>
-                                  {data.purposeOfCreditDevelopment === CreditType.TRACK_2 && (
-                                    <Button
-                                      danger
-                                      onClick={() => {
-                                        setActionInfo({
-                                          action: 'Retire',
-                                          text: t('projectDetailsView:popupText'),
-                                          title: t('projectDetailsView:retireTitle'),
-                                          type: 'primary',
-                                          remark: true,
-                                          icon: <Icon.Save />,
-                                          contentComp: (
-                                            <CreditRetirementSlRequestForm
-                                              hideType={
-                                                userInfoState?.companyRole !==
-                                                  CompanyRole.GOVERNMENT &&
-                                                userInfoState?.companyRole !== CompanyRole.MINISTRY
-                                              }
-                                              myCompanyId={userInfoState?.companyId}
-                                              programme={data}
-                                              onCancel={() => {
-                                                setOpenModal(false);
-                                                setComment(undefined);
-                                              }}
-                                              actionBtnText={t('projectDetailsView:retire')}
-                                              onFinish={(body: any) =>
-                                                onCreditRetireTransferAction(
-                                                  body,
-                                                  t('projectDetailsView:successRetireInitSLCF'),
-                                                  updateCreditInfo
-                                                )
-                                              }
-                                              translator={i18n}
-                                            />
-                                          ),
-                                        });
-                                        showModal();
-                                      }}
-                                    >
-                                      {t('projectDetailsView:retire')}
-                                    </Button>
-                                  )}
-                                  {data.purposeOfCreditDevelopment === CreditType.TRACK_1 && (
-                                    <Button
-                                      type="primary"
-                                      onClick={() => {
-                                        setActionInfo({
-                                          action: 'Send',
-                                          text: '',
-                                          title: t('projectDetailsView:sendCreditTitle'),
-                                          type: 'primary',
-                                          remark: true,
-                                          icon: <Icon.BoxArrowRight />,
-                                          contentComp: (
-                                            <CreditRetirementSlRequestForm
-                                              hideType={
-                                                userInfoState?.companyRole !==
-                                                  CompanyRole.GOVERNMENT &&
-                                                userInfoState?.companyRole !== CompanyRole.MINISTRY
-                                              }
-                                              myCompanyId={userInfoState?.companyId}
-                                              programme={data}
-                                              onCancel={() => {
-                                                setOpenModal(false);
-                                                setComment(undefined);
-                                              }}
-                                              actionBtnText={t('projectDetailsView:transferSl')}
-                                              onFinish={(body: any) =>
-                                                onCreditRetireTransferAction(
-                                                  body,
-                                                  t('projectDetailsView:successTransferInitSLCF'),
-                                                  updateCreditInfo
-                                                )
-                                              }
-                                              translator={i18n}
-                                            />
-                                          ),
-                                        });
-                                        showModal();
-                                      }}
-                                    >
-                                      {t('projectDetailsView:send')}
-                                    </Button>
-                                  )}
-                                </span>
-                              )}
-                            </div>
-                          )}
-                      </div>
-                    )}
                 </div>
-              </div>
-            </Card>
+              </Card>
+            )}
+
             {data?.programmeProperties?.programmeMaterials &&
               data?.programmeProperties?.programmeMaterials.length > 0 && (
                 <Card className="card-container">
@@ -2298,18 +2523,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                   </div>
                 </Card>
               )}
-            {/* {data.programmeProperties.projectMaterial &&
-              data.programmeProperties.projectMaterial.length > 0 && (
-                <Card className="card-container">
-                  <div className="info-view">
-                    <div className="title">
-                      <span className="title-icon">{<Icon.FileEarmarkText />}</span>
-                      <span className="title-text">{t('projectDetailsView:projectMaterial')}</span>
-                      <div>{getFileContent(data.programmeProperties.projectMaterial)}</div>
-                    </div>
-                  </div>
-                </Card>
-              )} */}
             <Card className="card-container">
               <div>
                 <InfoView
@@ -2323,6 +2536,17 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 />
               </div>
             </Card>
+            {data.contactName && (
+              <Card className="card-container">
+                <div>
+                  <InfoView
+                    data={getContactPersonInfo()}
+                    title={t('projectDetailsView:contactPerson')}
+                    icon={<MailOutlined />}
+                  />
+                </div>
+              </Card>
+            )}
           </Col>
           <Col md={24} lg={14}>
             <Card className="card-container">
@@ -2376,29 +2600,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
             ) : (
               ''
             )}
-            {verificationHistoryData && verificationHistoryData.length > 0 && (
-              <Card className="card-container">
-                <div>
-                  <VerificationForms
-                    data={verificationHistoryData}
-                    title={t('projectDetailsView:verificationPhaseForms')}
-                    icon={<QrcodeOutlined />}
-                    programmeId={data?.programmeId}
-                    companyId={data.companyId}
-                    programmeOwnerId={programmeOwnerId}
-                    getDocumentDetails={() => {
-                      getDocuments(data?.programmeId);
-                    }}
-                    getVerificationData={() => {
-                      getVerificationHistory(data?.programmeId);
-                    }}
-                    ministryLevelPermission={ministryLevelPermission}
-                    translator={i18n}
-                    projectProposalStage={data?.projectProposalStage}
-                  />
-                </div>
-              </Card>
-            )}
+
             {programmeHistoryLogData && programmeHistoryLogData.length > 0 && (
               <Card className="card-container">
                 <div className="info-view">
@@ -2484,6 +2686,22 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           </div>
         )}
       </Modal>
+      {popupInfo && (
+        <SlcfFormActionModel
+          onCancel={() => {
+            setSlcfActionModalVisible(false);
+          }}
+          actionBtnText={popupInfo!.actionBtnText}
+          onFinish={popupInfo!.okAction}
+          subText={''}
+          openModal={slcfActionModalVisible}
+          icon={popupInfo!.icon}
+          title={popupInfo!.title}
+          type={popupInfo!.type}
+          remarkRequired={popupInfo!.remarkRequired}
+          t={t}
+        />
+      )}
     </div>
   );
 };

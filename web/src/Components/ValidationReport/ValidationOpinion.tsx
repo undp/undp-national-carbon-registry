@@ -1,9 +1,6 @@
-import React from 'react';
 import { ValidationStepsProps } from './StepProps';
 import { Row, Button, Form, Input, Col, Upload, DatePicker } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { isValidateFileType } from '../../Utils/DocumentValidator';
-import { DocType } from '../../Definitions/Enums/document.type';
 import TextArea from 'antd/lib/input/TextArea';
 import { ProcessSteps } from './ValidationStepperComponent';
 import moment from 'moment';
@@ -80,8 +77,6 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
 
               <Row justify={'space-between'} gutter={40} className="mg-top-1">
                 <Col md={24} xl={10}>
-                  {/* <p className="no-margin-p">{t('validationReport:witness')}</p> */}
-
                   <div className="signature-upload">
                     <Form.Item
                       name="validator1Signature"
@@ -97,14 +92,6 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                         {
                           validator: async (rule, file) => {
                             if (file?.length > 0) {
-                              // if (
-                              //   !isValidateFileType(
-                              //     file[0]?.type,
-                              //     DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                              //   )
-                              // ) {
-                              //   throw new Error(`${t('CMAForm:invalidFileFormat')}`);
-                              // } else
                               if (file[0]?.size > maximumImageSize) {
                                 // default size format of files would be in bytes -> 1MB = 1000000bytes
                                 throw new Error(`${t('common:maxSizeVal')}`);
@@ -127,7 +114,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                         maxCount={1}
                       >
                         <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
-                          Upload
+                          {t('validationReport:upload')}
                         </Button>
                       </Upload>
                     </Form.Item>
@@ -190,14 +177,6 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                         {
                           validator: async (rule, file) => {
                             if (file?.length > 0) {
-                              // if (
-                              //   !isValidateFileType(
-                              //     file[0]?.type,
-                              //     DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
-                              //   )
-                              // ) {
-                              //   throw new Error(`${t('CMAForm:invalidFileFormat')}`);
-                              // } else
                               if (file[0]?.size > maximumImageSize) {
                                 // default size format of files would be in bytes -> 1MB = 1000000bytes
                                 throw new Error(`${t('common:maxSizeVal')}`);
@@ -220,7 +199,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                         maxCount={1}
                       >
                         <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
-                          Upload
+                          {t('validationReport:upload')}
                         </Button>
                       </Upload>
                     </Form.Item>
@@ -271,16 +250,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                 <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  disabled={false}
-                  // onClick={next}
-                  // onClick={() => {
-                  //   console.log(form.getFieldsValue());
-                  // }}
-                  htmlType="submit"
-                >
+                <Button type="primary" size={'large'} disabled={false} htmlType="submit">
                   {t('validationReport:next')}
                 </Button>
               </Row>

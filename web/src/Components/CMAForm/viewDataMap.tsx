@@ -6,6 +6,7 @@ export const projectDetailsDataMapToFields = (vals: any) => {
   const tempValues = {
     ...vals,
     dateOfIssue: vals?.dateOfIssue ? moment.unix(vals?.dateOfIssue) : undefined,
+    reportID: vals?.reportID,
   };
 
   return tempValues;
@@ -44,14 +45,9 @@ export const descriptionOfProjectActivityDataMapToFields = (vals: any) => {
       ? vals?.locationsOfProjectActivity.shift()
       : undefined;
 
-  const firstGHGEmissionReduction =
-    vals?.estimatedAnnualGHGEmissions && vals?.estimatedAnnualGHGEmissions?.length > 0
-      ? vals?.estimatedAnnualGHGEmissions.shift()
-      : undefined;
-
   const tempValues = {
     introduction: vals?.introduction,
-    sectoralScopeAndProjectType: vals?.sectoralScopeAndProjectType,
+    sectoralScope: vals?.sectoralScope,
     organizationName: vals?.projectProponent?.organizationName,
     email: vals?.projectProponent?.email,
     contactPerson: vals?.projectProponent?.contactPerson,
@@ -135,10 +131,6 @@ export const descriptionOfProjectActivityDataMapToFields = (vals: any) => {
       : undefined,
     creditingPeriodDescription: vals?.creditingPeriodDescription,
     projectScale: vals?.projectScaleType,
-    estimatedAnnualGHGEmissionsYear: firstGHGEmissionReduction?.year
-      ? moment.unix(firstGHGEmissionReduction?.year)
-      : undefined,
-    estimatedAnnualGHGEmissionsValue: firstGHGEmissionReduction?.ghgEmissionReduction,
     extraGHGEmmissions: (function () {
       const emmissions = vals?.estimatedAnnualGHGEmissions;
 

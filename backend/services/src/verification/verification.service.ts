@@ -48,8 +48,6 @@ export class VerificationService {
     private emailHelperService: EmailHelperService,
     private configService: ConfigService,
     private fileHandler: FileHandlerInterface,
-    private carbonNeutralCertificateGenerator: CarbonNeutralCertificateGenerator,
-    private creditRetirementSlService: CreditRetirementSlService,
     @InjectRepository(ProgrammeAuditLogSl)
     private programmeAuditSlRepo: Repository<ProgrammeAuditLogSl>
   ) {}
@@ -139,49 +137,32 @@ export class VerificationService {
       docContent.quantifications.optionalDocuments = docUrls;
     }
 
-    const monitoringDocument = await this.documentRepository.findOne({
-      where: {
-        programmeId: monitoringReportDto.programmeId,
-        type: DocumentTypeEnum.MONITORING_REPORT,
-      },
-      order: {
-        createdTime: "DESC",
-      },
-    });
-    const monitoringReportDocument = new DocumentEntity();
-    monitoringReportDocument.userId = user.id;
-    monitoringReportDocument.version = monitoringDocument ? monitoringDocument.version + 1 : 1;
-
-    monitoringReportDocument.companyId = user.companyId;
-    monitoringReportDocument.programmeId = monitoringReportDto.programmeId;
-    monitoringReportDocument.status = DocumentStatus.PENDING;
-    monitoringReportDocument.type = DocumentTypeEnum.MONITORING_REPORT;
-    monitoringReportDocument.createdTime = new Date().getTime();
-    monitoringReportDocument.updatedTime = new Date().getTime();
-    monitoringReportDocument.content = docContent;
-
     const savedReport = await this.entityManager.transaction(async (em) => {
-      const verificationRequests: VerificationRequestEntity[] =
-        await this.verificationRequestRepository.find({
+      const monitoringReportDocument = new DocumentEntity();
+      monitoringReportDocument.userId = user.id;
+      monitoringReportDocument.companyId = user.companyId;
+      monitoringReportDocument.programmeId = monitoringReportDto.programmeId;
+      monitoringReportDocument.status = DocumentStatus.PENDING;
+      monitoringReportDocument.type = DocumentTypeEnum.MONITORING_REPORT;
+      monitoringReportDocument.createdTime = new Date().getTime();
+      monitoringReportDocument.updatedTime = new Date().getTime();
+
+      const verificationRequest: VerificationRequestEntity =
+        await this.verificationRequestRepository.findOne({
           where: {
             programmeId: monitoringReportDto.programmeId,
           },
           order: { id: "DESC" },
         });
+
       if (
-        verificationRequests &&
-        verificationRequests.length &&
-        !(
-          verificationRequests[0].status ===
-            VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED ||
-          verificationRequests[0].status ===
-            VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED
-        )
+        verificationRequest &&
+        verificationRequest.status === VerificationRequestStatusEnum.MONITORING_REPORT_REJECTED
       ) {
         await em.update(
           VerificationRequestEntity,
           {
-            programmeId: monitoringReportDto.programmeId,
+            id: verificationRequest.id,
           },
           {
             status: VerificationRequestStatusEnum.MONITORING_REPORT_UPLOADED,
@@ -189,7 +170,20 @@ export class VerificationService {
             updatedTime: new Date().getTime(),
           }
         );
-        monitoringReportDocument.verificationRequestId = verificationRequests[0].id;
+
+        const lastMonitoringDocument = await this.documentRepository.findOne({
+          where: {
+            verificationRequestId: verificationRequest.id,
+            type: DocumentTypeEnum.MONITORING_REPORT,
+          },
+          order: {
+            createdTime: "DESC",
+          },
+        });
+        monitoringReportDocument.version = lastMonitoringDocument
+          ? lastMonitoringDocument.version + 1
+          : 1;
+        monitoringReportDocument.verificationRequestId = verificationRequest.id;
       } else {
         const verificationRequest = new VerificationRequestEntity();
         verificationRequest.programmeId = monitoringReportDto.programmeId;
@@ -199,7 +193,20 @@ export class VerificationService {
         verificationRequest.updatedTime = new Date().getTime();
         const saved = await em.save(verificationRequest);
         monitoringReportDocument.verificationRequestId = saved.id;
+        monitoringReportDocument.version = 1;
       }
+
+      //updating monitoring report id
+      const currentYear = new Date().getFullYear();
+      const programmeId = monitoringReportDocument.programmeId;
+      const verificationRequestIdByProgramme = await this.getVerificationRequestIdByProgramme(
+        monitoringReportDocument.programmeId
+      );
+      const version = monitoringReportDocument.version;
+      docContent.projectDetails.reportID = `SLCCS/MR/${currentYear}/${programmeId}/${verificationRequestIdByProgramme}/${version}`;
+
+      monitoringReportDocument.content = docContent;
+
       return await em.save(monitoringReportDocument);
     });
 
@@ -294,26 +301,23 @@ export class VerificationService {
 
       const log = new ProgrammeAuditLogSl();
       log.programmeId = verificationRequest.programmeId;
-      log.logType = verifyReportDto.verify ? ProgrammeAuditLogType.MONITORING_APPROVED : ProgrammeAuditLogType.MONITORING_REJECTED;
+      log.logType = verifyReportDto.verify
+        ? ProgrammeAuditLogType.MONITORING_APPROVED
+        : ProgrammeAuditLogType.MONITORING_REJECTED;
       log.userId = user.id;
+      if (verifyReportDto.remark) log.data = { remark: verifyReportDto.remark };
 
       await this.programmeAuditSlRepo.save(log);
     });
 
     //send email to Project Participant
-    // if (verifyReportDto.verify) {
-      await this.emailHelperService.sendEmailToProjectParticipant(
-        (verifyReportDto.verify) ? EmailTemplates.MONITORING_APPROVED : EmailTemplates.MONITORING_REJECTED,
-        null,
-        verificationRequest.programmeId
-      );
-    // } else {
-    //   await this.emailHelperService.sendEmailToProjectParticipant(
-    //     EmailTemplates.MONITORING_REJECTED,
-    //     null,
-    //     verificationRequest.programmeId
-    //   );
-    // }
+    await this.emailHelperService.sendEmailToProjectParticipant(
+      verifyReportDto.verify
+        ? EmailTemplates.MONITORING_APPROVED
+        : EmailTemplates.MONITORING_REJECTED,
+      verifyReportDto.remark ? { remark: verifyReportDto.remark } : null,
+      verificationRequest.programmeId
+    );
   }
 
   //MARK: create Verification Report
@@ -418,58 +422,54 @@ export class VerificationService {
       docContent.verificationOpinion.signature2 = signUrls;
     }
 
-    const verificationDocument = await this.documentRepository.findOne({
-      where: {
-        programmeId: verificationReportDto.programmeId,
-        type: DocumentTypeEnum.VERIFICATION_REPORT,
-      },
-      order: {
-        createdTime: "DESC",
-      },
-    });
-
-    const programme = await this.programmeSlService.getProjectById(verificationReportDto.programmeId);
+    const programme = await this.programmeSlService.getProjectById(
+      verificationReportDto.programmeId
+    );
 
     const creditReceived =
-          (Number(programme.creditBalance) || 0) +
-          (Number(programme.creditFrozen) || 0) +
-          (Number(programme.creditRetired) || 0) +
-          (Number(programme.creditTransferred) || 0);
+      (Number(programme.creditBalance) || 0) +
+      (Number(programme.creditFrozen) || 0) +
+      (Number(programme.creditRetired) || 0) +
+      (Number(programme.creditTransferred) || 0);
 
-        if ((programme.creditEst - creditReceived) < Number(docContent?.projectDetails?.verifiedScer)) {
-          throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              "verification.cannotIssueMoreThanEstimatedCredits",
-              []
-            ),
-            HttpStatus.BAD_REQUEST
-          );
-        }
+    if (programme.creditEst - creditReceived < Number(docContent?.projectDetails?.verifiedScer)) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "verification.cannotIssueMoreThanEstimatedCredits",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
 
     const verificationReportDocument = new DocumentEntity();
     verificationReportDocument.userId = user.id;
     verificationReportDocument.companyId = user.companyId;
-    verificationReportDocument.version = verificationDocument
-      ? verificationDocument.version + 1
-      : 1;
+
     verificationReportDocument.programmeId = verificationReportDto.programmeId;
     verificationReportDocument.status = DocumentStatus.PENDING;
     verificationReportDocument.type = DocumentTypeEnum.VERIFICATION_REPORT;
     verificationReportDocument.createdTime = new Date().getTime();
     verificationReportDocument.updatedTime = new Date().getTime();
-    verificationReportDocument.content = docContent;
 
     const savedReport = await this.entityManager.transaction(async (em) => {
       const verificationRequest = await this.verificationRequestRepository.findOne({
         where: {
           programmeId: verificationReportDto.programmeId,
         },
+        order: {
+          id: "DESC",
+        },
       });
-      if (verificationRequest) {
+      if (
+        verificationRequest &&
+        (verificationRequest.status == VerificationRequestStatusEnum.VERIFICATION_REPORT_REJECTED ||
+          verificationRequest.status == VerificationRequestStatusEnum.MONITORING_REPORT_VERIFIED)
+      ) {
         await em.update(
           VerificationRequestEntity,
           {
-            programmeId: verificationReportDto.programmeId,
+            id: verificationRequest.id,
           },
           {
             status: VerificationRequestStatusEnum.VERIFICATION_REPORT_UPLOADED,
@@ -481,7 +481,19 @@ export class VerificationService {
             updatedTime: new Date().getTime(),
           }
         );
+        const lastVerificationDocument = await this.documentRepository.findOne({
+          where: {
+            verificationRequestId: verificationRequest.id,
+            type: DocumentTypeEnum.VERIFICATION_REPORT,
+          },
+          order: {
+            id: "DESC",
+          },
+        });
         verificationReportDocument.verificationRequestId = verificationRequest.id;
+        verificationReportDocument.version = lastVerificationDocument
+          ? lastVerificationDocument.version + 1
+          : 1;
       } else {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
@@ -490,8 +502,17 @@ export class VerificationService {
           ),
           HttpStatus.BAD_REQUEST
         );
-        return;
       }
+      verificationReportDocument.content = docContent;
+
+      //updating verification report id
+      const currentYear = new Date().getFullYear();
+      const programmeId = verificationReportDocument.programmeId;
+      const verificationRequestIdByProgramme = await this.getVerificationRequestIdByProgramme(
+        verificationReportDocument.programmeId
+      );
+      const version = verificationReportDocument.version;
+      docContent.projectDetails.reportID = `SLCCS/VRR/${currentYear}/${programmeId}/${verificationRequestIdByProgramme}/${version}`;
       return await em.save(verificationReportDocument);
     });
 
@@ -546,7 +567,7 @@ export class VerificationService {
       const programme = await this.programmeSlService.getProjectById(
         verificationRequest.programmeId
       );
-      
+
       isInitialCreditIssue = !programme.creditStartSerialNumber;
       const txRef = this.txRefGen.getCreditIssueApproveRef(user, programme, verificationRequest);
 
@@ -562,8 +583,7 @@ export class VerificationService {
     let creditIssueCertificateSerial = undefined;
     if (updatedProgramme) {
       const previousCreditIssueCertificateSerial = await this.getPreviousCertificateSerial(
-        verificationRequest.programmeId,
-        "CI"
+        verificationRequest.programmeId
       );
       creditIssueCertificateSerial = this.serialGenerator.generateCreditIssueCertificateNumber(
         updatedProgramme.serialNo,
@@ -598,7 +618,7 @@ export class VerificationService {
       const creditIssueLog = new ProgrammeAuditLogSl();
       creditIssueLog.programmeId = verificationRequest.programmeId;
       creditIssueLog.logType = ProgrammeAuditLogType.CREDIT_ISSUED;
-      creditIssueLog.data = {creditIssued: Number(verificationRequest.creditAmount)}
+      creditIssueLog.data = { creditIssued: Number(verificationRequest.creditAmount) };
       creditIssueLog.userId = user.id;
       logs.push(creditIssueLog);
 
@@ -655,7 +675,7 @@ export class VerificationService {
       verifyReportDto.verify
         ? EmailTemplates.VERIFICATION_APPROVED
         : EmailTemplates.VERIFICATION_REJECTED,
-      null,
+      verifyReportDto.remark ? { remark: verifyReportDto.remark } : null,
       verificationRequest.programmeId
     );
 
@@ -664,105 +684,16 @@ export class VerificationService {
       log.programmeId = verificationRequest.programmeId;
       log.logType = ProgrammeAuditLogType.VERIFICATION_REJECTED;
       log.userId = user.id;
+      if (verifyReportDto.remark) log.data = { remark: verifyReportDto.remark };
 
       await this.programmeAuditSlRepo.save(log);
     }
   }
 
-  //MARK: approve Carbon Neutral Certificate
-  async approveCarbonNeutralCertificate(cNCertificateIssueDto: CNCertificateIssueDto, user: User) {
-    if (user.companyRole !== CompanyRole.CLIMATE_FUND) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "verification.verifyVerificationReportWrongUser",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
-    const verificationRequest = await this.verificationRequestRepository.findOneBy({
-      id: cNCertificateIssueDto.verificationRequestId,
-    });
-
-    if (!verificationRequest) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "verification.verificationRequestDoesNotExists",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-    let carbonNeutralCertificateSerial = undefined;
-    let carbonNeutralCertUrl = undefined;
-    const programme = await this.programmeSlService.getProjectById(verificationRequest.programmeId);
-
-    if (cNCertificateIssueDto.approve) {
-      const previousCarbonNeutralCertificateSerial = await this.getPreviousCertificateSerial(
-        verificationRequest.programmeId,
-        "CNC"
-      );
-      carbonNeutralCertificateSerial = this.serialGenerator.generateCarbonNeutralCertificateNumber(
-        previousCarbonNeutralCertificateSerial
-      );
-
-      const neutralData = {
-        projectName: programme.title,
-        companyName: programme.company.name,
-        scope: cNCertificateIssueDto.scope,
-        certificateNo: carbonNeutralCertificateSerial,
-        issueDate: this.dateUtilService.formatCustomDate(),
-        creditAmount: await this.creditRetirementSlService.getCreditAmountSum(
-          programme.company.companyId,
-          cNCertificateIssueDto.assessmentPeriodStart,
-          cNCertificateIssueDto.assessmentPeriodEnd
-        ),
-        orgBoundary: cNCertificateIssueDto.orgBoundary,
-        assessmentYear: cNCertificateIssueDto.year,
-        assessmentPeriod: `${this.dateUtilService.formatCustomDate(
-          cNCertificateIssueDto.assessmentPeriodStart
-        )} - ${this.dateUtilService.formatCustomDate(cNCertificateIssueDto.assessmentPeriodEnd)}`,
-      };
-      carbonNeutralCertUrl =
-        await this.carbonNeutralCertificateGenerator.generateCarbonNeutralCertificate(
-          neutralData,
-          false
-        );
-    }
-
-    const updatedRequest = await this.verificationRequestRepository.update(
-      {
-        id: cNCertificateIssueDto.verificationRequestId,
-      },
-      {
-        carbonNeutralCertificateRequested: false,
-        carbonNeutralCertificateSerialNo: carbonNeutralCertificateSerial,
-        carbonNeutralCertificateUrl: carbonNeutralCertUrl,
-      }
-    );
-
-    const hostAddress = this.configService.get("host");
-    await this.emailHelperService.sendEmailToOrganisationAdmins(
-      programme.company.companyId,
-      cNCertificateIssueDto.approve
-        ? EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_APPROVED
-        : EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_REJECTED,
-      {
-        programmeName: programme.title,
-        remark: cNCertificateIssueDto.orgBoundary,
-        pageLink: hostAddress + `/programmeManagementSLCF/view/${programme.programmeId}`,
-      }
-    );
-
-    console.log(carbonNeutralCertUrl);
-    return updatedRequest;
-  }
-
   //MARK: get Credit Issuance Certificate URL
   async getCreditIssuanceCertificateURL(
     verificationRequest: VerificationRequestEntity,
-    verificationSerialNo: string, 
+    verificationSerialNo: string,
     isInitialCreditIssue: boolean
   ) {
     const programme = await this.programmeSlService.getProjectById(verificationRequest.programmeId);
@@ -774,12 +705,14 @@ export class VerificationService {
       );
     }
 
-    const blockStart = isInitialCreditIssue ? programme.creditStartSerialNumber : this.serialGenerator.calculateCreditSerialNumber(
-      programme.creditStartSerialNumber,
-      programme.creditBalance > 0
-        ? programme.creditBalance - verificationRequest.creditAmount
-        : 0
-    );
+    const blockStart = isInitialCreditIssue
+      ? programme.creditStartSerialNumber
+      : this.serialGenerator.calculateCreditSerialNumber(
+          programme.creditStartSerialNumber,
+          programme.creditBalance > 0
+            ? programme.creditBalance - verificationRequest.creditAmount
+            : 0
+        );
     const blockEnd = this.serialGenerator.calculateCreditSerialNumber(
       programme.creditStartSerialNumber,
       programme.creditBalance - 1
@@ -835,6 +768,7 @@ export class VerificationService {
           type: data.d_type,
           content: data.d_content,
           status: data.d_status,
+          version: data.d_version,
           createdTime: data.d_createdTime,
         });
       }
@@ -862,7 +796,7 @@ export class VerificationService {
             vr.id AS vr_id, vr."programmeId" AS "programmeId", vr.status AS vr_status, vr."createdTime" AS "vr_createdTime", 
             vr."verificationSerialNo" AS "verificationSerialNo", vr."creditIssueCertificateUrl" AS "creditIssueCertificateUrl",
             vr."carbonNeutralCertificateRequested" AS "carbonNeutralCertificateRequested", vr."carbonNeutralCertificateUrl" AS "carbonNeutralCertificateUrl",
-            d.id AS d_id, d.type AS d_type, d.content AS d_content, d.status AS d_status, d."createdTime" AS "d_createdTime"
+            d.id AS d_id, d.type AS d_type, d.content AS d_content, d.status AS d_status, d.version AS d_version, d."createdTime" AS "d_createdTime"
         FROM 
             verification_request_entity vr
         LEFT JOIN 
@@ -878,54 +812,7 @@ export class VerificationService {
     return this.aggregateDocuments(rawResults);
   }
 
-  // MARK: Request Carbon Neutral Certificate
-  async requestCarbonNeutralCertificate(verificationRequestId: number, user: User) {
-    if (user.companyRole !== CompanyRole.PROGRAMME_DEVELOPER) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "verification.requestCarbonNeutralCertificateReportWrongUser",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
-    const verificationRequest = await this.verificationRequestRepository.findOneBy({
-      id: verificationRequestId,
-    });
-
-    if (!verificationRequest) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "verification.verificationRequestDoesNotExists",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
-    const updatedVerificationRequest = await this.entityManager.transaction(async (em) => {
-      await em.update(
-        VerificationRequestEntity,
-        {
-          id: verificationRequestId,
-        },
-        {
-          carbonNeutralCertificateRequested: true,
-        }
-      );
-    });
-
-    await this.emailHelperService.sendEmailToSLCFAdmins(
-      EmailTemplates.CARBON_NEUTRAL_SL_REQUESTED,
-      {},
-      verificationRequest.programmeId
-    );
-
-    return updatedVerificationRequest;
-  }
-
-  async getPreviousCertificateSerial(programmeId: string, type: string) {
+  async getPreviousCertificateSerial(programmeId: string) {
     const latestVerifiedRequest = await this.verificationRequestRepository.findOne({
       where: {
         programmeId: programmeId,
@@ -936,9 +823,7 @@ export class VerificationService {
       },
     });
 
-    return type === "CNC"
-      ? latestVerifiedRequest?.carbonNeutralCertificateSerialNo
-      : latestVerifiedRequest?.verificationSerialNo;
+    return latestVerifiedRequest?.verificationSerialNo;
   }
 
   private isValidHttpUrl(attachment: string): boolean {
@@ -1005,4 +890,15 @@ export class VerificationService {
     fileType = this.fileExtensionMap.get(fileType);
     return fileType;
   };
+
+  private async getVerificationRequestIdByProgramme(programmeId: string) {
+    const count = await this.verificationRequestRepository.count({
+      where: {
+        programmeId: programmeId,
+        status: VerificationRequestStatusEnum.VERIFICATION_REPORT_VERIFIED,
+      },
+    });
+
+    return count + 1;
+  }
 }

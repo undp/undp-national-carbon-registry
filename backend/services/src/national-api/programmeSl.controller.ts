@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Post, Put, Query, UseGuards, Request } from "@nestjs/common";
+import { Body, Controller, Post, UseGuards, Request } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { Action } from "src/casl/action.enum";
 import { AppAbility } from "src/casl/casl-ability.factory";
 import { CheckPolicies } from "src/casl/policy.decorator";
-import { PoliciesGuard, PoliciesGuardEx } from "src/casl/policy.guard";
+import { PoliciesGuard } from "src/casl/policy.guard";
 import { ProgrammeSl } from "../entities/programmeSl.entity";
 import { ProgrammeSlService } from "../programme-sl/programme-sl.service";
 import { ProgrammeSlDto } from "../dto/programmeSl.dto";
@@ -12,13 +12,13 @@ import { CMADto } from "src/dto/cma.dto";
 import { GetDocDto } from "src/dto/getDoc.dto";
 import { QueryDto } from "src/dto/query.dto";
 import { CostQuotationDto } from "src/dto/costQuotation.dto";
-import { TxType } from "src/enum/txtype.enum";
-import { CompanyRole } from "src/enum/company.role.enum";
 import { ProjectProposalDto } from "src/dto/projectProposal.dto";
 import { ValidationAgreementDto } from "src/dto/validationAgreement.dto";
 import { DocumentEntity } from "src/entities/document.entity";
 import { CMAApproveDto } from "src/dto/cmaApprove.dto";
 import { ValidationReportDto } from "src/dto/validationReport.dto";
+import { CNCertificateIssueDto } from "src/dto/cncertificateIssue.dto";
+import { ProjectRateLimiterGuard } from "src/auth/guards/project-rate-limiter.guard";
 
 @ApiTags("ProgrammeSl")
 @ApiBearerAuth()
@@ -46,8 +46,8 @@ export class ProgrammeSlController {
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
   @Post("inf/reject")
-  async rejectINF(@Body("programmeId") programmeId: string, @Request() req) {
-    return this.programmeService.rejectINF(programmeId, req.user);
+  async rejectINF(@Body("programmeId") programmeId: string, @Body("remark") remark: string, @Request() req) {
+    return this.programmeService.rejectINF(programmeId, remark, req.user);
   }
 
   @ApiBearerAuth()
@@ -89,8 +89,8 @@ export class ProgrammeSlController {
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
   @Post("proposal/reject")
-  async rejectProposal(@Body("programmeId") programmeId: string, @Request() req) {
-    return this.programmeService.rejectProposal(programmeId, req.user);
+  async rejectProposal(@Body("programmeId") programmeId: string, @Body("remark") remark: string, @Request() req) {
+    return this.programmeService.rejectProposal(programmeId, remark, req.user);
   }
 
   @ApiBearerAuth()
@@ -113,8 +113,8 @@ export class ProgrammeSlController {
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
   @Post("cma/reject")
-  async rejectCMA(@Body("programmeId") programmeId: string, @Request() req) {
-    return this.programmeService.rejectCMA(programmeId, req.user);
+  async rejectCMA(@Body("programmeId") programmeId: string, @Body("remark") remark: string, @Request() req) {
+    return this.programmeService.rejectCMA(programmeId, remark, req.user);
   }
 
   @ApiBearerAuth()
@@ -137,8 +137,8 @@ export class ProgrammeSlController {
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, ProgrammeSl))
   @Post("validation/reject")
-  async rejectValidation(@Body("programmeId") programmeId: string, @Request() req) {
-    return this.programmeService.rejectValidation(programmeId, req.user);
+  async rejectValidation(@Body("programmeId") programmeId: string, @Body("remark") remark: string, @Request() req) {
+    return this.programmeService.rejectValidation(programmeId, remark, req.user);
   }
 
   @ApiBearerAuth()
@@ -160,6 +160,14 @@ export class ProgrammeSlController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
+  @Post("getVerificationDocVersions")
+  async getVerificationDocVersions(@Body() getDocDto: GetDocDto, @Request() req) {
+    return this.programmeService.getVerificationDocVersions(getDocDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
   @Post("getDocByVersion")
   async getDocByVersion(@Body() getDocDto: GetDocDto, @Request() req) {
     return this.programmeService.getDocByVersion(getDocDto, req.user);
@@ -168,9 +176,25 @@ export class ProgrammeSlController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
+  @Post("getVerificationDocByVersion")
+  async getVerificationDocByVersion(@Body() getDocDto: GetDocDto, @Request() req) {
+    return this.programmeService.getVerificationDocByVersion(getDocDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
   @Post("getDocLastVersion")
   async getDocLastVersion(@Body() getDocDto: GetDocDto, @Request() req) {
     return this.programmeService.getDocLastVersion(getDocDto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, DocumentEntity))
+  @Post("getVerificationDocLastVersion")
+  async getVerificationDocLastVersion(@Body() getDocDto: GetDocDto, @Request() req) {
+    return this.programmeService.getVerificationDocLastVersion(getDocDto, req.user);
   }
 
   @ApiBearerAuth()
@@ -194,5 +218,31 @@ export class ProgrammeSlController {
   @Post("query")
   async getAll(@Body() query: QueryDto, @Request() req) {
     return this.programmeService.query(query, req.abilityCondition, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Post("getCarbonNeutralCertificates")
+  async getCncByCompanyId(@Body("companyId") companyId: number) {
+    return this.programmeService.getCarbonNeutralCertificateDocs(companyId);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Post("requestCarbonNeutralCertificate")
+  async createCncRequest(@Body("programmeId") programmeId: string, @Body("companyId") companyId: number, @Request() req) {
+    return this.programmeService.requestCarbonNeutralCertificate(programmeId, companyId, req.user);
+  }
+
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Post("issueCarbonNeutralCertificate")
+  async approveCarbonNeutralCertificate(@Body() cNCertificateIssueDto: CNCertificateIssueDto, @Request() req) {
+    return this.programmeService.approveCarbonNeutralCertificate(cNCertificateIssueDto, req.user);
+  }
+
+  @UseGuards(ProjectRateLimiterGuard)
+  @Post("public/get")
+  async getPublicProjectDetails(@Body() query: QueryDto, @Request() req) {
+    return this.programmeService.getPublicProjectDetails(query);
   }
 }

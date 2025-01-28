@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { HttpException, HttpStatus, Inject, Injectable, Logger } from "@nestjs/common";
 import { instanceToPlain, plainToClass } from "class-transformer";
 import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
 import { EntityManager, In, QueryFailedError, Repository } from "typeorm";
@@ -52,30 +52,22 @@ import { ProjectCategory, SlProjectCategoryMap } from "../enum/projectCategory.e
 import { ProjectGeography } from "src/enum/projectGeography.enum";
 import { ProgrammeAuditLogSl } from "../entities/programmeAuditLogSl.entity";
 import { ProgrammeAuditLogType } from "../enum/programmeAuditLogType.enum";
+import { CNCertificateIssueDto } from "../dto/cncertificateIssue.dto";
+import { CarbonNeutralCertificateGenerator } from "../util/carbonNeutralCertificate.gen";
+import { CreditRetirementSlService } from "../creditRetirement-sl/creditRetirementSl.service";
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class ProgrammeSlService {
   constructor(
-    private authLetterGen: AuthorizationLetterGen,
     private programmeLedger: ProgrammeLedgerService,
     private counterService: CounterService,
     private configService: ConfigService,
     private companyService: CompanyService,
-    private userService: UserService,
-    private locationService: LocationInterface,
     private helperService: HelperService,
     private emailHelperService: EmailHelperService,
-    private readonly countryService: CountryService,
-    private letterGen: ObjectionLetterGen,
-    private logger: Logger,
-    private asyncOperationsInterface: AsyncOperationsInterface,
     @InjectEntityManager() private entityManager: EntityManager,
     private fileHandler: FileHandlerInterface,
-    private letterOfIntentRequestGen: LetterOfIntentRequestGen,
-    private letterOfIntentResponseGen: LetterOfIntentResponseGen,
-    private letterOfAuthorisationRequestGen: LetterOfAuthorisationRequestGen,
-    private letterSustainableDevSupportLetterGen: LetterSustainableDevSupportLetterGen,
-    private dataExportService: DataExportService,
     @InjectRepository(DocumentEntity)
     private documentRepo: Repository<DocumentEntity>,
     @InjectRepository(ProgrammeSl)
@@ -85,7 +77,10 @@ export class ProgrammeSlService {
     private dateUtilService: DateUtilService,
     private serialGenerator: SLCFSerialNumberGeneratorService,
     @InjectRepository(ProgrammeAuditLogSl)
-    private programmeAuditSlRepo: Repository<ProgrammeAuditLogSl>
+    private programmeAuditSlRepo: Repository<ProgrammeAuditLogSl>,
+    private carbonNeutralCertificateGenerator: CarbonNeutralCertificateGenerator,
+    private creditRetirementSlService: CreditRetirementSlService,
+    @Inject('CACHE_MANAGER') private cacheManager: Cache,
   ) {}
 
   // MARK: Create Programme
@@ -160,6 +155,7 @@ export class ProgrammeSlService {
     programme.txTime = new Date().getTime();
     programme.createdTime = programme.txTime;
     programme.updatedTime = programme.txTime;
+    programme.proposalStageUpdatedTime = programme.txTime;
 
     const docUrls = [];
 
@@ -252,7 +248,7 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, response);
   }
 
-  async rejectINF(programmeId: string, user: User): Promise<DataResponseDto> {
+  async rejectINF(programmeId: string, remark: string, user: User): Promise<DataResponseDto> {
     if (user.companyRole != CompanyRole.CLIMATE_FUND) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
@@ -293,7 +289,7 @@ export class ProgrammeSlService {
     //send email to Project Participant
     await this.emailHelperService.sendEmailToProjectParticipant(
       EmailTemplates.PROGRAMME_SL_REJECTED,
-      null,
+      { remark },
       programmeId
     );
 
@@ -302,6 +298,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.INF_REJECTED;
       log.userId = user.id;
+      log.data = { remark };
 
       await this.programmeAuditSlRepo.save(log);
     }
@@ -734,7 +731,7 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, response);
   }
 
-  async rejectProposal(programmeId: string, user: User): Promise<DataResponseDto> {
+  async rejectProposal(programmeId: string, remark: string, user: User): Promise<DataResponseDto> {
     if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
@@ -841,7 +838,7 @@ export class ProgrammeSlService {
     //sending email to SLCF Admins
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.PROJECT_PROPOSAL_REJECTED,
-      null,
+      { remark },
       programmeId
     );
 
@@ -850,6 +847,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.PROJECT_PROPOSAL_REJECTED;
       log.userId = user.id;
+      log.data = { remark };
 
       await this.programmeAuditSlRepo.save(log);
     }
@@ -972,7 +970,6 @@ export class ProgrammeSlService {
     }
 
     const cmaDoc = new DocumentEntity();
-    cmaDoc.content = JSON.stringify(cmaDto.content);
     cmaDoc.programmeId = cmaDto.programmeId;
     cmaDoc.companyId = user.companyId;
     cmaDoc.userId = user.id;
@@ -980,6 +977,11 @@ export class ProgrammeSlService {
 
     const lastVersion = await this.getLastDocumentVersion(DocumentTypeEnum.CMA, cmaDto.programmeId);
     cmaDoc.version = lastVersion + 1;
+    //updating cma report ID
+    cmaDto.content.projectDetails.reportID = `SLCCS/CMA/${new Date().getFullYear()}/${
+      cmaDoc.programmeId
+    }/${cmaDoc.version}`;
+    cmaDoc.content = JSON.stringify(cmaDto.content);
     cmaDoc.status = DocumentStatus.PENDING;
     cmaDoc.createdTime = new Date().getTime();
     cmaDoc.updatedTime = cmaDoc.createdTime;
@@ -1072,34 +1074,10 @@ export class ProgrammeSlService {
 
     await this.documentRepo.insert(siteVisitChecklistDoc);
 
-    const getDoctDto = {
-      programmeId: programmeId,
-      docType: DocumentTypeEnum.CMA,
-    };
-    const cmaDoc = await this.getDocLastVersion(getDoctDto, user);
-    let parsedCMADoc;
-    let data;
-    if (cmaDoc.data && cmaDoc.data.content) {
-      parsedCMADoc = JSON.parse(cmaDoc.data.content);
-    }
-
-    if (
-      parsedCMADoc &&
-      parsedCMADoc.quantificationOfGHG &&
-      parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions &&
-      parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions.totalNetEmissionReductions
-    ) {
-      data = {
-        creditEst: Number(
-          parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions.totalNetEmissionReductions
-        ),
-      };
-    }
-
     const updateProgrammeSlProposalStage = {
       programmeId: programmeId,
       txType: TxType.APPROVE_CMA,
-      data: data,
+      // data: data,
     };
     const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
 
@@ -1141,7 +1119,7 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, siteVisitChecklistDoc);
   }
 
-  async rejectCMA(programmeId: string, user: User): Promise<DataResponseDto> {
+  async rejectCMA(programmeId: string, remark: string, user: User): Promise<DataResponseDto> {
     if (user.companyRole != CompanyRole.CLIMATE_FUND) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
@@ -1201,7 +1179,7 @@ export class ProgrammeSlService {
     //sending email to SLCF Admins
     await this.emailHelperService.sendEmailToProjectParticipant(
       EmailTemplates.CMA_REJECTED,
-      null,
+      { remark },
       programmeId
     );
 
@@ -1210,6 +1188,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.CMA_REJECTED;
       log.userId = user.id;
+      log.data = { remark };
 
       await this.programmeAuditSlRepo.save(log);
     }
@@ -1339,7 +1318,6 @@ export class ProgrammeSlService {
     }
 
     const validationReportDoc = new DocumentEntity();
-    validationReportDoc.content = JSON.stringify(validationReportDto.content);
     validationReportDoc.programmeId = validationReportDto.programmeId;
     validationReportDoc.companyId = companyId;
     validationReportDoc.userId = user.id;
@@ -1350,6 +1328,11 @@ export class ProgrammeSlService {
       validationReportDto.programmeId
     );
     validationReportDoc.version = lastVersion + 1;
+    //updating validation report ID
+    validationReportDto.content.projectDetails.reportID = `SLCCS/VDR/${new Date().getFullYear()}/${
+      validationReportDoc.programmeId
+    }/${validationReportDoc.version}`;
+    validationReportDoc.content = JSON.stringify(validationReportDto.content);
     validationReportDoc.status = DocumentStatus.PENDING;
     validationReportDoc.createdTime = new Date().getTime();
     validationReportDoc.updatedTime = validationReportDoc.createdTime;
@@ -1412,9 +1395,32 @@ export class ProgrammeSlService {
       );
     }
 
+    const getDoctDto = {
+      programmeId: programmeId,
+      docType: DocumentTypeEnum.CMA,
+    };
+    const cmaDoc = await this.getDocLastVersion(getDoctDto, user);
+    let parsedCMADoc;
+    let creditEst;
+    if (cmaDoc.data && cmaDoc.data.content) {
+      parsedCMADoc = JSON.parse(cmaDoc.data.content);
+    }
+
+    if (
+      parsedCMADoc &&
+      parsedCMADoc.quantificationOfGHG &&
+      parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions &&
+      parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions.totalNetEmissionReductions
+    ) {
+      creditEst = Number(
+        parsedCMADoc.quantificationOfGHG.netGHGEmissionReductions.totalNetEmissionReductions
+      );
+    }
+
     const serialNo = await this.serialGenerator.generateProjectRegistrationSerial(programmeId);
     const registrationCertificateUrl = await this.generateProjectRegistrationCertificate(
-      programmeId
+      programmeId,
+      creditEst
     );
 
     const updateProgrammeSlProposalStage = {
@@ -1423,6 +1429,7 @@ export class ProgrammeSlService {
       data: {
         serialNo: serialNo,
         registrationCertificateUrl: registrationCertificateUrl,
+        creditEst,
       },
     };
     const response = await this.updateProposalStage(updateProgrammeSlProposalStage, user);
@@ -1479,18 +1486,16 @@ export class ProgrammeSlService {
 
       await this.programmeAuditSlRepo.save(logs);
 
-      // const log = new ProgrammeAuditLogSl();
-      // log.programmeId = programmeId;
-      // log.logType = ProgrammeAuditLogType.VALIDATION_REPORT_APPROVED;
-      // log.userId = user.id;
-
-      // await this.programmeAuditSlRepo.save(log);
     }
 
     return new DataResponseDto(HttpStatus.OK, response);
   }
 
-  async rejectValidation(programmeId: string, user: User): Promise<DataResponseDto> {
+  async rejectValidation(
+    programmeId: string,
+    remark: string,
+    user: User
+  ): Promise<DataResponseDto> {
     if (user.companyRole != CompanyRole.EXECUTIVE_COMMITTEE) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
@@ -1553,7 +1558,7 @@ export class ProgrammeSlService {
     //sending email to SLCF Admins
     await this.emailHelperService.sendEmailToSLCFAdmins(
       EmailTemplates.VALIDATION_REJECTED,
-      null,
+      { remark },
       programmeId
     );
 
@@ -1562,6 +1567,7 @@ export class ProgrammeSlService {
       log.programmeId = programmeId;
       log.logType = ProgrammeAuditLogType.VALIDATION_REPORT_REJECTED;
       log.userId = user.id;
+      log.data = { remark };
 
       await this.programmeAuditSlRepo.save(log);
     }
@@ -1634,6 +1640,30 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, null);
   }
 
+  async getVerificationDocLastVersion(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const programme = await this.programmeLedgerService.getProgrammeSlById(getDocDto.programmeId);
+      if (user.companyId !== programme.companyId) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+    }
+    const document = await this.documentRepo.findOne({
+      where: {
+        programmeId: getDocDto.programmeId,
+        type: getDocDto.docType,
+        verificationRequestId: getDocDto.verificationRequestId,
+      },
+      order: {
+        version: "DESC",
+      },
+    });
+
+    return new DataResponseDto(HttpStatus.OK, document);
+  }
+
   async getDocVersions(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       const programme = await this.programmeLedgerService.getProgrammeSlById(getDocDto.programmeId);
@@ -1657,6 +1687,41 @@ export class ProgrammeSlService {
       where: {
         programmeId: getDocDto.programmeId,
         type: getDocDto.docType,
+      },
+      order: {
+        version: "DESC",
+      },
+    });
+
+    const versions = documentVersions.map((doc) => doc.version);
+
+    return new DataResponseDto(HttpStatus.OK, versions);
+  }
+
+  async getVerificationDocVersions(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const programme = await this.programmeLedgerService.getProgrammeSlById(getDocDto.programmeId);
+
+      if (!programme) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.programmeNotExist", []),
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      if (user.companyId !== programme.companyId) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+    }
+    const documentVersions = await this.documentRepo.find({
+      select: { version: true },
+      where: {
+        programmeId: getDocDto.programmeId,
+        type: getDocDto.docType,
+        verificationRequestId: getDocDto.verificationRequestId,
       },
       order: {
         version: "DESC",
@@ -1697,6 +1762,199 @@ export class ProgrammeSlService {
     return new DataResponseDto(HttpStatus.OK, document);
   }
 
+  async getVerificationDocByVersion(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {
+    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      const programme = await this.programmeLedgerService.getProgrammeSlById(getDocDto.programmeId);
+
+      if (!programme) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.programmeNotExist", []),
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      if (user.companyId !== programme.companyId) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("programmeSl.notAuthorised", []),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+    }
+    const document = await this.documentRepo.findOne({
+      where: {
+        programmeId: getDocDto.programmeId,
+        type: getDocDto.docType,
+        version: getDocDto.version,
+        verificationRequestId: getDocDto.verificationRequestId,
+      },
+    });
+
+    return new DataResponseDto(HttpStatus.OK, document);
+  }
+
+  //MARK: Get Carbon Neutral Certs
+  async getCarbonNeutralCertificateDocs(companyId: number): Promise<DocumentEntity[]> {
+    return await this.documentRepo.find({
+      where: {
+        companyId: companyId,
+        type: DocumentTypeEnum.CARBON_NEUTRAL_CERTIFICATE,
+      },
+      order: {
+        createdTime: "ASC",
+      },
+    });
+  }
+
+  // MARK: Request Carbon Neutral Certificate
+  async requestCarbonNeutralCertificate(programmeId: string, companyId: number, user: User) {
+    if (user.companyRole !== CompanyRole.PROGRAMME_DEVELOPER || companyId != user.companyId) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "verification.requestCarbonNeutralCertificateReportWrongUser",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const programme = await this.programmeLedgerService.getProgrammeSlById(programmeId);
+
+    if (!programme) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("programmeSl.programmeNotExist", []),
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    const cncRequestDoc = new DocumentEntity();
+    cncRequestDoc.companyId = companyId;
+    cncRequestDoc.programmeId = programmeId;
+    cncRequestDoc.userId = user.id;
+    cncRequestDoc.type = DocumentTypeEnum.CARBON_NEUTRAL_CERTIFICATE;
+    cncRequestDoc.version = 1;
+    cncRequestDoc.createdTime = new Date().getTime();
+    cncRequestDoc.updatedTime = cncRequestDoc.createdTime;
+
+    const cncSavedRequest = await this.documentRepo.save(cncRequestDoc);
+
+    await this.emailHelperService.sendEmailToSLCFAdmins(
+      EmailTemplates.CARBON_NEUTRAL_SL_REQUESTED,
+      {},
+      programmeId
+    );
+
+    return cncSavedRequest;
+  }
+
+  //MARK: approve Carbon Neutral Certificate
+  async approveCarbonNeutralCertificate(cNCertificateIssueDto: CNCertificateIssueDto, user: User) {
+    if (user.companyRole !== CompanyRole.CLIMATE_FUND) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "verification.verifyVerificationReportWrongUser",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const cncRequest = await this.documentRepo.findOneBy({
+      id: cNCertificateIssueDto.documentId,
+    });
+
+    if (!cncRequest) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("verification.cncRequestDoesNotExists", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    let carbonNeutralCertificateSerial = undefined;
+    let carbonNeutralCertUrl = undefined;
+    const programme = await this.getProjectById(cncRequest.programmeId);
+
+    if (cNCertificateIssueDto.approve) {
+      const previousCarbonNeutralCertificateSerial = await this.getPreviousCNCertificateSerial();
+      carbonNeutralCertificateSerial = this.serialGenerator.generateCarbonNeutralCertificateNumber(
+        previousCarbonNeutralCertificateSerial
+      );
+
+      const neutralData = {
+        projectName: programme.title,
+        companyName: programme.company.name,
+        scope: cNCertificateIssueDto.scope,
+        certificateNo: carbonNeutralCertificateSerial,
+        issueDate: this.dateUtilService.formatCustomDate(),
+        creditAmount: await this.creditRetirementSlService.getCreditAmountSum(
+          programme.company.companyId,
+          cNCertificateIssueDto.assessmentPeriodStart,
+          cNCertificateIssueDto.assessmentPeriodEnd
+        ),
+        orgBoundary: cNCertificateIssueDto.orgBoundary,
+        assessmentYear: cNCertificateIssueDto.year,
+        assessmentPeriod: `${this.dateUtilService.formatCustomDate(
+          cNCertificateIssueDto.assessmentPeriodStart
+        )} - ${this.dateUtilService.formatCustomDate(cNCertificateIssueDto.assessmentPeriodEnd)}`,
+      };
+      carbonNeutralCertUrl =
+        await this.carbonNeutralCertificateGenerator.generateCarbonNeutralCertificate(
+          neutralData,
+          false
+        );
+    }
+
+    const certificateContent = {
+      serialNumber: carbonNeutralCertificateSerial,
+      certificateUrl: carbonNeutralCertUrl,
+    };
+
+    if (!cNCertificateIssueDto.approve)
+      certificateContent["remark"] = cNCertificateIssueDto.orgBoundary;
+
+    const updatedRequest = await this.documentRepo.update(
+      {
+        id: cNCertificateIssueDto.documentId,
+      },
+      {
+        content: JSON.stringify(certificateContent),
+        status: cNCertificateIssueDto.approve ? DocumentStatus.ACCEPTED : DocumentStatus.REJECTED,
+      }
+    );
+
+    const hostAddress = this.configService.get("host");
+    await this.emailHelperService.sendEmailToOrganisationAdmins(
+      programme.company.companyId,
+      cNCertificateIssueDto.approve
+        ? EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_APPROVED
+        : EmailTemplates.CARBON_NEUTRAL_SL_REQUEST_REJECTED,
+      {
+        programmeName: programme.title,
+        remark: cNCertificateIssueDto.orgBoundary,
+        pageLink: hostAddress + `/programmeManagementSLCF/view/${programme.programmeId}`,
+      }
+    );
+
+    console.log(carbonNeutralCertUrl);
+    return updatedRequest;
+  }
+
+  //MARK: Get Previous CNCertificate Serial
+  async getPreviousCNCertificateSerial() {
+    const latestApprovedCNCRequest = await this.documentRepo.findOne({
+      where: {
+        status: DocumentStatus.ACCEPTED,
+        type: DocumentTypeEnum.CARBON_NEUTRAL_CERTIFICATE,
+      },
+      order: {
+        createdTime: "DESC",
+      },
+    });
+
+    return latestApprovedCNCRequest
+      ? JSON.parse(latestApprovedCNCRequest.content).serialNumber
+      : null;
+  }
+
+  //MARK: Query
   async query(query: QueryDto, abilityCondition: string, user: User): Promise<DataListResponseDto> {
     const skip = query.size * query.page - query.size;
     const limit = query.size || 10;
@@ -1760,42 +2018,70 @@ export class ProgrammeSlService {
     const totalCount = parseInt(totalResult[0].count, 10);
     return new DataListResponseDto(resp.length > 0 ? resp : undefined, totalCount);
   }
-  // async query(
-  //   query: QueryDto,
-  //   abilityCondition: string
-  // ): Promise<DataListResponseDto> {
-  //   const skip = query.size * query.page - query.size;
-  //   let resp = await this.programmeSlRepo
-  //     .createQueryBuilder("programme_sl")
-  //     .innerJoinAndSelect(
-  //       "company",
-  //       "c",
-  //       "programme_sl.companyId = c.companyId"
-  //     )
-  //     .where(this.helperService.generateWhereSQL(query, null))
-  //     .orderBy(
-  //       query?.sort?.key &&
-  //         `"programme_sl".${this.helperService.generateSortCol(
-  //           query?.sort?.key
-  //         )}`,
-  //       query?.sort?.order,
-  //       query?.sort?.nullFirst !== undefined
-  //         ? query?.sort?.nullFirst === true
-  //           ? "NULLS FIRST"
-  //           : "NULLS LAST"
-  //         : undefined
-  //     )
-  //     .offset(skip)
-  //     .limit(query.size)
-  //     .getManyAndCount();
-  //   console.log(resp[0]);
 
-  //   return new DataListResponseDto(
-  //     resp.length > 0 ? resp[0] : undefined,
-  //     resp.length > 1 ? resp[1] : undefined
-  //   );
-  // }
+  // MARK: publicProgrammeDetails
+  async getPublicProjectDetails(query: QueryDto) {
+    const cacheKey = `programme_${JSON.stringify(query)}`;
 
+    const cachedData = await this.cacheManager.get<DataListResponseDto>(cacheKey);
+    if (cachedData) {
+      console.log('Get project public data from cache');
+      return cachedData;
+    }
+    console.log('Project data not in cache');
+
+    const skip = query.size * query.page - query.size;
+    const limit = query.size || 10;
+    const offset = skip || 0;
+    const sortKey = query?.sort?.key
+      ? `programme_sl."${query.sort.key}"`
+      : `"programme_sl"."createdTime"`;
+    const sortOrder = query?.sort?.order || "DESC";
+
+    const rawQuery = `
+      SELECT 
+        programme_sl.*, 
+        json_build_object(
+                'companyId', c."companyId",
+                'name', c."name",
+                'companyRole', c."companyRole",
+                'logo', c."logo",
+                'email', c."email"
+              ) as company
+      FROM 
+        programme_sl
+      INNER JOIN 
+        company c 
+      ON 
+        "programme_sl"."companyId" = c."companyId"
+      WHERE
+        "projectProposalStage" = 'AUTHORISED'
+      ORDER BY 
+        ${sortKey} ${sortOrder}
+      LIMIT ${limit}
+      OFFSET ${offset};
+    `;
+    const resp = await this.programmeSlRepo.query(rawQuery);
+    const totalQuery = `
+      SELECT COUNT(*) 
+      FROM 
+        programme_sl
+      INNER JOIN 
+        company c 
+      ON 
+        "programme_sl"."companyId" = c."companyId"
+      WHERE
+        "projectProposalStage" = 'AUTHORISED'
+    `;
+
+    const totalResult = await this.programmeSlRepo.query(totalQuery);
+    const totalCount = parseInt(totalResult[0].count, 10);
+    const result = new DataListResponseDto(resp.length > 0 ? resp : undefined, totalCount);
+    // Cache set
+    await this.cacheManager.set(cacheKey, result);
+    return result
+  }
+ 
   // MARK: getProjectById
   async getProjectById(programmeId: string): Promise<any> {
     let project: ProgrammeSl = await this.programmeLedgerService.getProgrammeSlById(programmeId);
@@ -1842,7 +2128,7 @@ export class ProgrammeSlService {
   }
 
   // MARK: gen Reg Certificate
-  async generateProjectRegistrationCertificate(programmeId: string) {
+  async generateProjectRegistrationCertificate(programmeId: string, creditEst: string) {
     const programme = await this.getProjectById(programmeId);
 
     if (!programme) {
@@ -1860,7 +2146,7 @@ export class ProgrammeSlService {
       regDate: this.dateUtilService.formatCustomDate(programme.createdTime),
       issueDate: this.dateUtilService.formatCustomDate(),
       sector: SlProjectCategoryMap[programme.projectCategory],
-      estimatedCredits: programme.creditEst,
+      estimatedCredits: creditEst,
     };
 
     const url =

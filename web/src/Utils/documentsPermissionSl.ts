@@ -258,7 +258,9 @@ export const formDownloadPermission = (
     (userInfoState?.companyRole === CompanyRole.CLIMATE_FUND ||
       userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
       userInfoState?.companyRole === CompanyRole.EXECUTIVE_COMMITTEE ||
-      userInfoState?.companyRole === CompanyRole.GOVERNMENT)
+      userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+      userInfoState?.companyRole === CompanyRole.CERTIFIER ||
+      userInfoState?.companyRole === CompanyRole.MINISTRY)
   ) {
     return true;
   }

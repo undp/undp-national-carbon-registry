@@ -17,6 +17,11 @@ export class GetDocDto {
   @IsString()
   programmeId: string;
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumber()
+  verificationRequestId?: number;
+
   @ApiProperty({ enum: DocumentTypeEnum })
   @IsNotEmpty()
   @IsEnum(DocumentTypeEnum, {

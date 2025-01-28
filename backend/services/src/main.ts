@@ -68,6 +68,5 @@ async function bootstrap() {
     await app.listen(process.env.RUN_PORT || 3000);
     console.log("Module initiated", moduleName);
   }
-  // global.baseUrl = await app.getUrl();
 }
 bootstrap();

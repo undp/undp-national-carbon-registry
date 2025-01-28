@@ -94,4 +94,32 @@ export default () => ({
   systemType: process.env.SYSTEM_TYPE || "CARBON_UNIFIED_SYSTEM",
   systemName: process.env.SYSTEM_NAME || "SystemX",
   environmentalManagementActHyperlink: process.env.ENVIRONMENTAL_MANAGEMENT_ACT_HYPERLINK || "",
+  cache: {
+    project: {
+      ttl: process.env.CACHE_PROJECT_TTL || 60 * 1000, // ttl is set in milliseconds
+      max: process.env.CACHE_PROJECT_MAX || 100, // maximum records to be held in the cache
+    },
+    retirement: {
+      ttl: process.env.CACHE_RETIREMENT_TTL || 60 * 1000, // ttl is set in milliseconds
+      max: process.env.CACHE_RETIREMENT_MAX || 100, // maximum records to be held in the cache
+    },
+    organisation: {
+      ttl: process.env.CACHE_ORGANISATION_TTL || 60 * 1000, // ttl is set in milliseconds
+      max: process.env.CACHE_ORGANISATION_MAX || 100, // maximum records to be held in the cache
+    },
+  },
+  rateLimiter: {
+    project: {
+      limit: process.env.RATE_LIMIT_PROJECT_LIMIT || 100, // number of requests for the given time
+      duration: process.env.RATE_LIMIT_PROJECT_DURATION || 60, // duration in seconds
+    },
+    retirement: {
+      limit: process.env.RATE_LIMIT_RETIREMENT_LIMIT || 100, // number of requests for the given time
+      duration: process.env.RATE_LIMIT_RETIREMENT_DURATION || 60, // duration in seconds
+    },
+    organisation: {
+      limit: process.env.RATE_LIMIT_ORGANISATION_LIMIT || 100, // number of requests for the given time
+      duration: process.env.RATE_LIMIT_ORGANISATION_DURATION || 60, // duration in seconds
+    },
+  },
 });

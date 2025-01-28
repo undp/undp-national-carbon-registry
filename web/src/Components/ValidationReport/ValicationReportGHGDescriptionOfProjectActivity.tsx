@@ -356,9 +356,8 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                     >
                       <Radio.Group style={{ justifyContent: 'flex-start' }}>
                         <Radio value={'LARGE'}>{t('validationReport:largeScale')}</Radio>
-                        <Radio value={'SMALL'}>
-                          {t('validationReport:smallScaleBundleProject')}
-                        </Radio>
+                        <Radio value={'SMALL'}>{t('validationReport:smallScale')}</Radio>
+                        <Radio value={'MICRO'}>{t('validationReport:microScale')}</Radio>
                       </Radio.Group>
                     </Form.Item>
                   </Col>
@@ -367,7 +366,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                 <Row gutter={[8, 16]}>
                   <Col span={24}>
                     <div className="custom-required">
-                      {t('validationReport:projectScopeUNFCC')}
+                      {t('validationReport:projectScopeUNFCC')} {'  '}
                       {t('validationReport:projectScopeUNFCCt2')}
                     </div>
                   </Col>
@@ -433,7 +432,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                     <Input size="large" />
                   </Form.Item>
                   <Form.Item
-                    label={`${t('validationReport:creditingPeriod')}`}
+                    label={`${t('validationReport:totalCreditingYears')}`}
                     name="creditingPeriod"
                     rules={[
                       {
@@ -442,7 +441,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                       },
                     ]}
                   >
-                    <InputNumber className="full-width-form-item" size="large" />
+                    <InputNumber className="full-width-form-item" size="large" disabled />
                   </Form.Item>
                   <Form.Item
                     className="full-width-form-item"
@@ -457,7 +456,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                       },
                     ]}
                   >
-                    <DatePicker size="large" />
+                    <DatePicker size="large" disabled />
                   </Form.Item>
                 </div>
               </div>
@@ -494,6 +493,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                   className="addMinusBtn"
                                   // block
                                   icon={<MinusOutlined />}
+                                  disabled
                                 >
                                   {/* Remove Entity */}
                                 </Button>
@@ -501,9 +501,6 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                             )}
                           </div>
                           <div className="form-section">
-                            {/* <h4 className="form-section-title">
-                              {`1.5 ${t('validationReport:locationOfProjectActivity')}`}
-                            </h4> */}
                             <Row
                               justify={'space-between'}
                               gutter={[40, 16]}
@@ -522,7 +519,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                     },
                                   ]}
                                 >
-                                  <Input size="large" />
+                                  <Input size="large" disabled />
                                 </Form.Item>
 
                                 <Form.Item
@@ -541,6 +538,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                     size="large"
                                     onChange={(value) => onProvinceSelect(value, name)}
                                     placeholder={t('validationReport:provincePlaceholder')}
+                                    disabled
                                   >
                                     {provinces.map((province: string, index: number) => (
                                       <Select.Option value={province}>{province}</Select.Option>
@@ -564,6 +562,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                     size="large"
                                     placeholder={t('validationReport:districtPlaceholder')}
                                     onSelect={(value) => onDistrictSelect(value, name)}
+                                    disabled
                                   >
                                     {districts[name]?.map((district: string, index: number) => (
                                       <Select.Option key={district}>{district}</Select.Option>
@@ -586,6 +585,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                     size="large"
                                     placeholder={t('validationReport:dsDivisionPlaceholder')}
                                     onSelect={(value) => onDivisionSelect(value, name)}
+                                    disabled
                                   >
                                     {dsDivisions[name]?.map((division: string) => (
                                       <Select.Option value={division}>{division}</Select.Option>
@@ -605,6 +605,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                   <Select
                                     size="large"
                                     placeholder={t('validationReport:cityPlaceholder')}
+                                    disabled
                                   >
                                     {cities[name]?.map((city: string) => (
                                       <Select.Option value={city}>{city}</Select.Option>
@@ -623,21 +624,18 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                     },
                                   ]}
                                 >
-                                  <Input size="large" />
+                                  <Input size="large" disabled />
                                 </Form.Item>
                               </Col>
 
                               <Col xl={12} md={24}>
-                                <Form.Item
-                                  label={t('validationReport:setLocation')}
-                                  // name={[name, 'geographicalLocationCoordinates']}
-                                >
+                                <Form.Item label={t('validationReport:setLocation')}>
                                   <GetLocationMapComponent
                                     form={form}
                                     formItemName={[name, 'geographicalLocationCoordinates']}
                                     listName="locationsOfProjectActivity"
                                     existingCordinate={getExistingCordinate(locationIndex)}
-                                    disabled={formMode === FormMode.VIEW}
+                                    disabled
                                     isShowCordinate
                                   />
                                 </Form.Item>
@@ -679,8 +677,9 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                       className="upload-doc"
                                       size="large"
                                       icon={<UploadOutlined />}
+                                      disabled
                                     >
-                                      Upload
+                                      {t('validationReport:upload')}
                                     </Button>
                                   </Upload>
                                 </Form.Item>
@@ -745,15 +744,6 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                                               </Col>
                                               <Col span={4}></Col>
                                             </Row>
-                                            {/* <div className="technical-project-grid-title">
-                                              <p style={{ height: 10 }}>
-                                                {t('validationReport:parameter')}
-                                              </p>
-                                              <p style={{ height: 10 }}>
-                                                {t('validationReport:value')}
-                                              </p>
-                                              <span></span>
-                                            </div> */}
                                             <Form.List name={[itemName, 'parameterValue']}>
                                               {(
                                                 parameterValueList,
@@ -917,6 +907,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                             className="addMinusBtn"
                             // block
                             icon={<PlusOutlined />}
+                            disabled
                           >
                             {t('validationReport:addLocation')}
                           </Button>
@@ -927,32 +918,11 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                 </Form.List>
               </>
 
-              {/* Section 2.3 Technical project description */}
-              {/* <>
-                <h4 className="form-section-title custom-required">{`2.3 ${t(
-                  'validationReport:technicalProjectDescription'
-                )}`}</h4>
-
-                <div></div>
-              </> */}
-
               <Row justify={'end'} className="step-actions-end">
                 <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  disabled={false}
-                  // onClick={() => {
-                  //   console.log(form.getFieldsValue());
-
-                  //   // next()
-                  // }}
-                  // onClick={next}
-
-                  htmlType="submit"
-                >
+                <Button type="primary" size={'large'} disabled={false} htmlType="submit">
                   {t('validationReport:next')}
                 </Button>
               </Row>

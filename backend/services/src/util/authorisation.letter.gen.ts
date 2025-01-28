@@ -22,12 +22,6 @@ export class AuthorizationLetterGen {
     designDocUrl,
     methodologyDocUrl
   ) {
-    // this.logger.log("programmeId",programmeId)
-    // this.logger.log("programmeName",programmeName)
-    // this.logger.log("authorisedCompanyName",authorisedCompanyName)
-    // this.logger.log("orgs",orgs)
-    // this.logger.log("designDocUrl",designDocUrl)
-    // this.logger.log("methodologyDocUrl",methodologyDocUrl)
 
     const country = this.configService.get("systemCountryName");
     const minister = this.configService.get("docGenerate.ministerName");

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ValidationStepsProps } from './StepProps';
 import { Row, Button, Form, Col, DatePicker, Input } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
@@ -10,7 +10,6 @@ import PhoneInput, {
   Country,
 } from 'react-phone-number-input';
 import validator from 'validator';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { ProcessSteps } from './ValidationStepperComponent';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
@@ -89,20 +88,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                             },
                           ]}
                         >
-                          <Input size="large" />
-                        </Form.Item>
-
-                        <Form.Item
-                          label={t('validationReport:versionNo')}
-                          name="versionNo"
-                          rules={[
-                            {
-                              required: true,
-                              message: `${t('validationReport:versionNo')} ${t('isRequired')}`,
-                            },
-                          ]}
-                        >
-                          <Input size="large" />
+                          <Input size="large" disabled />
                         </Form.Item>
 
                         <Form.Item
@@ -149,14 +135,13 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           ]}
                         >
                           <PhoneInput
-                            // placeholder={t('validationReport:telephone')}
                             international
                             value={formatPhoneNumberIntl(contactNoInput)}
                             defaultCountry="LK"
                             countryCallingCodeEditable={false}
                             onChange={(v) => {}}
                             countries={countries as Country[]}
-                            disabled={FormMode.VIEW === formMode}
+                            disabled
                           />
                         </Form.Item>
 
@@ -194,7 +179,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                             },
                           ]}
                         >
-                          <Input size="large" />
+                          <Input size="large" disabled />
                         </Form.Item>
                       </div>
                     </Col>
@@ -215,21 +200,6 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
                         />
                       </Form.Item>
-                      <Form.Item
-                        label={t('validationReport:versionDate')}
-                        name="versionDate"
-                        rules={[
-                          {
-                            required: true,
-                            message: `${t('validationReport:versionDate')} ${t('isRequired')}`,
-                          },
-                        ]}
-                      >
-                        <DatePicker
-                          size="large"
-                          disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
-                        />
-                      </Form.Item>
 
                       <Form.Item
                         label={t('validationReport:address')}
@@ -241,7 +211,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled />
                       </Form.Item>
 
                       <Form.Item
@@ -269,7 +239,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -279,23 +249,6 @@ const ProjectDetails = (props: ValidationStepsProps) => {
               <Form.Item
                 className="full-width-form-item"
                 label={`${t('validationReport:summary')}`}
-                // tooltip={{
-                //   title: (
-                //     <div className="tooltip">
-                //       <p>Provinde a brief summary of the following</p>
-                //       <ul>
-                //         <li>A brief description of the validation and the project.</li>
-                //         <li>The purpose and scope of validation.</li>
-                //         <li>The method and criteria used for validation.</li>
-                //         <li>The number of findings raised during validation.</li>
-                //         <li>Any uncertainties associated with the validation.</li>
-                //         <li>Summary of the validation conclusion.</li>
-                //       </ul>
-                //     </div>
-                //   ),
-                //   icon: <InfoCircleOutlined style={{ color: 'rgba(58, 53, 65, 0.5)' }} />,
-                //   placement: 'topLeft',
-                // }}
                 name="summary"
                 rules={[
                   {
@@ -320,7 +273,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
                     <Form.Item
                       label={t('validationReport:workCarryOutBy')}
@@ -332,25 +285,21 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                         },
                       ]}
                     >
-                      <TextArea disabled={FormMode.VIEW === formMode} rows={3} size="large" />
+                      <TextArea disabled rows={3} size="large" />
                     </Form.Item>
                   </div>
                 </Col>
 
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('validationReport:reportNo')}
-                      name="reportNo"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('validationReport:reportNo')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size={'large'} />
-                    </Form.Item>
+                    {FormMode.VIEW === formMode ? (
+                      <Form.Item label={t('validationReport:reportID')} name="reportID">
+                        <Input size={'large'} disabled />
+                      </Form.Item>
+                    ) : (
+                      ''
+                    )}
+
                     <Form.Item
                       label={t('validationReport:workApprovedBy')}
                       name="workApprovedBy"
@@ -371,13 +320,7 @@ const ProjectDetails = (props: ValidationStepsProps) => {
                 <Button danger size={'large'} disabled={false} onClick={prev}>
                   {t('validationReport:cancel')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  disabled={false}
-                  // onClick={next}
-                  htmlType="submit"
-                >
+                <Button type="primary" size={'large'} disabled={false} htmlType="submit">
                   {t('validationReport:next')}
                 </Button>
               </Row>

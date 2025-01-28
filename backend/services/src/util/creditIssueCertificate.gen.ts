@@ -51,6 +51,9 @@ export class CreditIssueCertificateGenerator {
     const startImageX = (doc.page.width - totalImageWidth) / 2;
     const startImageY = 50; // vertical position where images will be placed
 
+    doc.registerFont("Inter", "fonts/Inter-Regular.ttf");
+    doc.registerFont("Inter-Bold", "fonts/Inter-Bold.ttf");
+
     // Draw each image
     doc.image("images/sri-lanka-emblem.png", startImageX, startImageY, {
       width: image1Width,
@@ -70,8 +73,8 @@ export class CreditIssueCertificateGenerator {
     // Title
     doc
       .fontSize(30)
-      .font("Helvetica-Bold")
-      .fillColor("#134e9e")
+      .font("Inter-Bold")
+      .fillColor("#1f4e79")
       .text("Credit Issuance Certificate", { align: "center" });
 
     if (isPreview) {
@@ -81,59 +84,59 @@ export class CreditIssueCertificateGenerator {
     doc.moveDown(2).fontSize(16).fillColor("black");
 
     doc
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .fontSize(14)
-      .text("Zimbabwe Climate Fund (PVT) Ltd", 70, 180, { align: "center" });
+      .text("Sri Lanka Climate Fund (Pvt) Ltd", 70, 180, { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(12).text("Issues", { align: "center" });
+    doc.font("Inter").fontSize(12).text("Issues", { align: "center" });
 
     doc.moveDown(0.5);
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(12)
       .text("Zimbabwen Certified Emission Reductions (SCER)", { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(12).text("for", { align: "center" });
+    doc.font("Inter").fontSize(12).text("for", { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica-Bold").fontSize(14).text(`${data.projectName}`, { align: "center" });
+    doc.font("Inter-Bold").fontSize(14).text(`${data.projectName}`, { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(12).text("of", { align: "center" });
+    doc.font("Inter").fontSize(12).text("of", { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(14).text(`${data.companyName}`, { align: "center" });
+    doc.font("Inter").fontSize(14).text(`${data.companyName}`, { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Helvetica").fontSize(12).text("registered under", { align: "center" });
+    doc.font("Inter").fontSize(12).text("registered under", { align: "center" });
 
     doc.moveDown(0.5);
 
     doc
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .fontSize(14)
-      .text(`${track} of Zimbabwe Carbon Credit Scheme`, { align: "center" });
+      .text(`${track} of Sri Lanka Carbon Crediting Scheme`, { align: "center" });
 
     doc.moveDown(0.5);
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(12)
-      .text("In accordance with the SLCCR eligibility criteria and", { align: "center" });
+      .text("In accordance with the SLCCS eligibility criteria and", { align: "center" });
 
     doc.moveDown(0.4);
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(12)
       .text("Approved CDM methodology (AMS I.D Version 18.0)", { align: "center" });
 
@@ -141,11 +144,11 @@ export class CreditIssueCertificateGenerator {
 
     doc
       .fontSize(11)
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .text("Certificate No ", 180, 440, {
         continued: true,
       })
-      .text(`: ${data.certificateNo}`, 230, 440, {
+      .text(`: ${data.certificateNo}`, 229, 440, {
         continued: false,
       })
       .moveDown(0.4)
@@ -159,20 +162,20 @@ export class CreditIssueCertificateGenerator {
       .text("Monitoring Period ", 180, doc.y, {
         continued: true,
       })
-      .text(`: ${data.monitoringStartDate} - ${data.monitoringEndDate}`, 208, doc.y, {
+      .text(`: ${data.monitoringStartDate} - ${data.monitoringEndDate}`, 207.5, doc.y, {
         continued: false,
       })
       .moveDown(1);
 
     doc
-      .font("Helvetica-Bold")
+      .font("Inter-Bold")
       .fontSize(16)
-      .text(`Zimbabwen Credit Emission Reductions: ${data.issuedCredits} (tCO2eq)`, 100, doc.y)
+      .text(`Sri Lankan Credit Emission Reductions: ${data.issuedCredits} (tCO₂eq)`, 100, doc.y)
       .moveDown(1.5);
 
     doc
       .fontSize(11)
-      .font("Helvetica")
+      .font("Inter")
       .text("Serial Range ", 180, doc.y, {
         continued: true,
       })
@@ -183,10 +186,10 @@ export class CreditIssueCertificateGenerator {
         continued: false,
       })
       .moveDown(0.4)
-      .text(": Block end ", 252, doc.y, {
+      .text(": Block end ", 252.5, doc.y, {
         continued: true,
       })
-      .text(`: ${data.endCreditSerialNo}`, 265, doc.y, {
+      .text(`: ${data.endCreditSerialNo}`, 267.5, doc.y, {
         continued: false,
       })
       .moveDown(1);
@@ -204,14 +207,14 @@ export class CreditIssueCertificateGenerator {
     }
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(10)
-      .text("...............................", 130, 660, { align: "left" });
+      .text("...............................", 135, 660, { align: "left" });
 
-    doc.font("Helvetica").fontSize(10).text("Chairman", 154, 675);
+    doc.font("Inter").fontSize(10).text("Chairman", 154, 675);
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(10)
       .text("Zimbabwe Climate Fund (Pvt) Ltd.", 100, 690, { align: "left" });
 
@@ -235,19 +238,19 @@ export class CreditIssueCertificateGenerator {
     }
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(10)
-      .text("...............................", 410, 660, { align: "left" });
+      .text("...............................", 415, 660, { align: "left" });
 
-    doc.font("Helvetica").fontSize(11).text("Chief Executive Officer", 400, 675);
+    doc.font("Inter").fontSize(11).text("Chief Executive Officer", 400, 675);
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(10)
       .text("Zimbabwe Climate Fund (Pvt) Ltd.", 378, 690, { align: "left" });
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(9)
       .text(
         "Zimbabwe Climate Fund (Pvt) Ltd, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.",
@@ -257,7 +260,7 @@ export class CreditIssueCertificateGenerator {
       );
 
     doc
-      .font("Helvetica")
+      .font("Inter")
       .fontSize(9)
       .text("Phone: 011 2053065  E-mail: info@climatefund.lk", 70, 730, { align: "center" });
 

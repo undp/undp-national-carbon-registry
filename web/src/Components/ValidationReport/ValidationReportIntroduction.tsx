@@ -118,7 +118,7 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled />
                       </Form.Item>
 
                       <Form.Item
@@ -133,7 +133,7 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled />
                       </Form.Item>
 
                       <Form.Item

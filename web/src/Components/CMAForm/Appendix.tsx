@@ -135,7 +135,7 @@ const Step08 = (props: CustomStepsProps) => {
                     icon={<UploadOutlined />}
                     disabled={disableFields}
                   >
-                    Upload
+                    {t('CMAForm:upload')}
                   </Button>
                 </Upload>
               </Form.Item>

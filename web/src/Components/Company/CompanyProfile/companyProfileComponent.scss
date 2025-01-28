@@ -70,5 +70,37 @@
       background-color: white !important;
       outline: auto !important;
     }
+    
+
   }
   
+  .cnc-container {
+    .btn-danger {
+      color: #ff4d4f !important;
+      border-color: #ff8183 !important;
+
+      span {
+        color: #ff4d4f !important;
+        text-transform: none !important;
+      }
+      
+    }
+    .approve-cnc-title-icon {
+      padding-left: 15px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .cnc-record-title {
+      font-weight: 600;
+      .Accepted {
+        color:rgb(165, 223, 108)
+      }
+      .Rejected {
+        color: #ff4d4f
+      }
+      .Pending {
+        color:#ec8f37
+      }
+    }
+  }

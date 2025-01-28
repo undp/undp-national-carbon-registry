@@ -24,7 +24,6 @@
           color: rgba(0, 0, 0, 0.85);
         }
       }
-      
     }
 
     .addMinusBtn {
@@ -312,6 +311,57 @@
           }
         }
       }
+    }
+  }
+  .contact-person-title {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .document-info-title-row {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 40px;
+  }
+
+  .document-info-col {
+    display: flex;
+
+    .document-info-col-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .document-info-field {
+      margin-bottom: 10px;
+    }
+  }
+
+  .revisions-table {
+    .ant-table-thead > tr > th {
+      position: relative;
+      color: rgba(0, 0, 0, 0.85);
+      font-weight: 500;
+      text-align: left;
+      background: none !important;
+      border-bottom: none !important;
+      transition: none !important;
+      padding: 16px 0px !important;
+    }
+    .ant-table-tbody {
+      vertical-align: top;
+    }
+
+    .ant-table-tbody > tr > td.ant-table-cell-row-hover {
+      background: none !important;
+    }
+
+    .ant-table-tbody > tr > td {
+      border-bottom: none !important;
+      transition: none !important;
+      padding: 16px 0px !important;
     }
   }
 }

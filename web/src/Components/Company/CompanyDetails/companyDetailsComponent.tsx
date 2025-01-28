@@ -208,7 +208,7 @@ export const CompanyDetailsComponent = (props: any) => {
                   {t('companyDetails:track1CreditBalance')}
                 </Col>
                 <Col span={12} className="field-value">
-                  {companyDetails.slcfAccountBalance?.TRACK_2
+                  {companyDetails.slcfAccountBalance?.TRACK_1
                     ? addCommSep(companyDetails.slcfAccountBalance?.TRACK_1)
                     : '-'}
                 </Col>

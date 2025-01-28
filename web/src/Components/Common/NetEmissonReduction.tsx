@@ -14,7 +14,7 @@ const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
 };
 
 const NetEmissionReduction = (props: any) => {
-  const { form, t, existingEmission, projectCategory } = props;
+  const { form, t, existingEmission, projectCategory, disableFields } = props;
 
   useEffect(() => {
     // onPeriodEndChange()
@@ -25,20 +25,28 @@ const NetEmissionReduction = (props: any) => {
     let projectEmissionReductionsVal = 0;
     let leakageEmissionReductionsVal = 0;
 
-    console.log('-------cal em is running----------', index);
     if (index === undefined) {
       baselineEmissionReductionsVal = Number(form.getFieldValue('baselineEmissionReductions') || 0);
       projectEmissionReductionsVal = Number(form.getFieldValue('projectEmissionReductions') || 0);
       leakageEmissionReductionsVal = Number(form.getFieldValue('leakageEmissionReductions') || 0);
       const netGHGEmissions =
         baselineEmissionReductionsVal - projectEmissionReductionsVal - leakageEmissionReductionsVal;
-      console.log(
-        '---------cal em vals----',
-        baselineEmissionReductionsVal,
-        projectEmissionReductionsVal,
-        leakageEmissionReductionsVal,
-        netGHGEmissions
-      );
+
+      if (netGHGEmissions < 0) {
+        form.setFields([
+          {
+            name: 'netEmissionReductions',
+            errors: [`${t('common:estimatedNetGHGEmissionShouldHavePositive')}`],
+          },
+        ]);
+      } else {
+        form.setFields([
+          {
+            name: 'netEmissionReductions',
+            errors: [],
+          },
+        ]);
+      }
       form.setFieldValue('netEmissionReductions', String(netGHGEmissions));
     } else {
       const listVals = form.getFieldValue('estimatedNetEmissionReductions');
@@ -54,6 +62,22 @@ const NetEmissionReduction = (props: any) => {
           leakageEmissionReductionsVal;
 
         listVals[index].netEmissionReductions = netGHGEmissions;
+
+        if (netGHGEmissions < 0) {
+          form.setFields([
+            {
+              name: ['estimatedNetEmissionReductions', index, 'netEmissionReductions'],
+              errors: [`${t('common:estimatedNetGHGEmissionShouldHavePositive')}`],
+            },
+          ]);
+        } else {
+          form.setFields([
+            {
+              name: ['estimatedNetEmissionReductions', index, 'netEmissionReductions'],
+              errors: [],
+            },
+          ]);
+        }
 
         form.setFieldValue('estimatedNetEmissionReductions', listVals);
       }
@@ -86,7 +110,6 @@ const NetEmissionReduction = (props: any) => {
   };
 
   const calculateTotalEmissions = (value: any, category: string, categoryToAdd: string) => {
-    // let tempTotal = Number(form.getFieldValue(category) || 0);
     const listVals = form.getFieldValue('estimatedNetEmissionReductions');
     if (typeof listVals === 'undefined' || typeof listVals[0] === 'undefined') {
       return;
@@ -133,14 +156,7 @@ const NetEmissionReduction = (props: any) => {
   };
 
   const onPeriodEndChange = (value: any, fieldCounts: number) => {
-    // let totalCreditingYears = form.getFieldValue('totalNumberOfCredingYears') || 0;
-    // if (value && totalCreditingYears < fieldCounts) {
-    //   totalCreditingYears += 1;
-    // } else if (value === null && totalCreditingYears !== 0) {
-    //   totalCreditingYears -= 1;
-    // }
     form.setFieldValue('totalNumberOfCredingYears', fieldCounts);
-    // calculateAvgAnnualERs();
   };
 
   return (
@@ -151,20 +167,20 @@ const NetEmissionReduction = (props: any) => {
             Year
           </Col>
           <Col md={3} xl={3}>
-            Estimated baseline emissions or removals (tCO2e)
+            Estimated Baseline Emissions Or Removals (tCO₂e)
           </Col>
           <Col md={3} xl={3}>
-            Estimated project emissions or removals (tCO2e)
+            Estimated Project Emissions Or Removals (tCO₂e)
           </Col>
           <Col md={3} xl={3}>
-            Estimated leakage emissions (tCO2e)
+            Estimated Leakage Emissions (tCO₂e)
           </Col>
           <Col md={3} xl={3}>
-            Estimated net GHG emission reductions or removals (tCO2e)
+            Estimated Net GHG Emission Reductions Or Removals (tCO₂e)
           </Col>
           {projectCategory === ProjectCategory.AFOLU && (
             <Col md={3} xl={3}>
-              Buffer pool allocation
+              Buffer Pool Allocation
             </Col>
           )}
           <Col md={3} xl={3}>
@@ -197,7 +213,7 @@ const NetEmissionReduction = (props: any) => {
                                   value === null ||
                                   value === undefined
                                 ) {
-                                  throw new Error(`${t('validationReport:required')}`);
+                                  throw new Error(`${t('common:required')}`);
                                 }
                               },
                             },
@@ -208,7 +224,7 @@ const NetEmissionReduction = (props: any) => {
                             placeholder="Start Date"
                             picker="month"
                             format="YYYY MMM"
-                            // disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                            disabled={disableFields}
                           />
                         </Form.Item>
                         <span style={{ marginBottom: 23 }}>to</span>
@@ -229,7 +245,7 @@ const NetEmissionReduction = (props: any) => {
                                   value === null ||
                                   value === undefined
                                 ) {
-                                  throw new Error(`${t('validationReport:required')}`);
+                                  throw new Error(`${t('common:required')}`);
                                 }
 
                                 const startDate = moment(
@@ -240,10 +256,6 @@ const NetEmissionReduction = (props: any) => {
                                 const duration = moment.duration(selectedDate.diff(startDate));
 
                                 const isOneYear = Math.round(duration.asMonths()) === 12;
-
-                                // if (!isOneYear) {
-                                //   throw new Error('Duration should be a year');
-                                // }
                               },
                             },
                           ]}
@@ -269,6 +281,7 @@ const NetEmissionReduction = (props: any) => {
                               }
                               return false;
                             }}
+                            disabled={disableFields}
                           />
                         </Form.Item>
                       </div>
@@ -280,7 +293,7 @@ const NetEmissionReduction = (props: any) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('validationReport:required')}`,
+                            message: `${t('common:required')}`,
                           },
                           {
                             validator(rule, value) {
@@ -309,6 +322,7 @@ const NetEmissionReduction = (props: any) => {
                               'totalBaselineEmissionReductions'
                             );
                           }}
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -318,7 +332,7 @@ const NetEmissionReduction = (props: any) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('validationReport:required')}`,
+                            message: `${t('common:required')}`,
                           },
                           {
                             validator(rule, value) {
@@ -347,6 +361,7 @@ const NetEmissionReduction = (props: any) => {
                               'totalProjectEmissionReductions'
                             );
                           }}
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -356,7 +371,7 @@ const NetEmissionReduction = (props: any) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('validationReport:required')}`,
+                            message: `${t('common:required')}`,
                           },
                           {
                             validator(rule, value) {
@@ -385,6 +400,7 @@ const NetEmissionReduction = (props: any) => {
                               'totalLeakageEmissionReductions'
                             );
                           }}
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -394,17 +410,20 @@ const NetEmissionReduction = (props: any) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('validationReport:required')}`,
+                            message: `${t('common:required')}`,
                           },
                           {
                             validator(rule, value) {
                               if (!value) {
                                 return Promise.resolve();
-                              }
-
-                              // eslint-disable-next-line no-restricted-globals
-                              if (isNaN(value)) {
+                              } else if (isNaN(value)) {
                                 return Promise.reject(new Error('Should be a number'));
+                              } else if (Number(value) < 0) {
+                                return Promise.reject(
+                                  new Error(
+                                    `${t('common:estimatedNetGHGEmissionShouldHavePositive')}`
+                                  )
+                                );
                               }
 
                               return Promise.resolve();
@@ -422,7 +441,7 @@ const NetEmissionReduction = (props: any) => {
                           rules={[
                             {
                               required: true,
-                              message: `${t('CMAForm:required')}`,
+                              message: `${t('common:required')}`,
                             },
                             {
                               validator(rule, value) {
@@ -455,6 +474,7 @@ const NetEmissionReduction = (props: any) => {
                                 'totalBufferPoolAllocations'
                               );
                             }}
+                            disabled={disableFields}
                           />
                         </Form.Item>
                       </Col>
@@ -494,6 +514,7 @@ const NetEmissionReduction = (props: any) => {
                             className="addMinusBtn"
                             // block
                             icon={<MinusOutlined />}
+                            disabled={disableFields}
                           >
                             {/* Add Entity */}
                           </Button>
@@ -509,6 +530,7 @@ const NetEmissionReduction = (props: any) => {
                             className="addMinusBtn"
                             // block
                             icon={<PlusOutlined />}
+                            disabled={disableFields}
                           >
                             {/* Add Entity */}
                           </Button>
@@ -526,7 +548,7 @@ const NetEmissionReduction = (props: any) => {
         {/* calc Row 1 start */}
         <Row justify={'space-between'} align={'top'}>
           <Col md={6} xl={6}>
-            Total
+            {t('common:total')}
           </Col>
           <Col md={3} xl={3} className="total-cols">
             <Form.Item
@@ -534,7 +556,7 @@ const NetEmissionReduction = (props: any) => {
               rules={[
                 {
                   required: true,
-                  message: `${t('CMAForm:required')}`,
+                  message: `${t('common:required')}`,
                 },
                 {
                   validator(rule, value) {
@@ -561,7 +583,7 @@ const NetEmissionReduction = (props: any) => {
               rules={[
                 {
                   required: true,
-                  message: `${t('CMAForm:required')}`,
+                  message: `${t('common:required')}`,
                 },
                 {
                   validator(rule, value) {
@@ -588,7 +610,7 @@ const NetEmissionReduction = (props: any) => {
               rules={[
                 {
                   required: true,
-                  message: `${t('validationReport:required')}`,
+                  message: `${t('common:required')}`,
                 },
                 {
                   validator(rule, value) {
@@ -615,7 +637,7 @@ const NetEmissionReduction = (props: any) => {
               rules={[
                 {
                   required: true,
-                  message: `${t('validationReport:required')}`,
+                  message: `${t('common:required')}`,
                 },
                 {
                   validator(rule, value) {
@@ -644,7 +666,7 @@ const NetEmissionReduction = (props: any) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('validationReport:required')}`,
+                    message: `${t('common:required')}`,
                   },
                   {
                     validator(rule, value) {
@@ -675,7 +697,7 @@ const NetEmissionReduction = (props: any) => {
         {/* calc row 2 start */}
         <Row justify={'space-between'} align={'top'}>
           <Col md={6} xl={6}>
-            Total number of crediting years
+            {t('common:totalCreditingYears')}
           </Col>
           <Col md={3} xl={3} className="total-cols">
             <Form.Item
@@ -683,7 +705,7 @@ const NetEmissionReduction = (props: any) => {
               rules={[
                 {
                   required: true,
-                  message: `${t('CMAForm:required')}`,
+                  message: `${t('common:required')}`,
                 },
                 {
                   validator(rule, value) {
@@ -727,7 +749,7 @@ const NetEmissionReduction = (props: any) => {
         {/* calc row 3 start */}
         <Row justify={'space-between'} align={'top'}>
           <Col md={6} xl={6}>
-            Annual average over the crediting period
+            {t('common:averageCreditingPeriod')}
           </Col>
           <Col md={3} xl={3} className="total-cols">
             <Form.Item
@@ -735,7 +757,7 @@ const NetEmissionReduction = (props: any) => {
               rules={[
                 {
                   required: true,
-                  message: `${t('CMAForm:required')}`,
+                  message: `${t('common:required')}`,
                 },
                 {
                   validator(rule, value) {
@@ -762,7 +784,7 @@ const NetEmissionReduction = (props: any) => {
               rules={[
                 {
                   required: true,
-                  message: `${t('CMAForm:required')}`,
+                  message: `${t('common:required')}`,
                 },
                 {
                   validator(rule, value) {
@@ -789,7 +811,7 @@ const NetEmissionReduction = (props: any) => {
               rules={[
                 {
                   required: true,
-                  message: `${t('CMAForm:required')}`,
+                  message: `${t('common:required')}`,
                 },
                 {
                   validator(rule, value) {
@@ -816,7 +838,7 @@ const NetEmissionReduction = (props: any) => {
               rules={[
                 {
                   required: true,
-                  message: `${t('CMAForm:required')}`,
+                  message: `${t('common:required')}`,
                 },
                 {
                   validator(rule, value) {
@@ -844,7 +866,7 @@ const NetEmissionReduction = (props: any) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('CMAForm:required')}`,
+                    message: `${t('common:required')}`,
                   },
                   {
                     validator(rule, value) {

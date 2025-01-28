@@ -43,5 +43,6 @@
   "internationalTransferReqRejected": "The international transfer retire request has been rejected successfully",
   "internationalTransferReqCancelled": "The international transfer retire request has been cancelled successfully",
   "allTransfersPausedLabelTxt": "All transfers are currently paused",
-  "downloadVoluntaryCertificate": "Download Voluntary Cancellation Certificate"
+  "downloadVoluntaryCertificate": "Download Voluntary Cancellation Certificate",
+  "all": "All"
 }

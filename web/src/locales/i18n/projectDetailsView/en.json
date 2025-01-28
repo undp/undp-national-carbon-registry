@@ -246,5 +246,20 @@
   "btnReject": "Reject",
   "validationFormsTitle": "Validation",
   "cmaFormsTitle": "Carbon Management Assessment",
-  "projectProposalFormsTitle": "Project Proposal"
+  "projectProposalFormsTitle": "Project Proposal",
+  "rejectInfModalTitle": "Are you sure you want to reject this Initial Notification?",
+  "approveInfModalTitle": "Are you sure you want to approve this Initial Notification?",
+  "rejectProposalTitle": "Are you sure you want to reject this Project Proposal?",
+  "approveProposalTitle": "Are you sure you want to approve this Project Proposal?",
+  "rejectCMATitle": "Are you sure you want to reject this Carbon Management Assessment?",
+  "approveCMATitle": "Are you sure you want to approve this Carbon Management Assessment?",
+  "rejectValidationTitle": "Are you sure you want to reject this Validation Report?",
+  "approveValidationTitle": "Are you sure you want to approve this Validation Report?",
+  "contactPerson": "Contact Person",
+  "contactName": "Name",
+  "contactEmail": "Email",
+  "contactPhoneNo": "Mobile",
+  "requestCarbonNeutralCert": "Request Carbon Neutral Certificate",
+  "requestCarbonNeutralCertificateTitle": "Are you sure you want to request a Carbon Neutral Certificate?",
+  "btnRequest": "Request"
 }

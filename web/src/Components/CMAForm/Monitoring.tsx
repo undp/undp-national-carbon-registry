@@ -1,11 +1,8 @@
-import { Button, Col, Form, Input, Row, Select, StepProps } from 'antd';
-import React from 'react';
+import { Button, Col, Form, Input, Row, Select } from 'antd';
 import { CustomStepsProps } from './StepProps';
 import TextArea from 'antd/lib/input/TextArea';
 import { t } from 'i18next';
-import { countries } from 'react-circle-flags';
 
-import { InfoCircleOutlined } from '@ant-design/icons';
 import LabelWithTooltip, { TooltipPostion } from '../LabelWithTooltip/LabelWithTooltip';
 
 const Monitoring = (props: CustomStepsProps) => {

@@ -1,15 +1,8 @@
-import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Col, DatePicker, Form, Input, InputNumber, Row, Upload } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Input, Row, Upload } from 'antd';
 
 import TextArea from 'antd/lib/input/TextArea';
-import { DocType } from '../../../Definitions/Enums/document.type';
-import { isValidateFileType } from '../../../Utils/DocumentValidator';
-import moment from 'moment';
-import { getBase64 } from '../../../Definitions/Definitions/programme.definitions';
-import { RcFile } from 'antd/lib/upload';
 import { FormMode } from '../../../Definitions/Enums/formMode.enum';
-import { fileUploadValueExtract } from '../../../Utils/utilityHelper';
-import { requiredValidationRule } from '../../../Utils/validationHelper';
 import NetEmissionReduction from '../../Common/NetEmissonReduction';
 export const QualificationStep = (props: any) => {
   const {
@@ -133,7 +126,7 @@ export const QualificationStep = (props: any) => {
               disabled={FormMode.VIEW === formMode}
               initialValues={{
                 q_baselineEmission2:
-                  'B𝑬𝒚 = 𝑬𝑮𝒚×𝑬F\nWhere,\nBEy= Baseline Emissions in year y (tCO2e\nEGy = Quantity of net electricity supplied to the grid as a result of the implementation of the Clean Development Mechanism (CDM) project activity in year y (MWh).\nEFy = CO2 Emission factor of the grid in the year 2020 (tCO2/ MWh)',
+                  'B𝑬𝒚 = 𝑬𝑮𝒚×𝑬F𝒚\nWhere,\nB𝑬𝒚= Baseline Emissions in year y (tCO₂ₑ)\n𝑬𝑮𝒚 = Quantity of net electricity supplied to the grid as a result of the implementation of the Clean Development Mechanism (CDM) project activity in year y (MWh).\n𝑬F𝒚 = CO₂ Emission factor of the grid in the year 2020 (tCO₂/ MWh)',
               }}
               onFinish={async (values: any) => {
                 onValueChange({ quantifications: values });
@@ -192,7 +185,7 @@ export const QualificationStep = (props: any) => {
                         // maxCount={1}
                       >
                         <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
-                          Upload
+                          {t('monitoringReport:upload')}
                         </Button>
                       </Upload>
                     </Form.Item>
@@ -257,6 +250,7 @@ For AFOLU projects, include quantification of the net change in carbon stocks. A
                         form={form}
                         t={t}
                         projectCategory={projectCategory}
+                        disableFields={FormMode.VIEW === formMode}
                       ></NetEmissionReduction>
                     </>
 
@@ -353,10 +347,10 @@ For AFOLU projects, include quantification of the net change in carbon stocks. A
               </Row>
               <Row justify={'end'} className="step-actions-end">
                 <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
-                  Back
+                  {t('monitoringReport:back')}
                 </Button>
                 <Button type="primary" htmlType="submit" disabled={false}>
-                  Next
+                  {t('monitoringReport:next')}
                 </Button>
               </Row>
             </Form>

@@ -61,22 +61,24 @@
 
       .title {
         font-family: 'MuseoSans';
-        font-size: 1.2rem;
+        font-size: 0.9rem;
         color: $logo-text-color;
         font-weight: 700;
         margin-right: 0.5rem;
+        width: 9rem;
       }
 
       .title-sub {
-        font-weight: 100 !important;
+        font-weight: 700 !important;
         font-family: 'MuseoSans';
-        font-size: 1.2rem;
+        font-size: 0.9rem;
         color: $logo-text-color;
+        margin-top: -8px;
       }
 
       .logo {
         height: 52px;
-        width: 80px;
+        width: 50px;
 
         img {
           object-fit: cover;
@@ -146,6 +148,14 @@
     .custom-padding-left {
       padding-left: 3rem !important;
     }
+
+    .wrap-content-overflow {
+      white-space: normal;
+      word-wrap: break-word;
+      word-break: break-word;
+      overflow: hidden;
+      line-height: 1.8;
+    }
   }
 }
 
@@ -153,6 +163,10 @@
   .layout-sider-div-container {
     .custom-padding-left {
       padding-left: 32px !important;
+    }
+
+    .wrap-content-overflow {
+      white-space: unset;
     }
   }
 }
