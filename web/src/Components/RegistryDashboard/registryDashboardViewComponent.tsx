@@ -1791,7 +1791,7 @@ ${total}
         <div className="systemchange-container" style={{ marginLeft: `20px` }}>
           <ButtonGroup>
             <Link to="/dashboard">
-              <Button className="rgdefault">CCF PROJECTS</Button>
+              <Button className="rgdefault">ARTICLE 6.2 PROJECTS</Button>
             </Link>
             <Button type="primary" className="rgprimary">
               ARTICLE 6.4 PROJECTS

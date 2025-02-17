@@ -2983,10 +2983,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           <>
             <h4 className="section-title">10. Executive Board of SLCCS(SLCCS EB)</h4>
             <p className="capitalize">
-              CCF will validate/verify the project independently, and ensure the avoidance of the
-              double counting by the establishment of SLCCS Executive Board and responsible for
-              monitoring and regularly evaluating the process and performance, seeking to ensure the
-              continuity of SLCCS functions
+              Article 6.2 will validate/verify the project independently, and ensure the avoidance
+              of the double counting by the establishment of SLCCS Executive Board and responsible
+              for monitoring and regularly evaluating the process and performance, seeking to ensure
+              the continuity of SLCCS functions
             </p>
 
             <p className="capitalize">SLCCS Executive Board Members</p>
@@ -3085,12 +3085,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           <>
             <h4 className="section-title">11. Introduction to CountryX Climate Fund</h4>
             <p className="capitalize">
-              CCF is a public-private partnership company established under the companies’ Act No.7
-              of 2007, under the Ministry of Environment and Renewable Energy to promote carbon
-              trading projects in CountryX. Company provides technical and finance resources to
-              develop projects contribute to the sustainability of the environment in any sector.
-              CCF also purchases carbon credits from project owners while providing any service
-              relating to CDM project development.
+              Article 6.2 is a public-private partnership company established under the companies’
+              Act No.7 of 2007, under the Ministry of Environment and Renewable Energy to promote
+              carbon trading projects in CountryX. Company provides technical and finance resources
+              to develop projects contribute to the sustainability of the environment in any sector.
+              Article 6.2 also purchases carbon credits from project owners while providing any
+              service relating to CDM project development.
             </p>
 
             <div className="mg-top-1">Our Vision </div>

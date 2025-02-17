@@ -1,7 +1,7 @@
 {
   "uploadMonitoringReportWrongUser": "Only the Project Participant can upload the monitoring report",
-  "verifyMonitoringReportWrongUser": "Only the CCF can verify the monitoring report",
-  "uploadVerificationReportWrongUser": "Only the CCF can upload the verification report",
+  "verifyMonitoringReportWrongUser": "Only the Article 6.2 can verify the monitoring report",
+  "uploadVerificationReportWrongUser": "Only the Article 6.2 can upload the verification report",
   "verifyVerificationReportWrongUser": "Only the Executive Board can verify the verification report",
   "creditIssuanceCertificateWrongUser": "Only the Executive Board can provide the credit issuance certificate",
   "issueCreditsWrongUser": "Only the Executive Board can issue credits",
