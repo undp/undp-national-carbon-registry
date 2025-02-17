@@ -523,7 +523,9 @@ const ValidationAgreement = (props: { translator: i18n }) => {
             <Row justify={'space-between'} gutter={40} className="mg-top-1">
               <Col md={24} xl={10}>
                 <p className="no-margin-p">{t('validationAgreement:onBehalf')}</p>
-                <p className="no-margin-p">Sri Lanka Climate Fund (Pvt) Ltd.</p>
+                <p className="no-margin-p">
+                  {process.env.REACT_APP_COUNTRY_CLIMATE_FUND || 'CountryX Climate Fund (Pvt) Ltd.'}
+                </p>
 
                 <div className="signature-upload">
                   <LabelWithTooltip label="Signature" required={true} />
@@ -586,11 +588,11 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
                 <div className="authorized-signatory">
                   <p>Authorized Signatory </p>
-                  <p>Zimbabwe Climate Fund (Pvt) Ltd.</p>
+                  <p>CountryX Climate Fund (Pvt) Ltd.</p>
                   <p>“Sobadam Piyasa”, </p>
                   <p>No. 416/C/1, </p>
                   <p>Robert Gunawardana Mawatha, </p>
-                  <p>Battaramulla, Zimbabwe.</p>
+                  <p>Battaramulla, CountryX.</p>
                 </div>
               </Col>
 
@@ -686,8 +688,8 @@ const ValidationAgreement = (props: { translator: i18n }) => {
               <Col md={24} xl={10}>
                 <Form.Item name="SLCFWitness" label="Witness" className="witness-input">
                   <Input
-                    defaultValue={'Zimbabwe Climate Fund (PVT) Ltd'}
-                    placeholder="Zimbabwe Climate Fund (PVT) Ltd"
+                    defaultValue={'CountryX Climate Fund (PVT) Ltd'}
+                    placeholder="CountryX Climate Fund (PVT) Ltd"
                     disabled
                   />
                 </Form.Item>

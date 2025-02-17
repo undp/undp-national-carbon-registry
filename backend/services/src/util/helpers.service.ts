@@ -18,7 +18,7 @@ export class HelperService {
   ) {}
 
   public isBase64(text: string): boolean {
-    return Buffer.from(text, 'base64').toString('base64') === text
+    return Buffer.from(text, "base64").toString("base64") === text;
   }
 
   public enumToString(enumObj, value) {
@@ -41,17 +41,15 @@ export class HelperService {
     return Number(text);
   }
 
-  public halfUpToPrecision(value:number,precision:number=2){
-    if(precision>0)
-    {
-      return parseFloat((value*(10**precision)).toFixed(0))/(10**precision)
+  public halfUpToPrecision(value: number, precision: number = 2) {
+    if (precision > 0) {
+      return parseFloat((value * 10 ** precision).toFixed(0)) / 10 ** precision;
+    } else if (precision == 0) {
+      return parseFloat(value.toFixed(0));
     }
-    else if(precision==0){
-      return parseFloat(value.toFixed(0))
-    }
-    return value
+    return value;
   }
-  
+
   private prepareValue(value: any, table?: string, toLower?: boolean) {
     if (value instanceof Array) {
       return "(" + value.map((e) => `'${e}'`).join(",") + ")";
@@ -94,7 +92,7 @@ export class HelperService {
         "serialNo",
         "programmeTitle",
         "programmeName",
-        "id"
+        "id",
       ].includes(key)
     )
       return true;
@@ -312,11 +310,18 @@ export class HelperService {
     return sql;
   }
 
-  public generateWhereSQL(query: QueryDto, extraSQL: string, table?: string, ignoreCol?: string[]) {
+  public generateWhereSQL(
+    query: QueryDto,
+    extraSQL: string,
+    table?: string,
+    ignoreCol?: string[]
+  ) {
     let sql = "";
     if (query.filterAnd) {
       if (ignoreCol) {
-        query.filterAnd = query.filterAnd.filter(e=> (ignoreCol.indexOf(e.key) >= 0))
+        query.filterAnd = query.filterAnd.filter(
+          (e) => ignoreCol.indexOf(e.key) >= 0
+        );
       }
       sql += query.filterAnd
         .map((e) => {
@@ -345,7 +350,9 @@ export class HelperService {
     }
     if (query.filterOr) {
       if (ignoreCol) {
-        query.filterOr = query.filterOr.filter(e=> (ignoreCol.indexOf(e.key) >= 0))
+        query.filterOr = query.filterOr.filter(
+          (e) => ignoreCol.indexOf(e.key) >= 0
+        );
       }
       const orSQl = query.filterOr
         .map((e) => {
@@ -456,42 +463,44 @@ export class HelperService {
     return final;
   }
 
-  
-  public getEmailTemplateMessage(template: string, data, isSubject: boolean) :string{
+  public getEmailTemplateMessage(
+    template: string,
+    data,
+    isSubject: boolean
+  ): string {
     if (template == undefined) {
-        return template;
+      return template;
     }
     for (const key in data) {
-        if (data.hasOwnProperty(key)) {
-            var find = `{{${key}}}`;
-            var re = new RegExp(find, 'g');
-            template = template.replace(re, data[key]);
-        }
+      if (data.hasOwnProperty(key)) {
+        var find = `{{${key}}}`;
+        var re = new RegExp(find, "g");
+        template = template.replace(re, data[key]);
+      }
     }
 
-    if(isSubject) 
-      return `Zimbabwe Carbon Registry: ${template}`;
-    else 
-      return template;
-}
+    if (isSubject)
+      return `${
+        this.configService.get("systemCountryName") || "CountryX"
+      } Carbon Registry: ${template}`;
+    else return template;
+  }
 
-public formatTimestamp(timestamp: any) {
-  if (timestamp) {
-    const parsedTimestamp = Number(timestamp);
+  public formatTimestamp(timestamp: any) {
+    if (timestamp) {
+      const parsedTimestamp = Number(timestamp);
 
-    if (!isNaN(parsedTimestamp)) {
-      const date = new Date(parsedTimestamp);
+      if (!isNaN(parsedTimestamp)) {
+        const date = new Date(parsedTimestamp);
 
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const day = date.getDate().toString().padStart(2, '0');
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-      const seconds = date.getSeconds().toString().padStart(2, '0');
-      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const day = date.getDate().toString().padStart(2, "0");
+        const hours = date.getHours().toString().padStart(2, "0");
+        const minutes = date.getMinutes().toString().padStart(2, "0");
+        const seconds = date.getSeconds().toString().padStart(2, "0");
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      }
     }
   }
-  
-}
-
 }

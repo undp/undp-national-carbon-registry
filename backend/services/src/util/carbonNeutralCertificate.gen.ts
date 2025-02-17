@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
 import { CreditType } from "../enum/creditType.enum";
+import { ConfigService } from "@nestjs/config";
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 
@@ -18,16 +19,25 @@ export interface CarbonNeutralCertificateData {
 
 @Injectable()
 export class CarbonNeutralCertificateGenerator {
-  constructor(private fileHandler: FileHandlerInterface) {}
+  constructor(
+    private fileHandler: FileHandlerInterface,
+    private configService: ConfigService
+  ) {}
 
-  async generateCarbonNeutralCertificate(data: CarbonNeutralCertificateData, isPreview?: boolean) {
+  async generateCarbonNeutralCertificate(
+    data: CarbonNeutralCertificateData,
+    isPreview?: boolean
+  ) {
     const doc = new PDFDocument({
       margin: 50,
     });
 
     const refFileName = data.certificateNo.replace(/\//g, "_");
     const filepath = `CARBON_NEUTRAL_CERTIFICATE_${refFileName}.pdf`;
-
+    const country = this.configService.get("systemCountryName") || "CountryX";
+    const countryClimateFundName =
+      this.configService.get("countryClimateFundName") ||
+      "CountryX Climate Fund (Pvt) Ltd";
     // Define the output file path
     const stream = fs.createWriteStream("/tmp/" + filepath);
     doc.pipe(stream);
@@ -51,10 +61,15 @@ export class CarbonNeutralCertificateGenerator {
       width: image1Width,
       height: imageHeight,
     });
-    doc.image("images/SLCF_logo.jpg", startImageX + image1Width + spaceBetweenImages, startImageY, {
-      width: image2Width,
-      height: image2Height,
-    });
+    doc.image(
+      "images/SLCF_logo.jpg",
+      startImageX + image1Width + spaceBetweenImages,
+      startImageY,
+      {
+        width: image2Width,
+        height: image2Height,
+      }
+    );
     doc.moveDown(2);
     doc.registerFont("Inter", "fonts/Inter-Regular.ttf");
     doc.registerFont("Inter-Bold", "fonts/Inter-Bold.ttf");
@@ -80,25 +95,16 @@ export class CarbonNeutralCertificateGenerator {
     doc
       .font("Inter-Bold")
       .fontSize(14)
-      .text("Presented by: Sri Lanka Climate Fund (Pvt) Ltd.", { align: "center" });
+      .text(`Presented by: ${countryClimateFundName}`, {
+        align: "center",
+      });
 
     doc.moveDown(1);
 
     doc
       .font("Inter")
       .fontSize(12)
-      .text("Sri Lanka Climate Fund (Pvt) Ltd. certifies that", { align: "center" });
-
-    doc.moveDown(0.5);
-
-    doc.font("Inter").fontSize(12).text(`${data.companyName}`, { align: "center" });
-
-    doc.moveDown(0.5);
-
-    doc
-      .font("Inter")
-      .fontSize(12)
-      .text(`has inset its ${data.scope} GHG Emissions of ${data.creditAmount} tCO₂e`, {
+      .text(`${countryClimateFundName}. certifies that`, {
         align: "center",
       });
 
@@ -107,7 +113,38 @@ export class CarbonNeutralCertificateGenerator {
     doc
       .font("Inter")
       .fontSize(12)
-      .text(`quantified and verified for the calendar year ${data.assessmentYear}`, {
+      .text(`${data.companyName}`, { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter")
+      .fontSize(12)
+      .text(
+        `has inset its ${data.scope} GHG Emissions of ${data.creditAmount} tCO₂e`,
+        {
+          align: "center",
+        }
+      );
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter")
+      .fontSize(12)
+      .text(
+        `quantified and verified for the calendar year ${data.assessmentYear}`,
+        {
+          align: "center",
+        }
+      );
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter")
+      .fontSize(12)
+      .text(`${country} Certified Emission Reductions (SCER) of`, {
         align: "center",
       });
 
@@ -116,18 +153,16 @@ export class CarbonNeutralCertificateGenerator {
     doc
       .font("Inter")
       .fontSize(12)
-      .text("Zimbabwen Certified Emission Reductions (SCER) of", { align: "center" });
-
-    doc.moveDown(0.5);
-
-    doc.font("Inter").fontSize(12).text(`${data.projectName}`, { align: "center" });
+      .text(`${data.projectName}`, { align: "center" });
 
     doc.moveDown(0.5);
 
     doc
       .font("Inter")
       .fontSize(12)
-      .text(`registered under Zimbabwe Carbon Crediting Scheme (SLCCS)`, { align: "center" });
+      .text(`registered under ${country} Carbon Crediting Scheme (SLCCS)`, {
+        align: "center",
+      });
 
     doc.moveDown(1);
     doc
@@ -182,7 +217,7 @@ export class CarbonNeutralCertificateGenerator {
         continued: true,
       })
       .font("Inter")
-      .text(`: Sri Lanka Climate Fund (Pvt) Ltd.`, 267, doc.y, {
+      .text(`: ${countryClimateFundName}.`, 267, doc.y, {
         continued: false,
       })
       .moveDown(1);
@@ -215,7 +250,10 @@ export class CarbonNeutralCertificateGenerator {
         height: 100,
       });
     } else {
-      console.log("Chairmans Signature does not exist in:", chairmanSignatureImagePath);
+      console.log(
+        "Chairmans Signature does not exist in:",
+        chairmanSignatureImagePath
+      );
     }
 
     doc
@@ -228,7 +266,7 @@ export class CarbonNeutralCertificateGenerator {
     doc
       .font("Inter")
       .fontSize(10)
-      .text("Zimbabwe Climate Fund (Pvt) Ltd.", 100, 690, { align: "left" });
+      .text(`${countryClimateFundName}.`, 100, 690, { align: "left" });
 
     doc.image("images/carbonNeutralLogo.jpg", 260, 580, {
       width: 110,
@@ -259,13 +297,13 @@ export class CarbonNeutralCertificateGenerator {
     doc
       .font("Inter")
       .fontSize(10)
-      .text("Zimbabwe Climate Fund (Pvt) Ltd.", 378, 690, { align: "left" });
+      .text(`${countryClimateFundName}.`, 378, 690, { align: "left" });
 
     doc
       .font("Inter")
       .fontSize(9)
       .text(
-        "Zimbabwe Climate Fund (Pvt) Ltd, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.",
+        `${countryClimateFundName}, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.`,
         70,
         720,
         { align: "center" }
@@ -274,7 +312,9 @@ export class CarbonNeutralCertificateGenerator {
     doc
       .font("Inter")
       .fontSize(9)
-      .text("Phone: 011 2053065  E-mail: info@climatefund.lk", 70, 730, { align: "center" });
+      .text("Phone: 011 2053065  E-mail: info@climatefund.lk", 70, 730, {
+        align: "center",
+      });
 
     // End and save the document
     doc.end();
@@ -288,7 +328,10 @@ export class CarbonNeutralCertificateGenerator {
       });
     });
 
-    const url = await this.fileHandler.uploadFile("documents/" + filepath, content);
+    const url = await this.fileHandler.uploadFile(
+      "documents/" + filepath,
+      content
+    );
 
     return url;
   }

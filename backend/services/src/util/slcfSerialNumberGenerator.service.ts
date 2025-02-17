@@ -92,7 +92,7 @@ export class SLCFSerialNumberGeneratorService {
     // Convert the numbers to strings and pad them with zeros to ensure they are 4 digits
     const paddedRetirementReqId = lastNumber.padStart(4, "0");
     // Construct the full string
-    return `SLCF/CNC/${paddedRetirementReqId}`;
+    return `CCF/CNC/${paddedRetirementReqId}`;
   }
 
   public matchesCreditFormat(serialNumber: string) {
