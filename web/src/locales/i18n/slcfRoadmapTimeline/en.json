@@ -7,14 +7,14 @@
   "completed": "Completed",
   "infTitle" : "Initial Notification",
   "submissionByPP": "Submission by Project Participant",
-  "approveBySLCF": "Approval by SLCF",
+  "approveBySLCF": "Approval by CCF",
   "projectProposal": "Project Proposal",
-  "subCostQuoteBySLCF": "Submission of Cost Quotation, Proposal and Validation Agreement by SLCF",
+  "subCostQuoteBySLCF": "Submission of Cost Quotation, Proposal and Validation Agreement by CCF",
   "acceptByPP": "Acceptance by Project Participant",
   "cmaTitlePart1": "Carbon Management",
   "cmaTitlePart2": "Assessment",
   "validationTitle": "Validation Report",
-  "submissionBySLCF": "Submission by SLCF",
+  "submissionBySLCF": "Submission by CCF",
   "approveByExCom": "Approval by Executive Committee",
   "authorisedTitle": "Project Authorisation"
   

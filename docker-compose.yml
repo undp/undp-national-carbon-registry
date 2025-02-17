@@ -36,11 +36,12 @@ services:
       rootEmail: <ROOT EMAIL>
       cfAdminEmail: <CLIMATE FUND ADMIN EMAIL>
       exComAdminEmail: <EXCECUTIVE COMMITTEE ADMIN EMAIL>
-      Ministery: ""
+      Ministry: ""
       Department: ""
-      systemCountryCode: "ZW"
-      systemCountryName: "Zimbabwe"
-      systemContinentName: "Zimbabwe"
+      systemCountryCode: "NG"
+      systemCountryName: "CountryX"
+      systemContinentName: "CountryX"
+      countryClimateFundName: "CountryX Climate Fund (Pvt) Ltd"
       name: "Antactic Region"
       climateFundName: "Zimbabwe Climate Fund"
       exComName: "Executive Committee"

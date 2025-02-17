@@ -381,12 +381,14 @@ const StepperComponent = (props: any) => {
           telephone: cmaData?.projectDetails?.telephone,
           contactPerson: cmaData?.projectActivity?.projectProponent?.contactPerson,
           estimatedScer: monitoringData?.content?.quantifications?.totalNetEmissionReductions,
-          workCarriedOutBy: 'Validation & Verification Division Sri Lanka Climate Fund (Pvt) Ltd',
+          workCarriedOutBy: `Validation & Verification Division ${
+            process.env.REACT_APP_COUNTRY_CLIMATE_FUND || 'CountryX Climate Fund (Pvt) Ltd.'
+          }`,
         });
 
         introductionForm.setFieldsValue({
           title: cmaData?.projectDetails?.title,
-          hostParty: 'Sri Lanka',
+          hostParty: process.env.REACT_APP_COUNTRY_NAME || 'CountryX',
           tiprojectParticipantstle: cmaData?.projectActivity?.projectProponent?.organizationName,
           monitoringMethodology: monitoringData?.content?.projectActivity?.methodology,
           creditionPeriodStart: moment(
@@ -401,7 +403,8 @@ const StepperComponent = (props: any) => {
           verificationTeamList: [
             {
               name: '',
-              company: 'Sri Lanka Climate Fund',
+              company:
+                process.env.REACT_APP_COUNTRY_CLIMATE_FUND || 'CountryX Climate Fund (Pvt) Ltd.',
               function: [],
               taskPerformed: [],
             },

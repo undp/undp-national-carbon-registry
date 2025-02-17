@@ -76,21 +76,37 @@ const getLogDescription = (log: any, t: any) => {
       return formatString('slcfProgrammeTimeline:programmeCreatedDescription', [log.name], t);
       break;
     case 'INF_APPROVED':
-      return formatString('slcfProgrammeTimeline:infApprovedDescription', [log.name], t);
+      return formatString(
+        'slcfProgrammeTimeline:infApprovedDescription',
+        [log.name, process.env.REACT_APP_COUNTRY_NAME || 'CountryX'],
+        t
+      );
       break;
     case 'INF_REJECTED':
-      return formatString('slcfProgrammeTimeline:infRejectedDescription', [log.name], t);
+      return formatString(
+        'slcfProgrammeTimeline:infRejectedDescription',
+        [log.name, process.env.REACT_APP_COUNTRY_NAME || 'CountryX'],
+        t
+      );
       break;
     case 'CREATE_COST_QUOTATION':
-      return formatString('slcfProgrammeTimeline:costQuoteCreatedDescription', [log.name], t);
+      return formatString(
+        'slcfProgrammeTimeline:costQuoteCreatedDescription',
+        [log.name, process.env.REACT_APP_COUNTRY_NAME || 'CountryX'],
+        t
+      );
       break;
     case 'CREATE_PROJECT_PROPOSAL':
-      return formatString('slcfProgrammeTimeline:proposalCreatedDescription', [log.name], t);
+      return formatString(
+        'slcfProgrammeTimeline:proposalCreatedDescription',
+        [log.name, process.env.REACT_APP_COUNTRY_NAME || 'CountryX'],
+        t
+      );
       break;
     case 'CREATE_VALIDATION_AGREEMENT':
       return formatString(
         'slcfProgrammeTimeline:validationAgreementCreatedDescription',
-        [log.name],
+        [log.name, process.env.REACT_APP_COUNTRY_NAME || 'CountryX'],
         t
       );
       break;
@@ -112,15 +128,23 @@ const getLogDescription = (log: any, t: any) => {
       return formatString('slcfProgrammeTimeline:cmaCreatedDescription', [log.name], t);
       break;
     case 'CMA_APPROVED':
-      return formatString('slcfProgrammeTimeline:cmaApprovedDescription', [log.name], t);
+      return formatString(
+        'slcfProgrammeTimeline:cmaApprovedDescription',
+        [log.name, process.env.REACT_APP_COUNTRY_NAME || 'CountryX'],
+        t
+      );
       break;
     case 'CMA_REJECTED':
-      return formatString('slcfProgrammeTimeline:cmaRejectedDescription', [log.name], t);
+      return formatString(
+        'slcfProgrammeTimeline:cmaRejectedDescription',
+        [log.name, process.env.REACT_APP_COUNTRY_NAME || 'CountryX'],
+        t
+      );
       break;
     case 'VALIDATION_REPORT_CREATED':
       return formatString(
         'slcfProgrammeTimeline:validationReportCreatedDescription',
-        [log.name],
+        [log.name, process.env.REACT_APP_COUNTRY_NAME || 'CountryX'],
         t
       );
       break;
@@ -151,21 +175,21 @@ const getLogDescription = (log: any, t: any) => {
     case 'MONITORING_REJECTED':
       return formatString(
         'slcfProgrammeTimeline:monitoringReportRejectedDescription',
-        [log.name],
+        [log.name, process.env.REACT_APP_COUNTRY_NAME || 'CountryX'],
         t
       );
       break;
     case 'MONITORING_APPROVED':
       return formatString(
         'slcfProgrammeTimeline:monitoringReportApprovedDescription',
-        [log.name],
+        [log.name, process.env.REACT_APP_COUNTRY_NAME || 'CountryX'],
         t
       );
       break;
     case 'VERIFICATION_CREATE':
       return formatString(
         'slcfProgrammeTimeline:verificationReportCreatedDescription',
-        [log.name],
+        [log.name, process.env.REACT_APP_COUNTRY_NAME || 'CountryX'],
         t
       );
       break;
@@ -198,7 +222,11 @@ const getLogDescription = (log: any, t: any) => {
       );
       break;
     case 'TRANSFER_APPROVED':
-      return formatString('slcfProgrammeTimeline:transferApprovedDescription', [log.name], t);
+      return formatString(
+        'slcfProgrammeTimeline:transferApprovedDescription',
+        [log.name, process.env.REACT_APP_COUNTRY_NAME || 'CountryX'],
+        t
+      );
       break;
     case 'TRANSFER_CANCELLED':
       return formatString(
@@ -210,7 +238,12 @@ const getLogDescription = (log: any, t: any) => {
     case 'TRANSFER_REJECTED':
       return formatString(
         'slcfProgrammeTimeline:transferRejectedDescription',
-        [log.name, log.data.creditAmount, log.toCompanyName],
+        [
+          log.name,
+          process.env.REACT_APP_COUNTRY_NAME || 'CountryX',
+          log.data.creditAmount,
+          log.toCompanyName,
+        ],
         t
       );
       break;
@@ -222,7 +255,11 @@ const getLogDescription = (log: any, t: any) => {
       );
       break;
     case 'RETIRE_APPROVED':
-      return formatString('slcfProgrammeTimeline:retireApprovedDescription', [log.name], t);
+      return formatString(
+        'slcfProgrammeTimeline:retireApprovedDescription',
+        [log.name, process.env.REACT_APP_COUNTRY_NAME || 'CountryX'],
+        t
+      );
       break;
     case 'RETIRE_CANCELLED':
       return formatString(
@@ -234,7 +271,7 @@ const getLogDescription = (log: any, t: any) => {
     case 'RETIRE_REJECTED':
       return formatString(
         'slcfProgrammeTimeline:retireRejectedDescription',
-        [log.name, log.data.creditAmount],
+        [log.name, process.env.REACT_APP_COUNTRY_NAME || 'CountryX', log.data.creditAmount],
         t
       );
       break;

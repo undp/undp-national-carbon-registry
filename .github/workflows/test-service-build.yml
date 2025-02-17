@@ -5,7 +5,7 @@ on:
     branches:
       - 'hotfix-*'
       - 'CARBON-*'
-      - 'SLCR-*'
+      - 'develop'
     paths:
       - backend/**
       - web/**

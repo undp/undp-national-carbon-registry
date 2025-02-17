@@ -275,7 +275,7 @@ export const AddCostQuotationForm = (props: any) => {
                     <Form.Item
                       label={t('costQuotation:quotationNo')}
                       name="quotationNo"
-                      initialValue={`SLCF/PD/${new Date().getFullYear() % 100}/${id}`}
+                      initialValue={`CCF/PD/${new Date().getFullYear() % 100}/${id}`}
                       rules={[
                         {
                           required: true,

@@ -925,7 +925,7 @@ export const SLCFDashboardComponent = (props: any) => {
           <div className="systemchange-container" style={{ marginLeft: `20px` }}>
             <ButtonGroup>
               <Button type="primary" className="slcf-primary">
-                SLCF PROJECTS
+                CCF PROJECTS
               </Button>
               <Link to="/dashboard/cr">
                 <Button className="slcf-default">ARTICLE 6.4 PROJECTS</Button>

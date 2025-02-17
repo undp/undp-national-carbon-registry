@@ -7,14 +7,14 @@
   "completed": "Terminé",
   "infTitle": "Notification initiale",
   "submissionByPP": "Soumission par le participant au projet",
-  "approveBySLCF": "Approbation par le SLCF",
+  "approveBySLCF": "Approbation par le CCF",
   "projectProposal": "Proposition de projet",
-  "subCostQuoteBySLCF": "Soumission du devis, de la proposition et de l'accord de validation par le SLCF",
+  "subCostQuoteBySLCF": "Soumission du devis, de la proposition et de l'accord de validation par le CCF",
   "acceptByPP": "Acceptation par le participant au projet",
   "cmaTitlePart1": "Gestion du carbone",
   "cmaTitlePart2": "Évaluation",
   "validationTitle": "Rapport de validation",
-  "submissionBySLCF": "Soumission par le SLCF",
+  "submissionBySLCF": "Soumission par le CCF",
   "approveByExCom": "Approbation par le comité exécutif",
   "authorisedTitle": "Autorisation du projet"
 }

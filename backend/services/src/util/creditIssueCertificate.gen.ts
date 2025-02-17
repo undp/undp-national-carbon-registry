@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
 import { CreditType } from "../enum/creditType.enum";
+import { ConfigService } from "@nestjs/config";
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 
@@ -19,21 +20,29 @@ export interface CreditIssueCertificateData {
 
 @Injectable()
 export class CreditIssueCertificateGenerator {
-  constructor(private fileHandler: FileHandlerInterface) {}
+  constructor(
+    private fileHandler: FileHandlerInterface,
+    private configService: ConfigService
+  ) {}
 
-  async generateCreditIssueCertificate(data: CreditIssueCertificateData, isPreview?: boolean) {
+  async generateCreditIssueCertificate(
+    data: CreditIssueCertificateData,
+    isPreview?: boolean
+  ) {
     const doc = new PDFDocument({
       margin: 50,
     });
 
     const refFileName = data.certificateNo.replace(/\//g, "_");
     const filepath = `CREDIT_ISSUANCE_CERTIFICATE_${refFileName}.pdf`;
+    const country = this.configService.get("systemCountryName") || "CountryX";
 
     // Define the output file path
     const stream = fs.createWriteStream("/tmp/" + filepath);
     doc.pipe(stream);
 
-    const track = data.creditType === CreditType.TRACK_1 ? "Track I" : "Track II";
+    const track =
+      data.creditType === CreditType.TRACK_1 ? "Track I" : "Track II";
 
     // Add logo
     const image1Width = 45;
@@ -86,7 +95,7 @@ export class CreditIssueCertificateGenerator {
     doc
       .font("Inter-Bold")
       .fontSize(14)
-      .text("Sri Lanka Climate Fund (Pvt) Ltd", 70, 180, { align: "center" });
+      .text(`CountryX Climate Fund (Pvt) Ltd`, 70, 180, { align: "center" });
 
     doc.moveDown(0.5);
 
@@ -97,7 +106,9 @@ export class CreditIssueCertificateGenerator {
     doc
       .font("Inter")
       .fontSize(12)
-      .text("Zimbabwen Certified Emission Reductions (SCER)", { align: "center" });
+      .text("CountryX Certified Emission Reductions (SCER)", {
+        align: "center",
+      });
 
     doc.moveDown(0.5);
 
@@ -105,7 +116,10 @@ export class CreditIssueCertificateGenerator {
 
     doc.moveDown(0.5);
 
-    doc.font("Inter-Bold").fontSize(14).text(`${data.projectName}`, { align: "center" });
+    doc
+      .font("Inter-Bold")
+      .fontSize(14)
+      .text(`${data.projectName}`, { align: "center" });
 
     doc.moveDown(0.5);
 
@@ -113,32 +127,44 @@ export class CreditIssueCertificateGenerator {
 
     doc.moveDown(0.5);
 
-    doc.font("Inter").fontSize(14).text(`${data.companyName}`, { align: "center" });
+    doc
+      .font("Inter")
+      .fontSize(14)
+      .text(`${data.companyName}`, { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Inter").fontSize(12).text("registered under", { align: "center" });
+    doc
+      .font("Inter")
+      .fontSize(12)
+      .text("registered under", { align: "center" });
 
     doc.moveDown(0.5);
 
     doc
       .font("Inter-Bold")
       .fontSize(14)
-      .text(`${track} of Sri Lanka Carbon Crediting Scheme`, { align: "center" });
+      .text(`${track} of ${country} Carbon Crediting Scheme`, {
+        align: "center",
+      });
 
     doc.moveDown(0.5);
 
     doc
       .font("Inter")
       .fontSize(12)
-      .text("In accordance with the SLCCS eligibility criteria and", { align: "center" });
+      .text("In accordance with the SLCCS eligibility criteria and", {
+        align: "center",
+      });
 
     doc.moveDown(0.4);
 
     doc
       .font("Inter")
       .fontSize(12)
-      .text("Approved CDM methodology (AMS I.D Version 18.0)", { align: "center" });
+      .text("Approved CDM methodology (AMS I.D Version 18.0)", {
+        align: "center",
+      });
 
     doc.moveDown(1);
 
@@ -162,15 +188,24 @@ export class CreditIssueCertificateGenerator {
       .text("Monitoring Period ", 180, doc.y, {
         continued: true,
       })
-      .text(`: ${data.monitoringStartDate} - ${data.monitoringEndDate}`, 207.5, doc.y, {
-        continued: false,
-      })
+      .text(
+        `: ${data.monitoringStartDate} - ${data.monitoringEndDate}`,
+        207.5,
+        doc.y,
+        {
+          continued: false,
+        }
+      )
       .moveDown(1);
 
     doc
       .font("Inter-Bold")
       .fontSize(16)
-      .text(`Sri Lankan Credit Emission Reductions: ${data.issuedCredits} (tCO₂eq)`, 100, doc.y)
+      .text(
+        `${country} Credit Emission Reductions: ${data.issuedCredits} (tCO₂eq)`,
+        100,
+        doc.y
+      )
       .moveDown(1.5);
 
     doc
@@ -203,7 +238,10 @@ export class CreditIssueCertificateGenerator {
         height: 100,
       });
     } else {
-      console.log("Chairmans Signature does not exist in:", chairmanSignatureImagePath);
+      console.log(
+        "Chairmans Signature does not exist in:",
+        chairmanSignatureImagePath
+      );
     }
 
     doc
@@ -216,7 +254,7 @@ export class CreditIssueCertificateGenerator {
     doc
       .font("Inter")
       .fontSize(10)
-      .text("Zimbabwe Climate Fund (Pvt) Ltd.", 100, 690, { align: "left" });
+      .text("CountryX Climate Fund (Pvt) Ltd.", 100, 690, { align: "left" });
 
     doc.image("images/SLCF_logo.jpg", 260, 600, {
       width: 110,
@@ -247,13 +285,13 @@ export class CreditIssueCertificateGenerator {
     doc
       .font("Inter")
       .fontSize(10)
-      .text("Zimbabwe Climate Fund (Pvt) Ltd.", 378, 690, { align: "left" });
+      .text("CountryX Climate Fund (Pvt) Ltd.", 378, 690, { align: "left" });
 
     doc
       .font("Inter")
       .fontSize(9)
       .text(
-        "Zimbabwe Climate Fund (Pvt) Ltd, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.",
+        "CountryX Climate Fund (Pvt) Ltd, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.",
         70,
         720,
         { align: "center" }
@@ -262,7 +300,9 @@ export class CreditIssueCertificateGenerator {
     doc
       .font("Inter")
       .fontSize(9)
-      .text("Phone: 011 2053065  E-mail: info@climatefund.lk", 70, 730, { align: "center" });
+      .text("Phone: 011 2053065  E-mail: info@climatefund.lk", 70, 730, {
+        align: "center",
+      });
 
     // End and save the document
     doc.end();
@@ -276,24 +316,27 @@ export class CreditIssueCertificateGenerator {
       });
     });
 
-    const url = await this.fileHandler.uploadFile("documents/" + filepath, content);
+    const url = await this.fileHandler.uploadFile(
+      "documents/" + filepath,
+      content
+    );
 
     return url;
   }
 
-    // Function to add a preview watermark
-    addPreviewWatermark(doc) {
-      doc.save(); // Save the current state
-      doc
-        .fontSize(160) // Set a large font size for visibility
-        .font("Helvetica-Bold") // Use a standard, bold font
-        .opacity(0.1) // Set low opacity for the watermark
-        .fillColor("grey") // Grey color for the watermark text
-        .rotate(35, { origin: [doc.page.width / 2, doc.page.height / 2] }) // Rotate the text by 45 degrees around the center
-        .text("Preview", 0, doc.page.height / 2 - 100, {
-          width: doc.page.width,
-          align: "center",
-        });
-      doc.restore(); // Restore the original state for further additions
-    }
+  // Function to add a preview watermark
+  addPreviewWatermark(doc) {
+    doc.save(); // Save the current state
+    doc
+      .fontSize(160) // Set a large font size for visibility
+      .font("Helvetica-Bold") // Use a standard, bold font
+      .opacity(0.1) // Set low opacity for the watermark
+      .fillColor("grey") // Grey color for the watermark text
+      .rotate(35, { origin: [doc.page.width / 2, doc.page.height / 2] }) // Rotate the text by 45 degrees around the center
+      .text("Preview", 0, doc.page.height / 2 - 100, {
+        width: doc.page.width,
+        align: "center",
+      });
+    doc.restore(); // Restore the original state for further additions
+  }
 }

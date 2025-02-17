@@ -132,7 +132,9 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.2
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria02')}
+                      {t('CMAForm:criteria02', {
+                        countryName: process.env.REACT_APP_COUNTRY_NAME || 'CountryX',
+                      })}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -182,7 +184,9 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.3
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria03')}
+                      {t('CMAForm:criteria03', {
+                        countryName: process.env.REACT_APP_COUNTRY_NAME || 'CountryX',
+                      })}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item

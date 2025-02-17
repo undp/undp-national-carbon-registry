@@ -156,7 +156,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Your initial notification form has been approved by Zimbabwe Climate Fund. <br><br>
+        Your initial notification form has been approved by {{countryName}} Climate Fund. <br><br>
 
         Click <a href="{{programmePageLink}}">here</a> for more details of the project.
         <br><br>
@@ -171,7 +171,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Initial notification submitted by your {{organisationName}} organisation has been rejected by Sri Lanka Climate Fund due to the following reason/s:<br>
+        Initial notification submitted by your {{organisationName}} organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
         {{remark}} <br><br>
 
         Please submit a new notification request.
@@ -187,7 +187,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Cost Quotation Form, Proposal Form and Validation Agreement for the project {{programmeName}} have been submitted by Zimbabwe Climate Fund. <br><br>
+        Cost Quotation Form, Proposal Form and Validation Agreement for the project {{programmeName}} have been submitted by {{countryName}} Climate Fund. <br><br>
 
         Please review and accept by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -202,7 +202,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Cost Quotation Form, Proposal Form and Validation Agreement submitted by Zimbabwe Climate Fund for the project {{programmeName}} owned by {{organisationName}} have been accepted by {{organisationName}}. <br><br>
+        Cost Quotation Form, Proposal Form and Validation Agreement submitted by {{countryName}} Climate Fund for the project {{programmeName}} owned by {{organisationName}} have been accepted by {{organisationName}}. <br><br>
 
         Click <a href="{{programmePageLink}}">here</a> for more details of the project.
         <br><br>
@@ -217,7 +217,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Cost Quotation Form, Proposal Form and Validation Agreement submitted by Sri Lanka Climate Fund for the project {{programmeName}} owned by {{organisationName}} have been rejected by {{organisationName}} due to the following reason/s:<br>
+        Cost Quotation Form, Proposal Form and Validation Agreement submitted by {{countryName}} Climate Fund for the project {{programmeName}} owned by {{organisationName}} have been rejected by {{organisationName}} due to the following reason/s:<br>
         {{remark}}<br><br>
 
 
@@ -249,7 +249,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} organisation has been approved by Zimbabwe Climate Fund. <br><br>
+        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} organisation has been approved by {{countryName}} Climate Fund. <br><br>
 
         Click <a href="{{programmePageLink}}">here</a> for more details of the form.
         <br><br>
@@ -264,7 +264,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} organisation has been rejected by Sri Lanka Climate Fund due to the following reason/s:<br>
+        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
         {{remark}} <br><br>
 
         Please re-submit the Carbon Management Assessment form by clicking <a href="{{programmePageLink}}">here</a>.
@@ -280,7 +280,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        A new Validation Report has been submitted by Zimbabwe Climate Fund for the project {{programmeName}} owned by {{organisationName}}. <br><br>
+        A new Validation Report has been submitted by {{countryName}} Climate Fund for the project {{programmeName}} owned by {{organisationName}}. <br><br>
 
         Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -295,7 +295,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Validation Report submitted for the project {{programmeName}} by Zimbabwe Climate Fund has been approved by Executive Board of Zimbabwe Climate Fund. <br><br>
+        Validation Report submitted for the project {{programmeName}} by {{countryName}} Climate Fund has been approved by Executive Board of {{countryName}} Climate Fund. <br><br>
 
         Now the project has been authorised.
 
@@ -314,7 +314,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Validation report submitted for the project {{programmeName}} owned by {{organisationName}} organisation has been rejected by Executive Board of Sri Lanka Climate Fund due to the following reason/s:<br>
+        Validation report submitted for the project {{programmeName}} owned by {{organisationName}} organisation has been rejected by Executive Board of {{countryName}} Climate Fund due to the following reason/s:<br>
         {{remark}} <br><br>
 
         Please submit again by clicking <a href="{{programmePageLink}}">here</a>.
@@ -345,7 +345,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} organisation has been approved by Zimbabwe Climate Fund. <br><br>
+        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} organisation has been approved by {{countryName}} Climate Fund. <br><br>
 
         Click <a href="{{programmePageLink}}">here</a> to be directed to create the Verification Report.
         <br><br>
@@ -360,7 +360,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} organisation has been rejected by Sri Lanka Climate Fund due to the following reason/s:<br>
+        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
         {{remark}} <br><br>
 
         Please submit again by clicking <a href="{{programmePageLink}}">here</a>.
@@ -391,7 +391,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Verification Report submitted for the project {{programmeName}} by the Zimbabwe Climate Fund has been approved by Executive Board of Zimbabwe Climate Fund. <br><br>
+        Verification Report submitted for the project {{programmeName}} by the {{countryName}} Climate Fund has been approved by Executive Board of {{countryName}} Climate Fund. <br><br>
 
         Please request for the credits transfer or retirement accordingly. 
         <br><br>
@@ -406,7 +406,7 @@ export const EmailTemplates = {
     html: `
         Hi {{name}}, <br><br>
 
-        Verification Report submitted for the project {{programmeName}} by the Sri Lanka Climate Fund has been rejected by Executive Board of Sri Lanka Climate Fund due to the following reason/s:<br>
+        Verification Report submitted for the project {{programmeName}} by the {{countryName}} Climate Fund has been rejected by Executive Board of {{countryName}} Climate Fund due to the following reason/s:<br>
         {{remark}} <br><br>
 
         Please submit again if required by clicking <a href="{{programmePageLink}}">here</a>. 

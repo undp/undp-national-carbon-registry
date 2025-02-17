@@ -789,7 +789,9 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 <Col md={10} xl={10} className="col-1">
                   <div className="text-row">
                     <div>2.</div>
-                    <div>The project activity shall be located in Zimbabwe.</div>
+                    <div>{`The project activity shall be located in ${
+                      process.env.REACT_APP_COUNTRY_NAME || 'CountryX'
+                    }.`}</div>
                   </div>
                 </Col>
                 <Col md={4} xl={4}>
@@ -852,9 +854,11 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   <div className="text-row">
                     <div>3.</div>
                     <div>
-                      The project activity shall not happen in the absence of benefits received from
-                      trading Zimbabwe Certified Emission Reduction units (SCERs). (This is not
-                      applicable Track II)
+                      {`The project activity shall not happen in the absence of benefits received from
+                      trading ${
+                        process.env.REACT_APP_COUNTRY_NAME || 'CountryX'
+                      } Certified Emission Reduction units (SCERs). (This is not
+                      applicable Track II`}
                     </div>
                   </div>
                 </Col>
