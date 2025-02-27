@@ -5,8 +5,8 @@ import { plainToClass } from "class-transformer";
 import { ConfigService } from "@nestjs/config";
 import { LedgerReplicatorInterface } from "./replicator-interface.service";
 import { ProcessEventService } from "./process.event.service";
-import { Programme } from "../shared/src/entities/programme.entity";
-import { CreditOverall } from "../shared/src/entities/credit.overall.entity";
+import { Programme } from "@app/shared/entities/programme.entity";
+import { CreditOverall } from "@app/shared/entities/credit.overall.entity";
 
 const computeChecksums = true;
 const REVISION_DETAILS = "REVISION_DETAILS";

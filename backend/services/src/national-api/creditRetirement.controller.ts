@@ -1,14 +1,14 @@
 import { Controller, UseGuards, Request, Post, Body } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { JwtAuthGuard } from "src/shared/src/auth/guards/jwt-auth.guard";
-import { RetirementRateLimiterGuard } from "src/shared/src/auth/guards/retirement-rate-limiter.guard";
-import { Action } from "src/shared/src/casl/action.enum";
-import { PoliciesGuardEx } from "src/shared/src/casl/policy.guard";
-import { CreditRetirementSlService } from "src/shared/src/creditRetirement-sl/creditRetirementSl.service";
-import { CreditRetirementRequestSlDto } from "src/shared/src/dto/creditRetirementRequestSl.dto";
-import { CreditRetirementStatusUpdateSlDto } from "src/shared/src/dto/creditRetirementStatusUpdateSl.dto";
-import { QueryDto } from "src/shared/src/dto/query.dto";
-import { CreditRetirementSl } from "src/shared/src/entities/creditRetirementSl.entity";
+import { JwtAuthGuard } from "@app/shared/auth/guards/jwt-auth.guard";
+import { RetirementRateLimiterGuard } from "@app/shared/auth/guards/retirement-rate-limiter.guard";
+import { Action } from "@app/shared/casl/action.enum";
+import { PoliciesGuardEx } from "@app/shared/casl/policy.guard";
+import { CreditRetirementSlService } from "@app/shared/creditRetirement-sl/creditRetirementSl.service";
+import { CreditRetirementRequestSlDto } from "@app/shared/dto/creditRetirementRequestSl.dto";
+import { CreditRetirementStatusUpdateSlDto } from "@app/shared/dto/creditRetirementStatusUpdateSl.dto";
+import { QueryDto } from "@app/shared/dto/query.dto";
+import { CreditRetirementSl } from "@app/shared/entities/creditRetirementSl.entity";
 
 @ApiTags("Credit Retire")
 @ApiBearerAuth()

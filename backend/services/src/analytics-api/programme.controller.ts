@@ -10,13 +10,13 @@ import {
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { AggregateAPIService } from "./aggregate.api.service";
 import { AggregateSlAPIService } from "./aggregate.sl.api.service";
-import { ApiKeyJwtAuthGuard } from "src/shared/src/auth/guards/api-jwt-key.guard";
-import { PoliciesGuardEx } from "src/shared/src/casl/policy.guard";
-import { Action } from "src/shared/src/casl/action.enum";
-import { Stat } from "src/shared/src/dto/stat.dto";
-import { StatList } from "src/shared/src/dto/stat.list.dto";
-import { QueryDto } from "src/shared/src/dto/query.dto";
-import { StatFilter } from "src/shared/src/dto/stat.filter";
+import { ApiKeyJwtAuthGuard } from "@app/shared/auth/guards/api-jwt-key.guard";
+import { PoliciesGuardEx } from "@app/shared/casl/policy.guard";
+import { Action } from "@app/shared/casl/action.enum";
+import { Stat } from "@app/shared/dto/stat.dto";
+import { StatList } from "@app/shared/dto/stat.list.dto";
+import { QueryDto } from "@app/shared/dto/query.dto";
+import { StatFilter } from "@app/shared/dto/stat.filter";
 @ApiTags("Programme")
 @ApiBearerAuth()
 @Controller("programme")

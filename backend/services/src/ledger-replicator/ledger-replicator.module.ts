@@ -5,16 +5,17 @@ import { QLDBKinesisReplicatorService } from "./qldb-kinesis-replicator.service"
 import { LedgerReplicatorInterface } from "./replicator-interface.service";
 import { PgSqlReplicatorService } from "./pgsql-replicator.service";
 import { ProcessEventService } from "./process.event.service";
-import { Programme } from "../shared/src/entities/programme.entity";
-import configuration from "../shared/src/configuration";
-import { TypeOrmConfigService } from "../shared/src/typeorm.config.service";
-import { Company } from "../shared/src/entities/company.entity";
-import { Counter } from "../shared/src/entities/counter.entity";
-import { LocationModule } from "../shared/src/location/location.module";
-import { LedgerType } from "../shared/src/enum/ledger.type";
+import { Programme } from "@app/shared/entities/programme.entity";
+import configuration from "@app/shared/configuration";
+import { TypeOrmConfigService } from "@app/shared/typeorm.config.service";
+import { Company } from "@app/shared/entities/company.entity";
+import { Counter } from "@app/shared/entities/counter.entity";
+import { LocationModule } from "@app/shared/location/location.module";
+import { LedgerType } from "@app/shared/enum/ledger.type";
 import { DataImporterModule } from "../data-importer/data-importer.module";
-import { AsyncOperationsModule } from "../shared/src/async-operations/async-operations.module";
-import { ProgrammeSl } from "../shared/src/entities/programmeSl.entity";
+import { AsyncOperationsModule } from "@app/shared/async-operations/async-operations.module";
+import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
+import { SharedModule } from "@app/shared";
 
 @Module({
   imports: [
@@ -27,9 +28,7 @@ import { ProgrammeSl } from "../shared/src/entities/programmeSl.entity";
       useClass: TypeOrmConfigService,
     }),
     TypeOrmModule.forFeature([Programme, Company, Counter, ProgrammeSl]),
-    LocationModule,
-    DataImporterModule,
-    AsyncOperationsModule,
+    SharedModule,
   ],
   providers: [
     {

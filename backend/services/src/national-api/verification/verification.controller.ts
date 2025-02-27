@@ -8,15 +8,15 @@ import {
   Query,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { JwtAuthGuard } from "src/shared/src/auth/guards/jwt-auth.guard";
-import { MonitoringReportDto } from "src/shared/src/dto/monitoring.report.dto";
-import { VerificationReportDto } from "src/shared/src/dto/verification.report.dto";
-import { VerifyReportDto } from "src/shared/src/dto/verify.report.dto";
-import { VerificationService } from "src/shared/src/verification/verification.service";
-import { PoliciesGuardEx } from "../../shared/src/casl/policy.guard";
-import { Action } from "../../shared/src/casl/action.enum";
-import { VerificationRequestEntity } from "../../shared/src/entities/verification.request.entity";
-import { CNCertificateIssueDto } from "../../shared/src/dto/cncertificateIssue.dto";
+import { JwtAuthGuard } from "@app/shared/auth/guards/jwt-auth.guard";
+import { MonitoringReportDto } from "@app/shared/dto/monitoring.report.dto";
+import { VerificationReportDto } from "@app/shared/dto/verification.report.dto";
+import { VerifyReportDto } from "@app/shared/dto/verify.report.dto";
+import { VerificationService } from "@app/shared/verification/verification.service";
+import { PoliciesGuardEx } from "@app/shared/casl/policy.guard";
+import { Action } from "@app/shared/casl/action.enum";
+import { VerificationRequestEntity } from "@app/shared/entities/verification.request.entity";
+import { CNCertificateIssueDto } from "@app/shared/dto/cncertificateIssue.dto";
 
 @ApiTags("Verification")
 @ApiBearerAuth()

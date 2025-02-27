@@ -3,10 +3,10 @@ import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ImporterInterface } from "../importer.interface";
-import { AnnualReportGen } from "../../shared/src/annualreport/annual.report.gen";
-import { ProgrammeDocument } from "../../shared/src/entities/programme.document";
-import { DocumentStatus } from "../../shared/src/enum/document.status";
-import { DocType } from "../../shared/src/enum/document.type";
+import { AnnualReportGen } from "@app/shared/annualreport/annual.report.gen";
+import { ProgrammeDocument } from "@app/shared/entities/programme.document";
+import { DocumentStatus } from "@app/shared/enum/document.status";
+import { DocType } from "@app/shared/enum/document.type";
 @Injectable()
 export class AnnualReportImport implements ImporterInterface {
   constructor(

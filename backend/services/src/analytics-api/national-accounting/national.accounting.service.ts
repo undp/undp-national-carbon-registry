@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DataListResponseDto } from "src/shared/src/dto/data.list.response";
-import { QueryDto } from "src/shared/src/dto/query.dto";
-import { CreditAuditLog } from "src/shared/src/entities/credit.audit.log.entity";
-import { CreditAuditLogViewEntity } from "src/shared/src/entities/creditAuditLog.view.entity";
-import { CountryService } from "src/shared/src/util/country.service";
-import { HelperService } from "src/shared/src/util/helpers.service";
+import { DataListResponseDto } from "@app/shared/dto/data.list.response";
+import { QueryDto } from "@app/shared/dto/query.dto";
+import { CreditAuditLog } from "@app/shared/entities/credit.audit.log.entity";
+import { CreditAuditLogViewEntity } from "@app/shared/entities/creditAuditLog.view.entity";
+import { CountryService } from "@app/shared/util/country.service";
+import { HelperService } from "@app/shared/util/helpers.service";
 import { Repository } from "typeorm";
 
 @Injectable()

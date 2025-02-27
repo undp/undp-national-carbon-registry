@@ -1,16 +1,16 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
 import { Repository, EntityManager } from "typeorm";
-import { TxType } from "../shared/src/enum/txtype.enum";
-import { Company } from "../shared/src/entities/company.entity";
-import { Programme } from "../shared/src/entities/programme.entity";
-import { CreditOverall } from "../shared/src/entities/credit.overall.entity";
-import { LocationInterface } from "../shared/src/location/location.interface";
-import { CompanyRole } from "../shared/src/enum/company.role.enum";
-import { AsyncOperationsInterface } from "../shared/src/async-operations/async-operations.interface";
-import { AsyncActionType } from "../shared/src/enum/async.action.type.enum";
-import { ProgrammeSl } from "../shared/src/entities/programmeSl.entity";
-import { OrganisationCreditAccounts } from "../shared/src/enum/organisation.credit.accounts.enum";
+import { TxType } from "@app/shared/enum/txtype.enum";
+import { Company } from "@app/shared/entities/company.entity";
+import { Programme } from "@app/shared/entities/programme.entity";
+import { CreditOverall } from "@app/shared/entities/credit.overall.entity";
+import { LocationInterface } from "@app/shared/location/location.interface";
+import { CompanyRole } from "@app/shared/enum/company.role.enum";
+import { AsyncOperationsInterface } from "@app/shared/async-operations/async-operations.interface";
+import { AsyncActionType } from "@app/shared/enum/async.action.type.enum";
+import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
+import { OrganisationCreditAccounts } from "@app/shared/enum/organisation.credit.accounts.enum";
 
 @Injectable()
 export class ProcessEventService {

@@ -2,7 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { AsyncOperationsHandlerInterface } from "./async-operations-handler-interface.service";
 import { SQSEvent } from "aws-lambda";
 import { AsyncOperationsHandlerService } from "./async-operations-handler.service";
-import { AsyncActionType } from "../shared/src/enum/async.action.type.enum";
+import { AsyncActionType } from "@app/shared/enum/async.action.type.enum";
 
 type Response = { batchItemFailures: { itemIdentifier: string }[] };
 

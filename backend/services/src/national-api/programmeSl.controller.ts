@@ -1,24 +1,24 @@
 import { Body, Controller, Post, UseGuards, Request } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { JwtAuthGuard } from "../shared/src/auth/guards/jwt-auth.guard";
-import { Action } from "../shared/src/casl/action.enum";
-import { AppAbility } from "../shared/src/casl/casl-ability.factory";
-import { CheckPolicies } from "../shared/src/casl/policy.decorator";
-import { PoliciesGuard } from "../shared/src/casl/policy.guard";
-import { ProgrammeSl } from "../shared/src/entities/programmeSl.entity";
-import { ProgrammeSlService } from "../shared/src/programme-sl/programme-sl.service";
-import { ProgrammeSlDto } from "../shared/src/dto/programmeSl.dto";
-import { CMADto } from "../shared/src/dto/cma.dto";
-import { GetDocDto } from "../shared/src/dto/getDoc.dto";
-import { QueryDto } from "../shared/src/dto/query.dto";
-import { CostQuotationDto } from "../shared/src/dto/costQuotation.dto";
-import { ProjectProposalDto } from "../shared/src/dto/projectProposal.dto";
-import { ValidationAgreementDto } from "../shared/src/dto/validationAgreement.dto";
-import { DocumentEntity } from "../shared/src/entities/document.entity";
-import { CMAApproveDto } from "../shared/src/dto/cmaApprove.dto";
-import { ValidationReportDto } from "../shared/src/dto/validationReport.dto";
-import { CNCertificateIssueDto } from "../shared/src/dto/cncertificateIssue.dto";
-import { ProjectRateLimiterGuard } from "../shared/src/auth/guards/project-rate-limiter.guard";
+import { JwtAuthGuard } from "@app/shared/auth/guards/jwt-auth.guard";
+import { Action } from "@app/shared/casl/action.enum";
+import { AppAbility } from "@app/shared/casl/casl-ability.factory";
+import { CheckPolicies } from "@app/shared/casl/policy.decorator";
+import { PoliciesGuard } from "@app/shared/casl/policy.guard";
+import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
+import { ProgrammeSlService } from "@app/shared/programme-sl/programme-sl.service";
+import { ProgrammeSlDto } from "@app/shared/dto/programmeSl.dto";
+import { CMADto } from "@app/shared/dto/cma.dto";
+import { GetDocDto } from "@app/shared/dto/getDoc.dto";
+import { QueryDto } from "@app/shared/dto/query.dto";
+import { CostQuotationDto } from "@app/shared/dto/costQuotation.dto";
+import { ProjectProposalDto } from "@app/shared/dto/projectProposal.dto";
+import { ValidationAgreementDto } from "@app/shared/dto/validationAgreement.dto";
+import { DocumentEntity } from "@app/shared/entities/document.entity";
+import { CMAApproveDto } from "@app/shared/dto/cmaApprove.dto";
+import { ValidationReportDto } from "@app/shared/dto/validationReport.dto";
+import { CNCertificateIssueDto } from "@app/shared/dto/cncertificateIssue.dto";
+import { ProjectRateLimiterGuard } from "@app/shared/auth/guards/project-rate-limiter.guard";
 
 @ApiTags("ProgrammeSl")
 @ApiBearerAuth()

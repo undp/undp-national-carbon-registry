@@ -8,14 +8,14 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { JwtAuthGuard } from "../shared/src/auth/guards/jwt-auth.guard";
-import { Action } from "../shared/src/casl/action.enum";
-import { PoliciesGuardEx } from "../shared/src/casl/policy.guard";
-import { SettingsDto } from "../shared/src/dto/settings.dto";
-import { ConfigurationSettings } from "../shared/src/entities/configuration.settings";
-import { ConfigurationSettingsService } from "../shared/src/util/configurationSettings.service";
-import { SLCFSignsDto } from "src/shared/src/dto/slcfSigns.dto";
-import { SLCFCertificateType } from "src/shared/src/enum/certificate.type.enum";
+import { JwtAuthGuard } from "@app/shared/auth/guards/jwt-auth.guard";
+import { Action } from "@app/shared/casl/action.enum";
+import { PoliciesGuardEx } from "@app/shared/casl/policy.guard";
+import { SettingsDto } from "@app/shared/dto/settings.dto";
+import { ConfigurationSettings } from "@app/shared/entities/configuration.settings";
+import { ConfigurationSettingsService } from "@app/shared/util/configurationSettings.service";
+import { SLCFSignsDto } from "@app/shared/dto/slcfSigns.dto";
+import { SLCFCertificateType } from "@app/shared/enum/certificate.type.enum";
 
 @ApiTags("Settings")
 @Controller("Settings")
