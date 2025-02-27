@@ -11,23 +11,23 @@ import {
   Body,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { ApiKeyJwtAuthGuard } from "src/shared/src/auth/guards/api-jwt-key.guard";
-import { JwtAuthGuard } from "src/shared/src/auth/guards/jwt-auth.guard";
-import { OrganisationRateLimiterGuard } from "src/shared/src/auth/guards/organisation-rate-limiter.guard";
-import { Action } from "src/shared/src/casl/action.enum";
-import { CaslAbilityFactory } from "src/shared/src/casl/casl-ability.factory";
-import { PoliciesGuardEx } from "src/shared/src/casl/policy.guard";
-import { CompanyService } from "src/shared/src/company/company.service";
-import { DataExportQueryDto } from "src/shared/src/dto/data.export.query.dto";
-import { FindOrganisationQueryDto } from "src/shared/src/dto/find.organisation.dto";
-import { InvestmentDto } from "src/shared/src/dto/investment.dto";
-import { OrganisationSuspendDto } from "src/shared/src/dto/organisation.suspend.dto";
-import { OrganisationUpdateDto } from "src/shared/src/dto/organisation.update.dto";
-import { QueryDto } from "src/shared/src/dto/query.dto";
-import { Company } from "src/shared/src/entities/company.entity";
-import { Investment } from "src/shared/src/entities/investment.entity";
-import { CountryService } from "src/shared/src/util/country.service";
-import { HelperService } from "src/shared/src/util/helpers.service";
+import { ApiKeyJwtAuthGuard } from "@app/shared/auth/guards/api-jwt-key.guard";
+import { JwtAuthGuard } from "@app/shared/auth/guards/jwt-auth.guard";
+import { OrganisationRateLimiterGuard } from "@app/shared/auth/guards/organisation-rate-limiter.guard";
+import { Action } from "@app/shared/casl/action.enum";
+import { CaslAbilityFactory } from "@app/shared/casl/casl-ability.factory";
+import { PoliciesGuardEx } from "@app/shared/casl/policy.guard";
+import { CompanyService } from "@app/shared/company/company.service";
+import { DataExportQueryDto } from "@app/shared/dto/data.export.query.dto";
+import { FindOrganisationQueryDto } from "@app/shared/dto/find.organisation.dto";
+import { InvestmentDto } from "@app/shared/dto/investment.dto";
+import { OrganisationSuspendDto } from "@app/shared/dto/organisation.suspend.dto";
+import { OrganisationUpdateDto } from "@app/shared/dto/organisation.update.dto";
+import { QueryDto } from "@app/shared/dto/query.dto";
+import { Company } from "@app/shared/entities/company.entity";
+import { Investment } from "@app/shared/entities/investment.entity";
+import { CountryService } from "@app/shared/util/country.service";
+import { HelperService } from "@app/shared/util/helpers.service";
 
 @ApiTags("Organisation")
 @ApiBearerAuth()

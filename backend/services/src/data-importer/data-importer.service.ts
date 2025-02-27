@@ -5,16 +5,16 @@ import { Repository } from "typeorm";
 import { ImporterInterface } from "./importer.interface";
 import { ITMOSystemImporter } from "./importers/itmo-system.service";
 import { CertifierScrapeService } from "./importers/certifier-scrape.service";
-import { ProgrammeService } from "../shared/src/programme/programme.service";
-import { UserService } from "../shared/src/user/user.service";
-import { CompanyService } from "../shared/src/company/company.service";
-import { Company } from "../shared/src/entities/company.entity";
+import { ProgrammeService } from "@app/shared/programme/programme.service";
+import { UserService } from "@app/shared/user/user.service";
+import { CompanyService } from "@app/shared/company/company.service";
+import { Company } from "@app/shared/entities/company.entity";
 import { AnnualReportImport } from "./importers/annual-report.service";
-import { ProgrammeDocument } from "../shared/src/entities/programme.document";
-import { AnnualReportGen } from "../shared/src/annualreport/annual.report.gen";
-import { ProgrammeLedgerService } from "../shared/src/programme-ledger/programme-ledger.service";
-import { EmailHelperService } from "../shared/src/email-helper/email-helper.service";
-import { AuthorizationLetterGen } from "../shared/src/util/authorisation.letter.gen";
+import { ProgrammeDocument } from "@app/shared/entities/programme.document";
+import { AnnualReportGen } from "@app/shared/annualreport/annual.report.gen";
+import { ProgrammeLedgerService } from "@app/shared/programme-ledger/programme-ledger.service";
+import { EmailHelperService } from "@app/shared/email-helper/email-helper.service";
+import { AuthorizationLetterGen } from "@app/shared/util/authorisation.letter.gen";
 @Injectable()
 export class DataImporterService {
   constructor(

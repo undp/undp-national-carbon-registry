@@ -8,11 +8,11 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { NationalAccountingService } from "src/analytics-api/national-accounting/national.accounting.service";
-import { JwtAuthGuard } from "src/shared/src/auth/guards/jwt-auth.guard";
-import { Action } from "src/shared/src/casl/action.enum";
-import { PoliciesGuardEx } from "src/shared/src/casl/policy.guard";
-import { QueryDto } from "src/shared/src/dto/query.dto";
-import { CreditAuditLog } from "src/shared/src/entities/credit.audit.log.entity";
+import { JwtAuthGuard } from "@app/shared/auth/guards/jwt-auth.guard";
+import { Action } from "@app/shared/casl/action.enum";
+import { PoliciesGuardEx } from "@app/shared/casl/policy.guard";
+import { QueryDto } from "@app/shared/dto/query.dto";
+import { CreditAuditLog } from "@app/shared/entities/credit.audit.log.entity";
 
 @ApiTags("national-accounting")
 @ApiBearerAuth()

@@ -6,12 +6,12 @@ import { LedgerReplicatorInterface } from "./replicator-interface.service";
 import { Pool } from "pg";
 import { plainToClass } from "class-transformer";
 import { ProcessEventService } from "./process.event.service";
-import { Counter } from "../shared/src/entities/counter.entity";
-import { CounterType } from "../shared/src/util/counter.type.enum";
-import { Programme } from "../shared/src/entities/programme.entity";
-import { CreditOverall } from "../shared/src/entities/credit.overall.entity";
+import { Counter } from "@app/shared/entities/counter.entity";
+import { CounterType } from "@app/shared/util/counter.type.enum";
+import { Programme } from "@app/shared/entities/programme.entity";
+import { CreditOverall } from "@app/shared/entities/credit.overall.entity";
 import { DataImporterService } from "../data-importer/data-importer.service";
-import { ProgrammeSl } from "../shared/src/entities/programmeSl.entity";
+import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
 
 @Injectable()
 export class PgSqlReplicatorService implements LedgerReplicatorInterface {

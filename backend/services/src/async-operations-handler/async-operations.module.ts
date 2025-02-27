@@ -5,14 +5,15 @@ import { AsyncOperationsDatabaseHandlerService } from "./async-operations-databa
 import { AsyncOperationsHandlerInterface } from "./async-operations-handler-interface.service";
 import { AsyncOperationsQueueHandlerService } from "./async-operations-queue-handler.service";
 import { AsyncOperationsHandlerService } from "./async-operations-handler.service";
-import { AsyncActionEntity } from "../shared/src/entities/async.action.entity";
-import { Counter } from "../shared/src/entities/counter.entity";
-import configuration from "../shared/src/configuration";
-import { AsyncOperationType } from "../shared/src/enum/async.operation.type.enum";
-import { TypeOrmConfigService } from "../shared/src/typeorm.config.service";
-import { RegistryClientModule } from "../shared/src/registry-client/registry-client.module";
-import { EmailModule } from "../shared/src/email/email.module";
-import { CadtModule } from "../shared/src/cadt/cadt.module";
+import { AsyncActionEntity } from "@app/shared/entities/async.action.entity";
+import { Counter } from "@app/shared/entities/counter.entity";
+import configuration from "@app/shared/configuration";
+import { AsyncOperationType } from "@app/shared/enum/async.operation.type.enum";
+import { TypeOrmConfigService } from "@app/shared/typeorm.config.service";
+import { RegistryClientModule } from "@app/shared/registry-client/registry-client.module";
+import { EmailModule } from "@app/shared/email/email.module";
+import { CadtModule } from "@app/shared/cadt/cadt.module";
+import { SharedModule } from "@app/shared";
 
 @Module({
   imports: [
@@ -25,9 +26,7 @@ import { CadtModule } from "../shared/src/cadt/cadt.module";
       useClass: TypeOrmConfigService,
     }),
     TypeOrmModule.forFeature([AsyncActionEntity, Counter]),
-    RegistryClientModule,
-    EmailModule,
-    CadtModule,
+    SharedModule,
   ],
   providers: [
     {

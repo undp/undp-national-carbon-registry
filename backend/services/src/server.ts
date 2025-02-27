@@ -16,11 +16,11 @@ import * as winston from "winston";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { BadRequestException, INestApplication } from "@nestjs/common";
 import { ValidationPipe } from "@nestjs/common";
-import { TrimPipe } from "./shared/src/validation/trim-pipe.transform";
-import { ValidationException } from "./shared/src/validation/validation.exception";
-import { ValidationExceptionFilter } from "./shared/src/validation/validation-exception.filter";
+import { TrimPipe } from "@app/shared/validation/trim-pipe.transform";
+import { ValidationException } from "@app/shared/validation/validation.exception";
+import { ValidationExceptionFilter } from "@app/shared/validation/validation-exception.filter";
 import { useContainer } from "class-validator";
-import { UtilModule } from "./shared/src/util/util.module";
+import { UtilModule } from "@app/shared/util/util.module";
 import * as bodyParser from "body-parser";
 
 const express = require("express");

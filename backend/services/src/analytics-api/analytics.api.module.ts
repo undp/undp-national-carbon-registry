@@ -1,31 +1,32 @@
 import { Logger, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Programme } from "../shared/src/entities/programme.entity";
-import { ProgrammeTransfer } from "../shared/src/entities/programme.transfer";
-import { ProgrammeTransferViewEntityQuery } from "../shared/src/entities/programmeTransfer.view.entity";
+import { Programme } from "@app/shared/entities/programme.entity";
+import { ProgrammeTransfer } from "@app/shared/entities/programme.transfer";
+import { ProgrammeTransferViewEntityQuery } from "@app/shared/entities/programmeTransfer.view.entity";
 import { AggregateAPIService } from "./aggregate.api.service";
-import { Company } from "../shared/src/entities/company.entity";
-import configuration from "../shared/src/configuration";
-import { AuthModule } from "../shared/src/auth/auth.module";
-import { CaslModule } from "../shared/src/casl/casl.module";
-import { UtilModule } from "../shared/src/util/util.module";
-import { ProgrammeLedgerModule } from "../shared/src/programme-ledger/programme-ledger.module";
-import { TypeOrmConfigService } from "../shared/src/typeorm.config.service";
+import { Company } from "@app/shared/entities/company.entity";
+import configuration from "@app/shared/configuration";
+import { AuthModule } from "@app/shared/auth/auth.module";
+import { CaslModule } from "@app/shared/casl/casl.module";
+import { UtilModule } from "@app/shared/util/util.module";
+import { ProgrammeLedgerModule } from "@app/shared/programme-ledger/programme-ledger.module";
+import { TypeOrmConfigService } from "@app/shared/typeorm.config.service";
 import { ProgrammeController } from "./programme.controller";
-import { InvestmentView } from "../shared/src/entities/investment.view.entity";
-import { NDCActionViewEntity } from "../shared/src/entities/ndc.view.entity";
-import { Emission } from "../shared/src/entities/emission.entity";
-import { Projection } from "../shared/src/entities/projection.entity";
-import { EventLog } from "../shared/src/entities/event.log.entity";
+import { InvestmentView } from "@app/shared/entities/investment.view.entity";
+import { NDCActionViewEntity } from "@app/shared/entities/ndc.view.entity";
+import { Emission } from "@app/shared/entities/emission.entity";
+import { Projection } from "@app/shared/entities/projection.entity";
+import { EventLog } from "@app/shared/entities/event.log.entity";
 import { NationalAccountingModule } from "src/analytics-api/national-accounting/national.accounting.module";
 import { NationalAccountingController } from "./national-accounting.controller";
-import { ProgrammeSl } from "../shared/src/entities/programmeSl.entity";
+import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
 import { AggregateSlAPIService } from "./aggregate.sl.api.service";
-import { VerificationRequestEntity } from "../shared/src/entities/verification.request.entity";
-import { CreditRetirementSl } from "../shared/src/entities/creditRetirementSl.entity";
-import { CreditRetirementSlView } from "src/shared/src/entities/creditRetirementSl.view.entity";
-import { ProgrammeAuditLogSl } from "src/shared/src/entities/programmeAuditLogSl.entity";
+import { VerificationRequestEntity } from "@app/shared/entities/verification.request.entity";
+import { CreditRetirementSl } from "@app/shared/entities/creditRetirementSl.entity";
+import { CreditRetirementSlView } from "@app/shared/entities/creditRetirementSl.view.entity";
+import { ProgrammeAuditLogSl } from "@app/shared/entities/programmeAuditLogSl.entity";
+import { SharedModule } from "@app/shared";
 
 @Module({
   imports: [
@@ -54,11 +55,7 @@ import { ProgrammeAuditLogSl } from "src/shared/src/entities/programmeAuditLogSl
       CreditRetirementSlView,
       ProgrammeAuditLogSl,
     ]),
-    AuthModule,
-    CaslModule,
-    UtilModule,
-    ProgrammeLedgerModule,
-    NationalAccountingModule,
+    SharedModule,
   ],
   controllers: [ProgrammeController, NationalAccountingController],
   providers: [Logger, AggregateAPIService, AggregateSlAPIService],

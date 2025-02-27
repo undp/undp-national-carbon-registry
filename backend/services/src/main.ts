@@ -1,7 +1,7 @@
 import { handler } from "./ledger-replicator/handler";
 import { handler as asyncHandler } from "./async-operations-handler/handler";
 import { handler as importHandler } from "./data-importer/handler";
-import * as setupHandler from "./shared/src/setup/handler";
+import * as setupHandler from "@app/shared/setup/handler";
 import { NationalAPIModule } from "./national-api/national.api.module";
 import { join } from "path";
 import { AnalyticsAPIModule } from "./analytics-api/analytics.api.module";

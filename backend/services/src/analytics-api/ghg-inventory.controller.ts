@@ -10,11 +10,11 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { AggregateAPIService } from "./aggregate.api.service";
-import { StatList } from "../shared/src/dto/stat.list.dto";
-import { ApiKeyJwtAuthGuard } from "src/shared/src/auth/guards/api-jwt-key.guard";
-import { PoliciesGuardEx } from "src/shared/src/casl/policy.guard";
-import { Stat } from "src/shared/src/dto/stat.dto";
-import { Action } from "src/shared/src/casl/action.enum";
+import { StatList } from "@app/shared/dto/stat.list.dto";
+import { ApiKeyJwtAuthGuard } from "@app/shared/auth/guards/api-jwt-key.guard";
+import { PoliciesGuardEx } from "@app/shared/casl/policy.guard";
+import { Stat } from "@app/shared/dto/stat.dto";
+import { Action } from "@app/shared/casl/action.enum";
 
 @ApiTags("GHG Inventory")
 @ApiBearerAuth()

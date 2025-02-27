@@ -9,13 +9,13 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { AuthService } from "../shared/src/auth/auth.service";
-import { ForgotPasswordDto } from "../shared/src/dto/forgotPassword.dto";
-import { LoginDto } from "../shared/src/dto/login.dto";
-import { PasswordResetDto } from "../shared/src/dto/passwordReset.dto";
-import { HelperService } from "../shared/src/util/helpers.service";
-import { PasswordResetService } from "../shared/src/util/passwordReset.service";
-import { RefreshLoginDto } from "src/shared/src/dto/refreshLogin.dto";
+import { AuthService } from "@app/shared/auth/auth.service";
+import { ForgotPasswordDto } from "@app/shared/dto/forgotPassword.dto";
+import { LoginDto } from "@app/shared/dto/login.dto";
+import { PasswordResetDto } from "@app/shared/dto/passwordReset.dto";
+import { HelperService } from "@app/shared/util/helpers.service";
+import { PasswordResetService } from "@app/shared/util/passwordReset.service";
+import { RefreshLoginDto } from "@app/shared/dto/refreshLogin.dto";
 
 @ApiTags("Auth")
 @Controller("auth")

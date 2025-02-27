@@ -9,46 +9,43 @@ import {
   Request,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { JwtAuthGuard } from "src/shared/src/auth/guards/jwt-auth.guard";
-import { TransferFreezeGuard } from "src/shared/src/auth/guards/transfer-freeze.guard";
-import { Action } from "src/shared/src/casl/action.enum";
-import { AppAbility } from "src/shared/src/casl/casl-ability.factory";
-import { CheckPolicies } from "src/shared/src/casl/policy.decorator";
-import {
-  PoliciesGuard,
-  PoliciesGuardEx,
-} from "src/shared/src/casl/policy.guard";
-import { BaseIdDto } from "src/shared/src/dto/base.id.dto";
-import { ConstantUpdateDto } from "src/shared/src/dto/constants.update.dto";
-import { DataExportQueryDto } from "src/shared/src/dto/data.export.query.dto";
-import { DocumentAction } from "src/shared/src/dto/document.action";
-import { InvestmentApprove } from "src/shared/src/dto/investment.approve";
-import { InvestmentCancel } from "src/shared/src/dto/investment.cancel";
-import { InvestmentReject } from "src/shared/src/dto/investment.reject";
-import { InvestmentRequestDto } from "src/shared/src/dto/investment.request.dto";
-import { NDCActionDto } from "src/shared/src/dto/ndc.action.dto";
-import { NdcDetailsActionDto } from "src/shared/src/dto/ndc.details.action.dto";
-import { NdcDetailsPeriodDto } from "src/shared/src/dto/ndc.details.period.dto";
-import { ProgrammeApprove } from "src/shared/src/dto/programme.approve";
-import { ProgrammeCertify } from "src/shared/src/dto/programme.certify";
-import { ProgrammeDocumentDto } from "src/shared/src/dto/programme.document.dto";
-import { ProgrammeDto } from "src/shared/src/dto/programme.dto";
-import { ProgrammeMitigationIssue } from "src/shared/src/dto/programme.mitigation.issue";
-import { ProgrammeReject } from "src/shared/src/dto/programme.reject";
-import { ProgrammeRetire } from "src/shared/src/dto/programme.retire";
-import { ProgrammeRevoke } from "src/shared/src/dto/programme.revoke";
-import { ProgrammeTransferApprove } from "src/shared/src/dto/programme.transfer.approve";
-import { ProgrammeTransferCancel } from "src/shared/src/dto/programme.transfer.cancel";
-import { ProgrammeTransferReject } from "src/shared/src/dto/programme.transfer.reject";
-import { ProgrammeTransferRequest } from "src/shared/src/dto/programme.transfer.request";
-import { QueryDto } from "src/shared/src/dto/query.dto";
-import { ProgrammeDocumentViewEntity } from "src/shared/src/entities/document.view.entity";
-import { Investment } from "src/shared/src/entities/investment.entity";
-import { NDCActionViewEntity } from "src/shared/src/entities/ndc.view.entity";
-import { Programme } from "src/shared/src/entities/programme.entity";
-import { ProgrammeTransfer } from "src/shared/src/entities/programme.transfer";
-import { ApiKeyJwtAuthGuard } from "src/shared/src/auth/guards/api-jwt-key.guard";
-import { ProgrammeService } from "src/shared/src/programme/programme.service";
+import { JwtAuthGuard } from "@app/shared/auth/guards/jwt-auth.guard";
+import { TransferFreezeGuard } from "@app/shared/auth/guards/transfer-freeze.guard";
+import { Action } from "@app/shared/casl/action.enum";
+import { AppAbility } from "@app/shared/casl/casl-ability.factory";
+import { CheckPolicies } from "@app/shared/casl/policy.decorator";
+import { PoliciesGuard, PoliciesGuardEx } from "@app/shared/casl/policy.guard";
+import { BaseIdDto } from "@app/shared/dto/base.id.dto";
+import { ConstantUpdateDto } from "@app/shared/dto/constants.update.dto";
+import { DataExportQueryDto } from "@app/shared/dto/data.export.query.dto";
+import { DocumentAction } from "@app/shared/dto/document.action";
+import { InvestmentApprove } from "@app/shared/dto/investment.approve";
+import { InvestmentCancel } from "@app/shared/dto/investment.cancel";
+import { InvestmentReject } from "@app/shared/dto/investment.reject";
+import { InvestmentRequestDto } from "@app/shared/dto/investment.request.dto";
+import { NDCActionDto } from "@app/shared/dto/ndc.action.dto";
+import { NdcDetailsActionDto } from "@app/shared/dto/ndc.details.action.dto";
+import { NdcDetailsPeriodDto } from "@app/shared/dto/ndc.details.period.dto";
+import { ProgrammeApprove } from "@app/shared/dto/programme.approve";
+import { ProgrammeCertify } from "@app/shared/dto/programme.certify";
+import { ProgrammeDocumentDto } from "@app/shared/dto/programme.document.dto";
+import { ProgrammeDto } from "@app/shared/dto/programme.dto";
+import { ProgrammeMitigationIssue } from "@app/shared/dto/programme.mitigation.issue";
+import { ProgrammeReject } from "@app/shared/dto/programme.reject";
+import { ProgrammeRetire } from "@app/shared/dto/programme.retire";
+import { ProgrammeRevoke } from "@app/shared/dto/programme.revoke";
+import { ProgrammeTransferApprove } from "@app/shared/dto/programme.transfer.approve";
+import { ProgrammeTransferCancel } from "@app/shared/dto/programme.transfer.cancel";
+import { ProgrammeTransferReject } from "@app/shared/dto/programme.transfer.reject";
+import { ProgrammeTransferRequest } from "@app/shared/dto/programme.transfer.request";
+import { QueryDto } from "@app/shared/dto/query.dto";
+import { ProgrammeDocumentViewEntity } from "@app/shared/entities/document.view.entity";
+import { Investment } from "@app/shared/entities/investment.entity";
+import { NDCActionViewEntity } from "@app/shared/entities/ndc.view.entity";
+import { Programme } from "@app/shared/entities/programme.entity";
+import { ProgrammeTransfer } from "@app/shared/entities/programme.transfer";
+import { ApiKeyJwtAuthGuard } from "@app/shared/auth/guards/api-jwt-key.guard";
+import { ProgrammeService } from "@app/shared/programme/programme.service";
 
 @ApiTags("Programme")
 @ApiBearerAuth()

@@ -2,39 +2,39 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { StatList } from "../shared/src/dto/stat.list.dto";
-import { StatType } from "../shared/src/enum/stat.type.enum";
-import { ProgrammeTransferViewEntityQuery } from "../shared/src/entities/programmeTransfer.view.entity";
-import { QueryDto } from "../shared/src/dto/query.dto";
-import { FilterEntry } from "../shared/src/dto/filter.entry";
-import { SortEntry } from "../shared/src/dto/sort.entry";
-import { AggrEntry } from "../shared/src/dto/aggr.entry";
-import { Company } from "../shared/src/entities/company.entity";
-import { StatFilter } from "../shared/src/dto/stat.filter";
-import { ProgrammeStage } from "../shared/src/enum/programme-status.enum";
-import { Stat } from "../shared/src/dto/stat.dto";
-import { Sector } from "../shared/src/enum/sector.enum";
+import { StatList } from "@app/shared/dto/stat.list.dto";
+import { StatType } from "@app/shared/enum/stat.type.enum";
+import { ProgrammeTransferViewEntityQuery } from "@app/shared/entities/programmeTransfer.view.entity";
+import { QueryDto } from "@app/shared/dto/query.dto";
+import { FilterEntry } from "@app/shared/dto/filter.entry";
+import { SortEntry } from "@app/shared/dto/sort.entry";
+import { AggrEntry } from "@app/shared/dto/aggr.entry";
+import { Company } from "@app/shared/entities/company.entity";
+import { StatFilter } from "@app/shared/dto/stat.filter";
+import { ProgrammeStage } from "@app/shared/enum/programme-status.enum";
+import { Stat } from "@app/shared/dto/stat.dto";
+import { Sector } from "@app/shared/enum/sector.enum";
 import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
-import { HelperService } from "../shared/src/util/helpers.service";
-import { Programme } from "../shared/src/entities/programme.entity";
+import { HelperService } from "@app/shared/util/helpers.service";
+import { Programme } from "@app/shared/entities/programme.entity";
 import {
   StatusGroupedByTimedata,
   StatusGroupedByTimedataThere,
-} from "../shared/src/dto/programmeStatus.timeGrouped.result";
-import { CompanyRole } from "../shared/src/enum/company.role.enum";
-import { TransferStatus } from "../shared/src/enum/transform.status.enum";
-import { DataCountResponseDto } from "../shared/src/dto/data.count.response";
-import { InvestmentView } from "../shared/src/entities/investment.view.entity";
-import { NDCActionViewEntity } from "../shared/src/entities/ndc.view.entity";
-import { InvestmentStatus } from "../shared/src/enum/investment.status";
-import { SYSTEM_TYPE } from "../shared/src/enum/system.names.enum";
-import { Emission } from "src/shared/src/entities/emission.entity";
-import { Projection } from "src/shared/src/entities/projection.entity";
-import { EventLog } from "src/shared/src/entities/event.log.entity";
+} from "@app/shared/dto/programmeStatus.timeGrouped.result";
+import { CompanyRole } from "@app/shared/enum/company.role.enum";
+import { TransferStatus } from "@app/shared/enum/transform.status.enum";
+import { DataCountResponseDto } from "@app/shared/dto/data.count.response";
+import { InvestmentView } from "@app/shared/entities/investment.view.entity";
+import { NDCActionViewEntity } from "@app/shared/entities/ndc.view.entity";
+import { InvestmentStatus } from "@app/shared/enum/investment.status";
+import { SYSTEM_TYPE } from "@app/shared/enum/system.names.enum";
+import { Emission } from "@app/shared/entities/emission.entity";
+import { Projection } from "@app/shared/entities/projection.entity";
+import { EventLog } from "@app/shared/entities/event.log.entity";
 import {
   EmissionSubSectorsPathMap,
   EmissionSubSectorsToSectoralScopeMap,
-} from "src/shared/src/enum/sectoral.scope.enum";
+} from "@app/shared/enum/sectoral.scope.enum";
 
 @Injectable()
 export class AggregateAPIService {

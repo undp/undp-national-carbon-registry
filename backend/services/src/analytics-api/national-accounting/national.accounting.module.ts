@@ -1,23 +1,21 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { CaslModule } from "src/shared/src/casl/casl.module";
-import { CreditAuditLog } from "src/shared/src/entities/credit.audit.log.entity";
-import { Programme } from "src/shared/src/entities/programme.entity";
-import { User } from "src/shared/src/entities/user.entity";
 import { NationalAccountingService } from "./national.accounting.service";
-import { UtilModule } from "src/shared/src/util/util.module";
-import { CreditAuditLogViewEntity } from "src/shared/src/entities/creditAuditLog.view.entity";
+import { Programme } from "@app/shared/entities/programme.entity";
+import { CreditAuditLog } from "@app/shared/entities/credit.audit.log.entity";
+import { CreditAuditLogViewEntity } from "@app/shared/entities/creditAuditLog.view.entity";
+import { User } from "@app/shared/entities/user.entity";
+import { SharedModule } from "@app/shared";
 
 @Module({
   imports: [
-    CaslModule,
     TypeOrmModule.forFeature([
       Programme,
       CreditAuditLog,
       CreditAuditLogViewEntity,
       User,
     ]),
-    UtilModule,
+    SharedModule,
   ],
   providers: [NationalAccountingService],
   exports: [NationalAccountingService],

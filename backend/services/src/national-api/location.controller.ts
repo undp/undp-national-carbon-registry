@@ -9,10 +9,10 @@ import {
   HttpCode,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { LocationDataType } from "../shared/src/enum/locationDataType.enum";
-import { LocationService } from "../shared/src/location/location.service";
-import { QueryDto } from "src/shared/src/dto/query.dto";
-import { DataListResponseDto } from "src/shared/src/dto/data.list.response";
+import { LocationDataType } from "@app/shared/enum/locationDataType.enum";
+import { LocationService } from "@app/shared/location/location.service";
+import { QueryDto } from "@app/shared/dto/query.dto";
+import { DataListResponseDto } from "@app/shared/dto/data.list.response";
 
 @ApiTags("Location")
 @ApiBearerAuth()

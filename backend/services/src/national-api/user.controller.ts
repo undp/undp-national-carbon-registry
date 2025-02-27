@@ -14,24 +14,21 @@ import {
 } from "@nestjs/common";
 
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { ApiKeyJwtAuthGuard } from "../shared/src/auth/guards/api-jwt-key.guard";
-import { JwtAuthGuard } from "../shared/src/auth/guards/jwt-auth.guard";
-import { Action } from "../shared/src/casl/action.enum";
-import { CaslAbilityFactory } from "../shared/src/casl/casl-ability.factory";
-import { CheckPolicies } from "../shared/src/casl/policy.decorator";
-import {
-  PoliciesGuard,
-  PoliciesGuardEx,
-} from "../shared/src/casl/policy.guard";
-import { Role } from "../shared/src/casl/role.enum";
-import { DataExportQueryDto } from "../shared/src/dto/data.export.query.dto";
-import { PasswordUpdateDto } from "../shared/src/dto/password.update.dto";
-import { QueryDto } from "../shared/src/dto/query.dto";
-import { UserDto } from "../shared/src/dto/user.dto";
-import { UserUpdateDto } from "../shared/src/dto/user.update.dto";
-import { User } from "../shared/src/entities/user.entity";
-import { UserService } from "../shared/src/user/user.service";
-import { HelperService } from "../shared/src/util/helpers.service";
+import { ApiKeyJwtAuthGuard } from "@app/shared/auth/guards/api-jwt-key.guard";
+import { JwtAuthGuard } from "@app/shared/auth/guards/jwt-auth.guard";
+import { Action } from "@app/shared/casl/action.enum";
+import { CaslAbilityFactory } from "@app/shared/casl/casl-ability.factory";
+import { CheckPolicies } from "@app/shared/casl/policy.decorator";
+import { PoliciesGuard, PoliciesGuardEx } from "@app/shared/casl/policy.guard";
+import { Role } from "@app/shared/casl/role.enum";
+import { DataExportQueryDto } from "@app/shared/dto/data.export.query.dto";
+import { PasswordUpdateDto } from "@app/shared/dto/password.update.dto";
+import { QueryDto } from "@app/shared/dto/query.dto";
+import { UserDto } from "@app/shared/dto/user.dto";
+import { UserUpdateDto } from "@app/shared/dto/user.update.dto";
+import { User } from "@app/shared/entities/user.entity";
+import { UserService } from "@app/shared/user/user.service";
+import { HelperService } from "@app/shared/util/helpers.service";
 
 @ApiTags("User")
 @ApiBearerAuth()

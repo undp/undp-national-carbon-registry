@@ -20,6 +20,7 @@ import { UserModule } from "./user/user.module";
 import { UtilModule } from "./util/util.module";
 import { ValidationModule } from "./validation/validation.module";
 import { VerificationModule } from "./verification/verification.module";
+import { CaslModule } from "./casl/casl.module";
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { VerificationModule } from "./verification/verification.module";
     UtilModule,
     ValidationModule,
     VerificationModule,
+    CaslModule,
   ],
   providers: [SharedService],
   exports: [
@@ -67,6 +69,7 @@ import { VerificationModule } from "./verification/verification.module";
     UtilModule,
     ValidationModule,
     VerificationModule,
+    CaslModule,
   ],
 })
 export class SharedModule {}

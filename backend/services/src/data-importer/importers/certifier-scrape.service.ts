@@ -3,15 +3,15 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { ConfigService } from "@nestjs/config";
 import axios from "axios";
 import { Repository } from "typeorm";
-import { CompanyService } from "../../shared/src/company/company.service";
+import { CompanyService } from "@app/shared/company/company.service";
 import { ImporterInterface } from "../importer.interface";
-import { UserService } from "../../shared/src/user/user.service";
+import { UserService } from "@app/shared/user/user.service";
 import * as cheerio from "cheerio";
-import { CompanyRole } from "../../shared/src/enum/company.role.enum";
-import { Role } from "../../shared/src/casl/role.enum";
-import { OrganisationDto } from "../../shared/src/dto/organisation.dto";
-import { UserDto } from "../../shared/src/dto/user.dto";
-import { Company } from "../../shared/src/entities/company.entity";
+import { CompanyRole } from "@app/shared/enum/company.role.enum";
+import { Role } from "@app/shared/casl/role.enum";
+import { OrganisationDto } from "@app/shared/dto/organisation.dto";
+import { UserDto } from "@app/shared/dto/user.dto";
+import { Company } from "@app/shared/entities/company.entity";
 @Injectable()
 export class CertifierScrapeService implements ImporterInterface {
   constructor(

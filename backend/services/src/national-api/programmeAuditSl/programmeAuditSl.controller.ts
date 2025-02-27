@@ -1,7 +1,7 @@
 import { Controller, Get, Query, UseGuards, Request } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { ProgrammeAuditSlService } from "../../shared/src/programme-audit-sl/programmeAuditSL.service";
-import { JwtAuthGuard } from "src/shared/src/auth/guards/jwt-auth.guard";
+import { ProgrammeAuditSlService } from "@app/shared/programme-audit-sl/programmeAuditSL.service";
+import { JwtAuthGuard } from "@app/shared/auth/guards/jwt-auth.guard";
 
 @ApiTags("Logs")
 @ApiBearerAuth()

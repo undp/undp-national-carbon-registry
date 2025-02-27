@@ -8,25 +8,15 @@ import { UserController } from "./user.controller";
 import { AuthController } from "./auth.controller";
 import { ProgrammeController } from "./programme.controller";
 import { SettingsController } from "./settings.controller";
-import { AuthModule } from "../shared/src/auth/auth.module";
-import { CaslModule } from "../shared/src/casl/casl.module";
-import { CompanyModule } from "../shared/src/company/company.module";
-import { ProgrammeModule } from "../shared/src/programme/programme.module";
-import { TypeOrmConfigService } from "../shared/src/typeorm.config.service";
-import { UserModule } from "../shared/src/user/user.module";
-import { UtilModule } from "../shared/src/util/util.module";
-import configuration from "../shared/src/configuration";
-import { ProgrammeSlModule } from "../shared/src/programme-sl/programme-sl.module";
+import { TypeOrmConfigService } from "@app/shared/typeorm.config.service";
+import configuration from "@app/shared/configuration";
 import { ProgrammeSlController } from "./programmeSl.controller";
-import { LocationModule } from "../shared/src/location/location.module";
 import { LocationController } from "./location.controller";
 import { CreditRetirementSlController } from "./creditRetirement.controller";
-import { CreditRetirementSlModule } from "../shared/src/creditRetirement-sl/creditRetirementSl.module";
 import { VerificationController } from "./verification/verification.controller";
-import { VerificationModule } from "src/shared/src/verification/verification.module";
-import { ProgrammeAuditSlModule } from "../shared/src/programme-audit-sl/programme-audit-sl.module";
 import { ProgrammeAuditSlController } from "./programmeAuditSl/programmeAuditSl.controller";
 import { RateLimiterModule } from "nestjs-rate-limiter";
+import { SharedModule } from "@app/shared";
 
 @Module({
   imports: [
@@ -42,17 +32,7 @@ import { RateLimiterModule } from "nestjs-rate-limiter";
       useClass: TypeOrmConfigService,
       imports: undefined,
     }),
-    AuthModule,
-    UserModule,
-    CaslModule,
-    ProgrammeModule,
-    VerificationModule,
-    CompanyModule,
-    UtilModule,
-    LocationModule,
-    ProgrammeSlModule,
-    CreditRetirementSlModule,
-    ProgrammeAuditSlModule,
+    SharedModule,
   ],
   controllers: [
     NationalAPIController,
