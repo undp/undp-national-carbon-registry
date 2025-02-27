@@ -1,11 +1,18 @@
-import { Body, Controller, Get, Post, UseGuards, Request } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UseGuards,
+  Request,
+} from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
-import { Action } from "src/casl/action.enum";
-import { PoliciesGuardEx } from "src/casl/policy.guard";
-import { QueryDto } from "src/dto/query.dto";
-import { CreditAuditLog } from "src/entities/credit.audit.log.entity";
 import { NationalAccountingService } from "src/analytics-api/national-accounting/national.accounting.service";
+import { JwtAuthGuard } from "src/shared/src/auth/guards/jwt-auth.guard";
+import { Action } from "src/shared/src/casl/action.enum";
+import { PoliciesGuardEx } from "src/shared/src/casl/policy.guard";
+import { QueryDto } from "src/shared/src/dto/query.dto";
+import { CreditAuditLog } from "src/shared/src/entities/credit.audit.log.entity";
 
 @ApiTags("national-accounting")
 @ApiBearerAuth()
@@ -22,18 +29,30 @@ export class NationalAccountingController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, CreditAuditLog, true))
+  @UseGuards(
+    JwtAuthGuard,
+    PoliciesGuardEx(true, Action.Read, CreditAuditLog, true)
+  )
   @Post("query")
   queryTransactionRecords(@Body() query: QueryDto, @Request() req) {
     console.log(req.abilityCondition);
-    return this.nationalAccountingService.getTransactionRecords(query, req.abilityCondition);
+    return this.nationalAccountingService.getTransactionRecords(
+      query,
+      req.abilityCondition
+    );
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, CreditAuditLog, true))
+  @UseGuards(
+    JwtAuthGuard,
+    PoliciesGuardEx(true, Action.Read, CreditAuditLog, true)
+  )
   @Post("query-by-country")
   getRetirementsByCountry(@Body() query: QueryDto, @Request() req) {
     console.log(req.abilityCondition);
-    return this.nationalAccountingService.getRetiresByCountry(query, req.abilityCondition);
+    return this.nationalAccountingService.getRetiresByCountry(
+      query,
+      req.abilityCondition
+    );
   }
 }

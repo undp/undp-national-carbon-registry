@@ -1,17 +1,18 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DataListResponseDto } from "src/dto/data.list.response";
-import { QueryDto } from "src/dto/query.dto";
-import { CreditAuditLog } from "src/entities/credit.audit.log.entity";
-import { CreditAuditLogViewEntity } from "src/entities/creditAuditLog.view.entity";
-import { CountryService } from "src/util/country.service";
-import { HelperService } from "src/util/helpers.service";
+import { DataListResponseDto } from "src/shared/src/dto/data.list.response";
+import { QueryDto } from "src/shared/src/dto/query.dto";
+import { CreditAuditLog } from "src/shared/src/entities/credit.audit.log.entity";
+import { CreditAuditLogViewEntity } from "src/shared/src/entities/creditAuditLog.view.entity";
+import { CountryService } from "src/shared/src/util/country.service";
+import { HelperService } from "src/shared/src/util/helpers.service";
 import { Repository } from "typeorm";
 
 @Injectable()
 export class NationalAccountingService {
   constructor(
-    @InjectRepository(CreditAuditLog) private creditAuditLogRepo: Repository<CreditAuditLog>,
+    @InjectRepository(CreditAuditLog)
+    private creditAuditLogRepo: Repository<CreditAuditLog>,
     @InjectRepository(CreditAuditLogViewEntity)
     private creditAuditLogViewRepo: Repository<CreditAuditLogViewEntity>,
     private helperService: HelperService,
@@ -30,7 +31,9 @@ export class NationalAccountingService {
     const formattedResult = result.reduce((acc, item) => {
       acc[item.type] = {
         credits: item.sumCredits,
-        lastUpdated: item.latestTime ? Math.floor(item.latestTime.getTime()) : 0,
+        lastUpdated: item.latestTime
+          ? Math.floor(item.latestTime.getTime())
+          : 0,
       };
       return acc;
     }, {});
@@ -55,7 +58,10 @@ export class NationalAccountingService {
       .where(
         this.helperService.generateWhereSQL(
           query,
-          this.helperService.parseMongoQueryToSQLWithTable("log", abilityCondition)
+          this.helperService.parseMongoQueryToSQLWithTable(
+            "log",
+            abilityCondition
+          )
         )
       )
       .orderBy(
@@ -64,7 +70,9 @@ export class NationalAccountingService {
       );
 
     if (query.size && query.page) {
-      dataQueryBuilder.offset(query.size * query.page - query.size).limit(query.size);
+      dataQueryBuilder
+        .offset(query.size * query.page - query.size)
+        .limit(query.size);
     }
 
     const data = await dataQueryBuilder.getRawMany();
@@ -83,7 +91,10 @@ export class NationalAccountingService {
       .where(
         this.helperService.generateWhereSQL(
           query,
-          this.helperService.parseMongoQueryToSQLWithTable("log", abilityCondition)
+          this.helperService.parseMongoQueryToSQLWithTable(
+            "log",
+            abilityCondition
+          )
         )
       );
 
@@ -107,7 +118,10 @@ export class NationalAccountingService {
       dataQueryBuilder = dataQueryBuilder.andWhere(
         this.helperService.generateWhereSQL(
           query,
-          this.helperService.parseMongoQueryToSQLWithTable("log", abilityCondition)
+          this.helperService.parseMongoQueryToSQLWithTable(
+            "log",
+            abilityCondition
+          )
         )
       );
     }
@@ -145,7 +159,9 @@ export class NationalAccountingService {
     const formattedResult = [];
 
     for (const item of data) {
-      const countryName = await this.countryService.getCountryName(item.country);
+      const countryName = await this.countryService.getCountryName(
+        item.country
+      );
       formattedResult.push({
         country: item.country,
         credits: item.totalCredits,

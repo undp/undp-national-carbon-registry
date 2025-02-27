@@ -3,12 +3,14 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { AsyncOperationsHandlerInterface } from "./async-operations-handler-interface.service";
 import { AsyncOperationsHandlerService } from "./async-operations-handler.service";
-import { AsyncActionEntity } from "../entities/async.action.entity";
-import { CounterType } from "../util/counter.type.enum";
-import { Counter } from "../entities/counter.entity";
+import { AsyncActionEntity } from "../shared/src/entities/async.action.entity";
+import { CounterType } from "../shared/src/util/counter.type.enum";
+import { Counter } from "../shared/src/entities/counter.entity";
 
 @Injectable()
-export class AsyncOperationsDatabaseHandlerService implements AsyncOperationsHandlerInterface {
+export class AsyncOperationsDatabaseHandlerService
+  implements AsyncOperationsHandlerInterface
+{
   constructor(
     private logger: Logger,
     @InjectRepository(Counter) private counterRepo: Repository<Counter>,
@@ -35,7 +37,9 @@ export class AsyncOperationsDatabaseHandlerService implements AsyncOperationsHan
       console.log("lastSeq", lastSeq, "retryCount", retryCount);
       const notExecutedActions = await this.asyncActionRepo
         .createQueryBuilder("asyncAction")
-        .where("asyncAction.actionId > :lastExecuted", { lastExecuted: lastSeq })
+        .where("asyncAction.actionId > :lastExecuted", {
+          lastExecuted: lastSeq,
+        })
         .orderBy('"actionId"', "ASC")
         .select(['"actionId"', '"actionType"', '"actionProps"'])
         .getRawMany();

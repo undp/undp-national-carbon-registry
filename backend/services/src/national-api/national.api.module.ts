@@ -8,23 +8,23 @@ import { UserController } from "./user.controller";
 import { AuthController } from "./auth.controller";
 import { ProgrammeController } from "./programme.controller";
 import { SettingsController } from "./settings.controller";
-import { AuthModule } from "../auth/auth.module";
-import { CaslModule } from "../casl/casl.module";
-import { CompanyModule } from "../company/company.module";
-import { ProgrammeModule } from "../programme/programme.module";
-import { TypeOrmConfigService } from "../typeorm.config.service";
-import { UserModule } from "../user/user.module";
-import { UtilModule } from "../util/util.module";
-import configuration from "../configuration";
-import { ProgrammeSlModule } from "../programme-sl/programme-sl.module";
+import { AuthModule } from "../shared/src/auth/auth.module";
+import { CaslModule } from "../shared/src/casl/casl.module";
+import { CompanyModule } from "../shared/src/company/company.module";
+import { ProgrammeModule } from "../shared/src/programme/programme.module";
+import { TypeOrmConfigService } from "../shared/src/typeorm.config.service";
+import { UserModule } from "../shared/src/user/user.module";
+import { UtilModule } from "../shared/src/util/util.module";
+import configuration from "../shared/src/configuration";
+import { ProgrammeSlModule } from "../shared/src/programme-sl/programme-sl.module";
 import { ProgrammeSlController } from "./programmeSl.controller";
-import { LocationModule } from "../location/location.module";
+import { LocationModule } from "../shared/src/location/location.module";
 import { LocationController } from "./location.controller";
 import { CreditRetirementSlController } from "./creditRetirement.controller";
-import { CreditRetirementSlModule } from "../creditRetirement-sl/creditRetirementSl.module";
+import { CreditRetirementSlModule } from "../shared/src/creditRetirement-sl/creditRetirementSl.module";
 import { VerificationController } from "./verification/verification.controller";
-import { VerificationModule } from "src/verification/verification.module";
-import { ProgrammeAuditSlModule } from "../programme-audit-sl/programme-audit-sl.module";
+import { VerificationModule } from "src/shared/src/verification/verification.module";
+import { ProgrammeAuditSlModule } from "../shared/src/programme-audit-sl/programme-audit-sl.module";
 import { ProgrammeAuditSlController } from "./programmeAuditSl/programmeAuditSl.controller";
 import { RateLimiterModule } from "nestjs-rate-limiter";
 
@@ -36,7 +36,7 @@ import { RateLimiterModule } from "nestjs-rate-limiter";
       envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
     }),
     RateLimiterModule.register({
-      type: 'Memory',   // In-memory store for rate limiting
+      type: "Memory", // In-memory store for rate limiting
     }),
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
@@ -52,7 +52,7 @@ import { RateLimiterModule } from "nestjs-rate-limiter";
     LocationModule,
     ProgrammeSlModule,
     CreditRetirementSlModule,
-    ProgrammeAuditSlModule
+    ProgrammeAuditSlModule,
   ],
   controllers: [
     NationalAPIController,
@@ -65,7 +65,7 @@ import { RateLimiterModule } from "nestjs-rate-limiter";
     ProgrammeSlController,
     CreditRetirementSlController,
     VerificationController,
-    ProgrammeAuditSlController
+    ProgrammeAuditSlController,
   ],
   providers: [NationalAPIService, Logger],
 })
