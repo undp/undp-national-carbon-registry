@@ -7,45 +7,47 @@ import { InvestmentStream } from "../enum/investment.stream";
 import { ESGType } from "../enum/esg.type";
 import { InvestmentStatus } from "../enum/investment.status";
 import { InvestmentCategoryEnum } from "../enum/investment.category.enum";
-import { GuaranteePayback, InsurancePayback } from "../enum/investment.payback.enum";
+import {
+  GuaranteePayback,
+  InsurancePayback,
+} from "../enum/investment.payback.enum";
 
 @Entity()
 export class Investment implements EntitySubject {
-
   @PrimaryGeneratedColumn()
   requestId: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   programmeId: string;
 
-  @Column({type: 'double precision'})
+  @Column({ type: "double precision" })
   amount: number;
 
   @Column({
     type: "enum",
     enum: Instrument,
     array: true,
-    nullable: true
+    nullable: true,
   })
   instrument: Instrument[];
 
-  @Column({nullable: true, type: 'double precision'})
+  @Column({ nullable: true, type: "double precision" })
   interestRate?: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   resultMetric?: string;
 
-  @Column({nullable: true, type: 'double precision' })
+  @Column({ nullable: true, type: "double precision" })
   paymentPerMetric?: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   comments?: string;
 
   @Column({
     type: "enum",
     enum: InvestmentType,
     array: false,
-    nullable: true
+    nullable: true,
   })
   type: InvestmentType;
 
@@ -53,7 +55,7 @@ export class Investment implements EntitySubject {
     type: "enum",
     enum: GuaranteePayback,
     array: false,
-    nullable: true
+    nullable: true,
   })
   guaranteePayback: GuaranteePayback;
 
@@ -61,7 +63,7 @@ export class Investment implements EntitySubject {
     type: "enum",
     enum: InsurancePayback,
     array: false,
-    nullable: true
+    nullable: true,
   })
   insurancePayback: InsurancePayback;
 
@@ -69,7 +71,7 @@ export class Investment implements EntitySubject {
     type: "enum",
     enum: InvestmentLevel,
     array: false,
-    nullable: true
+    nullable: true,
   })
   level: InvestmentLevel;
 
@@ -77,7 +79,7 @@ export class Investment implements EntitySubject {
     type: "enum",
     enum: InvestmentStream,
     array: false,
-    nullable: true
+    nullable: true,
   })
   stream: InvestmentStream;
 
@@ -85,7 +87,7 @@ export class Investment implements EntitySubject {
     type: "enum",
     enum: ESGType,
     array: false,
-    nullable: true
+    nullable: true,
   })
   esgClassification: ESGType;
 
@@ -96,10 +98,10 @@ export class Investment implements EntitySubject {
   })
   status: InvestmentStatus;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   fromCompanyId: number;
 
-  @Column("real",{nullable: true})
+  @Column("real", { nullable: true })
   percentage: number;
 
   @Column({ type: "bigint", nullable: true })
@@ -108,7 +110,7 @@ export class Investment implements EntitySubject {
   @Column("bigint", { array: true, nullable: true })
   period: number[];
 
-  @Column("real", {nullable: true})
+  @Column("real", { nullable: true })
   shareFromOwner: number;
 
   @Column()
@@ -120,29 +122,31 @@ export class Investment implements EntitySubject {
   @Column()
   initiatorCompanyId: number;
 
-  @Column({type: "bigint"})
+  @Column({ type: "bigint" })
   txTime: number;
 
-  @Column({type: "bigint"})
+  @Column({ type: "bigint" })
   createdTime: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   txRef: string;
 
   @Column({
     nullable: true,
     default: InvestmentCategoryEnum.Project,
-    enum: InvestmentCategoryEnum
+    enum: InvestmentCategoryEnum,
+    type: "enum",
+    array: false,
   })
-  category: InvestmentCategoryEnum
+  category: InvestmentCategoryEnum;
 
   @Column({
     nullable: true,
   })
-  investmentName:string
+  investmentName: string;
 
   @Column({
     nullable: true,
   })
-  nationalInvestmentId:number
+  nationalInvestmentId: number;
 }
