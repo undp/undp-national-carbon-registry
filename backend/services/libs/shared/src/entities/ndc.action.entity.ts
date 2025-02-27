@@ -115,10 +115,15 @@ export class NDCAction {
   @Column({ nullable: true })
   constantVersion: string;
 
-  @Column({ nullable: true })
+  @Column({
+    nullable: true,
+    type: "enum",
+    enum: Sector,
+    array: false,
+  })
   sector: Sector;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: "enum", enum: NDCStatus, array: false })
   status: NDCStatus;
 
   externalId: string;

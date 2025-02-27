@@ -29,7 +29,11 @@ export class Programme implements EntitySubject {
   })
   sectoralScope: SectoralScope;
 
-  @Column()
+  @Column({
+    type: "enum",
+    enum: Sector,
+    array: false,
+  })
   sector: Sector;
 
   @Column()
