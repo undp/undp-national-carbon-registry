@@ -9,11 +9,10 @@ import {
   HttpCode,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
-import { QueryDto } from "../dto/query.dto";
-import { LocationDataType } from "../enum/locationDataType.enum";
-import { LocationService } from "../location/location.service";
-import { DataListResponseDto } from "../dto/data.list.response";
+import { LocationDataType } from "../shared/src/enum/locationDataType.enum";
+import { LocationService } from "../shared/src/location/location.service";
+import { QueryDto } from "src/shared/src/dto/query.dto";
+import { DataListResponseDto } from "src/shared/src/dto/data.list.response";
 
 @ApiTags("Location")
 @ApiBearerAuth()
@@ -26,7 +25,8 @@ export class LocationController {
   @Post(":locationType")
   @HttpCode(200)
   async getLocationData(
-    @Param("locationType", new ParseEnumPipe(LocationDataType)) locationType: LocationDataType,
+    @Param("locationType", new ParseEnumPipe(LocationDataType))
+    locationType: LocationDataType,
     @Body() query: QueryDto,
     @Request() req
   ): Promise<DataListResponseDto> {

@@ -5,12 +5,12 @@
   "compilerOptions": {
     "assets": [
       {
-        "include": "i18n/**/*",
+        "include": "shared/src/i18n/**/*",
         "watchAssets": true,
         "outDir": "dist"
       },
       {
-        "include": "i18n/**/*",
+        "include": "shared/src/i18n/**/*",
         "watchAssets": true,
         "outDir": ".build/src"
       }

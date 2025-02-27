@@ -5,16 +5,16 @@ import { QLDBKinesisReplicatorService } from "./qldb-kinesis-replicator.service"
 import { LedgerReplicatorInterface } from "./replicator-interface.service";
 import { PgSqlReplicatorService } from "./pgsql-replicator.service";
 import { ProcessEventService } from "./process.event.service";
-import { Programme } from "../entities/programme.entity";
-import configuration from "../configuration";
-import { TypeOrmConfigService } from "../typeorm.config.service";
-import { Company } from "../entities/company.entity";
-import { Counter } from "../entities/counter.entity";
-import { LocationModule } from "../location/location.module";
-import { LedgerType } from "../enum/ledger.type";
+import { Programme } from "../shared/src/entities/programme.entity";
+import configuration from "../shared/src/configuration";
+import { TypeOrmConfigService } from "../shared/src/typeorm.config.service";
+import { Company } from "../shared/src/entities/company.entity";
+import { Counter } from "../shared/src/entities/counter.entity";
+import { LocationModule } from "../shared/src/location/location.module";
+import { LedgerType } from "../shared/src/enum/ledger.type";
 import { DataImporterModule } from "../data-importer/data-importer.module";
-import { AsyncOperationsModule } from "../async-operations/async-operations.module";
-import { ProgrammeSl } from "../entities/programmeSl.entity";
+import { AsyncOperationsModule } from "../shared/src/async-operations/async-operations.module";
+import { ProgrammeSl } from "../shared/src/entities/programmeSl.entity";
 
 @Module({
   imports: [

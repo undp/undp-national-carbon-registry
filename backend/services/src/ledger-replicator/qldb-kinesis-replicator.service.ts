@@ -5,15 +5,15 @@ import { plainToClass } from "class-transformer";
 import { ConfigService } from "@nestjs/config";
 import { LedgerReplicatorInterface } from "./replicator-interface.service";
 import { ProcessEventService } from "./process.event.service";
-import { Programme } from "../entities/programme.entity";
-import { CreditOverall } from "../entities/credit.overall.entity";
+import { Programme } from "../shared/src/entities/programme.entity";
+import { CreditOverall } from "../shared/src/entities/credit.overall.entity";
 
 const computeChecksums = true;
 const REVISION_DETAILS = "REVISION_DETAILS";
 const deagg = require("aws-kinesis-agg");
 
 @Injectable()
-export class QLDBKinesisReplicatorService implements LedgerReplicatorInterface{
+export class QLDBKinesisReplicatorService implements LedgerReplicatorInterface {
   constructor(
     private logger: Logger,
     private eventProcessor: ProcessEventService,
@@ -51,11 +51,10 @@ export class QLDBKinesisReplicatorService implements LedgerReplicatorInterface{
               Programme,
               JSON.parse(JSON.stringify(payload))
             );
-            await this.eventProcessor.process(programme, undefined, 0, 0)
+            await this.eventProcessor.process(programme, undefined, 0, 0);
           } else if (
             tableName == this.configService.get("ledger.companyTable")
           ) {
-
             const meta = JSON.parse(
               JSON.stringify(
                 ionRecord.get("payload").get("revision").get("metadata")
@@ -72,7 +71,12 @@ export class QLDBKinesisReplicatorService implements LedgerReplicatorInterface{
               JSON.parse(JSON.stringify(payload))
             );
 
-            await this.eventProcessor.process(undefined, overall, parseInt(meta["version"]), new Date(meta.txTime).getTime())
+            await this.eventProcessor.process(
+              undefined,
+              overall,
+              parseInt(meta["version"]),
+              new Date(meta.txTime).getTime()
+            );
           }
         }
       })

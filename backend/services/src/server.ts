@@ -1,20 +1,26 @@
 import { createLogger } from "winston";
-import { utilities as nestWinstonModuleUtilities, WinstonModule } from "nest-winston";
+import {
+  utilities as nestWinstonModuleUtilities,
+  WinstonModule,
+} from "nest-winston";
 import { createServer, proxy } from "aws-serverless-express";
 import { eventContext } from "aws-serverless-express/middleware";
 
 import { AbstractHttpAdapter, NestFactory } from "@nestjs/core";
-import { ExpressAdapter, NestExpressApplication } from "@nestjs/platform-express";
+import {
+  ExpressAdapter,
+  NestExpressApplication,
+} from "@nestjs/platform-express";
 import { Server } from "http";
 import * as winston from "winston";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { BadRequestException, INestApplication } from "@nestjs/common";
 import { ValidationPipe } from "@nestjs/common";
-import { TrimPipe } from "./validation/trim-pipe.transform";
-import { ValidationException } from "./validation/validation.exception";
-import { ValidationExceptionFilter } from "./validation/validation-exception.filter";
+import { TrimPipe } from "./shared/src/validation/trim-pipe.transform";
+import { ValidationException } from "./shared/src/validation/validation.exception";
+import { ValidationExceptionFilter } from "./shared/src/validation/validation-exception.filter";
 import { useContainer } from "class-validator";
-import { UtilModule } from "./util/util.module";
+import { UtilModule } from "./shared/src/util/util.module";
 import * as bodyParser from "body-parser";
 
 const express = require("express");
@@ -26,14 +32,20 @@ const fs_promises = require("fs/promises");
 // binaryMimeTypes below
 const binaryMimeTypes: string[] = [];
 
-function setupSwagger(nestApp: INestApplication, name: string, httpBase: String): void {
+function setupSwagger(
+  nestApp: INestApplication,
+  name: string,
+  httpBase: String
+): void {
   const config = new DocumentBuilder()
     .setTitle(`${name.replace("APIModule", " API")}`)
     .setDescription(`RESTful Web API Documentation.`)
     .setVersion("0.5")
     .addBearerAuth()
     .addApiKey()
-    .addServer(`${process.env.DOMAIN_MAP == "true" ? "/" : "/" + process.env.NODE_ENV}`)
+    .addServer(
+      `${process.env.DOMAIN_MAP == "true" ? "/" : "/" + process.env.NODE_ENV}`
+    )
     .build();
   // ${process.env.NODE_ENV}
   const document = SwaggerModule.createDocument(nestApp, config);
