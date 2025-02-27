@@ -55,10 +55,13 @@ import { CarbonNeutralCertificateGenerator } from "./carbonNeutralCertificate.ge
     I18nModule.forRoot({
       fallbackLanguage: "en",
       loaderOptions: {
-        path: path.join(__dirname, "../i18n/"),
+        path: path.join(__dirname, "/shared/src/i18n/"),
         watch: true,
       },
-      resolvers: [{ use: QueryResolver, options: ["lang"] }, AcceptLanguageResolver],
+      resolvers: [
+        { use: QueryResolver, options: ["lang"] },
+        AcceptLanguageResolver,
+      ],
     }),
     TypeOrmModule.forFeature([
       Counter,
@@ -97,7 +100,7 @@ import { CarbonNeutralCertificateGenerator } from "./carbonNeutralCertificate.ge
     ProjectRegistrationCertificateGenerator,
     CreditIssueCertificateGenerator,
     CarbonNeutralCertificateGenerator,
-    DateUtilService
+    DateUtilService,
   ],
   exports: [
     CounterService,
@@ -120,7 +123,7 @@ import { CarbonNeutralCertificateGenerator } from "./carbonNeutralCertificate.ge
     ProjectRegistrationCertificateGenerator,
     CreditIssueCertificateGenerator,
     CarbonNeutralCertificateGenerator,
-    DateUtilService
+    DateUtilService,
   ],
 })
 export class UtilModule {}
