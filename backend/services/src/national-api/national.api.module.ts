@@ -8,8 +8,8 @@ import { UserController } from "./user.controller";
 import { AuthController } from "./auth.controller";
 import { ProgrammeController } from "./programme.controller";
 import { SettingsController } from "./settings.controller";
-import { TypeOrmConfigService } from "@app/shared/typeorm.config.service";
-import configuration from "@app/shared/configuration";
+import { TypeOrmConfigService } from "@app/core/app-config/typeorm.config.service";
+import configuration from "@app/core/app-config/configuration";
 import { ProgrammeSlController } from "./programmeSl.controller";
 import { LocationController } from "./location.controller";
 import { CreditRetirementSlController } from "./creditRetirement.controller";
@@ -17,22 +17,15 @@ import { VerificationController } from "./verification/verification.controller";
 import { ProgrammeAuditSlController } from "./programmeAuditSl/programmeAuditSl.controller";
 import { RateLimiterModule } from "nestjs-rate-limiter";
 import { SharedModule } from "@app/shared";
+import { CoreModule } from "@app/core";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration],
-      envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
-    }),
     RateLimiterModule.register({
       type: "Memory", // In-memory store for rate limiting
     }),
-    TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService,
-      imports: undefined,
-    }),
     SharedModule,
+    CoreModule,
   ],
   controllers: [
     NationalAPIController,

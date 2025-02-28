@@ -6,12 +6,12 @@ import { ProgrammeTransfer } from "@app/shared/entities/programme.transfer";
 import { ProgrammeTransferViewEntityQuery } from "@app/shared/entities/programmeTransfer.view.entity";
 import { AggregateAPIService } from "./aggregate.api.service";
 import { Company } from "@app/shared/entities/company.entity";
-import configuration from "@app/shared/configuration";
+import configuration from "@app/core/app-config/configuration";
 import { AuthModule } from "@app/shared/auth/auth.module";
 import { CaslModule } from "@app/shared/casl/casl.module";
 import { UtilModule } from "@app/shared/util/util.module";
 import { ProgrammeLedgerModule } from "@app/shared/programme-ledger/programme-ledger.module";
-import { TypeOrmConfigService } from "@app/shared/typeorm.config.service";
+import { TypeOrmConfigService } from "@app/core/app-config/typeorm.config.service";
 import { ProgrammeController } from "./programme.controller";
 import { InvestmentView } from "@app/shared/entities/investment.view.entity";
 import { NDCActionViewEntity } from "@app/shared/entities/ndc.view.entity";
@@ -27,18 +27,10 @@ import { CreditRetirementSl } from "@app/shared/entities/creditRetirementSl.enti
 import { CreditRetirementSlView } from "@app/shared/entities/creditRetirementSl.view.entity";
 import { ProgrammeAuditLogSl } from "@app/shared/entities/programmeAuditLogSl.entity";
 import { SharedModule } from "@app/shared";
+import { CoreModule } from "@app/core";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration],
-      envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
-    }),
-    TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService,
-      imports: undefined,
-    }),
     TypeOrmModule.forFeature([
       Programme,
       ProgrammeTransfer,
@@ -56,6 +48,7 @@ import { SharedModule } from "@app/shared";
       ProgrammeAuditLogSl,
     ]),
     SharedModule,
+    CoreModule,
   ],
   controllers: [ProgrammeController, NationalAccountingController],
   providers: [Logger, AggregateAPIService, AggregateSlAPIService],
