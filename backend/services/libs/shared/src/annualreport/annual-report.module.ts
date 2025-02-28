@@ -1,7 +1,7 @@
 import { Logger, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import configuration from "../configuration";
+import configuration from "../../../core/src/app-config/configuration";
 import { Country } from "../entities/country.entity";
 import { ConfigurationSettings } from "../entities/configuration.settings";
 import { FileHandlerModule } from "../file-handler/filehandler.module";
@@ -13,11 +13,6 @@ import { ProgrammeModule } from "../programme/programme.module";
 import { CompanyModule } from "../company/company.module";
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration],
-      envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
-    }),
     TypeOrmModule.forFeature([
       Country,
       Programme,
@@ -29,12 +24,7 @@ import { CompanyModule } from "../company/company.module";
     ProgrammeModule,
     CompanyModule,
   ],
-  providers: [
-    Logger,
-    AnnualReportGen,
-  ],
-  exports: [
-    AnnualReportGen,
-  ],
+  providers: [Logger, AnnualReportGen],
+  exports: [AnnualReportGen],
 })
 export class AnnualReportModule {}

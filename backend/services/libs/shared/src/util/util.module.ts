@@ -1,12 +1,7 @@
 import { forwardRef, Logger, Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
-import { AcceptLanguageResolver, I18nModule, QueryResolver } from "nestjs-i18n";
-import * as path from "path";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import configuration from "../configuration";
 import { Counter } from "../entities/counter.entity";
 import { Country } from "../entities/country.entity";
-import { TypeOrmConfigService } from "../typeorm.config.service";
 import { CounterService } from "./counter.service";
 import { CountryService } from "./country.service";
 import { HelperService } from "./helpers.service";
@@ -14,7 +9,6 @@ import { IsValidCountryConstraint } from "./validcountry.decorator";
 import { PasswordReset } from "../entities/userPasswordResetToken.entity";
 import { PasswordResetService } from "./passwordReset.service";
 import { User } from "../entities/user.entity";
-import { UserModule } from "../user/user.module";
 import { AsyncOperationsModule } from "../async-operations/async-operations.module";
 import { ConfigurationSettingsService } from "./configurationSettings.service";
 import { ConfigurationSettings } from "../entities/configuration.settings";
@@ -39,30 +33,17 @@ import { ProjectRegistrationCertificateGenerator } from "./projectRegistrationCe
 import { DateUtilService } from "./dateUtil.service";
 import { CreditIssueCertificateGenerator } from "./creditIssueCertificate.gen";
 import { CarbonNeutralCertificateGenerator } from "./carbonNeutralCertificate.gen";
+import { CoreModule } from "@app/core";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration],
-      envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
-    }),
-    TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService,
-      imports: undefined,
-    }),
+    CoreModule,
+    // need to import core module since some dependant modules from UtilModule, are used in setup script in main.
+    // Those modules need to solve dependencies on its own
+    // Since UtilModule is imported from all those modules, its more flexible to import core module here
+    // Otherwise, core module need to be imported in each above mentioned modules
+    // Global dependency injections doesnt work since those modules are called before the construction of app
     FileHandlerModule,
-    I18nModule.forRoot({
-      fallbackLanguage: "en",
-      loaderOptions: {
-        path: path.join(__dirname, "/shared/src/i18n/"),
-        watch: true,
-      },
-      resolvers: [
-        { use: QueryResolver, options: ["lang"] },
-        AcceptLanguageResolver,
-      ],
-    }),
     TypeOrmModule.forFeature([
       Counter,
       Country,

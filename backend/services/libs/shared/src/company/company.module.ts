@@ -3,8 +3,8 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Company } from "../entities/company.entity";
 import { CaslModule } from "../casl/casl.module";
-import configuration from "../configuration";
-import { TypeOrmConfigService } from "../typeorm.config.service";
+import configuration from "../../../core/src/app-config/configuration";
+import { TypeOrmConfigService } from "../../../core/src/app-config/typeorm.config.service";
 import { CompanyService } from "./company.service";
 import { UtilModule } from "../util/util.module";
 import { ProgrammeLedgerModule } from "../programme-ledger/programme-ledger.module";
@@ -19,16 +19,6 @@ import { CacheModule } from "@nestjs/cache-manager";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration],
-      envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
-    }),
-    TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService,
-      imports: undefined,
-    }),
-
     CacheModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
