@@ -1,9 +1,9 @@
-import { ViewColumn, ViewEntity } from "typeorm"
-import { Company } from "./company.entity";
-import { ProgrammeTransfer } from "./programme.transfer";
+import { ViewColumn, ViewEntity } from "typeorm";
+import { Company } from "../entities/company.entity";
+import { ProgrammeTransfer } from "../entities/programme.transfer";
 
 @ViewEntity({
-    expression: `
+  expression: `
         SELECT programme_transfer.*, JSON_AGG(distinct "requester".*) as "requester", JSON_AGG(distinct "receiver".*) as "receiver", 
         "prog"."creditBalance" as "creditBalance", "prog"."title" as "programmeTitle", "prog"."certifierId" as "programmeCertifierId", 
         "prog"."sector" as "programmeSector", "prog"."sectoralScope" as "programmeSectoralScope", JSON_AGG(distinct "certifier".*) as "certifier", 
@@ -20,46 +20,45 @@ import { ProgrammeTransfer } from "./programme.transfer";
     `,
 })
 export class ProgrammeTransferViewEntityQuery extends ProgrammeTransfer {
-    @ViewColumn()
-    creditBalance: number;
+  @ViewColumn()
+  creditBalance: number;
 
-    @ViewColumn()
-    programmeTitle: string;
+  @ViewColumn()
+  programmeTitle: string;
 
-    @ViewColumn()
-    programmeCertifierId: number[]
+  @ViewColumn()
+  programmeCertifierId: number[];
 
-    @ViewColumn()
-    serialNo: string;
+  @ViewColumn()
+  serialNo: string;
 
-    @ViewColumn()
-    programmeSector: string;
+  @ViewColumn()
+  programmeSector: string;
 
-    @ViewColumn()
-    programmeSectoralScope: string;
+  @ViewColumn()
+  programmeSectoralScope: string;
 
-    @ViewColumn()
-    certifier: Company[];
+  @ViewColumn()
+  certifier: Company[];
 
-    @ViewColumn()
-    sender: Company;
+  @ViewColumn()
+  sender: Company;
 
-    @ViewColumn()
-    requester: Company;
+  @ViewColumn()
+  requester: Company;
 
-    @ViewColumn()
-    receiver: Company;
+  @ViewColumn()
+  receiver: Company;
 
-    @ViewColumn()
-    proponentTaxVatId: string[];
+  @ViewColumn()
+  proponentTaxVatId: string[];
 
-    @ViewColumn()
-    proponentPercentage: number[];
+  @ViewColumn()
+  proponentPercentage: number[];
 
-    @ViewColumn()
-    companyId: string[];
+  @ViewColumn()
+  companyId: string[];
 
-    @ViewColumn()
-    creditOwnerPercentage: number[];
-
+  @ViewColumn()
+  creditOwnerPercentage: number[];
 }

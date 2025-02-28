@@ -10,7 +10,7 @@ import { CaslModule } from "../casl/casl.module";
 import { FileHandlerModule } from "../file-handler/filehandler.module";
 import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
 import { CreditRetirementSlService } from "./creditRetirementSl.service";
-import { CreditRetirementSlView } from "../entities/creditRetirementSl.view.entity";
+import { CreditRetirementSlView } from "../view-entities/creditRetirementSl.view.entity";
 import { ProgrammeAuditLogSl } from "../entities/programmeAuditLogSl.entity";
 import { CacheModule } from "@nestjs/cache-manager";
 import { ConfigModule, ConfigService } from "@nestjs/config";
@@ -19,7 +19,11 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
   imports: [
     ProgrammeLedgerModule,
     CaslModule,
-    TypeOrmModule.forFeature([CreditRetirementSl, CreditRetirementSlView, ProgrammeAuditLogSl]),
+    TypeOrmModule.forFeature([
+      CreditRetirementSl,
+      CreditRetirementSlView,
+      ProgrammeAuditLogSl,
+    ]),
     UtilModule,
     CompanyModule,
     UserModule,

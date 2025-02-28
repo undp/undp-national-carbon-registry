@@ -1,22 +1,16 @@
-import { Logger, Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { QLDBKinesisReplicatorService } from "./qldb-kinesis-replicator.service";
-import { LedgerReplicatorInterface } from "./replicator-interface.service";
-import { PgSqlReplicatorService } from "./pgsql-replicator.service";
-import { ProcessEventService } from "./process.event.service";
-import { Programme } from "@app/shared/entities/programme.entity";
-import configuration from "@app/core/app-config/configuration";
-import { TypeOrmConfigService } from "@app/core/app-config/typeorm.config.service";
+import { CoreModule } from "@app/core";
+import { SharedModule } from "@app/shared";
 import { Company } from "@app/shared/entities/company.entity";
 import { Counter } from "@app/shared/entities/counter.entity";
-import { LocationModule } from "@app/shared/location/location.module";
-import { LedgerType } from "@app/shared/enum/ledger.type";
-import { DataImporterModule } from "../data-importer/data-importer.module";
-import { AsyncOperationsModule } from "@app/shared/async-operations/async-operations.module";
+import { Programme } from "@app/shared/entities/programme.entity";
 import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
-import { SharedModule } from "@app/shared";
-import { CoreModule } from "@app/core";
+import { LedgerType } from "@app/shared/enum/ledger.type";
+import { Logger, Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { PgSqlReplicatorService } from "./pgsql-replicator.service";
+import { ProcessEventService } from "./process.event.service";
+import { QLDBKinesisReplicatorService } from "./qldb-kinesis-replicator.service";
+import { LedgerReplicatorInterface } from "./replicator-interface.service";
 
 @Module({
   imports: [

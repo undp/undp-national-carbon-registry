@@ -1,9 +1,9 @@
-import { ViewColumn, ViewEntity } from "typeorm"
-import { Company } from "./company.entity";
-import { Programme } from "./programme.entity"
+import { ViewColumn, ViewEntity } from "typeorm";
+import { Company } from "../entities/company.entity";
+import { Programme } from "../entities/programme.entity";
 
 @ViewEntity({
-    expression: `
+  expression: `
     SELECT programme.*, json_agg(DISTINCT "company".*) as "company", json_agg(DISTINCT "cert".*) as "certifier" FROM "programme" "programme" 
     LEFT JOIN "company" "cert" ON "cert"."companyId" = ANY("programme"."certifierId") 
     LEFT JOIN "company" "company" ON "company"."companyId" = ANY("programme"."companyId") 
@@ -11,10 +11,9 @@ import { Programme } from "./programme.entity"
     `,
 })
 export class ProgrammeQueryEntity extends Programme {
+  @ViewColumn()
+  company: Company[];
 
-    @ViewColumn()
-    company: Company[];
-
-    @ViewColumn()
-    certifier: Company[]
+  @ViewColumn()
+  certifier: Company[];
 }

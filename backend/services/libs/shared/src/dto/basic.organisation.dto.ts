@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsString,
 } from "class-validator";
-import { IsValidCountry } from "../util/validcountry.decorator";
+import { IsValidCountry } from "../decorators/validcountry.decorator";
 
 export class BasicOrgInfo {
   @IsString()

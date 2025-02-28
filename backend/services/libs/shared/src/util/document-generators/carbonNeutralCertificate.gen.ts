@@ -1,32 +1,31 @@
 import { Injectable } from "@nestjs/common";
-import { FileHandlerInterface } from "../file-handler/filehandler.interface";
-import { CreditType } from "../enum/creditType.enum";
+import { FileHandlerInterface } from "../../file-handler/filehandler.interface";
+import { CreditType } from "../../enum/creditType.enum";
 import { ConfigService } from "@nestjs/config";
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 
-export interface CreditIssueCertificateData {
+export interface CarbonNeutralCertificateData {
   projectName: string;
   companyName: string;
-  creditType: string;
+  scope: string;
   certificateNo: string;
   issueDate: string;
-  monitoringStartDate: string;
-  monitoringEndDate: string;
-  issuedCredits: number;
-  startCreditSerialNo: string;
-  endCreditSerialNo: string;
+  creditAmount: number;
+  orgBoundary: string;
+  assessmentYear: number;
+  assessmentPeriod: string;
 }
 
 @Injectable()
-export class CreditIssueCertificateGenerator {
+export class CarbonNeutralCertificateGenerator {
   constructor(
     private fileHandler: FileHandlerInterface,
     private configService: ConfigService
   ) {}
 
-  async generateCreditIssueCertificate(
-    data: CreditIssueCertificateData,
+  async generateCarbonNeutralCertificate(
+    data: CarbonNeutralCertificateData,
     isPreview?: boolean
   ) {
     const doc = new PDFDocument({
@@ -34,20 +33,18 @@ export class CreditIssueCertificateGenerator {
     });
 
     const refFileName = data.certificateNo.replace(/\//g, "_");
-    const filepath = `CREDIT_ISSUANCE_CERTIFICATE_${refFileName}.pdf`;
+    const filepath = `CARBON_NEUTRAL_CERTIFICATE_${refFileName}.pdf`;
     const country = this.configService.get("systemCountryName") || "CountryX";
-
+    const countryClimateFundName =
+      this.configService.get("countryClimateFundName") ||
+      "CountryX Climate Fund (Pvt) Ltd";
     // Define the output file path
     const stream = fs.createWriteStream("/tmp/" + filepath);
     doc.pipe(stream);
 
-    const track =
-      data.creditType === CreditType.TRACK_1 ? "Track I" : "Track II";
-
     // Add logo
     const image1Width = 45;
-    // const image2Width = 60;
-    const image2Width = 130;
+    const image2Width = 75;
 
     const imageHeight = 60;
     const image2Height = 65;
@@ -56,12 +53,8 @@ export class CreditIssueCertificateGenerator {
 
     const totalImageWidth = image1Width + image2Width + 2 * spaceBetweenImages;
 
-    // Start position for the first image (centering all images on the page)
     const startImageX = (doc.page.width - totalImageWidth) / 2;
-    const startImageY = 50; // vertical position where images will be placed
-
-    doc.registerFont("Inter", "fonts/Inter-Regular.ttf");
-    doc.registerFont("Inter-Bold", "fonts/Inter-Bold.ttf");
+    const startImageY = 50;
 
     // Draw each image
     doc.image("images/sri-lanka-emblem.png", startImageX, startImageY, {
@@ -69,7 +62,7 @@ export class CreditIssueCertificateGenerator {
       height: imageHeight,
     });
     doc.image(
-      "images/SLCCS_logo.png",
+      "images/SLCF_logo.jpg",
       startImageX + image1Width + spaceBetweenImages,
       startImageY,
       {
@@ -78,13 +71,15 @@ export class CreditIssueCertificateGenerator {
       }
     );
     doc.moveDown(2);
+    doc.registerFont("Inter", "fonts/Inter-Regular.ttf");
+    doc.registerFont("Inter-Bold", "fonts/Inter-Bold.ttf");
 
     // Title
     doc
       .fontSize(30)
       .font("Inter-Bold")
-      .fillColor("#1f4e79")
-      .text("Credit Issuance Certificate", { align: "center" });
+      .fillColor("#134e9e")
+      .text("Carbon Neutral Certificate", { align: "center" });
 
     if (isPreview) {
       this.addPreviewWatermark(doc);
@@ -95,41 +90,29 @@ export class CreditIssueCertificateGenerator {
     doc
       .font("Inter-Bold")
       .fontSize(14)
-      .text(`CountryX Climate Fund (Pvt) Ltd`, 70, 180, { align: "center" });
-
+      .text(`Presented to: ${data.companyName}`, 70, 180, { align: "center" });
     doc.moveDown(0.5);
+    doc
+      .font("Inter-Bold")
+      .fontSize(14)
+      .text(`Presented by: ${countryClimateFundName}`, {
+        align: "center",
+      });
 
-    doc.font("Inter").fontSize(12).text("Issues", { align: "center" });
+    doc.moveDown(1);
+
+    doc
+      .font("Inter")
+      .fontSize(12)
+      .text(`${countryClimateFundName}. certifies that`, {
+        align: "center",
+      });
 
     doc.moveDown(0.5);
 
     doc
       .font("Inter")
       .fontSize(12)
-      .text("CountryX Certified Emission Reductions (SCER)", {
-        align: "center",
-      });
-
-    doc.moveDown(0.5);
-
-    doc.font("Inter").fontSize(12).text("for", { align: "center" });
-
-    doc.moveDown(0.5);
-
-    doc
-      .font("Inter-Bold")
-      .fontSize(14)
-      .text(`${data.projectName}`, { align: "center" });
-
-    doc.moveDown(0.5);
-
-    doc.font("Inter").fontSize(12).text("of", { align: "center" });
-
-    doc.moveDown(0.5);
-
-    doc
-      .font("Inter")
-      .fontSize(14)
       .text(`${data.companyName}`, { align: "center" });
 
     doc.moveDown(0.5);
@@ -137,94 +120,123 @@ export class CreditIssueCertificateGenerator {
     doc
       .font("Inter")
       .fontSize(12)
-      .text("registered under", { align: "center" });
+      .text(
+        `has inset its ${data.scope} GHG Emissions of ${data.creditAmount} tCO₂e`,
+        {
+          align: "center",
+        }
+      );
 
     doc.moveDown(0.5);
 
+    doc
+      .font("Inter")
+      .fontSize(12)
+      .text(
+        `quantified and verified for the calendar year ${data.assessmentYear}`,
+        {
+          align: "center",
+        }
+      );
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter")
+      .fontSize(12)
+      .text(`${country} Certified Emission Reductions (SCER) of`, {
+        align: "center",
+      });
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter")
+      .fontSize(12)
+      .text(`${data.projectName}`, { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter")
+      .fontSize(12)
+      .text(`registered under ${country} Carbon Crediting Scheme (SLCCS)`, {
+        align: "center",
+      });
+
+    doc.moveDown(1);
     doc
       .font("Inter-Bold")
       .fontSize(14)
-      .text(`${track} of ${country} Carbon Crediting Scheme`, {
-        align: "center",
-      });
-
-    doc.moveDown(0.5);
-
-    doc
-      .font("Inter")
-      .fontSize(12)
-      .text("In accordance with the SLCCS eligibility criteria and", {
-        align: "center",
-      });
-
-    doc.moveDown(0.4);
-
-    doc
-      .font("Inter")
-      .fontSize(12)
-      .text("Approved CDM methodology (AMS I.D Version 18.0)", {
-        align: "center",
-      });
-
+      .text(`Assessment of ${data.scope} GHG Statement`, { align: "center" });
     doc.moveDown(1);
 
     doc
       .fontSize(11)
       .font("Inter-Bold")
-      .text("Certificate No ", 180, 440, {
+      .fillColor("green")
+      .text("Scope ", 180, doc.y, {
         continued: true,
       })
-      .text(`: ${data.certificateNo}`, 229, 440, {
+      .font("Inter")
+      .text(`: ${data.scope}`, 291, doc.y, {
         continued: false,
       })
       .moveDown(0.4)
-      .text("Date of issuance ", 180, doc.y, {
-        continued: true,
-      })
-      .text(`: ${data.issueDate}`, 214, doc.y, {
-        continued: false,
-      })
-      .moveDown(0.4)
-      .text("Monitoring Period ", 180, doc.y, {
-        continued: true,
-      })
-      .text(
-        `: ${data.monitoringStartDate} - ${data.monitoringEndDate}`,
-        207.5,
-        doc.y,
-        {
-          continued: false,
-        }
-      )
-      .moveDown(1);
-
-    doc
       .font("Inter-Bold")
-      .fontSize(16)
-      .text(
-        `${country} Credit Emission Reductions: ${data.issuedCredits} (tCO₂eq)`,
-        100,
-        doc.y
-      )
-      .moveDown(1.5);
+      .text("Methodology", 180, doc.y, {
+        continued: true,
+      })
+      .font("Inter")
+      .text(`: ISO 14064-1-2018`, 255.5, doc.y, {
+        continued: false,
+      })
+      .moveDown(0.4)
+      .font("Inter-Bold")
+      .text("Organization Boundary ", 180, doc.y, {
+        continued: true,
+      })
+      .text("")
+      .font("Inter")
+      .text(`: ${data.orgBoundary}`, 334, doc.y, {
+        continued: false,
+        indent: -7,
+      })
+      .moveDown(0.4)
+      .font("Inter-Bold")
+      .text("Period of Assessment ", 180, doc.y, {
+        continued: true,
+      })
+      .font("Inter")
+      .text(`: ${data.assessmentPeriod}`, 207, doc.y, {
+        continued: false,
+      })
+      .moveDown(0.4)
+      .font("Inter-Bold")
+      .text("Verified by ", 180, doc.y, {
+        continued: true,
+      })
+      .font("Inter")
+      .text(`: ${countryClimateFundName}.`, 267, doc.y, {
+        continued: false,
+      })
+      .moveDown(1);
 
     doc
       .fontSize(11)
       .font("Inter")
-      .text("Serial Range ", 180, doc.y, {
+      .fillColor("black")
+      .text("Certificate No ", 200, doc.y, {
         continued: true,
       })
-      .text(": Block start ", 185, doc.y, {
-        continued: true,
-      })
-      .text(`: ${data.startCreditSerialNo}`, 195, doc.y, {
+      .text(`: ${data.certificateNo}`, 237, doc.y, {
         continued: false,
       })
       .moveDown(0.4)
-      .text(": Block end ", 252.5, doc.y, {
+      .text("Date of Issues ", 200, doc.y, {
         continued: true,
       })
-      .text(`: ${data.endCreditSerialNo}`, 267.5, doc.y, {
+      .text(`: ${data.issueDate}`, 236, doc.y, {
         continued: false,
       })
       .moveDown(1);
@@ -254,11 +266,11 @@ export class CreditIssueCertificateGenerator {
     doc
       .font("Inter")
       .fontSize(10)
-      .text("CountryX Climate Fund (Pvt) Ltd.", 100, 690, { align: "left" });
+      .text(`${countryClimateFundName}.`, 100, 690, { align: "left" });
 
-    doc.image("images/SLCF_logo.jpg", 260, 600, {
+    doc.image("images/carbonNeutralLogo.jpg", 260, 580, {
       width: 110,
-      height: 100,
+      height: 110,
     });
 
     // CEO Signature
@@ -285,13 +297,13 @@ export class CreditIssueCertificateGenerator {
     doc
       .font("Inter")
       .fontSize(10)
-      .text("CountryX Climate Fund (Pvt) Ltd.", 378, 690, { align: "left" });
+      .text(`${countryClimateFundName}.`, 378, 690, { align: "left" });
 
     doc
       .font("Inter")
       .fontSize(9)
       .text(
-        "CountryX Climate Fund (Pvt) Ltd, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.",
+        `${countryClimateFundName}, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.`,
         70,
         720,
         { align: "center" }

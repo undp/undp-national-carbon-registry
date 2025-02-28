@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { FileHandlerInterface } from "../file-handler/filehandler.interface";
+import { FileHandlerInterface } from "../../file-handler/filehandler.interface";
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 
@@ -44,7 +44,8 @@ export class VoluntarilyCancellationCertificateGenerator {
 
     const spaceBetweenImages = 10;
 
-    const totalImageWidth = image1Width + image2Width + image3Width + 2 * spaceBetweenImages;
+    const totalImageWidth =
+      image1Width + image2Width + image3Width + 2 * spaceBetweenImages;
 
     // Start position for the first image (centering all images on the page)
     const startImageX = (doc.page.width - totalImageWidth) / 2;
@@ -55,10 +56,15 @@ export class VoluntarilyCancellationCertificateGenerator {
       width: image1Width,
       height: imageHeight,
     });
-    doc.image("images/SLCF_logo.jpg", startImageX + image1Width + spaceBetweenImages, startImageY, {
-      width: image2Width,
-      height: imageHeight,
-    });
+    doc.image(
+      "images/SLCF_logo.jpg",
+      startImageX + image1Width + spaceBetweenImages,
+      startImageY,
+      {
+        width: image2Width,
+        height: imageHeight,
+      }
+    );
     doc.image(
       "images/SLCCS_logo.png",
       startImageX + (image1Width + image2Width + 2 * spaceBetweenImages),
@@ -92,8 +98,12 @@ export class VoluntarilyCancellationCertificateGenerator {
     const startXPresentedTo = (doc.page.width - totalWidthPresentedTo) / 2;
 
     // Print "Presented to:" and company name
-    doc.font("Helvetica").text(labelText, startXPresentedTo, 220, { continued: true });
-    doc.font("Helvetica-Bold").text(valueText, doc.x, doc.y, { continued: false });
+    doc
+      .font("Helvetica")
+      .text(labelText, startXPresentedTo, 220, { continued: true });
+    doc
+      .font("Helvetica-Bold")
+      .text(valueText, doc.x, doc.y, { continued: false });
 
     doc.moveDown(1);
 
@@ -101,13 +111,19 @@ export class VoluntarilyCancellationCertificateGenerator {
     const labelByText = "Presented by: ";
     const labelByWidth = doc.widthOfString(labelByText, { font: "Helvetica" });
     const valueByText = "CountryX Climate Fund (Pvt) Ltd.";
-    const valueByWidth = doc.widthOfString(valueByText, { font: "Helvetica-Bold" });
+    const valueByWidth = doc.widthOfString(valueByText, {
+      font: "Helvetica-Bold",
+    });
     const totalWidthPresentedBy = labelByWidth + valueByWidth;
     const startXPresentedBy = (doc.page.width - totalWidthPresentedBy) / 2;
 
     // Print "Presented by:" and organization name
-    doc.font("Helvetica").text(labelByText, startXPresentedBy, doc.y, { continued: true });
-    doc.font("Helvetica-Bold").text(valueByText, doc.x, doc.y, { continued: false });
+    doc
+      .font("Helvetica")
+      .text(labelByText, startXPresentedBy, doc.y, { continued: true });
+    doc
+      .font("Helvetica-Bold")
+      .text(valueByText, doc.x, doc.y, { continued: false });
 
     doc.moveDown(2);
 
@@ -116,7 +132,9 @@ export class VoluntarilyCancellationCertificateGenerator {
     // Calculate text width for alignment
     const numberText = `${data.noOfSCERs} SCERs`;
     const unitText = "(tCO2 equivalent)";
-    const numberWidth = doc.widthOfString(numberText, { font: "Helvetica-Bold" });
+    const numberWidth = doc.widthOfString(numberText, {
+      font: "Helvetica-Bold",
+    });
     const unitWidth = doc.widthOfString(unitText, { font: "Helvetica" });
 
     // Calculate total width and starting position for centering
@@ -124,7 +142,9 @@ export class VoluntarilyCancellationCertificateGenerator {
     const startX = (doc.page.width - totalWidth) / 2; // Center the entire line on the page
 
     // Print the first part in bold
-    doc.font("Helvetica-Bold").text(numberText, startX, doc.y, { continued: true });
+    doc
+      .font("Helvetica-Bold")
+      .text(numberText, startX, doc.y, { continued: true });
 
     // Add a small space between texts to prevent overlapping
     doc.text(" ", { continued: true });
@@ -139,7 +159,9 @@ export class VoluntarilyCancellationCertificateGenerator {
     doc
       .fontSize(14)
       .font("Helvetica")
-      .text(`From ${data.projectName} is cancelled to inset`, 50, 330, { align: "center" })
+      .text(`From ${data.projectName} is cancelled to inset`, 50, 330, {
+        align: "center",
+      })
       .text("organizational level GHG emissions", 50, 360, { align: "center" })
       .text("of", 50, 390, { align: "center" });
 
@@ -151,9 +173,14 @@ export class VoluntarilyCancellationCertificateGenerator {
     doc
       .fontSize(14)
       .font("Helvetica")
-      .text(`quantified and verified for the year ${data.yearVerified}.`, 50, 450, {
-        align: "center",
-      });
+      .text(
+        `quantified and verified for the year ${data.yearVerified}.`,
+        50,
+        450,
+        {
+          align: "center",
+        }
+      );
 
     doc
       .fontSize(12)
@@ -228,7 +255,10 @@ export class VoluntarilyCancellationCertificateGenerator {
       });
     });
 
-    const url = await this.fileHandler.uploadFile("documents/" + filepath, content);
+    const url = await this.fileHandler.uploadFile(
+      "documents/" + filepath,
+      content
+    );
 
     return url;
   }

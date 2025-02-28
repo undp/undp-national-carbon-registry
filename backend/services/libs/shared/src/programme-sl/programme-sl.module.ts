@@ -1,12 +1,12 @@
 import { Logger, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ProgrammeTransfer } from "../entities/programme.transfer";
-import { ProgrammeTransferViewEntityQuery } from "../entities/programmeTransfer.view.entity";
+import { ProgrammeTransferViewEntityQuery } from "../view-entities/programmeTransfer.view.entity";
 import { Programme } from "../entities/programme.entity";
 import { UtilModule } from "../util/util.module";
 import { ConstantEntity } from "../entities/constants.entity";
 import { Company } from "../entities/company.entity";
-import { ProgrammeQueryEntity } from "../entities/programme.view.entity";
+import { ProgrammeQueryEntity } from "../view-entities/programme.view.entity";
 import { ProgrammeLedgerModule } from "../programme-ledger/programme-ledger.module";
 import { AsyncOperationsModule } from "../async-operations/async-operations.module";
 import { LocationModule } from "../location/location.module";

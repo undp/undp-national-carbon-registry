@@ -1,9 +1,9 @@
-import { ViewColumn, ViewEntity } from "typeorm"
-import { Company } from "./company.entity";
-import { Investment } from "./investment.entity";
+import { ViewColumn, ViewEntity } from "typeorm";
+import { Company } from "../entities/company.entity";
+import { Investment } from "../entities/investment.entity";
 
 @ViewEntity({
-    expression: `
+  expression: `
         SELECT investment.*, JSON_AGG(distinct "requester".*) as "requester", JSON_AGG(distinct "receiver".*) as "receiver", "receiver"."geographicalLocationCordintes" as "toGeo",
          "prog"."title" as "programmeTitle", "prog"."sector" as "programmeSector",
         JSON_AGG(distinct "sender".*) as "sender", "sender"."geographicalLocationCordintes" as "fromGeo", "prog"."proponentTaxVatId" as "proponentTaxVatId", 
@@ -17,37 +17,36 @@ import { Investment } from "./investment.entity";
     `,
 })
 export class InvestmentView extends Investment {
+  @ViewColumn()
+  programmeTitle: string;
 
-    @ViewColumn()
-    programmeTitle: string;
+  @ViewColumn()
+  programmeSector: string;
 
-    @ViewColumn()
-    programmeSector: string;
+  @ViewColumn()
+  sender: Company;
 
-    @ViewColumn()
-    sender: Company;
+  @ViewColumn()
+  requester: Company;
 
-    @ViewColumn()
-    requester: Company;
+  @ViewColumn()
+  receiver: Company;
 
-    @ViewColumn()
-    receiver: Company;
+  @ViewColumn()
+  proponentTaxVatId: string[];
 
-    @ViewColumn()
-    proponentTaxVatId: string[];
+  @ViewColumn()
+  proponentPercentage: number[];
 
-    @ViewColumn()
-    proponentPercentage: number[];
+  @ViewColumn()
+  companyId: string[];
 
-    @ViewColumn()
-    companyId: string[];
+  @ViewColumn()
+  creditOwnerPercentage: number[];
 
-    @ViewColumn()
-    creditOwnerPercentage: number[];
+  @ViewColumn()
+  toGeo: any;
 
-    @ViewColumn()
-    toGeo: any;
-
-    @ViewColumn()
-    fromGeo: any;
+  @ViewColumn()
+  fromGeo: any;
 }

@@ -3,7 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 import { CompanyService } from "../company/company.service";
 import { instanceToPlain } from "class-transformer";
 import { CaslAbilityFactory } from "../casl/casl-ability.factory";
-import { API_KEY_SEPARATOR } from "../constants";
+import { API_KEY_SEPARATOR } from "../constants/constants";
 import { JWTPayload } from "../dto/jwt.payload";
 import { UserService } from "../user/user.service";
 import { HelperService } from "../util/helpers.service";

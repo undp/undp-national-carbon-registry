@@ -4,7 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { StatList } from "@app/shared/dto/stat.list.dto";
 import { StatType } from "@app/shared/enum/stat.type.enum";
-import { ProgrammeTransferViewEntityQuery } from "@app/shared/entities/programmeTransfer.view.entity";
+import { ProgrammeTransferViewEntityQuery } from "@app/shared/view-entities/programmeTransfer.view.entity";
 import { QueryDto } from "@app/shared/dto/query.dto";
 import { FilterEntry } from "@app/shared/dto/filter.entry";
 import { SortEntry } from "@app/shared/dto/sort.entry";
@@ -23,8 +23,8 @@ import {
 import { CompanyRole } from "@app/shared/enum/company.role.enum";
 import { TransferStatus } from "@app/shared/enum/transform.status.enum";
 import { DataCountResponseDto } from "@app/shared/dto/data.count.response";
-import { InvestmentView } from "@app/shared/entities/investment.view.entity";
-import { NDCActionViewEntity } from "@app/shared/entities/ndc.view.entity";
+import { InvestmentView } from "@app/shared/view-entities/investment.view.entity";
+import { NDCActionViewEntity } from "@app/shared/view-entities/ndc.view.entity";
 import { SYSTEM_TYPE } from "@app/shared/enum/system.names.enum";
 import { Emission } from "@app/shared/entities/emission.entity";
 import { Projection } from "@app/shared/entities/projection.entity";
@@ -41,7 +41,7 @@ import { User } from "@app/shared/entities/user.entity";
 import { CreditRetirementSl } from "@app/shared/entities/creditRetirementSl.entity";
 import { SLDashboardProjectStage } from "@app/shared/enum/slDashboardProjectStage.enum";
 import { DataResponseDto } from "@app/shared/dto/data.response.dto";
-import { CreditRetirementSlView } from "@app/shared/entities/creditRetirementSl.view.entity";
+import { CreditRetirementSlView } from "@app/shared/view-entities/creditRetirementSl.view.entity";
 import { ProgrammeAuditLogSl } from "@app/shared/entities/programmeAuditLogSl.entity";
 
 @Injectable()

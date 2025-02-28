@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { FileHandlerInterface } from "../file-handler/filehandler.interface";
-import { HelperService } from "./helpers.service";
+import { FileHandlerInterface } from "../../file-handler/filehandler.interface";
+import { HelperService } from "../helpers.service";
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 
@@ -22,14 +22,13 @@ export class AuthorizationLetterGen {
     designDocUrl,
     methodologyDocUrl
   ) {
-
     const country = this.configService.get("systemCountryName");
     const minister = this.configService.get("docGenerate.ministerName");
-    const ministry = this.configService.get('docGenerate.ministryName');
+    const ministry = this.configService.get("docGenerate.ministryName");
     const filepath = `LETTER_OF_AUTHORISATION_${programmeId}.pdf`;
     const date = new Date().toDateString();
     const refNo = this.helperService.generateRandomNumber();
-    let orgName;  
+    let orgName;
     if (orgs.length > 2) {
       orgName = orgs.slice(0, orgs.length - 1).join(", ");
       orgName += " and " + orgs[orgs.length - 1];

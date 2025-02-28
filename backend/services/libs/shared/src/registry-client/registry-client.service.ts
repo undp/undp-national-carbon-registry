@@ -3,7 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { UserDto } from "../dto/user.dto";
 import axios from "axios";
 import { ProgrammeApprove } from "../dto/programme.approve";
-import { AuthorizationLetterGen } from "../util/authorisation.letter.gen";
+import { AuthorizationLetterGen } from "../util/document-generators/authorisation.letter.gen";
 import { CompanyService } from "../company/company.service";
 import { ProgrammeService } from "../programme/programme.service";
 import { InjectRepository } from "@nestjs/typeorm";

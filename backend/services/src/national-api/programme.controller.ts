@@ -39,9 +39,9 @@ import { ProgrammeTransferCancel } from "@app/shared/dto/programme.transfer.canc
 import { ProgrammeTransferReject } from "@app/shared/dto/programme.transfer.reject";
 import { ProgrammeTransferRequest } from "@app/shared/dto/programme.transfer.request";
 import { QueryDto } from "@app/shared/dto/query.dto";
-import { ProgrammeDocumentViewEntity } from "@app/shared/entities/document.view.entity";
+import { ProgrammeDocumentViewEntity } from "@app/shared/view-entities/document.view.entity";
 import { Investment } from "@app/shared/entities/investment.entity";
-import { NDCActionViewEntity } from "@app/shared/entities/ndc.view.entity";
+import { NDCActionViewEntity } from "@app/shared/view-entities/ndc.view.entity";
 import { Programme } from "@app/shared/entities/programme.entity";
 import { ProgrammeTransfer } from "@app/shared/entities/programme.transfer";
 import { ApiKeyJwtAuthGuard } from "@app/shared/auth/guards/api-jwt-key.guard";

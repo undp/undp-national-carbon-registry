@@ -1,6 +1,6 @@
 import { ViewColumn, ViewEntity } from "typeorm";
-import { Company } from "./company.entity";
-import { CreditRetirementSl } from "./creditRetirementSl.entity";
+import { Company } from "../entities/company.entity";
+import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
 
 @ViewEntity({
   expression: `

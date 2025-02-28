@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional, getSchemaPath } from "@nestjs/swagger";
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from "@nestjs/swagger";
 import {
   ArrayMinSize,
   IsArray,
@@ -23,9 +27,9 @@ import { Sector } from "../enum/sector.enum";
 import { Type } from "class-transformer";
 import { MitigationProperties } from "./mitigation.properties";
 import { NDCActionDto } from "./ndc.action.dto";
-import { IsNumericLength } from "../util/validNumericLength.decorator";
-import { IsNotPastDate } from "../util/isNotPastDate.decorator";
-import { IsNotLesserThanStartDate } from "../util/isNotLesserThanStartDate.decorator";
+import { IsNumericLength } from "../decorators/validNumericLength.decorator";
+import { IsNotPastDate } from "../decorators/isNotPastDate.decorator";
+import { IsNotLesserThanStartDate } from "../decorators/isNotLesserThanStartDate.decorator";
 
 export class ProgrammeDto {
   @ApiProperty()
@@ -42,14 +46,16 @@ export class ProgrammeDto {
   @IsNotEmpty()
   @IsEnum(SectoralScope, {
     message:
-      "Invalid sectoral scope. Supported following sectoral scope:" + Object.values(SectoralScope),
+      "Invalid sectoral scope. Supported following sectoral scope:" +
+      Object.values(SectoralScope),
   })
   sectoralScope: SectoralScope;
 
   @ApiProperty({ enum: Sector })
   @IsNotEmpty()
   @IsEnum(Sector, {
-    message: "Invalid sector. Supported following sector:" + Object.values(Sector),
+    message:
+      "Invalid sector. Supported following sector:" + Object.values(Sector),
   })
   sector: Sector;
 

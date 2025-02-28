@@ -14,7 +14,7 @@ import { ProgrammeDocument } from "@app/shared/entities/programme.document";
 import { AnnualReportGen } from "@app/shared/annualreport/annual.report.gen";
 import { ProgrammeLedgerService } from "@app/shared/programme-ledger/programme-ledger.service";
 import { EmailHelperService } from "@app/shared/email-helper/email-helper.service";
-import { AuthorizationLetterGen } from "@app/shared/util/authorisation.letter.gen";
+import { AuthorizationLetterGen } from "@app/shared/util/document-generators/authorisation.letter.gen";
 @Injectable()
 export class DataImporterService {
   constructor(

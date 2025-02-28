@@ -28,7 +28,7 @@ import { PasswordUpdateDto } from "../dto/password.update.dto";
 import { BasicResponseDto } from "../dto/basic.response.dto";
 import { Role } from "../casl/role.enum";
 import { nanoid } from "nanoid";
-import { API_KEY_SEPARATOR } from "../constants";
+import { API_KEY_SEPARATOR } from "../constants/constants";
 import { DataResponseDto } from "../dto/data.response.dto";
 import { DataListResponseDto } from "../dto/data.list.response";
 import { ConfigService } from "@nestjs/config";
