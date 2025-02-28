@@ -1,39 +1,41 @@
 import { Injectable } from "@nestjs/common";
-import { FileHandlerInterface } from "../file-handler/filehandler.interface";
-import { CreditType } from "../enum/creditType.enum";
+import { FileHandlerInterface } from "../../file-handler/filehandler.interface";
+import { CreditType } from "../../enum/creditType.enum";
 import { ConfigService } from "@nestjs/config";
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 
-export interface ProjectRegistrationCertificateData {
+export interface CreditIssueCertificateData {
   projectName: string;
   companyName: string;
   creditType: string;
   certificateNo: string;
-  regDate: string;
   issueDate: string;
-  sector: string;
-  estimatedCredits: string;
+  monitoringStartDate: string;
+  monitoringEndDate: string;
+  issuedCredits: number;
+  startCreditSerialNo: string;
+  endCreditSerialNo: string;
 }
 
 @Injectable()
-export class ProjectRegistrationCertificateGenerator {
+export class CreditIssueCertificateGenerator {
   constructor(
     private fileHandler: FileHandlerInterface,
     private configService: ConfigService
   ) {}
 
-  async generateProjectRegistrationCertificate(
-    data: ProjectRegistrationCertificateData,
-    programmeId: string,
+  async generateCreditIssueCertificate(
+    data: CreditIssueCertificateData,
     isPreview?: boolean
   ) {
     const doc = new PDFDocument({
       margin: 50,
     });
 
-    const filepath = `PROJECT_REGISTRATION_CERTIFICATE_${programmeId}.pdf`;
-    const country = this.configService.get("systemCountryName");
+    const refFileName = data.certificateNo.replace(/\//g, "_");
+    const filepath = `CREDIT_ISSUANCE_CERTIFICATE_${refFileName}.pdf`;
+    const country = this.configService.get("systemCountryName") || "CountryX";
 
     // Define the output file path
     const stream = fs.createWriteStream("/tmp/" + filepath);
@@ -82,7 +84,7 @@ export class ProjectRegistrationCertificateGenerator {
       .fontSize(30)
       .font("Inter-Bold")
       .fillColor("#1f4e79")
-      .text("Project Registration Certificate", { align: "center" });
+      .text("Credit Issuance Certificate", { align: "center" });
 
     if (isPreview) {
       this.addPreviewWatermark(doc);
@@ -92,40 +94,56 @@ export class ProjectRegistrationCertificateGenerator {
 
     doc
       .font("Inter-Bold")
-      .fontSize(16)
-      .text("CountryX Climate Fund (Pvt) Ltd", 70, 180, { align: "center" });
+      .fontSize(14)
+      .text(`CountryX Climate Fund (Pvt) Ltd`, 70, 180, { align: "center" });
 
     doc.moveDown(0.5);
 
-    doc.font("Inter").fontSize(14).text("registers", { align: "center" });
-
-    doc.moveDown(0.5);
-
-    doc
-      .font("Inter-Bold")
-      .fontSize(16)
-      .text(`${data.projectName}`, { align: "center" });
-
-    doc.moveDown(0.5);
-
-    doc.font("Inter").fontSize(14).text("developed by", { align: "center" });
+    doc.font("Inter").fontSize(12).text("Issues", { align: "center" });
 
     doc.moveDown(0.5);
 
     doc
       .font("Inter")
-      .fontSize(16)
-      .text(`${data.companyName}`, { align: "center" });
+      .fontSize(12)
+      .text("CountryX Certified Emission Reductions (SCER)", {
+        align: "center",
+      });
 
     doc.moveDown(0.5);
 
-    doc.font("Inter").fontSize(14).text("under", { align: "center" });
+    doc.font("Inter").fontSize(12).text("for", { align: "center" });
 
     doc.moveDown(0.5);
 
     doc
       .font("Inter-Bold")
-      .fontSize(16)
+      .fontSize(14)
+      .text(`${data.projectName}`, { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc.font("Inter").fontSize(12).text("of", { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter")
+      .fontSize(14)
+      .text(`${data.companyName}`, { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter")
+      .fontSize(12)
+      .text("registered under", { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter-Bold")
+      .fontSize(14)
       .text(`${track} of ${country} Carbon Crediting Scheme`, {
         align: "center",
       });
@@ -134,7 +152,7 @@ export class ProjectRegistrationCertificateGenerator {
 
     doc
       .font("Inter")
-      .fontSize(14)
+      .fontSize(12)
       .text("In accordance with the SLCCS eligibility criteria and", {
         align: "center",
       });
@@ -143,59 +161,75 @@ export class ProjectRegistrationCertificateGenerator {
 
     doc
       .font("Inter")
-      .fontSize(14)
-      .text("approved CDM methodology", { align: "center" });
+      .fontSize(12)
+      .text("Approved CDM methodology (AMS I.D Version 18.0)", {
+        align: "center",
+      });
+
+    doc.moveDown(1);
 
     doc
-      .fontSize(12)
+      .fontSize(11)
       .font("Inter-Bold")
-      .text("Certificate No ", 170, 425, {
+      .text("Certificate No ", 180, 440, {
         continued: true,
       })
-      .text(`: ${data.certificateNo}`, 215, 425, {
+      .text(`: ${data.certificateNo}`, 229, 440, {
         continued: false,
       })
-      .moveDown(1)
-      .text("Date of registration ", 170, doc.y, {
+      .moveDown(0.4)
+      .text("Date of issuance ", 180, doc.y, {
         continued: true,
       })
-      .text(`: ${data.regDate}`, 183.5, doc.y, {
+      .text(`: ${data.issueDate}`, 214, doc.y, {
         continued: false,
       })
-      .moveDown(1)
-      .text("Date of issue ", 170, doc.y, {
+      .moveDown(0.4)
+      .text("Monitoring Period ", 180, doc.y, {
         continued: true,
       })
-      .text(`: ${data.issueDate}`, 220, doc.y, {
-        continued: false,
-      })
-      .moveDown(1)
-      .text("Sector ", 170, doc.y, {
-        continued: true,
-      })
-      .text(`: ${data.sector}`, 257.5, doc.y, {
-        continued: false,
-      })
-      .moveDown(1)
-      .text("Methodology ", 170, doc.y, {
-        continued: true,
-      })
-      .text(`: AMS I.D Version 18.0`, 218.5, doc.y, {
-        continued: false,
-      })
+      .text(
+        `: ${data.monitoringStartDate} - ${data.monitoringEndDate}`,
+        207.5,
+        doc.y,
+        {
+          continued: false,
+        }
+      )
       .moveDown(1);
 
     doc
       .font("Inter-Bold")
       .fontSize(16)
       .text(
-        `Estimated Annual Emission Reductions: ${data.estimatedCredits} (tCO₂eq)`,
+        `${country} Credit Emission Reductions: ${data.issuedCredits} (tCO₂eq)`,
         100,
         doc.y
-      );
+      )
+      .moveDown(1.5);
+
+    doc
+      .fontSize(11)
+      .font("Inter")
+      .text("Serial Range ", 180, doc.y, {
+        continued: true,
+      })
+      .text(": Block start ", 185, doc.y, {
+        continued: true,
+      })
+      .text(`: ${data.startCreditSerialNo}`, 195, doc.y, {
+        continued: false,
+      })
+      .moveDown(0.4)
+      .text(": Block end ", 252.5, doc.y, {
+        continued: true,
+      })
+      .text(`: ${data.endCreditSerialNo}`, 267.5, doc.y, {
+        continued: false,
+      })
+      .moveDown(1);
 
     // Chairman Signature
-
     const chairmanSignatureImagePath = "public/signatures/chairman.jpg";
 
     if (fs.existsSync(chairmanSignatureImagePath)) {
@@ -229,6 +263,7 @@ export class ProjectRegistrationCertificateGenerator {
 
     // CEO Signature
 
+    // Define image paths
     const ceoSignatureImagePath = "public/signatures/ceo.jpg";
 
     if (fs.existsSync(ceoSignatureImagePath)) {

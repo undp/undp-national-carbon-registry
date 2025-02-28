@@ -1,10 +1,10 @@
-import { ViewColumn, ViewEntity } from "typeorm"
-import { Company } from "./company.entity";
-import { Programme } from "./programme.entity"
-import { NDCAction } from "./ndc.action.entity";
+import { ViewColumn, ViewEntity } from "typeorm";
+import { Company } from "../entities/company.entity";
+import { Programme } from "../entities/programme.entity";
+import { NDCAction } from "../entities/ndc.action.entity";
 
 @ViewEntity({
-    expression: `
+  expression: `
     SELECT ndc_action.*, programme."companyId" as "companyId",programme."title" as "programmeName", programme."emissionReductionExpected" as "emissionReductionExpected", programme."emissionReductionAchieved" as "emissionReductionAchieved", json_agg(DISTINCT "company".*) as "company" FROM "ndc_action" "ndc_action" 
     LEFT JOIN "programme" "programme" ON "programme"."programmeId" =  "ndc_action"."programmeId"
     LEFT JOIN "company" "company" ON "company"."companyId" = ANY("programme"."companyId") 
@@ -12,19 +12,18 @@ import { NDCAction } from "./ndc.action.entity";
     `,
 })
 export class NDCActionViewEntity extends NDCAction {
+  @ViewColumn()
+  company: Company[];
 
-    @ViewColumn()
-    company: Company[];
+  @ViewColumn()
+  companyId: number[];
 
-    @ViewColumn()
-    companyId: number[];
+  @ViewColumn()
+  programmeName: string;
 
-    @ViewColumn()
-    programmeName: string;
+  @ViewColumn()
+  emissionReductionExpected: string;
 
-    @ViewColumn()
-    emissionReductionExpected: string;
-
-    @ViewColumn()
-    emissionReductionAchieved: string;
+  @ViewColumn()
+  emissionReductionAchieved: string;
 }

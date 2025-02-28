@@ -28,15 +28,15 @@ import { Sector } from "../enum/sector.enum";
 import { Type } from "class-transformer";
 import { MitigationProperties } from "./mitigation.properties";
 import { NDCActionDto } from "./ndc.action.dto";
-import { IsNumericLength } from "../util/validNumericLength.decorator";
-import { IsNotPastDate } from "../util/isNotPastDate.decorator";
-import { IsNotLesserThanStartDate } from "../util/isNotLesserThanStartDate.decorator";
+import { IsNumericLength } from "../decorators/validNumericLength.decorator";
+import { IsNotPastDate } from "../decorators/isNotPastDate.decorator";
+import { IsNotLesserThanStartDate } from "../decorators/isNotLesserThanStartDate.decorator";
 import { ProjectCategory } from "../enum/projectCategory.enum";
 import { ProjectGeography } from "../enum/projectGeography.enum";
 import { ProjectStatus } from "../enum/projectStatus.enum";
 import { ProjectProposalStage } from "../enum/projectProposalStage.enum";
 import { CreditType } from "../enum/creditType.enum";
-import { IsTwoDecimalPoints } from "../util/twoDecimalPointNumber.decorator";
+import { IsTwoDecimalPoints } from "../decorators/twoDecimalPointNumber.decorator";
 
 export class ProgrammeSlDto {
   @ApiProperty()

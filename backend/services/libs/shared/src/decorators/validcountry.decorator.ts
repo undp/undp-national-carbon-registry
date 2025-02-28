@@ -6,7 +6,7 @@ import {
   ValidationOptions,
   registerDecorator,
 } from "class-validator";
-import { CountryService } from "./country.service";
+import { CountryService } from "../util/country.service";
 
 @ValidatorConstraint({ name: "isValidCountry", async: true })
 @Injectable()

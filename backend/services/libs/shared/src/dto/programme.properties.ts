@@ -16,7 +16,7 @@ import {
 } from "class-validator";
 import { GHGs } from "../enum/ghgs.enum";
 import { SourceOfFunding } from "../enum/sourceoffinding.enum";
-import { IsValidCountry } from "../util/validcountry.decorator";
+import { IsValidCountry } from "../decorators/validcountry.decorator";
 
 export class ProgrammeProperties {
   @ApiPropertyOptional()
@@ -56,7 +56,7 @@ export class ProgrammeProperties {
 
   @ApiPropertyOptional()
   @IsPositive()
-  @ValidateIf(o => o.article6trade === true)
+  @ValidateIf((o) => o.article6trade === true)
   @IsNumber()
   @IsOptional()
   carbonPriceUSDPerTon?: number;

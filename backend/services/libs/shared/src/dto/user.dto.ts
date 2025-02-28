@@ -13,7 +13,7 @@ import {
   ValidateNested,
 } from "class-validator";
 import { Role } from "../casl/role.enum";
-import MutuallyExclusive from "../util/mutualexclusive.decorator";
+import MutuallyExclusive from "../decorators/mutualexclusive.decorator";
 import { OrganisationDto } from "./organisation.dto";
 
 export class UserDto {

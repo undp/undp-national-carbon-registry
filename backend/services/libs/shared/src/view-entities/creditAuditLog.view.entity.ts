@@ -1,9 +1,9 @@
-import { ViewColumn, ViewEntity } from "typeorm"
-import { Company } from "./company.entity";
-import { CreditAuditLog } from "./credit.audit.log.entity";
+import { ViewColumn, ViewEntity } from "typeorm";
+import { Company } from "../entities/company.entity";
+import { CreditAuditLog } from "../entities/credit.audit.log.entity";
 
 @ViewEntity({
-	expression: `
+  expression: `
         SELECT CAL.*,
 					PROG.TITLE AS "programmeTitle",
 					PROG.SECTOR AS "programmeSector",
@@ -19,20 +19,18 @@ import { CreditAuditLog } from "./credit.audit.log.entity";
     `,
 })
 export class CreditAuditLogViewEntity extends CreditAuditLog {
+  @ViewColumn()
+  programmeTitle: string;
 
-	@ViewColumn()
-	programmeTitle: string;
+  @ViewColumn()
+  programmeSector: string;
 
-	@ViewColumn()
-	programmeSector: string;
+  @ViewColumn()
+  programmeCompanyId: number[];
 
-	@ViewColumn()
-	programmeCompanyId: number[]
+  @ViewColumn()
+  company: Company[];
 
-	@ViewColumn()
-	company: Company[];
-
-	@ViewColumn()
-	created_epoch: string;
-
+  @ViewColumn()
+  created_epoch: string;
 }

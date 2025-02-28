@@ -14,7 +14,7 @@ import {
 } from "class-validator";
 import { Role } from "../casl/role.enum";
 import { CompanyRole } from "../enum/company.role.enum";
-import { IsValidCountry } from "../util/validcountry.decorator";
+import { IsValidCountry } from "../decorators/validcountry.decorator";
 import { SectoralScope } from "@undp/serial-number-gen";
 import { CompanyState } from "../enum/company.state.enum";
 import { GovDepartment } from "../enum/govDep.enum";
@@ -24,7 +24,10 @@ export class OrganisationDto {
   companyId: number;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API, CompanyRole.MINISTRY].includes(c.companyRole)
+    (c) =>
+      ![CompanyRole.GOVERNMENT, CompanyRole.API, CompanyRole.MINISTRY].includes(
+        c.companyRole
+      )
   )
   @IsNotEmpty()
   @IsString()
@@ -32,7 +35,10 @@ export class OrganisationDto {
   taxId: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API, CompanyRole.MINISTRY].includes(c.companyRole)
+    (c) =>
+      ![CompanyRole.GOVERNMENT, CompanyRole.API, CompanyRole.MINISTRY].includes(
+        c.companyRole
+      )
   )
   @IsNotEmpty()
   @IsString()
@@ -59,7 +65,7 @@ export class OrganisationDto {
   @IsNotEmpty({ each: true })
   @IsOptional()
   regions: string[];
-  
+
   @ApiPropertyOptional()
   @IsArray()
   @ArrayMinSize(1)
@@ -67,7 +73,7 @@ export class OrganisationDto {
   @IsNotEmpty({ each: true })
   @IsOptional()
   provinces: string[];
-  
+
   @ValidateIf(
     (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
   )
@@ -121,7 +127,9 @@ export class OrganisationDto {
   @ApiProperty({ enum: GovDepartment })
   @IsNotEmpty()
   @IsEnum(GovDepartment, {
-      message: 'Invalid Government Department. Supported following Departments:' + Object.values(GovDepartment)
+    message:
+      "Invalid Government Department. Supported following Departments:" +
+      Object.values(GovDepartment),
   })
   govDep: GovDepartment;
 
@@ -129,9 +137,10 @@ export class OrganisationDto {
   @ApiProperty({ enum: Ministry })
   @IsNotEmpty()
   @IsEnum(Ministry, {
-      message: 'Invalid sector. Supported following sector:' + Object.values(Ministry)
+    message:
+      "Invalid sector. Supported following sector:" + Object.values(Ministry),
   })
-  ministry: Ministry;  
+  ministry: Ministry;
 
   @ValidateIf((c) => c.companyRole === CompanyRole.MINISTRY)
   @IsArray()
@@ -139,8 +148,10 @@ export class OrganisationDto {
   @MaxLength(100, { each: true })
   @IsNotEmpty({ each: true })
   @IsEnum(SectoralScope, {
-      each: true,
-      message: 'Invalid sectoral scope. Supported following sectoral scope:' + Object.values(SectoralScope)
+    each: true,
+    message:
+      "Invalid sectoral scope. Supported following sectoral scope:" +
+      Object.values(SectoralScope),
   })
   @ApiProperty({
     type: [String],

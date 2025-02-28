@@ -8,19 +8,19 @@ import { HelperService } from "./helpers.service";
 import { SLCFSignsDto } from "../dto/slcfSigns.dto";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
 import { SLCFCertificateType } from "../enum/certificate.type.enum";
-import { ProjectRegistrationCertificateGenerator } from "./projectRegistrationCertificate.gen";
+import { ProjectRegistrationCertificateGenerator } from "./document-generators/projectRegistrationCertificate.gen";
 import { CreditType } from "../enum/creditType.enum";
 import { DateUtilService } from "./dateUtil.service";
 import {
   ProjectCategory,
   SlProjectCategoryMap,
 } from "../enum/projectCategory.enum";
-import { CreditIssueCertificateGenerator } from "./creditIssueCertificate.gen";
-import { VoluntarilyCancellationCertificateGenerator } from "./voluntarilyCancellationCertificate.gen";
+import { CreditIssueCertificateGenerator } from "./document-generators/creditIssueCertificate.gen";
+import { VoluntarilyCancellationCertificateGenerator } from "./document-generators/voluntarilyCancellationCertificate.gen";
 import { User } from "../entities/user.entity";
 import { Role } from "../casl/role.enum";
 import { CompanyRole } from "../enum/company.role.enum";
-import { CarbonNeutralCertificateGenerator } from "./carbonNeutralCertificate.gen";
+import { CarbonNeutralCertificateGenerator } from "./document-generators/carbonNeutralCertificate.gen";
 
 @Injectable()
 export class ConfigurationSettingsService {

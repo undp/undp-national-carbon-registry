@@ -1,50 +1,51 @@
 import { Injectable } from "@nestjs/common";
-import { FileHandlerInterface } from "../file-handler/filehandler.interface";
-import { CreditType } from "../enum/creditType.enum";
+import { FileHandlerInterface } from "../../file-handler/filehandler.interface";
+import { CreditType } from "../../enum/creditType.enum";
 import { ConfigService } from "@nestjs/config";
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 
-export interface CarbonNeutralCertificateData {
+export interface ProjectRegistrationCertificateData {
   projectName: string;
   companyName: string;
-  scope: string;
+  creditType: string;
   certificateNo: string;
+  regDate: string;
   issueDate: string;
-  creditAmount: number;
-  orgBoundary: string;
-  assessmentYear: number;
-  assessmentPeriod: string;
+  sector: string;
+  estimatedCredits: string;
 }
 
 @Injectable()
-export class CarbonNeutralCertificateGenerator {
+export class ProjectRegistrationCertificateGenerator {
   constructor(
     private fileHandler: FileHandlerInterface,
     private configService: ConfigService
   ) {}
 
-  async generateCarbonNeutralCertificate(
-    data: CarbonNeutralCertificateData,
+  async generateProjectRegistrationCertificate(
+    data: ProjectRegistrationCertificateData,
+    programmeId: string,
     isPreview?: boolean
   ) {
     const doc = new PDFDocument({
       margin: 50,
     });
 
-    const refFileName = data.certificateNo.replace(/\//g, "_");
-    const filepath = `CARBON_NEUTRAL_CERTIFICATE_${refFileName}.pdf`;
-    const country = this.configService.get("systemCountryName") || "CountryX";
-    const countryClimateFundName =
-      this.configService.get("countryClimateFundName") ||
-      "CountryX Climate Fund (Pvt) Ltd";
+    const filepath = `PROJECT_REGISTRATION_CERTIFICATE_${programmeId}.pdf`;
+    const country = this.configService.get("systemCountryName");
+
     // Define the output file path
     const stream = fs.createWriteStream("/tmp/" + filepath);
     doc.pipe(stream);
 
+    const track =
+      data.creditType === CreditType.TRACK_1 ? "Track I" : "Track II";
+
     // Add logo
     const image1Width = 45;
-    const image2Width = 75;
+    // const image2Width = 60;
+    const image2Width = 130;
 
     const imageHeight = 60;
     const image2Height = 65;
@@ -53,8 +54,12 @@ export class CarbonNeutralCertificateGenerator {
 
     const totalImageWidth = image1Width + image2Width + 2 * spaceBetweenImages;
 
+    // Start position for the first image (centering all images on the page)
     const startImageX = (doc.page.width - totalImageWidth) / 2;
-    const startImageY = 50;
+    const startImageY = 50; // vertical position where images will be placed
+
+    doc.registerFont("Inter", "fonts/Inter-Regular.ttf");
+    doc.registerFont("Inter-Bold", "fonts/Inter-Bold.ttf");
 
     // Draw each image
     doc.image("images/sri-lanka-emblem.png", startImageX, startImageY, {
@@ -62,7 +67,7 @@ export class CarbonNeutralCertificateGenerator {
       height: imageHeight,
     });
     doc.image(
-      "images/SLCF_logo.jpg",
+      "images/SLCCS_logo.png",
       startImageX + image1Width + spaceBetweenImages,
       startImageY,
       {
@@ -71,15 +76,13 @@ export class CarbonNeutralCertificateGenerator {
       }
     );
     doc.moveDown(2);
-    doc.registerFont("Inter", "fonts/Inter-Regular.ttf");
-    doc.registerFont("Inter-Bold", "fonts/Inter-Bold.ttf");
 
     // Title
     doc
       .fontSize(30)
       .font("Inter-Bold")
-      .fillColor("#134e9e")
-      .text("Carbon Neutral Certificate", { align: "center" });
+      .fillColor("#1f4e79")
+      .text("Project Registration Certificate", { align: "center" });
 
     if (isPreview) {
       this.addPreviewWatermark(doc);
@@ -89,159 +92,110 @@ export class CarbonNeutralCertificateGenerator {
 
     doc
       .font("Inter-Bold")
-      .fontSize(14)
-      .text(`Presented to: ${data.companyName}`, 70, 180, { align: "center" });
+      .fontSize(16)
+      .text("CountryX Climate Fund (Pvt) Ltd", 70, 180, { align: "center" });
+
     doc.moveDown(0.5);
+
+    doc.font("Inter").fontSize(14).text("registers", { align: "center" });
+
+    doc.moveDown(0.5);
+
     doc
       .font("Inter-Bold")
-      .fontSize(14)
-      .text(`Presented by: ${countryClimateFundName}`, {
-        align: "center",
-      });
-
-    doc.moveDown(1);
-
-    doc
-      .font("Inter")
-      .fontSize(12)
-      .text(`${countryClimateFundName}. certifies that`, {
-        align: "center",
-      });
-
-    doc.moveDown(0.5);
-
-    doc
-      .font("Inter")
-      .fontSize(12)
-      .text(`${data.companyName}`, { align: "center" });
-
-    doc.moveDown(0.5);
-
-    doc
-      .font("Inter")
-      .fontSize(12)
-      .text(
-        `has inset its ${data.scope} GHG Emissions of ${data.creditAmount} tCO₂e`,
-        {
-          align: "center",
-        }
-      );
-
-    doc.moveDown(0.5);
-
-    doc
-      .font("Inter")
-      .fontSize(12)
-      .text(
-        `quantified and verified for the calendar year ${data.assessmentYear}`,
-        {
-          align: "center",
-        }
-      );
-
-    doc.moveDown(0.5);
-
-    doc
-      .font("Inter")
-      .fontSize(12)
-      .text(`${country} Certified Emission Reductions (SCER) of`, {
-        align: "center",
-      });
-
-    doc.moveDown(0.5);
-
-    doc
-      .font("Inter")
-      .fontSize(12)
+      .fontSize(16)
       .text(`${data.projectName}`, { align: "center" });
 
     doc.moveDown(0.5);
 
+    doc.font("Inter").fontSize(14).text("developed by", { align: "center" });
+
+    doc.moveDown(0.5);
+
     doc
       .font("Inter")
-      .fontSize(12)
-      .text(`registered under ${country} Carbon Crediting Scheme (SLCCS)`, {
+      .fontSize(16)
+      .text(`${data.companyName}`, { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc.font("Inter").fontSize(14).text("under", { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter-Bold")
+      .fontSize(16)
+      .text(`${track} of ${country} Carbon Crediting Scheme`, {
         align: "center",
       });
 
-    doc.moveDown(1);
+    doc.moveDown(0.5);
+
     doc
-      .font("Inter-Bold")
+      .font("Inter")
       .fontSize(14)
-      .text(`Assessment of ${data.scope} GHG Statement`, { align: "center" });
-    doc.moveDown(1);
+      .text("In accordance with the SLCCS eligibility criteria and", {
+        align: "center",
+      });
+
+    doc.moveDown(0.4);
 
     doc
-      .fontSize(11)
+      .font("Inter")
+      .fontSize(14)
+      .text("approved CDM methodology", { align: "center" });
+
+    doc
+      .fontSize(12)
       .font("Inter-Bold")
-      .fillColor("green")
-      .text("Scope ", 180, doc.y, {
+      .text("Certificate No ", 170, 425, {
         continued: true,
       })
-      .font("Inter")
-      .text(`: ${data.scope}`, 291, doc.y, {
+      .text(`: ${data.certificateNo}`, 215, 425, {
         continued: false,
       })
-      .moveDown(0.4)
-      .font("Inter-Bold")
-      .text("Methodology", 180, doc.y, {
+      .moveDown(1)
+      .text("Date of registration ", 170, doc.y, {
         continued: true,
       })
-      .font("Inter")
-      .text(`: ISO 14064-1-2018`, 255.5, doc.y, {
+      .text(`: ${data.regDate}`, 183.5, doc.y, {
         continued: false,
       })
-      .moveDown(0.4)
-      .font("Inter-Bold")
-      .text("Organization Boundary ", 180, doc.y, {
+      .moveDown(1)
+      .text("Date of issue ", 170, doc.y, {
         continued: true,
       })
-      .text("")
-      .font("Inter")
-      .text(`: ${data.orgBoundary}`, 334, doc.y, {
-        continued: false,
-        indent: -7,
-      })
-      .moveDown(0.4)
-      .font("Inter-Bold")
-      .text("Period of Assessment ", 180, doc.y, {
-        continued: true,
-      })
-      .font("Inter")
-      .text(`: ${data.assessmentPeriod}`, 207, doc.y, {
+      .text(`: ${data.issueDate}`, 220, doc.y, {
         continued: false,
       })
-      .moveDown(0.4)
-      .font("Inter-Bold")
-      .text("Verified by ", 180, doc.y, {
+      .moveDown(1)
+      .text("Sector ", 170, doc.y, {
         continued: true,
       })
-      .font("Inter")
-      .text(`: ${countryClimateFundName}.`, 267, doc.y, {
+      .text(`: ${data.sector}`, 257.5, doc.y, {
+        continued: false,
+      })
+      .moveDown(1)
+      .text("Methodology ", 170, doc.y, {
+        continued: true,
+      })
+      .text(`: AMS I.D Version 18.0`, 218.5, doc.y, {
         continued: false,
       })
       .moveDown(1);
 
     doc
-      .fontSize(11)
-      .font("Inter")
-      .fillColor("black")
-      .text("Certificate No ", 200, doc.y, {
-        continued: true,
-      })
-      .text(`: ${data.certificateNo}`, 237, doc.y, {
-        continued: false,
-      })
-      .moveDown(0.4)
-      .text("Date of Issues ", 200, doc.y, {
-        continued: true,
-      })
-      .text(`: ${data.issueDate}`, 236, doc.y, {
-        continued: false,
-      })
-      .moveDown(1);
+      .font("Inter-Bold")
+      .fontSize(16)
+      .text(
+        `Estimated Annual Emission Reductions: ${data.estimatedCredits} (tCO₂eq)`,
+        100,
+        doc.y
+      );
 
     // Chairman Signature
+
     const chairmanSignatureImagePath = "public/signatures/chairman.jpg";
 
     if (fs.existsSync(chairmanSignatureImagePath)) {
@@ -266,16 +220,15 @@ export class CarbonNeutralCertificateGenerator {
     doc
       .font("Inter")
       .fontSize(10)
-      .text(`${countryClimateFundName}.`, 100, 690, { align: "left" });
+      .text("CountryX Climate Fund (Pvt) Ltd.", 100, 690, { align: "left" });
 
-    doc.image("images/carbonNeutralLogo.jpg", 260, 580, {
+    doc.image("images/SLCF_logo.jpg", 260, 600, {
       width: 110,
-      height: 110,
+      height: 100,
     });
 
     // CEO Signature
 
-    // Define image paths
     const ceoSignatureImagePath = "public/signatures/ceo.jpg";
 
     if (fs.existsSync(ceoSignatureImagePath)) {
@@ -297,13 +250,13 @@ export class CarbonNeutralCertificateGenerator {
     doc
       .font("Inter")
       .fontSize(10)
-      .text(`${countryClimateFundName}.`, 378, 690, { align: "left" });
+      .text("CountryX Climate Fund (Pvt) Ltd.", 378, 690, { align: "left" });
 
     doc
       .font("Inter")
       .fontSize(9)
       .text(
-        `${countryClimateFundName}, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.`,
+        "CountryX Climate Fund (Pvt) Ltd, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.",
         70,
         720,
         { align: "center" }

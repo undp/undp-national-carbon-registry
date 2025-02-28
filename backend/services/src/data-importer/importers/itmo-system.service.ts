@@ -16,7 +16,7 @@ import { CompanyState } from "@app/shared/enum/company.state.enum";
 import { ProgrammeLedgerService } from "@app/shared/programme-ledger/programme-ledger.service";
 import { EmailTemplates } from "@app/shared/email-helper/email.template";
 import { EmailHelperService } from "@app/shared/email-helper/email-helper.service";
-import { AuthorizationLetterGen } from "@app/shared/util/authorisation.letter.gen";
+import { AuthorizationLetterGen } from "@app/shared/util/document-generators/authorisation.letter.gen";
 import { DataListResponseDto } from "@app/shared/dto/data.list.response";
 import { SYSTEM_TYPE } from "@app/shared/enum/system.names.enum";
 import { DocumentStatus } from "@app/shared/enum/document.status";
