@@ -1,6 +1,6 @@
 import { Row, Button, Form, Upload } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { CustomStepsProps } from '../CMAForm/StepProps';
+import { CustomStepsProps } from '../PDD/StepProps';
 import { RcFile } from 'antd/lib/upload';
 import { UploadOutlined } from '@ant-design/icons';
 import { ProcessSteps } from './ValidationStepperComponent';

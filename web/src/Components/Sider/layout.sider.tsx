@@ -18,6 +18,7 @@ import { LayoutSiderProps } from '../../Definitions/Definitions/layout.sider.def
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
 import { Role } from '../../Definitions/Enums/role.enum';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -51,12 +52,8 @@ const LayoutSider = (props: LayoutSiderProps) => {
 
   const items: MenuItem[] = [
     getItem(t('nav:dashboard'), 'dashboard', <DashboardOutlined />),
-    getItem(
-      t('nav:slcfprogrammes'),
-      'programmeManagementSLCF/viewAllProjects',
-      <AppstoreOutlined />
-    ),
-    getItem(t('nav:projectList'), 'programmeManagementSLCF/viewAll', <UnorderedListOutlined />),
+    getItem(t('nav:slcfprogrammes'), 'programmeManagement/viewAllProjects', <AppstoreOutlined />),
+    getItem(t('nav:projectList'), 'programmeManagement/viewAll', <UnorderedListOutlined />),
     getItem(t('nav:retirements'), 'retirementManagement/viewAll', <SplitCellsOutlined />),
     // getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
     // getItem(t('nav:cdmTransitionProjects'), 'cdmManagement/viewAll', <UnorderedListOutlined />),
@@ -81,20 +78,20 @@ const LayoutSider = (props: LayoutSiderProps) => {
   //   );
   // }
 
-  if (userInfoState?.companyRole !== CompanyRole.PROGRAMME_DEVELOPER) {
-    items.splice(
-      4,
-      0,
-      getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
-      getItem(t('nav:cdmTransitionProjects'), 'cdmManagement/viewAll', <UnorderedListOutlined />),
-      getItem(t('nav:verra'), 'verraManagement/viewAll', <AppstoreOutlined />),
-      getItem(t('nav:goldStandards'), 'goldStandardManagement/viewAll', <AppstoreOutlined />)
-    );
-  }
+  // if (userInfoState?.companyRole !== CompanyRole.PROGRAMME_DEVELOPER) {
+  //   items.splice(
+  //     4,
+  //     0,
+  //     getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
+  //     getItem(t('nav:cdmTransitionProjects'), 'cdmManagement/viewAll', <UnorderedListOutlined />),
+  //     getItem(t('nav:verra'), 'verraManagement/viewAll', <AppstoreOutlined />),
+  //     getItem(t('nav:goldStandards'), 'goldStandardManagement/viewAll', <AppstoreOutlined />)
+  //   );
+  // }
 
-  if (userInfoState?.userRole === Role.Root) {
-    items.push(getItem(t('nav:settings'), 'settings', <SettingOutlined />));
-  }
+  // if (userInfoState?.userRole === Role.Root) {
+  //   items.push(getItem(t('nav:settings'), 'settings', <SettingOutlined />));
+  // }
 
   const onClick: MenuProps['onClick'] = (e) => {
     navigate('/' + e.key);
@@ -110,7 +107,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
       <div className="layout-sider-div-container">
         <div
           className="layout-sider-heading-container"
-          onClick={() => navigate('/dashboard', { replace: true })}
+          onClick={() => navigate(ROUTES.DASHBOARD, { replace: true })}
         >
           <div className="logo">
             <img src={sliderLogo} alt="slider-logo" />
@@ -151,7 +148,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
                   item?.key === 'ndcManagement/viewAll' ||
                   item?.key === 'investmentManagement/viewAll' ||
                   item?.key === 'retirementManagement/viewAll' ||
-                  item?.key === 'programmeManagementSLCF/viewAll' ||
+                  item?.key === 'programmeManagement/viewAll' ||
                   item?.key === 'creditTransfers/viewAll'
                     ? 'custom-padding-left'
                     : item?.key === 'cdmManagement/viewAll'
@@ -159,7 +156,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
                     : ''
                 }
                 disabled={
-                  item?.key === 'programmeManagement/viewAll' ||
+                  // item?.key === 'programmeManagement/viewAll' ||
                   item?.key === 'cdmManagement/viewAll' ||
                   item?.key === 'goldStandardManagement/viewAll' ||
                   item?.key === 'verraManagement/viewAll'

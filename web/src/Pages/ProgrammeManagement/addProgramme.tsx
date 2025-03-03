@@ -1,13 +1,14 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ProgrammeCreationComponent } from '../../Components/Programme/AddNewProgramme/programmeCreationComponent';
+import { ProgrammeCreationComponent } from '../../Components/AddNewProgramme/ProgrammeCreationComponent';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const AddProgramme = () => {
   const navigate = useNavigate();
   const { i18n } = useTranslation(['common', 'addProgramme']);
 
   const onNavigateToProgrammeManagementView = () => {
-    navigate('/programmeManagement/viewAll');
+    navigate(ROUTES.VIEW_PROGRAMMES);
   };
 
   return (

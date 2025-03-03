@@ -44,6 +44,7 @@ import { Role } from '../../Definitions/Enums/role.enum';
 import { ProfileIcon } from '../../Components/IconComponents/ProfileIcon/profile.icon';
 import { ConfigurationSettingsType } from '../../Definitions/Definitions/settings.definitions';
 import { TransferActionModel } from '../../Components/Models/transferActionModel';
+import { API_PATHS } from '../../Config/apiConfig';
 
 type CompanyInfo = {
   name: string;
@@ -185,7 +186,7 @@ export const CreditTransferComponent = (props: any) => {
     }
 
     try {
-      const response: any = await post('national/programme/transferQuery', {
+      const response: any = await post(API_PATHS.PROJECT_TRANSFERS, {
         page: currentPage,
         size: pageSize,
         filterAnd: filter,
@@ -218,7 +219,7 @@ export const CreditTransferComponent = (props: any) => {
   const downloadTransferData = async () => {
     setLoading(true);
     try {
-      const response: any = await post('national/programme/transfers/download', {
+      const response: any = await post(API_PATHS.TRANSFER_DOWNLOAD, {
         filterAnd: dataQuery.filterAnd,
         filterOr: dataQuery.filterOr?.length > 0 ? dataQuery.filterOr : undefined,
         sort: dataQuery.sort,
@@ -250,8 +251,8 @@ export const CreditTransferComponent = (props: any) => {
   const getUserDetails = async () => {
     setLoading(true);
     try {
-      const userId = userInfoState?.id ? parseInt(userInfoState.id) : userInfoState?.id;
-      const response: any = await post('national/user/query', {
+      const userId = userInfoState?.id;
+      const response: any = await post(API_PATHS.USER_DETAILS, {
         page: 1,
         size: 10,
         filterAnd: [
@@ -305,7 +306,7 @@ export const CreditTransferComponent = (props: any) => {
   ) => {
     setLoading(true);
     try {
-      const response: any = await post('national/programme/' + endpoint, {
+      const response: any = await post(API_PATHS.TRANSFER_ACTION + endpoint, {
         requestId: reqId,
         comment: remarks,
       });
@@ -747,7 +748,7 @@ export const CreditTransferComponent = (props: any) => {
   };
 
   const onFreezeTransfer = async () => {
-    const response = await post('national/Settings/update', {
+    const response = await post(API_PATHS.TRANSFER_ON_FREEZE, {
       id: ConfigurationSettingsType.isTransferFrozen,
       settingValue: `${!isTransferFrozen}`,
     });

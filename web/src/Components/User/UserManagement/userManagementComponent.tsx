@@ -69,6 +69,7 @@ import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import CompanyRoleIcon from '../../IconComponents/CompanyRoleIcon/companyRoleIcon';
+import { API_PATHS } from '../../../Config/apiConfig';
 
 const { Search } = Input;
 
@@ -150,7 +151,7 @@ export const UserManagementComponent = (props: any) => {
   const deleteUser = async (record: UserTableDataType) => {
     setLoading(true);
     try {
-      const response = await del(`national/user/delete?userId=${record?.id}`);
+      const response = await del(API_PATHS.DELETE_USER(String(record?.id)));
       if (response.status === 200) {
         message.open({
           type: 'success',
@@ -344,6 +345,14 @@ export const UserManagementComponent = (props: any) => {
     } else return undefined;
   };
 
+  const fixFilterAnd = [
+    {
+      key: 'user"."isActive',
+      operation: '=',
+      value: true,
+    },
+  ];
+
   const filterAnd = () => {
     if (
       searchByTermUser !== null &&
@@ -354,6 +363,7 @@ export const UserManagementComponent = (props: any) => {
       filterByOrganisationType !== 'All'
     ) {
       return [
+        ...fixFilterAnd,
         {
           key: searchByTermUser,
           operation: 'like',
@@ -378,6 +388,7 @@ export const UserManagementComponent = (props: any) => {
       filterByRole !== 'All'
     ) {
       return [
+        ...fixFilterAnd,
         {
           key: searchByTermUser,
           operation: 'like',
@@ -397,6 +408,7 @@ export const UserManagementComponent = (props: any) => {
       filterByOrganisationType !== 'All'
     ) {
       return [
+        ...fixFilterAnd,
         {
           key: searchByTermUser,
           operation: 'like',
@@ -410,6 +422,7 @@ export const UserManagementComponent = (props: any) => {
       ];
     } else if (filterByOrganisationType !== 'All' && filterByRole !== 'All') {
       return [
+        ...fixFilterAnd,
         {
           key: 'companyRole',
           operation: '=',
@@ -423,6 +436,7 @@ export const UserManagementComponent = (props: any) => {
       ];
     } else if (filterByOrganisationType !== 'All') {
       return [
+        ...fixFilterAnd,
         {
           key: 'companyRole',
           operation: '=',
@@ -431,13 +445,14 @@ export const UserManagementComponent = (props: any) => {
       ];
     } else if (filterByRole !== 'All') {
       return [
+        ...fixFilterAnd,
         {
           key: 'role',
           operation: '=',
           value: filterByRole,
         },
       ];
-    } else return undefined;
+    } else return [...fixFilterAnd];
   };
 
   const sort = () => {
@@ -466,7 +481,7 @@ export const UserManagementComponent = (props: any) => {
   const getAllUser = async () => {
     setLoading(true);
     try {
-      const response: any = await post('national/user/query', getAllUserParams());
+      const response: any = await post(API_PATHS.USER_DETAILS, getAllUserParams());
       if (response && response.data) {
         const availableUsers = response.data.filter(
           (user: any) => user.companyRole !== CompanyRole.API
@@ -495,7 +510,7 @@ export const UserManagementComponent = (props: any) => {
   const downloadUserData = async () => {
     setLoading(true);
     try {
-      const response: any = await post('national/user/download', {
+      const response: any = await post(API_PATHS.DOWNLOAD_USER_DATA, {
         filterAnd: dataQuery.filterAnd,
         filterOr: dataQuery.filterOr?.length > 0 ? dataQuery.filterOr : undefined,
         sort: dataQuery.sort,
@@ -602,12 +617,9 @@ export const UserManagementComponent = (props: any) => {
           <Radio.Group onChange={onFilterOrganisationType} value={filterByOrganisationType}>
             <Space direction="vertical">
               <Radio value="All">{t('user:all')}</Radio>
-              <Radio value="Government">{t('user:gov')}</Radio>
-              <Radio value="Ministry">{t('user:min')}</Radio>
-              <Radio value="ProgrammeDeveloper">{t('user:developer')}</Radio>
-              <Radio value="ClimateFund">{t('user:ClimateFund')}</Radio>
-              <Radio value="ExecutiveCommittee">{t('user:ExecutiveCommittee')}</Radio>
-              <Radio value="Certifier">{t('user:certifier')}</Radio>
+              <Radio value="DNA">{t('user:dna')}</Radio>
+              <Radio value="PD">{t('user:pd')}</Radio>
+              <Radio value="IC">{t('user:ic')}</Radio>
             </Space>
           </Radio.Group>
         </div>

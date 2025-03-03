@@ -543,7 +543,6 @@ const NetEmissionReduction = (props: any) => {
             </>
           )}
         </Form.List>
-
         {/* Emmissions calculations */}
         {/* calc Row 1 start */}
         <Row justify={'space-between'} align={'top'}>
@@ -693,7 +692,6 @@ const NetEmissionReduction = (props: any) => {
           </Col>
         </Row>
         {/* calc Row 1 end */}
-
         {/* calc row 2 start */}
         <Row justify={'space-between'} align={'top'}>
           <Col md={6} xl={6}>
@@ -745,7 +743,6 @@ const NetEmissionReduction = (props: any) => {
           </Col>
         </Row>
         {/* calc row 2 end */}
-
         {/* calc row 3 start */}
         <Row justify={'space-between'} align={'top'}>
           <Col md={6} xl={6}>

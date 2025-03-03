@@ -21,6 +21,7 @@ import { Role } from '../../Definitions/Enums/role.enum';
 import { isValidateFileType } from '../../Utils/DocumentValidator';
 import { DocumentStatus } from '../../Definitions/Enums/document.status';
 import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
+import { API_PATHS } from '../../Config/apiConfig';
 
 export interface ProgrammeDocumentsProps {
   data: any;
@@ -182,7 +183,7 @@ export const ProgrammeDocuments: FC<ProgrammeDocumentsProps> = (props: Programme
     const logoBase64 = await getBase64(file as RcFile);
     try {
       if (isValidateFileType(file?.type, type)) {
-        const response: any = await post('national/programme/addDocument', {
+        const response: any = await post(API_PATHS.ADD_PROJECT_DOC, {
           type: type,
           data: logoBase64,
           programmeId: programmeId,
@@ -223,7 +224,7 @@ export const ProgrammeDocuments: FC<ProgrammeDocumentsProps> = (props: Programme
   const docAction = async (id: any, status: DocumentStatus) => {
     setLoading(true);
     try {
-      const response: any = await post('national/programme/docAction', {
+      const response: any = await post(API_PATHS.PROJECT_DOC_ACTION, {
         id: id,
         status: status,
       });

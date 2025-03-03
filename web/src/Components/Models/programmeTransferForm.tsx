@@ -16,6 +16,7 @@ import { addCommSep, Programme } from '../../Definitions/Definitions/programme.d
 import { creditUnit } from '../../Definitions/Definitions/common.definitions';
 import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import { API_PATHS } from '../../Config/apiConfig';
 
 export interface ProgrammeTransferFormProps {
   programme: Programme;
@@ -61,7 +62,7 @@ export const ProgrammeTransferForm: FC<ProgrammeTransferFormProps> = (
 
   const handleSearch = async (newValue: string) => {
     if (newValue !== undefined) {
-      const resp = await post('national/organisation/queryNames', {
+      const resp = await post(API_PATHS.ORGANIZATION_NAMES, {
         page: 1,
         size: 50,
         filterAnd: [

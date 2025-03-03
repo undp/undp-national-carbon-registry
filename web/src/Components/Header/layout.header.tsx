@@ -7,6 +7,7 @@ import thumbnail from '../../Assets/Images/thumbnail.png';
 import { HeaderProps } from '../../Definitions/Definitions/layout.header';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const LayoutHeader = (props: HeaderProps) => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const LayoutHeader = (props: HeaderProps) => {
             src={companyLogo as string}
             alt="logo"
             onClick={() => {
-              navigate('/userProfile/view');
+              navigate(ROUTES.VIEW_USER_PROFILE);
             }}
           />
         </div>

@@ -43,6 +43,7 @@ import { useConnection } from '../../../Context/ConnectionContext/connectionCont
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { ProgrammeStageUnified } from '../../../Definitions/Enums/programmeStage.enum';
 import { TooltipColor } from '../../../Styles/role.color.constants';
+import { API_PATHS } from '../../../Config/apiConfig';
 const { RangePicker } = DatePicker;
 
 export const InvestmentCreationComponent = (props: any) => {
@@ -102,7 +103,7 @@ export const InvestmentCreationComponent = (props: any) => {
   const getGovernmentDetails = async () => {
     setLoading(true);
     try {
-      const response = await post('national/organisation/query', {
+      const response = await post(API_PATHS.ORGANIZATION_DETAILS, {
         page: 1,
         size: 100,
         filterAnd: [
@@ -129,7 +130,7 @@ export const InvestmentCreationComponent = (props: any) => {
     try {
       if (data) {
         if (!data?.programmeId) {
-          const response = await post('national/programme/query', {
+          const response = await post(API_PATHS.ALL_PROJECTS, {
             page: 1,
             size: 250,
             filterAnd: [
@@ -206,7 +207,7 @@ export const InvestmentCreationComponent = (props: any) => {
         );
         optionalFilters.filterOr = filterOr;
       }
-      const response = await post('national/programme/investmentQuery', {
+      const response = await post(API_PATHS.INVESTMENT_LIST, {
         page: 1,
         size: 100,
         filterAnd: filterAnd,
@@ -229,7 +230,7 @@ export const InvestmentCreationComponent = (props: any) => {
 
   const getUserOrganization = async () => {
     try {
-      const response = await post('national/organisation/query', {
+      const response = await post(API_PATHS.ORGANIZATION_DETAILS, {
         page: 1,
         size: 100,
         filterAnd: [{ key: 'companyId', operation: '=', value: userInfoState?.companyId }],
@@ -275,7 +276,7 @@ export const InvestmentCreationComponent = (props: any) => {
         filters.filterOr = filterOr;
       }
 
-      const response = await post('national/organisation/queryNames', {
+      const response = await post(API_PATHS.ORGANIZATION_NAMES, {
         page: 1,
         size: 100,
         filterAnd: filterAnd,
@@ -398,10 +399,10 @@ export const InvestmentCreationComponent = (props: any) => {
         payload.programmeId = projectData?.programmeId;
         payload.fromCompanyIds = projectData?.companyId.map((e) => Number(e));
         payload.percentage = val.percentage;
-        response = await post('national/programme/addInvestment', payload);
+        response = await post(API_PATHS.ADD_PROJECT_INVESTMENT, payload);
       } else {
         payload.instrument = payload.instrument;
-        response = await post('national/organisation/addInvestment', payload);
+        response = await post(API_PATHS.ADD_ORGANIZATION_INVESTMENT, payload);
       }
       if (response?.statusText === 'SUCCESS') {
         message.open({
