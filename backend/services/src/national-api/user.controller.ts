@@ -14,21 +14,21 @@ import {
 } from "@nestjs/common";
 
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { ApiKeyJwtAuthGuard } from "../auth/guards/api-jwt-key.guard";
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
-import { Action } from "../casl/action.enum";
-import { CaslAbilityFactory } from "../casl/casl-ability.factory";
-import { CheckPolicies } from "../casl/policy.decorator";
-import { PoliciesGuard, PoliciesGuardEx } from "../casl/policy.guard";
-import { Role } from "../casl/role.enum";
-import { DataExportQueryDto } from "../dto/data.export.query.dto";
-import { PasswordUpdateDto } from "../dto/password.update.dto";
-import { QueryDto } from "../dto/query.dto";
-import { UserDto } from "../dto/user.dto";
-import { UserUpdateDto } from "../dto/user.update.dto";
-import { User } from "../entities/user.entity";
-import { UserService } from "../user/user.service";
-import { HelperService } from "../util/helpers.service";
+import { ApiKeyJwtAuthGuard } from "@app/shared/auth/guards/api-jwt-key.guard";
+import { JwtAuthGuard } from "@app/shared/auth/guards/jwt-auth.guard";
+import { Action } from "@app/shared/casl/action.enum";
+import { CaslAbilityFactory } from "@app/shared/casl/casl-ability.factory";
+import { CheckPolicies } from "@app/shared/casl/policy.decorator";
+import { PoliciesGuard, PoliciesGuardEx } from "@app/shared/casl/policy.guard";
+import { Role } from "@app/shared/casl/role.enum";
+import { DataExportQueryDto } from "@app/shared/dto/data.export.query.dto";
+import { PasswordUpdateDto } from "@app/shared/dto/password.update.dto";
+import { QueryDto } from "@app/shared/dto/query.dto";
+import { UserDto } from "@app/shared/dto/user.dto";
+import { UserUpdateDto } from "@app/shared/dto/user.update.dto";
+import { User } from "@app/shared/entities/user.entity";
+import { UserService } from "@app/shared/user/user.service";
+import { HelperService } from "@app/shared/util/helpers.service";
 
 @ApiTags("User")
 @ApiBearerAuth()
@@ -50,7 +50,9 @@ export class UserController {
   @ApiBearerAuth("api_key")
   @ApiBearerAuth()
   @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability, body) => ability.can(Action.Create, Object.assign(new User(), body)))
+  @CheckPolicies((ability, body) =>
+    ability.can(Action.Create, Object.assign(new User(), body))
+  )
   @Post("add")
   addUser(@Body() user: UserDto, @Request() req) {
     if (user.role == Role.Root) {
@@ -60,7 +62,11 @@ export class UserController {
       );
     }
     global.baseUrl = `${req.protocol}://${req.get("Host")}`;
-    return this.userService.create(user, req.user.companyId, req.user.companyRole);
+    return this.userService.create(
+      user,
+      req.user.companyId,
+      req.user.companyRole
+    );
   }
 
   @Post("register")
@@ -89,7 +95,11 @@ export class UserController {
   // @CheckPolicies((ability, body) => ability.can(Action.Update, Object.assign(new User(), body)))
   @Put("resetPassword")
   resetPassword(@Body() reset: PasswordUpdateDto, @Request() req) {
-    return this.userService.resetPassword(req.user.id, reset, req.abilityCondition);
+    return this.userService.resetPassword(
+      req.user.id,
+      reset,
+      req.abilityCondition
+    );
   }
 
   @ApiBearerAuth()

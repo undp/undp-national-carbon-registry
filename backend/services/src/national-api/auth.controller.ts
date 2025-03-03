@@ -9,13 +9,13 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { AuthService } from "../auth/auth.service";
-import { ForgotPasswordDto } from "../dto/forgotPassword.dto";
-import { LoginDto } from "../dto/login.dto";
-import { PasswordResetDto } from "../dto/passwordReset.dto";
-import { HelperService } from "../util/helpers.service";
-import { PasswordResetService } from "../util/passwordReset.service";
-import { RefreshLoginDto } from "src/dto/refreshLogin.dto";
+import { AuthService } from "@app/shared/auth/auth.service";
+import { ForgotPasswordDto } from "@app/shared/dto/forgotPassword.dto";
+import { LoginDto } from "@app/shared/dto/login.dto";
+import { PasswordResetDto } from "@app/shared/dto/passwordReset.dto";
+import { HelperService } from "@app/shared/util/helpers.service";
+import { PasswordResetService } from "@app/shared/util/passwordReset.service";
+import { RefreshLoginDto } from "@app/shared/dto/refreshLogin.dto";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -28,7 +28,10 @@ export class AuthController {
 
   @Post("login")
   async login(@Body() login: LoginDto, @Request() req) {
-    const user = await this.authService.validateUser(login.username, login.password);
+    const user = await this.authService.validateUser(
+      login.username,
+      login.password
+    );
     if (user != null) {
       global.baseUrl = `${req.protocol}://${req.get("Host")}`;
       return this.authService.login(user);
@@ -46,7 +49,10 @@ export class AuthController {
   }
 
   @Post("forgotPassword")
-  async forgotPassword(@Body() forgotPassword: ForgotPasswordDto, @Request() req) {
+  async forgotPassword(
+    @Body() forgotPassword: ForgotPasswordDto,
+    @Request() req
+  ) {
     const email = forgotPassword.email;
     if (email !== null) {
       return this.authService.forgotPassword(email);
@@ -59,11 +65,18 @@ export class AuthController {
     @Body() reset: PasswordResetDto,
     @Request() req
   ) {
-    return this.passwordResetService.resetPassword(reqId, reset, req.abilityCondition);
+    return this.passwordResetService.resetPassword(
+      reqId,
+      reset,
+      req.abilityCondition
+    );
   }
 
   @Put("checkResetRequestId")
   async checkResetRequestId(@Query("requestId") reqId: string, @Request() req) {
-    return this.passwordResetService.checkPasswordResetRequestId(reqId, req.abilityCondition);
+    return this.passwordResetService.checkPasswordResetRequestId(
+      reqId,
+      req.abilityCondition
+    );
   }
 }

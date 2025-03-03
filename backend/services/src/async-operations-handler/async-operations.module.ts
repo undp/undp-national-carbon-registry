@@ -5,29 +5,22 @@ import { AsyncOperationsDatabaseHandlerService } from "./async-operations-databa
 import { AsyncOperationsHandlerInterface } from "./async-operations-handler-interface.service";
 import { AsyncOperationsQueueHandlerService } from "./async-operations-queue-handler.service";
 import { AsyncOperationsHandlerService } from "./async-operations-handler.service";
-import { AsyncActionEntity } from "../entities/async.action.entity";
-import { Counter } from "../entities/counter.entity";
-import configuration from "../configuration";
-import { AsyncOperationType } from "../enum/async.operation.type.enum";
-import { TypeOrmConfigService } from "../typeorm.config.service";
-import { RegistryClientModule } from "../registry-client/registry-client.module";
-import { EmailModule } from "../email/email.module";
-import { CadtModule } from "../cadt/cadt.module";
+import { AsyncActionEntity } from "@app/shared/entities/async.action.entity";
+import { Counter } from "@app/shared/entities/counter.entity";
+import configuration from "@app/core/app-config/configuration";
+import { AsyncOperationType } from "@app/shared/enum/async.operation.type.enum";
+import { TypeOrmConfigService } from "@app/core/app-config/typeorm.config.service";
+import { RegistryClientModule } from "@app/shared/registry-client/registry-client.module";
+import { EmailModule } from "@app/shared/email/email.module";
+import { CadtModule } from "@app/shared/cadt/cadt.module";
+import { SharedModule } from "@app/shared";
+import { CoreModule } from "@app/core";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration],
-      envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
-    }),
-    TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService,
-    }),
     TypeOrmModule.forFeature([AsyncActionEntity, Counter]),
-    RegistryClientModule,
-    EmailModule,
-    CadtModule,
+    SharedModule,
+    CoreModule,
   ],
   providers: [
     {

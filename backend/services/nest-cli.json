@@ -3,17 +3,39 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true,
     "assets": [
       {
-        "include": "i18n/**/*",
+        "include": "../libs/shared/src/i18n/**/*",
         "watchAssets": true,
         "outDir": "dist"
       },
       {
-        "include": "i18n/**/*",
+        "include": "../libs/shared/src/i18n/**/*",
         "watchAssets": true,
         "outDir": ".build/src"
       }
     ]
+  },
+  "projects": {
+    "shared": {
+      "type": "library",
+      "root": "libs/shared",
+      "entryFile": "index",
+      "sourceRoot": "libs/shared/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/shared/tsconfig.lib.json"
+      }
+    },
+    "core": {
+      "type": "library",
+      "root": "libs/core",
+      "entryFile": "index",
+      "sourceRoot": "libs/core/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/core/tsconfig.lib.json"
+      }
+    }
   }
 }

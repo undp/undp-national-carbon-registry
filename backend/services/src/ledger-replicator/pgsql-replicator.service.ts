@@ -6,12 +6,12 @@ import { LedgerReplicatorInterface } from "./replicator-interface.service";
 import { Pool } from "pg";
 import { plainToClass } from "class-transformer";
 import { ProcessEventService } from "./process.event.service";
-import { Counter } from "../entities/counter.entity";
-import { CounterType } from "../util/counter.type.enum";
-import { Programme } from "../entities/programme.entity";
-import { CreditOverall } from "../entities/credit.overall.entity";
+import { Counter } from "@app/shared/entities/counter.entity";
+import { CounterType } from "@app/shared/util/counter.type.enum";
+import { Programme } from "@app/shared/entities/programme.entity";
+import { CreditOverall } from "@app/shared/entities/credit.overall.entity";
 import { DataImporterService } from "../data-importer/data-importer.service";
-import { ProgrammeSl } from "../entities/programmeSl.entity";
+import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
 
 @Injectable()
 export class PgSqlReplicatorService implements LedgerReplicatorInterface {
@@ -42,8 +42,12 @@ export class PgSqlReplicatorService implements LedgerReplicatorInterface {
 
     const replicateActions = async () => {
       const tableName = this.configService.get<string>("ledger.table");
-      const companyTableName = this.configService.get<string>("ledger.companyTable");
-      const programmeSlTableName = this.configService.get<string>("ledger.programmeSlTable");
+      const companyTableName = this.configService.get<string>(
+        "ledger.companyTable"
+      );
+      const programmeSlTableName = this.configService.get<string>(
+        "ledger.programmeSlTable"
+      );
 
       try {
         const seqObj = await this.counterRepo.findOneBy({
@@ -66,10 +70,16 @@ export class PgSqlReplicatorService implements LedgerReplicatorInterface {
           let newSeq = 0;
           for (const row of results.rows) {
             const data = row.data;
-            const programme: Programme = plainToClass(Programme, JSON.parse(JSON.stringify(data)));
+            const programme: Programme = plainToClass(
+              Programme,
+              JSON.parse(JSON.stringify(data))
+            );
             await this.eventProcessor.process(programme, undefined, 0, 0);
             newSeq = row.hash;
-            await this.counterRepo.save({ id: CounterType.REPLICATE_SEQ, counter: newSeq });
+            await this.counterRepo.save({
+              id: CounterType.REPLICATE_SEQ,
+              counter: newSeq,
+            });
           }
         }
         retryCountTable = 0;
@@ -112,7 +122,10 @@ export class PgSqlReplicatorService implements LedgerReplicatorInterface {
               row.hash,
               new Date(row.meta.txTime).getTime()
             );
-            await this.counterRepo.save({ id: CounterType.REPLICATE_SEQ_COMP, counter: newSeq });
+            await this.counterRepo.save({
+              id: CounterType.REPLICATE_SEQ_COMP,
+              counter: newSeq,
+            });
           }
         }
         retryCountCTable = 0;
@@ -165,7 +178,10 @@ export class PgSqlReplicatorService implements LedgerReplicatorInterface {
         }
         retryCountTable = 0;
       } catch (exception) {
-        this.logger.log(`Failed Executing Ops for : ${programmeSlTableName}`, exception);
+        this.logger.log(
+          `Failed Executing Ops for : ${programmeSlTableName}`,
+          exception
+        );
         if (retryCountTable > retryLimit) {
           this.logger.log("Ledger Replicator terminated");
           return;
@@ -189,8 +205,13 @@ export class PgSqlReplicatorService implements LedgerReplicatorInterface {
           lastDate = lastItmoseq.counter;
         }
         if (today > lastDate) {
-          await this.dataImportService.importData({ importTypes: "ITMO_SYSTEM" });
-          await this.counterRepo.save({ id: CounterType.ITMO_SYSTEM, counter: today });
+          await this.dataImportService.importData({
+            importTypes: "ITMO_SYSTEM",
+          });
+          await this.counterRepo.save({
+            id: CounterType.ITMO_SYSTEM,
+            counter: today,
+          });
         }
       }
       setTimeout(replicateActions, 1000);
