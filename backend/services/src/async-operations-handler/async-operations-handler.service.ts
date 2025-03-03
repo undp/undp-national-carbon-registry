@@ -1,8 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { RegistryClientService } from "../registry-client/registry-client.service";
-import { EmailService } from "../email/email.service";
-import { AsyncActionType } from "../enum/async.action.type.enum";
-import { CadtApiService } from "../cadt/cadt.api.service";
+import { RegistryClientService } from "@app/shared/registry-client/registry-client.service";
+import { EmailService } from "@app/shared/email/email.service";
+import { AsyncActionType } from "@app/shared/enum/async.action.type.enum";
+import { CadtApiService } from "@app/shared/cadt/cadt.api.service";
 
 @Injectable()
 export class AsyncOperationsHandlerService {
@@ -14,8 +14,10 @@ export class AsyncOperationsHandlerService {
   ) {}
 
   async handler(actionType: any, dataObject: any) {
-
-    this.logger.log("AsyncOperationsHandlerService started", actionType.toString());
+    this.logger.log(
+      "AsyncOperationsHandlerService started",
+      actionType.toString()
+    );
     if (actionType) {
       switch (actionType.toString()) {
         case AsyncActionType.Email.toString():
@@ -30,7 +32,7 @@ export class AsyncOperationsHandlerService {
           return await this.registryClient.issueCredit(dataObject);
         case AsyncActionType.RejectProgramme.toString():
           return await this.registryClient.rejectProgramme(dataObject);
-        
+
         case AsyncActionType.ProgrammeCreate.toString():
           return this.registryClient.createProgramme(dataObject);
         case AsyncActionType.ProgrammeAccept.toString():
@@ -42,17 +44,22 @@ export class AsyncOperationsHandlerService {
         case AsyncActionType.AddMitigation.toString():
           return this.registryClient.addMitigation(dataObject);
         case AsyncActionType.NationalInvestment.toString():
-          return this.registryClient.addNationalInvestment(dataObject)
+          return this.registryClient.addNationalInvestment(dataObject);
 
         case AsyncActionType.CADTProgrammeCreate.toString():
-          return this.cadtService.createProgramme(dataObject)
+          return this.cadtService.createProgramme(dataObject);
         case AsyncActionType.CADTUpdateProgramme.toString():
           return this.cadtService.updateProgramme(dataObject.programme);
         case AsyncActionType.CADTCreditIssue.toString():
-          return this.cadtService.issueCredit(dataObject.programme, dataObject.amount);
+          return this.cadtService.issueCredit(
+            dataObject.programme,
+            dataObject.amount
+          );
         case AsyncActionType.CADTTransferCredit.toString():
-          return this.cadtService.transferCredit(dataObject.programme, dataObject.transfer);
-        
+          return this.cadtService.transferCredit(
+            dataObject.programme,
+            dataObject.transfer
+          );
       }
     }
   }

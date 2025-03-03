@@ -1,16 +1,16 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectEntityManager, InjectRepository } from "@nestjs/typeorm";
 import { Repository, EntityManager } from "typeorm";
-import { TxType } from "../enum/txtype.enum";
-import { Company } from "../entities/company.entity";
-import { Programme } from "../entities/programme.entity";
-import { CreditOverall } from "../entities/credit.overall.entity";
-import { LocationInterface } from "../location/location.interface";
-import { CompanyRole } from "../enum/company.role.enum";
-import { AsyncOperationsInterface } from "../async-operations/async-operations.interface";
-import { AsyncActionType } from "../enum/async.action.type.enum";
-import { ProgrammeSl } from "../entities/programmeSl.entity";
-import { OrganisationCreditAccounts } from "../enum/organisation.credit.accounts.enum";
+import { TxType } from "@app/shared/enum/txtype.enum";
+import { Company } from "@app/shared/entities/company.entity";
+import { Programme } from "@app/shared/entities/programme.entity";
+import { CreditOverall } from "@app/shared/entities/credit.overall.entity";
+import { LocationInterface } from "@app/shared/location/location.interface";
+import { CompanyRole } from "@app/shared/enum/company.role.enum";
+import { AsyncOperationsInterface } from "@app/shared/async-operations/async-operations.interface";
+import { AsyncActionType } from "@app/shared/enum/async.action.type.enum";
+import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
+import { OrganisationCreditAccounts } from "@app/shared/enum/organisation.credit.accounts.enum";
 
 @Injectable()
 export class ProcessEventService {
@@ -18,7 +18,8 @@ export class ProcessEventService {
     private logger: Logger,
     @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
     @InjectRepository(Company) private companyRepo: Repository<Company>,
-    @InjectRepository(ProgrammeSl) private programmeSlRepo: Repository<ProgrammeSl>,
+    @InjectRepository(ProgrammeSl)
+    private programmeSlRepo: Repository<ProgrammeSl>,
     private asyncOperationsInterface: AsyncOperationsInterface,
     private locationService: LocationInterface,
     @InjectEntityManager() private entityManager: EntityManager
@@ -30,7 +31,9 @@ export class ProcessEventService {
     version: number,
     txTime: number
   ): Promise<any> {
-    this.logger.log(`Processing message ${programme} ${overall} ${version} ${txTime}`);
+    this.logger.log(
+      `Processing message ${programme} ${overall} ${version} ${txTime}`
+    );
     if (programme) {
       const previousProgramme = await this.programmeRepo.findOneBy({
         programmeId: programme.programmeId,
@@ -68,13 +71,20 @@ export class ProcessEventService {
                   actionProps: programme,
                 });
               }
-            } else if (programme.txType === TxType.CERTIFY || programme.txType === TxType.REVOKE) {
+            } else if (
+              programme.txType === TxType.CERTIFY ||
+              programme.txType === TxType.REVOKE
+            ) {
               programme.certifiedTime = programme.txTime;
             } else if (programme.txType === TxType.AUTH) {
               programme.authTime = programme.txTime;
             }
 
-            if ([TxType.AUTH, TxType.REJECT, TxType.CREATE].includes(programme.txType)) {
+            if (
+              [TxType.AUTH, TxType.REJECT, TxType.CREATE].includes(
+                programme.txType
+              )
+            ) {
               programme.statusUpdateTime = programme.txTime;
             }
             if (
@@ -91,11 +101,17 @@ export class ProcessEventService {
             }
           }
         } catch (error) {
-          console.log("Getting cordinates with forward geocoding failed -> ", error);
+          console.log(
+            "Getting cordinates with forward geocoding failed -> ",
+            error
+          );
         } finally {
           programme.updatedAt = new Date(programme.txTime);
           programme.createdAt = new Date(programme.createdTime);
-          const columns = this.programmeRepo.manager.connection.getMetadata("Programme").columns;
+          const columns =
+            this.programmeRepo.manager.connection.getMetadata(
+              "Programme"
+            ).columns;
 
           const columnNames = columns
             .filter(function (item) {
@@ -147,7 +163,10 @@ export class ProcessEventService {
         let updateObj;
         if (account) {
           if (account === OrganisationCreditAccounts.TRACK_1) {
-            if (company.slcfAccountBalance && company.slcfAccountBalance["TRACK_1"]) {
+            if (
+              company.slcfAccountBalance &&
+              company.slcfAccountBalance["TRACK_1"]
+            ) {
               company.slcfAccountBalance["TRACK_1"] = overall.credit;
             } else {
               if (!company.slcfAccountBalance) {
@@ -161,7 +180,10 @@ export class ProcessEventService {
               lastUpdateVersion: version,
             };
           } else if (account == OrganisationCreditAccounts.TRACK_2) {
-            if (company.slcfAccountBalance && company.slcfAccountBalance["TRACK_2"]) {
+            if (
+              company.slcfAccountBalance &&
+              company.slcfAccountBalance["TRACK_2"]
+            ) {
               company.slcfAccountBalance["TRACK_2"] = overall.credit;
             } else {
               if (!company.slcfAccountBalance) {
@@ -175,14 +197,21 @@ export class ProcessEventService {
               lastUpdateVersion: version,
             };
           } else {
-            if (company.secondaryAccountBalance && company.secondaryAccountBalance[account]) {
-              company.secondaryAccountBalance[account]["total"] = overall.credit;
+            if (
+              company.secondaryAccountBalance &&
+              company.secondaryAccountBalance[account]
+            ) {
+              company.secondaryAccountBalance[account]["total"] =
+                overall.credit;
               company.secondaryAccountBalance[account]["count"] += 1;
             } else {
               if (!company.secondaryAccountBalance) {
                 company.secondaryAccountBalance = {};
               }
-              company.secondaryAccountBalance[account] = { total: overall.credit, count: 1 };
+              company.secondaryAccountBalance[account] = {
+                total: overall.credit,
+                count: 1,
+              };
             }
 
             updateObj = {
@@ -194,7 +223,8 @@ export class ProcessEventService {
           updateObj = {
             creditBalance: overall.credit,
             programmeCount:
-              Number(company.programmeCount) + (overall.txType == TxType.AUTH ? 1 : 0),
+              Number(company.programmeCount) +
+              (overall.txType == TxType.AUTH ? 1 : 0),
             lastUpdateVersion: version,
             creditTxTime: [
               TxType.ISSUE,
@@ -222,7 +252,10 @@ export class ProcessEventService {
             return err;
           });
       } else {
-        this.logger.error("Unexpected programme. Company does not found", companyId);
+        this.logger.error(
+          "Unexpected programme. Company does not found",
+          companyId
+        );
       }
     }
   }
@@ -239,7 +272,10 @@ export class ProcessEventService {
         previousProgramme.txTime == undefined ||
         previousProgramme.txTime <= programme.txTime
       ) {
-        const columns = this.programmeRepo.manager.connection.getMetadata("ProgrammeSl").columns;
+        const columns =
+          this.programmeRepo.manager.connection.getMetadata(
+            "ProgrammeSl"
+          ).columns;
 
         const columnNames = columns
           .filter(function (item) {
@@ -262,7 +298,9 @@ export class ProcessEventService {
               .getRepository(Company)
               .createQueryBuilder()
               .update(Company)
-              .set({ programmeCount: () => `COALESCE("programmeCount", 0) + 1` })
+              .set({
+                programmeCount: () => `COALESCE("programmeCount", 0) + 1`,
+              })
               .where("companyId = :id", { id: programme.companyId })
               .execute();
           }

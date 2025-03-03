@@ -1,43 +1,36 @@
 import { Logger, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Programme } from "../entities/programme.entity";
-import { ProgrammeTransfer } from "../entities/programme.transfer";
-import { ProgrammeTransferViewEntityQuery } from "../entities/programmeTransfer.view.entity";
+import { Programme } from "@app/shared/entities/programme.entity";
+import { ProgrammeTransfer } from "@app/shared/entities/programme.transfer";
+import { ProgrammeTransferViewEntityQuery } from "@app/shared/view-entities/programmeTransfer.view.entity";
 import { AggregateAPIService } from "./aggregate.api.service";
-import { Company } from "../entities/company.entity";
-import configuration from "../configuration";
-import { AuthModule } from "../auth/auth.module";
-import { CaslModule } from "../casl/casl.module";
-import { UtilModule } from "../util/util.module";
-import { ProgrammeLedgerModule } from "../programme-ledger/programme-ledger.module";
-import { TypeOrmConfigService } from "../typeorm.config.service";
+import { Company } from "@app/shared/entities/company.entity";
+import configuration from "@app/core/app-config/configuration";
+import { AuthModule } from "@app/shared/auth/auth.module";
+import { CaslModule } from "@app/shared/casl/casl.module";
+import { UtilModule } from "@app/shared/util/util.module";
+import { ProgrammeLedgerModule } from "@app/shared/programme-ledger/programme-ledger.module";
+import { TypeOrmConfigService } from "@app/core/app-config/typeorm.config.service";
 import { ProgrammeController } from "./programme.controller";
-import { InvestmentView } from "../entities/investment.view.entity";
-import { NDCActionViewEntity } from "../entities/ndc.view.entity";
-import { Emission } from "../entities/emission.entity";
-import { Projection } from "../entities/projection.entity";
-import { EventLog } from "../entities/event.log.entity";
+import { InvestmentView } from "@app/shared/view-entities/investment.view.entity";
+import { NDCActionViewEntity } from "@app/shared/view-entities/ndc.view.entity";
+import { Emission } from "@app/shared/entities/emission.entity";
+import { Projection } from "@app/shared/entities/projection.entity";
+import { EventLog } from "@app/shared/entities/event.log.entity";
 import { NationalAccountingModule } from "src/analytics-api/national-accounting/national.accounting.module";
 import { NationalAccountingController } from "./national-accounting.controller";
-import { ProgrammeSl } from "../entities/programmeSl.entity";
+import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
 import { AggregateSlAPIService } from "./aggregate.sl.api.service";
-import { VerificationRequestEntity } from "../entities/verification.request.entity";
-import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
-import { CreditRetirementSlView } from "src/entities/creditRetirementSl.view.entity";
-import { ProgrammeAuditLogSl } from "src/entities/programmeAuditLogSl.entity";
+import { VerificationRequestEntity } from "@app/shared/entities/verification.request.entity";
+import { CreditRetirementSl } from "@app/shared/entities/creditRetirementSl.entity";
+import { CreditRetirementSlView } from "@app/shared/view-entities/creditRetirementSl.view.entity";
+import { ProgrammeAuditLogSl } from "@app/shared/entities/programmeAuditLogSl.entity";
+import { SharedModule } from "@app/shared";
+import { CoreModule } from "@app/core";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration],
-      envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
-    }),
-    TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService,
-      imports: undefined,
-    }),
     TypeOrmModule.forFeature([
       Programme,
       ProgrammeTransfer,
@@ -54,11 +47,8 @@ import { ProgrammeAuditLogSl } from "src/entities/programmeAuditLogSl.entity";
       CreditRetirementSlView,
       ProgrammeAuditLogSl,
     ]),
-    AuthModule,
-    CaslModule,
-    UtilModule,
-    ProgrammeLedgerModule,
-    NationalAccountingModule,
+    SharedModule,
+    CoreModule,
   ],
   controllers: [ProgrammeController, NationalAccountingController],
   providers: [Logger, AggregateAPIService, AggregateSlAPIService],

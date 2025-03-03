@@ -1,35 +1,22 @@
+import { CoreModule } from "@app/core";
+import { SharedModule } from "@app/shared";
+import { Company } from "@app/shared/entities/company.entity";
+import { Counter } from "@app/shared/entities/counter.entity";
+import { Programme } from "@app/shared/entities/programme.entity";
+import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
+import { LedgerType } from "@app/shared/enum/ledger.type";
 import { Logger, Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { QLDBKinesisReplicatorService } from "./qldb-kinesis-replicator.service";
-import { LedgerReplicatorInterface } from "./replicator-interface.service";
 import { PgSqlReplicatorService } from "./pgsql-replicator.service";
 import { ProcessEventService } from "./process.event.service";
-import { Programme } from "../entities/programme.entity";
-import configuration from "../configuration";
-import { TypeOrmConfigService } from "../typeorm.config.service";
-import { Company } from "../entities/company.entity";
-import { Counter } from "../entities/counter.entity";
-import { LocationModule } from "../location/location.module";
-import { LedgerType } from "../enum/ledger.type";
-import { DataImporterModule } from "../data-importer/data-importer.module";
-import { AsyncOperationsModule } from "../async-operations/async-operations.module";
-import { ProgrammeSl } from "../entities/programmeSl.entity";
+import { QLDBKinesisReplicatorService } from "./qldb-kinesis-replicator.service";
+import { LedgerReplicatorInterface } from "./replicator-interface.service";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration],
-      envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
-    }),
-    TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService,
-    }),
     TypeOrmModule.forFeature([Programme, Company, Counter, ProgrammeSl]),
-    LocationModule,
-    DataImporterModule,
-    AsyncOperationsModule,
+    SharedModule,
+    CoreModule,
   ],
   providers: [
     {

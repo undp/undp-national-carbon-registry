@@ -2,47 +2,47 @@ import { HttpStatus, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { StatList } from "../dto/stat.list.dto";
-import { StatType } from "../enum/stat.type.enum";
-import { ProgrammeTransferViewEntityQuery } from "../entities/programmeTransfer.view.entity";
-import { QueryDto } from "../dto/query.dto";
-import { FilterEntry } from "../dto/filter.entry";
-import { SortEntry } from "../dto/sort.entry";
-import { AggrEntry } from "../dto/aggr.entry";
-import { Company } from "../entities/company.entity";
-import { StatFilter } from "../dto/stat.filter";
-import { ProgrammeStage } from "../enum/programme-status.enum";
-import { Stat } from "../dto/stat.dto";
+import { StatList } from "@app/shared/dto/stat.list.dto";
+import { StatType } from "@app/shared/enum/stat.type.enum";
+import { ProgrammeTransferViewEntityQuery } from "@app/shared/view-entities/programmeTransfer.view.entity";
+import { QueryDto } from "@app/shared/dto/query.dto";
+import { FilterEntry } from "@app/shared/dto/filter.entry";
+import { SortEntry } from "@app/shared/dto/sort.entry";
+import { AggrEntry } from "@app/shared/dto/aggr.entry";
+import { Company } from "@app/shared/entities/company.entity";
+import { StatFilter } from "@app/shared/dto/stat.filter";
+import { ProgrammeStage } from "@app/shared/enum/programme-status.enum";
+import { Stat } from "@app/shared/dto/stat.dto";
 import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
-import { HelperService } from "../util/helpers.service";
-import { Programme } from "../entities/programme.entity";
+import { HelperService } from "@app/shared/util/helpers.service";
+import { Programme } from "@app/shared/entities/programme.entity";
 import {
   StatusGroupedByTimedata,
   StatusGroupedByTimedataThere,
-} from "../dto/programmeStatus.timeGrouped.result";
-import { CompanyRole } from "../enum/company.role.enum";
-import { TransferStatus } from "../enum/transform.status.enum";
-import { DataCountResponseDto } from "../dto/data.count.response";
-import { InvestmentView } from "../entities/investment.view.entity";
-import { NDCActionViewEntity } from "../entities/ndc.view.entity";
-import { SYSTEM_TYPE } from "../enum/system.names.enum";
-import { Emission } from "src/entities/emission.entity";
-import { Projection } from "src/entities/projection.entity";
-import { EventLog } from "src/entities/event.log.entity";
+} from "@app/shared/dto/programmeStatus.timeGrouped.result";
+import { CompanyRole } from "@app/shared/enum/company.role.enum";
+import { TransferStatus } from "@app/shared/enum/transform.status.enum";
+import { DataCountResponseDto } from "@app/shared/dto/data.count.response";
+import { InvestmentView } from "@app/shared/view-entities/investment.view.entity";
+import { NDCActionViewEntity } from "@app/shared/view-entities/ndc.view.entity";
+import { SYSTEM_TYPE } from "@app/shared/enum/system.names.enum";
+import { Emission } from "@app/shared/entities/emission.entity";
+import { Projection } from "@app/shared/entities/projection.entity";
+import { EventLog } from "@app/shared/entities/event.log.entity";
 import {
   EmissionSubSectorsPathMap,
   EmissionSubSectorsToSectoralScopeMap,
-} from "src/enum/sectoral.scope.enum";
-import { ProjectProposalStage } from "src/enum/projectProposalStage.enum";
-import { ProgrammeSl } from "src/entities/programmeSl.entity";
-import { ProjectCategory } from "src/enum/projectCategory.enum";
-import { VerificationRequestEntity } from "../entities/verification.request.entity";
-import { User } from "../entities/user.entity";
-import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
-import { SLDashboardProjectStage } from "../enum/slDashboardProjectStage.enum";
-import { DataResponseDto } from "src/dto/data.response.dto";
-import { CreditRetirementSlView } from "src/entities/creditRetirementSl.view.entity";
-import { ProgrammeAuditLogSl } from "src/entities/programmeAuditLogSl.entity";
+} from "@app/shared/enum/sectoral.scope.enum";
+import { ProjectProposalStage } from "@app/shared/enum/projectProposalStage.enum";
+import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
+import { ProjectCategory } from "@app/shared/enum/projectCategory.enum";
+import { VerificationRequestEntity } from "@app/shared/entities/verification.request.entity";
+import { User } from "@app/shared/entities/user.entity";
+import { CreditRetirementSl } from "@app/shared/entities/creditRetirementSl.entity";
+import { SLDashboardProjectStage } from "@app/shared/enum/slDashboardProjectStage.enum";
+import { DataResponseDto } from "@app/shared/dto/data.response.dto";
+import { CreditRetirementSlView } from "@app/shared/view-entities/creditRetirementSl.view.entity";
+import { ProgrammeAuditLogSl } from "@app/shared/entities/programmeAuditLogSl.entity";
 
 @Injectable()
 export class AggregateSlAPIService {
@@ -64,14 +64,18 @@ export class AggregateSlAPIService {
     private helperService: HelperService,
     @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
     @InjectRepository(Company) private companyRepo: Repository<Company>,
-    @InjectRepository(InvestmentView) private investmentRepo: Repository<InvestmentView>,
-    @InjectRepository(NDCActionViewEntity) private ndcRepo: Repository<NDCActionViewEntity>,
+    @InjectRepository(InvestmentView)
+    private investmentRepo: Repository<InvestmentView>,
+    @InjectRepository(NDCActionViewEntity)
+    private ndcRepo: Repository<NDCActionViewEntity>,
     @InjectRepository(ProgrammeTransferViewEntityQuery)
     private programmeTransferRepo: Repository<ProgrammeTransferViewEntityQuery>,
     @InjectRepository(Emission) private emissionRepo: Repository<Emission>,
-    @InjectRepository(Projection) private projectionRepo: Repository<Projection>,
+    @InjectRepository(Projection)
+    private projectionRepo: Repository<Projection>,
     @InjectRepository(EventLog) private eventLogRepo: Repository<EventLog>,
-    @InjectRepository(ProgrammeSl) private programmeSlRepo: Repository<ProgrammeSl>,
+    @InjectRepository(ProgrammeSl)
+    private programmeSlRepo: Repository<ProgrammeSl>,
     @InjectRepository(VerificationRequestEntity)
     private verificationRequestRepo: Repository<VerificationRequestEntity>,
     @InjectRepository(CreditRetirementSl)
@@ -151,7 +155,9 @@ export class AggregateSlAPIService {
       retiredCredits: [],
       frozenCredits: [],
     };
-    const groupedDataFiltered = passedResult?.filter((item) => String(item.time_group) !== "0");
+    const groupedDataFiltered = passedResult?.filter(
+      (item) => String(item.time_group) !== "0"
+    );
     const groupedDatasObject = groupedDataFiltered.reduce((acc, curr) => {
       const time_group = curr.time_group;
       if (!acc[time_group]) {
@@ -181,7 +187,10 @@ export class AggregateSlAPIService {
       const statusArray = Object.values(ProjectProposalStage);
       arrResultForTimeGroup?.map((timeGroupItem) => {
         console.log("status array ----- > ", statusArray);
-        if (timeGroupItem?.projectProposalStage === ProjectProposalStage.AUTHORISED) {
+        if (
+          timeGroupItem?.projectProposalStage ===
+          ProjectProposalStage.AUTHORISED
+        ) {
           authorisedCreditsSum =
             authorisedCreditsSum +
             (parseFloat(timeGroupItem?.totalestcredit) -
@@ -191,11 +200,15 @@ export class AggregateSlAPIService {
         } else {
           authorisedCreditsSum = authorisedCreditsSum + 0;
         }
-        issuedCreditsSum = issuedCreditsSum + parseFloat(timeGroupItem?.totalissuedcredit);
+        issuedCreditsSum =
+          issuedCreditsSum + parseFloat(timeGroupItem?.totalissuedcredit);
 
-        transferredCreditsSum = transferredCreditsSum + parseFloat(timeGroupItem?.totaltxcredit);
-        retiredCreditsSum = retiredCreditsSum + parseFloat(timeGroupItem?.totalretiredcredit);
-        frozenCreditsSum = frozenCreditsSum + parseFloat(timeGroupItem?.totalfreezecredit);
+        transferredCreditsSum =
+          transferredCreditsSum + parseFloat(timeGroupItem?.totaltxcredit);
+        retiredCreditsSum =
+          retiredCreditsSum + parseFloat(timeGroupItem?.totalretiredcredit);
+        frozenCreditsSum =
+          frozenCreditsSum + parseFloat(timeGroupItem?.totalfreezecredit);
         let count = 0;
         switch (timeGroupItem.projectProposalStage) {
           case "SUBMITTED_INF":
@@ -214,7 +227,9 @@ export class AggregateSlAPIService {
               count = result["awaitingAuthorization"].pop();
             }
 
-            result["awaitingAuthorization"].push(count + parseInt(timeGroupItem?.count));
+            result["awaitingAuthorization"].push(
+              count + parseInt(timeGroupItem?.count)
+            );
             break;
           case "REJECTED_INF":
           case "REJECTED_PROPOSAL":
@@ -254,7 +269,9 @@ export class AggregateSlAPIService {
 
   private async getTimeGroupedDataSectorConverted(data) {
     const passedResult = data;
-    const groupedDataFiltered = passedResult?.filter((item) => String(item.time_group) !== "0");
+    const groupedDataFiltered = passedResult?.filter(
+      (item) => String(item.time_group) !== "0"
+    );
     const groupedDatasObject = groupedDataFiltered.reduce((acc, curr) => {
       const time_group = curr.time_group;
       if (!acc[time_group]) {
@@ -284,9 +301,16 @@ export class AggregateSlAPIService {
         arrResultForTimeGroupIndex++
       ) {
         sectorsArray?.map((sector) => {
-          if (arrResultForTimeGroup[arrResultForTimeGroupIndex]?.projectCategory === sector) {
-            resultThere[arrResultForTimeGroup[arrResultForTimeGroupIndex]?.projectCategory] = true;
-            result[arrResultForTimeGroup[arrResultForTimeGroupIndex]?.projectCategory]?.push(
+          if (
+            arrResultForTimeGroup[arrResultForTimeGroupIndex]
+              ?.projectCategory === sector
+          ) {
+            resultThere[
+              arrResultForTimeGroup[arrResultForTimeGroupIndex]?.projectCategory
+            ] = true;
+            result[
+              arrResultForTimeGroup[arrResultForTimeGroupIndex]?.projectCategory
+            ]?.push(
               parseInt(arrResultForTimeGroup[arrResultForTimeGroupIndex]?.count)
             );
           }
@@ -374,12 +398,18 @@ export class AggregateSlAPIService {
 
     const whereC = this.helperService.generateWhereSQL(
       query,
-      this.helperService.parseMongoQueryToSQLWithTable(tableName, abilityCondition)
+      this.helperService.parseMongoQueryToSQLWithTable(
+        tableName,
+        abilityCondition
+      )
     );
 
     const timeWhere = this.helperService.generateWhereSQL(
       query,
-      this.helperService.parseMongoQueryToSQLWithTable(tableName, abilityCondition),
+      this.helperService.parseMongoQueryToSQLWithTable(
+        tableName,
+        abilityCondition
+      ),
       undefined,
       timeFields
     );
@@ -389,9 +419,9 @@ export class AggregateSlAPIService {
     if (aggregates) {
       const selectQuery = aggregates
         .map((a) => {
-          const fieldCol = `${a.outerQuery ? "(" + a.outerQuery + "(" : ""}"${tableName}"."${
-            a.key
-          }"${a.outerQuery ? ")s )" : ""}`;
+          const fieldCol = `${
+            a.outerQuery ? "(" + a.outerQuery + "(" : ""
+          }"${tableName}"."${a.key}"${a.outerQuery ? ")s )" : ""}`;
 
           let mineCompField = fieldCol;
           if (a.mineCompanyId) {
@@ -406,7 +436,11 @@ export class AggregateSlAPIService {
     }
 
     if (sort) {
-      queryBuild = queryBuild.orderBy(sort?.key && `"${sort?.key}"`, sort?.order, "NULLS LAST");
+      queryBuild = queryBuild.orderBy(
+        sort?.key && `"${sort?.key}"`,
+        sort?.order,
+        "NULLS LAST"
+      );
     }
 
     let grpByAll = undefined;
@@ -452,7 +486,14 @@ export class AggregateSlAPIService {
       queryBuild = queryBuild.groupBy(grpByAll);
     }
 
-    const key = (grpByAll ? grpByAll : "") + " " + whereC + " from " + tableName + " " + timeWhere;
+    const key =
+      (grpByAll ? grpByAll : "") +
+      " " +
+      whereC +
+      " from " +
+      tableName +
+      " " +
+      timeWhere;
     console.log("Stat cache key", key);
     if (statCache[key]) {
       return statCache[key];
@@ -561,7 +602,8 @@ export class AggregateSlAPIService {
           key: "creditEst",
           operation: "SUM",
           fieldName: "sum",
-          mineCompanyId: stat?.statFilter?.onlyMine && companyId ? companyId : undefined,
+          mineCompanyId:
+            stat?.statFilter?.onlyMine && companyId ? companyId : undefined,
         },
       ],
       filtAuth,
@@ -617,7 +659,9 @@ export class AggregateSlAPIService {
           operation: "SUM",
           fieldName: "sum",
           mineCompanyId:
-            statFilter?.onlyMine && companyId && companyRole === CompanyRole.PROGRAMME_DEVELOPER
+            statFilter?.onlyMine &&
+            companyId &&
+            companyRole === CompanyRole.PROGRAMME_DEVELOPER
               ? companyId
               : undefined,
         },
@@ -646,7 +690,11 @@ export class AggregateSlAPIService {
     companyRole: CompanyRole,
     timeGroup?: boolean
   ) {
-    let filters = this.getFilterAndByStatFilter(statFilter, null, "createdTime");
+    let filters = this.getFilterAndByStatFilter(
+      statFilter,
+      null,
+      "createdTime"
+    );
     if (!filters) {
       filters = [];
     }
@@ -798,15 +846,20 @@ export class AggregateSlAPIService {
             const stageMapping = {
               SUBMITTED_INF: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
               APPROVED_INF: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
-              SUBMITTED_COST_QUOTATION: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
-              SUBMITTED_PROPOSAL: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
-              SUBMITTED_VALIDATION_AGREEMENT: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              SUBMITTED_COST_QUOTATION:
+                SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              SUBMITTED_PROPOSAL:
+                SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              SUBMITTED_VALIDATION_AGREEMENT:
+                SLDashboardProjectStage.AWAITING_AUTHORIZATION,
               ACCEPTED_PROPOSAL: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
               SUBMITTED_CMA: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
               REJECTED_CMA: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
               APPROVED_CMA: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
-              VALIDATION_PENDING: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
-              REJECTED_VALIDATION: SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              VALIDATION_PENDING:
+                SLDashboardProjectStage.AWAITING_AUTHORIZATION,
+              REJECTED_VALIDATION:
+                SLDashboardProjectStage.AWAITING_AUTHORIZATION,
               REJECTED_INF: SLDashboardProjectStage.REJECTED,
               REJECTED_PROPOSAL: SLDashboardProjectStage.REJECTED,
               AUTHORISED: SLDashboardProjectStage.AUTHORISED,
@@ -818,7 +871,12 @@ export class AggregateSlAPIService {
                 const locationKey = JSON.stringify(loc); // Use location as a unique key
 
                 if (!acc[locationKey]) {
-                  acc[locationKey] = { loc, awaitingAuthorization: 0, rejected: 0, authorised: 0 };
+                  acc[locationKey] = {
+                    loc,
+                    awaitingAuthorization: 0,
+                    rejected: 0,
+                    authorised: 0,
+                  };
                 }
 
                 acc[locationKey][mappedStage] += parseInt(count, 10);
@@ -840,7 +898,11 @@ export class AggregateSlAPIService {
                   });
                 }
                 if (rejected > 0) {
-                  output.push({ loc, stage: SLDashboardProjectStage.REJECTED, count: rejected });
+                  output.push({
+                    loc,
+                    stage: SLDashboardProjectStage.REJECTED,
+                    count: rejected,
+                  });
                 }
                 if (authorised > 0) {
                   output.push({
@@ -873,7 +935,12 @@ export class AggregateSlAPIService {
       console.log("Last time hit from the cache");
       colTime = lastTimeForWhere[cacheKey];
     } else {
-      colTime = await this.getLastTime(this.programmeRepo, tableName, timeWhere, tc);
+      colTime = await this.getLastTime(
+        this.programmeRepo,
+        tableName,
+        timeWhere,
+        tc
+      );
       lastTimeForWhere[cacheKey] = colTime;
     }
     return colTime;
@@ -890,7 +957,12 @@ export class AggregateSlAPIService {
       console.log("Last time hit from the cache");
       colTime = lastTimeForWhere[cacheKey];
     } else {
-      colTime = await this.getLastTime(this.investmentRepo, tableName, timeWhere, tc);
+      colTime = await this.getLastTime(
+        this.investmentRepo,
+        tableName,
+        timeWhere,
+        tc
+      );
       lastTimeForWhere[cacheKey] = colTime;
     }
     return colTime;
@@ -957,7 +1029,9 @@ export class AggregateSlAPIService {
           ),
           uncertifiedSum:
             Number(
-              allAuth && allAuth.data.length > 0 && allAuth?.data[0] ? allAuth?.data[0]["sum"] : 0
+              allAuth && allAuth.data.length > 0 && allAuth?.data[0]
+                ? allAuth?.data[0]["sum"]
+                : 0
             ) -
             Number(
               certified && certified?.data.length > 0 && certified?.data[0]
@@ -1040,9 +1114,12 @@ export class AggregateSlAPIService {
             revokedSum: groupedData[time]["revokedSum"],
           };
         } else {
-          sortedGroupedData[time]["certifiedSum"] = groupedData[time]["certifiedSum"];
-          sortedGroupedData[time]["uncertifiedSum"] = groupedData[time]["uncertifiedSum"];
-          sortedGroupedData[time]["revokedSum"] = groupedData[time]["revokedSum"];
+          sortedGroupedData[time]["certifiedSum"] =
+            groupedData[time]["certifiedSum"];
+          sortedGroupedData[time]["uncertifiedSum"] =
+            groupedData[time]["uncertifiedSum"];
+          sortedGroupedData[time]["revokedSum"] =
+            groupedData[time]["revokedSum"];
         }
       });
 
@@ -1054,9 +1131,15 @@ export class AggregateSlAPIService {
       };
       for (const tg in sortedGroupedData) {
         chartData.timeLabel.push(tg);
-        chartData.certifiedSum.push(parseFloat(sortedGroupedData[tg]["certifiedSum"]));
-        chartData.uncertifiedSum.push(parseFloat(sortedGroupedData[tg]["uncertifiedSum"]));
-        chartData.revokedSum.push(parseFloat(sortedGroupedData[tg]["revokedSum"]));
+        chartData.certifiedSum.push(
+          parseFloat(sortedGroupedData[tg]["certifiedSum"])
+        );
+        chartData.uncertifiedSum.push(
+          parseFloat(sortedGroupedData[tg]["uncertifiedSum"])
+        );
+        chartData.revokedSum.push(
+          parseFloat(sortedGroupedData[tg]["revokedSum"])
+        );
       }
 
       return {
@@ -1109,11 +1192,16 @@ export class AggregateSlAPIService {
   async getTotalIssuedCredits(user: User) {
     const query = this.programmeSlRepo
       .createQueryBuilder("pr")
-      .select("COALESCE(CAST(SUM(pr.creditIssued) AS INTEGER),0)", "totalCreditIssued") // Select count
+      .select(
+        "COALESCE(CAST(SUM(pr.creditIssued) AS INTEGER),0)",
+        "totalCreditIssued"
+      ) // Select count
       .addSelect("MAX(pr.issuedCreditUpdatedTime)", "latestUpdatedTime"); // Select latest updated time
 
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      query.andWhere("pr.companyId = :companyId", { companyId: user.companyId });
+      query.andWhere("pr.companyId = :companyId", {
+        companyId: user.companyId,
+      });
     }
     const result = await query.getRawOne();
 
@@ -1123,35 +1211,56 @@ export class AggregateSlAPIService {
   async getTotalRetiredCredits(user: User) {
     const query = this.programmeSlRepo
       .createQueryBuilder("pr")
-      .select("COALESCE(CAST(SUM(pr.creditRetired) AS INTEGER),0)", "totalCreditRetired")
-      .addSelect("COALESCE(CAST(SUM(pr.creditTransferred) AS INTEGER),0)", "totalCreditTransferred")
-      .addSelect("MAX(pr.retiredCreditUpdatedTime)", "latestRetiredCreditUpdatedTime")
-      .addSelect("MAX(pr.transferredCreditUpdatedTime)", "latestTransferredCreditUpdatedTime");
+      .select(
+        "COALESCE(CAST(SUM(pr.creditRetired) AS INTEGER),0)",
+        "totalCreditRetired"
+      )
+      .addSelect(
+        "COALESCE(CAST(SUM(pr.creditTransferred) AS INTEGER),0)",
+        "totalCreditTransferred"
+      )
+      .addSelect(
+        "MAX(pr.retiredCreditUpdatedTime)",
+        "latestRetiredCreditUpdatedTime"
+      )
+      .addSelect(
+        "MAX(pr.transferredCreditUpdatedTime)",
+        "latestTransferredCreditUpdatedTime"
+      );
 
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      query.andWhere("pr.companyId = :companyId", { companyId: user.companyId });
+      query.andWhere("pr.companyId = :companyId", {
+        companyId: user.companyId,
+      });
     }
     let result = await query.getRawOne();
 
-    result.latestRetiredCreditUpdatedTime = result.latestRetiredCreditUpdatedTime
-      ? parseInt(result.latestRetiredCreditUpdatedTime)
-      : result.latestRetiredCreditUpdatedTime;
-    result.latestTransferredCreditUpdatedTime = result.latestTransferredCreditUpdatedTime
-      ? parseInt(result.latestTransferredCreditUpdatedTime)
-      : result.latestTransferredCreditUpdatedTime;
+    result.latestRetiredCreditUpdatedTime =
+      result.latestRetiredCreditUpdatedTime
+        ? parseInt(result.latestRetiredCreditUpdatedTime)
+        : result.latestRetiredCreditUpdatedTime;
+    result.latestTransferredCreditUpdatedTime =
+      result.latestTransferredCreditUpdatedTime
+        ? parseInt(result.latestTransferredCreditUpdatedTime)
+        : result.latestTransferredCreditUpdatedTime;
     result = {
       ...result,
       latestUpdatedTime:
-        result.latestRetiredCreditUpdatedTime > result.latestTransferredCreditUpdatedTime
+        result.latestRetiredCreditUpdatedTime >
+        result.latestTransferredCreditUpdatedTime
           ? result.latestRetiredCreditUpdatedTime
           : result.latestTransferredCreditUpdatedTime,
-      totalRetiredCredits: result.totalCreditRetired + result.totalCreditTransferred,
+      totalRetiredCredits:
+        result.totalCreditRetired + result.totalCreditTransferred,
     };
 
     return new DataResponseDto(HttpStatus.OK, result);
   }
 
-  async queryProgrammesByStatus(query: QueryDto, user: User): Promise<DataResponseDto> {
+  async queryProgrammesByStatus(
+    query: QueryDto,
+    user: User
+  ): Promise<DataResponseDto> {
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       const filterAnd = {
         key: "companyId",
@@ -1164,14 +1273,19 @@ export class AggregateSlAPIService {
       .createQueryBuilder("pr")
       .select("pr.projectProposalStage", "projectProposalStage")
       .addSelect("COUNT(*)", "count")
-      .addSelect("MAX(pr.proposalStageUpdatedTime)", "latestProposalStageUpdatedTime")
+      .addSelect(
+        "MAX(pr.proposalStageUpdatedTime)",
+        "latestProposalStageUpdatedTime"
+      )
       .where(this.helperService.generateWhereSQL(query, null))
       .groupBy("pr.projectProposalStage")
       .getRawMany();
 
     let latestUpdatedTime = 0;
     resp.forEach((row) => {
-      let latestProposalStageUpdatedTime = parseInt(row.latestProposalStageUpdatedTime);
+      let latestProposalStageUpdatedTime = parseInt(
+        row.latestProposalStageUpdatedTime
+      );
       if (latestProposalStageUpdatedTime > latestUpdatedTime) {
         latestUpdatedTime = latestProposalStageUpdatedTime;
       }
@@ -1186,7 +1300,10 @@ export class AggregateSlAPIService {
     return new DataResponseDto(HttpStatus.OK, result);
   }
 
-  async queryProgrammesByCategory(query: QueryDto, user: User): Promise<DataResponseDto> {
+  async queryProgrammesByCategory(
+    query: QueryDto,
+    user: User
+  ): Promise<DataResponseDto> {
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       const filterAnd = {
         key: "companyId",
@@ -1221,7 +1338,10 @@ export class AggregateSlAPIService {
     return new DataResponseDto(HttpStatus.OK, result);
   }
 
-  async queryRetirementsByDate(query: QueryDto, user: User): Promise<DataResponseDto> {
+  async queryRetirementsByDate(
+    query: QueryDto,
+    user: User
+  ): Promise<DataResponseDto> {
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       const fromCompanyId = {
         key: 'cr"."fromCompanyId',
@@ -1262,15 +1382,23 @@ export class AggregateSlAPIService {
       .addSelect("cr.creditType", "creditType")
       .addSelect("SUM(cr.creditAmount)", "totalCreditAmount")
       .where(this.helperService.generateWhereSQL(query, null))
-      .groupBy("TO_CHAR(TO_TIMESTAMP(CAST(cr.approvedTime AS BIGINT)/1000), 'YYYY-MM-DD')")
+      .groupBy(
+        "TO_CHAR(TO_TIMESTAMP(CAST(cr.approvedTime AS BIGINT)/1000), 'YYYY-MM-DD')"
+      )
       .addGroupBy("cr.creditType")
-      .orderBy("TO_CHAR(TO_TIMESTAMP(CAST(cr.approvedTime AS BIGINT)/1000), 'YYYY-MM-DD')", "ASC")
+      .orderBy(
+        "TO_CHAR(TO_TIMESTAMP(CAST(cr.approvedTime AS BIGINT)/1000), 'YYYY-MM-DD')",
+        "ASC"
+      )
       .getRawMany();
 
     return new DataResponseDto(HttpStatus.OK, result);
   }
 
-  async queryCreditsByStatus(query: QueryDto, user: User): Promise<DataResponseDto> {
+  async queryCreditsByStatus(
+    query: QueryDto,
+    user: User
+  ): Promise<DataResponseDto> {
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       const filterAnd = {
         key: 'programme"."companyId',
@@ -1303,9 +1431,16 @@ export class AggregateSlAPIService {
 
     const authorisedCredits = await this.programmeSlAuditLogRepo
       .createQueryBuilder("audit_log")
-      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .leftJoin(
+        "programme_sl",
+        "programme",
+        "programme.programmeId = audit_log.programmeId"
+      )
       .select("MAX(audit_log.createdTime)", "latestAuthorisedCreditUpdatedTime")
-      .addSelect("CAST(SUM(programme.creditEst) AS INTEGER)", "totalCreditAuthorised")
+      .addSelect(
+        "CAST(SUM(programme.creditEst) AS INTEGER)",
+        "totalCreditAuthorised"
+      )
       .where(this.helperService.generateWhereSQL(query, null))
       .getRawOne();
 
@@ -1320,9 +1455,16 @@ export class AggregateSlAPIService {
 
     const issuedCredits = await this.programmeSlAuditLogRepo
       .createQueryBuilder("audit_log")
-      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .leftJoin(
+        "programme_sl",
+        "programme",
+        "programme.programmeId = audit_log.programmeId"
+      )
       .select("MAX(audit_log.createdTime)", "latestIssuedCreditUpdatedTime")
-      .addSelect("SUM((audit_log.data->>'creditIssued')::numeric)", "totalCreditIssued")
+      .addSelect(
+        "SUM((audit_log.data->>'creditIssued')::numeric)",
+        "totalCreditIssued"
+      )
       .where(this.helperService.generateWhereSQL(query, null))
       .getRawOne();
 
@@ -1337,9 +1479,19 @@ export class AggregateSlAPIService {
 
     const transferredCredits = await this.programmeSlAuditLogRepo
       .createQueryBuilder("audit_log")
-      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
-      .select("MAX(audit_log.createdTime)", "latestTransferredCreditUpdatedTime")
-      .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "totalCreditTransferred")
+      .leftJoin(
+        "programme_sl",
+        "programme",
+        "programme.programmeId = audit_log.programmeId"
+      )
+      .select(
+        "MAX(audit_log.createdTime)",
+        "latestTransferredCreditUpdatedTime"
+      )
+      .addSelect(
+        "SUM((audit_log.data->>'creditAmount')::numeric)",
+        "totalCreditTransferred"
+      )
       .where(this.helperService.generateWhereSQL(query, null))
       .getRawOne();
 
@@ -1353,9 +1505,16 @@ export class AggregateSlAPIService {
 
     const retiredCredits = await this.programmeSlAuditLogRepo
       .createQueryBuilder("audit_log")
-      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
+      .leftJoin(
+        "programme_sl",
+        "programme",
+        "programme.programmeId = audit_log.programmeId"
+      )
       .select("MAX(audit_log.createdTime)", "latestRetiredCreditUpdatedTime")
-      .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "totalCreditRetired")
+      .addSelect(
+        "SUM((audit_log.data->>'creditAmount')::numeric)",
+        "totalCreditRetired"
+      )
       .where(this.helperService.generateWhereSQL(query, null))
       .getRawOne();
 
@@ -1369,7 +1528,10 @@ export class AggregateSlAPIService {
     return new DataResponseDto(HttpStatus.OK, result);
   }
 
-  async queryCreditsByDate(query: QueryDto, user: User): Promise<DataResponseDto> {
+  async queryCreditsByDate(
+    query: QueryDto,
+    user: User
+  ): Promise<DataResponseDto> {
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       const filterAnd = {
         key: 'programme"."companyId',
@@ -1402,12 +1564,27 @@ export class AggregateSlAPIService {
 
     const authorisedCreditsByDate = await this.programmeSlAuditLogRepo
       .createQueryBuilder("audit_log")
-      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
-      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
-      .addSelect("CAST(SUM(programme.creditEst) AS INTEGER)", "total_credit_authorised")
+      .leftJoin(
+        "programme_sl",
+        "programme",
+        "programme.programmeId = audit_log.programmeId"
+      )
+      .select(
+        "TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')",
+        "log_date"
+      )
+      .addSelect(
+        "CAST(SUM(programme.creditEst) AS INTEGER)",
+        "total_credit_authorised"
+      )
       .where(this.helperService.generateWhereSQL(query, null))
-      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
-      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .groupBy(
+        "TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')"
+      )
+      .orderBy(
+        "TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')",
+        "ASC"
+      )
       .getRawMany();
 
     const issuedLogType = {
@@ -1421,12 +1598,27 @@ export class AggregateSlAPIService {
 
     const issuedCreditsByDate = await this.programmeSlAuditLogRepo
       .createQueryBuilder("audit_log")
-      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
-      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
-      .addSelect("SUM((audit_log.data->>'creditIssued')::numeric)", "total_credit_issued")
+      .leftJoin(
+        "programme_sl",
+        "programme",
+        "programme.programmeId = audit_log.programmeId"
+      )
+      .select(
+        "TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')",
+        "log_date"
+      )
+      .addSelect(
+        "SUM((audit_log.data->>'creditIssued')::numeric)",
+        "total_credit_issued"
+      )
       .where(this.helperService.generateWhereSQL(query, null))
-      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
-      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .groupBy(
+        "TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')"
+      )
+      .orderBy(
+        "TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')",
+        "ASC"
+      )
       .getRawMany();
 
     const transferredLogType = {
@@ -1440,12 +1632,27 @@ export class AggregateSlAPIService {
 
     const transferredCreditsByDate = await this.programmeSlAuditLogRepo
       .createQueryBuilder("audit_log")
-      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
-      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
-      .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "total_credit_transferred")
+      .leftJoin(
+        "programme_sl",
+        "programme",
+        "programme.programmeId = audit_log.programmeId"
+      )
+      .select(
+        "TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')",
+        "log_date"
+      )
+      .addSelect(
+        "SUM((audit_log.data->>'creditAmount')::numeric)",
+        "total_credit_transferred"
+      )
       .where(this.helperService.generateWhereSQL(query, null))
-      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
-      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .groupBy(
+        "TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')"
+      )
+      .orderBy(
+        "TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')",
+        "ASC"
+      )
       .getRawMany();
 
     const retiredLogType = {
@@ -1458,12 +1665,27 @@ export class AggregateSlAPIService {
 
     const retiredCreditsByDate = await this.programmeSlAuditLogRepo
       .createQueryBuilder("audit_log")
-      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
-      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "log_date")
-      .addSelect("SUM((audit_log.data->>'creditAmount')::numeric)", "total_credit_retired")
+      .leftJoin(
+        "programme_sl",
+        "programme",
+        "programme.programmeId = audit_log.programmeId"
+      )
+      .select(
+        "TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')",
+        "log_date"
+      )
+      .addSelect(
+        "SUM((audit_log.data->>'creditAmount')::numeric)",
+        "total_credit_retired"
+      )
       .where(this.helperService.generateWhereSQL(query, null))
-      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
-      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .groupBy(
+        "TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')"
+      )
+      .orderBy(
+        "TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')",
+        "ASC"
+      )
       .getRawMany();
 
     const data = {
@@ -1493,7 +1715,10 @@ export class AggregateSlAPIService {
     return new DataResponseDto(HttpStatus.OK, result);
   }
 
-  async queryCreditsByPurpose(query: QueryDto, user: User): Promise<DataResponseDto> {
+  async queryCreditsByPurpose(
+    query: QueryDto,
+    user: User
+  ): Promise<DataResponseDto> {
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
       const filterAnd = {
         key: 'programme"."companyId',
@@ -1526,22 +1751,45 @@ export class AggregateSlAPIService {
 
     const issuedCreditsByDate = await this.programmeSlAuditLogRepo
       .createQueryBuilder("audit_log")
-      .leftJoin("programme_sl", "programme", "programme.programmeId = audit_log.programmeId")
-      .select("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "logDate")
-      .addSelect("SUM((audit_log.data->>'creditIssued')::numeric)", "totalCreditIssued")
+      .leftJoin(
+        "programme_sl",
+        "programme",
+        "programme.programmeId = audit_log.programmeId"
+      )
+      .select(
+        "TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')",
+        "logDate"
+      )
+      .addSelect(
+        "SUM((audit_log.data->>'creditIssued')::numeric)",
+        "totalCreditIssued"
+      )
       .addSelect("programme.purposeOfCreditDevelopment", "creditType")
       .where(this.helperService.generateWhereSQL(query, null))
-      .groupBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')")
+      .groupBy(
+        "TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')"
+      )
       .addGroupBy("programme.purposeOfCreditDevelopment")
-      .orderBy("TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')", "ASC")
+      .orderBy(
+        "TO_CHAR(TO_TIMESTAMP(audit_log.createdTime / 1000), 'YYYY-MM-DD')",
+        "ASC"
+      )
       .getRawMany();
 
     return new DataResponseDto(HttpStatus.OK, issuedCreditsByDate);
   }
 
-  async getEmissions(stat, companyId, abilityCondition, lastTimeForWhere, statCache) {
+  async getEmissions(
+    stat,
+    companyId,
+    abilityCondition,
+    lastTimeForWhere,
+    statCache
+  ) {
     if ([StatType.MY_TOTAL_EMISSIONS].includes(stat.type)) {
-      stat.statFilter ? (stat.statFilter.onlyMine = true) : (stat.statFilter = { onlyMine: true });
+      stat.statFilter
+        ? (stat.statFilter.onlyMine = true)
+        : (stat.statFilter = { onlyMine: true });
     }
 
     let filterAnd = this.getFilterAndByStatFilter(
@@ -1584,11 +1832,22 @@ export class AggregateSlAPIService {
     );
   }
 
-  async generateNDCAggregates(stat, abilityCondition, lastTimeForWhere, statCache, companyId) {
+  async generateNDCAggregates(
+    stat,
+    abilityCondition,
+    lastTimeForWhere,
+    statCache,
+    companyId
+  ) {
     if (
-      [StatType.MY_AGG_NDC_ACTION_BY_SECTOR, StatType.MY_AGG_NDC_ACTION_BY_TYPE].includes(stat.type)
+      [
+        StatType.MY_AGG_NDC_ACTION_BY_SECTOR,
+        StatType.MY_AGG_NDC_ACTION_BY_TYPE,
+      ].includes(stat.type)
     ) {
-      stat.statFilter ? (stat.statFilter.onlyMine = true) : (stat.statFilter = { onlyMine: true });
+      stat.statFilter
+        ? (stat.statFilter.onlyMine = true)
+        : (stat.statFilter = { onlyMine: true });
     }
 
     let filterAnd = this.getFilterAndByStatFilter(
@@ -1604,7 +1863,10 @@ export class AggregateSlAPIService {
     return await this.genAggregateTypeOrmQuery(
       this.ndcRepo,
       "ndcaction",
-      [StatType.AGG_NDC_ACTION_BY_TYPE, StatType.MY_AGG_NDC_ACTION_BY_TYPE].includes(stat.type)
+      [
+        StatType.AGG_NDC_ACTION_BY_TYPE,
+        StatType.MY_AGG_NDC_ACTION_BY_TYPE,
+      ].includes(stat.type)
         ? ["action"]
         : ["sector"],
       [new AggrEntry("id", "COUNT", "count")],
@@ -1628,7 +1890,9 @@ export class AggregateSlAPIService {
     companyId
   ) {
     if ([StatType.MY_AGG_INVESTMENT_BY_TYPE].includes(stat.type)) {
-      stat.statFilter ? (stat.statFilter.onlyMine = true) : (stat.statFilter = { onlyMine: true });
+      stat.statFilter
+        ? (stat.statFilter.onlyMine = true)
+        : (stat.statFilter = { onlyMine: true });
     }
 
     let filterAnd = this.getFilterAndByStatFilter(
@@ -1723,24 +1987,56 @@ export class AggregateSlAPIService {
       if (!stat.statFilter || stat.statFilter.timeGroup != true) {
         return {
           last: Math.max(allAuth.all["authTime"], certified.last, revoked.last),
-          countLast: Math.max(allAuth.all["statusUpdateTime"], certified.last, revoked.last),
+          countLast: Math.max(
+            allAuth.all["statusUpdateTime"],
+            certified.last,
+            revoked.last
+          ),
           data: {
             certifiedCount: Number(
-              certified && certified.data.length > 0 ? certified.data[0]["count"] : 0
+              certified && certified.data.length > 0
+                ? certified.data[0]["count"]
+                : 0
             ),
-            revokedCount: Number(revoked && revoked.data.length > 0 ? revoked.data[0]["count"] : 0),
+            revokedCount: Number(
+              revoked && revoked.data.length > 0 ? revoked.data[0]["count"] : 0
+            ),
             uncertifiedCount:
-              Number(allAuth && allAuth.data.length > 0 ? allAuth.data[0]["count"] : 0) -
-              Number(revoked && revoked.data.length > 0 ? revoked.data[0]["count"] : 0) -
-              Number(certified && certified.data.length > 0 ? certified.data[0]["count"] : 0),
-            revokedSum: Number(revoked && revoked.data.length > 0 ? revoked.data[0]["sum"] : 0),
+              Number(
+                allAuth && allAuth.data.length > 0
+                  ? allAuth.data[0]["count"]
+                  : 0
+              ) -
+              Number(
+                revoked && revoked.data.length > 0
+                  ? revoked.data[0]["count"]
+                  : 0
+              ) -
+              Number(
+                certified && certified.data.length > 0
+                  ? certified.data[0]["count"]
+                  : 0
+              ),
+            revokedSum: Number(
+              revoked && revoked.data.length > 0 ? revoked.data[0]["sum"] : 0
+            ),
             certifiedSum: Number(
-              certified && certified.data.length > 0 ? certified.data[0]["sum"] : 0
+              certified && certified.data.length > 0
+                ? certified.data[0]["sum"]
+                : 0
             ),
             uncertifiedSum:
-              Number(allAuth && allAuth.data.length > 0 ? allAuth.data[0]["sum"] : 0) -
-              Number(revoked && revoked.data.length > 0 ? revoked.data[0]["sum"] : 0) -
-              Number(certified && certified.data.length > 0 ? certified.data[0]["sum"] : 0),
+              Number(
+                allAuth && allAuth.data.length > 0 ? allAuth.data[0]["sum"] : 0
+              ) -
+              Number(
+                revoked && revoked.data.length > 0 ? revoked.data[0]["sum"] : 0
+              ) -
+              Number(
+                certified && certified.data.length > 0
+                  ? certified.data[0]["sum"]
+                  : 0
+              ),
           },
         };
       } else {
@@ -1812,9 +2108,12 @@ export class AggregateSlAPIService {
               revokedSum: groupedData[time]["revokedSum"],
             };
           } else {
-            sortedGroupedData[time]["certifiedSum"] = groupedData[time]["certifiedSum"];
-            sortedGroupedData[time]["uncertifiedSum"] = groupedData[time]["uncertifiedSum"];
-            sortedGroupedData[time]["revokedSum"] = groupedData[time]["revokedSum"];
+            sortedGroupedData[time]["certifiedSum"] =
+              groupedData[time]["certifiedSum"];
+            sortedGroupedData[time]["uncertifiedSum"] =
+              groupedData[time]["uncertifiedSum"];
+            sortedGroupedData[time]["revokedSum"] =
+              groupedData[time]["revokedSum"];
           }
         });
 
@@ -1826,28 +2125,54 @@ export class AggregateSlAPIService {
         };
         for (const tg in sortedGroupedData) {
           chartData.timeLabel.push(tg);
-          chartData.certifiedSum.push(parseFloat(sortedGroupedData[tg]["certifiedSum"]));
-          chartData.uncertifiedSum.push(parseFloat(sortedGroupedData[tg]["uncertifiedSum"]));
-          chartData.revokedSum.push(parseFloat(sortedGroupedData[tg]["revokedSum"]));
+          chartData.certifiedSum.push(
+            parseFloat(sortedGroupedData[tg]["certifiedSum"])
+          );
+          chartData.uncertifiedSum.push(
+            parseFloat(sortedGroupedData[tg]["uncertifiedSum"])
+          );
+          chartData.revokedSum.push(
+            parseFloat(sortedGroupedData[tg]["revokedSum"])
+          );
         }
 
         return {
           last: Math.max(allAuth.all["authTime"], certified.last, revoked.last),
-          countLast: Math.max(allAuth.all["statusUpdateTime"], certified.last, revoked.last),
+          countLast: Math.max(
+            allAuth.all["statusUpdateTime"],
+            certified.last,
+            revoked.last
+          ),
           data: chartData,
         };
       }
     } else {
       return {
         last: Math.max(allAuth.all["authTime"], certified.last, revoked.last),
-        countLast: Math.max(certified.last, allAuth.all["statusUpdateTime"], revoked.last),
+        countLast: Math.max(
+          certified.last,
+          allAuth.all["statusUpdateTime"],
+          revoked.last
+        ),
         data: {
           uncertifiedSum:
-            Number(allAuth && allAuth.data.length > 0 ? allAuth.data[0]["sum"] : 0) -
-            Number(certified && certified.data.length > 0 ? certified.data[0]["sum"] : 0),
+            Number(
+              allAuth && allAuth.data.length > 0 ? allAuth.data[0]["sum"] : 0
+            ) -
+            Number(
+              certified && certified.data.length > 0
+                ? certified.data[0]["sum"]
+                : 0
+            ),
           uncertifiedCount:
-            Number(allAuth && allAuth.data.length > 0 ? allAuth.data[0]["count"] : 0) -
-            Number(certified && certified.data.length > 0 ? certified.data[0]["count"] : 0),
+            Number(
+              allAuth && allAuth.data.length > 0 ? allAuth.data[0]["count"] : 0
+            ) -
+            Number(
+              certified && certified.data.length > 0
+                ? certified.data[0]["count"]
+                : 0
+            ),
         },
       };
     }
@@ -1867,7 +2192,13 @@ export class AggregateSlAPIService {
       last: comp.creditTxTime,
     };
   }
-  async getPendingTxStats(stat, companyId, abilityCondition, lastTimeForWhere, statCache) {
+  async getPendingTxStats(
+    stat,
+    companyId,
+    abilityCondition,
+    lastTimeForWhere,
+    statCache
+  ) {
     if (stat.statFilter) {
       stat.statFilter.onlyMine = false;
     } else {
@@ -1891,7 +2222,10 @@ export class AggregateSlAPIService {
 
     filt.push({
       value: companyId,
-      key: stat.type === StatType.PENDING_TRANSFER_INIT ? "initiatorCompanyId" : "fromCompanyId",
+      key:
+        stat.type === StatType.PENDING_TRANSFER_INIT
+          ? "initiatorCompanyId"
+          : "fromCompanyId",
       operation: "=",
     });
 
@@ -1924,7 +2258,9 @@ export class AggregateSlAPIService {
         StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS,
       ].includes(stat.type)
     ) {
-      stat.statFilter ? (stat.statFilter.onlyMine = true) : (stat.statFilter = { onlyMine: true });
+      stat.statFilter
+        ? (stat.statFilter.onlyMine = true)
+        : (stat.statFilter = { onlyMine: true });
     }
 
     let filterAnd = this.getFilterAndByStatFilter(
@@ -1938,9 +2274,10 @@ export class AggregateSlAPIService {
     );
 
     if (
-      [StatType.AGG_AUTH_PROGRAMME_BY_STATUS, StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS].includes(
-        stat.type
-      )
+      [
+        StatType.AGG_AUTH_PROGRAMME_BY_STATUS,
+        StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS,
+      ].includes(stat.type)
     ) {
       if (!filterAnd) {
         filterAnd = [];
@@ -2022,7 +2359,10 @@ export class AggregateSlAPIService {
     );
 
     if (
-      [StatType.AGG_PROGRAMME_BY_STATUS, StatType.MY_AGG_PROGRAMME_BY_STATUS].includes(stat.type) &&
+      [
+        StatType.AGG_PROGRAMME_BY_STATUS,
+        StatType.MY_AGG_PROGRAMME_BY_STATUS,
+      ].includes(stat.type) &&
       !stat?.statFilter?.timeGroup
     ) {
       const updatedResult = [
@@ -2068,43 +2408,58 @@ export class AggregateSlAPIService {
           case "APPROVED_CMA":
           case "VALIDATION_PENDING":
           case "REJECTED_VALIDATION":
-            updatedResult[0].count = updatedResult[0].count + parseInt(result?.count);
+            updatedResult[0].count =
+              updatedResult[0].count + parseInt(result?.count);
             updatedResult[0].totalestcredit =
-              updatedResult[0].totalestcredit + parseInt(result?.totalestcredit);
+              updatedResult[0].totalestcredit +
+              parseInt(result?.totalestcredit);
             updatedResult[0].totalissuedcredit =
-              updatedResult[0].totalissuedcredit + parseInt(result?.totalissuedcredit);
+              updatedResult[0].totalissuedcredit +
+              parseInt(result?.totalissuedcredit);
             updatedResult[0].totalbalancecredit =
-              updatedResult[0].totalbalancecredit + parseInt(result?.totalbalancecredit);
+              updatedResult[0].totalbalancecredit +
+              parseInt(result?.totalbalancecredit);
             updatedResult[0].totalretiredcredit =
-              updatedResult[0].totalretiredcredit + parseInt(result?.totalretiredcredit);
+              updatedResult[0].totalretiredcredit +
+              parseInt(result?.totalretiredcredit);
             updatedResult[0].totaltxcredit =
               updatedResult[0].totaltxcredit + parseInt(result?.totaltxcredit);
 
             break;
           case "REJECTED_INF":
           case "REJECTED_PROPOSAL":
-            updatedResult[1].count = updatedResult[1].count + parseInt(result?.count);
+            updatedResult[1].count =
+              updatedResult[1].count + parseInt(result?.count);
             updatedResult[1].totalestcredit =
-              updatedResult[1].totalestcredit + parseInt(result?.totalestcredit);
+              updatedResult[1].totalestcredit +
+              parseInt(result?.totalestcredit);
             updatedResult[1].totalissuedcredit =
-              updatedResult[1].totalissuedcredit + parseInt(result?.totalissuedcredit);
+              updatedResult[1].totalissuedcredit +
+              parseInt(result?.totalissuedcredit);
             updatedResult[1].totalbalancecredit =
-              updatedResult[1].totalbalancecredit + parseInt(result?.totalbalancecredit);
+              updatedResult[1].totalbalancecredit +
+              parseInt(result?.totalbalancecredit);
             updatedResult[1].totalretiredcredit =
-              updatedResult[1].totalretiredcredit + parseInt(result?.totalretiredcredit);
+              updatedResult[1].totalretiredcredit +
+              parseInt(result?.totalretiredcredit);
             updatedResult[1].totaltxcredit =
               updatedResult[1].totaltxcredit + parseInt(result?.totaltxcredit);
             break;
           case "AUTHORISED":
-            updatedResult[2].count = updatedResult[2].count + parseInt(result?.count);
+            updatedResult[2].count =
+              updatedResult[2].count + parseInt(result?.count);
             updatedResult[2].totalestcredit =
-              updatedResult[2].totalestcredit + parseInt(result?.totalestcredit);
+              updatedResult[2].totalestcredit +
+              parseInt(result?.totalestcredit);
             updatedResult[2].totalissuedcredit =
-              updatedResult[2].totalissuedcredit + parseInt(result?.totalissuedcredit);
+              updatedResult[2].totalissuedcredit +
+              parseInt(result?.totalissuedcredit);
             updatedResult[2].totalbalancecredit =
-              updatedResult[2].totalbalancecredit + parseInt(result?.totalbalancecredit);
+              updatedResult[2].totalbalancecredit +
+              parseInt(result?.totalbalancecredit);
             updatedResult[2].totalretiredcredit =
-              updatedResult[2].totalretiredcredit + parseInt(result?.totalretiredcredit);
+              updatedResult[2].totalretiredcredit +
+              parseInt(result?.totalretiredcredit);
             updatedResult[2].totaltxcredit =
               updatedResult[2].totaltxcredit + parseInt(result?.totaltxcredit);
             break;
@@ -2112,9 +2467,10 @@ export class AggregateSlAPIService {
       });
       return updatedResult;
     } else if (
-      [StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS, StatType.AGG_AUTH_PROGRAMME_BY_STATUS].includes(
-        stat.type
-      ) &&
+      [
+        StatType.MY_AGG_AUTH_PROGRAMME_BY_STATUS,
+        StatType.AGG_AUTH_PROGRAMME_BY_STATUS,
+      ].includes(stat.type) &&
       !stat?.statFilter?.timeGroup
     ) {
       const updatedResult = [
@@ -2132,15 +2488,20 @@ export class AggregateSlAPIService {
       results.data.map((result) => {
         switch (result.projectProposalStage) {
           case "AUTHORISED":
-            updatedResult[0].count = updatedResult[0].count + parseInt(result?.count);
+            updatedResult[0].count =
+              updatedResult[0].count + parseInt(result?.count);
             updatedResult[0].totalestcredit =
-              updatedResult[0].totalestcredit + parseInt(result?.totalestcredit);
+              updatedResult[0].totalestcredit +
+              parseInt(result?.totalestcredit);
             updatedResult[0].totalissuedcredit =
-              updatedResult[0].totalissuedcredit + parseInt(result?.totalissuedcredit);
+              updatedResult[0].totalissuedcredit +
+              parseInt(result?.totalissuedcredit);
             updatedResult[0].totalbalancecredit =
-              updatedResult[0].totalbalancecredit + parseInt(result?.totalbalancecredit);
+              updatedResult[0].totalbalancecredit +
+              parseInt(result?.totalbalancecredit);
             updatedResult[0].totalretiredcredit =
-              updatedResult[0].totalretiredcredit + parseInt(result?.totalretiredcredit);
+              updatedResult[0].totalretiredcredit +
+              parseInt(result?.totalretiredcredit);
             updatedResult[0].totaltxcredit =
               updatedResult[0].totaltxcredit + parseInt(result?.totaltxcredit);
             break;
@@ -2178,7 +2539,15 @@ export class AggregateSlAPIService {
       ) {
         sum += this.calculateSumEmissionsBySector(obj[key]);
       } else if (
-        ["ch4", "co2", "n2o", "co2eq", "bau", "conditionalNdc", "unconditionalNdc"].includes(key)
+        [
+          "ch4",
+          "co2",
+          "n2o",
+          "co2eq",
+          "bau",
+          "conditionalNdc",
+          "unconditionalNdc",
+        ].includes(key)
       ) {
         sum += obj[key];
       }
@@ -2196,7 +2565,9 @@ export class AggregateSlAPIService {
 
     dataResult.forEach((item) => {
       xLabels.push(item.year);
-      energyEmissions.push(this.calculateSumEmissionsBySector(item.energyEmissions));
+      energyEmissions.push(
+        this.calculateSumEmissionsBySector(item.energyEmissions)
+      );
       agricultureForestryOtherLandUse.push(
         this.calculateSumEmissionsBySector(item.agricultureForestryOtherLandUse)
       );
@@ -2250,7 +2621,10 @@ export class AggregateSlAPIService {
     const endTime = this.getLastDayOfYear(endYear).getTime();
     const estimatedCreditResult = await this.eventLogRepo
       .createQueryBuilder("event_log")
-      .where("event_log.createdTime BETWEEN :startTime AND :endTime", { startTime, endTime })
+      .where("event_log.createdTime BETWEEN :startTime AND :endTime", {
+        startTime,
+        endTime,
+      })
       .andWhere("event_log.type = :type", { type: "ESTIMATED_CREDIT_ISSUE" })
       .orderBy("event_log.createdTime", "ASC")
       .getMany();
@@ -2274,7 +2648,10 @@ export class AggregateSlAPIService {
       const sectoralScope = EmissionSubSectorsToSectoralScopeMap[key];
       if (groupedBySectoralScope[sectoralScope]) {
         const logs = groupedBySectoralScope[sectoralScope];
-        const totalCredits = logs.reduce((sum, log) => sum + log.eventData.estimatedCredits, 0);
+        const totalCredits = logs.reduce(
+          (sum, log) => sum + log.eventData.estimatedCredits,
+          0
+        );
         creditTotals[key] = totalCredits;
       } else {
         creditTotals[key] = 0; // Set to 0 if no matching data found
@@ -2289,7 +2666,10 @@ export class AggregateSlAPIService {
     const endTime = this.getLastDayOfYear(endYear).getTime();
     const issuedCreditResult = await this.eventLogRepo
       .createQueryBuilder("event_log")
-      .where("event_log.createdTime BETWEEN :startTime AND :endTime", { startTime, endTime })
+      .where("event_log.createdTime BETWEEN :startTime AND :endTime", {
+        startTime,
+        endTime,
+      })
       .andWhere("event_log.type = :type", { type: "ACTUAL_CREDIT_ISSUE" })
       .orderBy("event_log.createdTime", "ASC")
       .getMany();
@@ -2313,7 +2693,10 @@ export class AggregateSlAPIService {
       const sectoralScope = EmissionSubSectorsToSectoralScopeMap[key];
       if (groupedBySectoralScope[sectoralScope]) {
         const logs = groupedBySectoralScope[sectoralScope];
-        const totalCredits = logs.reduce((sum, log) => sum + log.eventData.issuedCredits, 0);
+        const totalCredits = logs.reduce(
+          (sum, log) => sum + log.eventData.issuedCredits,
+          0
+        );
         creditTotals[key] = totalCredits;
       } else {
         creditTotals[key] = 0; // Set to 0 if no matching data found
@@ -2333,7 +2716,10 @@ export class AggregateSlAPIService {
         if (path.includes(".")) {
           // Handle paths with nested properties
           const pathSegments = path.split(".");
-          matchingValue = pathSegments.reduce((obj, prop) => obj[prop], projection);
+          matchingValue = pathSegments.reduce(
+            (obj, prop) => obj[prop],
+            projection
+          );
         } else {
           // Handle direct property access
           matchingValue = projection[path];
@@ -2357,10 +2743,14 @@ export class AggregateSlAPIService {
       .innerJoin("programme_sl", "psl", "ve.programmeId = psl.programmeId")
       .select("COUNT(*)", "count") // Select count
       .addSelect("MAX(ve.updatedTime)", "latestUpdatedTime") // Select latest updated time
-      .where("ve.status != :status", { status: "VERIFICATION_REPORT_VERIFIED" });
+      .where("ve.status != :status", {
+        status: "VERIFICATION_REPORT_VERIFIED",
+      });
 
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      query.andWhere("psl.companyId = :companyId", { companyId: user.companyId });
+      query.andWhere("psl.companyId = :companyId", {
+        companyId: user.companyId,
+      });
     }
 
     const result = await query.getRawOne();
@@ -2378,9 +2768,12 @@ export class AggregateSlAPIService {
       .where("cr.status = :status", { status: "Pending" });
 
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      query.andWhere("(cr.fromCompanyId = :companyId OR cr.toCompanyId = :companyId)", {
-        companyId: user.companyId,
-      });
+      query.andWhere(
+        "(cr.fromCompanyId = :companyId OR cr.toCompanyId = :companyId)",
+        {
+          companyId: user.companyId,
+        }
+      );
     }
     const result = await query.getRawOne();
 
@@ -2393,12 +2786,19 @@ export class AggregateSlAPIService {
   async getCreditTypeSummary(statFilter: StatFilter, user: User) {
     let query = this.programmeSlRepo
       .createQueryBuilder("programme")
-      .select("programme.purposeOfCreditDevelopment", "purposeOfCreditDevelopment")
+      .select(
+        "programme.purposeOfCreditDevelopment",
+        "purposeOfCreditDevelopment"
+      )
       .addSelect("SUM(programme.creditEst)", "totalCreditEst")
-      .where("programme.projectProposalStage = :stage", { stage: "AUTHORISED" });
+      .where("programme.projectProposalStage = :stage", {
+        stage: "AUTHORISED",
+      });
 
     if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      query.andWhere("programme.companyId = :companyId", { companyId: user.companyId });
+      query.andWhere("programme.companyId = :companyId", {
+        companyId: user.companyId,
+      });
     }
     if (statFilter.startTime && statFilter.endTime) {
       query.andWhere("programme.createdTime BETWEEN :startTime AND :endTime", {
@@ -2406,7 +2806,9 @@ export class AggregateSlAPIService {
         endTime: statFilter.endTime,
       });
     }
-    const result = await query.groupBy("programme.purposeOfCreditDevelopment").getRawMany();
+    const result = await query
+      .groupBy("programme.purposeOfCreditDevelopment")
+      .getRawMany();
 
     const formattedResult = result.reduce((acc, item) => {
       acc[item.purposeOfCreditDevelopment] = item.totalCreditEst;
@@ -2417,17 +2819,12 @@ export class AggregateSlAPIService {
   }
 
   async getEstimatedSubSectorData(projectionResult, startYear, endYear) {
-    const totalEstimatedCreditsPerSubSector = await this.calculateEstimatedCreditsBySubSector(
-      startYear,
-      endYear
-    );
-    const totalIssuedCreditsPerSubSector = await this.calculateIssuedCreditsBySubSector(
-      startYear,
-      endYear
-    );
-    const totalProjectedBauPerSubSector = await this.calculateProjectionBauBySubSector(
-      projectionResult
-    );
+    const totalEstimatedCreditsPerSubSector =
+      await this.calculateEstimatedCreditsBySubSector(startYear, endYear);
+    const totalIssuedCreditsPerSubSector =
+      await this.calculateIssuedCreditsBySubSector(startYear, endYear);
+    const totalProjectedBauPerSubSector =
+      await this.calculateProjectionBauBySubSector(projectionResult);
 
     const estimatePercentage = {};
     const issuePercentage = {};
@@ -2458,12 +2855,28 @@ export class AggregateSlAPIService {
       ["Metal", "Industry"],
       ["Non-Energy", "Products", "from", "Fuels", "and", "Solvent", "Use"],
       ["Electronics", "Industry"],
-      ["Product", "Uses as", "Substitutes", "for", "Ozone", "Depleting", "Substances"],
+      [
+        "Product",
+        "Uses as",
+        "Substitutes",
+        "for",
+        "Ozone",
+        "Depleting",
+        "Substances",
+      ],
       ["Other", "Product", "Manufacture", "and", "Use"],
       ["Other", "(Industrial", "Processes", "&", "Product", "Use)"],
       "Livestock",
       "Land",
-      ["Aggregate", "sources", "and", "non-CO2", "emissions", "sources", "on land"],
+      [
+        "Aggregate",
+        "sources",
+        "and",
+        "non-CO2",
+        "emissions",
+        "sources",
+        "on land",
+      ],
       ["Other", "(Agriculture,", "Forestry,", "and", "Other", "Land", "Use)"],
       ["Solid", "Waste", "Disposal"],
       ["Biological", "Treatment", "of", "Solid", "Waste"],
@@ -2524,8 +2937,12 @@ export class AggregateSlAPIService {
     projectionResult.forEach((projection) => {
       xLabels.push(projection.year);
       bau.push(this.calculateSumEmissions(projection, "bau"));
-      conditionalNdc.push(this.calculateSumEmissions(projection, "conditionalNdc"));
-      unconditionalNdc.push(this.calculateSumEmissions(projection, "unconditionalNdc"));
+      conditionalNdc.push(
+        this.calculateSumEmissions(projection, "conditionalNdc")
+      );
+      unconditionalNdc.push(
+        this.calculateSumEmissions(projection, "unconditionalNdc")
+      );
       last = projection.updatedAt;
 
       const emissionDataForYear = emissionResult.find(
@@ -2544,7 +2961,10 @@ export class AggregateSlAPIService {
 
     return {
       data: { xLabels, bau, conditionalNdc, unconditionalNdc, actual },
-      last: latestEmissionDate > latestProjectionDate ? latestEmissionDate : latestProjectionDate,
+      last:
+        latestEmissionDate > latestProjectionDate
+          ? latestEmissionDate
+          : latestProjectionDate,
     };
   }
 
@@ -2561,14 +2981,20 @@ export class AggregateSlAPIService {
         : new Date().getFullYear();
     const emissionResult = await this.emissionRepo
       .createQueryBuilder("emission")
-      .where("emission.year BETWEEN :startYear AND :endYear", { startYear, endYear })
+      .where("emission.year BETWEEN :startYear AND :endYear", {
+        startYear,
+        endYear,
+      })
       .andWhere("emission.state = :status", { status: "FINALIZED" })
       .orderBy("emission.year", "ASC")
       .getMany();
 
     const projectionResult = await this.projectionRepo
       .createQueryBuilder("projection")
-      .where("projection.year BETWEEN :startYear AND :endYear", { startYear, endYear })
+      .where("projection.year BETWEEN :startYear AND :endYear", {
+        startYear,
+        endYear,
+      })
       .andWhere("projection.state = :status", { status: "FINALIZED" })
       .orderBy("projection.year", "ASC")
       .getMany();
@@ -2593,13 +3019,19 @@ export class AggregateSlAPIService {
             );
             break;
           case StatType.AGG_EMISSIONS_COMPARISON:
-            results[key] = await this.getComparisonChartData(emissionResult, projectionResult);
+            results[key] = await this.getComparisonChartData(
+              emissionResult,
+              projectionResult
+            );
             break;
         }
     }
   }
 
-  async getGhgEmissionStats(query: StatList, system: SYSTEM_TYPE): Promise<DataCountResponseDto> {
+  async getGhgEmissionStats(
+    query: StatList,
+    system: SYSTEM_TYPE
+  ): Promise<DataCountResponseDto> {
     let results = {};
 
     for (const stat of query.stats) {
@@ -2647,7 +3079,9 @@ export class AggregateSlAPIService {
   }
 
   private getLatestUpdateTime(emissionDataArray) {
-    const updateTimeObjects = emissionDataArray.map((item) => new Date(item.updatedAt));
+    const updateTimeObjects = emissionDataArray.map(
+      (item) => new Date(item.updatedAt)
+    );
 
     updateTimeObjects.sort((a, b) => b - a);
 
