@@ -32,6 +32,7 @@ import { GovDepartment } from '../../../Definitions/Enums/govDep.enum';
 import { DocType } from '../../../Definitions/Enums/document.type';
 import { MapComponent } from '../../Maps/mapComponent';
 import { MapSourceData } from '../../../Definitions/Definitions/mapComponent.definitions';
+import { API_PATHS } from '../../../Config/apiConfig';
 
 type SizeType = Parameters<typeof Form>[0]['size'];
 
@@ -231,7 +232,7 @@ export const ProgrammeCreationComponent = (props: any) => {
   const getCountryList = async () => {
     setLoadingList(true);
     try {
-      const response = await get('national/organisation/countries');
+      const response = await get(API_PATHS.COUNTRY_LIST);
       if (response.data) {
         setCountries(response.data);
       }
@@ -245,7 +246,7 @@ export const ProgrammeCreationComponent = (props: any) => {
   const getRegionList = async () => {
     setLoadingList(true);
     try {
-      const response = await post('national/organisation/regions', {
+      const response = await post(API_PATHS.REGIONS, {
         page: 1,
         size: 100,
         filterAnd: [
@@ -271,7 +272,7 @@ export const ProgrammeCreationComponent = (props: any) => {
   const getGovernmentDetails = async () => {
     setLoading(true);
     try {
-      const response = await post('national/organisation/query', {
+      const response = await post(API_PATHS.ORGANIZATION_DETAILS, {
         page: 1,
         size: 100,
         filterAnd: [
@@ -308,7 +309,7 @@ export const ProgrammeCreationComponent = (props: any) => {
   const getMinistryDetails = async () => {
     setLoading(true);
     try {
-      const response = await post('national/organisation/query', {
+      const response = await post(API_PATHS.ORGANIZATION_DETAILS, {
         page: 1,
         size: 100,
         filterOr: [
@@ -337,8 +338,8 @@ export const ProgrammeCreationComponent = (props: any) => {
   const getImplementOwnerDetails = async () => {
     setLoading(true);
     try {
-      const userId = userInfoState?.id ? parseInt(userInfoState.id) : userInfoState?.id;
-      const response: any = await post('national/user/query', {
+      const userId = userInfoState?.id;
+      const response: any = await post(API_PATHS.USER_DETAILS, {
         page: 1,
         size: 10,
         filterAnd: [
@@ -370,7 +371,7 @@ export const ProgrammeCreationComponent = (props: any) => {
   const getOrganisationsDetails = async () => {
     setLoadingList(true);
     try {
-      const response = await post('national/organisation/queryNames', {
+      const response = await post(API_PATHS.ORGANIZATION_NAMES, {
         page: 1,
         size: 100,
         filterAnd: [
@@ -399,8 +400,8 @@ export const ProgrammeCreationComponent = (props: any) => {
   const getUserDetails = async () => {
     setLoading(true);
     try {
-      const userId = userInfoState?.id ? parseInt(userInfoState.id) : userInfoState?.id;
-      const response: any = await post('national/user/query', {
+      const userId = userInfoState?.id;
+      const response: any = await post(API_PATHS.USER_DETAILS, {
         page: 1,
         size: 10,
         filterAnd: [
@@ -620,7 +621,7 @@ export const ProgrammeCreationComponent = (props: any) => {
   const saveNewProgramme = async (payload: any) => {
     setLoading(true);
     try {
-      const response: any = await post('national/programme/create', payload);
+      const response: any = await post(API_PATHS.NEW_PROJECT, payload);
       if (response?.statusText === 'SUCCESS') {
         message.open({
           type: 'success',

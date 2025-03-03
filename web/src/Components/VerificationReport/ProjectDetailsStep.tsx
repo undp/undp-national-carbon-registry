@@ -1,0 +1,486 @@
+import { useEffect, useState } from 'react';
+import { Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
+import PhoneInput, {
+  formatPhoneNumber,
+  formatPhoneNumberIntl,
+  isPossiblePhoneNumber,
+} from 'react-phone-number-input';
+
+import moment from 'moment';
+import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import TextArea from 'antd/lib/input/TextArea';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
+import { API_PATHS } from '../../Config/apiConfig';
+
+export const ProjectDetailsStep = (props: any) => {
+  const {
+    useLocation,
+    translator,
+    current,
+    form,
+    formMode,
+    next,
+    cancel,
+    countries,
+    verifiedScer,
+    onValueChange,
+  } = props;
+
+  const { get, post } = useConnection();
+  const [contactNoInput] = useState<any>();
+  const [countryList, setCountryList] = useState<[]>([]);
+  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    : 'pk.eyJ1IjoicGFsaW5kYSIsImEiOiJjbGMyNTdqcWEwZHBoM3FxdHhlYTN4ZmF6In0.KBvFaMTjzzvoRCr1Z1dN_g';
+
+  const getCountryList = async () => {
+    const response = await get(API_PATHS.COUNTRY_LIST);
+    if (response.data) {
+      setCountryList(response.data);
+    }
+  };
+  useEffect(() => {
+    getCountryList();
+  }, []);
+  const t = translator.t;
+  return (
+    <>
+      {current === 0 && (
+        <div>
+          <div className="step-form-container">
+            <Form
+              labelCol={{ span: 20 }}
+              wrapperCol={{ span: 24 }}
+              className="step-form"
+              layout="vertical"
+              requiredMark={true}
+              form={form}
+              disabled={FormMode.VIEW === formMode}
+              onFinish={(values: any) => {
+                onValueChange({ projectDetails: values });
+                next();
+              }}
+            >
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={12} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('verificationReport:projectTitle')}
+                      name="projectTitle"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('verificationReport:projectTitle')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input size="large" disabled />
+                    </Form.Item>
+
+                    <Form.Item
+                      label={t('verificationReport:client')}
+                      name="client"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('verificationReport:client')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input size="large" disabled />
+                    </Form.Item>
+
+                    <Form.Item
+                      label={t('verificationReport:contactPerson')}
+                      name="contactPerson"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('verificationReport:contactPerson')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input size="large" disabled />
+                    </Form.Item>
+
+                    <Form.Item
+                      name="telephone"
+                      label={t('verificationReport:telephone')}
+                      initialValue={useLocation?.record?.phoneNo}
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule: any, value: any) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('verificationReport:telephone')} ${t('isRequired')}`
+                              );
+                            } else {
+                              const phoneNo = formatPhoneNumber(String(value));
+                              if (String(value).trim() !== '') {
+                                if (phoneNo === null || phoneNo === '' || phoneNo === undefined) {
+                                  throw new Error(
+                                    `${t('verificationReport:telephone')} ${t('isRequired')}`
+                                  );
+                                } else {
+                                  if (!isPossiblePhoneNumber(String(value))) {
+                                    throw new Error(
+                                      `${t('verificationReport:telephone')} ${t('isInvalid')}`
+                                    );
+                                  }
+                                }
+                              }
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <PhoneInput
+                        placeholder={t('verificationReport:telephone')}
+                        international
+                        value={formatPhoneNumberIntl(contactNoInput)}
+                        defaultCountry="LK"
+                        disabled
+                        countryCallingCodeEditable={false}
+                        onChange={(v) => {}}
+                        countries={countries}
+                      />
+                    </Form.Item>
+
+                    <Form.Item
+                      label={t('verificationReport:address')}
+                      name="address"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('verificationReport:address')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <TextArea rows={3} disabled />
+                    </Form.Item>
+                  </div>
+                </Col>
+
+                <Col xl={12} md={24}>
+                  <div className="step-form-right-col">
+                    <Form.Item
+                      label={t('verificationReport:completionDate')}
+                      name="completionDate"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('verificationReport:completionDate')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <DatePicker
+                        size="large"
+                        disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                      />
+                    </Form.Item>
+
+                    <Form.Item
+                      label={t('verificationReport:email')}
+                      name="email"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('verificationReport:email')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input size="large" disabled />
+                    </Form.Item>
+
+                    <h4 className="form-section-title">
+                      {`${t('verificationReport:monitoringPeriod')}`}
+                      <span style={{ color: '#ff4d4f' }}> *</span>
+                    </h4>
+                    <Row>
+                      <Col xl={11} md={24}>
+                        <Form.Item
+                          name="monitoringPeriodStart"
+                          rules={[
+                            {
+                              required: true,
+                              message: '',
+                            },
+                            {
+                              validator: async (rule, value) => {
+                                if (
+                                  String(value).trim() === '' ||
+                                  String(value).trim() === undefined ||
+                                  value === null ||
+                                  value === undefined
+                                ) {
+                                  throw new Error(
+                                    `${t('verificationReport:monitoringPeriodStart')} ${t(
+                                      'isRequired'
+                                    )}`
+                                  );
+                                }
+                              },
+                            },
+                          ]}
+                        >
+                          <DatePicker size="large" />
+                        </Form.Item>
+                      </Col>
+                      <Col xl={2} md={24}>
+                        <div className="step-form-right-col">
+                          <h4 className="to-lable">{t('verificationReport:to')}</h4>
+                        </div>
+                      </Col>
+                      <Col xl={11} md={24}>
+                        <Form.Item
+                          name="monitoringPeriodEnd"
+                          rules={[
+                            {
+                              required: true,
+                              message: '',
+                            },
+                            {
+                              validator: async (rule, value) => {
+                                if (
+                                  String(value).trim() === '' ||
+                                  String(value).trim() === undefined ||
+                                  value === null ||
+                                  value === undefined
+                                ) {
+                                  throw new Error(
+                                    `${t('verificationReport:monitoringPeriodEnd')} ${t(
+                                      'isRequired'
+                                    )}`
+                                  );
+                                }
+                              },
+                            },
+                          ]}
+                        >
+                          <DatePicker size="large" />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Form.Item
+                      label={t('verificationReport:estimatedScer')}
+                      name="estimatedScer"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('verificationReport:estimatedScer')} ${t('isRequired')}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input size="large" disabled />
+                    </Form.Item>
+
+                    <Form.Item
+                      label={t('verificationReport:verifiedScer')}
+                      name="verifiedScer"
+                      rules={[
+                        {
+                          required: true,
+                          message: '',
+                        },
+                        {
+                          pattern: /^[1-9]\d*$/,
+                          message: `${t('verificationReport:shouldBeInteger')}`,
+                        },
+                        {
+                          validator: async (rule, value) => {
+                            if (
+                              String(value).trim() === '' ||
+                              String(value).trim() === undefined ||
+                              value === null ||
+                              value === undefined
+                            ) {
+                              throw new Error(
+                                `${t('verificationReport:verifiedScer')} ${t('isRequired')}`
+                              );
+                            }
+                            if (formMode !== FormMode.VIEW && Number(value) > verifiedScer) {
+                              throw new Error(
+                                `${t('verificationReport:verifiedScer')} ${t(
+                                  'verificationReport:lessThanOrEqual'
+                                )} ${verifiedScer}`
+                              );
+                            }
+                          },
+                        },
+                      ]}
+                    >
+                      <Input size="large" type="number" />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={24} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('verificationReport:summary')}
+                      name="summary"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('verificationReport:summary')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+
+              <Row className="row" gutter={[40, 16]}>
+                <Col xl={12} md={24}>
+                  <div className="step-form-left-col">
+                    <Form.Item
+                      label={t('verificationReport:workCarriedOutBy')}
+                      name="workCarriedOutBy"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('verificationReport:workCarriedOutBy')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <TextArea rows={3} disabled />
+                    </Form.Item>
+                    {FormMode.VIEW === formMode ? (
+                      <Form.Item label={t('verificationReport:reportID')} name="reportID">
+                        <Input size="large" />
+                      </Form.Item>
+                    ) : (
+                      ''
+                    )}
+                  </div>
+                </Col>
+
+                <Col xl={12} md={24}>
+                  <div className="step-form-right-col">
+                    <Form.Item
+                      label={t('verificationReport:workApprovedBy')}
+                      name="workApprovedBy"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t('verificationReport:workApprovedBy')} ${t('isRequired')}`,
+                        },
+                      ]}
+                    >
+                      <TextArea rows={7} disabled={FormMode.VIEW === formMode} />
+                    </Form.Item>
+                  </div>
+                </Col>
+              </Row>
+              <Row justify={'end'} className="step-actions-end">
+                <Button danger size={'large'} onClick={cancel} disabled={false}>
+                  {t('verificationReport:cancel')}
+                </Button>
+                <Button type="primary" htmlType="submit" disabled={false}>
+                  {t('verificationReport:next')}
+                </Button>
+              </Row>
+            </Form>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};

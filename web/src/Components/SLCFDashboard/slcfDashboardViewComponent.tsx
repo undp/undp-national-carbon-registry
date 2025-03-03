@@ -35,6 +35,8 @@ import {
 import { SLStatisticsCard } from './SlStatisticsCard/slStatisticsCard';
 import { CreditTypeSl } from '../../Definitions/Enums/creditTypeSl.enum';
 import { SLCFDetailsBarChartsStatComponent } from './slcfDetailsBarChartStatsComponent';
+import { API_PATHS } from '../../Config/apiConfig';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 const { RangePicker } = DatePicker;
 
 export const SLCFDashboardComponent = (props: any) => {
@@ -122,7 +124,7 @@ export const SLCFDashboardComponent = (props: any) => {
     setLoadingWithoutTimeRange(true);
     try {
       const response: any = await post(
-        'stats/programme/totalSLProjects',
+        API_PATHS.TOTAL_PROGRAM_COUNT,
         null,
         undefined,
         statServerUrl
@@ -158,7 +160,7 @@ export const SLCFDashboardComponent = (props: any) => {
     setLoadingWithoutTimeRange(true);
     try {
       const response: any = await post(
-        'stats/programme/totalIssuedCredits',
+        API_PATHS.TOTAL_ISSUED_CREDITS,
         null,
         undefined,
         statServerUrl
@@ -194,7 +196,7 @@ export const SLCFDashboardComponent = (props: any) => {
     setLoadingWithoutTimeRange(true);
     try {
       const response: any = await post(
-        'stats/programme/totalRetiredCredits',
+        API_PATHS.TOTAL_RETIERED_CREDITS,
         null,
         undefined,
         statServerUrl
@@ -292,7 +294,7 @@ export const SLCFDashboardComponent = (props: any) => {
     setLoadingCharts(true);
     try {
       const response: any = await post(
-        'stats/programme/queryProgrammesByStatus',
+        API_PATHS.PROJECT_BY_STATUS,
         { filterAnd: getFilters() },
         undefined,
         statServerUrl
@@ -313,9 +315,10 @@ export const SLCFDashboardComponent = (props: any) => {
         if (response?.data?.proposalStageData) {
           const combinedStage = 'PROPOSAL_PENDING';
           const combinedStages = [
-            ProjectProposalStage.SUBMITTED_COST_QUOTATION,
-            ProjectProposalStage.SUBMITTED_PROPOSAL,
-            ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT,
+            // ProjectProposalStage.SUBMITTED_COST_QUOTATION,
+            // ProjectProposalStage.SUBMITTED_PROPOSAL,
+            // ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT,
+            ProjectProposalStage.PENDING,
           ];
 
           const processedData = [
@@ -345,7 +348,7 @@ export const SLCFDashboardComponent = (props: any) => {
               (stage) => !combinedStages.includes(stage)
             ),
           ];
-          const rejectedInfIndex = allStages.indexOf(ProjectProposalStage.REJECTED_INF);
+          const rejectedInfIndex = allStages.indexOf(ProjectProposalStage.REJECTED);
           allStages.splice(rejectedInfIndex + 1, 0, combinedStage); // Insert after REJECTED_INF
 
           // Generate the result array
@@ -427,7 +430,7 @@ export const SLCFDashboardComponent = (props: any) => {
     setLoadingPieChart(true);
     try {
       const response: any = await post(
-        'stats/programme/queryProgrammesByCategory',
+        API_PATHS.PROJECT_BY_CATEGORY,
         { filterAnd: getFilters() },
         undefined,
         statServerUrl
@@ -463,7 +466,7 @@ export const SLCFDashboardComponent = (props: any) => {
     setLoadingRetirementsByDateCharts(true);
     try {
       const response: any = await post(
-        'stats/programme/queryRetirementsByDate',
+        API_PATHS.RETIREMENTS_BY_DATE,
         { filterAnd: getFilters() },
         undefined,
         statServerUrl
@@ -698,7 +701,7 @@ export const SLCFDashboardComponent = (props: any) => {
     setLoadingCreditsByPurposeCharts(true);
     try {
       const response: any = await post(
-        'stats/programme/queryCreditsByPurpose',
+        API_PATHS.CREDITS_BY_PURPOSE,
         { filterAnd: getFilters() },
         undefined,
         statServerUrl
@@ -925,9 +928,9 @@ export const SLCFDashboardComponent = (props: any) => {
           <div className="systemchange-container" style={{ marginLeft: `20px` }}>
             <ButtonGroup>
               <Button type="primary" className="slcf-primary">
-                ARTICLE 6.2 PROJECTS
+                SLCF PROJECTS
               </Button>
-              <Link to="/dashboard/cr">
+              <Link to={ROUTES.REGISTRY_DASHBOARD}>
                 <Button className="slcf-default">ARTICLE 6.4 PROJECTS</Button>
               </Link>
             </ButtonGroup>

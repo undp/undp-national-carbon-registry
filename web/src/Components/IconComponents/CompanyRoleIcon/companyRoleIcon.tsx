@@ -32,11 +32,11 @@ const CompanyRoleIcon: FC<CompanyRoleIconProps> = (props: CompanyRoleIconProps) 
   const { role, t } = props;
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
-      {role === 'Government' ? (
+      {role === 'DNA' ? (
         <RoleIcon icon={<BankOutlined />} bg={GovBGColor} color={GovColor} />
-      ) : role === 'Certifier' ? (
+      ) : role === 'IC' ? (
         <RoleIcon icon={<SafetyOutlined />} bg={CertBGColor} color={CertColor} />
-      ) : role === 'ProgrammeDeveloper' ? (
+      ) : role === 'PD' ? (
         <RoleIcon icon={<ExperimentOutlined />} bg={DevBGColor} color={DevColor} />
       ) : role === 'ClimateFund' ? (
         <RoleIcon icon={<CopyrightOutlined />} bg={CFBGColor} color={CFColor} />

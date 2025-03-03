@@ -7,6 +7,7 @@ import { useUserContext } from '../../../Context/UserInformationContext/userInfo
 import LanguageSelection from '../../LanguageSelection/languageSelection';
 import { UserRoleIcon } from '../../IconComponents/UserRoleIcon/userRoleIcon';
 import { CompanyDetailsComponent } from '../../Company/CompanyDetails/companyDetailsComponent';
+import { API_PATHS } from '../../../Config/apiConfig';
 
 export const UserProfileComponent = (props: any) => {
   const { t, i18n, onNavigateUpdateUser, onNavigateLogin } = props;
@@ -27,7 +28,7 @@ export const UserProfileComponent = (props: any) => {
   const getUserProfileDetails = async () => {
     try {
       setIsLoading(true);
-      const response = await get('national/User/profile');
+      const response = await get(API_PATHS.USER_PROFILE_DETAILS);
       if (response.data) {
         setOrganisationDetails(response.data.Organisation);
         setUserDetails(response.data.user);

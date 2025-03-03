@@ -11,7 +11,7 @@ import UserManagement from './Pages/UserManagement/userManagement';
 import RegistryDashboard from './Pages/Dashboard/registry/registrydashboard';
 import AddNewCompany from './Pages/Company/addNewCompany';
 import CompanyManagement from './Pages/CompanyManagement/companyManagement';
-import ProgrammeManagement from './Pages/ProgrammeManagement/programmeManagement';
+// import ProgrammeManagement from './Pages/Old_ProgrammeManagement/programmeManagement';
 import ProgrammeView from './Pages/ProgrammeView/programmeView';
 import i18next from 'i18next';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -30,7 +30,7 @@ import { message } from 'antd';
 import InvestmentManagement from './Pages/InvestmentManagement/investmentManagement';
 import AddInvestmentComponent from './Pages/InvestmentManagement/investmentCreation';
 import NdcActionManagement from './Pages/NdcActionManagement/ndcActionManagement';
-import AddProgramme from './Pages/ProgrammeManagement/addProgramme';
+// import AddProgramme from './Pages/Old_ProgrammeManagement/addProgramme';
 import AddNDCAction from './Pages/NdcActionManagement/addNDCAction';
 import NdcActionView from './Pages/NdcActionManagement/ndcActionView';
 import RegisterNewCompany from './Pages/Company/registerNewCompany';
@@ -40,20 +40,22 @@ import { UserInformationContextProvider } from './Context/UserInformationContext
 import { SettingsContextProvider } from './Context/SettingsContext/settingsContext';
 import { Loading } from './Components/Loading/loading';
 import NationalAccountingDashboard from './Pages/NationalAccounting/nationalAccounting';
-import SLCFProgrammeManagement from './Pages/SLCFProgrammeManagement/SLCFProgrammeManagement';
-import SLCFAddProgramme from './Pages/SLCFProgrammeManagement/SLCFAddProgramme';
-import SLCFMonitoringReport from './Pages/SLCFProgrammeManagement/SLCFMonitoringReport';
-import SLCFProjectDetailsView from './Pages/SLCFProgrammeManagement/SLCFProjectDetailsView';
-import CMAFormPage from './Pages/CMAFormPage/CMAFormPage';
+// import ProgrammeManagement from './Pages/ProgrammeManagement/ProgrammeManagement';
+// import AddProgramme from './Pages/ProgrammeManagement/AddProgramme';
+import MonitoringReport from './Pages/ProgrammeManagement/MonitoringReport';
+import ProjectDetailsView from './Pages/ProgrammeManagement/ProjectDetailsView';
+import CMAFormPage from './Pages/PDD/PDDPage';
 import ValidationReportPage from './Pages/ValidationReportPage.tsx/ValidationReportPage';
 import ProjectProposalPage from './Pages/ProjectProposalPage/ProjectProposalPage';
 import ValidationAgreementPage from './Pages/ValidationAgreementPage/ValidationAgreementPage';
-import SLCFCostQuotationForm from './Pages/SLCFProgrammeManagement/SLCFCostQuotationForm';
+import CostQuotationForm from './Pages/ProgrammeManagement/CostQuotationForm';
 import SLCFRetirement from './Pages/SLCFRetirementManagement/SLCFRetirement';
-import VerificationReport from './Pages/SLCFProgrammeManagement/VerificationReport';
+import VerificationReport from './Pages/ProgrammeManagement/VerificationReport';
 import SiteVisitCheckListPage from './Pages/SiteVisitCheckListPage/SiteVisitCheckListPage';
 import Settings from './Pages/Settings/settings';
 import SLCFDashboard from './Pages/Dashboard/slcf/slcfdashboard';
+import AddProgramme from './Pages/ProgrammeManagement/addProgramme';
+import ProgrammeManagement from './Pages/ProgrammeManagement/programmeManagement';
 
 const App = () => {
   const ability = defineAbility();
@@ -112,32 +114,32 @@ const App = () => {
                   </Route>
 
                   <Route
-                    path="/programmeManagementSLCF"
-                    element={<CustomLayout selectedKey="programmeManagementSLCF/viewAll" />}
+                    path="/programmeManagement"
+                    element={<CustomLayout selectedKey="programmeManagement/viewAll" />}
                   >
-                    <Route path="viewAll" element={<SLCFProgrammeManagement />} />
-                    <Route path="viewAllProjects" element={<SLCFProgrammeManagement />} />
-                    <Route path="view/:id" element={<SLCFProjectDetailsView />} />
-                    <Route path="addProgramme" element={<SLCFAddProgramme />} />
+                    <Route path="viewAll" element={<ProgrammeManagement />} />
+                    <Route path="viewAllProjects" element={<ProgrammeManagement />} />
+                    <Route path="view/:id" element={<ProjectDetailsView />} />
+                    <Route path="addProgramme" element={<AddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
-                    <Route path="monitoringReport/:id" element={<SLCFMonitoringReport />} />
+                    <Route path="monitoringReport/:id" element={<MonitoringReport />} />
                     <Route
                       path="monitoringReport/:id/:verificationRequestId"
-                      element={<SLCFMonitoringReport />}
+                      element={<MonitoringReport />}
                     />
                     <Route path="verificationReport/:id" element={<VerificationReport />} />
                     <Route
                       path="verificationReport/:id/:verificationRequestId"
                       element={<VerificationReport />}
                     />
-                    <Route path="addCostQuotation/:id" element={<SLCFCostQuotationForm />} />
+                    <Route path="addCostQuotation/:id" element={<CostQuotationForm />} />
                     <Route path="projectProposal/:id" element={<ProjectProposalPage />} />
                     <Route path="siteVisitCheckList/:id/" element={<SiteVisitCheckListPage />} />
                     <Route
                       path="validationAgreement/:id"
                       element={<ValidationAgreementPage />}
                     />{' '}
-                    <Route path="cmaForm/:id/" element={<CMAFormPage />} />
+                    <Route path="pdd/:id/" element={<CMAFormPage />} />
                     <Route path="validationReport/:id" element={<ValidationReportPage />} />
                   </Route>
 
@@ -148,7 +150,9 @@ const App = () => {
                     <Route path="viewAll" element={<SLCFRetirement />} />
                     {/* <Route path="view" element={<ProgrammeView />} /> */}
                   </Route>
-                  <Route
+
+                  {/* ---------- old programme management routes start ------------ */}
+                  {/* <Route
                     path="/programmeManagement"
                     element={<CustomLayout selectedKey="programmeManagement/viewAll" />}
                   >
@@ -156,7 +160,9 @@ const App = () => {
                     <Route path="view/:id" element={<ProgrammeView />} />
                     <Route path="addProgramme" element={<AddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
-                  </Route>
+                  </Route> */}
+                  {/* ---------- old programme management routes end ------------ */}
+
                   <Route
                     path="/investmentManagement"
                     element={<CustomLayout selectedKey="investmentManagement/viewAll" />}

@@ -22,11 +22,11 @@ import {
   CarbonNeutralConfirmationModelSl,
   CarbonNeutralConfirmationPopupInfo,
 } from '../../Models/carbonNeutralConfirmationModelSl';
-import { SlcfFormActionModel } from '../../Models/SlcfFormActionModel';
-import { PopupInfo } from '../../../Definitions/Definitions/ndcDetails.definitions';
 import moment from 'moment';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
+import { Role } from '../../../Definitions/Enums/role.enum';
+import { API_PATHS } from '../../../Config/apiConfig';
 
 export const CompanyProfileComponent = (props: any) => {
   const {
@@ -60,7 +60,7 @@ export const CompanyProfileComponent = (props: any) => {
   const getCompanyDetails = async (companyId: string) => {
     try {
       setIsLoading(true);
-      const response = await get(`national/organisation/profile?id=${companyId}`);
+      const response = await get(API_PATHS.ORGANIZATION_PROFILE_DETAILS(companyId));
       if (response.data) {
         setCompanyDetails(response.data);
         setIsLoading(false);
@@ -71,7 +71,7 @@ export const CompanyProfileComponent = (props: any) => {
   const getUserDetails = async (companyId: string) => {
     setIsLoading(true);
     try {
-      const response: any = await post('national/user/query', {
+      const response: any = await post(API_PATHS.USER_DETAILS, {
         page: 1,
         size: 10,
         filterAnd: [
@@ -81,9 +81,9 @@ export const CompanyProfileComponent = (props: any) => {
             value: companyId,
           },
           {
-            key: 'isPending',
+            key: 'user"."isActive',
             operation: '=',
-            value: true,
+            value: false,
           },
         ],
       });
@@ -108,19 +108,20 @@ export const CompanyProfileComponent = (props: any) => {
       if (state.record?.state == '2' || state.record?.state == '3') {
         getUserDetails(state.record.companyId);
       }
-      getCarbonNeutralCertificates(state.record.companyId);
+      // getCarbonNeutralCertificates(state.record.companyId);
     }
   }, []);
 
   const onDeauthoriseOrgConfirmed = async (remarks: string) => {
     try {
       setIsLoading(true);
-      const response: any = await put(
-        `national/organisation/suspend?id=${companyDetails.companyId}`,
-        {
-          remarks: remarks,
-        }
-      );
+      // const response: any = await put(`organisation/suspend?id=${companyDetails.companyId}`, {
+      //   remarks: remarks,
+      // });
+      const response: any = await post(API_PATHS.ORG_CHANGE_STATUS, {
+        id: companyDetails.companyId,
+        state: '0',
+      });
       setOpenDeauthorisationModal(false);
       message.open({
         type: 'success',
@@ -139,12 +140,13 @@ export const CompanyProfileComponent = (props: any) => {
   const onReactivateOrgConfirmed = async (remarks: string) => {
     try {
       setIsLoading(true);
-      const response: any = await put(
-        `national/organisation/activate?id=${companyDetails.companyId}`,
-        {
-          remarks: remarks,
-        }
-      );
+      // const response: any = await put(`organisation/activate?id=${companyDetails.companyId}`, {
+      //   remarks: remarks,
+      // });
+      const response: any = await post(API_PATHS.ORG_CHANGE_STATUS, {
+        id: companyDetails.companyId,
+        state: '1',
+      });
       setOpenReactivateModal(false);
       message.open({
         type: 'success',
@@ -163,12 +165,9 @@ export const CompanyProfileComponent = (props: any) => {
   const onApproveOrgConfirmed = async (remarks: string) => {
     try {
       setIsLoading(true);
-      const response: any = await put(
-        `national/organisation/approve?id=${companyDetails.companyId}`,
-        {
-          remarks: remarks,
-        }
-      );
+      const response: any = await put(API_PATHS.ORG_APPROVE(companyDetails.companyId), {
+        remarks: remarks,
+      });
       setOpenApproveModal(false);
       message.open({
         type: 'success',
@@ -192,12 +191,9 @@ export const CompanyProfileComponent = (props: any) => {
   const onRejectOrgConfirmed = async (remarks: string) => {
     try {
       setIsLoading(true);
-      const response: any = await put(
-        `national/organisation/reject?id=${companyDetails.companyId}`,
-        {
-          remarks: remarks,
-        }
-      );
+      const response: any = await put(API_PATHS.ORG_REJECT(companyDetails.companyId), {
+        remarks: remarks,
+      });
       setOpenRejectModal(false);
       message.open({
         type: 'success',
@@ -284,28 +280,28 @@ export const CompanyProfileComponent = (props: any) => {
     setCNCModelInfo(info);
   };
 
-  const getCarbonNeutralCertificates = async (companyId: number) => {
-    // setLoading(true);
-    try {
-      const response: any = await post('national/programmeSl/getCarbonNeutralCertificates', {
-        companyId: companyId,
-      });
-      if (response.status === 200 || response.status === 201) {
-        console.log(response);
-        setCarbonNeutralCertificateData(response?.data);
-      }
-    } catch (err: any) {
-      console.log('Error in getting carbon neutral certificate data - ', err);
-      message.open({
-        type: 'error',
-        content: err.message,
-        duration: 4,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-    } finally {
-      // setLoading(false);
-    }
-  };
+  // const getCarbonNeutralCertificates = async (companyId: number) => {
+  //   // setLoading(true);
+  //   try {
+  //     const response: any = await post('programmeSl/getCarbonNeutralCertificates', {
+  //       companyId: companyId,
+  //     });
+  //     if (response.status === 200 || response.status === 201) {
+  //       console.log(response);
+  //       setCarbonNeutralCertificateData(response?.data);
+  //     }
+  //   } catch (err: any) {
+  //     console.log('Error in getting carbon neutral certificate data - ', err);
+  //     message.open({
+  //       type: 'error',
+  //       content: err.message,
+  //       duration: 4,
+  //       style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+  //     });
+  //   } finally {
+  //     // setLoading(false);
+  //   }
+  // };
 
   function formatCreatedTime(createdTime: string): string {
     return moment(parseInt(createdTime, 10)).format('DD MMMM YYYY [@] HH:mm');
@@ -361,7 +357,7 @@ export const CompanyProfileComponent = (props: any) => {
   ) => {
     setIsLoading(true);
     try {
-      await post('national/programmeSl/issueCarbonNeutralCertificate', {
+      await post(API_PATHS.ISSURE_CARBON_NEUTRAL_CERTIFICATE, {
         documentId: docId,
         scope: level,
         assessmentPeriodStart: startDate,
@@ -379,7 +375,7 @@ export const CompanyProfileComponent = (props: any) => {
         duration: 3,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
-      getCarbonNeutralCertificates(companyDetails.companyId);
+      // getCarbonNeutralCertificates(companyDetails.companyId);
     } catch (error: any) {
       console.log('Error in issuing  request', error);
       message.open({
@@ -402,7 +398,9 @@ export const CompanyProfileComponent = (props: any) => {
           <div className="body-title">{t('companyProfile:title')}</div>
         </div>
         <div className="flex-display">
-          {ability.can(Action.Delete, plainToClass(Company, companyDetails)) &&
+          {companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
+          userRole === Role.Root &&
+          ability.can(Action.Delete, plainToClass(Company, companyDetails)) &&
           !isLoading &&
           parseInt(companyDetails?.state) === 1 ? (
             <Button danger className="btn-danger" onClick={onDeauthoriseOrganisation}>
@@ -412,7 +410,9 @@ export const CompanyProfileComponent = (props: any) => {
             ''
           )}
 
-          {ability.can(Action.Delete, plainToClass(Company, companyDetails)) &&
+          {companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
+          userRole === Role.Root &&
+          ability.can(Action.Delete, plainToClass(Company, companyDetails)) &&
           !isLoading &&
           parseInt(companyDetails?.state) === 0 ? (
             <Button className="btn-activate" onClick={onReActivateOrganisation}>

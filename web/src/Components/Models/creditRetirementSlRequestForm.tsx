@@ -23,6 +23,7 @@ import { InfoCircle } from 'react-bootstrap-icons';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
 import { CreditType } from '../../Definitions/Enums/programmeStage.enum';
+import { API_PATHS } from '../../Config/apiConfig';
 
 export interface CreditRetirementSlRequestFormProps {
   programme: ProgrammeSl;
@@ -67,7 +68,7 @@ export const CreditRetirementSlRequestForm: FC<CreditRetirementSlRequestFormProp
   const getGovernmentDetails = async () => {
     setLoading(true);
     try {
-      const response = await post('national/organisation/query', {
+      const response = await post(API_PATHS.ORGANIZATION_DETAILS, {
         page: 1,
         size: 100,
         filterAnd: [
@@ -91,7 +92,7 @@ export const CreditRetirementSlRequestForm: FC<CreditRetirementSlRequestFormProp
 
   const handleSearch = async (newValue: string) => {
     if (newValue !== undefined) {
-      const resp = await post('national/organisation/queryNames', {
+      const resp = await post(API_PATHS.ORGANIZATION_NAMES, {
         page: 1,
         size: 50,
         filterAnd: [

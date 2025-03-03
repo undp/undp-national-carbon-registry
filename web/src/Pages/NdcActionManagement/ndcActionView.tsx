@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { getSdgGoalImages } from '../../Definitions/InterfacesAndType/ndcAction.definitions';
 import Chart from 'react-apexcharts';
 import { NdcActionViewComponent } from '../../Components/NdcActions/NdcView/ndcActionViewComponent';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const NdcActionView = () => {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ const NdcActionView = () => {
   const sdgGoalImages = getSdgGoalImages();
 
   const onNavigateToNdcManagementView = (record: any) => {
-    navigate('/ndcManagement/viewAll', { replace: true });
+    navigate(ROUTES.VIEW_ALL_NDC, { replace: true });
   };
 
   return (

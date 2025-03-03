@@ -13,6 +13,8 @@ import ResetPassword from './resetPassword';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import { LoginProps } from '../../Definitions/Definitions/userLogin.definitions';
+import { API_PATHS } from '../../Config/apiConfig';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 export interface LoginPageProps {
   forgotPassword?: boolean;
@@ -43,7 +45,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
     setErrorMsg(undefined);
     try {
       const email = values.email.trim();
-      const response = await post('national/auth/login', {
+      const response = await post(API_PATHS.LOGIN, {
         username: email.trim(),
         password: values.password.trim(),
       });
@@ -68,12 +70,15 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
           companyLogo: response.data.companyLogo,
           companyName: response.data.companyName,
           companyState: response.data.companyState,
+          name: response.data.name,
         });
         removeToken();
         setIsTokenExpired(false);
         return IsAuthenticated(response.data.access_token)
-          ? navigate(redirectLocation ? redirectLocation : '/dashboard', { replace: true })
-          : navigate('/login');
+          ? navigate(redirectLocation ? redirectLocation : ROUTES.VIEW_USERS, {
+              replace: true,
+            })
+          : navigate(ROUTES.LOGIN);
       }
     } catch (error: any) {
       console.log('Error in Login', error);
@@ -91,7 +96,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
   }, []);
 
   const onClickForgotPassword = () => {
-    navigate('/forgotPassword', { replace: true });
+    navigate(ROUTES.FORGOT_PASSWORD, { replace: true });
   };
 
   return (
@@ -261,7 +266,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                             {t('login:register-acc')}&nbsp;&nbsp;
                             <span
                               className="login-register-new-txt-span"
-                              onClick={() => navigate('/registerCompany')}
+                              onClick={() => navigate(ROUTES.REGISTER_ORGANIZATION_FROM_LOGIN)}
                             >
                               {t('login:register-here')}
                             </span>
