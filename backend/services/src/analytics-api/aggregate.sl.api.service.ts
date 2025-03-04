@@ -661,7 +661,7 @@ export class AggregateSlAPIService {
           mineCompanyId:
             statFilter?.onlyMine &&
             companyId &&
-            companyRole === CompanyRole.PROGRAMME_DEVELOPER
+            companyRole === CompanyRole.PROJECT_DEVELOPER
               ? companyId
               : undefined,
         },
@@ -730,7 +730,7 @@ export class AggregateSlAPIService {
     }
 
     frzAgg.mineCompanyId =
-      statFilter?.onlyMine && companyRole === CompanyRole.PROGRAMME_DEVELOPER
+      statFilter?.onlyMine && companyRole === CompanyRole.PROJECT_DEVELOPER
         ? companyId
         : undefined;
     return await this.genAggregateTypeOrmQuery(
@@ -1182,7 +1182,7 @@ export class AggregateSlAPIService {
       .select("COUNT(*)", "count") // Select count
       .addSelect("MAX(pr.createdTime)", "latestUpdatedTime"); // Select latest updated time
 
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       query.where("pr.companyId = :companyId", { companyId: user.companyId });
     }
     const result = await query.getRawOne();
@@ -1198,7 +1198,7 @@ export class AggregateSlAPIService {
       ) // Select count
       .addSelect("MAX(pr.issuedCreditUpdatedTime)", "latestUpdatedTime"); // Select latest updated time
 
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       query.andWhere("pr.companyId = :companyId", {
         companyId: user.companyId,
       });
@@ -1228,7 +1228,7 @@ export class AggregateSlAPIService {
         "latestTransferredCreditUpdatedTime"
       );
 
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       query.andWhere("pr.companyId = :companyId", {
         companyId: user.companyId,
       });
@@ -1261,7 +1261,7 @@ export class AggregateSlAPIService {
     query: QueryDto,
     user: User
   ): Promise<DataResponseDto> {
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       const filterAnd = {
         key: "companyId",
         operation: "=",
@@ -1304,7 +1304,7 @@ export class AggregateSlAPIService {
     query: QueryDto,
     user: User
   ): Promise<DataResponseDto> {
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       const filterAnd = {
         key: "companyId",
         operation: "=",
@@ -1342,7 +1342,7 @@ export class AggregateSlAPIService {
     query: QueryDto,
     user: User
   ): Promise<DataResponseDto> {
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       const fromCompanyId = {
         key: 'cr"."fromCompanyId',
         operation: "=",
@@ -1399,7 +1399,7 @@ export class AggregateSlAPIService {
     query: QueryDto,
     user: User
   ): Promise<DataResponseDto> {
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       const filterAnd = {
         key: 'programme"."companyId',
         operation: "=",
@@ -1532,7 +1532,7 @@ export class AggregateSlAPIService {
     query: QueryDto,
     user: User
   ): Promise<DataResponseDto> {
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       const filterAnd = {
         key: 'programme"."companyId',
         operation: "=",
@@ -1719,7 +1719,7 @@ export class AggregateSlAPIService {
     query: QueryDto,
     user: User
   ): Promise<DataResponseDto> {
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       const filterAnd = {
         key: 'programme"."companyId',
         operation: "=",
@@ -2747,7 +2747,7 @@ export class AggregateSlAPIService {
         status: "VERIFICATION_REPORT_VERIFIED",
       });
 
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       query.andWhere("psl.companyId = :companyId", {
         companyId: user.companyId,
       });
@@ -2767,7 +2767,7 @@ export class AggregateSlAPIService {
       .addSelect("MAX(cr.createdTime)", "latestUpdatedTime") // Select latest updated time
       .where("cr.status = :status", { status: "Pending" });
 
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       query.andWhere(
         "(cr.fromCompanyId = :companyId OR cr.toCompanyId = :companyId)",
         {
@@ -2795,7 +2795,7 @@ export class AggregateSlAPIService {
         stage: "AUTHORISED",
       });
 
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       query.andWhere("programme.companyId = :companyId", {
         companyId: user.companyId,
       });

@@ -728,7 +728,7 @@ export class CreditRetirementSlService {
   //MARK: isProjectParticipant
   isProjectParticipant(user: User) {
     return (
-      user.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
+      user.companyRole === CompanyRole.PROJECT_DEVELOPER &&
       (user.role === Role.Admin || user.role === Role.Manager)
     );
   }

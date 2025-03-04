@@ -620,7 +620,7 @@ export class AggregateAPIService {
           mineCompanyId:
             statFilter?.onlyMine &&
             companyId &&
-            companyRole === CompanyRole.PROGRAMME_DEVELOPER
+            companyRole === CompanyRole.PROJECT_DEVELOPER
               ? companyId
               : undefined,
         },
@@ -689,7 +689,7 @@ export class AggregateAPIService {
     }
 
     frzAgg.mineCompanyId =
-      statFilter?.onlyMine && companyRole === CompanyRole.PROGRAMME_DEVELOPER
+      statFilter?.onlyMine && companyRole === CompanyRole.PROJECT_DEVELOPER
         ? companyId
         : undefined;
     return await this.genAggregateTypeOrmQuery(

@@ -25,9 +25,11 @@ export class OrganisationDto {
 
   @ValidateIf(
     (c) =>
-      ![CompanyRole.GOVERNMENT, CompanyRole.API, CompanyRole.MINISTRY].includes(
-        c.companyRole
-      )
+      ![
+        CompanyRole.DESIGNATED_NATIONAL_AUTHORITY,
+        CompanyRole.API,
+        CompanyRole.MINISTRY,
+      ].includes(c.companyRole)
   )
   @IsNotEmpty()
   @IsString()
@@ -36,9 +38,11 @@ export class OrganisationDto {
 
   @ValidateIf(
     (c) =>
-      ![CompanyRole.GOVERNMENT, CompanyRole.API, CompanyRole.MINISTRY].includes(
-        c.companyRole
-      )
+      ![
+        CompanyRole.DESIGNATED_NATIONAL_AUTHORITY,
+        CompanyRole.API,
+        CompanyRole.MINISTRY,
+      ].includes(c.companyRole)
   )
   @IsNotEmpty()
   @IsString()
@@ -51,7 +55,10 @@ export class OrganisationDto {
   name: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
+    (c) =>
+      ![CompanyRole.DESIGNATED_NATIONAL_AUTHORITY, CompanyRole.API].includes(
+        c.companyRole
+      )
   )
   @IsNotEmpty()
   @IsEmail()
@@ -75,7 +82,10 @@ export class OrganisationDto {
   provinces: string[];
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
+    (c) =>
+      ![CompanyRole.DESIGNATED_NATIONAL_AUTHORITY, CompanyRole.API].includes(
+        c.companyRole
+      )
   )
   @IsNotEmpty()
   @IsString()
@@ -83,7 +93,10 @@ export class OrganisationDto {
   phoneNo: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
+    (c) =>
+      ![CompanyRole.DESIGNATED_NATIONAL_AUTHORITY, CompanyRole.API].includes(
+        c.companyRole
+      )
   )
   @IsUrl()
   @IsOptional()
@@ -91,7 +104,10 @@ export class OrganisationDto {
   website: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
+    (c) =>
+      ![CompanyRole.DESIGNATED_NATIONAL_AUTHORITY, CompanyRole.API].includes(
+        c.companyRole
+      )
   )
   @IsNotEmpty()
   @IsString()

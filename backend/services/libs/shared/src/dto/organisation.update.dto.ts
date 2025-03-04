@@ -32,7 +32,12 @@ export class OrganisationUpdateDto {
   name: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API, CompanyRole.MINISTRY].includes(c.companyRole)
+    (c) =>
+      ![
+        CompanyRole.DESIGNATED_NATIONAL_AUTHORITY,
+        CompanyRole.API,
+        CompanyRole.MINISTRY,
+      ].includes(c.companyRole)
   )
   @IsNotEmpty()
   @IsString()
@@ -40,7 +45,10 @@ export class OrganisationUpdateDto {
   taxId: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
+    (c) =>
+      ![CompanyRole.DESIGNATED_NATIONAL_AUTHORITY, CompanyRole.API].includes(
+        c.companyRole
+      )
   )
   @IsNotEmpty()
   @IsEmail()
@@ -48,49 +56,67 @@ export class OrganisationUpdateDto {
   email: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
+    (c) =>
+      ![CompanyRole.DESIGNATED_NATIONAL_AUTHORITY, CompanyRole.API].includes(
+        c.companyRole
+      )
   )
   @IsUrl()
   @IsOptional()
   @ApiPropertyOptional()
   website: string;
 
-  @ValidateIf(
-    (c) => c.logo
-  )
+  @ValidateIf((c) => c.logo)
   @ApiPropertyOptional()
   @MaxLength(1048576, { message: "Logo cannot exceed 1MB" })
   logo: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
+    (c) =>
+      ![CompanyRole.DESIGNATED_NATIONAL_AUTHORITY, CompanyRole.API].includes(
+        c.companyRole
+      )
   )
   @IsString()
   @ApiPropertyOptional()
   phoneNo: string;
 
   @ValidateIf(
-    (c) => ![CompanyRole.GOVERNMENT, CompanyRole.API].includes(c.companyRole)
+    (c) =>
+      ![CompanyRole.DESIGNATED_NATIONAL_AUTHORITY, CompanyRole.API].includes(
+        c.companyRole
+      )
   )
   @IsString()
   @ApiPropertyOptional()
   address: string;
 
-  @ValidateIf((c) => [CompanyRole.GOVERNMENT, CompanyRole.MINISTRY].includes(c.companyRole))
+  @ValidateIf((c) =>
+    [CompanyRole.DESIGNATED_NATIONAL_AUTHORITY, CompanyRole.MINISTRY].includes(
+      c.companyRole
+    )
+  )
   @ApiProperty({ enum: GovDepartment })
   @IsNotEmpty()
   @IsEnum(GovDepartment, {
-      message: 'Invalid Government Department. Supported following Departments:' + Object.values(GovDepartment)
+    message:
+      "Invalid Government Department. Supported following Departments:" +
+      Object.values(GovDepartment),
   })
   govDep: GovDepartment;
-  
-  @ValidateIf((c) => [CompanyRole.GOVERNMENT, CompanyRole.MINISTRY].includes(c.companyRole))
+
+  @ValidateIf((c) =>
+    [CompanyRole.DESIGNATED_NATIONAL_AUTHORITY, CompanyRole.MINISTRY].includes(
+      c.companyRole
+    )
+  )
   @ApiProperty({ enum: Ministry })
   @IsNotEmpty()
   @IsEnum(Ministry, {
-      message: 'Invalid sector. Supported following sector:' + Object.values(Ministry)
+    message:
+      "Invalid sector. Supported following sector:" + Object.values(Ministry),
   })
-  ministry: Ministry;  
+  ministry: Ministry;
 
   @IsNotEmpty()
   @ApiProperty({ enum: CompanyRole })
@@ -116,11 +142,9 @@ export class OrganisationUpdateDto {
   @IsOptional()
   provinces: string[];
 
-  geographicalLocationCordintes?: any
+  geographicalLocationCordintes?: any;
 
-  @ValidateIf(
-    (c) => CompanyRole.GOVERNMENT==c.companyRole
-  )
+  @ValidateIf((c) => CompanyRole.DESIGNATED_NATIONAL_AUTHORITY == c.companyRole)
   @IsNotEmpty()
   @IsNumber()
   @IsInt()
@@ -129,9 +153,7 @@ export class OrganisationUpdateDto {
   @ApiProperty()
   omgePercentage: number;
 
-  @ValidateIf(
-    (c) => CompanyRole.GOVERNMENT==c.companyRole
-  )
+  @ValidateIf((c) => CompanyRole.DESIGNATED_NATIONAL_AUTHORITY == c.companyRole)
   @IsNotEmpty()
   @IsNumber()
   @IsInt()
