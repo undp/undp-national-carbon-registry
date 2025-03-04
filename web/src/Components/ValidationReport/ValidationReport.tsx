@@ -8,6 +8,7 @@ import { DocumentTypeEnum } from '../../Definitions/Enums/document.type';
 import { Col, Row, Select, Tag } from 'antd';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
 import { getDocumentStatusColor } from '../../Definitions/Definitions/programme.definitions';
+import { API_PATHS } from '../../Config/apiConfig';
 
 const ValidationReport = (props: { translator: i18n }) => {
   const { translator } = props;
@@ -29,7 +30,7 @@ const ValidationReport = (props: { translator: i18n }) => {
 
   const getDocVersions = async () => {
     try {
-      const { data } = await post('national/programmeSl/getDocVersions', {
+      const { data } = await post(API_PATHS.LAST_DOC_VERSIONS, {
         programmeId: id,
         docType: DocumentTypeEnum.VALIDATION_REPORT,
       });

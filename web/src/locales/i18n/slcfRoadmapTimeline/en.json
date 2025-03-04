@@ -5,18 +5,19 @@
   "accepted": "Accepted",
   "rejected": "Rejected",
   "completed": "Completed",
+  "generated": "Generated",
   "infTitle" : "Initial Notification",
-  "submissionByPP": "Submission by Project Participant",
-  "approveBySLCF": "Approval by Article 6.2",
+  "submissionByPP": "Submission by Project Developer",
+  "approveBySLCF": "Approval by SLCF",
   "projectProposal": "Project Proposal",
-  "subCostQuoteBySLCF": "Submission of Cost Quotation, Proposal and Validation Agreement by Article 6.2",
-  "acceptByPP": "Acceptance by Project Participant",
+  "subCostQuoteBySLCF": "Submission of Cost Quotation, Proposal and Validation Agreement by SLCF",
+  "acceptByPP": "Acceptance by Project Developer",
   "cmaTitlePart1": "Carbon Management",
   "cmaTitlePart2": "Assessment",
   "validationTitle": "Validation Report",
-  "submissionBySLCF": "Submission by Article 6.2",
+  "submissionBySLCF": "Submission by SLCF",
   "approveByExCom": "Approval by Executive Committee",
-  "authorisedTitle": "Project Authorisation"
-  
-
+  "authorisedTitle": "Project Authorisation",
+  "noObjection": "No Objection Letter",
+  "noObjectionDescription": "Generated once INF is Approved"
 }

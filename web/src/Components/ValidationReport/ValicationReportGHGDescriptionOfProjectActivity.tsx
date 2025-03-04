@@ -19,9 +19,10 @@ import { useConnection } from '../../Context/ConnectionContext/connectionContext
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
 import { fileUploadValueExtract } from '../../Utils/utilityHelper';
 import { requiredValidationRule } from '../../Utils/validationHelper';
-import { CustomStepsProps } from '../CMAForm/StepProps';
+import { CustomStepsProps } from '../PDD/StepProps';
 import GetLocationMapComponent from '../Maps/GetLocationMapComponent';
 import { ProcessSteps } from './ValidationStepperComponent';
+import { API_PATHS } from '../../Config/apiConfig';
 
 const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps) => {
   const { next, prev, form, current, t, countries, handleValuesUpdate, formMode } = props;
@@ -48,7 +49,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
 
   const getProvinces = async () => {
     try {
-      const { data } = await post('national/location/province');
+      const { data } = await post(API_PATHS.PROVINCES);
       const tempProvinces = data.map((provinceData: any) => provinceData.provinceName);
       setProvinces(tempProvinces);
     } catch (error) {
@@ -58,7 +59,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
 
   const getDistricts = async (provinceName: string, index: number) => {
     try {
-      const { data } = await post('national/location/district', {
+      const { data } = await post(API_PATHS.DISTRICTS, {
         filterAnd: [
           {
             key: 'provinceName',
@@ -76,7 +77,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
 
   const getDivisions = async (districtName: string, index: number) => {
     try {
-      const { data } = await post('national/location/division', {
+      const { data } = await post(API_PATHS.DIVISIONS, {
         filterAnd: [
           {
             key: 'districtName',
@@ -95,7 +96,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
 
   const getCities = async (division: string, index: number) => {
     try {
-      const { data } = await post('national/location/city', {
+      const { data } = await post(API_PATHS.CITIES, {
         filterAnd: [
           {
             key: 'divisionName',

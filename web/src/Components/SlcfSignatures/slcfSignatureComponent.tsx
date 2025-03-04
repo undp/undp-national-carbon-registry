@@ -10,6 +10,7 @@ import { ConfigurationSettingsType } from '../../Definitions/Definitions/setting
 import './slcfSignatureComponent.scss';
 import '../../Styles/app.scss';
 import { SLCFCertificateType } from '../../Definitions/Definitions/certificate.type.enum';
+import { API_PATHS } from '../../Config/apiConfig';
 const { Meta } = Card;
 
 const SLCFSignatureComponent = (props: any) => {
@@ -40,7 +41,7 @@ const SLCFSignatureComponent = (props: any) => {
         ceoSignString = ceoSignUrls[1];
       }
 
-      const response = await post('national/Settings/signs/update', {
+      const response = await post(API_PATHS.SIGNS_UPDATE, {
         chairmanSign: chairmanSignString,
         ceoSign: ceoSignString,
       });
@@ -75,10 +76,10 @@ const SLCFSignatureComponent = (props: any) => {
 
   const getSigns = async () => {
     const ceoSignResponse = await get(
-      `national/Settings/query?id=${ConfigurationSettingsType.ceoSign}`
+      API_PATHS.CEO_SIGN(String(ConfigurationSettingsType.ceoSign))
     );
     const chairmanSignResponse = await get(
-      `national/Settings/query?id=${ConfigurationSettingsType.chairmanSign}`
+      API_PATHS.CHAIRMAN_SIGN(String(ConfigurationSettingsType.chairmanSign))
     );
     if (ceoSignResponse && ceoSignResponse.data) {
       setCeoSign(ceoSignResponse.data);
@@ -145,7 +146,7 @@ const SLCFSignatureComponent = (props: any) => {
   };
 
   const getPreviewCertificate = async (type: SLCFCertificateType) => {
-    const certUrl = await get(`national/Settings/certificates?type=${type}`);
+    const certUrl = await get(API_PATHS.PREVIEW_CERTIFICATE(type));
     if (certUrl.status === 200 && certUrl.data) {
       await downloadPreviewCertificate(certUrl.data?.certURL);
     }

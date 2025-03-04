@@ -6,6 +6,7 @@ import {
   ConnectionContextProviderProps,
   Methods,
 } from '../../Definitions/Definitions/connectionContext.definitions';
+import { API_PATHS } from '../../Config/apiConfig';
 
 const ConnectionContext = createContext<{
   connection?: ConnectionProps;
@@ -175,7 +176,7 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
   }, []);
 
   const refreshAccessToken = async () => {
-    const response = await post('national/auth/login/refresh', {
+    const response = await post(API_PATHS.REFRESH_ACCESS_TOKEN, {
       refreshToken,
     });
     return response;

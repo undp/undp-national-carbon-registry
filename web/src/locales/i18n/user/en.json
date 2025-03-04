@@ -16,8 +16,11 @@
   "gov": "Government",
   "certifier": "Certifier (VVB)",
   "all": "All",
-  "developer": "Project Participant",
+  "developer": "Project Developer",
   "min": "Ministry",
-  "ClimateFund": "CountryX Climate Fund",
-  "ExecutiveCommittee": "Executive Committee"
+  "ClimateFund": "Zimbabwe Climate Fund",
+  "ExecutiveCommittee": "Executive Committee",
+  "ic": "Independent Certifier",
+  "dna": "Designated National Authority",
+  "pd": "Project Developer"
 }

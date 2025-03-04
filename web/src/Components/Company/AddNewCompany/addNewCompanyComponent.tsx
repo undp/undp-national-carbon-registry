@@ -41,6 +41,8 @@ import { CarbonSystemType } from '../../../Definitions/Enums/carbonSystemType.en
 import { GovDepartment } from '../../../Definitions/Enums/govDep.enum';
 import { Ministry } from '../../../Definitions/Enums/ministry.enum';
 import { SectoralScope } from '../../../Definitions/Enums/sectoralScope.enum';
+import { formatBytes } from '../../../Utils/utilityHelper';
+import { API_PATHS } from '../../../Config/apiConfig';
 
 const ministries: any = [
   'Agriculture',
@@ -58,6 +60,19 @@ const ministries: any = [
   'Science And Technology',
   'Water Resources',
   'Other',
+];
+
+const provinces: any = [
+  'Harare',
+  'Bulawayo',
+  'Manicaland',
+  'Mashonaland Central',
+  'Mashonaland East',
+  'Mashonaland West',
+  'Masvingo',
+  'Matabeleland North',
+  'Matabeleland South',
+  'Midlands',
 ];
 
 const ministryOrgs: any = {
@@ -269,151 +284,153 @@ export const AddNewCompanyComponent = (props: any) => {
   const [loadingList, setLoadingList] = useState<boolean>(false);
   const [regionsList, setRegionsList] = useState<any[]>([]);
   const [companyRole, setCompanyRole] = useState<any>(state?.record?.companyRole);
-  const [selectedMinistry, setSelectedMinistry] = useState<string>('');
-  const [existgovDep, setexistGovdep] = useState<string[]>([]);
-  const [ministryDropdown, setMinistryDropdown] = useState<string[]>(ministries);
-  const [intialGovDep, selectInitialGovDep] = useState<any>(
-    state?.record?.govDep ? state?.record?.govDep : ''
-  );
-  const [initialMinistry, selectInitialministry] = useState<any>(
-    state?.record?.ministry ? state?.record?.ministry : ''
-  );
+  // const [selectedMinistry, setSelectedMinistry] = useState<string>('');
+  // const [existgovDep, setexistGovdep] = useState<string[]>([]);
+  // const [ministryDropdown, setMinistryDropdown] = useState<string[]>(ministries);
+  // const [intialGovDep, selectInitialGovDep] = useState<any>(
+  //   state?.record?.govDep ? state?.record?.govDep : ''
+  // );
+  // const [initialMinistry, selectInitialministry] = useState<any>(
+  //   state?.record?.ministry ? state?.record?.ministry : ''
+  // );
 
   const [faxNumber, setFaxNumber] = useState(state?.record?.faxNo || '');
 
-  let selectedGovDepatments = ministryOrgs[selectedMinistry];
-  if (existgovDep && existgovDep.length > 0) {
-    selectedGovDepatments = selectedGovDepatments.filter((x: string) => !existgovDep.includes(x));
-  }
-  const onChangeMinistry = async (val: any) => {
-    const key = Object.keys(Ministry)[Object.values(Ministry).indexOf(val as Ministry)];
-    setSelectedMinistry(String(key));
-    if (isUpdate && val === initialMinistry) {
-      formOne.setFieldValue(
-        'govDep',
-        Object.keys(GovDepartment)[
-          Object.values(GovDepartment).indexOf(intialGovDep as GovDepartment)
-        ]
-      );
-    } else {
-      formOne.setFieldValue('govDep', '');
-    }
-    // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
-    getGovDep(val);
-  };
+  // let selectedGovDepatments = ministryOrgs[selectedMinistry];
+  // if (existgovDep && existgovDep.length > 0) {
+  //   selectedGovDepatments = selectedGovDepatments.filter((x: string) => !existgovDep.includes(x));
+  // }
+  // const onChangeMinistry = async (val: any) => {
+  //   const key = Object.keys(Ministry)[Object.values(Ministry).indexOf(val as Ministry)];
+  //   setSelectedMinistry(String(key));
+  //   if (isUpdate && val === initialMinistry) {
+  //     formOne.setFieldValue(
+  //       'govDep',
+  //       Object.keys(GovDepartment)[
+  //         Object.values(GovDepartment).indexOf(intialGovDep as GovDepartment)
+  //       ]
+  //     );
+  //   } else {
+  //     formOne.setFieldValue('govDep', '');
+  //   }
+  //   // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
+  //   getGovDep(val);
+  // };
 
-  const getMinistryList = async () => {
-    setLoadingList(true);
-    try {
-      let leftmins: string[] = [];
-      const excludingmin: string[] = [];
-      for (const min of ministries) {
-        const response: any = await post('national/organisation/query', {
-          page: 1,
-          size: 100,
-          filterAnd: [
-            {
-              key: 'ministry',
-              operation: '=',
-              value: min,
-            },
-          ],
-        });
-        const minkey = Object.keys(Ministry)[Object.values(Ministry).indexOf(min as Ministry)];
-        if (response.data.length === ministryOrgs[minkey].length) {
-          if (!isUpdate && min !== initialMinistry) {
-            excludingmin.push(min);
-          }
-        }
-      }
-      leftmins = ministries.filter((x: string) => !excludingmin.includes(x));
-      setMinistryDropdown(leftmins);
-    } catch (error: any) {
-      console.log('Error in getting min list', error);
-    } finally {
-      setLoadingList(false);
-    }
-  };
+  // const getMinistryList = async () => {
+  //   setLoadingList(true);
+  //   try {
+  //     let leftmins: string[] = [];
+  //     const excludingmin: string[] = [];
+  //     for (const min of ministries) {
+  //       const response: any = await post(API_PATHS.ORGANIZATION_DETAILS, {
+  //         page: 1,
+  //         size: 100,
+  //         filterAnd: [
+  //           {
+  //             key: 'ministry',
+  //             operation: '=',
+  //             value: min,
+  //           },
+  //         ],
+  //       });
+  //       const minkey = Object.keys(Ministry)[Object.values(Ministry).indexOf(min as Ministry)];
+  //       if (response.data.length === ministryOrgs[minkey].length) {
+  //         if (!isUpdate && min !== initialMinistry) {
+  //           excludingmin.push(min);
+  //         }
+  //       }
+  //     }
+  //     leftmins = ministries.filter((x: string) => !excludingmin.includes(x));
+  //     setMinistryDropdown(leftmins);
+  //   } catch (error: any) {
+  //     console.log('Error in getting min list', error);
+  //   } finally {
+  //     setLoadingList(false);
+  //   }
+  // };
 
-  const getCountryList = async () => {
-    const response = await get('national/organisation/countries');
-    if (response.data) {
-      const alpha2Names = response.data.map((item: any) => {
-        return item.alpha2;
-      });
-      setCountries(alpha2Names);
-    }
-  };
+  // const getCountryList = async () => {
+  //   const response = await get('national/organisation/countries');
+  //   if (response.data) {
+  //     const alpha2Names = response.data.map((item: any) => {
+  //       return item.alpha2;
+  //     });
+  //     setCountries(alpha2Names);
+  //   }
+  // };
 
   const getRegionList = async () => {
-    setLoadingList(true);
-    try {
-      const response = await post('national/location/province', {
-        page: 1,
-        size: 100,
-        filterAnd: [
-          {
-            key: 'lang',
-            operation: '=',
-            value: 'en',
-          },
-        ],
-      });
-      if (response.data) {
-        const regionNames = response.data.map((item: any) => item.provinceName);
-        const uniqueRegionNames: any = Array.from(new Set(regionNames));
-        setRegionsList([t('national'), ...uniqueRegionNames]);
-      }
-    } catch (error: any) {
-      console.log('Error in getting regions list', error);
-    } finally {
-      setLoadingList(false);
-    }
+    // setLoadingList(true);
+    // try {
+    //   const response = await post('national/location/province', {
+    //     page: 1,
+    //     size: 100,
+    //     filterAnd: [
+    //       {
+    //         key: 'lang',
+    //         operation: '=',
+    //         value: 'en',
+    //       },
+    //     ],
+    //   });
+    //   if (response.data) {
+    //     const regionNames = response.data.map((item: any) => item.provinceName);
+    //     const uniqueRegionNames: any = Array.from(new Set(regionNames));
+    //     setRegionsList([t('national'), ...uniqueRegionNames]);
+    //   }
+    // } catch (error: any) {
+    //   console.log('Error in getting regions list', error);
+    // } finally {
+    //   setLoadingList(false);
+    // }
+
+    setRegionsList(provinces);
   };
 
-  const getGovDep = async (val: any) => {
-    setLoadingList(true);
-    try {
-      const response: any = await post('national/organisation/query', {
-        page: 1,
-        size: 200,
-        filterAnd: [
-          {
-            key: 'ministry',
-            operation: '=',
-            value: val,
-          },
-        ],
-      });
-      if (response && response.data) {
-        const existDep: string[] = [];
-        for (const i in response.data) {
-          if (response.data[i].govDep && response.data[i].govDep.length > 0) {
-            const departName =
-              Object.keys(GovDepartment)[
-                Object.values(GovDepartment).indexOf(response.data[i].govDep as GovDepartment)
-              ];
-            if (response.data[i].govDep !== intialGovDep) {
-              existDep.push(departName);
-            } else {
-              continue;
-            }
-          }
-        }
-        setexistGovdep(existDep);
-      }
-    } catch (error: any) {
-      console.log('Error in getting exist Government Department list', error);
-    } finally {
-      setLoadingList(false);
-    }
-  };
+  // const getGovDep = async (val: any) => {
+  //   setLoadingList(true);
+  //   try {
+  //     const response: any = await post('national/organisation/query', {
+  //       page: 1,
+  //       size: 200,
+  //       filterAnd: [
+  //         {
+  //           key: 'ministry',
+  //           operation: '=',
+  //           value: val,
+  //         },
+  //       ],
+  //     });
+  //     if (response && response.data) {
+  //       const existDep: string[] = [];
+  //       for (const i in response.data) {
+  //         if (response.data[i].govDep && response.data[i].govDep.length > 0) {
+  //           const departName =
+  //             Object.keys(GovDepartment)[
+  //               Object.values(GovDepartment).indexOf(response.data[i].govDep as GovDepartment)
+  //             ];
+  //           if (response.data[i].govDep !== intialGovDep) {
+  //             existDep.push(departName);
+  //           } else {
+  //             continue;
+  //           }
+  //         }
+  //       }
+  //       setexistGovdep(existDep);
+  //     }
+  //   } catch (error: any) {
+  //     console.log('Error in getting exist Government Department list', error);
+  //   } finally {
+  //     setLoadingList(false);
+  //   }
+  // };
 
   useEffect(() => {
     setIsUpdate(state?.record ? true : false);
-    getCountryList();
+    // getCountryList();
     getRegionList();
-    getMinistryList();
+    // getMinistryList();
     if (state?.record?.logo) {
       setFileList([
         {
@@ -425,12 +442,12 @@ export const AddNewCompanyComponent = (props: any) => {
         },
       ]);
     }
-    if (state?.record?.ministry) {
-      const key =
-        Object.keys(Ministry)[Object.values(Ministry).indexOf(state?.record?.ministry as Ministry)];
-      setSelectedMinistry(key);
-      getGovDep(state?.record?.ministry);
-    }
+    // if (state?.record?.ministry) {
+    //   const key =
+    //     Object.keys(Ministry)[Object.values(Ministry).indexOf(state?.record?.ministry as Ministry)];
+    //   setSelectedMinistry(key);
+    //   getGovDep(state?.record?.ministry);
+    // }
   }, []);
 
   const normFile = (e: any) => {
@@ -488,11 +505,11 @@ export const AddNewCompanyComponent = (props: any) => {
       const logoBase64 = await getBase64(requestData?.company?.logo[0]?.originFileObj as RcFile);
       const logoUrls = logoBase64.split(',');
       requestData.company.logo = logoUrls[1];
-      if (companyRole === CompanyRole.MINISTRY) {
+      if (companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
         requestData.company.name = 'Ministry of ' + requestData.company.ministry;
       }
       if (isGuest) {
-        const response = await post('national/user/register', requestData);
+        const response = await post('user/register', requestData);
         if (response.status === 200 || response.status === 201) {
           message.open({
             type: 'success',
@@ -504,7 +521,7 @@ export const AddNewCompanyComponent = (props: any) => {
           setLoading(false);
         }
       } else {
-        const response = await post('national/user/add', requestData);
+        const response = await post('user/add', requestData);
         if (response.status === 200 || response.status === 201) {
           if (isUpdate) {
             setUserInfo({
@@ -557,6 +574,7 @@ export const AddNewCompanyComponent = (props: any) => {
           provinces: formOneValues.provinces,
           // regions: formOneValues.regions,
           companyRole: state?.record?.companyRole,
+          logo: state?.record?.logo,
         };
       } else {
         values = {
@@ -567,21 +585,16 @@ export const AddNewCompanyComponent = (props: any) => {
           faxNo: formOneValues.faxNo,
           address: formOneValues.address,
           companyRole: state?.record?.companyRole,
+          logo: state?.record?.logo,
         };
       }
 
-      if (
-        state?.record?.companyRole !== CompanyRole.GOVERNMENT &&
-        state?.record?.companyRole !== CompanyRole.MINISTRY
-      ) {
+      if (state?.record?.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
         values.taxId = formOneValues.taxId;
         values.paymentId = formOneValues.paymentId;
       }
 
-      if (
-        state?.record?.companyRole === CompanyRole.MINISTRY ||
-        state?.record?.companyRole === CompanyRole.GOVERNMENT
-      ) {
+      if (state?.record?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
         if (formOneValues.govDep in GovDepartment) {
           const key = formOneValues.govDep as keyof typeof GovDepartment;
           values.govDep = GovDepartment[key];
@@ -590,15 +603,15 @@ export const AddNewCompanyComponent = (props: any) => {
         }
         values.ministry = formOneValues.ministry;
       }
-      if (state?.record?.companyRole === CompanyRole.MINISTRY) {
+      if (state?.record?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
         values.sectoralScope = formOneValues.sectoralScope;
         values.nameOfMinister = formOneValues.nameOfMinister;
-        values.name = 'Ministry of ' + formOneValues.ministry;
+        // values.name = formOneValues.ministry;
       }
-      if (state?.record?.companyRole === CompanyRole.GOVERNMENT) {
+      if (state?.record?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
         values.omgePercentage = Math.round(Number(formOneValues.omgePercentage));
       }
-      if (state?.record?.companyRole === CompanyRole.GOVERNMENT) {
+      if (state?.record?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
         values.nationalSopValue = Math.floor(Number(formOneValues.nationalSopValue));
       }
 
@@ -616,7 +629,7 @@ export const AddNewCompanyComponent = (props: any) => {
         }
       }
 
-      const response = await put('national/organisation/update', values);
+      const response = await post('organisation/update', values);
       if (response.status === 200 || response.status === 201) {
         setUserInfo({
           companyLogo: response.data.logo,
@@ -652,16 +665,12 @@ export const AddNewCompanyComponent = (props: any) => {
 
   const CompanyDetailsForm = () => {
     const companyRoleClassName =
-      companyRole === CompanyRole.CERTIFIER
+      companyRole === CompanyRole.INDEPENDENT_CERTIFIER
         ? 'certifier'
-        : companyRole === CompanyRole.PROGRAMME_DEVELOPER
+        : companyRole === CompanyRole.PROJECT_DEVELOPER
         ? 'dev'
-        : companyRole === CompanyRole.MINISTRY
+        : companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
         ? 'minister'
-        : companyRole === CompanyRole.CLIMATE_FUND
-        ? 'climate-fund'
-        : companyRole === CompanyRole.EXECUTIVE_COMMITTEE
-        ? 'executive-committee'
         : 'gov';
     return (
       <div className="company-details-form-container">
@@ -677,35 +686,36 @@ export const AddNewCompanyComponent = (props: any) => {
             <Row className="row" gutter={[16, 16]}>
               <Col xl={12} md={24}>
                 <div className="details-part-one">
-                  {companyRole !== CompanyRole.MINISTRY && (
-                    <Form.Item
-                      label={t('addCompany:name')}
-                      name="name"
-                      initialValue={state?.record?.name}
-                      rules={[
-                        {
-                          required: true,
-                          message: '',
+                  <Form.Item
+                    label={t('addCompany:name')}
+                    name="name"
+                    initialValue={state?.record?.name}
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('addCompany:name')} ${t('isRequired')}`);
+                          }
                         },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(`${t('addCompany:name')} ${t('isRequired')}`);
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-                  )}
-                  {companyRole !== CompanyRole.MINISTRY
-                    ? (!isUpdate || (isUpdate && companyRole !== CompanyRole.GOVERNMENT)) && (
+                      },
+                    ]}
+                  >
+                    <Input size="large" />
+                  </Form.Item>
+
+                  {companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
+                    ? (!isUpdate ||
+                        (isUpdate &&
+                          companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY)) && (
                         <Form.Item
                           label={t('addCompany:taxId')}
                           initialValue={state?.record?.taxId}
@@ -733,8 +743,10 @@ export const AddNewCompanyComponent = (props: any) => {
                         </Form.Item>
                       )
                     : null}
-                  {companyRole !== CompanyRole.MINISTRY
-                    ? (!isUpdate || (isUpdate && companyRole !== CompanyRole.GOVERNMENT)) && (
+                  {companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
+                    ? (!isUpdate ||
+                        (isUpdate &&
+                          companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY)) && (
                         <Form.Item
                           label={t('addCompany:paymentId')}
                           initialValue={state?.record?.paymentId}
@@ -764,7 +776,7 @@ export const AddNewCompanyComponent = (props: any) => {
                         </Form.Item>
                       )
                     : null}
-                  {companyRole !== CompanyRole.GOVERNMENT && (
+                  {companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY && (
                     <Form.Item
                       label={t('addCompany:email')}
                       name="email"
@@ -799,10 +811,9 @@ export const AddNewCompanyComponent = (props: any) => {
                       <Input size="large" />
                     </Form.Item>
                   )}
-                  {(companyRole === CompanyRole.MINISTRY ||
-                    companyRole === CompanyRole.GOVERNMENT) && (
+                  {companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY && (
                     <div className="space-container" style={{ width: '100%' }}>
-                      <Form.Item
+                      {/* <Form.Item
                         label={t('addCompany:Ministry')}
                         name="ministry"
                         initialValue={state?.record?.ministry}
@@ -813,7 +824,7 @@ export const AddNewCompanyComponent = (props: any) => {
                           },
                         ]}
                       >
-                        {companyRole !== CompanyRole.GOVERNMENT &&
+                        {companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
                         ministryDropdown &&
                         ministryDropdown.length > 0 ? (
                           <Select size="large" onChange={onChangeMinistry}>
@@ -824,8 +835,8 @@ export const AddNewCompanyComponent = (props: any) => {
                         ) : (
                           <Select size="large" disabled={true}></Select>
                         )}
-                      </Form.Item>
-                      {companyRole === CompanyRole.GOVERNMENT && (
+                      </Form.Item> */}
+                      {
                         <Form.Item
                           label={t('addCompany:email')}
                           name="email"
@@ -859,8 +870,8 @@ export const AddNewCompanyComponent = (props: any) => {
                         >
                           <Input size="large" />
                         </Form.Item>
-                      )}
-                      {companyRole === CompanyRole.MINISTRY && (
+                      }
+                      {/* {companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY && (
                         <Form.Item
                           label={t('addCompany:ministerName')}
                           name="nameOfMinister"
@@ -888,7 +899,7 @@ export const AddNewCompanyComponent = (props: any) => {
                         >
                           <Input size="large" />
                         </Form.Item>
-                      )}
+                      )} */}
                     </div>
                   )}
                   <Form.Item
@@ -916,84 +927,55 @@ export const AddNewCompanyComponent = (props: any) => {
                   >
                     <Input addonBefore="https://" size="large" />
                   </Form.Item>
-                  {companyRole === CompanyRole.MINISTRY && (
-                    <Form.Item
-                      name="address"
-                      label={t('addCompany:addresss')}
-                      initialValue={state?.record?.address}
-                      rules={[
-                        { required: true, message: '' },
-                        {
-                          validator: async (rule, value) => {
-                            if (
-                              String(value).trim() === '' ||
-                              String(value).trim() === undefined ||
-                              value === null ||
-                              value === undefined
-                            ) {
-                              throw new Error(`${t('addCompany:addresss')} ${t('isRequired')}`);
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Input.TextArea rows={3} maxLength={100} />
-                    </Form.Item>
-                  )}
-                  <Form.Item
-                    name="logo"
-                    label={t('addCompany:companyLogoWithType')}
-                    valuePropName="fileList"
-                    getValueFromEvent={normFile}
-                    required={true}
-                    rules={[
-                      {
-                        validator: async (rule, file) => {
-                          if (file === null || file === undefined) {
-                            if (!state?.record?.logo)
-                              throw new Error(`${t('addCompany:companyLogo')} ${t('isRequired')}`);
-                          } else {
-                            if (file.length === 0) {
-                              throw new Error(`${t('addCompany:companyLogo')} ${t('isRequired')}`);
-                            } else {
-                              let isCorrectFormat = false;
-                              if (file[0]?.type === 'image/png') {
-                                isCorrectFormat = true;
-                              } else if (file[0]?.type === 'image/jpeg') {
-                                isCorrectFormat = true;
-                              } else if (file[0]?.type === 'image/svg') {
-                                isCorrectFormat = true;
-                              }
-                              if (!isCorrectFormat) {
-                                throw new Error(`${t('unsupportedFormat')}`);
-                              } else if (file[0]?.size > maximumImageSize) {
-                                // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                throw new Error(`${t('maxUploadSize')}`);
-                              }
-                            }
-                          }
-                        },
-                      },
-                    ]}
-                  >
-                    <Upload
-                      beforeUpload={(file) => {
-                        return false;
-                      }}
-                      className="logo-upload-section"
-                      name="logo"
-                      action="/upload.do"
-                      listType="picture"
-                      multiple={false}
-                      defaultFileList={fileList}
-                      maxCount={1}
-                    >
-                      <Button size="large" icon={<UploadOutlined />}>
-                        {t('addCompany:upload')}
-                      </Button>
-                    </Upload>
-                  </Form.Item>
-                  {companyRole === CompanyRole.GOVERNMENT && (
+
+                  {companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
+                    systemType !== CarbonSystemType.MRV && (
+                      <div className="space-container" style={{ width: '100%' }}>
+                        <Space
+                          wrap={true}
+                          style={{
+                            display: 'flex',
+                            marginBottom: 8,
+                          }}
+                          align="center"
+                          size={'large'}
+                        >
+                          <Form.Item
+                            style={{ width: '100%' }}
+                            name="omgePercentage"
+                            label={t('addCompany:omgePercentage')}
+                            initialValue={state?.record?.omgePercentage}
+                            rules={[
+                              { required: true, message: '' },
+                              {
+                                validator: async (rule, value) => {
+                                  if (
+                                    String(value).trim() === '' ||
+                                    String(value).trim() === undefined ||
+                                    value === null ||
+                                    value === undefined
+                                  ) {
+                                    throw new Error(
+                                      `${t('addCompany:omgePercentage')}  ${t('isRequired')}`
+                                    );
+                                  }
+                                },
+                              },
+                            ]}
+                          >
+                            <InputNumber
+                              style={{ width: '100%' }}
+                              size="large"
+                              min={0}
+                              max={99}
+                              formatter={(value) => `${value ? Math.round(value) : ''}%`}
+                              parser={(value: any) => value.replace('%', '')}
+                            />
+                          </Form.Item>
+                        </Space>
+                      </div>
+                    )}
+                  {companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY && (
                     <div className="space-container" style={{ width: '100%' }}>
                       <Space
                         wrap={true}
@@ -1041,6 +1023,64 @@ export const AddNewCompanyComponent = (props: any) => {
                       </Space>
                     </div>
                   )}
+
+                  <Form.Item
+                    name="logo"
+                    label={t('addCompany:companyLogoWithType')}
+                    valuePropName="fileList"
+                    getValueFromEvent={normFile}
+                    required={true}
+                    rules={[
+                      {
+                        validator: async (rule, file) => {
+                          if (file === null || file === undefined) {
+                            if (!state?.record?.logo)
+                              throw new Error(`${t('addCompany:companyLogo')} ${t('isRequired')}`);
+                          } else {
+                            if (file.length === 0) {
+                              throw new Error(`${t('addCompany:companyLogo')} ${t('isRequired')}`);
+                            } else {
+                              let isCorrectFormat = false;
+                              if (file[0]?.type === 'image/png') {
+                                isCorrectFormat = true;
+                              } else if (file[0]?.type === 'image/jpeg') {
+                                isCorrectFormat = true;
+                              } else if (file[0]?.type === 'image/svg') {
+                                isCorrectFormat = true;
+                              }
+                              if (!isCorrectFormat) {
+                                throw new Error(`${t('unsupportedFormat')}`);
+                              } else if (file[0]?.size > maximumImageSize) {
+                                // default size format of files would be in bytes -> 1MB = 1000000bytes
+                                throw new Error(
+                                  `${t('addCompany:maxUploadSize', {
+                                    maxUploadSize: formatBytes(maximumImageSize),
+                                  })}`
+                                );
+                              }
+                            }
+                          }
+                        },
+                      },
+                    ]}
+                  >
+                    <Upload
+                      beforeUpload={(file) => {
+                        return false;
+                      }}
+                      className="logo-upload-section"
+                      name="logo"
+                      action="/upload.do"
+                      listType="picture"
+                      multiple={false}
+                      defaultFileList={fileList}
+                      maxCount={1}
+                    >
+                      <Button size="large" icon={<UploadOutlined />}>
+                        {t('addCompany:upload')}
+                      </Button>
+                    </Upload>
+                  </Form.Item>
                 </div>
               </Col>
               <Col xl={12} md={24}>
@@ -1066,16 +1106,10 @@ export const AddNewCompanyComponent = (props: any) => {
                       {isUpdate ? (
                         <div className={`${companyRoleClassName}-radio-container`}>
                           <Radio.Button className={companyRoleClassName} value={companyRole}>
-                            {companyRole === CompanyRole.CERTIFIER ? (
+                            {companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ? (
                               <SafetyOutlined className="role-icons" />
-                            ) : companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
+                            ) : companyRole === CompanyRole.PROJECT_DEVELOPER ? (
                               <ExperimentOutlined className="role-icons" />
-                            ) : companyRole === CompanyRole.MINISTRY ? (
-                              <AuditOutlined className="role-icons" />
-                            ) : companyRole === CompanyRole.CLIMATE_FUND ? (
-                              <CopyrightOutlined className="role-icons" />
-                            ) : companyRole === CompanyRole.EXECUTIVE_COMMITTEE ? (
-                              <TeamOutlined className="role-icons" />
                             ) : (
                               <BankOutlined className="role-icons" />
                             )}
@@ -1084,29 +1118,30 @@ export const AddNewCompanyComponent = (props: any) => {
                         </div>
                       ) : (
                         <>
-                          {userInfoState?.companyRole !== CompanyRole.CLIMATE_FUND && (
-                            <div
-                              className="certifier-radio-container"
-                              style={
-                                userInfoState?.companyRole === CompanyRole.MINISTRY
-                                  ? {
-                                      width: '45%',
-                                    }
-                                  : {}
-                              }
-                            >
-                              <Tooltip placement="top" title={t('addCompany:viewerToolTip')}>
-                                <Radio.Button className="certifier" value="Certifier">
-                                  <SafetyOutlined className="role-icons" />
-                                  {t('addCompany:Certifier')}
-                                </Radio.Button>
-                              </Tooltip>
-                            </div>
-                          )}
+                          <div
+                            className="certifier-radio-container"
+                            style={
+                              userInfoState?.companyRole ===
+                              CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
+                                ? {
+                                    width: '45%',
+                                  }
+                                : {}
+                            }
+                          >
+                            <Tooltip placement="top" title={t('addCompany:doeToolTip')}>
+                              <Radio.Button className="certifier" value="IC">
+                                <SafetyOutlined className="role-icons" />
+                                {t('addCompany:ic')}
+                              </Radio.Button>
+                            </Tooltip>
+                          </div>
+
                           <div
                             className="dev-radio-container"
                             style={
-                              userInfoState?.companyRole === CompanyRole.MINISTRY
+                              userInfoState?.companyRole ===
+                              CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
                                 ? {
                                     width: '45%',
                                     marginLeft: isGuest ? '30px' : 0,
@@ -1118,14 +1153,15 @@ export const AddNewCompanyComponent = (props: any) => {
                               placement="top"
                               title={t('addCompany:programmeDeveleperToolTip')}
                             >
-                              <Radio.Button className="dev" value="ProgrammeDeveloper">
+                              <Radio.Button className="dev" value="PD">
                                 <ExperimentOutlined className="role-icons" />
                                 {t('addCompany:ProgrammeDeveloper')}
                               </Radio.Button>
                             </Tooltip>
                           </div>
-                          {userInfoState?.companyRole !== CompanyRole.MINISTRY &&
-                            userInfoState?.companyRole !== CompanyRole.CLIMATE_FUND &&
+
+                          {/* {userInfoState?.companyRole !==
+                            CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
                             !isGuest && (
                               <div className="minister-radio-container">
                                 {ministryDropdown.length > 0 ? (
@@ -1144,13 +1180,13 @@ export const AddNewCompanyComponent = (props: any) => {
                                   </Tooltip>
                                 )}
                               </div>
-                            )}
+                            )} */}
                         </>
                       )}
                     </Radio.Group>
                   </Form.Item>
-                  {(companyRole === CompanyRole.MINISTRY ||
-                    companyRole === CompanyRole.GOVERNMENT) && (
+
+                  {/* {companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY && (
                     <Form.Item
                       label={t('addCompany:govdep')}
                       name="govDep"
@@ -1182,7 +1218,7 @@ export const AddNewCompanyComponent = (props: any) => {
                         },
                       ]}
                     >
-                      {companyRole !== CompanyRole.GOVERNMENT &&
+                      {companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
                       selectedGovDepatments &&
                       selectedGovDepatments.length > 0 ? (
                         <Select size="large">
@@ -1202,8 +1238,8 @@ export const AddNewCompanyComponent = (props: any) => {
                         <Select size="large" disabled={true}></Select>
                       )}
                     </Form.Item>
-                  )}
-                  {companyRole === CompanyRole.MINISTRY && (
+                  )} */}
+                  {/* {companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY && (
                     <Form.Item
                       label={t('addCompany:sectoralScope')}
                       name="sectoralScope"
@@ -1223,7 +1259,7 @@ export const AddNewCompanyComponent = (props: any) => {
                         ))}
                       </Select>
                     </Form.Item>
-                  )}
+                  )} */}
                   <Form.Item
                     name="phoneNo"
                     label={t('addCompany:phoneNo')}
@@ -1329,7 +1365,7 @@ export const AddNewCompanyComponent = (props: any) => {
                       initialValue={state?.record?.provinces ?? []}
                       rules={[
                         {
-                          required: true,
+                          required: false,
                           message: `${t('addCompany:province')} ${t('isRequired')}`,
                         },
                       ]}
@@ -1348,7 +1384,8 @@ export const AddNewCompanyComponent = (props: any) => {
                       </Select>
                     </Form.Item>
                   )}
-                  {companyRole !== CompanyRole.MINISTRY && (
+
+                  {
                     <Form.Item
                       name="address"
                       label={t('addCompany:addresss')}
@@ -1371,53 +1408,7 @@ export const AddNewCompanyComponent = (props: any) => {
                     >
                       <Input.TextArea rows={3} maxLength={100} />
                     </Form.Item>
-                  )}
-                  {companyRole === CompanyRole.GOVERNMENT && systemType !== CarbonSystemType.MRV && (
-                    <div className="space-container" style={{ width: '100%' }}>
-                      <Space
-                        wrap={true}
-                        style={{
-                          display: 'flex',
-                          marginBottom: 8,
-                        }}
-                        align="center"
-                        size={'large'}
-                      >
-                        <Form.Item
-                          style={{ width: '100%' }}
-                          name="omgePercentage"
-                          label={t('addCompany:omgePercentage')}
-                          initialValue={state?.record?.omgePercentage}
-                          rules={[
-                            { required: true, message: '' },
-                            {
-                              validator: async (rule, value) => {
-                                if (
-                                  String(value).trim() === '' ||
-                                  String(value).trim() === undefined ||
-                                  value === null ||
-                                  value === undefined
-                                ) {
-                                  throw new Error(
-                                    `${t('addCompany:omgePercentage')}  ${t('isRequired')}`
-                                  );
-                                }
-                              },
-                            },
-                          ]}
-                        >
-                          <InputNumber
-                            style={{ width: '100%' }}
-                            size="large"
-                            min={0}
-                            max={99}
-                            formatter={(value) => `${value ? Math.round(value) : ''}%`}
-                            parser={(value: any) => value.replace('%', '')}
-                          />
-                        </Form.Item>
-                      </Space>
-                    </div>
-                  )}
+                  }
                 </div>
               </Col>
             </Row>
@@ -1447,142 +1438,214 @@ export const AddNewCompanyComponent = (props: any) => {
 
   const CompanyAdminDetailsForm = () => {
     return (
-      <div className="company-details-form-container">
-        <Form
-          name="company-admin-details"
-          className="company-details-form"
-          layout="vertical"
-          requiredMark={true}
-          form={formTwo}
-          onFinish={onFinishStepTwo}
+      <>
+        <label
+          style={{
+            display: 'inline-block',
+            color: 'rgba(58, 53, 65, 0.5)',
+            borderRadius: '4px',
+            fontSize: '14px',
+            fontWeight: 500,
+            marginBottom: '10px',
+          }}
         >
-          <Row className="row" gutter={[16, 16]}>
-            <Col xl={12} md={24}>
-              <div className="details-part-one">
-                <Form.Item
-                  label={t('addCompany:name')}
-                  name="name"
-                  rules={[
-                    {
-                      required: true,
-                      message: '',
-                    },
-                    {
-                      validator: async (rule, value) => {
-                        if (
-                          String(value).trim() === '' ||
-                          String(value).trim() === undefined ||
-                          value === null ||
-                          value === undefined
-                        ) {
-                          throw new Error(`${t('addCompany:name')} ${t('isRequired')}`);
-                        }
+          {t('addUser:hederaAccountRequired')}
+        </label>
+        <div className="company-details-form-container">
+          <Form
+            name="company-admin-details"
+            className="company-details-form"
+            layout="vertical"
+            requiredMark={true}
+            form={formTwo}
+            onFinish={onFinishStepTwo}
+          >
+            <Row className="row" gutter={[16, 16]}>
+              <Col xl={12} md={24}>
+                <div className="details-part-one">
+                  <Form.Item
+                    label={t('addCompany:hederaAccount')}
+                    name="hederaAccount"
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
                       },
-                    },
-                  ]}
-                >
-                  <Input size="large" />
-                </Form.Item>
-                <Form.Item
-                  name="phoneNo"
-                  label={t('addCompany:phoneNo')}
-                  rules={[
-                    {
-                      required: false,
-                    },
-                    {
-                      validator: async (rule: any, value: any) => {
-                        const phoneNo = formatPhoneNumber(String(value));
-                        if (String(value).trim() !== '') {
+                      {
+                        validator: async (rule, value) => {
                           if (
-                            (String(value).trim() !== '' &&
-                              String(value).trim() !== undefined &&
-                              value !== null &&
-                              value !== undefined &&
-                              phoneNo !== null &&
-                              phoneNo !== '' &&
-                              phoneNo !== undefined &&
-                              !isPossiblePhoneNumber(String(value))) ||
-                            value?.length > 17
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
                           ) {
-                            throw new Error(`${t('addCompany:phoneNo')} ${t('isInvalid')}`);
+                            throw new Error(`${t('addCompany:hederaAccount')} ${t('isRequired')}`);
                           }
-                        }
+                        },
                       },
-                    },
-                  ]}
-                >
-                  <PhoneInput
-                    placeholder={t('addCompany:phoneNo')}
-                    international
-                    value={formatPhoneNumberIntl(contactNoInput)}
-                    defaultCountry="LK"
-                    countryCallingCodeEditable={false}
-                    onChange={(v) => {}}
-                  />
-                </Form.Item>
-              </div>
-            </Col>
-            <Col xl={12} md={24}>
-              <div className="details-part-two">
-                <Form.Item
-                  label={t('addCompany:email')}
-                  name="email"
-                  rules={[
-                    {
-                      required: true,
-                      message: '',
-                    },
-                    {
-                      validator: async (rule, value) => {
-                        if (
-                          String(value).trim() === '' ||
-                          String(value).trim() === undefined ||
-                          value === null ||
-                          value === undefined
-                        ) {
-                          throw new Error(`${t('addCompany:email')} ${t('isRequired')}`);
-                        } else {
-                          const val = value.trim();
-                          const reg =
-                            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                          const matches = val.match(reg) ? val.match(reg) : [];
-                          if (matches.length === 0) {
-                            throw new Error(`${t('addCompany:email')} ${t('isInvalid')}`);
+                    ]}
+                  >
+                    <Input size="large" />
+                  </Form.Item>
+                </div>
+              </Col>
+              <Col xl={12} md={24}>
+                <div className="details-part-two">
+                  <Form.Item
+                    label={t('addCompany:hederaKey')}
+                    name="hederaKey"
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('addCompany:hederaKey')} ${t('isRequired')}`);
                           }
-                        }
+                        },
                       },
-                    },
-                  ]}
+                    ]}
+                  >
+                    <Input size="large" />
+                  </Form.Item>
+                </div>
+              </Col>
+            </Row>
+            <Row className="row" gutter={[16, 16]}>
+              <Col xl={12} md={24}>
+                <div className="details-part-one">
+                  <Form.Item
+                    label={t('addCompany:name')}
+                    name="name"
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('addCompany:name')} ${t('isRequired')}`);
+                          }
+                        },
+                      },
+                    ]}
+                  >
+                    <Input size="large" />
+                  </Form.Item>
+                  <Form.Item
+                    name="phoneNo"
+                    label={t('addCompany:phoneNo')}
+                    rules={[
+                      {
+                        required: false,
+                      },
+                      {
+                        validator: async (rule: any, value: any) => {
+                          const phoneNo = formatPhoneNumber(String(value));
+                          if (String(value).trim() !== '') {
+                            if (
+                              (String(value).trim() !== '' &&
+                                String(value).trim() !== undefined &&
+                                value !== null &&
+                                value !== undefined &&
+                                phoneNo !== null &&
+                                phoneNo !== '' &&
+                                phoneNo !== undefined &&
+                                !isPossiblePhoneNumber(String(value))) ||
+                              value?.length > 17
+                            ) {
+                              throw new Error(`${t('addCompany:phoneNo')} ${t('isInvalid')}`);
+                            }
+                          }
+                        },
+                      },
+                    ]}
+                  >
+                    <PhoneInput
+                      placeholder={t('addCompany:phoneNo')}
+                      international
+                      value={formatPhoneNumberIntl(contactNoInput)}
+                      defaultCountry="LK"
+                      countryCallingCodeEditable={false}
+                      onChange={(v) => {}}
+                    />
+                  </Form.Item>
+                </div>
+              </Col>
+              <Col xl={12} md={24}>
+                <div className="details-part-two">
+                  <Form.Item
+                    label={t('addCompany:email')}
+                    name="email"
+                    rules={[
+                      {
+                        required: true,
+                        message: '',
+                      },
+                      {
+                        validator: async (rule, value) => {
+                          if (
+                            String(value).trim() === '' ||
+                            String(value).trim() === undefined ||
+                            value === null ||
+                            value === undefined
+                          ) {
+                            throw new Error(`${t('addCompany:email')} ${t('isRequired')}`);
+                          } else {
+                            const val = value.trim();
+                            const reg =
+                              /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                            const matches = val.match(reg) ? val.match(reg) : [];
+                            if (matches.length === 0) {
+                              throw new Error(`${t('addCompany:email')} ${t('isInvalid')}`);
+                            }
+                          }
+                        },
+                      },
+                    ]}
+                  >
+                    <Input size="large" />
+                  </Form.Item>
+                </div>
+              </Col>
+            </Row>
+            <div className="steps-actions">
+              {current === 1 && state?.record ? (
+                <Button
+                  className="mg-left-1"
+                  type="primary"
+                  onClick={onUpdateCompany}
+                  loading={loading}
                 >
-                  <Input size="large" />
-                </Form.Item>
-              </div>
-            </Col>
-          </Row>
-          <div className="steps-actions">
-            {current === 1 && state?.record ? (
-              <Button
-                className="mg-left-1"
-                type="primary"
-                onClick={onUpdateCompany}
-                loading={loading}
-              >
-                UPDATE
-              </Button>
-            ) : (
-              <Button className="mg-left-1" type="primary" htmlType="submit" loading={loading}>
-                {t('addCompany:submit')}
-              </Button>
-            )}
-            {current === 1 && (
-              <Button onClick={() => prevOne()} loading={loading}>
-                {t('addCompany:back')}
-              </Button>
-            )}
-          </div>
-        </Form>
-      </div>
+                  UPDATE
+                </Button>
+              ) : (
+                <Button className="mg-left-1" type="primary" htmlType="submit" loading={loading}>
+                  {t('addCompany:submit')}
+                </Button>
+              )}
+              {current === 1 && (
+                <Button onClick={() => prevOne()} loading={loading}>
+                  {t('addCompany:back')}
+                </Button>
+              )}
+            </div>
+          </Form>
+        </div>
+      </>
     );
   };
 

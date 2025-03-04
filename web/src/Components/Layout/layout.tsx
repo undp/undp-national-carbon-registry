@@ -19,19 +19,19 @@ const CustomLayout = (props: any) => {
   const { isTransferFrozen, setTransferFrozen } = useSettingsContext();
   const { t } = useTranslation(['creditTransfer']);
 
-  const getTransferFrozenStatus = async () => {
-    const response = await get(
-      `national/Settings/query?id=${ConfigurationSettingsType.isTransferFrozen}`
-    );
-    if (response && response.data) {
-      setTransferFrozen(response.data);
-    } else {
-      setTransferFrozen(false);
-    }
-  };
+  // const getTransferFrozenStatus = async () => {
+  //   const response = await get(
+  //     API_PATHS.TRANSFER_FORZEN_STATUS(ConfigurationSettingsType.isTransferFrozen)
+  //   );
+  //   if (response && response.data) {
+  //     setTransferFrozen(response.data);
+  //   } else {
+  //     setTransferFrozen(false);
+  //   }
+  // };
 
   useEffect(() => {
-    getTransferFrozenStatus();
+    // getTransferFrozenStatus();
   }, []);
 
   return (

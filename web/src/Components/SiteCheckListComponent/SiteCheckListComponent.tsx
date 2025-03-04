@@ -32,9 +32,11 @@ import { DocType } from '../../Definitions/Enums/document.type';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
-import { PURPOSE_CREDIT_DEVELOPMENT } from '../SLCFProgramme/AddNewProgramme/SLCFProgrammeCreationComponent';
+import { PURPOSE_CREDIT_DEVELOPMENT } from '../AddNewProgramme/ProgrammeCreationComponent';
 import GetMultipleLocationsMapComponent from '../Maps/GetMultipleLocationsMapComponent';
 import { Loading } from '../Loading/loading';
+import { API_PATHS } from '../../Config/apiConfig';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const SiteCheckListComponent = (props: { translator: i18n }) => {
   const [form] = useForm();
@@ -54,13 +56,13 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
   const { get, post } = useConnection();
 
   const navigateToDetailsPage = () => {
-    navigate(`/programmeManagementSLCF/view/${id}`);
+    navigate(ROUTES.PROGRAMME_DETAILS_BY_ID(String(id)));
   };
 
   const getDataToPopulate = async (programmeId: any) => {
     setLoading(true);
     try {
-      const { data } = await post('national/programmeSL/getProjectById', {
+      const { data } = await post(API_PATHS.PROJECT_BY_ID, {
         programmeId: programmeId,
       });
 
@@ -95,7 +97,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
 
   const getCountryList = async () => {
     try {
-      const response = await get('national/organisation/countries');
+      const response = await get(API_PATHS.COUNTRY_LIST);
       if (response.data) {
         const alpha2Names = response.data.map((item: any) => {
           return item.alpha2;
@@ -214,7 +216,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
       if (isView) {
         setLoading(true);
         try {
-          const res = await post('national/programmeSl/getDocLastVersion', {
+          const res = await post(API_PATHS.LAST_DOC_VERSION, {
             programmeId: id,
             docType: 'siteVisitChecklist',
           });
@@ -333,7 +335,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
     setLoading(true);
 
     try {
-      const res = await post('national/programmeSl/cma/approve', {
+      const res = await post(API_PATHS.APPROVE_CMA, {
         programmeId: id,
         content: tempValues,
       });
@@ -789,9 +791,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 <Col md={10} xl={10} className="col-1">
                   <div className="text-row">
                     <div>2.</div>
-                    <div>{`The project activity shall be located in ${
-                      process.env.REACT_APP_COUNTRY_NAME || 'CountryX'
-                    }.`}</div>
+                    <div>The project activity shall be located in Zimbabwe.</div>
                   </div>
                 </Col>
                 <Col md={4} xl={4}>
@@ -854,11 +854,9 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   <div className="text-row">
                     <div>3.</div>
                     <div>
-                      {`The project activity shall not happen in the absence of benefits received from
-                      trading ${
-                        process.env.REACT_APP_COUNTRY_NAME || 'CountryX'
-                      } Certified Emission Reduction units (SCERs). (This is not
-                      applicable Track II`}
+                      The project activity shall not happen in the absence of benefits received from
+                      trading Zimbabwe Certified Emission Reduction units (SCERs). (This is not
+                      applicable Track II)
                     </div>
                   </div>
                 </Col>
