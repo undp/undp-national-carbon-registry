@@ -227,7 +227,7 @@ export class CertifierScrapeService implements ImporterInterface {
           company.email = "nce.digital+" + intial + "@undp.org";
           company.phoneNo = number;
           company.address = certifier.address.trim().replaceAll(",,", ",");
-          company.companyRole = CompanyRole.CERTIFIER;
+          company.companyRole = CompanyRole.INDEPENDENT_CERTIFIER;
 
           const user = new UserDto();
           user.email = "nce.digital+" + intial + "@undp.org";
@@ -236,7 +236,11 @@ export class CertifierScrapeService implements ImporterInterface {
           user.phoneNo = number;
           user.company = company;
 
-          await this.userService.create(user, -1, CompanyRole.GOVERNMENT);
+          await this.userService.create(
+            user,
+            -1,
+            CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
+          );
           this.logger.log(
             "Certifier Creation " + certifier.entity + " Complete."
           );

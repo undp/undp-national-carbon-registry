@@ -184,7 +184,7 @@ export class ITMOSystemImporter implements ImporterInterface {
                       address: this.configService.get("systemCountryName"),
                       logo: undefined,
                       country: this.configService.get("systemCountry"),
-                      companyRole: CompanyRole.PROGRAMME_DEVELOPER,
+                      companyRole: CompanyRole.PROJECT_DEVELOPER,
                       createdTime: undefined,
                       regions: [],
                       provinces: [],
@@ -194,7 +194,7 @@ export class ITMOSystemImporter implements ImporterInterface {
                     companyId: undefined,
                   },
                   undefined,
-                  CompanyRole.GOVERNMENT
+                  CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
                 );
               }
 

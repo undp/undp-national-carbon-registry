@@ -6,7 +6,8 @@ import { NationalAPIModule } from "./national-api/national.api.module";
 import { join } from "path";
 import { AnalyticsAPIModule } from "./analytics-api/analytics.api.module";
 import { buildNestApp } from "./server";
-const fs = require("fs");
+import * as fs from "fs";
+//const fs = require("fs");
 
 async function bootstrap() {
   let module;

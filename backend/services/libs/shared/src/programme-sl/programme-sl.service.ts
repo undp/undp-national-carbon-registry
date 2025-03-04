@@ -97,7 +97,7 @@ export class ProgrammeSlService {
     programmeSlDto: ProgrammeSlDto,
     user: User
   ): Promise<ProgrammeSl | undefined> {
-    if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "programmeSl.notProjectParticipant",
@@ -705,7 +705,7 @@ export class ProgrammeSlService {
     programmeId: string,
     user: User
   ): Promise<DataResponseDto> {
-    if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "programmeSl.notAuthorised",
@@ -845,7 +845,7 @@ export class ProgrammeSlService {
     remark: string,
     user: User
   ): Promise<DataResponseDto> {
-    if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "programmeSl.notAuthorised",
@@ -983,7 +983,7 @@ export class ProgrammeSlService {
   }
 
   async createCMA(cmaDto: CMADto, user: User): Promise<DataResponseDto> {
-    if (user.companyRole != CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "programmeSl.notProjectParticipant",
@@ -1836,7 +1836,7 @@ export class ProgrammeSlService {
   }
 
   async getDocs(getDocDto: GetDocDto, user: User): Promise<DataResponseDto> {
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       const programme = await this.programmeLedgerService.getProgrammeSlById(
         getDocDto.programmeId
       );
@@ -1866,7 +1866,7 @@ export class ProgrammeSlService {
     getDocDto: GetDocDto,
     user: User
   ): Promise<DataResponseDto> {
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       const programme = await this.programmeLedgerService.getProgrammeSlById(
         getDocDto.programmeId
       );
@@ -1900,7 +1900,7 @@ export class ProgrammeSlService {
     getDocDto: GetDocDto,
     user: User
   ): Promise<DataResponseDto> {
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       const programme = await this.programmeLedgerService.getProgrammeSlById(
         getDocDto.programmeId
       );
@@ -1932,7 +1932,7 @@ export class ProgrammeSlService {
     getDocDto: GetDocDto,
     user: User
   ): Promise<DataResponseDto> {
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       const programme = await this.programmeLedgerService.getProgrammeSlById(
         getDocDto.programmeId
       );
@@ -1977,7 +1977,7 @@ export class ProgrammeSlService {
     getDocDto: GetDocDto,
     user: User
   ): Promise<DataResponseDto> {
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       const programme = await this.programmeLedgerService.getProgrammeSlById(
         getDocDto.programmeId
       );
@@ -2023,7 +2023,7 @@ export class ProgrammeSlService {
     getDocDto: GetDocDto,
     user: User
   ): Promise<DataResponseDto> {
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       const programme = await this.programmeLedgerService.getProgrammeSlById(
         getDocDto.programmeId
       );
@@ -2063,7 +2063,7 @@ export class ProgrammeSlService {
     getDocDto: GetDocDto,
     user: User
   ): Promise<DataResponseDto> {
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       const programme = await this.programmeLedgerService.getProgrammeSlById(
         getDocDto.programmeId
       );
@@ -2122,7 +2122,7 @@ export class ProgrammeSlService {
     user: User
   ) {
     if (
-      user.companyRole !== CompanyRole.PROGRAMME_DEVELOPER ||
+      user.companyRole !== CompanyRole.PROJECT_DEVELOPER ||
       companyId != user.companyId
     ) {
       throw new HttpException(
@@ -2304,7 +2304,7 @@ export class ProgrammeSlService {
       : `"programme_sl"."createdTime"`;
     const sortOrder = query?.sort?.order || "DESC";
 
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       const filterAnd = {
         key: "companyId",
         operation: "=",

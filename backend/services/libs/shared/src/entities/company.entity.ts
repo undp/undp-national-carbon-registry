@@ -44,10 +44,9 @@ export class Company implements EntitySubject {
   @Column({
     type: "enum",
     enum: CompanyRole,
-    array: false
+    array: false,
   })
   companyRole: CompanyRole;
-
 
   @Column({
     type: "enum",
@@ -108,17 +107,17 @@ export class Company implements EntitySubject {
   @Column("varchar", { array: true, nullable: true })
   sectoralScope: SectoralScope[];
 
-  @Column({ type: "bigint", nullable: true})
+  @Column({ type: "bigint", nullable: true })
   omgePercentage: number;
 
   @Column({ type: "bigint", nullable: true })
   nationalSopValue: number;
-  
+
   @Column({
     nullable: true,
     type: "enum",
     enum: Ministry,
-    array: false, 
+    array: false,
   })
   ministry: Ministry;
 
@@ -133,26 +132,26 @@ export class Company implements EntitySubject {
   @BeforeInsert()
   setDefaultState() {
     if (
-      this.companyRole === CompanyRole.GOVERNMENT ||
-      this.companyRole === CompanyRole.CERTIFIER
+      this.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+      this.companyRole === CompanyRole.INDEPENDENT_CERTIFIER
     ) {
       this.programmeCount = null;
-    } else if (this.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    } else if (this.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       this.programmeCount = 0;
     }
     if (
-      this.companyRole === CompanyRole.GOVERNMENT ||
-      this.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+      this.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+      this.companyRole === CompanyRole.PROJECT_DEVELOPER
     ) {
       this.creditBalance = 0;
-    } else if (this.companyRole === CompanyRole.CERTIFIER) {
+    } else if (this.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
       this.creditBalance = null;
     }
-    if (this.companyRole === CompanyRole.GOVERNMENT){
-      this.omgePercentage=1;
+    if (this.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+      this.omgePercentage = 1;
     }
-    if (this.companyRole === CompanyRole.GOVERNMENT){
-      this.nationalSopValue=0;
+    if (this.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+      this.nationalSopValue = 0;
     }
   }
 }
