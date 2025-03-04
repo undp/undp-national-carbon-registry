@@ -1,6 +1,6 @@
 export const API_PATHS = {
   //AUTH
-  LOGIN: 'auth/login',
+  LOGIN: 'national/auth/login',
   FORGOT_PW: 'auth/forgotPassword',
   RESET_PW: (requestId: string) => `auth/resetPassword?requestId=${requestId}`,
   REFRESH_ACCESS_TOKEN: 'auth/login/refresh',
