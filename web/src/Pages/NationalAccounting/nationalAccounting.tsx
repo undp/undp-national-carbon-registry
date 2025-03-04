@@ -31,6 +31,8 @@ import { CircleFlag } from 'react-circle-flags';
 import { CreditAuditLogType } from '../../Definitions/Enums/creditAuditLogType.enum';
 import Search from 'antd/lib/input/Search';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
+import { API_PATHS } from '../../Config/apiConfig';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const NationalAccountingDashboard = () => {
   const navigate = useNavigate();
@@ -73,7 +75,7 @@ const NationalAccountingDashboard = () => {
   const { RangePicker } = DatePicker;
 
   const onNavigateToProgrammeView = (programmeId: any) => {
-    navigate('/programmeManagement/view/' + programmeId);
+    navigate(ROUTES.VIEW_PROGRAMME + programmeId);
   };
 
   const recordsTableColumns = [
@@ -271,7 +273,7 @@ const NationalAccountingDashboard = () => {
   const getTotalCredits = async () => {
     setLoadingTotals(true);
     try {
-      const response: any = await get('stats/national-accounting/total', undefined, statServerUrl);
+      const response: any = await get(API_PATHS.TOTAL_CREDITS, undefined, statServerUrl);
       setTotalsWithoutTimeRange(response?.data);
     } catch (error: any) {
       console.log('Error in getting credit totals', error);
@@ -407,7 +409,7 @@ const NationalAccountingDashboard = () => {
     setLoadingTransactionRecords(true);
     try {
       const response: any = await post(
-        'stats/national-accounting/query',
+        API_PATHS.TRANSACTION_RECORDS_WITHOUT_TIME_RANGE,
         queryParams(),
         undefined,
         statServerUrl
@@ -431,7 +433,7 @@ const NationalAccountingDashboard = () => {
     setLoadingCountryRecords(true);
     try {
       const response: any = await post(
-        'stats/national-accounting/query-by-country',
+        API_PATHS.COUNTRY_CREDIT_RECORDS,
         queryParams(),
         undefined,
         statServerUrl

@@ -26,6 +26,7 @@
   "required": "Required!",
   "total": "Total",
   "totalCreditingYears": "Total Number of Crediting Years",
-  "averageCreditingPeriod": "Annual Average Over the Crediting Period"
-
+  "averageCreditingPeriod": "Annual Average Over the Crediting Period",
+  "yes": "yes",
+  "no": "no"
 }

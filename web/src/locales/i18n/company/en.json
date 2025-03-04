@@ -1,5 +1,5 @@
 {
-  "developer": "Project Participant",
+  "developer": "Project Developer",
   "name": "ORGANISATION NAME",
   "taxId": "TAX ID",
   "filterByOrgType": "Filter by Organisation Type",
@@ -20,8 +20,11 @@
   "searchName": "Search by name",
   "min": "Ministry",
   "nationalSopValue": "National Share of Proceeds",
-  "omgePercentage":"Overall Mitigation in Global Emissions (OMGE) Account",
+  "omgePercentage": "Overall Mitigation in Global Emissions (OMGE) Account",
   "view": "View",
-  "ClimateFund": "CountryX Climate Fund",
-  "ExecutiveCommittee": "Executive Committee"
+  "ClimateFund": "Zimbabwe Climate Fund",
+  "ExecutiveCommittee": "Executive Committee",
+  "ic": "Independent Certifier",
+  "dna": "Designated National Authority",
+  "pd": "Project Developer"
 }

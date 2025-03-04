@@ -20,6 +20,7 @@ import { useConnection } from '../../Context/ConnectionContext/connectionContext
 import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RadioButtonStatus, titleList } from '../../Definitions/Enums/commonEnums';
 import { isValidateFileType } from '../../Utils/DocumentValidator';
+import { API_PATHS } from '../../Config/apiConfig';
 
 const Assessment = (props: any) => {
   const { onFormSubmit, assessmentViewData, viewOnly, translator } = props;
@@ -44,7 +45,7 @@ const Assessment = (props: any) => {
   const getCountryList = async () => {
     setIsCountryListLoading(true);
     try {
-      const response = await get('national/organisation/countries');
+      const response = await get(API_PATHS.COUNTRY_LIST);
       if (response.data) {
         const alpha2Names = response.data.map((item: any) => {
           return item.alpha2;

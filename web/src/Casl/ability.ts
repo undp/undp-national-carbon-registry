@@ -49,7 +49,9 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       can(Action.Update, Company, { companyId: { $eq: user.companyId } });
     } else if (
       user.role === Role.Admin &&
-      (user.companyRole === CompanyRole.GOVERNMENT || user.companyRole === CompanyRole.MINISTRY)
+      (user.companyRole === CompanyRole.GOVERNMENT ||
+        user.companyRole === CompanyRole.MINISTRY ||
+        user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) // Added for Zimbabwe Registry Permission
     ) {
       can(Action.Manage, User, { role: { $ne: Role.Root } });
       cannot(Action.Update, User, ['role', 'apiKey', 'password', 'companyRole', 'email'], {
@@ -67,7 +69,10 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
           companyId: { $ne: user.companyId },
         });
       }
-    } else if (user.role === Role.Admin && user.companyRole !== CompanyRole.GOVERNMENT) {
+    } else if (
+      user.role === Role.Admin &&
+      user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY // Added for Zimbabwe Registry Permission Prev: CompanyRole.GOVERNMENT
+    ) {
       if (user.companyRole === CompanyRole.MINISTRY) {
         can(Action.Create, Company);
       }
@@ -88,7 +93,8 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
     } else {
       if (
         user.companyRole === CompanyRole.GOVERNMENT ||
-        user.companyRole === CompanyRole.MINISTRY
+        user.companyRole === CompanyRole.MINISTRY ||
+        user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY // Added for Zimbabwe Registry Permission
       ) {
         can(Action.Read, User);
       } else {
@@ -107,17 +113,27 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
 
     if (
       user.role === Role.Manager &&
-      (user.companyRole === CompanyRole.GOVERNMENT || user.companyRole === CompanyRole.MINISTRY)
+      (user.companyRole === CompanyRole.GOVERNMENT ||
+        user.companyRole === CompanyRole.MINISTRY ||
+        user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) // Added for Zimbabwe Registry Permission
     ) {
       can([Action.Delete], Company);
     }
 
-    if (user.role === Role.Admin && user.companyRole === CompanyRole.GOVERNMENT) {
+    if (
+      (user.role === Role.Admin && user.companyRole === CompanyRole.GOVERNMENT) ||
+      ((user.role === Role.Admin || user.role === Role.Root) &&
+        user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) // Added for Zimbabwe Registry Permission
+    ) {
       can(Action.Approve, Company);
       can(Action.Reject, Company);
     }
 
-    if (user.companyRole === CompanyRole.MINISTRY || user.companyRole === CompanyRole.GOVERNMENT) {
+    if (
+      user.companyRole === CompanyRole.MINISTRY ||
+      user.companyRole === CompanyRole.GOVERNMENT ||
+      user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY // Added for Zimbabwe Registry Permission
+    ) {
       if (user.role !== Role.ViewOnly) {
         can(Action.Create, Emission);
         can(Action.Create, Projection);
@@ -129,28 +145,44 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
       can(Action.Read, Projection);
     }
 
-    if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (
+      (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) ||
+      user.companyRole === CompanyRole.PROJECT_DEVELOPER // Added for Zimbabwe Registry Permission
+    ) {
       can(Action.Manage, ProgrammeTransfer);
       can(Action.Manage, ProgrammeEntity);
     }
 
-    if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.GOVERNMENT) {
+    if (
+      user.role !== Role.ViewOnly &&
+      (user.companyRole === CompanyRole.GOVERNMENT ||
+        user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) // Added for Zimbabwe Registry Permission
+    ) {
       can(Action.Manage, ProgrammeTransfer);
       can(Action.Manage, ProgrammeEntity);
     }
 
-    if (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.CERTIFIER) {
+    if (
+      (user.role !== Role.ViewOnly && user.companyRole === CompanyRole.CERTIFIER) ||
+      user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER // Added for Zimbabwe Registry Permission
+    ) {
       can(Action.Manage, ProgrammeCertify);
     }
 
     if (user.role === Role.Admin && user.companyRole === CompanyRole.MRV) {
       can([Action.Create, Action.Read], ProgrammeEntity);
-    } else if (user.companyRole === CompanyRole.CERTIFIER) {
+    } else if (
+      user.companyRole === CompanyRole.CERTIFIER ||
+      user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER // Added for Zimbabwe Registry Permission
+    ) {
       can(Action.Read, ProgrammeEntity, {
         currentStage: { $in: [ProgrammeStageUnified.Authorised] },
       });
       can(Action.Read, ProgrammeEntity, { certifierId: { $elemMatch: { $eq: user.companyId } } });
-    } else if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    } else if (
+      user.companyRole === CompanyRole.PROGRAMME_DEVELOPER ||
+      user.companyRole === CompanyRole.PROJECT_DEVELOPER // Added for Zimbabwe Registry Permission
+    ) {
       can(Action.Read, ProgrammeEntity, {
         currentStage: { $eq: ProgrammeStageUnified.Authorised },
       });
@@ -161,6 +193,9 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
     cannot(Action.Update, User, ['companyRole']);
 
     cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.GOVERNMENT } });
+    cannot([Action.Delete], Company, {
+      companyRole: { $eq: CompanyRole.DESIGNATED_NATIONAL_AUTHORITY },
+    }); // Added for Zimbabwe Registry Permission
     cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.MINISTRY } });
     cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.CLIMATE_FUND } });
     cannot([Action.Delete], Company, { companyRole: { $eq: CompanyRole.EXECUTIVE_COMMITTEE } });
@@ -183,7 +218,8 @@ export const updateUserAbility = (ability: AppAbility, user: User) => {
 
     if (
       (user.role === Role.Root || user.role === Role.Admin) &&
-      user.companyRole === CompanyRole.GOVERNMENT
+      (user.companyRole === CompanyRole.GOVERNMENT ||
+        user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) // Added for Zimbabwe Registry Permission
     ) {
       can(Action.Read, CreditAuditLog);
     } else {

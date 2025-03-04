@@ -50,6 +50,7 @@ import { useSettingsContext } from '../../../Context/SettingsContext/settingsCon
 import { RoleIcon } from '../../IconComponents/RoleIcon/role.icon';
 import { ProfileIcon } from '../../IconComponents/ProfileIcon/profile.icon';
 import InvestmentActionModel from '../../Models/investmentActionModel';
+import { API_PATHS } from '../../../Config/apiConfig';
 
 type PopupInfo = {
   title: string;
@@ -175,7 +176,7 @@ export const InvestmentManagementComponent = (props: any) => {
     }
 
     try {
-      const response: any = await post('national/programme/investmentQuery', {
+      const response: any = await post(API_PATHS.INVESTMENT_LIST, {
         page: currentPage,
         size: pageSize,
         filterAnd: filter,
@@ -208,7 +209,7 @@ export const InvestmentManagementComponent = (props: any) => {
   const downloadInvestmentData = async () => {
     setLoading(true);
     try {
-      const response: any = await post('national/programme/investments/download', {
+      const response: any = await post(API_PATHS.DOWNLOAD_PROJECT_INVESTMENT_DATA, {
         filterAnd: dataQuery.filterAnd,
         filterOr: dataQuery.filterOr?.length > 0 ? dataQuery.filterOr : undefined,
         sort: dataQuery.sort,
@@ -240,8 +241,8 @@ export const InvestmentManagementComponent = (props: any) => {
   const getUserDetails = async () => {
     setLoading(true);
     try {
-      const userId = userInfoState?.id ? parseInt(userInfoState.id) : userInfoState?.id;
-      const response: any = await post('national/user/query', {
+      const userId = userInfoState?.id;
+      const response: any = await post(API_PATHS.USER_DETAILS, {
         page: 1,
         size: 10,
         filterAnd: [
@@ -295,7 +296,7 @@ export const InvestmentManagementComponent = (props: any) => {
   ) => {
     setLoading(true);
     try {
-      const response: any = await post('national/programme/' + endpoint, {
+      const response: any = await post(API_PATHS.TRANSFER_ACTION + endpoint, {
         requestId: reqId,
         comment: remarks,
       });

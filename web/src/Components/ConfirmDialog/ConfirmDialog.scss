@@ -1,0 +1,26 @@
+@import '../../Styles/variables.scss';
+
+.dialog-box {
+  .icon {
+    width: 95px;
+  }
+  .message {
+    color: $confirm-modal-message-color;
+    margin-top: 10px;
+  }
+  .subMessage {
+    color: $confirm-modal-submessage-color;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 36px;
+    margin-top: 32px;
+
+    button {
+      text-transform: uppercase;
+    
+    }
+  }
+}

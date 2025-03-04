@@ -19,6 +19,8 @@ const { Text } = Typography;
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Loading } from '../Loading/loading';
 import { DocumentTypeEnum } from '../../Definitions/Enums/document.type';
+import { API_PATHS } from '../../Config/apiConfig';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const ProjectProposalComponent = (props: { translator: i18n }) => {
   const { translator } = props;
@@ -38,7 +40,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
   const navigate = useNavigate();
 
   const navigateToDetailsPage = () => {
-    navigate(`/programmeManagementSLCF/view/${id}`);
+    navigate(ROUTES.PROGRAMME_DETAILS_BY_ID(String(id)));
   };
   const [countries, setCountries] = useState<[]>([]);
 
@@ -51,10 +53,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
   const setMigratedData = async () => {
     try {
       setLoading(true);
-      const { data } = await post('national/programmeSl/getProjectById', {
+      const { data } = await post(API_PATHS.PROJECT_BY_ID, {
         programmeId: id,
       });
-      const res = await post('national/programmeSl/getDocLastVersion', {
+      const res = await post(API_PATHS.LAST_DOC_VERSION, {
         programmeId: id,
         docType: DocumentTypeEnum.COST_QUOTATION,
       });
@@ -66,8 +68,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
         clientContactPerson: data?.contactName,
         clientMobile: data?.contactPhoneNo,
         clientEmail: data?.contactEmail,
-        serviceProviderName:
-          process.env.REACT_APP_COUNTRY_CLIMATE_FUND || 'CountryX Climate Fund (Pvt) Ltd.',
+        serviceProviderName: 'Sri Lanka Climate Fund (Pvt.) Ltd.',
         developProjectConcept: data?.company?.name,
         notificationSLCSS: data?.company?.name,
         prepareCMA: data?.company?.name,
@@ -166,7 +167,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
   const getCountryList = async () => {
     try {
-      const response = await get('national/organisation/countries');
+      const response = await get(API_PATHS.COUNTRY_LIST);
       if (response.data) {
         const alpha2Names = response.data.map((item: any) => {
           return item.alpha2;
@@ -381,7 +382,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
     const getViewData = async () => {
       if (isView) {
         try {
-          const res = await post('national/programmeSl/getDocLastVersion', {
+          const res = await post(API_PATHS.LAST_DOC_VERSION, {
             programmeId: id,
             docType: 'projectProposal',
           });
@@ -558,7 +559,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
     try {
       setLoading(true);
-      const res = await post('national/programmeSl/createProjectProposal', tempValues);
+      const res = await post(API_PATHS.CREATE_PROJECT_PROPOSAL, tempValues);
       if (res?.statusText === 'SUCCESS') {
         message.open({
           type: 'success',
@@ -666,7 +667,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 <Form.Item
                   label={t('projectProposal:proposalNo')}
                   name="proposalNo"
-                  initialValue={`CCF/PP/${new Date().getFullYear() % 100}/${id}`}
+                  initialValue={`SLCF/PP/${new Date().getFullYear() % 100}/${id}`}
                   rules={[
                     {
                       required: true,
@@ -1209,15 +1210,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           {/* Sri Lanka Carbon Crediting Scheme(SLCCS) start */}
           <>
-            <h4 className="section-title mg-top-2">
-              3.{' '}
-              {t('projectProposal:creditingScheme', {
-                countryName: process.env.REACT_APP_COUNTRY_NAME || 'CountryX',
-              })}
-            </h4>
+            <h4 className="section-title mg-top-2">3. {t('projectProposal:creditingScheme')}</h4>
 
             <p className="section-description">
-              CountryX Carbon Crediting Scheme (SLCCS) is a Greenhouse Gas (GHG) reduction programme
+              Zimbabwe Carbon Crediting Scheme (SLCCS) is a Greenhouse Gas (GHG) reduction programme
               which needs encouragement of every kind of active carbon reduction or removal projects
               for the benefits of the Environment, Society and the Economy. It brings quality
               assurance for such projects and carbon offsets. It is a voluntary initiative that
@@ -1613,7 +1609,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               {t('projectProposal:validationoftheCMA')}
             </h4>
             <p className="section-description mg-bottom-1">
-              Validation process would be done by Validation/Verification Team of CountryX Climate
+              Validation process would be done by Validation/Verification Team of Zimbabwe Climate
               Fund based on the CMA provided by PP or 3rd Party by reviewing required document on
               site and off site.
             </p>
@@ -1624,8 +1620,8 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               {t('projectProposal:projectRegistration')}
             </h4>
             <p className="section-description mg-bottom-1">
-              Project registration would be done by SLCCS registry division of CountryX Climate Fund
-              based on the Validation Report provided by Validation Division of CountryX Climate
+              Project registration would be done by SLCCS registry division of Zimbabwe Climate Fund
+              based on the Validation Report provided by Validation Division of Zimbabwe Climate
               Fund.
             </p>
           </>
@@ -1647,7 +1643,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               {t('projectProposal:verificationOfMR')}
             </h4>
             <p className="section-description mg-bottom-1">
-              Verification process would be done by Verification Team of CountryX Climate Fund based
+              Verification process would be done by Verification Team of Zimbabwe Climate Fund based
               on the MR provided by PP or 3rd Party by reviewing required document on site and off
               site.
             </p>
@@ -1658,7 +1654,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               {t('projectProposal:issuanceOfSCER')}
             </h4>
             <p className="section-description mg-bottom-1">
-              The amount of CountryX Certified Emission Reduction (SCER) would be certified by SLCCS
+              The amount of Zimbabwe Certified Emission Reduction (SCER) would be certified by SLCCS
               registry division and that amount would credited to PP.
             </p>
           </>
@@ -2983,10 +2979,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           <>
             <h4 className="section-title">10. Executive Board of SLCCS(SLCCS EB)</h4>
             <p className="capitalize">
-              Article 6.2 will validate/verify the project independently, and ensure the avoidance
-              of the double counting by the establishment of SLCCS Executive Board and responsible
-              for monitoring and regularly evaluating the process and performance, seeking to ensure
-              the continuity of SLCCS functions
+              SLCF will validate/verify the project independently, and ensure the avoidance of the
+              double counting by the establishment of SLCCS Executive Board and responsible for
+              monitoring and regularly evaluating the process and performance, seeking to ensure the
+              continuity of SLCCS functions
             </p>
 
             <p className="capitalize">SLCCS Executive Board Members</p>
@@ -3083,19 +3079,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           {/*  Introduction to climate fund start */}
           <>
-            <h4 className="section-title">11. Introduction to CountryX Climate Fund</h4>
+            <h4 className="section-title">11. Introduction to Zimbabwe Climate Fund</h4>
             <p className="capitalize">
-              Article 6.2 is a public-private partnership company established under the companies’
-              Act No.7 of 2007, under the Ministry of Environment and Renewable Energy to promote
-              carbon trading projects in CountryX. Company provides technical and finance resources
-              to develop projects contribute to the sustainability of the environment in any sector.
-              Article 6.2 also purchases carbon credits from project owners while providing any
-              service relating to CDM project development.
+              SLCF is a public-private partnership company established under the companies’ Act No.7
+              of 2007, under the Ministry of Environment and Renewable Energy to promote carbon
+              trading projects in Zimbabwe. Company provides technical and finance resources to
+              develop projects contribute to the sustainability of the environment in any sector.
+              SLCF also purchases carbon credits from project owners while providing any service
+              relating to CDM project development.
             </p>
 
             <div className="mg-top-1">Our Vision </div>
             <div className="capitalize">
-              Carbon neutral and climate-resilient blue-green economy in CountryX.
+              Carbon neutral and climate-resilient blue-green economy in Zimbabwe.
             </div>
 
             <div className="mg-top-1">Mission</div>
