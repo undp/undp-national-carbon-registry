@@ -484,7 +484,7 @@ export class UserService {
   ) {
     let company: Company;
     if (
-      companyRole != CompanyRole.GOVERNMENT &&
+      companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
       companyRole !== CompanyRole.MINISTRY
     ) {
       if (!taxId || taxId === "") {
@@ -495,7 +495,7 @@ export class UserService {
       }
       company = await this.companyService.findByTaxId(taxId);
     } else {
-      if (companyRole === CompanyRole.GOVERNMENT) {
+      if (companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
         company = await this.companyService.findGovByCountry(
           this.configService.get("systemCountry")
         );
@@ -626,7 +626,7 @@ export class UserService {
     if (
       !company &&
       userDto.companyId &&
-      companyRole === CompanyRole.GOVERNMENT
+      companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
     ) {
       const adminUserdetails = await this.getAdminUserDetails(
         userDto.companyId
@@ -675,7 +675,7 @@ export class UserService {
       }
       if (
         company.companyRole == CompanyRole.MINISTRY ||
-        company.companyRole == CompanyRole.GOVERNMENT
+        company.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
       ) {
         const ministrykey =
           Object.keys(Ministry)[
@@ -683,7 +683,7 @@ export class UserService {
           ];
         if (
           (company.companyRole == CompanyRole.MINISTRY ||
-            company.companyRole == CompanyRole.GOVERNMENT) &&
+            company.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) &&
           !ministryOrgs[ministrykey].includes(
             Object.keys(GovDepartment)[
               Object.values(GovDepartment).indexOf(
@@ -702,7 +702,7 @@ export class UserService {
         }
       }
       if (
-        companyRole != CompanyRole.GOVERNMENT &&
+        companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
         companyRole != CompanyRole.API &&
         companyRole !== CompanyRole.MINISTRY &&
         companyRole !== CompanyRole.CLIMATE_FUND &&
@@ -739,11 +739,14 @@ export class UserService {
         );
       }
 
-      if (company.companyRole != CompanyRole.CERTIFIER || !company.country) {
+      if (
+        company.companyRole != CompanyRole.INDEPENDENT_CERTIFIER ||
+        !company.country
+      ) {
         company.country = this.configService.get("systemCountry");
       }
 
-      if (company.companyRole == CompanyRole.GOVERNMENT) {
+      if (company.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
         const companyGov = await this.companyService.findGovByCountry(
           company.country
         );
@@ -771,7 +774,7 @@ export class UserService {
         );
         if (
           (company.companyRole == CompanyRole.MINISTRY ||
-            company.companyRole == CompanyRole.GOVERNMENT) &&
+            company.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) &&
           ministry &&
           ministry.ministry == company.ministry &&
           ministry.govDep == company.govDep
@@ -824,7 +827,7 @@ export class UserService {
     }
 
     if (
-      CompanyRole.GOVERNMENT != companyRole &&
+      CompanyRole.DESIGNATED_NATIONAL_AUTHORITY != companyRole &&
       userDto.companyId &&
       userDto.companyId != companyId
     ) {
@@ -854,7 +857,7 @@ export class UserService {
       u.companyRole = companyRole;
     }
 
-    if (u.companyRole != CompanyRole.CERTIFIER || !u.country) {
+    if (u.companyRole != CompanyRole.INDEPENDENT_CERTIFIER || !u.country) {
       u.country = this.configService.get("systemCountry");
     }
 
@@ -902,7 +905,7 @@ export class UserService {
           countryName: this.configService.get("systemCountryName"),
           systemName: this.configService.get("systemName"),
           organisationRole:
-            company.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+            company.companyRole === CompanyRole.PROJECT_DEVELOPER
               ? "Programme Developer"
               : company.companyRole,
           home: hostAddress,
@@ -949,7 +952,7 @@ export class UserService {
           organisationName: company.name,
           systemName: this.configService.get("systemName"),
           organisationRole:
-            company.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+            company.companyRole === CompanyRole.PROJECT_DEVELOPER
               ? "Programme Developer"
               : company.companyRole,
           organisationPageLink: hostAddress + `/companyManagement/viewAll`,
@@ -1289,7 +1292,7 @@ export class UserService {
         manager: Role.Manager,
       })
       .andWhere("user.companyRole= :companyRole", {
-        companyRole: CompanyRole.GOVERNMENT,
+        companyRole: CompanyRole.DESIGNATED_NATIONAL_AUTHORITY,
       })
       .select(["user.name", "user.email"])
       .getRawMany();
@@ -1338,7 +1341,7 @@ export class UserService {
         admin: Role.Admin,
       })
       .andWhere("user.companyRole= :companyRole", {
-        companyRole: CompanyRole.GOVERNMENT,
+        companyRole: CompanyRole.DESIGNATED_NATIONAL_AUTHORITY,
       })
       .select(["user.name", "user.email"])
       .getRawMany();

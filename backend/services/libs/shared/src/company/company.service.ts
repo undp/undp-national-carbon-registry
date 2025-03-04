@@ -128,7 +128,7 @@ export class CompanyService {
 
     if (result.affected > 0) {
       // TODO: Currently there can be unfreezed credits after company suspend if transactions failed
-      if (company.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+      if (company.companyRole === CompanyRole.PROJECT_DEVELOPER) {
         await this.programmeLedgerService.freezeCompany(
           companyId,
           this.getUserRefWithRemarks(user, `${remarks}#${company.name}`),
@@ -144,7 +144,7 @@ export class CompanyService {
           {},
           user.companyId
         );
-      } else if (company.companyRole === CompanyRole.CERTIFIER) {
+      } else if (company.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
         await this.programmeLedgerService.revokeCompanyCertifications(
           companyId,
           this.getUserRefWithRemarks(
@@ -204,7 +204,7 @@ export class CompanyService {
     );
     //requester validations
     if (
-      requester.companyRole !== CompanyRole.GOVERNMENT &&
+      requester.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
       requester.companyRole != CompanyRole.MINISTRY &&
       requester.companyId !== req.toCompanyId
     ) {
@@ -220,7 +220,7 @@ export class CompanyService {
     const companyDetails = await this.findByCompanyId(req.toCompanyId);
     if (
       companyDetails &&
-      companyDetails.companyRole !== CompanyRole.PROGRAMME_DEVELOPER
+      companyDetails.companyRole !== CompanyRole.PROJECT_DEVELOPER
     ) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("user.investerUserAuth", []),
@@ -422,7 +422,7 @@ export class CompanyService {
           countryName: this.configService.get("systemCountryName"),
           systemName: this.configService.get("systemName"),
           organisationRole:
-            company.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+            company.companyRole === CompanyRole.PROJECT_DEVELOPER
               ? "Programme Developer"
               : company.companyRole,
           home: hostAddress,
@@ -520,7 +520,7 @@ export class CompanyService {
         name: company.name,
         countryName: this.configService.get("systemCountryName"),
         organisationRole:
-          company.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+          company.companyRole === CompanyRole.PROJECT_DEVELOPER
             ? "Programme Developer"
             : company.companyRole,
         remarks: remarks,
@@ -572,7 +572,7 @@ export class CompanyService {
     let filterWithCompanyStatesIn: number[];
 
     if (
-      companyRole === CompanyRole.GOVERNMENT ||
+      companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
       companyRole === CompanyRole.CLIMATE_FUND
     ) {
       filterWithCompanyStatesIn = [0, 1, 2, 3];
@@ -674,7 +674,7 @@ export class CompanyService {
 
     let filterWithCompanyStatesIn: number[];
 
-    if (companyRole === CompanyRole.GOVERNMENT) {
+    if (companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
       filterWithCompanyStatesIn = [0, 1, 2, 3];
     } else {
       filterWithCompanyStatesIn = [0, 1];
@@ -915,7 +915,7 @@ export class CompanyService {
     const companies = await this.companyRepo.find({
       where: {
         country: countryCode,
-        companyRole: CompanyRole.GOVERNMENT,
+        companyRole: CompanyRole.DESIGNATED_NATIONAL_AUTHORITY,
       },
     });
     return companies && companies.length > 0 ? companies[0] : undefined;
@@ -987,7 +987,7 @@ export class CompanyService {
     }
 
     if (
-      company.companyRole !== CompanyRole.GOVERNMENT &&
+      company.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
       company.companyRole !== CompanyRole.MINISTRY &&
       company.taxId !== companyUpdateDto.taxId
     ) {
@@ -1002,7 +1002,7 @@ export class CompanyService {
 
     if (
       company.companyRole == CompanyRole.MINISTRY ||
-      company.companyRole == CompanyRole.GOVERNMENT
+      company.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
     ) {
       const ministrykey =
         Object.keys(Ministry)[
@@ -1028,7 +1028,7 @@ export class CompanyService {
     }
     if (
       company.companyRole == CompanyRole.MINISTRY ||
-      company.companyRole == CompanyRole.GOVERNMENT
+      company.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
     ) {
       const ministry = await this.findMinistryByDepartment(
         companyUpdateDto.govDep

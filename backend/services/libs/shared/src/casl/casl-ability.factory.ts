@@ -58,7 +58,7 @@ export class CaslAbilityFactory {
         });
       } else if (
         user.role == Role.Admin &&
-        (user.companyRole == CompanyRole.GOVERNMENT ||
+        (user.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
           user.companyRole == CompanyRole.MINISTRY)
       ) {
         can(Action.Manage, User, { role: { $ne: Role.Root } });
@@ -82,7 +82,7 @@ export class CaslAbilityFactory {
         }
       } else if (
         user.role == Role.Admin &&
-        user.companyRole != CompanyRole.GOVERNMENT
+        user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
       ) {
         can(Action.Manage, User, { role: { $ne: Role.Root } });
         can(Action.Read, Company);
@@ -92,7 +92,7 @@ export class CaslAbilityFactory {
         });
         cannot([Action.Create], Company);
       } else {
-        if (user.companyRole == CompanyRole.GOVERNMENT) {
+        if (user.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
           can(Action.Read, User);
           if (user.role === Role.Manager) {
             can([Action.Delete], Company);
@@ -130,7 +130,7 @@ export class CaslAbilityFactory {
         }
       );
 
-      if (user.companyRole == CompanyRole.GOVERNMENT) {
+      if (user.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
         if (user.role != Role.ViewOnly) {
           can(Action.Manage, ProgrammeTransfer);
           can(Action.Manage, Programme);
@@ -160,7 +160,7 @@ export class CaslAbilityFactory {
 
       if (
         user.role != Role.ViewOnly &&
-        user.companyRole != CompanyRole.PROGRAMME_DEVELOPER
+        user.companyRole != CompanyRole.PROJECT_DEVELOPER
       ) {
         can(Action.Manage, ProgrammeCertify);
       }
@@ -169,7 +169,7 @@ export class CaslAbilityFactory {
         can([Action.Create, Action.Read, Action.Update], Programme);
         can([Action.Create, Action.Read], User);
         can([Action.Create, Action.Read, Action.Update], Company);
-      } else if (user.companyRole == CompanyRole.CERTIFIER) {
+      } else if (user.companyRole == CompanyRole.INDEPENDENT_CERTIFIER) {
         can(Action.Read, Programme, {
           currentStage: { $in: [ProgrammeStage.AUTHORISED] },
         });
@@ -187,7 +187,7 @@ export class CaslAbilityFactory {
         });
         can(Action.Read, Programme);
         can(Action.Manage, DocumentAction);
-      } else if (user.companyRole == CompanyRole.PROGRAMME_DEVELOPER) {
+      } else if (user.companyRole == CompanyRole.PROJECT_DEVELOPER) {
         // can(Action.Read, Programme, {
         //   currentStage: { $eq: ProgrammeStage.AUTHORISED },
         // });
@@ -260,14 +260,14 @@ export class CaslAbilityFactory {
         }
       }
 
-      if (user.companyRole == CompanyRole.CERTIFIER) {
+      if (user.companyRole == CompanyRole.INDEPENDENT_CERTIFIER) {
         can(Action.Read, Stat);
       } else {
         can(Action.Read, Stat);
       }
 
       cannot([Action.Delete], Company, {
-        companyRole: { $eq: CompanyRole.GOVERNMENT },
+        companyRole: { $eq: CompanyRole.DESIGNATED_NATIONAL_AUTHORITY },
       });
 
       cannot([Action.Delete], Company, {
@@ -292,8 +292,8 @@ export class CaslAbilityFactory {
       }
     }
     if (
-      user.companyRole == CompanyRole.GOVERNMENT ||
-      user.companyRole == CompanyRole.CERTIFIER ||
+      user.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+      user.companyRole == CompanyRole.INDEPENDENT_CERTIFIER ||
       user.companyRole == CompanyRole.MINISTRY
     ) {
       can([Action.Read], ProgrammeDocument);
@@ -301,7 +301,7 @@ export class CaslAbilityFactory {
 
     if (
       user.companyRole === CompanyRole.MINISTRY ||
-      user.companyRole === CompanyRole.GOVERNMENT
+      user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
     ) {
       if (user.role !== Role.ViewOnly) {
         can(Action.Create, Emission);
@@ -316,7 +316,7 @@ export class CaslAbilityFactory {
 
     if (
       (user.role == Role.Root || user.role == Role.Admin) &&
-      user.companyRole === CompanyRole.GOVERNMENT
+      user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
     ) {
       can(Action.Read, CreditAuditLog);
       can(Action.Read, CreditAuditLogViewEntity);
@@ -325,7 +325,7 @@ export class CaslAbilityFactory {
       cannot(Action.Read, CreditAuditLogViewEntity);
     }
 
-    if (user.companyRole === CompanyRole.GOVERNMENT) {
+    if (user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
       can(Action.Read, ProgrammeSl);
       can(Action.Read, DocumentEntity);
       can(Action.Read, VerificationRequestEntity);
@@ -337,13 +337,13 @@ export class CaslAbilityFactory {
       can(Action.Read, VerificationRequestEntity);
     }
 
-    if (user.companyRole === CompanyRole.CERTIFIER) {
+    if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
       can(Action.Read, ProgrammeSl);
       can(Action.Read, DocumentEntity);
       can(Action.Read, VerificationRequestEntity);
     }
 
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       can(Action.Read, ProgrammeSl);
       can(Action.Read, DocumentEntity);
       can(Action.Read, CreditRetirementSl, {
@@ -409,7 +409,7 @@ export class CaslAbilityFactory {
       }
     }
 
-    if (user.companyRole === CompanyRole.GOVERNMENT) {
+    if (user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
       can(Action.Read, User);
       can(Action.Read, ProgrammeSl);
       can(Action.Read, CreditRetirementSl);
@@ -417,7 +417,7 @@ export class CaslAbilityFactory {
       can(Action.Read, VerificationRequestEntity);
     }
 
-    if (user.companyRole === CompanyRole.CERTIFIER) {
+    if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
       can(Action.Read, User);
       can(Action.Read, ProgrammeSl);
       can(Action.Read, CreditRetirementSl);
