@@ -24,7 +24,8 @@ import { CountryService } from "../util/country.service";
 import { UtilModule } from "../util/util.module";
 import { LocationDataType } from "../enum/locationDataType.enum";
 import { getLogger } from "src/server";
-const fs = require("fs");
+import * as fs from "fs";
+//const fs = require("fs");
 
 export const handler: Handler = async (event) => {
   console.log(`Setup Handler Started with: ${event}`);
@@ -67,13 +68,13 @@ export const handler: Handler = async (event) => {
       fields = fields.map((f) => f.trim());
       // (name: string, companyRole: CompanyRole, taxId: string, password: string, email: string, userRole: string
       const cr =
-        fields[4] == "Government"
-          ? CompanyRole.GOVERNMENT
-          : fields[4] == "Certifier"
-          ? CompanyRole.CERTIFIER
+        fields[4] == "DNA"
+          ? CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
+          : fields[4] == "IC"
+          ? CompanyRole.INDEPENDENT_CERTIFIER
           : fields[4] == "API"
           ? CompanyRole.API
-          : CompanyRole.PROGRAMME_DEVELOPER;
+          : CompanyRole.PROJECT_DEVELOPER;
       const ur =
         fields[5] == "admin"
           ? Role.Admin
@@ -124,11 +125,11 @@ export const handler: Handler = async (event) => {
       fields = fields.map((f) => f.trim());
       // (name: string, companyRole: CompanyRole, taxId: string, password: string, email: string, userRole: string
       const cr =
-        fields[4] == "Certifier"
-          ? CompanyRole.CERTIFIER
+        fields[4] == "IC"
+          ? CompanyRole.INDEPENDENT_CERTIFIER
           : fields[4] == "API"
           ? CompanyRole.API
-          : CompanyRole.PROGRAMME_DEVELOPER;
+          : CompanyRole.PROJECT_DEVELOPER;
 
       try {
         const org = await companyService.create({
@@ -204,7 +205,7 @@ export const handler: Handler = async (event) => {
     company.country = event["systemCountryCode"];
     company.name = event["name"];
     company.logo = event["logoBase64"];
-    company.companyRole = CompanyRole.GOVERNMENT;
+    company.companyRole = CompanyRole.DESIGNATED_NATIONAL_AUTHORITY;
     company.taxId = `00000${event["systemCountryCode"]}`;
     company.govDep = GovDepartment[event["Department"]];
     company.ministry = mapEnvironmentToEnum(event["Ministry"], Ministry);
@@ -216,50 +217,54 @@ export const handler: Handler = async (event) => {
     user.phoneNo = "-";
     user.company = company;
 
-    await userService.create(user, -1, CompanyRole.GOVERNMENT);
+    await userService.create(
+      user,
+      -1,
+      CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
+    );
   } catch (e) {
     console.log(`User ${event["rootEmail"]} failed to create`, e);
   }
 
-  try {
-    const climateFundOrg = new OrganisationDto();
-    climateFundOrg.country = event["systemCountryCode"];
-    climateFundOrg.name = event["climateFundName"];
-    climateFundOrg.logo = event["logoBase64"];
-    climateFundOrg.companyRole = CompanyRole.CLIMATE_FUND;
-    climateFundOrg.taxId = `00001${event["systemCountryCode"]}`;
+  // try {
+  //   const climateFundOrg = new OrganisationDto();
+  //   climateFundOrg.country = event["systemCountryCode"];
+  //   climateFundOrg.name = event["climateFundName"];
+  //   climateFundOrg.logo = event["logoBase64"];
+  //   climateFundOrg.companyRole = CompanyRole.CLIMATE_FUND;
+  //   climateFundOrg.taxId = `00001${event["systemCountryCode"]}`;
 
-    const cfUser = new UserDto();
-    cfUser.email = event["cfAdminEmail"];
-    cfUser.name = "Climate Fund Admin";
-    cfUser.role = Role.Admin;
-    cfUser.phoneNo = "-";
-    cfUser.company = climateFundOrg;
+  //   const cfUser = new UserDto();
+  //   cfUser.email = event["cfAdminEmail"];
+  //   cfUser.name = "Climate Fund Admin";
+  //   cfUser.role = Role.Admin;
+  //   cfUser.phoneNo = "-";
+  //   cfUser.company = climateFundOrg;
 
-    await userService.create(cfUser, -1, CompanyRole.CLIMATE_FUND);
-  } catch (e) {
-    console.log(`User ${event["cfAdminEmail"]} failed to create`, e);
-  }
+  //   await userService.create(cfUser, -1, CompanyRole.CLIMATE_FUND);
+  // } catch (e) {
+  //   console.log(`User ${event["cfAdminEmail"]} failed to create`, e);
+  // }
 
-  try {
-    const exComOrg = new OrganisationDto();
-    exComOrg.country = event["systemCountryCode"];
-    exComOrg.name = event["exComName"];
-    exComOrg.logo = event["logoBase64"];
-    exComOrg.companyRole = CompanyRole.EXECUTIVE_COMMITTEE;
-    exComOrg.taxId = `00002${event["systemCountryCode"]}`;
+  // try {
+  //   const exComOrg = new OrganisationDto();
+  //   exComOrg.country = event["systemCountryCode"];
+  //   exComOrg.name = event["exComName"];
+  //   exComOrg.logo = event["logoBase64"];
+  //   exComOrg.companyRole = CompanyRole.EXECUTIVE_COMMITTEE;
+  //   exComOrg.taxId = `00002${event["systemCountryCode"]}`;
 
-    const exComUser = new UserDto();
-    exComUser.email = event["exComAdminEmail"];
-    exComUser.name = "Executive Committee Admin";
-    exComUser.role = Role.Admin;
-    exComUser.phoneNo = "-";
-    exComUser.company = exComOrg;
+  //   const exComUser = new UserDto();
+  //   exComUser.email = event["exComAdminEmail"];
+  //   exComUser.name = "Executive Committee Admin";
+  //   exComUser.role = Role.Admin;
+  //   exComUser.phoneNo = "-";
+  //   exComUser.company = exComOrg;
 
-    await userService.create(exComUser, -1, CompanyRole.EXECUTIVE_COMMITTEE);
-  } catch (e) {
-    console.log(`User ${event["exComAdminEmail"]} failed to create`, e);
-  }
+  //   await userService.create(exComUser, -1, CompanyRole.EXECUTIVE_COMMITTEE);
+  // } catch (e) {
+  //   console.log(`User ${event["exComAdminEmail"]} failed to create`, e);
+  // }
 
   const countryData = fs.readFileSync("countries.json", "utf8");
   const jsonCountryData = JSON.parse(countryData);

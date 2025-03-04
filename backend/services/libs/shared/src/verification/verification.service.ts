@@ -57,7 +57,7 @@ export class VerificationService {
     monitoringReportDto: MonitoringReportDto,
     user: User
   ) {
-    if (user.companyRole !== CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole !== CompanyRole.PROJECT_DEVELOPER) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "verification.uploadMonitoringReportWrongUser",

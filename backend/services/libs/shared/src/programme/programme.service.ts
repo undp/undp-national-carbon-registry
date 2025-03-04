@@ -529,7 +529,7 @@ export class ProgrammeService {
     );
     if (
       companyDetails &&
-      companyDetails.companyRole !== CompanyRole.PROGRAMME_DEVELOPER
+      companyDetails.companyRole !== CompanyRole.PROJECT_DEVELOPER
     ) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("user.investerUserAuth", []),
@@ -626,7 +626,7 @@ export class ProgrammeService {
     this.logger.verbose(`Investment on programme ${JSON.stringify(programme)}`);
 
     if (
-      requester.companyRole != CompanyRole.GOVERNMENT &&
+      requester.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
       requester.companyRole != CompanyRole.MINISTRY &&
       ![...req.fromCompanyIds, req.toCompanyId].includes(requester.companyId)
     ) {
@@ -667,7 +667,7 @@ export class ProgrammeService {
 
       if (
         nationalInvestment.fromCompanyId !== requester.companyId &&
-        requester.companyRole !== CompanyRole.GOVERNMENT &&
+        requester.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
         requester.companyRole !== CompanyRole.MINISTRY
       ) {
         throw new HttpException(
@@ -1299,7 +1299,7 @@ export class ProgrammeService {
     }
 
     if (
-      user.companyRole === CompanyRole.CERTIFIER &&
+      user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER &&
       (d.type === DocType.METHODOLOGY_DOCUMENT ||
         d.type === DocType.DESIGN_DOCUMENT ||
         d.type === DocType.MONITORING_REPORT ||
@@ -1346,7 +1346,7 @@ export class ProgrammeService {
       documentCreatedUser = await this.userService.findById(Number(d.remark));
       if (documentCreatedUser) {
         cid =
-          documentCreatedUser.companyRole === CompanyRole.CERTIFIER
+          documentCreatedUser.companyRole === CompanyRole.INDEPENDENT_CERTIFIER
             ? Number(documentCreatedUser.companyId)
             : undefined;
         if (cid) {
@@ -1602,8 +1602,8 @@ export class ProgrammeService {
 
   async addDocument(documentDto: ProgrammeDocumentDto, user: User) {
     if (
-      (user.companyRole === CompanyRole.CERTIFIER ||
-        user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) &&
+      (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER ||
+        user.companyRole === CompanyRole.PROJECT_DEVELOPER) &&
       user.role === Role.ViewOnly &&
       (documentDto.type == DocType.METHODOLOGY_DOCUMENT ||
         documentDto.type == DocType.MONITORING_REPORT ||
@@ -1707,7 +1707,7 @@ export class ProgrammeService {
 
     let ndc: NDCAction;
     if (
-      user.companyRole === CompanyRole.GOVERNMENT ||
+      user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
       (user.companyRole === CompanyRole.MINISTRY && permissionForMinistryLevel)
     ) {
       this.logger.log(
@@ -1732,7 +1732,7 @@ export class ProgrammeService {
     });
 
     if (
-      user.companyRole === CompanyRole.GOVERNMENT ||
+      user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
       (user.companyRole === CompanyRole.MINISTRY && permissionForMinistryLevel)
     ) {
       if (
@@ -2094,8 +2094,9 @@ export class ProgrammeService {
       }
 
       if (
-        projectCompany.companyRole != CompanyRole.PROGRAMME_DEVELOPER &&
-        projectCompany.companyRole != CompanyRole.GOVERNMENT &&
+        projectCompany.companyRole != CompanyRole.PROJECT_DEVELOPER &&
+        projectCompany.companyRole !=
+          CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
         projectCompany.companyRole != CompanyRole.MINISTRY
       ) {
         throw new HttpException(
@@ -2109,7 +2110,7 @@ export class ProgrammeService {
 
       if (
         programmeDto.article6trade === false &&
-        projectCompany.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+        projectCompany.companyRole === CompanyRole.PROJECT_DEVELOPER
       ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString("user.userUnAUth", []),
@@ -2122,7 +2123,7 @@ export class ProgrammeService {
     }
 
     if (
-      (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
+      (user.companyRole === CompanyRole.PROJECT_DEVELOPER &&
         !companyIds.includes(user.companyId)) ||
       (programmeDto.article6trade == false &&
         user.companyRole === CompanyRole.MINISTRY &&
@@ -2303,13 +2304,13 @@ export class ProgrammeService {
 
       if (
         [
-          CompanyRole.CERTIFIER,
-          CompanyRole.GOVERNMENT,
+          CompanyRole.INDEPENDENT_CERTIFIER,
+          CompanyRole.DESIGNATED_NATIONAL_AUTHORITY,
           CompanyRole.MINISTRY,
         ].includes(user.companyRole)
       ) {
         const certifierId =
-          user.companyRole === CompanyRole.CERTIFIER
+          user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER
             ? Number(user.companyId)
             : undefined;
 
@@ -2366,7 +2367,7 @@ export class ProgrammeService {
               },
               ndcAc,
               monitoringReport.type,
-              user.companyRole === CompanyRole.CERTIFIER
+              user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER
                 ? Number(user.companyId)
                 : undefined,
               programme
@@ -2395,7 +2396,7 @@ export class ProgrammeService {
               },
               undefined,
               environmentalImpactAssessmentDoc.type,
-              user.companyRole === CompanyRole.CERTIFIER
+              user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER
                 ? Number(user.companyId)
                 : undefined,
               programme
@@ -2504,7 +2505,7 @@ export class ProgrammeService {
           filterBy: undefined,
         },
         undefined,
-        CompanyRole.GOVERNMENT
+        CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
       );
 
       const programmeSectoralScopeKey = Object.keys(SectoralScopeDef).find(
@@ -2601,7 +2602,7 @@ export class ProgrammeService {
     if (
       !(
         programmeOwnedCompanyIds.includes(user.companyId) ||
-        (user.companyRole == CompanyRole.GOVERNMENT &&
+        (user.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
           (user.role == Role.Root ||
             user.role == Role.Admin ||
             user.role == Role.Manager))
@@ -2863,9 +2864,10 @@ export class ProgrammeService {
       );
 
       if (
-        [CompanyRole.GOVERNMENT, CompanyRole.MINISTRY].includes(
-          user.companyRole
-        ) &&
+        [
+          CompanyRole.DESIGNATED_NATIONAL_AUTHORITY,
+          CompanyRole.MINISTRY,
+        ].includes(user.companyRole) &&
         dr
       ) {
         this.logger.log(
@@ -2873,7 +2875,7 @@ export class ProgrammeService {
         );
         dr.status = DocumentStatus.ACCEPTED;
 
-        const certifierId = undefined; // (user.companyRole === CompanyRole.CERTIFIER ? Number(user.companyId): undefined);
+        const certifierId = undefined; // (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER ? Number(user.companyId): undefined);
         // if (certifierId) {
         //   await this.programmeLedger.updateCertifier(program.programmeId, certifierId, true, user.name)
         // }
@@ -3677,7 +3679,8 @@ export class ProgrammeService {
           pTransfer.programmeId
         );
       } else if (
-        initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT
+        initiatorCompanyDetails.companyRole ===
+        CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
       ) {
         await this.emailHelperService.sendEmailToGovernmentAdmins(
           EmailTemplates.CREDIT_TRANSFER_GOV_REJECTED,
@@ -3779,7 +3782,7 @@ export class ProgrammeService {
         }
 
         if (
-          user.companyRole === CompanyRole.GOVERNMENT ||
+          user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
           Number(userCompany) === Number(user.companyId)
         ) {
           e["userName"] = await this.getUserName(usrId);
@@ -4203,7 +4206,8 @@ export class ProgrammeService {
           transfer.programmeId
         );
       } else if (
-        initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT
+        initiatorCompanyDetails.companyRole ===
+        CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
       ) {
         await this.emailHelperService.sendEmailToGovernmentAdmins(
           EmailTemplates.CREDIT_TRANSFER_GOV_ACCEPTED_TO_INITIATOR,
@@ -4540,7 +4544,8 @@ export class ProgrammeService {
           transfer.programmeId
         );
       } else if (
-        initiatorCompanyDetails.companyRole === CompanyRole.GOVERNMENT
+        initiatorCompanyDetails.companyRole ===
+        CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
       ) {
         await this.emailHelperService.sendEmailToOrganisationAdmins(
           transfer.fromCompanyId,
@@ -4590,7 +4595,7 @@ export class ProgrammeService {
     //     throw new HttpException("View only user cannot create requests", HttpStatus.FORBIDDEN)
     // }
 
-    // if (![CompanyRole.GOVERNMENT, CompanyRole.PROGRAMME_DEVELOPER].includes(requester.companyRole)) {
+    // if (![CompanyRole.DESIGNATED_NATIONAL_AUTHORITY, CompanyRole.PROJECT_DEVELOPER].includes(requester.companyRole)) {
     //     throw new HttpException("Unsupported company role", HttpStatus.FORBIDDEN)
     // }
 
@@ -4693,7 +4698,7 @@ export class ProgrammeService {
     //     throw new HttpException("Not enough balance for the transfer", HttpStatus.BAD_REQUEST)
     // }
     if (
-      requester.companyRole != CompanyRole.GOVERNMENT &&
+      requester.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
       requester.companyRole != CompanyRole.MINISTRY &&
       ![...req.fromCompanyIds, req.toCompanyId].includes(requester.companyId)
     ) {
@@ -4855,7 +4860,7 @@ export class ProgrammeService {
     }
 
     allTransferList.forEach(async (transfer) => {
-      if (requester.companyRole === CompanyRole.GOVERNMENT) {
+      if (requester.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
         if (transfer.toCompanyId === requester.companyId) {
           await this.emailHelperService.sendEmailToOrganisationAdmins(
             transfer.fromCompanyId,
@@ -5206,7 +5211,7 @@ export class ProgrammeService {
         refs &&
         !isNaN(refs?.companyId) &&
         !isNaN(Number(refs.id)) &&
-        (user.companyRole === CompanyRole.GOVERNMENT ||
+        (user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
           Number(refs?.companyId) === Number(user.companyId))
       ) {
         el.data["userName"] = await this.getUserName(refs.id);
@@ -5293,7 +5298,7 @@ export class ProgrammeService {
       }
     }
 
-    if (add && user.companyRole != CompanyRole.CERTIFIER) {
+    if (add && user.companyRole != CompanyRole.INDEPENDENT_CERTIFIER) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programme.unAuth", []),
         HttpStatus.FORBIDDEN
@@ -5303,8 +5308,8 @@ export class ProgrammeService {
     if (
       !add &&
       ![
-        CompanyRole.CERTIFIER,
-        CompanyRole.GOVERNMENT,
+        CompanyRole.INDEPENDENT_CERTIFIER,
+        CompanyRole.DESIGNATED_NATIONAL_AUTHORITY,
         CompanyRole.MINISTRY,
       ].includes(user.companyRole)
     ) {
@@ -5319,7 +5324,7 @@ export class ProgrammeService {
 
     let certifierId;
     if (
-      user.companyRole === CompanyRole.GOVERNMENT ||
+      user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
       user.companyRole === CompanyRole.MINISTRY
     ) {
       if (!req.certifierId) {
@@ -5373,7 +5378,7 @@ export class ProgrammeService {
         user.companyId
       );
     } else {
-      if (user.companyRole === CompanyRole.GOVERNMENT) {
+      if (user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
         await this.emailHelperService.sendEmailToProgrammeOwnerAdmins(
           req.programmeId,
           EmailTemplates.PROGRAMME_CERTIFICATION_REVOKE_BY_GOVT_TO_PROGRAMME,
@@ -5517,7 +5522,8 @@ export class ProgrammeService {
     );
 
     if (
-      requestedCompany.companyRole != CompanyRole.GOVERNMENT &&
+      requestedCompany.companyRole !=
+        CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
       requestedCompany.companyRole != CompanyRole.MINISTRY
     ) {
       if (!req.fromCompanyIds) {
@@ -6787,7 +6793,7 @@ export class ProgrammeService {
 
     if (
       !query.extendedProperties?.isGetInvestmentHistory &&
-      user.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+      user.companyRole === CompanyRole.PROJECT_DEVELOPER
     ) {
       queryBuilder = queryBuilder.andWhere(
         "(investment.fromCompanyId = :developerCompanyId OR investment.toCompanyId = :developerCompanyId)",
@@ -6857,7 +6863,7 @@ export class ProgrammeService {
         });
     }
 
-    if (user.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       queryBuilder = queryBuilder.andWhere(
         "(investment.fromCompanyId = :developerCompanyId OR investment.toCompanyId = :developerCompanyId)",
         {
@@ -7263,7 +7269,7 @@ export class ProgrammeService {
     user: User
   ) {
     if (
-      user.companyRole !== CompanyRole.GOVERNMENT ||
+      user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
       user.role === Role.ViewOnly
     ) {
       throw new HttpException(
@@ -7292,7 +7298,7 @@ export class ProgrammeService {
 
   async deleteNdcDetailsPeriod(id: number, abilityCondition: any, user: User) {
     if (
-      user.companyRole !== CompanyRole.GOVERNMENT ||
+      user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
       user.role === Role.ViewOnly
     ) {
       throw new HttpException(
@@ -7322,7 +7328,7 @@ export class ProgrammeService {
     user: User
   ) {
     if (
-      user.companyRole !== CompanyRole.GOVERNMENT ||
+      user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
       user.role === Role.ViewOnly
     ) {
       throw new HttpException(
@@ -7377,7 +7383,7 @@ export class ProgrammeService {
 
     if (
       ndcDetailsAction.actionType === NdcDetailsActionType.MainAction &&
-      user.companyRole !== CompanyRole.GOVERNMENT
+      user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
     ) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programme.unAuth", []),
@@ -7387,7 +7393,7 @@ export class ProgrammeService {
 
     if (ndcDetailsAction.actionType === NdcDetailsActionType.SubAction) {
       if (
-        user.companyRole !== CompanyRole.GOVERNMENT &&
+        user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
         user.companyRole !== CompanyRole.MINISTRY
       ) {
         throw new HttpException(
@@ -7462,7 +7468,7 @@ export class ProgrammeService {
 
     if (
       ndcDetailsAction.actionType === NdcDetailsActionType.MainAction &&
-      user.companyRole !== CompanyRole.GOVERNMENT
+      user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
     ) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("programme.unAuth", []),
@@ -7473,7 +7479,7 @@ export class ProgrammeService {
     if (ndcDetailsAction.actionType === NdcDetailsActionType.SubAction) {
       if (
         !(
-          user.companyRole === CompanyRole.GOVERNMENT ||
+          user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
           (user.companyRole === CompanyRole.MINISTRY &&
             company.name === ndcAction.ministryName)
         )
@@ -7534,7 +7540,7 @@ export class ProgrammeService {
     }
 
     if (
-      user.companyRole !== CompanyRole.GOVERNMENT ||
+      user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
       user.role === Role.ViewOnly ||
       ndcAction.status === NdcDetailsActionStatus.Approved
     ) {
@@ -7581,7 +7587,7 @@ export class ProgrammeService {
     }
 
     if (
-      user.companyRole !== CompanyRole.GOVERNMENT ||
+      user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
       user.role === Role.ViewOnly ||
       ndcAction.status === NdcDetailsActionStatus.Approved
     ) {
