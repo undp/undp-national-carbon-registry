@@ -20,6 +20,7 @@ import ChangePasswordModel from '../../Models/changePasswordModel';
 import { Role } from '../../../Definitions/Enums/role.enum';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
+import { API_PATHS } from '../../../Config/apiConfig';
 
 export const AddNewUserComponent = (props: any) => {
   const {
@@ -48,28 +49,28 @@ export const AddNewUserComponent = (props: any) => {
   const [countries, setCountries] = useState<[]>([]);
   const [isCountryListLoading, setIsCountryListLoading] = useState(false);
 
-  const getCountryList = async () => {
-    setIsCountryListLoading(true);
-    try {
-      const response = await get('national/organisation/countries');
-      if (response.data) {
-        const alpha2Names = response.data.map((item: any) => {
-          return item.alpha2;
-        });
-        setCountries(alpha2Names);
-      }
-    } catch (error: any) {
-      console.log('Error in getCountryList', error);
-      message.open({
-        type: 'error',
-        content: `${error.message}`,
-        duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-      });
-    } finally {
-      setIsCountryListLoading(false);
-    }
-  };
+  // const getCountryList = async () => {
+  //   setIsCountryListLoading(true);
+  //   try {
+  //     const response = await get('organisation/countries');
+  //     if (response.data) {
+  //       const alpha2Names = response.data.map((item: any) => {
+  //         return item.alpha2;
+  //       });
+  //       setCountries(alpha2Names);
+  //     }
+  //   } catch (error: any) {
+  //     console.log('Error in getCountryList', error);
+  //     message.open({
+  //       type: 'error',
+  //       content: `${error.message}`,
+  //       duration: 3,
+  //       style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+  //     });
+  //   } finally {
+  //     setIsCountryListLoading(false);
+  //   }
+  // };
 
   const onAddUser = async (values: any) => {
     setLoading(true);
@@ -79,7 +80,7 @@ export const AddNewUserComponent = (props: any) => {
       } else {
         values.phoneNo = undefined;
       }
-      const response = await post('national/user/add', values);
+      const response = await post(API_PATHS.ADD_USER, values);
       if (response.status === 200 || response.status === 201) {
         message.open({
           type: 'success',
@@ -120,7 +121,7 @@ export const AddNewUserComponent = (props: any) => {
       if (ability.can(Action.Update, plainToClass(User, state?.record), 'email'))
         values.email = formOneValues?.email;
 
-      const response = await put('national/user/update', values);
+      const response = await put(API_PATHS.UPDATE_USER, values);
       if (response.status === 200 || response.status === 201) {
         message.open({
           type: 'success',
@@ -176,7 +177,7 @@ export const AddNewUserComponent = (props: any) => {
     try {
       setIsLoading(true);
       const userId = userInfoState?.id;
-      await del(`national/user/delete?userId=${userId}`);
+      await del(API_PATHS.DELETE_USER(String(userId)));
       setOpenDeleteConfirmationModal(false);
       message.open({
         type: 'success',
@@ -197,7 +198,7 @@ export const AddNewUserComponent = (props: any) => {
   const onPasswordChangeCompleted = async (props: any) => {
     setIsLoading(true);
     try {
-      const response = await put('national/user/resetPassword', {
+      const response = await put(API_PATHS.RESET_PASSWORD_USER, {
         newPassword: props.newPassword,
         oldPassword: props.oldPassword,
       });
@@ -232,7 +233,7 @@ export const AddNewUserComponent = (props: any) => {
   };
 
   useEffect(() => {
-    getCountryList();
+    // getCountryList();
     setIsUpdate(state?.record ? true : false);
   }, []);
 
@@ -241,6 +242,17 @@ export const AddNewUserComponent = (props: any) => {
       <div className="title-container">
         <div className="titles">
           <div className="main">{isUpdate ? t('addUser:editUser') : t('addUser:addNewUser')}</div>
+          <label
+            style={{
+              display: 'inline-block',
+              color: 'rgba(58, 53, 65, 0.5)',
+              borderRadius: '4px',
+              fontSize: '14px',
+              fontWeight: 500,
+            }}
+          >
+            {t('addUser:hederaAccountRequired')}
+          </label>
         </div>
         {isUpdate && !ability.can(Action.Update, plainToClass(User, state?.record), 'email') && (
           <div className="actions">
@@ -264,6 +276,70 @@ export const AddNewUserComponent = (props: any) => {
           requiredMark={true}
           onFinish={onSubmitData}
         >
+          <Row className="row" gutter={[16, 16]}>
+            <Col xl={12} md={24}>
+              <div className="details-part-one">
+                <Form.Item
+                  label={t('addUser:hederaAccount')}
+                  name="hederaAccount"
+                  initialValue={state?.record?.hederaAccount}
+                  rules={[
+                    {
+                      required: true,
+                      message: '',
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('addUser:hederaAccount')} ${t('isRequired')}`);
+                        }
+                      },
+                    },
+                  ]}
+                >
+                  <Input disabled={isUpdate} size="large" />
+                </Form.Item>
+              </div>
+            </Col>
+            <Col xl={12} md={24}>
+              <div className="details-part-two">
+                <Form.Item
+                  label={t('addUser:hederaKey')}
+                  name="hederaKey"
+                  initialValue={
+                    state?.record?.hederaAccount
+                      ? '##################################################'
+                      : null
+                  }
+                  rules={[
+                    {
+                      required: true,
+                      message: '',
+                    },
+                    {
+                      validator: async (rule, value) => {
+                        if (
+                          String(value).trim() === '' ||
+                          String(value).trim() === undefined ||
+                          value === null ||
+                          value === undefined
+                        ) {
+                          throw new Error(`${t('addUser:hederaKey')} ${t('isRequired')}`);
+                        }
+                      },
+                    },
+                  ]}
+                >
+                  <Input disabled={isUpdate} size="large" />
+                </Form.Item>
+              </div>
+            </Col>
+          </Row>
           <Row className="row" gutter={[16, 16]}>
             <Col xl={12} md={24}>
               <div className="details-part-one">
@@ -323,13 +399,7 @@ export const AddNewUserComponent = (props: any) => {
                     },
                   ]}
                 >
-                  <Input
-                    disabled={
-                      isUpdate &&
-                      !ability.can(Action.Update, plainToClass(User, state?.record), 'email')
-                    }
-                    size="large"
-                  />
+                  <Input disabled={isUpdate} size="large" />
                 </Form.Item>
               </div>
             </Col>
@@ -347,14 +417,7 @@ export const AddNewUserComponent = (props: any) => {
                     },
                   ]}
                 >
-                  <Radio.Group
-                    value={state?.record?.role}
-                    size="large"
-                    disabled={
-                      isUpdate &&
-                      !ability.can(Action.Update, plainToClass(User, state?.record), 'role')
-                    }
-                  >
+                  <Radio.Group value={state?.record?.role} size="large" disabled={isUpdate}>
                     <div className="admin-radio-container">
                       <Tooltip placement="top" title={t('addUser:adminToolTip')}>
                         <Radio.Button className="admin" value="Admin">
@@ -381,50 +444,47 @@ export const AddNewUserComponent = (props: any) => {
                     </div>
                   </Radio.Group>
                 </Form.Item>
-                <Skeleton loading={isCountryListLoading} active>
-                  {countries.length > 0 && (
-                    <Form.Item
-                      name="phoneNo"
-                      label={t('addUser:phoneNo')}
-                      initialValue={state?.record?.phoneNo}
-                      rules={[
-                        {
-                          required: false,
-                        },
-                        {
-                          validator: async (rule: any, value: any) => {
-                            const phoneNo = formatPhoneNumber(String(value));
-                            if (String(value).trim() !== '') {
-                              if (
-                                (String(value).trim() !== '' &&
-                                  String(value).trim() !== undefined &&
-                                  value !== null &&
-                                  value !== undefined &&
-                                  phoneNo !== null &&
-                                  phoneNo !== '' &&
-                                  phoneNo !== undefined &&
-                                  !isPossiblePhoneNumber(String(value))) ||
-                                value?.length > 17
-                              ) {
-                                throw new Error(`${t('addUser:phoneNo')} ${t('isInvalid')}`);
-                              }
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <PhoneInput
-                        placeholder={t('addUser:phoneNo')}
-                        international
-                        // value={contactNoInput}
-                        defaultCountry="LK"
-                        countryCallingCodeEditable={false}
-                        onChange={(v) => {}}
-                        countries={countries}
-                      />
-                    </Form.Item>
-                  )}
-                </Skeleton>
+
+                <Form.Item
+                  name="phoneNo"
+                  label={t('addUser:phoneNo')}
+                  initialValue={state?.record?.phoneNo}
+                  rules={[
+                    {
+                      required: false,
+                    },
+                    {
+                      validator: async (rule: any, value: any) => {
+                        const phoneNo = formatPhoneNumber(String(value));
+                        if (String(value).trim() !== '') {
+                          if (
+                            (String(value).trim() !== '' &&
+                              String(value).trim() !== undefined &&
+                              value !== null &&
+                              value !== undefined &&
+                              phoneNo !== null &&
+                              phoneNo !== '' &&
+                              phoneNo !== undefined &&
+                              !isPossiblePhoneNumber(String(value))) ||
+                            value?.length > 17
+                          ) {
+                            throw new Error(`${t('addUser:phoneNo')} ${t('isInvalid')}`);
+                          }
+                        }
+                      },
+                    },
+                  ]}
+                >
+                  <PhoneInput
+                    placeholder={t('addUser:phoneNo')}
+                    international
+                    // value={contactNoInput}
+                    defaultCountry="LK"
+                    countryCallingCodeEditable={false}
+                    onChange={(v) => {}}
+                    countries={countries}
+                  />
+                </Form.Item>
               </div>
             </Col>
           </Row>

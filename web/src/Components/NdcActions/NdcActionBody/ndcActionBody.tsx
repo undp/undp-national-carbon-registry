@@ -25,6 +25,7 @@ import { DocumentStatus } from '../../../Definitions/Enums/document.status';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { Role } from '../../../Definitions/Enums/role.enum';
 import { linkDocVisible, uploadDocUserPermission } from '../../../Utils/documentsPermission';
+import { API_PATHS } from '../../../Config/apiConfig';
 // import { isValidateFileType } from '../../../Utils/DocumentValidator';
 // import { linkDocVisible, uploadDocUserPermission } from '../../../Utils/documentsPermission';
 // import { useConnection, useUserContext } from '../../../Context';
@@ -103,7 +104,7 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
 
     try {
       if (isValidateFileType(file?.type)) {
-        const response: any = await post('national/programme/addDocument', {
+        const response: any = await post(API_PATHS.ADD_PROJECT_DOC, {
           type: type,
           data: logoBase64,
           programmeId: programmeId,
@@ -174,7 +175,7 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
   const docAction = async (id: any, status: DocumentStatus, actionId: any, type: any) => {
     setLoading(true);
     try {
-      await post('national/programme/docAction', {
+      await post(API_PATHS.PROJECT_DOC_ACTION, {
         id: id,
         status: status,
         actionId: actionId,
@@ -189,7 +190,7 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
       if (type == DocType.VERIFICATION_REPORT && status == DocumentStatus.ACCEPTED) {
-        let programmeRes = await post('national/programme/query', {
+        let programmeRes = await post(API_PATHS.ALL_PROJECTS, {
           page: 1,
           size: 2,
           filterAnd: [
@@ -203,7 +204,7 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
         let programmeData = programmeRes.data[0];
 
         if (programmeData.mitigationActions) {
-          const docRepoRes: any = await post('national/programme/queryDocs', {
+          const docRepoRes: any = await post(API_PATHS.PROJECT_DOCS, {
             page: 1,
             size: 100,
             filterAnd: [

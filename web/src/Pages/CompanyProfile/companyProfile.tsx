@@ -2,17 +2,18 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAbilityContext } from '../../Casl/Can';
 import { CompanyProfileComponent } from '../../Components/Company/CompanyProfile/companyProfileComponent';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const CompanyProfile = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['companyProfile', 'companyDetails', 'companyRoles']);
 
   const onNavigateToCompanyManagement = () => {
-    navigate('/companyManagement/viewAll');
+    navigate(ROUTES.VIEW_ORGANIZATIONS);
   };
 
   const onNavigateToCompanyEdit = (companyDetails: any) => {
-    navigate('/companyManagement/updateCompany', { state: { record: companyDetails } });
+    navigate(ROUTES.UPDATE_ORGANIZATION, { state: { record: companyDetails } });
   };
 
   return (

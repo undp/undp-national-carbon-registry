@@ -24,6 +24,7 @@ import './homepage.scss';
 import { GlobeAmericas, ShieldCheck, CartCheck, Briefcase } from 'react-bootstrap-icons';
 import { ImgWithFallback } from '../../Components/ImgwithFallback/imgWithFallback';
 import CollapsePanel from 'antd/lib/collapse/CollapsePanel';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const Homepage = () => {
   const { i18n, t } = useTranslation(['common', 'homepage']);
@@ -84,7 +85,7 @@ const Homepage = () => {
               <Col md={6} lg={3} xs={7} flex="auto">
                 <div className="homepage-button-container">
                   <div className="button">
-                    <Button type="primary" onClick={() => navigate('/login')}>
+                    <Button type="primary" onClick={() => navigate(ROUTES.LOGIN)}>
                       SIGN IN
                     </Button>
                   </div>

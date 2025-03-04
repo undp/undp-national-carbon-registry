@@ -13,6 +13,7 @@ import { ProgrammeStageR } from '../../../Definitions/Enums/programmeStage.enum'
 import NdcActionDetails from '../NdcActionDetails/ndcActionDetails';
 import { CoBenifitsComponent } from '../../CoBenifits/coBenifits';
 import { isValidateFileType } from '../../../Utils/DocumentValidator';
+import { API_PATHS } from '../../../Config/apiConfig';
 // import { CoBenifitsComponent } from '../../Common/CoBenifits/coBenifits';
 // import { Programme, ProgrammeStageR, getBase64 } from '../../../Definitions';
 // import { isValidateFileType } from '../../../Utils/DocumentValidator';
@@ -60,7 +61,7 @@ export const AddNdcActionComponent = (props: any) => {
         delete ndcActionDetailsObj.enablementReportData;
       }
 
-      const response: any = await post('national/programme/addNDCAction', ndcActionDetailsObj);
+      const response: any = await post(API_PATHS.NDC_ACTION, ndcActionDetailsObj);
       if (response.status === 200 || response.status === 201) {
         message.open({
           type: 'success',

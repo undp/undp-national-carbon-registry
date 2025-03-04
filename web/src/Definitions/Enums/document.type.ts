@@ -11,6 +11,7 @@ export enum DocType {
   VALIDATION_REPORT = '12',
   PROJECT_REGISTRATION_CERTIFICATE = '13',
   SITE_VISIT_CHECKLIST = '14',
+  PDD = '15',
 }
 
 export enum DocumentTypeEnum {

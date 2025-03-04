@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useAbilityContext } from '../../Casl/Can';
 import { ProgrammeManagementColumns } from '../../Definitions/Enums/programme.management.columns.enum';
 import { ProgrammeManagementSlColumns } from '../../Definitions/Enums/programme.management.sl.columns.enum';
-import { SLCFProgrammeManagementComponent } from '../../Components/SLCFProgramme/SLCFProgrammeManagement/SLCFProgrammeManagementComponent';
+import { SLCFProgrammeManagementComponent } from '../../Components/SLCFProgrammeManagement/SLCFProgrammeManagementComponent';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const SLCFProgrammeManagement = () => {
   const navigate = useNavigate();
@@ -24,15 +25,15 @@ const SLCFProgrammeManagement = () => {
   ];
 
   const onNavigateToProgrammeView = (record: any) => {
-    navigate(`/programmeManagementSLCF/view/${record.programmeId}`, { state: { record } });
+    navigate(ROUTES.PROGRAMME_DETAILS_BY_REF_ID(record.refId), { state: { record } });
   };
 
   const onClickAddProgramme = () => {
-    navigate('/programmeManagementSLCF/addProgramme');
+    navigate(ROUTES.ADD_PROGRAMME);
   };
 
   const onClickAddInvestment = () => {
-    navigate('/programmeManagementSLCF/addInvestment');
+    navigate(ROUTES.ADD_INVESTMENT_TO_PROGRAMME);
   };
 
   return (

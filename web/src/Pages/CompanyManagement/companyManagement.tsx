@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAbilityContext } from '../../Casl/Can';
 import { CompanyManagementColumns } from '../../Definitions/Enums/company.management.columns.enum';
 import { CompanyManagementComponent } from '../../Components/Company/CompanyManagement/companyManagementComponent';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const CompanyManagement = () => {
   const navigate = useNavigate();
@@ -19,11 +20,11 @@ const CompanyManagement = () => {
   ];
 
   const navigateToCompanyProfile = (record: any) => {
-    navigate('/companyProfile/view', { state: { record } });
+    navigate(ROUTES.VIEW_ORGANIZATION_PROFILE, { state: { record } });
   };
 
   const navigateToAddNewCompany = () => {
-    navigate('/companyManagement/addCompany');
+    navigate(ROUTES.ADD_ORGANIZATION);
   };
 
   return (

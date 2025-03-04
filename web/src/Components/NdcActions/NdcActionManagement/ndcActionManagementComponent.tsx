@@ -45,6 +45,7 @@ import {
 import { NdcActionTypes } from '../../../Definitions/Enums/ndcActionTypes.enum';
 import { Company } from '../../../Definitions/Entities/company';
 import { ProfileIcon } from '../../IconComponents/ProfileIcon/profile.icon';
+import { API_PATHS } from '../../../Config/apiConfig';
 
 export const NdcActionManagementComponent = (props: any) => {
   const { t, onNavigateToNdcManagementView, onNavigateToProgrammeManagementView } = props;
@@ -314,7 +315,7 @@ export const NdcActionManagementComponent = (props: any) => {
     }
 
     try {
-      const response: any = await post('national/programme/queryNdcActions', {
+      const response: any = await post(API_PATHS.NDC_ACTION_HISTORY, {
         page: currentPage,
         size: pageSize,
         filterAnd: filter,
@@ -345,8 +346,8 @@ export const NdcActionManagementComponent = (props: any) => {
   const getUserDetails = async () => {
     setLoading(true);
     try {
-      const userId = userInfoState?.id ? parseInt(userInfoState.id) : userInfoState?.id;
-      const response: any = await post('national/user/query', {
+      const userId = userInfoState?.id;
+      const response: any = await post(API_PATHS.USER_DETAILS, {
         page: 1,
         size: 10,
         filterAnd: [
@@ -377,7 +378,7 @@ export const NdcActionManagementComponent = (props: any) => {
     setLoading(true);
 
     try {
-      const response: any = await post('national/programme/queryNdcActions/download', {
+      const response: any = await post(API_PATHS.NDC_ACTIONS_DOWNLOAD, {
         filterAnd: dataQuery.filterAnd,
         filterBy: dataQuery.filterBy,
         sort: dataQuery.sort,
