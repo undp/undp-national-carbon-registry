@@ -18,4 +18,8 @@ export enum CompanyRole {
   API = 'API',
   CLIMATE_FUND = 'ClimateFund',
   EXECUTIVE_COMMITTEE = 'ExecutiveCommittee',
+  //only following three are used in zimbabwe flow. above will be deleted
+  DESIGNATED_NATIONAL_AUTHORITY = 'DNA',
+  INDEPENDENT_CERTIFIER = 'IC',
+  PROJECT_DEVELOPER = 'PD',
 }

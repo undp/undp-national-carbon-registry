@@ -5,6 +5,7 @@ import './registerNewCompany.scss';
 import { Row, Col, Button } from 'antd';
 import sliderLogo from '../../Assets/Images/logo-slider.png';
 import { AddNewCompanyComponent } from '../../Components/Company/AddNewCompany/addNewCompanyComponent';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const RegisterNewCompany = () => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const RegisterNewCompany = () => {
 
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
-    : 5000000;
+    : 1048576;
 
   const onNavigateToHome = () => {
     navigate('/', { replace: true });
@@ -42,7 +43,7 @@ const RegisterNewCompany = () => {
         <Col md={6} lg={3} xs={7} flex="auto">
           <div className="homepage-button-container">
             <div className="button">
-              <Button type="primary" onClick={() => navigate('/login')}>
+              <Button type="primary" onClick={() => navigate(ROUTES.LOGIN)}>
                 SIGN IN
               </Button>
             </div>

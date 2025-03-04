@@ -1,8 +1,11 @@
 {
-    "ProgrammeDeveloper": "Project Participant",
-    "Government": "Government",
-    "Certifier": "Certifier (VVB)",
-    "ClimateFund": "CountryX Climate Fund",
+    "ProgrammeDeveloper": "Project Developer",
+    "Government": "Designated National Authority",
+    "Certifier": "Independent Certifier",
+    "ClimateFund": "Zimbabwe Climate Fund",
     "ExecutiveCommittee": "Executive Committee",
-    "Ministry": "Ministry"
+    "Ministry": "Ministry",
+    "DNA": "DNA",
+    "IC": "Independent Certifier",
+    "PD": "Project Developer"
 }

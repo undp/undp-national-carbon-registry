@@ -51,6 +51,7 @@ import {
   getNdcStatusTagType,
   NdcActionStatus,
 } from '../../../Definitions/Enums/ndcAction.status.enum';
+import { API_PATHS } from '../../../Config/apiConfig';
 // import { useConnection, useUserContext } from '../../../Context';
 
 export const NdcActionViewComponent = (props: any) => {
@@ -77,7 +78,7 @@ export const NdcActionViewComponent = (props: any) => {
   const getProgrammeById = async (programmeId: string) => {
     setIsLoading(true);
     try {
-      const response: any = await post('national/programme/query', {
+      const response: any = await post(API_PATHS.ALL_PROJECTS, {
         page: 1,
         size: 10,
         filterAnd: [
@@ -175,7 +176,7 @@ export const NdcActionViewComponent = (props: any) => {
       ),
     };
     try {
-      const response: any = await post('national/programme/queryDocs', {
+      const response: any = await post(API_PATHS.PROJECT_DOCS, {
         page: 1,
         size: 100,
         filterAnd: [

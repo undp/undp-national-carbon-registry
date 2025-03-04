@@ -14,6 +14,8 @@ import { RcFile } from 'antd/lib/upload';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import LabelWithTooltip from '../LabelWithTooltip/LabelWithTooltip';
 import { Loading } from '../Loading/loading';
+import { API_PATHS } from '../../Config/apiConfig';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const ValidationAgreement = (props: { translator: i18n }) => {
   const { translator } = props;
@@ -39,7 +41,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
   const navigate = useNavigate();
 
   const navigateToDetailsPage = () => {
-    navigate(`/programmeManagementSLCF/view/${id}`);
+    navigate(ROUTES.PROGRAMME_DETAILS_BY_ID(String(id)));
   };
 
   const viewDataMapToFields = (val: any) => {
@@ -119,7 +121,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
   const setMigratedData = async () => {
     try {
       setLoading(true);
-      const { data } = await post('national/programmeSl/getProjectById', {
+      const { data } = await post(API_PATHS.PROJECT_BY_ID, {
         programmeId: id,
       });
 
@@ -138,7 +140,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
       if (isView) {
         setLoading(true);
         try {
-          const res = await post('national/programmeSl/getDocLastVersion', {
+          const res = await post(API_PATHS.LAST_DOC_VERSION, {
             programmeId: id,
             docType: 'validationAgreement',
           });
@@ -236,7 +238,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
     try {
       setLoading(true);
-      const res = await post('national/programmeSl/createValidationAgreement', tempValues);
+      const res = await post(API_PATHS.CREATE_VALIDATION_AGGREMENT, tempValues);
       if (res?.statusText === 'SUCCESS') {
         message.open({
           type: 'success',
@@ -523,9 +525,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
             <Row justify={'space-between'} gutter={40} className="mg-top-1">
               <Col md={24} xl={10}>
                 <p className="no-margin-p">{t('validationAgreement:onBehalf')}</p>
-                <p className="no-margin-p">
-                  {process.env.REACT_APP_COUNTRY_CLIMATE_FUND || 'CountryX Climate Fund (Pvt) Ltd.'}
-                </p>
+                <p className="no-margin-p">Sri Lanka Climate Fund (Pvt) Ltd.</p>
 
                 <div className="signature-upload">
                   <LabelWithTooltip label="Signature" required={true} />
@@ -588,11 +588,11 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
                 <div className="authorized-signatory">
                   <p>Authorized Signatory </p>
-                  <p>CountryX Climate Fund (Pvt) Ltd.</p>
+                  <p>Zimbabwe Climate Fund (Pvt) Ltd.</p>
                   <p>“Sobadam Piyasa”, </p>
                   <p>No. 416/C/1, </p>
                   <p>Robert Gunawardana Mawatha, </p>
-                  <p>Battaramulla, CountryX.</p>
+                  <p>Battaramulla, Zimbabwe.</p>
                 </div>
               </Col>
 
@@ -688,8 +688,8 @@ const ValidationAgreement = (props: { translator: i18n }) => {
               <Col md={24} xl={10}>
                 <Form.Item name="SLCFWitness" label="Witness" className="witness-input">
                   <Input
-                    defaultValue={'CountryX Climate Fund (PVT) Ltd'}
-                    placeholder="CountryX Climate Fund (PVT) Ltd"
+                    defaultValue={'Zimbabwe Climate Fund (PVT) Ltd'}
+                    placeholder="Zimbabwe Climate Fund (PVT) Ltd"
                     disabled
                   />
                 </Form.Item>

@@ -13,6 +13,7 @@ interface ILabelWithTooltip {
   tooltipContent?: JSX.Element;
   tooltipWidth?: number;
   tooltipPosition?: TooltipPostion | undefined;
+  labelStyles?: any;
 }
 
 interface IHoverTooltip {
@@ -58,11 +59,16 @@ const HoverTooltip = (props: IHoverTooltip) => {
 };
 
 const LabelWithTooltip = (props: ILabelWithTooltip) => {
-  const { label, required, tooltipContent, tooltipWidth, tooltipPosition } = props;
+  const { label, required, tooltipContent, tooltipWidth, tooltipPosition, labelStyles } = props;
 
   return (
     <div className="label-with-tooltip">
-      <label className={`${required ? 'custom-required' : ''}`}>{label}</label>
+      <label
+        className={`${required ? 'custom-required' : ''}`}
+        style={labelStyles ? labelStyles : {}}
+      >
+        {label}
+      </label>
 
       {tooltipContent !== undefined && (
         <div className="tooltip-section">
