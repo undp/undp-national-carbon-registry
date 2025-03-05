@@ -298,4 +298,9 @@ export const handler: Handler = async (event) => {
   await locationInterface.init(divisionRawData, LocationDataType.DIVISION);
   const cityRawData = fs.readFileSync("cities.csv", "utf8");
   await locationInterface.init(cityRawData, LocationDataType.CITY);
+  const postalCodesRawData = fs.readFileSync("postalCodes.csv", "utf8");
+  await locationInterface.init(
+    postalCodesRawData,
+    LocationDataType.POSTAL_CODE
+  );
 };

@@ -1,5 +1,11 @@
 import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
-import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 import { TxType } from "../enum/txtype.enum";
 import { EntitySubject } from "./entity.subject";
 import { ProjectGeography } from "../enum/projectGeography.enum";
@@ -36,13 +42,13 @@ export class ProgrammeSl implements EntitySubject {
   district: string;
 
   @Column()
-  dsDivision: string;
-
-  @Column()
   city: string;
 
   @Column()
-  community: string;
+  postalCode: string;
+
+  @Column()
+  StreetName: string;
 
   @Column({
     type: "jsonb",
@@ -57,7 +63,13 @@ export class ProgrammeSl implements EntitySubject {
   })
   projectGeography: ProjectGeography;
 
-  @Column({ type: "decimal", precision: 10, scale: PRECISION, nullable: true, array: true })
+  @Column({
+    type: "decimal",
+    precision: 10,
+    scale: PRECISION,
+    nullable: true,
+    array: true,
+  })
   landExtent?: number[];
 
   @Column({ nullable: true })
@@ -92,6 +104,7 @@ export class ProgrammeSl implements EntitySubject {
   @Column({
     type: "enum",
     enum: CreditType,
+    default: CreditType.TRACK_1,
     array: false,
   })
   purposeOfCreditDevelopment: CreditType;
@@ -127,7 +140,31 @@ export class ProgrammeSl implements EntitySubject {
   startDate: number;
 
   @Column({ type: "bigint" })
+  independantCertifierId: number;
+
+  @Column({ type: "bigint" })
   companyId: number;
+
+  @Column()
+  projectParticipant: string;
+
+  @Column()
+  address: string;
+
+  @Column()
+  telephone: string;
+
+  @Column()
+  fax: string;
+
+  @Column()
+  email: string;
+
+  @Column()
+  website: string;
+
+  @Column()
+  contactPerson: string;
 
   @Column({
     type: "enum",
@@ -145,15 +182,6 @@ export class ProgrammeSl implements EntitySubject {
 
   @Column({ nullable: true })
   registrationCertificateUrl: string;
-
-  @Column({ nullable: true })
-  contactName: string;
-
-  @Column({ nullable: true })
-  contactEmail: string;
-
-  @Column({ nullable: true })
-  contactPhoneNo: string;
 
   @Column({ type: "bigint" })
   createdTime: number;

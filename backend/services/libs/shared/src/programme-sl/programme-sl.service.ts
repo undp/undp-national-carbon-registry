@@ -122,6 +122,23 @@ export class ProgrammeSlService {
       );
     }
 
+    const ICCompany = await this.companyService.findByCompanyId(
+      programmeSlDto.independantCertifierId
+    );
+
+    if (
+      !ICCompany ||
+      ICCompany.companyRole != CompanyRole.INDEPENDENT_CERTIFIER
+    ) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.noICExistingInSystem",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
     if (programme.projectCategory !== ProjectCategory.OTHER) {
       programme.otherProjectCategory = null;
     }
@@ -170,7 +187,7 @@ export class ProgrammeSlService {
       CounterType.PROGRAMME_SL,
       4
     );
-    programme.projectProposalStage = ProjectProposalStage.SUBMITTED_INF;
+    programme.projectProposalStage = ProjectProposalStage.PENDING;
     programme.companyId = companyId;
     programme.txType = TxType.CREATE_SL;
     programme.txTime = new Date().getTime();
@@ -180,7 +197,7 @@ export class ProgrammeSlService {
 
     const docUrls = [];
 
-    if (programmeSlDto && programmeSlDto.additionalDocuments.length > 0) {
+    if (programmeSlDto && programmeSlDto.additionalDocuments?.length > 0) {
       programmeSlDto.additionalDocuments.forEach(async (doc) => {
         const docUrl = await this.uploadDocument(
           DocType.INF_ADDITIONAL_DOCUMENT,
