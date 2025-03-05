@@ -11,6 +11,7 @@ import { Province } from "../entities/province.entity";
 import { District } from "../entities/district.entity";
 import { DSDivision } from "../entities/dsDivision.entity";
 import { City } from "../entities/city.entity";
+import { PostalCode } from "../entities/postal.code.entity";
 
 @Injectable()
 export class LocationService {
@@ -20,6 +21,8 @@ export class LocationService {
     @InjectRepository(District) private districtRepo: Repository<District>,
     @InjectRepository(DSDivision) private divisionRepo: Repository<DSDivision>,
     @InjectRepository(City) private cityRepo: Repository<City>,
+    @InjectRepository(PostalCode)
+    private postalRepo: Repository<PostalCode>,
     private helperService: HelperService
   ) {}
 
@@ -81,6 +84,9 @@ export class LocationService {
 
       case LocationDataType.CITY:
         return this.cityRepo;
+        break;
+      case LocationDataType.POSTAL_CODE:
+        return this.postalRepo;
         break;
 
       default:

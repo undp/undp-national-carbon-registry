@@ -15,10 +15,18 @@ import { DSDivision } from "../entities/dsDivision.entity";
 import { City } from "../entities/city.entity";
 import { LocationService } from "./location.service";
 import { UtilModule } from "../util/util.module";
+import { PostalCode } from "../entities/postal.code.entity";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Region, Province, District, DSDivision, City]),
+    TypeOrmModule.forFeature([
+      Region,
+      Province,
+      District,
+      DSDivision,
+      City,
+      PostalCode,
+    ]),
     UtilModule,
   ],
   providers: [
