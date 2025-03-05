@@ -82,7 +82,7 @@ export class ProgrammeSlDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  streetName: string;
+  street: string;
 
   @ApiProperty()
   @IsArray()
@@ -167,30 +167,30 @@ export class ProgrammeSlDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  address: string;
+  contactAddress: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  telephone: string;
+  contactPhoneNo: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  fax: string;
+  contactFax: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  email: string;
+  contactEmail: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  website: string;
+  contactWebsite: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  contactPerson: string;
+  contactName: string;
 }
