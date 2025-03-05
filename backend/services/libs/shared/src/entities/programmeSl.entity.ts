@@ -48,7 +48,7 @@ export class ProgrammeSl implements EntitySubject {
   postalCode: string;
 
   @Column()
-  StreetName: string;
+  Street: string;
 
   @Column({
     type: "jsonb",
@@ -104,7 +104,7 @@ export class ProgrammeSl implements EntitySubject {
   @Column({
     type: "enum",
     enum: CreditType,
-    default: CreditType.TRACK_1,
+    default: CreditType.TRACK_1, //TODO need to remove this
     array: false,
   })
   purposeOfCreditDevelopment: CreditType;
@@ -149,22 +149,22 @@ export class ProgrammeSl implements EntitySubject {
   projectParticipant: string;
 
   @Column()
-  address: string;
+  contactAddress: string;
 
   @Column()
-  telephone: string;
+  contactPhoneNo: string;
 
   @Column()
-  fax: string;
+  contactFax: string;
 
   @Column()
-  email: string;
+  contactEmail: string;
 
   @Column()
-  website: string;
+  contactWebsite: string;
 
   @Column()
-  contactPerson: string;
+  contactName: string;
 
   @Column({
     type: "enum",

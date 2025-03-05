@@ -1,4 +1,12 @@
-import { Body, Controller, Post, UseGuards, Request } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Request,
+  HttpException,
+  HttpStatus,
+} from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "@app/shared/auth/guards/jwt-auth.guard";
 import { Action } from "@app/shared/casl/action.enum";
@@ -19,6 +27,8 @@ import { CMAApproveDto } from "@app/shared/dto/cmaApprove.dto";
 import { ValidationReportDto } from "@app/shared/dto/validationReport.dto";
 import { CNCertificateIssueDto } from "@app/shared/dto/cncertificateIssue.dto";
 import { ProjectRateLimiterGuard } from "@app/shared/auth/guards/project-rate-limiter.guard";
+import { validate } from "class-validator";
+import { plainToInstance } from "class-transformer";
 
 @ApiTags("ProgrammeSl")
 @ApiBearerAuth()
@@ -32,8 +42,16 @@ export class ProgrammeSlController {
     ability.can(Action.Create, ProgrammeSl)
   )
   @Post("create")
-  async addProgramme(@Body() programme: ProgrammeSlDto, @Request() req) {
-    return this.programmeService.create(programme, req.user);
+  async addProgramme(@Body() body: any, @Request() req) {
+    const dtoData = JSON.parse(body.data);
+    const dto = plainToInstance(ProgrammeSlDto, dtoData);
+    const errors = await validate(dto);
+    if (errors.length > 0) {
+      console.log("validation failed");
+      throw new HttpException(errors, HttpStatus.BAD_REQUEST);
+    }
+    console.log(dto);
+    return this.programmeService.create(dto, req.user);
   }
 
   @ApiBearerAuth()

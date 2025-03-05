@@ -139,10 +139,6 @@ export class ProgrammeSlService {
       );
     }
 
-    if (programme.projectCategory !== ProjectCategory.OTHER) {
-      programme.otherProjectCategory = null;
-    }
-
     if (programme.projectGeography === ProjectGeography.SINGLE) {
       if (
         programme.geographicalLocationCoordinates.length > 1 ||
@@ -166,21 +162,6 @@ export class ProgrammeSlService {
           HttpStatus.BAD_REQUEST
         );
       }
-    }
-
-    if (
-      programme.projectCategory === ProjectCategory.AFFORESTATION ||
-      programme.projectCategory === ProjectCategory.REFORESTATION ||
-      programme.projectCategory === ProjectCategory.OTHER
-    ) {
-      programme.proposedProjectCapacity = null;
-    }
-
-    if (
-      programme.projectCategory === ProjectCategory.RENEWABLE_ENERGY ||
-      programme.projectCategory === ProjectCategory.OTHER
-    ) {
-      programme.speciesPlanted = null;
     }
 
     programme.programmeId = await this.counterService.incrementCount(
