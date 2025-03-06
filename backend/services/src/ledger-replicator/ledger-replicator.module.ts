@@ -11,12 +11,21 @@ import { PgSqlReplicatorService } from "./pgsql-replicator.service";
 import { ProcessEventService } from "./process.event.service";
 import { QLDBKinesisReplicatorService } from "./qldb-kinesis-replicator.service";
 import { LedgerReplicatorInterface } from "./replicator-interface.service";
+import { ProjectEntity } from "@app/shared/entities/projects.entity";
+import { DataImporterModule } from "src/data-importer/data-importer.module";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Programme, Company, Counter, ProgrammeSl]),
+    TypeOrmModule.forFeature([
+      Programme,
+      Company,
+      Counter,
+      ProgrammeSl,
+      ProjectEntity,
+    ]),
     SharedModule,
     CoreModule,
+    DataImporterModule,
   ],
   providers: [
     {

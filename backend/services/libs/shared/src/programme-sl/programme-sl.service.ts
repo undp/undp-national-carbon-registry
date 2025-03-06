@@ -122,8 +122,21 @@ export class ProgrammeSlService {
       );
     }
 
-    if (programme.projectCategory !== ProjectCategory.OTHER) {
-      programme.otherProjectCategory = null;
+    const ICCompany = await this.companyService.findByCompanyId(
+      programmeSlDto.independantCertifierId
+    );
+
+    if (
+      !ICCompany ||
+      ICCompany.companyRole != CompanyRole.INDEPENDENT_CERTIFIER
+    ) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "programmeSl.noICExistingInSystem",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
     }
 
     if (programme.projectGeography === ProjectGeography.SINGLE) {
@@ -151,26 +164,11 @@ export class ProgrammeSlService {
       }
     }
 
-    if (
-      programme.projectCategory === ProjectCategory.AFFORESTATION ||
-      programme.projectCategory === ProjectCategory.REFORESTATION ||
-      programme.projectCategory === ProjectCategory.OTHER
-    ) {
-      programme.proposedProjectCapacity = null;
-    }
-
-    if (
-      programme.projectCategory === ProjectCategory.RENEWABLE_ENERGY ||
-      programme.projectCategory === ProjectCategory.OTHER
-    ) {
-      programme.speciesPlanted = null;
-    }
-
     programme.programmeId = await this.counterService.incrementCount(
       CounterType.PROGRAMME_SL,
       4
     );
-    programme.projectProposalStage = ProjectProposalStage.SUBMITTED_INF;
+    programme.projectProposalStage = ProjectProposalStage.PENDING;
     programme.companyId = companyId;
     programme.txType = TxType.CREATE_SL;
     programme.txTime = new Date().getTime();
@@ -180,7 +178,7 @@ export class ProgrammeSlService {
 
     const docUrls = [];
 
-    if (programmeSlDto && programmeSlDto.additionalDocuments.length > 0) {
+    if (programmeSlDto && programmeSlDto.additionalDocuments?.length > 0) {
       programmeSlDto.additionalDocuments.forEach(async (doc) => {
         const docUrl = await this.uploadDocument(
           DocType.INF_ADDITIONAL_DOCUMENT,

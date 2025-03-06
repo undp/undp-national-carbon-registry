@@ -11,6 +11,7 @@ import { AsyncOperationsInterface } from "@app/shared/async-operations/async-ope
 import { AsyncActionType } from "@app/shared/enum/async.action.type.enum";
 import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
 import { OrganisationCreditAccounts } from "@app/shared/enum/organisation.credit.accounts.enum";
+import { ProjectEntity } from "@app/shared/entities/projects.entity";
 
 @Injectable()
 export class ProcessEventService {
@@ -20,6 +21,8 @@ export class ProcessEventService {
     @InjectRepository(Company) private companyRepo: Repository<Company>,
     @InjectRepository(ProgrammeSl)
     private programmeSlRepo: Repository<ProgrammeSl>,
+    @InjectRepository(ProjectEntity)
+    private projectRepo: Repository<ProjectEntity>,
     private asyncOperationsInterface: AsyncOperationsInterface,
     private locationService: LocationInterface,
     @InjectEntityManager() private entityManager: EntityManager
@@ -310,6 +313,61 @@ export class ProcessEventService {
           `Skipping the programme due to old record ${JSON.stringify(
             programme
           )} ${previousProgramme}`
+        );
+      }
+    }
+  }
+
+  async processProject(project: ProjectEntity): Promise<any> {
+    this.logger.log(`Processing message ${project}`);
+    if (project) {
+      const previousProject = await this.projectRepo.findOneBy({
+        refId: project.refId,
+      });
+      if (
+        previousProject == null ||
+        project.txTime == undefined ||
+        previousProject.txTime == undefined ||
+        previousProject.txTime <= project.txTime
+      ) {
+        const columns =
+          this.programmeRepo.manager.connection.getMetadata(
+            "ProjectEntity"
+          ).columns;
+
+        const columnNames = columns
+          .filter(function (item) {
+            return project[item.propertyName] != undefined;
+          })
+          .map((e) => e.propertyName);
+
+        this.logger.debug(`${columnNames} ${JSON.stringify(project)}`);
+        await this.entityManager.transaction(async (em) => {
+          await em
+            .getRepository(ProjectEntity)
+            .createQueryBuilder()
+            .insert()
+            .values(project)
+            .orUpdate(columnNames, ["refId"])
+            .execute();
+
+          if (!previousProject) {
+            await em
+              .getRepository(Company)
+              .createQueryBuilder()
+              .update(Company)
+              .set({
+                programmeCount: () => `COALESCE("programmeCount", 0) + 1`,
+              })
+              .where("companyId = :id", { id: project.companyId })
+              .execute();
+          }
+        });
+      } else {
+        this.logger.error(
+          `Skipping the programme due to old record ${JSON.stringify(
+            project
+          )} ${previousProject}`
         );
       }
     }

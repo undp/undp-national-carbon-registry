@@ -72,17 +72,17 @@ export class ProgrammeSlDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  dsDivision: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
   city: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  community: string;
+  postalCode: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  street: string;
 
   @ApiProperty()
   @IsArray()
@@ -146,15 +146,6 @@ export class ProgrammeSlDto {
   @IsString()
   projectStatusDescription?: string;
 
-  @ApiProperty({ enum: CreditType })
-  @IsNotEmpty()
-  @IsEnum(CreditType, {
-    message:
-      "Invalid purpose of credit development. Supported following purpose of credit development:" +
-      Object.values(CreditType),
-  })
-  purposeOfCreditDevelopment: CreditType;
-
   @ApiProperty()
   @IsNotEmpty()
   @IsPositive()
@@ -164,16 +155,42 @@ export class ProgrammeSlDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsString()
-  contactName: string;
+  @IsInt()
+  @IsPositive()
+  independantCertifierId: number;
 
   @ApiProperty()
   @IsNotEmpty()
-  @IsEmail()
-  contactEmail: string;
+  @IsString()
+  projectParticipant: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  contactAddress: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   contactPhoneNo: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  contactFax: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  contactEmail: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  contactWebsite: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  contactName: string;
 }
