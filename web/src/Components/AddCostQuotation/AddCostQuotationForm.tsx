@@ -15,6 +15,8 @@ import { ROUTES } from '../../Config/uiRoutingConfig';
 const { Text } = Typography;
 
 export const AddCostQuotationForm = (props: any) => {
+  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+
   const { translator, programmeId } = props;
   const navigate = useNavigate();
   const { post } = useConnection();
@@ -673,7 +675,7 @@ export const AddCostQuotationForm = (props: any) => {
                   </Row>
                   <Text>{t('costQuotation:ceo')}</Text>
                   <br />
-                  <Text>{t('costQuotation:sriLankaClimateFund')}</Text>
+                  <Text>{t('costQuotation:ClimateFund', { countryName: countryName })}</Text>
                 </div>
                 <br />
                 <br />

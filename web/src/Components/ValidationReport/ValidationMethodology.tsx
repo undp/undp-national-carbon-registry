@@ -18,6 +18,8 @@ import { requiredValidationRule } from '../../Utils/validationHelper';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 const ValidationMethodology = (props: ValidationStepsProps) => {
+  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+
   const { prev, next, form, current, t, countries, handleValuesUpdate, formMode } = props;
 
   const emptyBackgroundInvestigationRow = {
@@ -29,7 +31,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
 
   const emptyAppointmentTeamMembersDataSourceRow = {
     name: '',
-    company: `${t('validationReport:sriLankaClimateFund')}`,
+    company: `${t('validationReport:ClimateFund', { countryName: countryName })}`,
     function: '',
     taskPerformed: '',
   };
@@ -487,7 +489,9 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                             <Form.Item name={[name, 'company']} rules={[requiredValidationRule(t)]}>
                               <Input
                                 size="large"
-                                value={t('validationReport:sriLankaClimateFund')}
+                                value={t('validationReport:ClimateFund', {
+                                  countryName: countryName,
+                                })}
                                 disabled
                               />
                             </Form.Item>
@@ -591,7 +595,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
 
                 <Col md={24} xl={24}>
                   <Form.Item label={`3.1.3 ${t('validationReport:deskReviewCMA')}`}>
-                    <p>{t('validationReport:deskReviewDesc')}</p>
+                    <p>{t('validationReport:deskReviewDesc', { countryName: countryName })}</p>
                     <ul>
                       <li>{t('validationReport:deskReviewP1')}</li>
                       <li>{t('validationReport:deskReviewP2')}</li>

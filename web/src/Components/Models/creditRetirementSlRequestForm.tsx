@@ -50,6 +50,8 @@ export const CreditRetirementSlRequestForm: FC<CreditRetirementSlRequestFormProp
     translator,
   } = props;
 
+  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+
   const t = translator.t;
   const [popupError, setPopupError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
@@ -319,8 +321,8 @@ export const CreditRetirementSlRequestForm: FC<CreditRetirementSlRequestFormProp
             <Form.Item className="text-left" valuePropName="checked" label="" name="confirm">
               <Checkbox className="label" onChange={(v) => setChecked(v.target.checked)}>
                 {programme.purposeOfCreditDevelopment === CreditType.TRACK_1
-                  ? t('view:confirmTransferSl')
-                  : t('view:confirmRetireSl')}
+                  ? t('view:confirmTransferSl', { countryName: countryName })
+                  : t('view:confirmRetireSl', { countryName: countryName })}
               </Checkbox>
             </Form.Item>
           </Col>

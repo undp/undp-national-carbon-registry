@@ -165,8 +165,8 @@
   "eligibilityCriteriaProjectActivityHeader": "Project Activity",
   "yesNoHeader": "Yes/No",
   "criteria01": "The project activity shall be a new project, which will reduce/absorb GHG emissions or the project activity shall be a project, which was implemented on or after 2010 in order to offset GHG emission within the organisation.",
-  "criteria02": "The project activity shall be located in Sri Lanka.",
-  "criteria03": "The project activity shall not happen in the absence of benefits received from trading Sri Lanka Certified Emission Reduction units (SCERs). (This is not applicable Track II)",
+  "criteria02": "The project activity shall be located in {{countryName}}.",
+  "criteria03": "The project activity shall not happen in the absence of benefits received from trading {{countryName}} Certified Emission Reduction units (SCERs). (This is not applicable Track II)",
   "criteria04": "The project shall be implemented voluntarily by the project owner but not implemented based on legislation or regulations in the country",
   "criteria05": "The project activity satisfies environmental standard and regulations of the country",
   "criteria06": "The project shall not have been registered under any other national or international scheme. However, if a registered project under other scheme is willing to register with SLCCS, then, such project shall be deregistered from the other scheme in order to be eligible",
@@ -211,5 +211,7 @@
   "partiesInvolved": "Parties Involved",
   "projectParticipant": "Project Participants",
   "addProjectParticipant": "Add Project Participant",
-  "descriptionOfMeasurementMethods": "Description of Measurement Methods and Procedures to be Applied"
+  "descriptionOfMeasurementMethods": "Description of Measurement Methods and Procedures to be Applied",
+  "confirmModalMessage": "Are you sure you want to submit ?",
+  "confirmModalSubMessage": "You can't undo this action"
 }
