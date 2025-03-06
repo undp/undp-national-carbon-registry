@@ -1,5 +1,5 @@
 {
-  "heading": "Transformation numérique du <br> marché du carbone <br> du Zimbabwe",
+  "heading": "Transformation numérique du <br> marché du carbone <br> du {{countryName}}",
   "subHeading": "SITIO DE DEMOSTRACIÓN",
   "ourVisonTitle": "Nuestra Visión",
   "ourVisonContentStart": "El PNUD ha desarrollado un",
@@ -59,7 +59,7 @@
   "faqA7-2": "Pedimos amablemente a los usuarios que nos informen sobre su uso contactando a <a>digital4planet@undp.org</a> ya que esto nos ayuda a rastrear el impacto de la herramienta y guiar futuras mejoras.",
   "faqA7-3": "Bajo AGPL-3.0, cualquier modificación del código debe hacerse públicamente disponible creando una nueva rama en GitHub. El software no puede ser relicenciado bajo términos más restrictivos sin adherirse a las directrices de AGPL-3.0.",
   "footertext1": "Registro Nacional de Carbono: Esto es una demostración. Los países pueden desear agregar un lema aquí.",
-  "antarctic": "PaísX",
+  "antarctic": "{{countryName}}",
   "Cookie": "Política de Cookies",
   "codeconduct": "Código de Conducta",
   "terms": "Términos de Uso",

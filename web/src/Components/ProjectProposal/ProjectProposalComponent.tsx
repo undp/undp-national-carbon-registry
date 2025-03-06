@@ -27,6 +27,8 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
   const t = translator.t;
 
+  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+
   const { state } = useLocation();
   const [isView, setIsView] = useState<boolean>(!!state?.isView);
   const [loading, setLoading] = useState<boolean>(isView);
@@ -68,7 +70,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
         clientContactPerson: data?.contactName,
         clientMobile: data?.contactPhoneNo,
         clientEmail: data?.contactEmail,
-        serviceProviderName: 'Sri Lanka Climate Fund (Pvt.) Ltd.',
+        serviceProviderName: `${countryName} Climate Fund (Pvt.) Ltd.`,
         developProjectConcept: data?.company?.name,
         notificationSLCSS: data?.company?.name,
         prepareCMA: data?.company?.name,
@@ -1210,16 +1212,18 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           {/* Sri Lanka Carbon Crediting Scheme(SLCCS) start */}
           <>
-            <h4 className="section-title mg-top-2">3. {t('projectProposal:creditingScheme')}</h4>
+            <h4 className="section-title mg-top-2">
+              3. {t('projectProposal:creditingScheme', { countryName: countryName })}
+            </h4>
 
             <p className="section-description">
-              Zimbabwe Carbon Crediting Scheme (SLCCS) is a Greenhouse Gas (GHG) reduction programme
-              which needs encouragement of every kind of active carbon reduction or removal projects
-              for the benefits of the Environment, Society and the Economy. It brings quality
-              assurance for such projects and carbon offsets. It is a voluntary initiative that
-              regulates and registers such projects which offsets the GHG emissions from companies,
-              project developers, or other entities within a context of quality, credibility and
-              transparency.
+              {countryName} Carbon Crediting Scheme (SLCCS) is a Greenhouse Gas (GHG) reduction
+              programme which needs encouragement of every kind of active carbon reduction or
+              removal projects for the benefits of the Environment, Society and the Economy. It
+              brings quality assurance for such projects and carbon offsets. It is a voluntary
+              initiative that regulates and registers such projects which offsets the GHG emissions
+              from companies, project developers, or other entities within a context of quality,
+              credibility and transparency.
             </p>
 
             <h4 className="section-sub-title">{t('projectProposal:slccsObjectives')}</h4>
@@ -1609,9 +1613,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               {t('projectProposal:validationoftheCMA')}
             </h4>
             <p className="section-description mg-bottom-1">
-              Validation process would be done by Validation/Verification Team of Zimbabwe Climate
-              Fund based on the CMA provided by PP or 3rd Party by reviewing required document on
-              site and off site.
+              Validation process would be done by Validation/Verification Team of {countryName}{' '}
+              Climate Fund based on the CMA provided by PP or 3rd Party by reviewing required
+              document on site and off site.
             </p>
           </>
 
@@ -1620,9 +1624,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               {t('projectProposal:projectRegistration')}
             </h4>
             <p className="section-description mg-bottom-1">
-              Project registration would be done by SLCCS registry division of Zimbabwe Climate Fund
-              based on the Validation Report provided by Validation Division of Zimbabwe Climate
-              Fund.
+              Project registration would be done by SLCCS registry division of {countryName} Climate
+              Fund based on the Validation Report provided by Validation Division of {countryName}{' '}
+              Climate Fund.
             </p>
           </>
 
@@ -1643,9 +1647,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               {t('projectProposal:verificationOfMR')}
             </h4>
             <p className="section-description mg-bottom-1">
-              Verification process would be done by Verification Team of Zimbabwe Climate Fund based
-              on the MR provided by PP or 3rd Party by reviewing required document on site and off
-              site.
+              Verification process would be done by Verification Team of {countryName} Climate Fund
+              based on the MR provided by PP or 3rd Party by reviewing required document on site and
+              off site.
             </p>
           </>
 
@@ -1654,8 +1658,8 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               {t('projectProposal:issuanceOfSCER')}
             </h4>
             <p className="section-description mg-bottom-1">
-              The amount of Zimbabwe Certified Emission Reduction (SCER) would be certified by SLCCS
-              registry division and that amount would credited to PP.
+              The amount of {countryName} Certified Emission Reduction (SCER) would be certified by
+              SLCCS registry division and that amount would credited to PP.
             </p>
           </>
 
@@ -3079,11 +3083,11 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           {/*  Introduction to climate fund start */}
           <>
-            <h4 className="section-title">11. Introduction to Zimbabwe Climate Fund</h4>
+            <h4 className="section-title">11. Introduction to {countryName} Climate Fund</h4>
             <p className="capitalize">
               SLCF is a public-private partnership company established under the companies’ Act No.7
               of 2007, under the Ministry of Environment and Renewable Energy to promote carbon
-              trading projects in Zimbabwe. Company provides technical and finance resources to
+              trading projects in {countryName}. Company provides technical and finance resources to
               develop projects contribute to the sustainability of the environment in any sector.
               SLCF also purchases carbon credits from project owners while providing any service
               relating to CDM project development.
@@ -3091,7 +3095,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
             <div className="mg-top-1">Our Vision </div>
             <div className="capitalize">
-              Carbon neutral and climate-resilient blue-green economy in Zimbabwe.
+              Carbon neutral and climate-resilient blue-green economy in {countryName}.
             </div>
 
             <div className="mg-top-1">Mission</div>

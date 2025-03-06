@@ -18,7 +18,7 @@
   "all": "All",
   "developer": "Project Developer",
   "min": "Ministry",
-  "ClimateFund": "Zimbabwe Climate Fund",
+  "ClimateFund": "{{countryName}} Climate Fund",
   "ExecutiveCommittee": "Executive Committee",
   "ic": "Independent Certifier",
   "dna": "Designated National Authority",

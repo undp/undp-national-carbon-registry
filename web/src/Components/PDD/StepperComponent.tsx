@@ -39,7 +39,7 @@ const CMA_STEPS = {};
 
 const StepperComponent = (props: any) => {
   const { t, selectedVersion, handleDocumentStatus } = props;
-  const [current, setCurrent] = useState(2);
+  const [current, setCurrent] = useState(7);
 
   const navigate = useNavigate();
 
@@ -68,7 +68,7 @@ const StepperComponent = (props: any) => {
   };
 
   const [values, setValues] = useState({
-    projectId: Number(id),
+    projectId: id,
     name: 'PDD',
     companyId: undefined,
     documentType: DocumentEnum.PDD,

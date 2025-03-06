@@ -22,7 +22,7 @@
   "nationalSopValue": "National Share of Proceeds",
   "omgePercentage": "Overall Mitigation in Global Emissions (OMGE) Account",
   "view": "View",
-  "ClimateFund": "Zimbabwe Climate Fund",
+  "ClimateFund": "{{countryName}} Climate Fund",
   "ExecutiveCommittee": "Executive Committee",
   "ic": "Independent Certifier",
   "dna": "Designated National Authority",

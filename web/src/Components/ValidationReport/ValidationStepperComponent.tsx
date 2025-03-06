@@ -43,6 +43,8 @@ const StepperComponent = (props: any) => {
   const scrollSection = useRef({} as any);
   const { mode } = navigationLocation.state || {};
   const isEdit = true;
+  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+  const registryName = process.env.REACT_APP_COUNTRY_NAME || 'RegistryX';
 
   const [existingFormValues, setExistingFormValues] = useState({
     programmeId: programId,
@@ -198,7 +200,7 @@ const StepperComponent = (props: any) => {
         address: projectContent?.projectDetails?.physicalAddress,
         website: projectContent?.projectDetails?.website,
         reportNo: `SLCCS/VDR/${new Date().getFullYear()}/${id}`,
-        workCarriedOutBy: 'Validation Division - Sri Lanka Climate Fund (Pvt) Ltd',
+        workCarriedOutBy: `Validation Division - ${registryName}`,
       });
 
       form2.setFieldsValue({
@@ -257,7 +259,7 @@ const StepperComponent = (props: any) => {
         teamMembers: [
           {
             name: '',
-            company: `${t('validationReport:sriLankaClimateFund')}`,
+            company: `${t('validationReport:ClimateFund', { countryName: countryName })}`,
             function: '',
             taskPerformed: '',
           },
