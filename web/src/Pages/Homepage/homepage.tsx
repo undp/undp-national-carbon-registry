@@ -28,6 +28,7 @@ import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const Homepage = () => {
   const { i18n, t } = useTranslation(['common', 'homepage']);
+  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
   const navigate = useNavigate();
   const [Visible, setVisible] = useState(true);
 
@@ -97,6 +98,7 @@ const Homepage = () => {
                 <span>
                   <Trans
                     i18nKey="homepage:heading"
+                    values={{ countryName }}
                     components={{
                       br: <br />,
                     }}

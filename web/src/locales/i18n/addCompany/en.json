@@ -50,7 +50,7 @@
   "allmincreated": "All ministries have been implemented",
   "govdepnotexist": "Department not exist in Selected Ministry",
   "govdep": "Department",
-  "ClimateFund": "Zimbabwe Climate Fund",
+  "ClimateFund": "{{countryName}} Climate Fund",
   "ExecutiveCommittee": "Executive Committee",
   "faxNo": "Fax Number",
   "province": "Province"

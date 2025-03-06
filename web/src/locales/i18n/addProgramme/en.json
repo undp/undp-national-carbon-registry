@@ -110,5 +110,7 @@
   "confirmModalMessage": "Are you sure you want to submit",
   "confirmModalSubMessage": "You can't undo this action",
   "sectorPlaceholder": "Select your Sector",
-  "sectoralScopePlaceholder": "Select your Sectoral Scope"
+  "sectoralScopePlaceholder": "Select your Sectoral Scope",
+  "estimatedProjectCost": "Estimated Project Cost",
+  "shouldBeAnNumber": "Should be an number"
 }
