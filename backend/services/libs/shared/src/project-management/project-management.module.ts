@@ -8,12 +8,13 @@ import { CompanyModule } from "../company/company.module";
 import { UserModule } from "../user/user.module";
 import { EmailHelperModule } from "../email-helper/email-helper.module";
 import { FileHandlerModule } from "../file-handler/filehandler.module";
+import { DocumentEntity } from "../entities/document.entity";
 
 @Module({
   imports: [
     ProgrammeLedgerModule,
     CaslModule,
-    TypeOrmModule.forFeature([]),
+    TypeOrmModule.forFeature([DocumentEntity]),
     UtilModule,
     CompanyModule,
     UserModule,
