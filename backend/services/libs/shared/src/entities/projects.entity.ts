@@ -25,6 +25,9 @@ export class ProjectEntity extends BasicFieldsEntity {
   })
   projectProposalStage: ProjectProposalStage;
 
+  @Column()
+  sectoralScope: string;
+
   @Column({
     type: "enum",
     enum: TxType,
@@ -37,4 +40,10 @@ export class ProjectEntity extends BasicFieldsEntity {
 
   @Column({ type: "bigint" })
   txTime: number;
+
+  @Column({ type: "bigint", default: 0 })
+  creditBalance: number;
+
+  @Column({ type: "bigint", default: 0 })
+  creditRetired: number;
 }
