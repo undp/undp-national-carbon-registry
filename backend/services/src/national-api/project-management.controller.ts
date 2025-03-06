@@ -3,10 +3,21 @@ import { Action } from "@app/shared/casl/action.enum";
 import { AppAbility } from "@app/shared/casl/casl-ability.factory";
 import { CheckPolicies } from "@app/shared/casl/policy.decorator";
 import { PoliciesGuard } from "@app/shared/casl/policy.guard";
+import { ProjectCreateDto } from "@app/shared/dto/project.create.dto";
 import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
 import { ProjectManagementService } from "@app/shared/project-management/project-management.service";
-import { Body, Controller, Post, UseGuards, Request } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  Request,
+  HttpException,
+  HttpStatus,
+} from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { plainToInstance } from "class-transformer";
+import { validate } from "class-validator";
 
 @ApiTags("ProjectManagement")
 @ApiBearerAuth()
@@ -22,14 +33,13 @@ export class ProjectManagementController {
   @Post("create")
   async addProject(@Body() body: any, @Request() req) {
     const dtoData = JSON.parse(body.data);
-    // const dto = plainToInstance(ProgrammeSlDto, dtoData);
-    // const errors = await validate(dto);
-    // if (errors.length > 0) {
-    //   console.log("validation failed");
-    //   throw new HttpException(errors, HttpStatus.BAD_REQUEST);
-    // }
-    // console.log(dto);
-    return this.projectManagementService.create(body, req.user);
+    const dto = plainToInstance(ProjectCreateDto, dtoData);
+    const errors = await validate(dto);
+    if (errors.length > 0) {
+      console.log("validation failed");
+      throw new HttpException(errors, HttpStatus.BAD_REQUEST);
+    }
+    return this.projectManagementService.create(dto, req.user);
   }
 
   // @ApiBearerAuth()
