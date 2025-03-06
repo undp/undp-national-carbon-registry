@@ -183,6 +183,9 @@ export const handler: Handler = async (event) => {
     await ledgerModule.createTable("programmesl");
     await ledgerModule.createIndex("txId", "programmesl");
 
+    await ledgerModule.createTable("project");
+    await ledgerModule.createIndex("txId", "project");
+
     await ledgerModule.createTable("company");
     await ledgerModule.createIndex("txId", "company");
 
@@ -298,4 +301,9 @@ export const handler: Handler = async (event) => {
   await locationInterface.init(divisionRawData, LocationDataType.DIVISION);
   const cityRawData = fs.readFileSync("cities.csv", "utf8");
   await locationInterface.init(cityRawData, LocationDataType.CITY);
+  const postalCodesRawData = fs.readFileSync("postalCodes.csv", "utf8");
+  await locationInterface.init(
+    postalCodesRawData,
+    LocationDataType.POSTAL_CODE
+  );
 };

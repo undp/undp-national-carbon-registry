@@ -9,6 +9,7 @@ import { District } from "../entities/district.entity";
 import { DSDivision } from "../entities/dsDivision.entity";
 import { City } from "../entities/city.entity";
 import { LocationDataType } from "../enum/locationDataType.enum";
+import { PostalCode } from "../entities/postal.code.entity";
 const fs = require("fs");
 
 @Injectable()
@@ -46,6 +47,12 @@ export class FileLocationService implements LocationInterface {
       nameField: "cityName",
       repository: () => this.cityRepo,
     },
+    [LocationDataType.POSTAL_CODE]: {
+      fileName: "postalCodes.csv",
+      entity: PostalCode,
+      nameField: "postalCode",
+      repository: () => this.postalCodeRepo,
+    },
     // Additional types can be configured here easily
   };
   constructor(
@@ -54,7 +61,8 @@ export class FileLocationService implements LocationInterface {
     @InjectRepository(Province) private provinceRepo: Repository<Province>,
     @InjectRepository(District) private districtRepo: Repository<District>,
     @InjectRepository(DSDivision) private divisionRepo: Repository<DSDivision>,
-    @InjectRepository(City) private cityRepo: Repository<City>
+    @InjectRepository(City) private cityRepo: Repository<City>,
+    @InjectRepository(PostalCode) private postalCodeRepo: Repository<PostalCode>
   ) {}
 
   public async init(
@@ -90,6 +98,11 @@ export class FileLocationService implements LocationInterface {
     };
 
     switch (type) {
+      case LocationDataType.POSTAL_CODE:
+        dataIndexes["cityIndex"] = headers.indexOf("City");
+        dataIndexes["districtIndex"] = headers.indexOf("District");
+        dataIndexes["divisionIndex"] = headers.indexOf("DS Division");
+        break;
       case LocationDataType.CITY:
         dataIndexes["districtIndex"] = headers.indexOf("District");
         dataIndexes["divisionIndex"] = headers.indexOf("DS Division");
@@ -118,7 +131,7 @@ export class FileLocationService implements LocationInterface {
     row: string,
     indexes: any,
     type: LocationDataType
-  ): Region | Province | District | DSDivision | null {
+  ): Region | Province | District | DSDivision | null | City | PostalCode {
     const columns = row.replace("\r", "").split(",");
     if (columns.length !== Object.keys(indexes).length) return null;
 
@@ -144,6 +157,11 @@ export class FileLocationService implements LocationInterface {
       entity.districtName = columns[indexes.districtIndex].trim();
       entity.divisionName = columns[indexes.divisionIndex].trim();
     }
+    if (this.isPostal(entity, type)) {
+      entity.districtName = columns[indexes.districtIndex].trim();
+      entity.divisionName = columns[indexes.divisionIndex].trim();
+      entity.cityName = columns[indexes.cityIndex].trim();
+    }
     return entity;
   }
 
@@ -157,7 +175,9 @@ export class FileLocationService implements LocationInterface {
   isCity(entity: any, locationDataType: LocationDataType): entity is City {
     return LocationDataType.CITY === locationDataType;
   }
-
+  isPostal(entity: any, locationDataType: LocationDataType): entity is City {
+    return LocationDataType.POSTAL_CODE === locationDataType;
+  }
   isDistrict(
     entity: any,
     locationDataType: LocationDataType
