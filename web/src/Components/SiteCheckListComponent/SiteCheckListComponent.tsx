@@ -42,6 +42,8 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
   const [form] = useForm();
   const { translator } = props;
 
+  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+
   const [contactNoInput] = useState<any>();
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -791,7 +793,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 <Col md={10} xl={10} className="col-1">
                   <div className="text-row">
                     <div>2.</div>
-                    <div>The project activity shall be located in Zimbabwe.</div>
+                    <div>The project activity shall be located in {countryName}.</div>
                   </div>
                 </Col>
                 <Col md={4} xl={4}>
@@ -855,7 +857,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     <div>3.</div>
                     <div>
                       The project activity shall not happen in the absence of benefits received from
-                      trading Zimbabwe Certified Emission Reduction units (SCERs). (This is not
+                      trading {countryName} Certified Emission Reduction units (SCERs). (This is not
                       applicable Track II)
                     </div>
                   </div>

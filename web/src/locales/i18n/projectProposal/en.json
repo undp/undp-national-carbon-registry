@@ -17,7 +17,7 @@
   "telephone": "Telephone",
   "overallProjectBackground": "Overall Project Background",
   "overallProjectBackgroundPlaceHolder": "Explain the overall project background",
-  "creditingScheme": "Sri Lanka Carbon Crediting Scheme(SLCCS)",
+  "creditingScheme": "{{countryName}} Carbon Crediting Scheme(SLCCS)",
   "slccsObjectives": "Objectives of the SLCCS",
   "scopeForThisProposal": "Scope For This Proposal",
   "developProjectConcept": "Develop the Project Concept",

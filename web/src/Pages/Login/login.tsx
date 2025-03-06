@@ -33,6 +33,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
   const ability = useContext(AbilityContext);
   const { state } = useLocation();
   const enableRegistration = process.env.REACT_APP_ENABLE_REGISTRATION || 'true';
+  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
 
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
@@ -109,7 +110,8 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                 <span>
                   {t('login:digital')} <br />
                   {t('login:transformation')} <br />
-                  {t('login:countryName')} {t('login:carbonMarket')} <br />
+                  {t('login:countryName', { countryName: countryName })} {t('login:carbonMarket')}{' '}
+                  <br />
                   {t('login:management')}
                 </span>
               </div>
@@ -132,9 +134,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                     <div className="login-country-name">
                       <div className="title">{'CARBON MARKET'}</div>
                       <div className="title-sub">{'DIGITAL PLATFORM'}</div>
-                      <span className="country-name">
-                        {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}
-                      </span>
+                      <span className="country-name">{countryName}</span>
                     </div>
                   </Col>
                 </Row>

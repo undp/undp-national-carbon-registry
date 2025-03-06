@@ -6,6 +6,7 @@ import TextArea from 'antd/lib/input/TextArea';
 
 const EligibilityCriteria = (props: CustomStepsProps) => {
   const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
+  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
 
   const onFinish = (values: any) => {
     const tempValues = {
@@ -132,7 +133,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.2
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria02')}
+                      {t('CMAForm:criteria02', { countryName: countryName })}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -182,7 +183,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.3
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria03')}
+                      {t('CMAForm:criteria03', { countryName: countryName })}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item

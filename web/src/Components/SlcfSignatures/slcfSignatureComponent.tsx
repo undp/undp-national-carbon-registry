@@ -15,6 +15,7 @@ const { Meta } = Card;
 
 const SLCFSignatureComponent = (props: any) => {
   const { t, maximumImageSize } = props;
+  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -156,7 +157,7 @@ const SLCFSignatureComponent = (props: any) => {
     <div className="slcf-signs-container">
       <div className="slcf-signs-title">
         <h1 className="add-sign-title">{t('certificateSignatures')}</h1>
-        <p>{t('settings:certificateSignaturesSub')}</p>
+        <p>{t('settings:certificateSignaturesSub', { countryName: countryName })}</p>
       </div>
       <div className="slcf-upload-signs-main">
         <div className="slcf-upload-signs-form">

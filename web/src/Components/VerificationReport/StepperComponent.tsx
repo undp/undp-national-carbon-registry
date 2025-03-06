@@ -38,6 +38,9 @@ const StepperComponent = (props: any) => {
   const [popupInfo, setPopupInfo] = useState<PopupInfo>();
   const [slcfActionModalVisible, setSlcfActioModalVisible] = useState<boolean>(false);
 
+  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+  const registryName = process.env.REACT_APP_REGISTRY_NAME || 'RegistryX';
+
   const onValueChange = (newValues: any) => {
     setFormValues((prevValues) => ({
       ...prevValues,
@@ -377,12 +380,12 @@ const StepperComponent = (props: any) => {
           telephone: cmaData?.projectDetails?.telephone,
           contactPerson: cmaData?.projectActivity?.projectProponent?.contactPerson,
           estimatedScer: monitoringData?.content?.quantifications?.totalNetEmissionReductions,
-          workCarriedOutBy: 'Validation & Verification Division Sri Lanka Climate Fund (Pvt) Ltd',
+          workCarriedOutBy: `Validation & Verification Division ${registryName}`,
         });
 
         introductionForm.setFieldsValue({
           title: cmaData?.projectDetails?.title,
-          hostParty: 'Sri Lanka',
+          hostParty: `${countryName}`,
           tiprojectParticipantstle: cmaData?.projectActivity?.projectProponent?.organizationName,
           monitoringMethodology: monitoringData?.content?.projectActivity?.methodology,
           creditionPeriodStart: moment(
@@ -397,7 +400,7 @@ const StepperComponent = (props: any) => {
           verificationTeamList: [
             {
               name: '',
-              company: 'Sri Lanka Climate Fund',
+              company: `${countryName} Climate Fund`,
               function: [],
               taskPerformed: [],
             },
