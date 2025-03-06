@@ -1,11 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { ProjectProposalStage } from "../enum/projectProposalStage.enum";
 import { TxType } from "../enum/txtype.enum";
 import { BasicFieldsEntity } from "./basic.fields.entity";
 
 @Entity()
 export class ProjectEntity extends BasicFieldsEntity {
-  @Column({ unique: true })
+  @PrimaryColumn()
   refId: string;
 
   @Column()
