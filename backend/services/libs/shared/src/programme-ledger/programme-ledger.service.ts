@@ -31,6 +31,7 @@ import { CreditType } from "../enum/creditType.enum";
 import { OrganisationCreditAccounts } from "../enum/organisation.credit.accounts.enum";
 import { SLCFSerialNumberGeneratorService } from "../util/slcfSerialNumberGenerator.service";
 import { VerificationRequestEntity } from "../entities/verification.request.entity";
+import { ProjectEntity } from "../entities/projects.entity";
 
 @Injectable()
 export class ProgrammeLedgerService {
@@ -117,6 +118,43 @@ export class ProgrammeLedgerService {
     );
 
     return programme;
+  }
+
+  public async createProject(project: ProjectEntity): Promise<ProjectEntity> {
+    const getQueries = {};
+    getQueries[this.ledger.projectTable] = {
+      refId: project.refId,
+    };
+
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const projects: ProjectEntity[] = results[this.ledger.projectTable].map(
+          (domValue) => {
+            return plainToClass(
+              ProjectEntity,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+        if (projects.length > 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.projectExistsWithSameRefId",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        let insertMap = {};
+        insertMap[this.ledger.projectTable + "#"] = project;
+
+        return [{}, {}, insertMap];
+      }
+    );
+
+    return project;
   }
 
   //MARK: updateProgrammeSlProposalStage

@@ -21,6 +21,7 @@ import { UtilModule } from "./util/util.module";
 import { ValidationModule } from "./validation/validation.module";
 import { VerificationModule } from "./verification/verification.module";
 import { CaslModule } from "./casl/casl.module";
+import { ProjectManagementModule } from "./project-management/project-management.module";
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { CaslModule } from "./casl/casl.module";
     ValidationModule,
     VerificationModule,
     CaslModule,
+    ProjectManagementModule,
   ],
   providers: [SharedService],
   exports: [
@@ -70,6 +72,7 @@ import { CaslModule } from "./casl/casl.module";
     ValidationModule,
     VerificationModule,
     CaslModule,
+    ProjectManagementModule,
   ],
 })
 export class SharedModule {}

@@ -34,6 +34,7 @@ export default () => ({
     overallTable: "overall",
     companyTable: "company",
     programmeSlTable: "programmesl",
+    projectTable: "project",
   },
   email: {
     source: process.env.SOURCE_EMAIL || "info@xeptagon.xyz",
