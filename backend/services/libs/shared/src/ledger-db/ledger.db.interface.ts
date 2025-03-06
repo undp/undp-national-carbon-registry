@@ -21,14 +21,21 @@ export abstract class LedgerDBInterface {
   public companyTableName: string;
   public ledgerName: string;
   public programmeSlTable: string;
+  public projectTable: string;
 
   abstract createTable(tableName?: string): Promise<void>;
 
   abstract createIndex(indexCol: string, tableName?: string): Promise<void>;
 
-  abstract insertRecord(document: Record<string, any>, tableName?: string): Promise<void>;
+  abstract insertRecord(
+    document: Record<string, any>,
+    tableName?: string
+  ): Promise<void>;
 
-  abstract fetchRecords(where: Record<string, any>, tableName?: string): Promise<dom.Value[]>;
+  abstract fetchRecords(
+    where: Record<string, any>,
+    tableName?: string
+  ): Promise<dom.Value[]>;
 
   abstract fetchHistory(where: Record<string, any>): Promise<dom.Value[]>;
 

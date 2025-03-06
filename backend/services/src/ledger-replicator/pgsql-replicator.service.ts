@@ -12,6 +12,7 @@ import { Programme } from "@app/shared/entities/programme.entity";
 import { CreditOverall } from "@app/shared/entities/credit.overall.entity";
 import { DataImporterService } from "../data-importer/data-importer.service";
 import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
+import { ProjectEntity } from "@app/shared/entities/projects.entity";
 
 @Injectable()
 export class PgSqlReplicatorService implements LedgerReplicatorInterface {
@@ -47,6 +48,9 @@ export class PgSqlReplicatorService implements LedgerReplicatorInterface {
       );
       const programmeSlTableName = this.configService.get<string>(
         "ledger.programmeSlTable"
+      );
+      const projectTableName = this.configService.get<string>(
+        "ledger.projectTable"
       );
 
       try {
@@ -180,6 +184,57 @@ export class PgSqlReplicatorService implements LedgerReplicatorInterface {
       } catch (exception) {
         this.logger.log(
           `Failed Executing Ops for : ${programmeSlTableName}`,
+          exception
+        );
+        if (retryCountTable > retryLimit) {
+          this.logger.log("Ledger Replicator terminated");
+          return;
+        } else {
+          retryCountTable += 1; //ref
+          replicateActions;
+        }
+      }
+
+      try {
+        const seqObj = await this.counterRepo.findOneBy({
+          id: CounterType.PROJECT_REPLICATE_SEQ,
+        });
+
+        let lastSeq = 0;
+        if (seqObj) {
+          lastSeq = seqObj.counter;
+        }
+
+        const sql = `select data, hash from ${projectTableName} where hash > $1 order by hash`;
+        const results = await dbCon.query(sql, [lastSeq]);
+        this.logger.log(`Query for new data ${sql} ${lastSeq}`);
+        this.logger.log(
+          `Periodical replicate check - last seq:${lastSeq} new events: ${results?.rows?.length}`
+        );
+
+        if (results) {
+          let newSeq = 0;
+          for (const row of results.rows) {
+            const data = row.data;
+            console.log("replicator data:", data);
+            const project: ProjectEntity = plainToClass(
+              ProjectEntity,
+              JSON.parse(JSON.stringify(data))
+            );
+
+            console.log("replicator data after conversion", project);
+            await this.eventProcessor.processProject(project);
+            newSeq = row.hash;
+            await this.counterRepo.save({
+              id: CounterType.PROJECT_REPLICATE_SEQ,
+              counter: newSeq,
+            });
+          }
+        }
+        retryCountTable = 0;
+      } catch (exception) {
+        this.logger.log(
+          `Failed Executing Ops for : ${projectTableName}`,
           exception
         );
         if (retryCountTable > retryLimit) {

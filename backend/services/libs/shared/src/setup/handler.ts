@@ -183,6 +183,9 @@ export const handler: Handler = async (event) => {
     await ledgerModule.createTable("programmesl");
     await ledgerModule.createIndex("txId", "programmesl");
 
+    await ledgerModule.createTable("project");
+    await ledgerModule.createIndex("txId", "project");
+
     await ledgerModule.createTable("company");
     await ledgerModule.createIndex("txId", "company");
 

@@ -14,6 +14,7 @@ import { ProgrammeSlController } from "./programmeSl.controller";
 import { SettingsController } from "./settings.controller";
 import { UserController } from "./user.controller";
 import { VerificationController } from "./verification/verification.controller";
+import { ProjectManagementController } from "./project-management.controller";
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { VerificationController } from "./verification/verification.controller";
     CreditRetirementSlController,
     VerificationController,
     ProgrammeAuditSlController,
+    ProjectManagementController,
   ],
   providers: [NationalAPIService, Logger],
 })
