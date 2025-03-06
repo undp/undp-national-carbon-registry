@@ -8,9 +8,6 @@ import {
 import { NumberTransformer } from "../functions/number.transformer.decorator";
 
 export class BasicFieldsEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column({ type: "bigint", transformer: NumberTransformer })
   createTime: number;
 

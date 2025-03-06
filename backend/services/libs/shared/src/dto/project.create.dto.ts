@@ -19,4 +19,6 @@ export class ProjectCreateDto {
   @IsInt({ each: true })
   @ArrayMinSize(1)
   independentCertifiers: number[];
+
+  additionalDocuments?: any[];
 }

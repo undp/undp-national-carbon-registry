@@ -9,4 +9,5 @@ export enum DocumentTypeEnum {
   VALIDATION_REPORT = "validationReport",
   SITE_VISIT_CHECKLIST = "siteVisitChecklist",
   CARBON_NEUTRAL_CERTIFICATE = "carbonNeutralCertificate",
+  INITIAL_NOTIFICATION_FORM = "initialNotificationForm",
 }
