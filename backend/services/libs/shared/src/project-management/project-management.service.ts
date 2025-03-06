@@ -13,6 +13,7 @@ import { CounterType } from "../util/counter.type.enum";
 import { DocType } from "../enum/document.type";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
+import { ProjectCreateDto } from "../dto/project.create.dto";
 
 @Injectable()
 export class ProjectManagementService {
@@ -24,12 +25,11 @@ export class ProjectManagementService {
     private readonly programmeLedger: ProgrammeLedgerService
   ) {}
 
-  async create(projectDataDto: ProjectDataDto, user: User): Promise<any> {
-    let projectDto = JSON.parse(projectDataDto.data);
+  async create(projectCreateDto: ProjectCreateDto, user: User): Promise<any> {
     if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "programmeSl.notProjectParticipant",
+          "programme.notProjectParticipant",
           []
         ),
         HttpStatus.BAD_REQUEST
@@ -41,22 +41,28 @@ export class ProjectManagementService {
     if (!projectCompany) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "programmeSl.noCompanyExistingInSystem",
+          "programme.noCompanyExistingInSystem",
           []
         ),
         HttpStatus.BAD_REQUEST
       );
     }
 
-    const project = plainToClass(ProjectEntity, projectDto);
-    project.refId = await this.counterService.incrementCount(
-      CounterType.PROJECT,
-      4
-    );
-    project.projectProposalStage = ProjectProposalStage.PENDING;
-    project.companyId = companyId;
-    project.txType = TxType.CREATE_PROJECT;
-    project.txTime = new Date().getTime();
+    for (const certifierId of projectCreateDto.independentCertifiers) {
+      const ICCompany = await this.companyService.findByCompanyId(certifierId);
+      if (
+        !ICCompany ||
+        ICCompany.companyRole != CompanyRole.INDEPENDENT_CERTIFIER
+      ) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "programme.noICExistingInSystem",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+    }
 
     // const docUrls = [];
     // if (projectDto.additionalDocuments?.length > 0) {
@@ -69,6 +75,17 @@ export class ProjectManagementService {
     //     docUrls.push(docUrl);
     //   });
     // }
+    //create INF
+
+    const project = plainToClass(ProjectEntity, projectCreateDto);
+    project.refId = await this.counterService.incrementCount(
+      CounterType.PROJECT,
+      4
+    );
+    project.projectProposalStage = ProjectProposalStage.PENDING;
+    project.companyId = companyId;
+    project.txType = TxType.CREATE_PROJECT;
+    project.txTime = new Date().getTime();
 
     let savedProgramme = await this.programmeLedger.createProject(project);
 

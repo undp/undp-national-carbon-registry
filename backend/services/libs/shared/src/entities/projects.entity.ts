@@ -15,7 +15,7 @@ export class ProjectEntity extends BasicFieldsEntity {
   companyId: number;
 
   @Column("bigint", { array: true, nullable: false })
-  assigneeIds: number[];
+  independentCertifiers: number[];
 
   @Column({
     type: "enum",
