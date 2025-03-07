@@ -25,6 +25,9 @@ import { NoObjectionLetterGenerateService } from "../util/document-generators/no
 import { QueryDto } from "../dto/query.dto";
 import { DataListResponseDto } from "../dto/data.list.response";
 import { ProjectViewEntity } from "../view-entities/project.view.entity";
+import { ProjectAuditLogType } from "../enum/project.audit.log.type.enum";
+import { AuditEntity } from "../entities/audit.entity";
+import { AuditLogsService } from "../audit-logs/audit-logs.service";
 
 @Injectable()
 export class ProjectManagementService {
@@ -38,7 +41,8 @@ export class ProjectManagementService {
     private documentRepo: Repository<DocumentEntity>,
     private readonly noObjectionLetterGenerateService: NoObjectionLetterGenerateService,
     @InjectRepository(ProjectViewEntity)
-    private projectViewRepo: Repository<ProjectViewEntity>
+    private projectViewRepo: Repository<ProjectViewEntity>,
+    private readonly auditLogService: AuditLogsService
   ) {}
 
   async create(projectCreateDto: ProjectCreateDto, user: User): Promise<any> {
@@ -133,14 +137,13 @@ export class ProjectManagementService {
     //   savedProgramme.programmeId
     // );
 
-    // if (savedProgramme) {
-    //   const log = new ProgrammeAuditLogSl();
-    //   log.programmeId = savedProgramme.programmeId;
-    //   log.logType = ProgrammeAuditLogType.CREATE;
-    //   log.userId = user.id;
-
-    //   await this.programmeAuditSlRepo.save(log);
-    // }
+    if (savedProgramme) {
+      await this.logProjectStage(
+        project.refId,
+        ProjectAuditLogType.PENDING,
+        user.id
+      );
+    }
 
     return savedProgramme;
   }
@@ -203,14 +206,13 @@ export class ProjectManagementService {
     //   programmeId
     // );
 
-    // if (response) {
-    //   const log = new ProgrammeAuditLogSl();
-    //   log.programmeId = programmeId;
-    //   log.logType = ProgrammeAuditLogType.INF_APPROVED;
-    //   log.userId = user.id;
-
-    //   await this.programmeAuditSlRepo.save(log);
-    // }
+    if (response) {
+      await this.logProjectStage(
+        project.refId,
+        ProjectAuditLogType.APPROVED,
+        user.id
+      );
+    }
 
     return new DataResponseDto(HttpStatus.OK, response);
   }
@@ -270,15 +272,13 @@ export class ProjectManagementService {
     //   programmeId
     // );
 
-    // if (response) {
-    //   const log = new ProgrammeAuditLogSl();
-    //   log.programmeId = programmeId;
-    //   log.logType = ProgrammeAuditLogType.INF_REJECTED;
-    //   log.userId = user.id;
-    //   log.data = { remark };
-
-    //   await this.programmeAuditSlRepo.save(log);
-    // }
+    if (response) {
+      await this.logProjectStage(
+        project.refId,
+        ProjectAuditLogType.REJECTED,
+        user.id
+      );
+    }
 
     return new DataResponseDto(HttpStatus.OK, response);
   }
@@ -383,6 +383,23 @@ export class ProjectManagementService {
     ["png", "png"],
     ["jpeg", "jpg"],
   ]);
+
+  private async logProjectStage(
+    refId: string,
+    type: ProjectAuditLogType,
+    userId: number
+  ): Promise<void> {
+    const log = new AuditEntity();
+    log.refId = refId;
+    log.logType = type;
+    log.userId = userId;
+
+    await this.auditLogService.save(log);
+  }
+
+  async getLogs(refId: string) {
+    return await this.auditLogService.getLogs(refId);
+  }
 
   async query(
     query: QueryDto,
