@@ -16,6 +16,7 @@ import { AsyncOperationsModule } from "../async-operations/async-operations.modu
 import { LocationModule } from "../location/location.module";
 import { Investment } from "../entities/investment.entity";
 import { CacheModule } from "@nestjs/cache-manager";
+import { CompanyViewEntity } from "../view-entities/company.view.entity";
 
 @Module({
   imports: [
@@ -28,7 +29,12 @@ import { CacheModule } from "@nestjs/cache-manager";
         max: parseInt(configService.get<string>("cache.organisation.max"), 10),
       }),
     }),
-    TypeOrmModule.forFeature([Company, ProgrammeTransfer, Investment]),
+    TypeOrmModule.forFeature([
+      Company,
+      ProgrammeTransfer,
+      Investment,
+      CompanyViewEntity,
+    ]),
     CaslModule,
     UtilModule,
     ProgrammeLedgerModule,

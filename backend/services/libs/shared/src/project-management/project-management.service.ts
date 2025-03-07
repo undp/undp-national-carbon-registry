@@ -19,6 +19,9 @@ import { DocumentTypeEnum } from "../enum/document.type.enum";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { DocumentStatus } from "../enum/document.status";
+import { QueryDto } from "../dto/query.dto";
+import { DataListResponseDto } from "../dto/data.list.response";
+import { ProjectViewEntity } from "../view-entities/project.view.entity";
 
 @Injectable()
 export class ProjectManagementService {
@@ -29,7 +32,9 @@ export class ProjectManagementService {
     private fileHandler: FileHandlerInterface,
     private readonly programmeLedger: ProgrammeLedgerService,
     @InjectRepository(DocumentEntity)
-    private documentRepo: Repository<DocumentEntity>
+    private documentRepo: Repository<DocumentEntity>,
+    @InjectRepository(ProjectViewEntity)
+    private projectViewRepo: Repository<ProjectViewEntity>
   ) {}
 
   async create(projectCreateDto: ProjectCreateDto, user: User): Promise<any> {
@@ -130,6 +135,56 @@ export class ProjectManagementService {
     // }
 
     return savedProgramme;
+  }
+
+  async query(
+    query: QueryDto,
+    abilityCondition: string
+  ): Promise<DataListResponseDto> {
+    const skip = query.size * query.page - query.size;
+    let resp = await this.projectViewRepo
+      .createQueryBuilder("document_entity")
+      .where(
+        this.helperService.generateWhereSQL(
+          query,
+          this.helperService.parseMongoQueryToSQLWithTable(
+            "document_entity",
+            abilityCondition
+          ),
+          "document_entity"
+        )
+      )
+      .orderBy(
+        query?.sort?.key &&
+          `"document_entity".${this.helperService.generateSortCol(
+            query?.sort?.key
+          )}`,
+        query?.sort?.order,
+        query?.sort?.nullFirst !== undefined
+          ? query?.sort?.nullFirst === true
+            ? "NULLS FIRST"
+            : "NULLS LAST"
+          : undefined
+      )
+      .offset(skip)
+      .limit(query.size)
+      .getManyAndCount();
+
+    if (resp.length > 0) {
+      resp[0] = resp[0].map((e) => ({
+        ...e,
+        company: {
+          companyId: e.companyId,
+          name: e.name,
+          logo: e.logo,
+        },
+      }));
+    }
+
+    return new DataListResponseDto(
+      resp.length > 0 ? resp[0] : undefined,
+      resp.length > 1 ? resp[1] : undefined
+    );
   }
 
   private async getLastDocumentVersion(
