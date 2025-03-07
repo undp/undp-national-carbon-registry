@@ -15,6 +15,8 @@ import {
   Request,
   HttpException,
   HttpStatus,
+  Get,
+  Query,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { plainToInstance } from "class-transformer";
@@ -73,6 +75,14 @@ export class ProjectManagementController {
   @Post("query")
   async getAll(@Body() query: QueryDto, @Request() req) {
     return this.projectManagementService.query(query, req.abilityCondition);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
+  @Get("logs")
+  getLogs(@Query("refId") refId: string, @Request() req) {
+    return this.projectManagementService.getLogs(refId);
   }
 
   // @ApiBearerAuth()

@@ -10,6 +10,7 @@ import { EmailHelperModule } from "../email-helper/email-helper.module";
 import { FileHandlerModule } from "../file-handler/filehandler.module";
 import { DocumentEntity } from "../entities/document.entity";
 import { ProjectViewEntity } from "../view-entities/project.view.entity";
+import { AuditLogsModule } from "../audit-logs/audit-logs.module";
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ProjectViewEntity } from "../view-entities/project.view.entity";
     UserModule,
     EmailHelperModule,
     FileHandlerModule,
+    AuditLogsModule,
   ],
   providers: [ProjectManagementService],
   exports: [ProjectManagementService],
