@@ -4,6 +4,7 @@ import { AppAbility } from "@app/shared/casl/casl-ability.factory";
 import { CheckPolicies } from "@app/shared/casl/policy.decorator";
 import { PoliciesGuard } from "@app/shared/casl/policy.guard";
 import { ProjectCreateDto } from "@app/shared/dto/project.create.dto";
+import { QueryDto } from "@app/shared/dto/query.dto";
 import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
 import { ProjectManagementService } from "@app/shared/project-management/project-management.service";
 import {
@@ -40,6 +41,14 @@ export class ProjectManagementController {
       throw new HttpException(errors, HttpStatus.BAD_REQUEST);
     }
     return this.projectManagementService.create(dto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
+  @Post("query")
+  async getAll(@Body() query: QueryDto, @Request() req) {
+    return this.projectManagementService.query(query, req.abilityCondition);
   }
 
   // @ApiBearerAuth()
@@ -325,14 +334,6 @@ export class ProjectManagementController {
   // @Post("getProjectById")
   // async getProjectById(@Body("programmeId") programmeId: string) {
   //   return this.programmeService.getProjectById(programmeId);
-  // }
-
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
-  // @Post("query")
-  // async getAll(@Body() query: QueryDto, @Request() req) {
-  //   return this.programmeService.query(query, req.abilityCondition, req.user);
   // }
 
   // @ApiBearerAuth()

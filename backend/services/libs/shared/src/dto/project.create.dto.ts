@@ -20,5 +20,10 @@ export class ProjectCreateDto {
   @ArrayMinSize(1)
   independentCertifiers: number[];
 
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  sectoralScope: string;
+
   additionalDocuments?: any[];
 }
