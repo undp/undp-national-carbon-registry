@@ -2,9 +2,10 @@ import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { ProjectProposalStage } from "../enum/projectProposalStage.enum";
 import { TxType } from "../enum/txtype.enum";
 import { BasicFieldsEntity } from "./basic.fields.entity";
+import { NumberTransformer } from "../functions/number.transformer.decorator";
 
 @Entity()
-export class ProjectEntity extends BasicFieldsEntity {
+export class ProjectEntity {
   @PrimaryColumn()
   refId: string;
 
@@ -25,6 +26,9 @@ export class ProjectEntity extends BasicFieldsEntity {
   })
   projectProposalStage: ProjectProposalStage;
 
+  @Column({ nullable: true })
+  noObjectionLetterUrl?: string;
+
   @Column({
     type: "enum",
     enum: TxType,
@@ -37,4 +41,10 @@ export class ProjectEntity extends BasicFieldsEntity {
 
   @Column({ type: "bigint" })
   txTime: number;
+
+  @Column({ type: "bigint", transformer: NumberTransformer })
+  createTime: number;
+
+  @Column({ type: "bigint", transformer: NumberTransformer })
+  updateTime: number;
 }

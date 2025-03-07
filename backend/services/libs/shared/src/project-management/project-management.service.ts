@@ -19,6 +19,9 @@ import { DocumentTypeEnum } from "../enum/document.type.enum";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { DocumentStatus } from "../enum/document.status";
+import { DataResponseDto } from "../dto/data.response.dto";
+import { UpdateProjectProposalStageDto } from "../dto/updateProjectProposalStage.dto";
+import { NoObjectionLetterGenerateService } from "../util/document-generators/no.objection.letter.gen";
 
 @Injectable()
 export class ProjectManagementService {
@@ -27,16 +30,17 @@ export class ProjectManagementService {
     private readonly companyService: CompanyService,
     private readonly counterService: CounterService,
     private fileHandler: FileHandlerInterface,
-    private readonly programmeLedger: ProgrammeLedgerService,
+    private readonly programmeLedgerService: ProgrammeLedgerService,
     @InjectRepository(DocumentEntity)
-    private documentRepo: Repository<DocumentEntity>
+    private documentRepo: Repository<DocumentEntity>,
+    private readonly noObjectionLetterGenerateService: NoObjectionLetterGenerateService
   ) {}
 
   async create(projectCreateDto: ProjectCreateDto, user: User): Promise<any> {
     if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "programme.notProjectParticipant",
+          "project.notProjectParticipant",
           []
         ),
         HttpStatus.BAD_REQUEST
@@ -48,7 +52,7 @@ export class ProjectManagementService {
     if (!projectCompany) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "programme.noCompanyExistingInSystem",
+          "project.noCompanyExistingInSystem",
           []
         ),
         HttpStatus.BAD_REQUEST
@@ -63,7 +67,7 @@ export class ProjectManagementService {
       ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "programme.noICExistingInSystem",
+            "project.noICExistingInSystem",
             []
           ),
           HttpStatus.BAD_REQUEST
@@ -80,6 +84,8 @@ export class ProjectManagementService {
     project.companyId = companyId;
     project.txType = TxType.CREATE_PROJECT;
     project.txTime = new Date().getTime();
+    project.createTime = project.txTime;
+    project.updateTime = project.txTime;
 
     const docUrls = [];
     if (projectCreateDto.additionalDocuments?.length > 0) {
@@ -112,7 +118,9 @@ export class ProjectManagementService {
 
     await this.documentRepo.insert(INFDoc);
 
-    let savedProgramme = await this.programmeLedger.createProject(project);
+    let savedProgramme = await this.programmeLedgerService.createProject(
+      project
+    );
 
     // await this.emailHelperService.sendEmailToSLCFAdmins(
     //   EmailTemplates.PROGRAMME_SL_CREATE,
@@ -132,6 +140,162 @@ export class ProjectManagementService {
     return savedProgramme;
   }
 
+  async approveINF(refId: string, user: User): Promise<DataResponseDto> {
+    if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("project.notAuthorised", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    const project = await this.programmeLedgerService.getProjectById(refId);
+
+    const companyId = project.companyId;
+
+    const projectCompany = await this.companyService.findByCompanyId(companyId);
+
+    if (!projectCompany) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "project.noCompanyExistingInSystem",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (project?.projectProposalStage !== ProjectProposalStage.PENDING) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "project.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const noObjectionLetterUrl =
+      await this.noObjectionLetterGenerateService.generateReport(
+        projectCompany.name,
+        project.title,
+        project.refId
+      );
+
+    const updateProjectroposalStage: UpdateProjectProposalStageDto = {
+      programmeId: refId,
+      txType: TxType.APPROVE_INF,
+      data: { noObjectionLetterUrl: noObjectionLetterUrl },
+    };
+    const response = await this.updateProposalStage(
+      updateProjectroposalStage,
+      user
+    );
+
+    //send email to Project Participant
+    // await this.emailHelperService.sendEmailToProjectParticipant(
+    //   EmailTemplates.PROGRAMME_SL_APPROVED,
+    //   null,
+    //   programmeId
+    // );
+
+    // if (response) {
+    //   const log = new ProgrammeAuditLogSl();
+    //   log.programmeId = programmeId;
+    //   log.logType = ProgrammeAuditLogType.INF_APPROVED;
+    //   log.userId = user.id;
+
+    //   await this.programmeAuditSlRepo.save(log);
+    // }
+
+    return new DataResponseDto(HttpStatus.OK, response);
+  }
+
+  async rejectINF(
+    refId: string,
+    remark: string,
+    user: User
+  ): Promise<DataResponseDto> {
+    if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("project.notAuthorised", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    const project = await this.programmeLedgerService.getProjectById(refId);
+
+    const companyId = project.companyId;
+
+    const projectCompany = await this.companyService.findByCompanyId(companyId);
+
+    if (!projectCompany) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "project.noCompanyExistingInSystem",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    if (project?.projectProposalStage !== ProjectProposalStage.PENDING) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "project.programmeIsNotInSuitableStageToProceed",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const updateProjectProposalStage = {
+      programmeId: refId,
+      txType: TxType.REJECT_INF,
+    };
+
+    const response = await this.updateProposalStage(
+      updateProjectProposalStage,
+      user
+    );
+
+    //send email to Project Participant
+    // await this.emailHelperService.sendEmailToProjectParticipant(
+    //   EmailTemplates.PROGRAMME_SL_REJECTED,
+    //   { remark },
+    //   programmeId
+    // );
+
+    // if (response) {
+    //   const log = new ProgrammeAuditLogSl();
+    //   log.programmeId = programmeId;
+    //   log.logType = ProgrammeAuditLogType.INF_REJECTED;
+    //   log.userId = user.id;
+    //   log.data = { remark };
+
+    //   await this.programmeAuditSlRepo.save(log);
+    // }
+
+    return new DataResponseDto(HttpStatus.OK, response);
+  }
+
+  async updateProposalStage(
+    updateProposalStageDto: UpdateProjectProposalStageDto,
+    user: User
+  ): Promise<ProjectEntity> {
+    const refId = updateProposalStageDto.programmeId;
+    const txType = updateProposalStageDto.txType;
+    const data = updateProposalStageDto.data;
+
+    //updating proposal stage in programme
+    const updatedProject =
+      await this.programmeLedgerService.updateProjectProposalStage(
+        refId,
+        txType,
+        data
+      );
+
+    return updatedProject;
+  }
   private async getLastDocumentVersion(
     docType: DocumentTypeEnum,
     programmeId: string
@@ -161,7 +325,7 @@ export class ProjectManagementService {
       if (filetype == undefined) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "programme.invalidDocumentUpload",
+            "project.invalidDocumentUpload",
             []
           ),
           HttpStatus.INTERNAL_SERVER_ERROR
@@ -170,7 +334,7 @@ export class ProjectManagementService {
     } catch (Exception: any) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "programme.invalidDocumentUpload",
+          "project.invalidDocumentUpload",
           []
         ),
         HttpStatus.INTERNAL_SERVER_ERROR
@@ -188,7 +352,7 @@ export class ProjectManagementService {
     } else {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "programme.docUploadFailed",
+          "project.docUploadFailed",
           []
         ),
         HttpStatus.INTERNAL_SERVER_ERROR
