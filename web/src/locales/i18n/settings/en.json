@@ -1,7 +1,7 @@
-{ 
+{
   "settingsTitle": "Settings",
-"certificateSignatures": "Certificate Signatures",
-"certificateSignaturesSub": "Upload current Zimbabwe Climate Fund Chairman and Chief Executive Officer's signatures.",
+  "certificateSignatures": "Certificate Signatures",
+  "certificateSignaturesSub": "Upload current {{countryName}} Climate Fund Chairman and Chief Executive Officer's signatures.",
   "upload": "Upload",
   "chairmanSign": "Chairman's Signature",
   "ceoSign": "Chief Executive Officer's Signature",
@@ -17,6 +17,4 @@
   "signUploadSuccess": "Signature/s saved.",
   "unsupportedFormat": "Only JPG image format is supported",
   "maxUploadSize": "Maximum upload file size is 5MB!"
-
-
 }

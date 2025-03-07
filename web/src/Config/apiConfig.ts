@@ -15,7 +15,7 @@ export const API_PATHS = {
   DOWNLOAD_USER_DATA: 'national/user/download',
   //PROJECT
   PROJECT_CREATE: 'national/projectManagement/create',
-  GET_PROJECT: 'national/programmeSl/query',
+  GET_PROJECT: 'national/projectManagement/query',
   PROJECT_BY_ID: 'national/programmeSl/getProjectById',
   ALL_PROJECTS: 'national/programme/query',
   ADD_PROJECT_DOC: 'national/programme/addDocument',

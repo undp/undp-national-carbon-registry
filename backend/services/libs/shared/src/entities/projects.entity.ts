@@ -29,6 +29,9 @@ export class ProjectEntity {
   @Column({ nullable: true })
   noObjectionLetterUrl?: string;
 
+  @Column()
+  sectoralScope: string;
+
   @Column({
     type: "enum",
     enum: TxType,
@@ -47,4 +50,10 @@ export class ProjectEntity {
 
   @Column({ type: "bigint", transformer: NumberTransformer })
   updateTime: number;
+
+  @Column({ type: "bigint", default: 0 })
+  creditBalance: number;
+
+  @Column({ type: "bigint", default: 0 })
+  creditRetired: number;
 }

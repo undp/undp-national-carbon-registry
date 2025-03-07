@@ -57,11 +57,14 @@ import { HttpUtilService } from "../util/http.util.service";
 import { OrganisationDuplicateCheckDto } from "../dto/organisation.duplicate.check.dto";
 import { OrganisationSyncRequestDto } from "../dto/organisation.sync.request.dto";
 import { Cache } from "cache-manager";
+import { CompanyViewEntity } from "../view-entities/company.view.entity";
 
 @Injectable()
 export class CompanyService {
   constructor(
     @InjectRepository(Company) private companyRepo: Repository<Company>,
+    @InjectRepository(CompanyViewEntity)
+    private companyViewRepo: Repository<CompanyViewEntity>,
     private logger: Logger,
     private configService: ConfigService,
     private helperService: HelperService,
@@ -615,6 +618,51 @@ export class CompanyService {
       )
       .offset(query.size * query.page - query.size)
       .limit(query.size)
+      .getManyAndCount();
+
+    return new DataListResponseDto(
+      resp.length > 0 ? resp[0] : undefined,
+      resp.length > 1 ? resp[1] : undefined
+    );
+  }
+
+  async byType(
+    companyRole: CompanyRole,
+    abilityCondition: string
+  ): Promise<any> {
+    let filterWithCompanyStatesIn: number[];
+
+    if (
+      companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+      companyRole === CompanyRole.CLIMATE_FUND
+    ) {
+      filterWithCompanyStatesIn = [0, 1, 2, 3];
+    } else {
+      filterWithCompanyStatesIn = [0, 1];
+    }
+
+    const query: any = { filterAnd: [] };
+
+    query.filterAnd.push({
+      key: "state",
+      operation: "in",
+      value: filterWithCompanyStatesIn,
+    });
+
+    query.filterAnd.push({
+      key: "companyRole",
+      operation: "=",
+      value: companyRole,
+    });
+
+    const resp = await this.companyViewRepo
+      .createQueryBuilder()
+      .where(
+        this.helperService.generateWhereSQL(
+          query,
+          this.helperService.parseMongoQueryToSQL(abilityCondition)
+        )
+      )
       .getManyAndCount();
 
     return new DataListResponseDto(

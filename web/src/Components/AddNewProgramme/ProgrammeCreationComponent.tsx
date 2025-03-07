@@ -81,7 +81,20 @@ const INF_SECTOR: { [key: string]: string } = {
 const INF_SECTORAL_SCOPE: { [key: string]: string } = {
   ENERGY_INDUSTRIES: 'Energy Industries (Renewable)',
   ENERGY_DISTRIBUTION: 'Energy Distribution',
-  ENERGY_DEMAND: 'Energy Deamdn',
+  ENERGY_DEMAND: 'Energy Demand',
+  MANUFACTURING_INDUSTRIES: 'Manufacturing Industries',
+  CHEMICAL_INDUSTRIES: 'Chemical Industries',
+  CONSTRUCTION: 'Construction',
+  TRANSPORT: 'Transport',
+  MINING_MINERAL_PRODUCTION: 'Mining/Mineral Production',
+  METAL_PRODUCTION: 'Metal Production',
+  FUGITIVE_EMISSIONS_FUELS: 'Fugitive Emissions from fuels',
+  FUGITIVE_EMISSIONS_PRODUCTION:
+    'Fugitive Emissions from Production and Consumption of Halocarbons and Sulphur Hexafluoride',
+  SOLVENT_USE: 'Solvent Use',
+  WASTE_HANDLING_AND_DISPOSAL: 'Waste Handling and Disposal',
+  AFFORESTATION_AND_REFORESTATION: 'Afforestation and Reforestation',
+  AGRICULTURE: 'Agriculture',
 };
 
 export const ProgrammeCreationComponent = (props: any) => {
@@ -280,7 +293,7 @@ export const ProgrammeCreationComponent = (props: any) => {
       title: values?.title,
       // projectCategory: values?.projectCategory,
       sector: values?.sector,
-      SectoralScope: values?.sectoralScope,
+      sectoralScope: values?.sectoralScope,
       province: values?.province || 'test',
       district: values?.district || 'test',
       city: values?.city || 'test',
@@ -301,6 +314,7 @@ export const ProgrammeCreationComponent = (props: any) => {
       //   }
       //   return undefined;
       // })(),
+      estimatedProjectCost: values?.estimatedProjectCost,
       proposedProjectCapacity: values?.projectCapacity,
       projectStatusDescription: values?.projectStatusDescription,
       speciesPlanted: values?.speciesPlanted,
@@ -950,7 +964,38 @@ export const ProgrammeCreationComponent = (props: any) => {
                                   ))}
                                 </Select>
                               </Form.Item>
-                              {projectCategory === 'RENEWABLE_ENERGY' && (
+
+                              <Form.Item
+                                label={t('addProgramme:estimatedProjectCost')}
+                                name="estimatedProjectCost"
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: `${t('addProgramme:independentCertifiers')} ${t(
+                                      'isRequired'
+                                    )}`,
+                                  },
+                                  {
+                                    validator(rule, value) {
+                                      if (!value) {
+                                        return Promise.resolve();
+                                      }
+
+                                      // eslint-disable-next-line no-restricted-globals
+                                      if (isNaN(value)) {
+                                        return Promise.reject(
+                                          new Error(t('addProgramme:shouldBeAnNumber'))
+                                        );
+                                      }
+
+                                      return Promise.resolve();
+                                    },
+                                  },
+                                ]}
+                              >
+                                <Input />
+                              </Form.Item>
+                              {/* {projectCategory === 'RENEWABLE_ENERGY' && (
                                 <Form.Item
                                   label={t('addProgramme:projectCapacity')}
                                   name="projectCapacity"
@@ -973,7 +1018,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                 >
                                   <Input size="large" />
                                 </Form.Item>
-                              )}
+                              )} */}
 
                               <Form.Item
                                 label={t('addProgramme:briefProjectDescription')}

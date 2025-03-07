@@ -15,6 +15,8 @@ import PhoneInput, {
   Country,
 } from 'react-phone-number-input';
 import validator from 'validator';
+import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
+import { ReactComponent as ConfirmSubmitSVG } from '../../Assets/DialogIcons/ConfirmSubmit.svg';
 
 // import { countries } from 'react-circle-flags';
 
@@ -132,6 +134,14 @@ const Step08 = (props: CustomStepsProps) => {
     // handleValuesUpdate({ appendix: tempValues });
   };
 
+  const [showDialog, setShowDialog] = useState<boolean>(false);
+
+  const closeDialog = () => {
+    setShowDialog(false);
+  };
+
+  const [formValues, setFormValues] = useState<any>();
+
   const [contactNoInput] = useState<any>();
 
   console.log('---countries---', countries);
@@ -141,6 +151,20 @@ const Step08 = (props: CustomStepsProps) => {
       {current === 7 && (
         <div>
           <div className="step-form-container">
+            <ConfirmDialog
+              showDialog={showDialog}
+              Icon={ConfirmSubmitSVG}
+              message={t('PDD:confirmModalMessage')}
+              subMessage={`${t('PDD:confirmModalSubMessage')}`}
+              okText={t('common:yes')}
+              cancelText={t('common:no')}
+              okAction={() => {
+                closeDialog();
+                onFinish(formValues);
+              }}
+              closeDialog={closeDialog}
+              isReject={false}
+            />
             <Form
               labelCol={{ span: 20 }}
               wrapperCol={{ span: 24 }}
@@ -149,8 +173,8 @@ const Step08 = (props: CustomStepsProps) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                onFinish(values);
-
+                setShowDialog(true);
+                setFormValues(values);
                 // if (submitForm) {
                 //   setTimeout(() => submitForm(), 1000);
                 // }

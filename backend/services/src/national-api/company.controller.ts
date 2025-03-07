@@ -28,6 +28,7 @@ import { Company } from "@app/shared/entities/company.entity";
 import { Investment } from "@app/shared/entities/investment.entity";
 import { CountryService } from "@app/shared/util/country.service";
 import { HelperService } from "@app/shared/util/helpers.service";
+import { ByTypeDto } from "@app/shared/dto/byType.dto";
 
 @ApiTags("Organisation")
 @ApiBearerAuth()
@@ -49,6 +50,13 @@ export class CompanyController {
       req.abilityCondition,
       req.user.companyRole
     );
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, Company, true))
+  @Post("byType")
+  byType(@Body() byType: ByTypeDto, @Request() req) {
+    return this.companyService.byType(byType.companyRole, req.abilityCondition);
   }
 
   @ApiBearerAuth()
