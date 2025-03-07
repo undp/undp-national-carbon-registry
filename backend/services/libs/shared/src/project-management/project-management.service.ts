@@ -28,6 +28,8 @@ import { ProjectViewEntity } from "../view-entities/project.view.entity";
 import { ProjectAuditLogType } from "../enum/project.audit.log.type.enum";
 import { AuditEntity } from "../entities/audit.entity";
 import { AuditLogsService } from "../audit-logs/audit-logs.service";
+import { EmailHelperService } from "../email-helper/email-helper.service";
+import { EmailTemplates } from "../email-helper/email.template";
 
 @Injectable()
 export class ProjectManagementService {
@@ -42,7 +44,8 @@ export class ProjectManagementService {
     private readonly noObjectionLetterGenerateService: NoObjectionLetterGenerateService,
     @InjectRepository(ProjectViewEntity)
     private projectViewRepo: Repository<ProjectViewEntity>,
-    private readonly auditLogService: AuditLogsService
+    private readonly auditLogService: AuditLogsService,
+    private readonly emailHelperService: EmailHelperService
   ) {}
 
   async create(projectCreateDto: ProjectCreateDto, user: User): Promise<any> {
@@ -131,21 +134,23 @@ export class ProjectManagementService {
       project
     );
 
-    // await this.emailHelperService.sendEmailToSLCFAdmins(
-    //   EmailTemplates.PROGRAMME_SL_CREATE,
-    //   null,
-    //   savedProgramme.programmeId
-    // );
+    await this.emailHelperService.sendEmailToDNAAdmins(
+      EmailTemplates.INF_CREATE,
+      null,
+      project.refId
+    );
+    await this.emailHelperService.sendEmailToICAdmins(
+      EmailTemplates.INF_ASSIGN,
+      null,
+      project.refId
+    );
 
-    if (savedProgramme) {
-      await this.logProjectStage(
-        project.refId,
-        ProjectAuditLogType.PENDING,
-        user.id
-      );
-    }
-
-    return savedProgramme;
+    await this.logProjectStage(
+      project.refId,
+      ProjectAuditLogType.PENDING,
+      user.id
+    );
+    return new DataResponseDto(HttpStatus.OK, savedProgramme);
   }
 
   async approveINF(refId: string, user: User): Promise<DataResponseDto> {
@@ -199,20 +204,17 @@ export class ProjectManagementService {
       user
     );
 
-    //send email to Project Participant
-    // await this.emailHelperService.sendEmailToProjectParticipant(
-    //   EmailTemplates.PROGRAMME_SL_APPROVED,
-    //   null,
-    //   programmeId
-    // );
+    await this.emailHelperService.sendEmailToPDAdmins(
+      EmailTemplates.INF_APPROVE,
+      null,
+      project.refId
+    );
 
-    if (response) {
-      await this.logProjectStage(
-        project.refId,
-        ProjectAuditLogType.APPROVED,
-        user.id
-      );
-    }
+    await this.logProjectStage(
+      project.refId,
+      ProjectAuditLogType.APPROVED,
+      user.id
+    );
 
     return new DataResponseDto(HttpStatus.OK, response);
   }
@@ -265,20 +267,17 @@ export class ProjectManagementService {
       user
     );
 
-    //send email to Project Participant
-    // await this.emailHelperService.sendEmailToProjectParticipant(
-    //   EmailTemplates.PROGRAMME_SL_REJECTED,
-    //   { remark },
-    //   programmeId
-    // );
+    await this.emailHelperService.sendEmailToPDAdmins(
+      EmailTemplates.INF_REJECT,
+      null,
+      project.refId
+    );
 
-    if (response) {
-      await this.logProjectStage(
-        project.refId,
-        ProjectAuditLogType.REJECTED,
-        user.id
-      );
-    }
+    await this.logProjectStage(
+      project.refId,
+      ProjectAuditLogType.REJECTED,
+      user.id
+    );
 
     return new DataResponseDto(HttpStatus.OK, response);
   }
