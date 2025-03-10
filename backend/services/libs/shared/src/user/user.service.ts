@@ -1318,6 +1318,34 @@ export class UserService {
     return result;
   }
 
+  async getDNAAdminUsers() {
+    const result = await this.userRepo
+      .createQueryBuilder("user")
+      .where("user.role in (:admin)", {
+        admin: Role.Admin,
+      })
+      .andWhere("user.companyRole= :companyRole", {
+        companyRole: CompanyRole.DESIGNATED_NATIONAL_AUTHORITY,
+      })
+      .select(["user.name", "user.email"])
+      .getRawMany();
+
+    return result;
+  }
+
+  async getOrganisationAdminUsers(organisationId: number) {
+    const result = await this.userRepo
+      .createQueryBuilder("user")
+      .where("user.role in (:admin)", {
+        admin: Role.Admin,
+      })
+      .andWhere("user.companyId= :companyId", { companyId: organisationId })
+      .select(["user.name", "user.email"])
+      .getRawMany();
+
+    return result;
+  }
+
   async getExComAdminAndManagerUsers() {
     const result = await this.userRepo
       .createQueryBuilder("user")
