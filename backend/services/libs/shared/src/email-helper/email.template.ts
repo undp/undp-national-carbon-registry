@@ -1097,4 +1097,68 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `,
   },
+
+  INF_CREATE: {
+    id: "INF_CREATE",
+    subject: "Initial Notification has been Submitted!",
+    html: `
+        Hi,<br><br> 
+        
+        Initial Notification has been submitted, by {{organisationName}} organisation.<br> 
+
+        Please review and approve by clicking <a href={{programmePageLink}}>here</a>.<br> 
+        <br>
+        Sincerely,<br>
+
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  INF_ASSIGN: {
+    id: "INF_ASSIGN",
+    subject: "Assigned to Review Project Authorization",
+    html: `
+        Hi,<br><br> 
+
+        You have been assigned to review the project authorization procedure for {{organisationName}} in the {{countryName}} Carbon Credit Registry. <br>  
+
+        Please review the details and take the necessary action by clicking the link below: 
+        <br><a href={{programmePageLink}}>here</a>.<br> 
+        <br>
+        Sincerely,<br>
+
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  INF_APPROVE: {
+    id: "INF_APPROVE",
+    subject: "Initial Notification has been Approved",
+    html: `
+        Hi {{user}},<br>
+        <br>
+        Your Initial Notification has been approved by {{countryName}} Designated National Authority.<br>
+        Click <a href={{programmePageLink}}>here</a> for more details of the project.<br>
+        <br>
+        Sincerely,<br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  INF_REJECT: {
+    id: "INF_REJECT",
+    subject: "Initial Notification has been Rejected",
+    html: `
+        Hi {{user}}
+        <br>
+        <br>
+        Initial Notification submitted by your {{organisationName}} organisation has been rejected by {{countryName}}  Designated National Authority.
+        <br>
+        Please submit a new Initial Notification. 
+        <br>
+        Sincerely,<br>
+
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
 };
