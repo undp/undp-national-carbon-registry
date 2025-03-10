@@ -1,12 +1,32 @@
 import { ValidationStepsProps } from './StepProps';
-import { Row, Button, Form, Col } from 'antd';
+import { Row, Button, Form, Col, Input } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
+import LabelWithTooltip from '../LabelWithTooltip/LabelWithTooltip';
+import { useEffect } from 'react';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import NetEmissionReduction from '../Common/NetEmissonReduction';
 
-const ValidationConclusion = (props: ValidationStepsProps) => {
+const GHGProjectDescription = (props: ValidationStepsProps) => {
   const { prev, next, form, current, t, countries, handleValuesUpdate } = props;
+
+  useEffect(() => {
+    form.setFieldValue('baselineEmissions', [{ location: '' }]);
+    form.setFieldValue('estimatedNetEmissionReductions', [{ baselineEmissionReductions: 0 }]);
+  }, []);
+  const onFinish = (values: any) => {
+    const body = {
+      calculationOfBaselineEmissionFactor: values?.calculationOfBaselineEmissionFactor,
+      plantFactor: values?.plantFactor,
+      annualEmissionReductionCalculation: values?.annualEmissionReductionCalculation,
+      projectemission: values?.projectemission,
+      leakageEmission: values?.leakageEmission,
+      baselineEmissions: values?.baselineEmissions,
+    };
+    handleValuesUpdate({ ghgProjectDescription: body });
+  };
   return (
     <>
-      {current === 2 && (
+      {current === 1 && (
         <div>
           <div className="val-report-step-form-container">
             <Form
@@ -17,7 +37,7 @@ const ValidationConclusion = (props: ValidationStepsProps) => {
               requiredMark={true}
               form={form}
               onFinish={(values: any) => {
-                // onFinish(values);
+                onFinish(values);
                 if (next) {
                   next();
                 }
@@ -25,115 +45,350 @@ const ValidationConclusion = (props: ValidationStepsProps) => {
             >
               <Form.Item
                 className="full-width-form-item"
-                label={`2.1 ${t('validationReport:methodAndCriteria')}`}
-                name="methodAndCriteria"
+                label={`${t('validationReport:calculationOfBaselineEmissionFactor')}`}
+                name="calculationOfBaselineEmissionFactor"
                 rules={[
                   {
                     required: true,
-                    message: `${t('validationReport:methodAndCriteria')} ${t('isRequired')}`,
+                    message: `${t('validationReport:calculationOfBaselineEmissionFactor')} ${t(
+                      'isRequired'
+                    )}`,
                   },
                 ]}
               >
-                <TextArea
-                  rows={4}
-                  placeholder="Describe the method and criteria, including the sampling plan, used for undertaking the  validation. Where sampling plans are used as a part of the validation, include a  description of the sampling approach, important assumptions and justification of the  chosen approach."
-                />
+                <TextArea rows={4} />
               </Form.Item>
-
-              <Row gutter={60}>
-                <Col md={24} xl={12}>
-                  <Form.Item
-                    label={`2.2 ${t('validationReport:documentReview')}`}
-                    name="documentReview"
-                    rules={[
-                      {
-                        required: true,
-                        message: `${t('validationReport:documentReview')} ${t('isRequired')}`,
-                      },
-                    ]}
-                  >
-                    <TextArea
-                      rows={4}
-                      placeholder="Describe how the validation was performed as an audit where the project description and  any supporting documents were reviewed, cross-checked and compared with identified  and stated requirements."
-                    />
-                  </Form.Item>
+              {/* Grid Emissions start */}
+              <Row gutter={[40, 16]} className="grid-emission-factor">
+                <Col xl={5}>
+                  <p>{t('validationReport:gridEmissionFactorEFCM')}</p>
                 </Col>
-
-                <Col md={24} xl={12}>
-                  <Form.Item
-                    label={`2.3 ${t('validationReport:interviews')}`}
-                    name="interviews"
-                    rules={[
-                      {
-                        required: true,
-                        message: `${t('validationReport:interviews')} ${t('isRequired')}`,
-                      },
-                    ]}
-                  >
-                    <TextArea
-                      rows={4}
-                      placeholder="Describe the interview process and identify personnel, including their roles, who were  interviewed and/or provided information additional to that provided in the project  description and any supporting documents."
-                    />
-                  </Form.Item>
+                <Col xl={4}>
+                  <Input disabled placeholder="0.7298" />
+                </Col>
+                <Col xl={5}>
+                  <Input disabled placeholder="tCO2e/MWh" />
+                </Col>
+                <Col xl={5}>
+                  <Input disabled placeholder="Published by  SLSEA (2020)" />
                 </Col>
               </Row>
-
-              <Row gutter={60}>
-                <Col md={24} xl={12}>
-                  <Form.Item
-                    label={`2.4 ${t('validationReport:siteInspection')}`}
-                    name="siteInspection"
-                    rules={[
-                      {
-                        required: true,
-                        message: `${t('validationReport:siteInspection')} ${t('isRequired')}`,
-                      },
-                    ]}
-                  >
-                    <TextArea
-                      rows={4}
-                      placeholder="Describe how the validation was performed as an audit where the project description and  any supporting documents were reviewed, cross-checked and compared with identified  and stated requirements."
-                    />
-                  </Form.Item>
-                </Col>
-
-                <Col md={24} xl={12}>
-                  <Form.Item
-                    label={`2.5.1 ${t('validationReport:forwardActionRequests')}`}
-                    name="forwardActionRequests"
-                    rules={[
-                      {
-                        required: true,
-                        message: `${t('validationReport:forwardActionRequests')} ${t(
-                          'isRequired'
-                        )}`,
-                      },
-                    ]}
-                  >
-                    <TextArea
-                      rows={4}
-                      placeholder="Provide details of any forward action requests raised during the validation, for the  benefit of subsequent project audits."
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
+              {/* Grid Emissions end */}
 
               <Form.Item
                 className="full-width-form-item"
-                label={`2.5 ${t('validationReport:resolutionOfFindings')}`}
-                name="resolutionOfFindings"
+                label={`${t('validationReport:plantFactor')}`}
+                name="plantFactor"
                 rules={[
                   {
                     required: true,
-                    message: `${t('validationReport:resolutionOfFindings')} ${t('isRequired')}`,
+                    message: `${t('validationReport:plantFactor')} ${t('isRequired')}`,
                   },
                 ]}
               >
-                <TextArea
-                  rows={4}
-                  placeholder="Describe the process for the resolution of findings (corrective actions, clarifications or  other findings) raised by the validation team during the validation.  State the total number of corrective action requests, clarification requests, forward  action requests and other findings raised during the validation. Provide a summary of each finding, including the issue raised, the response(s)  provided by the project proponent, and the final conclusion and any resulting changes  to project documents."
-                />
+                <TextArea rows={4} />
               </Form.Item>
+
+              <Form.Item
+                className="full-width-form-item"
+                label={`${t('validationReport:annualEmissionReductionCalculation')}`}
+                name="annualEmissionReductionCalculation"
+                rules={[
+                  {
+                    required: true,
+                    message: `${t('validationReport:annualEmissionReductionCalculation')} ${t(
+                      'isRequired'
+                    )}`,
+                  },
+                ]}
+              >
+                <TextArea rows={4} />
+              </Form.Item>
+
+              {/* Baseline Emmission table start */}
+              <LabelWithTooltip label={t('validationReport:baselineEmission')} required={true} />
+
+              <div className="baseline-emisions-table">
+                <Row gutter={[40, 16]}>
+                  <Col xl={5}></Col>
+                  <Col xl={3}>Project Capacity</Col>
+                  <Col xl={3}>Plant Factor</Col>
+                  <Col xl={3}>
+                    Average Energy
+                    <br /> Output (EGy)
+                  </Col>
+                  <Col xl={3}>
+                    Average Emission
+                    <br /> Factor (EFy)
+                  </Col>
+                  <Col xl={3}>
+                    Emission Reduction
+                    <br /> (ERy)
+                  </Col>
+                </Row>
+
+                <Row gutter={[40, 16]} className="mg-top-1">
+                  <Col xl={2}></Col>
+                  <Col xl={3} style={{ textAlign: 'right' }}>
+                    Units
+                  </Col>
+                  <Col xl={3}>
+                    <Input placeholder="kWp" disabled />
+                  </Col>
+                  <Col xl={3}>
+                    <Input placeholder="%" disabled />
+                  </Col>
+                  <Col xl={3}>
+                    <Input placeholder="MWh/Year" disabled />
+                  </Col>
+                  <Col xl={3}>
+                    <Input placeholder="tCO2/MWh" disabled />
+                  </Col>
+                  <Col xl={3}>
+                    <Input placeholder="tCO2/Year" disabled />
+                  </Col>
+                </Row>
+
+                <Row gutter={[40, 16]}>
+                  <Col xl={3}>Location</Col>
+                </Row>
+
+                <Row gutter={[40, 16]} className="mg-top-1 mg-bottom-2 baseline-emissions-table">
+                  <Form.List name="baselineEmissions">
+                    {(fields, { add, remove }) => (
+                      <>
+                        {fields.map(({ key, name, ...restFields }) => (
+                          <>
+                            <Col xl={5}>
+                              <Form.Item
+                                name={[name, 'location']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: ``,
+                                  },
+                                  {
+                                    validator: async (rule, value) => {
+                                      if (
+                                        String(value).trim() === '' ||
+                                        String(value).trim() === undefined ||
+                                        value === null ||
+                                        value === undefined
+                                      ) {
+                                        throw new Error(`${t('validationReport:required')}`);
+                                      }
+                                    },
+                                  },
+                                ]}
+                              >
+                                <Input />
+                              </Form.Item>
+                            </Col>
+                            <Col xl={3}>
+                              <Form.Item
+                                name={[name, 'projectCapacity']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: ``,
+                                  },
+                                  {
+                                    validator: async (rule, value) => {
+                                      if (
+                                        String(value).trim() === '' ||
+                                        String(value).trim() === undefined ||
+                                        value === null ||
+                                        value === undefined
+                                      ) {
+                                        throw new Error(`${t('validationReport:required')}`);
+                                      }
+                                    },
+                                  },
+                                ]}
+                              >
+                                <Input />
+                              </Form.Item>
+                            </Col>
+
+                            <Col xl={3}>
+                              <Form.Item
+                                name={[name, 'plantFactor']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: ``,
+                                  },
+                                  {
+                                    validator: async (rule, value) => {
+                                      if (
+                                        String(value).trim() === '' ||
+                                        String(value).trim() === undefined ||
+                                        value === null ||
+                                        value === undefined
+                                      ) {
+                                        throw new Error(`${t('validationReport:required')}`);
+                                      }
+                                    },
+                                  },
+                                ]}
+                              >
+                                <Input />
+                              </Form.Item>
+                            </Col>
+
+                            <Col xl={3} className="actions">
+                              <Form.Item
+                                name={[name, 'avgEnergyOutput']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: ``,
+                                  },
+                                  {
+                                    validator: async (rule, value) => {
+                                      if (
+                                        String(value).trim() === '' ||
+                                        String(value).trim() === undefined ||
+                                        value === null ||
+                                        value === undefined
+                                      ) {
+                                        throw new Error(`${t('validationReport:required')}`);
+                                      }
+                                    },
+                                  },
+                                ]}
+                              >
+                                <Input />
+                              </Form.Item>
+                            </Col>
+
+                            <Col xl={3}>
+                              <Form.Item
+                                name={[name, 'gridEmissionFactor']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: ``,
+                                  },
+                                  {
+                                    validator: async (rule, value) => {
+                                      if (
+                                        String(value).trim() === '' ||
+                                        String(value).trim() === undefined ||
+                                        value === null ||
+                                        value === undefined
+                                      ) {
+                                        throw new Error(`${t('validationReport:required')}`);
+                                      }
+                                    },
+                                  },
+                                ]}
+                              >
+                                <Input />
+                              </Form.Item>
+                            </Col>
+
+                            <Col xl={3}>
+                              <Form.Item
+                                name={[name, 'emissionReduction']}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: ``,
+                                  },
+                                  {
+                                    validator: async (rule, value) => {
+                                      if (
+                                        String(value).trim() === '' ||
+                                        String(value).trim() === undefined ||
+                                        value === null ||
+                                        value === undefined
+                                      ) {
+                                        throw new Error(`${t('validationReport:required')}`);
+                                      }
+                                    },
+                                  },
+                                ]}
+                              >
+                                <Input />
+                              </Form.Item>
+                            </Col>
+                            <Col xl={3} className="actions">
+                              <Form.Item>
+                                <Button
+                                  onClick={add}
+                                  size="small"
+                                  className="addMinusBtn"
+                                  icon={<PlusOutlined />}
+                                ></Button>
+                              </Form.Item>
+                              {name > 0 && (
+                                <Form.Item>
+                                  <Button
+                                    // type="dashed"
+                                    onClick={() => {
+                                      // removeParticipants(name2);
+                                      remove(name);
+                                    }}
+                                    size="small"
+                                    className="addMinusBtn"
+                                    // block
+                                    icon={<MinusOutlined />}
+                                    // disabled={disableFields}
+                                  >
+                                    {/* Minus Participant */}
+                                  </Button>
+                                </Form.Item>
+                              )}
+                            </Col>
+                          </>
+                        ))}
+                      </>
+                    )}
+                  </Form.List>
+                </Row>
+              </div>
+              {/* Baseline Emmission table end */}
+
+              <Form.Item
+                className="full-width-form-item"
+                label={`${t('validationReport:projectemission')}`}
+                name="projectemission"
+                rules={[
+                  {
+                    required: true,
+                    message: `${t('validationReport:projectemission')} ${t('isRequired')}`,
+                  },
+                ]}
+              >
+                <TextArea rows={4} />
+              </Form.Item>
+
+              <Form.Item
+                className="full-width-form-item"
+                label={`${t('validationReport:leakageEmission')}`}
+                name="leakageEmission"
+                rules={[
+                  {
+                    required: true,
+                    message: `${t('validationReport:leakageEmission')} ${t('isRequired')}`,
+                  },
+                ]}
+              >
+                <TextArea rows={4} />
+              </Form.Item>
+
+              {/* Estimated net emissions reduction start */}
+              <h4 className="form-section-heading">
+                {t('validationReport:estimatedNetEmissionReduction')}
+              </h4>
+              <NetEmissionReduction
+                form={form}
+                t={t}
+                projectCategory={null}
+                disableFields={false}
+              ></NetEmissionReduction>
+              {/* Estimated net emissions reduction end */}
 
               <Row justify={'end'} className="step-actions-end">
                 <Button danger size={'large'} onClick={prev}>
@@ -156,4 +411,4 @@ const ValidationConclusion = (props: ValidationStepsProps) => {
   );
 };
 
-export default ValidationConclusion;
+export default GHGProjectDescription;
