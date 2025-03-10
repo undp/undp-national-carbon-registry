@@ -12,6 +12,7 @@ import { DocumentEntity } from "../entities/document.entity";
 import { ProjectViewEntity } from "../view-entities/project.view.entity";
 import { ProjectDetailsViewEntity } from "../view-entities/projectDetails.view.entity";
 import { AuditLogsModule } from "../audit-logs/audit-logs.module";
+import { DocumentManagementModule } from "../document-management/document-management.module";
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AuditLogsModule } from "../audit-logs/audit-logs.module";
     EmailHelperModule,
     FileHandlerModule,
     AuditLogsModule,
+    DocumentManagementModule,
   ],
   providers: [ProjectManagementService],
   exports: [ProjectManagementService],

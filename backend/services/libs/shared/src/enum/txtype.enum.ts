@@ -32,4 +32,9 @@ export enum TxType {
   REJECT_VALIDATION = "30",
   ISSUE_SL = "31",
   CREATE_PROJECT = "32",
+  CREATE_PDD = "33",
+  REJECT_PDD_BY_IC = "34",
+  APPROVE_PDD_BY_IC = "35",
+  REJECT_PDD_BY_DNA = "36",
+  APPROVE_PDD_BY_DNA = "37",
 }
