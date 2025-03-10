@@ -10,4 +10,8 @@ export enum DocumentTypeEnum {
   SITE_VISIT_CHECKLIST = "siteVisitChecklist",
   CARBON_NEUTRAL_CERTIFICATE = "carbonNeutralCertificate",
   INITIAL_NOTIFICATION_FORM = "initialNotificationForm",
+  PROJECT_DESIGN_DOCUMENT = "PDD",
+  VALIDATION = "VALIDATION",
+  MONITORING = "MONITORING",
+  VERIFICATION = "VERIFICATION",
 }

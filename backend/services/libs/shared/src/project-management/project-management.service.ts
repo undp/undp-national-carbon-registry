@@ -31,6 +31,7 @@ import { AuditEntity } from "../entities/audit.entity";
 import { AuditLogsService } from "../audit-logs/audit-logs.service";
 import { EmailHelperService } from "../email-helper/email-helper.service";
 import { EmailTemplates } from "../email-helper/email.template";
+import { DocumentManagementService } from "../document-management/document-management.service";
 
 @Injectable()
 export class ProjectManagementService {
@@ -48,7 +49,8 @@ export class ProjectManagementService {
     @InjectRepository(ProjectDetailsViewEntity)
     private projectDetailsViewRepo: Repository<ProjectDetailsViewEntity>,
     private readonly auditLogService: AuditLogsService,
-    private readonly emailHelperService: EmailHelperService
+    private readonly emailHelperService: EmailHelperService,
+    private readonly documentManagementService: DocumentManagementService
   ) {}
 
   async create(projectCreateDto: ProjectCreateDto, user: User): Promise<any> {
@@ -122,10 +124,11 @@ export class ProjectManagementService {
     INFDoc.userId = user.id;
     INFDoc.type = DocumentTypeEnum.INITIAL_NOTIFICATION_FORM;
 
-    const lastVersion = await this.getLastDocumentVersion(
-      DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
-      project.refId
-    );
+    const lastVersion =
+      await this.documentManagementService.getLastDocumentVersion(
+        DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
+        project.refId
+      );
     INFDoc.version = lastVersion + 1;
     INFDoc.status = DocumentStatus.PENDING;
     INFDoc.createdTime = new Date().getTime();
@@ -202,7 +205,7 @@ export class ProjectManagementService {
       txType: TxType.APPROVE_INF,
       data: { noObjectionLetterUrl: noObjectionLetterUrl },
     };
-    const response = await this.updateProposalStage(
+    const response = await this.documentManagementService.updateProposalStage(
       updateProjectroposalStage,
       user
     );
@@ -265,7 +268,7 @@ export class ProjectManagementService {
       txType: TxType.REJECT_INF,
     };
 
-    const response = await this.updateProposalStage(
+    const response = await this.documentManagementService.updateProposalStage(
       updateProjectProposalStage,
       user
     );
@@ -283,45 +286,6 @@ export class ProjectManagementService {
     );
 
     return new DataResponseDto(HttpStatus.OK, response);
-  }
-
-  async updateProposalStage(
-    updateProposalStageDto: UpdateProjectProposalStageDto,
-    user: User
-  ): Promise<ProjectEntity> {
-    const refId = updateProposalStageDto.programmeId;
-    const txType = updateProposalStageDto.txType;
-    const data = updateProposalStageDto.data;
-
-    //updating proposal stage in programme
-    const updatedProject =
-      await this.programmeLedgerService.updateProjectProposalStage(
-        refId,
-        txType,
-        data
-      );
-
-    return updatedProject;
-  }
-  private async getLastDocumentVersion(
-    docType: DocumentTypeEnum,
-    programmeId: string
-  ): Promise<number> {
-    const documents = await this.documentRepo.find({
-      where: {
-        programmeId: programmeId,
-        type: docType,
-      },
-      order: {
-        version: "DESC",
-      },
-    });
-
-    if (documents.length > 0) {
-      return documents[0].version;
-    } else {
-      return 0;
-    }
   }
 
   private async uploadDocument(type: DocType, id: string, data: string) {
@@ -452,7 +416,7 @@ export class ProjectManagementService {
       resp.length > 1 ? resp[1] : undefined
     );
   }
-  
+
   async getProjectById(programmeId: string): Promise<any> {
     if (!programmeId)
       throw new HttpException(
