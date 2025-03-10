@@ -51,6 +51,13 @@ export class ProjectManagementController {
     return this.projectManagementService.query(query, req.abilityCondition);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Post("getProjectById")
+  async getProjectById(@Body("programmeId") programmeId: string) {
+    return this.projectManagementService.getProjectById(programmeId);
+  }
+
   // @ApiBearerAuth()
   // @UseGuards(JwtAuthGuard, PoliciesGuard)
   // @CheckPolicies((ability: AppAbility) =>
@@ -327,13 +334,6 @@ export class ProjectManagementController {
   // @Post("getDocumentById")
   // async getDocumentById(@Body("docId") docId: number, @Request() req) {
   //   return this.programmeService.getDocumentById(docId);
-  // }
-
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @Post("getProjectById")
-  // async getProjectById(@Body("programmeId") programmeId: string) {
-  //   return this.programmeService.getProjectById(programmeId);
   // }
 
   // @ApiBearerAuth()
