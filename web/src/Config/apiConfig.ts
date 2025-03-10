@@ -23,7 +23,7 @@ export const API_PATHS = {
   PROJECT_DOCS: 'national/programme/queryDocs',
   NEW_PROJECT: 'national/programme/create',
   PROJECT_DOWNLOAD: 'national/programme/download',
-  PROGRAMME_BY_ID: 'national/programmeSl/getProjectById', //Change this to project later
+  PROGRAMME_BY_ID: 'national/projectManagement/getProjectById', //Change this to project later
   PROJECT_HISTORY_BY_ID: (programmeId: string) =>
     `national/programme/getHistory?programmeId=${programmeId}`,
   PROJECT_BY_STATUS: 'stats/programme/queryProgrammesByStatus',

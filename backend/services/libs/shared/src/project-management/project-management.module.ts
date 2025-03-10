@@ -10,13 +10,18 @@ import { EmailHelperModule } from "../email-helper/email-helper.module";
 import { FileHandlerModule } from "../file-handler/filehandler.module";
 import { DocumentEntity } from "../entities/document.entity";
 import { ProjectViewEntity } from "../view-entities/project.view.entity";
+import { ProjectDetailsViewEntity } from "../view-entities/projectDetails.view.entity";
 import { AuditLogsModule } from "../audit-logs/audit-logs.module";
 
 @Module({
   imports: [
     ProgrammeLedgerModule,
     CaslModule,
-    TypeOrmModule.forFeature([DocumentEntity, ProjectViewEntity]),
+    TypeOrmModule.forFeature([
+      DocumentEntity,
+      ProjectViewEntity,
+      ProjectDetailsViewEntity,
+    ]),
     UtilModule,
     CompanyModule,
     UserModule,

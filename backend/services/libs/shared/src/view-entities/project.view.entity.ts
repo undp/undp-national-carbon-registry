@@ -4,6 +4,7 @@ import { ViewColumn, ViewEntity } from "typeorm";
   expression: `
     SELECT 
       p."refId" as "projectId", 
+      p."refId",
       p."title", 
       p."projectProposalStage", 
       p."createTime" as "createdTime",
@@ -21,6 +22,9 @@ import { ViewColumn, ViewEntity } from "typeorm";
 export class ProjectViewEntity {
   @ViewColumn()
   projectId: string;
+
+  @ViewColumn()
+  refId: string;
 
   @ViewColumn()
   title: string;
