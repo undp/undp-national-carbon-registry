@@ -5,6 +5,7 @@ import { CheckPolicies } from "@app/shared/casl/policy.decorator";
 import { PoliciesGuard } from "@app/shared/casl/policy.guard";
 import { ProjectCreateDto } from "@app/shared/dto/project.create.dto";
 import { QueryDto } from "@app/shared/dto/query.dto";
+import { ValidationReportDto } from "@app/shared/dto/validationReport.dto";
 import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
 import { ProjectManagementService } from "@app/shared/project-management/project-management.service";
 import {
@@ -199,21 +200,20 @@ export class ProjectManagementController {
   //   return this.programmeService.rejectCMA(programmeId, remark, req.user);
   // }
 
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Action.Update, ProgrammeSl)
-  // )
-  // @Post("validation/create")
-  // async createValidationReport(
-  //   @Body() validationReportDto: ValidationReportDto,
-  //   @Request() req
-  // ) {
-  //   return this.programmeService.createValidationReport(
-  //     validationReportDto,
-  //     req.user
-  //   );
-  // }
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Update, ProgrammeSl)
+  )
+  @Post("validation/create")
+  async createValidationReport(
+    @Body() validationReportDto: ValidationReportDto,
+    @Request() req
+  ) {
+    return this.projectManagementService.createValidationReport(
+      validationReportDto,
+      req.user
+    );
+  }
 
   // @ApiBearerAuth()
   // @UseGuards(JwtAuthGuard, PoliciesGuard)
