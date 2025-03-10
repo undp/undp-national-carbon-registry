@@ -11,6 +11,7 @@ import { FileHandlerModule } from "../file-handler/filehandler.module";
 import { DocumentEntity } from "../entities/document.entity";
 import { ProjectViewEntity } from "../view-entities/project.view.entity";
 import { ProjectDetailsViewEntity } from "../view-entities/projectDetails.view.entity";
+import { AuditLogsModule } from "../audit-logs/audit-logs.module";
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ProjectDetailsViewEntity } from "../view-entities/projectDetails.view.e
     UserModule,
     EmailHelperModule,
     FileHandlerModule,
+    AuditLogsModule,
   ],
   providers: [ProjectManagementService],
   exports: [ProjectManagementService],
