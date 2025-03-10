@@ -15,6 +15,8 @@ import {
   Request,
   HttpException,
   HttpStatus,
+  Get,
+  Query,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { plainToInstance } from "class-transformer";
@@ -45,35 +47,43 @@ export class ProjectManagementController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Update, ProgrammeSl)
+  )
+  @Post("inf/approve")
+  async approveINF(@Body("refId") refId: string, @Request() req) {
+    return this.projectManagementService.approveINF(refId, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Update, ProgrammeSl)
+  )
+  @Post("inf/reject")
+  async rejectINF(
+    @Body("refId") refId: string,
+    @Body("remark") remark: string,
+    @Request() req
+  ) {
+    return this.projectManagementService.rejectINF(refId, remark, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
   @Post("query")
   async getAll(@Body() query: QueryDto, @Request() req) {
     return this.projectManagementService.query(query, req.abilityCondition);
   }
 
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Action.Update, ProgrammeSl)
-  // )
-  // @Post("inf/approve")
-  // async approveINF(@Body("programmeId") programmeId: string, @Request() req) {
-  //   return this.programmeService.approveINF(programmeId, req.user);
-  // }
-
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Action.Update, ProgrammeSl)
-  // )
-  // @Post("inf/reject")
-  // async rejectINF(
-  //   @Body("programmeId") programmeId: string,
-  //   @Body("remark") remark: string,
-  //   @Request() req
-  // ) {
-  //   return this.programmeService.rejectINF(programmeId, remark, req.user);
-  // }
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
+  @Get("logs")
+  getLogs(@Query("refId") refId: string, @Request() req) {
+    return this.projectManagementService.getLogs(refId);
+  }
 
   // @ApiBearerAuth()
   // @UseGuards(JwtAuthGuard, PoliciesGuard)

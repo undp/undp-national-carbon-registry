@@ -34,6 +34,7 @@ import { DateUtilService } from "./dateUtil.service";
 import { CreditIssueCertificateGenerator } from "./document-generators/creditIssueCertificate.gen";
 import { CarbonNeutralCertificateGenerator } from "./document-generators/carbonNeutralCertificate.gen";
 import { CoreModule } from "@app/core";
+import { NoObjectionLetterGenerateService } from "./document-generators/no.objection.letter.gen";
 
 @Module({
   imports: [
@@ -82,6 +83,7 @@ import { CoreModule } from "@app/core";
     CreditIssueCertificateGenerator,
     CarbonNeutralCertificateGenerator,
     DateUtilService,
+    NoObjectionLetterGenerateService,
   ],
   exports: [
     CounterService,
@@ -105,6 +107,7 @@ import { CoreModule } from "@app/core";
     CreditIssueCertificateGenerator,
     CarbonNeutralCertificateGenerator,
     DateUtilService,
+    NoObjectionLetterGenerateService,
   ],
 })
 export class UtilModule {}
