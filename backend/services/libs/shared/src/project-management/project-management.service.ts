@@ -22,6 +22,9 @@ import { DocumentStatus } from "../enum/document.status";
 import { QueryDto } from "../dto/query.dto";
 import { DataListResponseDto } from "../dto/data.list.response";
 import { ProjectViewEntity } from "../view-entities/project.view.entity";
+import { ProgrammeSl } from "../entities/programmeSl.entity";
+import { Company } from "../entities/company.entity";
+import { ProjectDetailsViewEntity } from "../view-entities/projectDetails.view.entity";
 
 @Injectable()
 export class ProjectManagementService {
@@ -34,7 +37,9 @@ export class ProjectManagementService {
     @InjectRepository(DocumentEntity)
     private documentRepo: Repository<DocumentEntity>,
     @InjectRepository(ProjectViewEntity)
-    private projectViewRepo: Repository<ProjectViewEntity>
+    private projectViewRepo: Repository<ProjectViewEntity>,
+    @InjectRepository(ProjectDetailsViewEntity)
+    private projectDetailsViewRepo: Repository<ProjectDetailsViewEntity>
   ) {}
 
   async create(projectCreateDto: ProjectCreateDto, user: User): Promise<any> {
@@ -187,6 +192,128 @@ export class ProjectManagementService {
     );
   }
 
+  async getProjectById(programmeId: string): Promise<any> {
+    if (!programmeId)
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "Project ID is required",
+          []
+        ),
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+
+    const project = await this.projectDetailsViewRepo
+      .createQueryBuilder("project")
+      .where("project.projectId = :programmeId", { programmeId })
+      .getOne();
+
+    if (!project)
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("Project not found", []),
+        HttpStatus.NOT_FOUND
+      );
+
+    let parsedContent = null;
+    if (project.content) {
+      try {
+        parsedContent = JSON.parse(project.content);
+      } catch (error) {
+        console.error("Error parsing content JSON:", error);
+      }
+    }
+
+    const certifiers = await this.companyService.findByCompanyIds({
+      companyIds: project.certifierId,
+    });
+
+    const certifiersInfo = certifiers?.map(
+      ({ companyId, name, logo, companyRole }) => ({
+        companyId,
+        name,
+        logo,
+        companyRole,
+      })
+    );
+
+    const staticValues = {
+      externalId: "EXT-CARB-45678",
+      serialNo: "SL-CARB",
+      countryCodeA2: "LK",
+      projectCategory: "RENEWABLE_ENERGY",
+      purposeOfCreditDevelopment: "Carbon sequestration",
+      endTime: 1862601600000,
+      creditChange: 5000,
+      creditIssued: 5000,
+      creditEst: 25000,
+      creditFrozen: 1000,
+      creditTransferred: 10000,
+      constantVersion: "1.2.0",
+      creditUnit: "tCO2e",
+      txTime: 1709251200000,
+      txRef: "TX-20240301-56789",
+      typeOfMitigation: "REMOVAL",
+      projectLocation: { latitude: 7.2906, longitude: 80.6337 },
+      mitigationActions: [
+        "Reforestation of degraded lands",
+        "Sustainable forest management practices",
+        "Community-based conservation",
+      ],
+      environmentalAssessmentRegistrationNo: "ENV-2023-LK-789",
+      article6trade: true,
+      registrationCertificateUrl:
+        "https://registry.example.com/certificates/PRG-2024-00123.pdf",
+      dsDivision: "Ambagamuwa",
+      community: "Local indigenous communities",
+      projectDescription: "This project aims to restore degraded land.",
+      additionalDocuments: [],
+      emissionReductionExpected: 25000,
+      emissionReductionAchieved: 5000,
+      documents: {
+        projectDesign:
+          "https://registry.example.com/documents/PRG-2024-00123/design.pdf",
+        validationReport:
+          "https://registry.example.com/documents/PRG-2024-00123/validation.pdf",
+        monitoringReport:
+          "https://registry.example.com/documents/PRG-2024-00123/monitoring.pdf",
+      },
+    };
+
+    const programmeProperties = {
+      estimatedProgrammeCostUSD: parsedContent.estimatedProjectCost,
+      programmeCostUSD: 4000000,
+      maxInternationalTransferAmount: "1000000",
+      creditingPeriodInYears: 10,
+      sourceOfFunding: ["Government"],
+      grantEquivalentAmount: 2000000,
+      carbonPriceUSDPerTon: 25,
+      buyerCountryEligibility: "All",
+      geographicalLocation: ["USA", "Canada"],
+      greenHouseGasses: ["CO2", "CH4"],
+      creditYear: 2025,
+      programmeMaterials: [],
+      projectMaterial: [],
+    };
+
+    const { content, ...projectWithoutContent } = project;
+
+    const projectDetails = {
+      ...projectWithoutContent,
+      ...parsedContent,
+      ...staticValues,
+      programmeProperties,
+      company: {
+        companyId: project.companyId,
+        name: project.name,
+        logo: project.logo,
+        companyRole: project.companyRole,
+        state: project.state,
+      },
+      certifier: certifiersInfo,
+    };
+
+    return projectDetails;
+  }
+
   private async getLastDocumentVersion(
     docType: DocumentTypeEnum,
     programmeId: string
@@ -207,7 +334,7 @@ export class ProjectManagementService {
       return 0;
     }
   }
-
+  
   private async uploadDocument(type: DocType, id: string, data: string) {
     let filetype;
     try {
