@@ -200,20 +200,20 @@ export class ProjectManagementController {
   //   return this.programmeService.rejectCMA(programmeId, remark, req.user);
   // }
 
-  // @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Action.Update, ProgrammeSl)
-  // )
-  // @Post("validation/create")
-  // async createValidationReport(
-  //   @Body() validationReportDto: ValidationReportDto,
-  //   @Request() req
-  // ) {
-  //   return this.projectManagementService.createValidationReport(
-  //     validationReportDto,
-  //     req.user
-  //   );
-  // }
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Update, ProgrammeSl)
+  )
+  @Post("validation/create")
+  async createValidationReport(
+    @Body() validationReportDto: ValidationReportDto,
+    @Request() req
+  ) {
+    return this.projectManagementService.createValidationReport(
+      validationReportDto,
+      req.user
+    );
+  }
 
   // @ApiBearerAuth()
   // @UseGuards(JwtAuthGuard, PoliciesGuard)
