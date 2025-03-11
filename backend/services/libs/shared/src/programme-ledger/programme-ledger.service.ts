@@ -284,6 +284,7 @@ export class ProgrammeLedgerService {
   public async updateProjectProposalStage(
     refId: string,
     txType: TxType,
+    txRef?: string,
     data?: any
   ): Promise<ProjectEntity> {
     const getQueries = {};
@@ -324,6 +325,7 @@ export class ProgrammeLedgerService {
         let uPayload = {
           txTime: project.txTime,
           txType: project.txType,
+          txRef: txRef,
           updateTime: project.txTime,
         };
         let expectedCurrentProposalStages = [project.projectProposalStage];
@@ -345,6 +347,34 @@ export class ProgrammeLedgerService {
               ProjectProposalStage.APPROVED,
               ProjectProposalStage.PDD_REJECTED_BY_CERTIFIER,
               ProjectProposalStage.PDD_REJECTED_BY_DNA,
+            ];
+            break;
+          case TxType.APPROVE_PDD_BY_IC:
+            uPayload["projectProposalStage"] =
+              ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER;
+            expectedCurrentProposalStages = [
+              ProjectProposalStage.PDD_SUBMITTED,
+            ];
+            break;
+          case TxType.REJECT_PDD_BY_IC:
+            uPayload["projectProposalStage"] =
+              ProjectProposalStage.PDD_REJECTED_BY_CERTIFIER;
+            expectedCurrentProposalStages = [
+              ProjectProposalStage.PDD_SUBMITTED,
+            ];
+            break;
+          case TxType.APPROVE_PDD_BY_DNA:
+            uPayload["projectProposalStage"] =
+              ProjectProposalStage.PDD_APPROVED_BY_DNA;
+            expectedCurrentProposalStages = [
+              ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER,
+            ];
+            break;
+          case TxType.REJECT_PDD_BY_DNA:
+            uPayload["projectProposalStage"] =
+              ProjectProposalStage.PDD_REJECTED_BY_DNA;
+            expectedCurrentProposalStages = [
+              ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER,
             ];
             break;
           default:

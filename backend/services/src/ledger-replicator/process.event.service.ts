@@ -12,6 +12,8 @@ import { AsyncActionType } from "@app/shared/enum/async.action.type.enum";
 import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
 import { OrganisationCreditAccounts } from "@app/shared/enum/organisation.credit.accounts.enum";
 import { ProjectEntity } from "@app/shared/entities/projects.entity";
+import { DocumentEntity } from "@app/shared/entities/document.entity";
+import { DocumentManagementService } from "@app/shared/document-management/document-management.service";
 
 @Injectable()
 export class ProcessEventService {
@@ -25,7 +27,8 @@ export class ProcessEventService {
     private projectRepo: Repository<ProjectEntity>,
     private asyncOperationsInterface: AsyncOperationsInterface,
     private locationService: LocationInterface,
-    @InjectEntityManager() private entityManager: EntityManager
+    @InjectEntityManager() private entityManager: EntityManager,
+    private readonly documentManagementService: DocumentManagementService
   ) {}
 
   async process(
@@ -362,6 +365,14 @@ export class ProcessEventService {
               .where("companyId = :id", { id: project.companyId })
               .execute();
           }
+          //here we can update document status in a single transaction
+          await this.documentManagementService.updateDocumentEntity(
+            project.refId,
+            project.txType,
+            project.txTime,
+            project.txRef,
+            em
+          );
         });
       } else {
         this.logger.error(
