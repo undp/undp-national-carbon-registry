@@ -366,7 +366,7 @@ export class ProcessEventService {
               .execute();
           }
           //here we can update document status in a single transaction
-          await this.documentManagementService.updateDocumentEntity(
+          await this.documentManagementService.modifyDocumentEntity(
             project.refId,
             project.txType,
             project.txTime,
