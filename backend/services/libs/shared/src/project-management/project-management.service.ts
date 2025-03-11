@@ -31,6 +31,7 @@ import { AuditEntity } from "../entities/audit.entity";
 import { AuditLogsService } from "../audit-logs/audit-logs.service";
 import { EmailHelperService } from "../email-helper/email-helper.service";
 import { EmailTemplates } from "../email-helper/email.template";
+import { DocumentManagementService } from "../document-management/document-management.service";
 
 @Injectable()
 export class ProjectManagementService {
@@ -47,179 +48,198 @@ export class ProjectManagementService {
     private projectViewRepo: Repository<ProjectViewEntity>,
     @InjectRepository(ProjectDetailsViewEntity)
     private projectDetailsViewRepo: Repository<ProjectDetailsViewEntity>,
-    private readonly auditLogService: AuditLogsService,
-    private readonly emailHelperService: EmailHelperService
+    private readonly emailHelperService: EmailHelperService,
+    private readonly documentManagementService: DocumentManagementService,
+    private readonly auditLogService: AuditLogsService
   ) {}
 
   async create(projectCreateDto: ProjectCreateDto, user: User): Promise<any> {
-    if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "project.notProjectParticipant",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
-    const companyId = user.companyId;
-    const projectCompany = await this.companyService.findByCompanyId(companyId);
-    if (!projectCompany) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "project.noCompanyExistingInSystem",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
-    for (const certifierId of projectCreateDto.independentCertifiers) {
-      const ICCompany = await this.companyService.findByCompanyId(certifierId);
-      if (
-        !ICCompany ||
-        ICCompany.companyRole != CompanyRole.INDEPENDENT_CERTIFIER
-      ) {
+    try {
+      if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.noICExistingInSystem",
+            "project.notProjectParticipant",
             []
           ),
           HttpStatus.BAD_REQUEST
         );
       }
-    }
 
-    const project = plainToClass(ProjectEntity, projectCreateDto);
-    project.refId = await this.counterService.incrementCount(
-      CounterType.PROJECT,
-      4
-    );
-    project.projectProposalStage = ProjectProposalStage.PENDING;
-    project.companyId = companyId;
-    project.txType = TxType.CREATE_PROJECT;
-    project.txTime = new Date().getTime();
-    project.createTime = project.txTime;
-    project.updateTime = project.txTime;
-
-    const docUrls = [];
-    if (projectCreateDto.additionalDocuments?.length > 0) {
-      projectCreateDto.additionalDocuments.forEach(async (doc) => {
-        const docUrl = await this.uploadDocument(
-          DocType.INF_ADDITIONAL_DOCUMENT,
-          project.refId,
-          doc
+      const companyId = user.companyId;
+      const projectCompany = await this.companyService.findByCompanyId(
+        companyId
+      );
+      if (!projectCompany) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.noCompanyExistingInSystem",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
         );
-        docUrls.push(docUrl);
-      });
-    }
-    projectCreateDto.additionalDocuments = docUrls;
+      }
 
-    const INFDoc = new DocumentEntity();
-    INFDoc.content = JSON.stringify(projectCreateDto);
-    INFDoc.programmeId = project.refId;
-    INFDoc.companyId = companyId;
-    INFDoc.userId = user.id;
-    INFDoc.type = DocumentTypeEnum.INITIAL_NOTIFICATION_FORM;
+      for (const certifierId of projectCreateDto.independentCertifiers) {
+        const ICCompany = await this.companyService.findByCompanyId(
+          certifierId
+        );
+        if (
+          !ICCompany ||
+          ICCompany.companyRole != CompanyRole.INDEPENDENT_CERTIFIER
+        ) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.noICExistingInSystem",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+      }
 
-    const lastVersion = await this.getLastDocumentVersion(
-      DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
-      project.refId
-    );
-    INFDoc.version = lastVersion + 1;
-    INFDoc.status = DocumentStatus.PENDING;
-    INFDoc.createdTime = new Date().getTime();
-    INFDoc.updatedTime = INFDoc.createdTime;
-
-    await this.documentRepo.insert(INFDoc);
-
-    let savedProgramme = await this.programmeLedgerService.createProject(
-      project
-    );
-
-    await this.emailHelperService.sendEmailToDNAAdmins(
-      EmailTemplates.INF_CREATE,
-      null,
-      project.refId
-    );
-    await this.emailHelperService.sendEmailToICAdmins(
-      EmailTemplates.INF_ASSIGN,
-      null,
-      project.refId
-    );
-
-    await this.logProjectStage(
-      project.refId,
-      ProjectAuditLogType.PENDING,
-      user.id
-    );
-    return new DataResponseDto(HttpStatus.OK, savedProgramme);
-  }
-
-  async approveINF(refId: string, user: User): Promise<DataResponseDto> {
-    if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString("project.notAuthorised", []),
-        HttpStatus.UNAUTHORIZED
+      const project = plainToClass(ProjectEntity, projectCreateDto);
+      project.refId = await this.counterService.incrementCount(
+        CounterType.PROJECT,
+        4
       );
-    }
+      project.projectProposalStage = ProjectProposalStage.PENDING;
+      project.companyId = companyId;
+      project.txType = TxType.CREATE_PROJECT;
+      project.txTime = new Date().getTime();
+      project.createTime = project.txTime;
+      project.updateTime = project.txTime;
 
-    const project = await this.programmeLedgerService.getProjectById(refId);
+      const docUrls = [];
+      if (projectCreateDto.additionalDocuments?.length > 0) {
+        projectCreateDto.additionalDocuments.forEach(async (doc) => {
+          const docUrl = await this.uploadDocument(
+            DocType.INF_ADDITIONAL_DOCUMENT,
+            project.refId,
+            doc
+          );
+          docUrls.push(docUrl);
+        });
+      }
+      projectCreateDto.additionalDocuments = docUrls;
 
-    const companyId = project.companyId;
+      const INFDoc = new DocumentEntity();
+      INFDoc.content = JSON.stringify(projectCreateDto);
+      INFDoc.programmeId = project.refId;
+      INFDoc.companyId = companyId;
+      INFDoc.userId = user.id;
+      INFDoc.type = DocumentTypeEnum.INITIAL_NOTIFICATION_FORM;
 
-    const projectCompany = await this.companyService.findByCompanyId(companyId);
+      const lastVersion =
+        await this.documentManagementService.getLastDocumentVersion(
+          DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
+          project.refId
+        );
+      INFDoc.version = lastVersion + 1;
+      INFDoc.status = DocumentStatus.PENDING;
+      INFDoc.createdTime = new Date().getTime();
+      INFDoc.updatedTime = INFDoc.createdTime;
 
-    if (!projectCompany) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "project.noCompanyExistingInSystem",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
+      await this.documentRepo.insert(INFDoc);
+
+      let savedProgramme = await this.programmeLedgerService.createProject(
+        project
       );
-    }
 
-    if (project?.projectProposalStage !== ProjectProposalStage.PENDING) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "project.programmeIsNotInSuitableStageToProceed",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
+      await this.emailHelperService.sendEmailToDNAAdmins(
+        EmailTemplates.INF_CREATE,
+        null,
+        project.refId
       );
-    }
-
-    const noObjectionLetterUrl =
-      await this.noObjectionLetterGenerateService.generateReport(
-        projectCompany.name,
-        project.title,
+      await this.emailHelperService.sendEmailToICAdmins(
+        EmailTemplates.INF_ASSIGN,
+        null,
         project.refId
       );
 
-    const updateProjectroposalStage: UpdateProjectProposalStageDto = {
-      programmeId: refId,
-      txType: TxType.APPROVE_INF,
-      data: { noObjectionLetterUrl: noObjectionLetterUrl },
-    };
-    const response = await this.updateProposalStage(
-      updateProjectroposalStage,
-      user
-    );
+      await this.documentManagementService.logProjectStage(
+        project.refId,
+        ProjectAuditLogType.PENDING,
+        user.id
+      );
+      return new DataResponseDto(HttpStatus.OK, savedProgramme);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 
-    await this.emailHelperService.sendEmailToPDAdmins(
-      EmailTemplates.INF_APPROVE,
-      null,
-      project.refId
-    );
+  async approveINF(refId: string, user: User): Promise<DataResponseDto> {
+    try {
+      if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.notAuthorised",
+            []
+          ),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
 
-    await this.logProjectStage(
-      project.refId,
-      ProjectAuditLogType.APPROVED,
-      user.id
-    );
+      const project = await this.programmeLedgerService.getProjectById(refId);
 
-    return new DataResponseDto(HttpStatus.OK, response);
+      const companyId = project.companyId;
+
+      const projectCompany = await this.companyService.findByCompanyId(
+        companyId
+      );
+
+      if (!projectCompany) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.noCompanyExistingInSystem",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      if (project?.projectProposalStage !== ProjectProposalStage.PENDING) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.programmeIsNotInSuitableStageToProceed",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      const noObjectionLetterUrl =
+        await this.noObjectionLetterGenerateService.generateReport(
+          projectCompany.name,
+          project.title,
+          project.refId
+        );
+
+      const updateProjectroposalStage: UpdateProjectProposalStageDto = {
+        programmeId: refId,
+        txType: TxType.APPROVE_INF,
+        data: { noObjectionLetterUrl: noObjectionLetterUrl },
+      };
+      const response = await this.documentManagementService.updateProposalStage(
+        updateProjectroposalStage,
+        user
+      );
+
+      await this.emailHelperService.sendEmailToPDAdmins(
+        EmailTemplates.INF_APPROVE,
+        null,
+        project.refId
+      );
+
+      await this.documentManagementService.logProjectStage(
+        project.refId,
+        ProjectAuditLogType.APPROVED,
+        user.id
+      );
+
+      return new DataResponseDto(HttpStatus.OK, response);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   async rejectINF(
@@ -227,100 +247,70 @@ export class ProjectManagementService {
     remark: string,
     user: User
   ): Promise<DataResponseDto> {
-    if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString("project.notAuthorised", []),
-        HttpStatus.UNAUTHORIZED
-      );
-    }
+    try {
+      if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.notAuthorised",
+            []
+          ),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
 
-    const project = await this.programmeLedgerService.getProjectById(refId);
+      const project = await this.programmeLedgerService.getProjectById(refId);
 
-    const companyId = project.companyId;
+      const companyId = project.companyId;
 
-    const projectCompany = await this.companyService.findByCompanyId(companyId);
-
-    if (!projectCompany) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "project.noCompanyExistingInSystem",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
-    if (project?.projectProposalStage !== ProjectProposalStage.PENDING) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "project.programmeIsNotInSuitableStageToProceed",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
-    const updateProjectProposalStage = {
-      programmeId: refId,
-      txType: TxType.REJECT_INF,
-    };
-
-    const response = await this.updateProposalStage(
-      updateProjectProposalStage,
-      user
-    );
-
-    await this.emailHelperService.sendEmailToPDAdmins(
-      EmailTemplates.INF_REJECT,
-      null,
-      project.refId
-    );
-
-    await this.logProjectStage(
-      project.refId,
-      ProjectAuditLogType.REJECTED,
-      user.id
-    );
-
-    return new DataResponseDto(HttpStatus.OK, response);
-  }
-
-  async updateProposalStage(
-    updateProposalStageDto: UpdateProjectProposalStageDto,
-    user: User
-  ): Promise<ProjectEntity> {
-    const refId = updateProposalStageDto.programmeId;
-    const txType = updateProposalStageDto.txType;
-    const data = updateProposalStageDto.data;
-
-    //updating proposal stage in programme
-    const updatedProject =
-      await this.programmeLedgerService.updateProjectProposalStage(
-        refId,
-        txType,
-        data
+      const projectCompany = await this.companyService.findByCompanyId(
+        companyId
       );
 
-    return updatedProject;
-  }
-  private async getLastDocumentVersion(
-    docType: DocumentTypeEnum,
-    programmeId: string
-  ): Promise<number> {
-    const documents = await this.documentRepo.find({
-      where: {
-        programmeId: programmeId,
-        type: docType,
-      },
-      order: {
-        version: "DESC",
-      },
-    });
+      if (!projectCompany) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.noCompanyExistingInSystem",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
 
-    if (documents.length > 0) {
-      return documents[0].version;
-    } else {
-      return 0;
+      if (project?.projectProposalStage !== ProjectProposalStage.PENDING) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.programmeIsNotInSuitableStageToProceed",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      const updateProjectProposalStage = {
+        programmeId: refId,
+        txType: TxType.REJECT_INF,
+      };
+
+      const response = await this.documentManagementService.updateProposalStage(
+        updateProjectProposalStage,
+        user
+      );
+
+      await this.emailHelperService.sendEmailToPDAdmins(
+        EmailTemplates.INF_REJECT,
+        null,
+        project.refId
+      );
+
+      await this.documentManagementService.logProjectStage(
+        project.refId,
+        ProjectAuditLogType.REJECTED,
+        user.id
+      );
+
+      return new DataResponseDto(HttpStatus.OK, response);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -386,19 +376,6 @@ export class ProjectManagementService {
     ["jpeg", "jpg"],
   ]);
 
-  private async logProjectStage(
-    refId: string,
-    type: ProjectAuditLogType,
-    userId: number
-  ): Promise<void> {
-    const log = new AuditEntity();
-    log.refId = refId;
-    log.logType = type;
-    log.userId = userId;
-
-    await this.auditLogService.save(log);
-  }
-
   async getLogs(refId: string) {
     return await this.auditLogService.getLogs(refId);
   }
@@ -452,7 +429,7 @@ export class ProjectManagementService {
       resp.length > 1 ? resp[1] : undefined
     );
   }
-  
+
   async getProjectById(programmeId: string): Promise<any> {
     if (!programmeId)
       throw new HttpException(

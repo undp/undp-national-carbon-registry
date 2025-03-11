@@ -442,7 +442,7 @@ export class EmailHelperService {
 
   public async sendEmailToDNAAdmins(
     template: EmailTemplateDto,
-    templateData: object,
+    templateData: any,
     refId: string
   ) {
     if (this.isEmailDisabled) return;
@@ -468,6 +468,16 @@ export class EmailHelperService {
     switch (template.id) {
       case "INF_CREATE":
         templateData = {
+          organisationName: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "PDD_APPROVAL_IC_TO_DNA":
+        templateData = {
+          icOrganisationName: templateData.icOrganisationName, //TODO
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
@@ -540,6 +550,15 @@ export class EmailHelperService {
             hostAddress + `/programmeManagementSLCF/view/${refId}`,
         };
         break;
+      case "PDD_CREATE":
+        templateData = {
+          organisationName: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
     }
 
     const users: any[] = [];
@@ -579,7 +598,7 @@ export class EmailHelperService {
 
   public async sendEmailToPDAdmins(
     template: EmailTemplateDto,
-    templateData: object,
+    templateData: any,
     refId: string
   ) {
     if (this.isEmailDisabled) return;
@@ -614,6 +633,26 @@ export class EmailHelperService {
         break;
       case "INF_REJECT":
         templateData = {
+          organisationName: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "PDD_APPROVAL_IC_TO_PD":
+        templateData = {
+          icOrganisationName: templateData.icOrganisationName, //TODO
+          organisationName: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "PDD_IC_REJECT":
+        templateData = {
+          icOrganisationName: templateData.icOrganisationName, //TODO
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
