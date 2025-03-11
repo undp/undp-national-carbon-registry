@@ -12,6 +12,12 @@ import { UpdateProjectProposalStageDto } from "../dto/updateProjectProposalStage
 import { ProjectEntity } from "../entities/projects.entity";
 import { TxType } from "../enum/txtype.enum";
 import { DocumentStatus } from "../enum/document.status";
+import { EmailTemplates } from "../email-helper/email.template";
+import { EmailHelperService } from "../email-helper/email-helper.service";
+import { ProjectAuditLogType } from "../enum/project.audit.log.type.enum";
+import { AuditEntity } from "../entities/audit.entity";
+import { AuditLogsService } from "../audit-logs/audit-logs.service";
+import { DocumentActionRequestDto } from "../dto/document.action.request.dto";
 
 @Injectable()
 export class DocumentManagementService {
@@ -19,65 +25,92 @@ export class DocumentManagementService {
     @InjectRepository(DocumentEntity)
     private readonly documentRepository: Repository<DocumentEntity>,
     private readonly programmeLedgerService: ProgrammeLedgerService,
-    private readonly helperService: HelperService
+    private readonly helperService: HelperService,
+    private readonly emailHelperService: EmailHelperService,
+    private readonly auditLogService: AuditLogsService
   ) {}
   async addDocument(addDocumentDto: BaseDocumentDto, user: User) {
-    const project = await this.programmeLedgerService.getProjectById(
-      addDocumentDto.projectRefId
-    );
-    const newDoc = new DocumentEntity();
-    newDoc.content = JSON.stringify(addDocumentDto.data);
-    newDoc.programmeId = project.refId;
-    newDoc.companyId = project.companyId;
-    newDoc.userId = user.id;
-    newDoc.type = addDocumentDto.documentType;
-    const lastVersion = await this.getLastDocumentVersion(
-      addDocumentDto.documentType,
-      project.refId
-    );
-    newDoc.version = lastVersion + 1;
-    newDoc.status = DocumentStatus.PENDING;
-    newDoc.createdTime = new Date().getTime();
-    newDoc.updatedTime = newDoc.createdTime;
+    try {
+      const project = await this.programmeLedgerService.getProjectById(
+        addDocumentDto.projectRefId
+      );
+      const newDoc = new DocumentEntity();
+      newDoc.content = JSON.stringify(addDocumentDto.data);
+      newDoc.programmeId = project.refId;
+      newDoc.companyId = project.companyId;
+      newDoc.userId = user.id;
+      newDoc.type = addDocumentDto.documentType;
+      const lastVersion = await this.getLastDocumentVersion(
+        addDocumentDto.documentType,
+        project.refId
+      );
+      newDoc.version = lastVersion + 1;
+      newDoc.status = DocumentStatus.PENDING;
+      newDoc.createdTime = new Date().getTime();
+      newDoc.updatedTime = newDoc.createdTime;
 
-    let updateProjectProposalStage: UpdateProjectProposalStageDto;
-    switch (addDocumentDto.documentType) {
-      case DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT:
-        if (user.companyId != project.companyId) {
-          throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              "project.notAuthorised",
-              []
-            ),
-            HttpStatus.UNAUTHORIZED
+      let updateProjectProposalStage: UpdateProjectProposalStageDto;
+      switch (addDocumentDto.documentType) {
+        case DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT:
+          if (user.companyId != project.companyId) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.notAuthorised",
+                []
+              ),
+              HttpStatus.UNAUTHORIZED
+            );
+          }
+          if (
+            ![
+              ProjectProposalStage.APPROVED,
+              ProjectProposalStage.PDD_REJECTED_BY_CERTIFIER,
+              ProjectProposalStage.PDD_REJECTED_BY_DNA,
+            ].includes(project.projectProposalStage)
+          ) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.programmeIsNotInSuitableStageToProceed",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          updateProjectProposalStage = {
+            programmeId: addDocumentDto.projectRefId,
+            txType: TxType.CREATE_PDD,
+          };
+          await this.documentRepository.insert(newDoc); //not a good method to handle this, ledger table can be used to gerantee the consistency
+          const response = await this.updateProposalStage(
+            updateProjectProposalStage,
+            user
           );
-        }
-        if (
-          ![
-            ProjectProposalStage.APPROVED,
-            ProjectProposalStage.PDD_REJECTED_BY_CERTIFIER,
-            ProjectProposalStage.PDD_REJECTED_BY_DNA,
-          ].includes(project.projectProposalStage)
-        ) {
-          throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              "project.programmeIsNotInSuitableStageToProceed",
-              []
-            ),
-            HttpStatus.BAD_REQUEST
+          await this.logProjectStage(
+            project.refId,
+            ProjectAuditLogType.PDD_SUBMITTED,
+            user.id
           );
-        }
-        updateProjectProposalStage = {
-          programmeId: addDocumentDto.projectRefId,
-          txType: TxType.CREATE_PDD,
-        };
-        break;
+          await this.emailHelperService.sendEmailToICAdmins(
+            EmailTemplates.PDD_CREATE,
+            null,
+            project.refId
+          );
+          break;
+      }
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-    await this.documentRepository.insert(newDoc);
-    const response = await this.updateProposalStage(
-      updateProjectProposalStage,
-      user
-    );
+  }
+
+  async approve(
+    refId: string,
+    requestData: DocumentActionRequestDto,
+    user: User
+  ) {
+    try {
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   public async getLastDocumentVersion(
@@ -118,5 +151,18 @@ export class DocumentManagementService {
       );
 
     return updatedProject;
+  }
+
+  public async logProjectStage(
+    refId: string,
+    type: ProjectAuditLogType,
+    userId: number
+  ): Promise<void> {
+    const log = new AuditEntity();
+    log.refId = refId;
+    log.logType = type;
+    log.userId = userId;
+
+    await this.auditLogService.save(log);
   }
 }
