@@ -6,6 +6,7 @@ import { DocumentEntity } from "../entities/document.entity";
 import { ProgrammeLedgerModule } from "../programme-ledger/programme-ledger.module";
 import { EmailHelperModule } from "../email-helper/email-helper.module";
 import { AuditLogsModule } from "../audit-logs/audit-logs.module";
+import { FileHandlerModule } from "../file-handler/filehandler.module";
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AuditLogsModule } from "../audit-logs/audit-logs.module";
     ProgrammeLedgerModule,
     EmailHelperModule,
     AuditLogsModule,
+    FileHandlerModule,
   ],
   providers: [DocumentManagementService],
   exports: [DocumentManagementService],
