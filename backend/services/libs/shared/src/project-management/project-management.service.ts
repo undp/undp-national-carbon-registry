@@ -552,23 +552,4 @@ export class ProjectManagementService {
 
     return projectDetails;
   }
-
-  async updateProposalStage(
-    updateProposalStageDto: UpdateProjectProposalStageDto,
-    user: User
-  ): Promise<ProjectEntity> {
-    const programmeId = updateProposalStageDto.programmeId;
-    const txType = updateProposalStageDto.txType;
-    const data = updateProposalStageDto.data;
-
-    //updating proposal stage in programme
-    const updatedProject =
-      await this.programmeLedgerService.updateProjectProposalStage(
-        programmeId,
-        txType,
-        data
-      );
-
-    return updatedProject;
-  }
 }
