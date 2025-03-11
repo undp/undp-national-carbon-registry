@@ -26,6 +26,7 @@ import { ValidationReportDto } from "../dto/validationReport.dto";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { DocType } from "../enum/document.type";
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class DocumentManagementService {
@@ -37,7 +38,8 @@ export class DocumentManagementService {
     private readonly emailHelperService: EmailHelperService,
     private readonly auditLogService: AuditLogsService,
     private readonly companyServie: CompanyService,
-    private fileHandler: FileHandlerInterface
+    private fileHandler: FileHandlerInterface,
+    private readonly userService: UserService
   ) {}
   async addDocument(addDocumentDto: BaseDocumentDto, user: User) {
     try {
@@ -447,7 +449,7 @@ export class DocumentManagementService {
     return updatedProject;
   }
 
-  public async updateDocumentEntity(
+  public async modifyDocumentEntity(
     projectRefId: string,
     txType: TxType,
     txTime: number,
@@ -634,6 +636,11 @@ export class DocumentManagementService {
           HttpStatus.BAD_REQUEST
         );
       }
+      const certifiedByUserDetails =
+        await this.userService.getUserProfileDetails(
+          document.lastActionByUserId
+        );
+
       if (requestData.action === DocumentStatus.DNA_REJECTED) {
         const updateProjectProposalStage = {
           programmeId: project.refId,
@@ -647,6 +654,16 @@ export class DocumentManagementService {
             document.id,
             user.id
           )
+        );
+        await this.emailHelperService.sendEmailToPDAdmins(
+          EmailTemplates.PDD_DNA_REJECT_TO_PD,
+          null,
+          project.refId
+        );
+        await this.emailHelperService.sendEmailToICAdmins(
+          EmailTemplates.PDD_DNA_REJECT_TO_IC,
+          { icOrganisationName: certifiedByUserDetails.Organisation.name },
+          project.refId
         );
         await this.logProjectStage(
           project.refId,
@@ -666,6 +683,16 @@ export class DocumentManagementService {
             document.id,
             user.id
           )
+        );
+        await this.emailHelperService.sendEmailToPDAdmins(
+          EmailTemplates.PDD_APPROVAL_DNA_TO_PD,
+          null,
+          project.refId
+        );
+        await this.emailHelperService.sendEmailToICAdmins(
+          EmailTemplates.PDD_DNA_REJECT_TO_IC,
+          { icOrganisationName: certifiedByUserDetails.Organisation.name },
+          project.refId
         );
         await this.logProjectStage(
           project.refId,

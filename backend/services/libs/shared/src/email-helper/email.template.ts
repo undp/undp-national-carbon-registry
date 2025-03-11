@@ -1224,7 +1224,7 @@ export const EmailTemplates = {
     html: `
         Hi,<br>
         <br>
-        The Project Design Document submitted by your {{pdOrganisationName}} has been approved by the Designated National Authority (DNA).<br> 
+        The Project Design Document submitted by your {{organisationName}} has been approved by the Designated National Authority (DNA).<br> 
         <br>
         Sincerely,<br>
         The {{countryName}} Carbon Registry Team
@@ -1250,7 +1250,7 @@ export const EmailTemplates = {
     html: `
         Hi,<br>
         <br>
-        The Project Design Document submitted by your {{pdOrganisationName}} has been rejected by the Designated National Authority (DNA).<br>
+        The Project Design Document submitted by your {{organisationName}} has been rejected by the Designated National Authority (DNA).<br>
         <br>
         Please re-submit the Project Design Document by clicking <a href={{programmePageLink}}>here</a>.<br> 
         <br>
