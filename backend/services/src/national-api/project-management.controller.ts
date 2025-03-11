@@ -84,29 +84,6 @@ export class ProjectManagementController {
     return this.projectManagementService.getProjectById(programmeId);
   }
 
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Action.Update, ProgrammeSl)
-  // )
-  // @Post("inf/approve")
-  // async approveINF(@Body("programmeId") programmeId: string, @Request() req) {
-  //   return this.programmeService.approveINF(programmeId, req.user);
-  // }
-
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Action.Update, ProgrammeSl)
-  // )
-  // @Post("inf/reject")
-  // async rejectINF(
-  //   @Body("programmeId") programmeId: string,
-  //   @Body("remark") remark: string,
-  //   @Request() req
-  // ) {
-  //   return this.programmeService.rejectINF(programmeId, remark, req.user);
-  // }
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
   @Get("logs")
   getLogs(@Query("refId") refId: string, @Request() req) {

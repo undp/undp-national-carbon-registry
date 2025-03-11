@@ -326,63 +326,41 @@ export class ProgrammeLedgerService {
           txType: project.txType,
           updateTime: project.txTime,
         };
+        let expectedCurrentProposalStages = [project.projectProposalStage];
 
         switch (txType) {
           case TxType.APPROVE_INF:
             uPayload["projectProposalStage"] = ProjectProposalStage.APPROVED;
             uPayload["noObjectionLetterUrl"] = data?.noObjectionLetterUrl;
+            expectedCurrentProposalStages = [ProjectProposalStage.PENDING];
             break;
           case TxType.REJECT_INF:
             uPayload["projectProposalStage"] = ProjectProposalStage.REJECTED;
+            expectedCurrentProposalStages = [ProjectProposalStage.PENDING];
             break;
-          // case TxType.CREATE_COST_QUOTATION:
-          //   uPayload["estimatedProjectCost"] = data?.estimatedProjectCost;
-          //   uPayload["projectProposalStage"] =
-          //     ProjectProposalStage.SUBMITTED_COST_QUOTATION;
-          //   break;
-          // case TxType.CREATE_PROJECT_PROPOSAL:
-          //   uPayload["projectProposalStage"] =
-          //     ProjectProposalStage.SUBMITTED_PROPOSAL;
-          //   break;
-          // case TxType.CREATE_VALIDATION_AGREEMENT:
-          //   uPayload["projectProposalStage"] =
-          //     ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT;
-          //   break;
-          // case TxType.APPROVE_PROPOSAL:
-          //   uPayload["projectProposalStage"] =
-          //     ProjectProposalStage.ACCEPTED_PROPOSAL;
-          //   break;
-          // case TxType.REJECT_PROPOSAL:
-          //   uPayload["projectProposalStage"] =
-          //     ProjectProposalStage.REJECTED_PROPOSAL;
-          //   break;
-          // case TxType.APPROVE_CMA:
-          //   uPayload["projectProposalStage"] =
-          //     ProjectProposalStage.APPROVED_CMA;
-          //   break;
-          // case TxType.REJECT_CMA:
-          //   uPayload["projectProposalStage"] =
-          //     ProjectProposalStage.REJECTED_CMA;
-          //   break;
-          // case TxType.CREATE_VALIDATION_REPORT:
-          //   uPayload["projectProposalStage"] =
-          //     ProjectProposalStage.VALIDATION_PENDING;
-          //   break;
-          // case TxType.APPROVE_VALIDATION:
-          //   uPayload["serialNo"] = data?.serialNo;
-          //   uPayload["registrationCertificateUrl"] =
-          //     data?.registrationCertificateUrl;
-          //   uPayload["creditEst"] = data?.creditEst;
-          //   uPayload["creditUpdatedTime"] = programme.txTime;
-          //   uPayload["authorisedCreditUpdatedTime"] = programme.txTime;
-          //   uPayload["projectProposalStage"] = ProjectProposalStage.AUTHORISED;
-          //   break;
-          // case TxType.REJECT_VALIDATION:
-          //   uPayload["projectProposalStage"] =
-          //     ProjectProposalStage.REJECTED_VALIDATION;
-          //   break;
+          case TxType.CREATE_PDD:
+            uPayload["projectProposalStage"] =
+              ProjectProposalStage.PDD_SUBMITTED;
+            expectedCurrentProposalStages = [
+              ProjectProposalStage.APPROVED,
+              ProjectProposalStage.PDD_REJECTED_BY_CERTIFIER,
+              ProjectProposalStage.PDD_REJECTED_BY_DNA,
+            ];
+            break;
           default:
             break;
+        }
+
+        if (
+          !expectedCurrentProposalStages.includes(project.projectProposalStage)
+        ) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.programmeIsNotInSuitableStageToProceed",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
         }
 
         updateMap[this.ledger.projectTable + "#"] = uPayload;

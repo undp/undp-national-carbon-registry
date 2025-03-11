@@ -23,6 +23,7 @@ import { VerificationModule } from "./verification/verification.module";
 import { CaslModule } from "./casl/casl.module";
 import { ProjectManagementModule } from "./project-management/project-management.module";
 import { AuditLogsModule } from "./audit-logs/audit-logs.module";
+import { DocumentManagementModule } from "./document-management/document-management.module";
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { AuditLogsModule } from "./audit-logs/audit-logs.module";
     CaslModule,
     ProjectManagementModule,
     AuditLogsModule,
+    DocumentManagementModule,
   ],
   providers: [SharedService],
   exports: [
@@ -76,6 +78,7 @@ import { AuditLogsModule } from "./audit-logs/audit-logs.module";
     CaslModule,
     ProjectManagementModule,
     AuditLogsModule,
+    DocumentManagementModule,
   ],
 })
 export class SharedModule {}

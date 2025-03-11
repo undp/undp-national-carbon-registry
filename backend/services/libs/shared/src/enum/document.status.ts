@@ -1,5 +1,10 @@
 export enum DocumentStatus {
-  PENDING = "Pending",
   ACCEPTED = "Accepted",
   REJECTED = "Rejected",
+
+  PENDING = "PENDING",
+  IC_APPROVED = "IC_APPROVED",
+  IC_REJECTED = "IC_REJECTED",
+  DNA_APPROVED = "DNA_APPROVED",
+  DNA_REJECTED = "DNA_REJECTED",
 }
