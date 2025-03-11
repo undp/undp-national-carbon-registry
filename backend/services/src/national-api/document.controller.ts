@@ -17,7 +17,7 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth } from "@nestjs/swagger";
 
-@Controller("document")
+@Controller("documentManagement")
 export class DocumentManagementController {
   constructor(
     private readonly documentManagementService: DocumentManagementService
@@ -25,9 +25,9 @@ export class DocumentManagementController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Update, ProgrammeSl)
-  )
+  // @CheckPolicies((ability: AppAbility) =>
+  //   ability.can(Action.Update, ProgrammeSl)
+  // )
   @Post("add")
   async add(@Body() documentDTO: BaseDocumentDto, @Request() req) {
     return await this.documentManagementService.addDocument(
@@ -38,9 +38,9 @@ export class DocumentManagementController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Update, ProgrammeSl)
-  )
+  // @CheckPolicies((ability: AppAbility) =>
+  //   ability.can(Action.Update, ProgrammeSl)
+  // )
   @Post("approve")
   async approve(
     @Query("refId") refId: string,
@@ -50,13 +50,17 @@ export class DocumentManagementController {
     return await this.documentManagementService.approve(refId, dto, req.user);
   }
 
-  //   @UseGuards(AuthGuardService)
-  //   @Post("reject")
-  //   async reject(
-  //     @Query("refId") refId: string,
-  //     @Body() dto: DocumentActionDTO,
-  //     @Request() req
-  //   ) {
-  //     return await this.documentService.reject(refId, dto, req.user);
-  //   }
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  // @CheckPolicies((ability: AppAbility) =>
+  //   ability.can(Action.Update, ProgrammeSl)
+  // )
+  @Post("reject")
+  async reject(
+    @Query("refId") refId: string,
+    @Body() dto: DocumentActionRequestDto,
+    @Request() req
+  ) {
+    return await this.documentManagementService.reject(refId, dto, req.user);
+  }
 }

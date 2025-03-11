@@ -1265,7 +1265,7 @@ export const EmailTemplates = {
     html: `
         Hi,<br>
         <br>
-        The Project Design Document certified by your {{icOrganisationName}} organisation submitted by {{pdOrganisationName}} has been rejected by the Designated National Authority (DNA).<br>
+        The Project Design Document certified by {{icOrganisationName}} organisation submitted by {{pdOrganisationName}} has been rejected by the Designated National Authority (DNA).<br>
         <br>
         Sincerely,<br>
         The {{countryName}} Carbon Registry Team

@@ -477,7 +477,7 @@ export class EmailHelperService {
         break;
       case "PDD_APPROVAL_IC_TO_DNA":
         templateData = {
-          icOrganisationName: templateData.icOrganisationName, //TODO
+          icOrganisationName: templateData.icOrganisationName,
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
@@ -642,7 +642,7 @@ export class EmailHelperService {
         break;
       case "PDD_APPROVAL_IC_TO_PD":
         templateData = {
-          icOrganisationName: templateData.icOrganisationName, //TODO
+          icOrganisationName: templateData.icOrganisationName,
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
@@ -652,7 +652,7 @@ export class EmailHelperService {
         break;
       case "PDD_IC_REJECT":
         templateData = {
-          icOrganisationName: templateData.icOrganisationName, //TODO
+          icOrganisationName: templateData.icOrganisationName,
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
