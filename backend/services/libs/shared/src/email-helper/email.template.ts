@@ -1161,4 +1161,114 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `,
   },
+
+  PDD_CREATE: {
+    id: "PDD_CREATE",
+    subject: "Project Design Document Submitted!",
+    html: `
+        Hi,<br>
+        <br>
+        The Project Design Document has been submitted by {{organisationName}}.<br>
+        <br>
+        Please review and approve it by clicking <a href={{programmePageLink}}>here</a>.<br>
+        <br>
+        Sincerely,<br>
+        The {{countryName}} Carbon Credit Registry Team.
+        `,
+  },
+
+  PDD_APPROVAL_IC_TO_PD: {
+    id: "PDD_APPROVAL_IC_TO_PD",
+    subject: "Project Design Document Certified",
+    html: `
+        Hi,<br>
+        <br>
+        The Project Design Document submitted by your {{organisationName}} has been certified by the {{icOrganisationName}} Independant Certifier.<br>
+        <br>
+        Sincerely,<br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  PDD_APPROVAL_IC_TO_DNA: {
+    id: "PDD_APPROVAL_IC_TO_DNA",
+    subject: "Project Design Document Certified",
+    html: `
+        Hi,<br>
+        <br>
+        The Project Design Document submitted by {{organisationName}} has been certified by the {{icOrganisationName}} Independant Certifier. Please review and approve it by clicking <a href={{programmePageLink}}>here</a>.<br>
+        <br>
+        Sincerely,<br>
+        The {{countryName}} Carbon Credit Registry Team
+        `,
+  },
+
+  PDD_IC_REJECT: {
+    id: "PDD_IC_REJECT",
+    subject: "Project Design Document Certification Denied",
+    html: `
+        Hi,<br>
+        <br>
+        Certification is declined by the {{icOrganisationName}} Independant Certifier for the Project Design Document submitted by your organisation.<br>
+        <br>
+        Please re-submit the Project Design Document by clicking <a href={{programmePageLink}}>here</a>.<br>
+        <br>
+        Sincerely,<br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+
+  PDD_APPROVAL_DNA_TO_PD: {
+    id: "PDD_APPROVAL_DNA_TO_PD",
+    subject: "Project Design Document Approved by DNA!",
+    html: `
+        Hi,<br>
+        <br>
+        The Project Design Document submitted by your {{pdOrganisationName}} has been approved by the Designated National Authority (DNA).<br> 
+        <br>
+        Sincerely,<br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+
+  PDD_APPROVAL_DNA_TO_IC: {
+    id: "PDD_APPROVAL_DNA_TO_IC",
+    subject: "Project Design Document Approved by DNA!",
+    html: `
+        Hi,<br>
+        <br>
+        The Project Design Document certified by {{icOrganisationName}} organisation submitted by {{pdOrganisationName}} has been approved by the Designated National Authority (DNA). Click <a href={{programmePageLink}}>here</a> to add the Validation report.<br>
+        <br>
+        Sincerely,<br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+
+  PDD_DNA_REJECT_TO_PD: {
+    id: "PDD_DNA_REJECT_TO_PD",
+    subject: "Project Design Document Rejected by DNA!",
+    html: `
+        Hi,<br>
+        <br>
+        The Project Design Document submitted by your {{pdOrganisationName}} has been rejected by the Designated National Authority (DNA).<br>
+        <br>
+        Please re-submit the Project Design Document by clicking <a href={{programmePageLink}}>here</a>.<br> 
+        <br>
+        Sincerely,<br>
+        The {{countryName}} Carbon Registry Team  
+        `,
+  },
+
+  PDD_DNA_REJECT_TO_IC: {
+    id: "PDD_DNA_REJECT_TO_IC",
+    subject: "Project Design Document Rejected by DNA!",
+    html: `
+        Hi,<br>
+        <br>
+        The Project Design Document certified by your {{icOrganisationName}} organisation submitted by {{pdOrganisationName}} has been rejected by the Designated National Authority (DNA).<br>
+        <br>
+        Sincerely,<br>
+        The {{countryName}} Carbon Registry Team
+                `,
+  },
 };
