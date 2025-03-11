@@ -30,6 +30,9 @@ export class DocumentEntity implements EntitySubject {
   })
   status: DocumentStatus;
 
+  @Column({ nullable: true })
+  lastActionByUserId?: number;
+
   @Column({
     type: "enum",
     enum: DocumentTypeEnum,
