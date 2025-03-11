@@ -139,8 +139,11 @@ export class ProjectManagementService {
       INFDoc.createdTime = new Date().getTime();
       INFDoc.updatedTime = INFDoc.createdTime;
 
-      await this.documentRepo.insert(INFDoc);
-
+      const doc = await this.documentRepo.save(INFDoc);
+      project.txRef = this.documentManagementService.getDocumentTxRef(
+        DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
+        doc.id
+      );
       let savedProgramme = await this.programmeLedgerService.createProject(
         project
       );
@@ -178,6 +181,18 @@ export class ProjectManagementService {
           HttpStatus.UNAUTHORIZED
         );
       }
+      const lastVersion =
+        await this.documentManagementService.getLastDocumentVersion(
+          DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
+          refId
+        );
+      const infDoc = await this.documentRepo.findOne({
+        where: {
+          type: DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
+          programmeId: refId,
+          version: lastVersion,
+        },
+      });
 
       const project = await this.programmeLedgerService.getProjectById(refId);
 
@@ -221,7 +236,12 @@ export class ProjectManagementService {
       };
       const response = await this.documentManagementService.updateProposalStage(
         updateProjectroposalStage,
-        user
+        user,
+        this.documentManagementService.getDocumentTxRef(
+          DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
+          infDoc.id,
+          user.id
+        )
       );
 
       await this.emailHelperService.sendEmailToPDAdmins(
@@ -257,6 +277,18 @@ export class ProjectManagementService {
           HttpStatus.UNAUTHORIZED
         );
       }
+      const lastVersion =
+        await this.documentManagementService.getLastDocumentVersion(
+          DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
+          refId
+        );
+      const infDoc = await this.documentRepo.findOne({
+        where: {
+          type: DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
+          programmeId: refId,
+          version: lastVersion,
+        },
+      });
 
       const project = await this.programmeLedgerService.getProjectById(refId);
 
@@ -293,7 +325,12 @@ export class ProjectManagementService {
 
       const response = await this.documentManagementService.updateProposalStage(
         updateProjectProposalStage,
-        user
+        user,
+        this.documentManagementService.getDocumentTxRef(
+          DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
+          infDoc.id,
+          user.id
+        )
       );
 
       await this.emailHelperService.sendEmailToPDAdmins(
