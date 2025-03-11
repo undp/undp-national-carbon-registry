@@ -7,7 +7,7 @@ import moment from 'moment';
 import { fileUploadValueExtract } from '../../Utils/utilityHelper';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
-const ValidationOpinion = (props: ValidationStepsProps) => {
+const ExecutiveSummary = (props: ValidationStepsProps) => {
   const { prev, next, form, current, t, countries, handleValuesUpdate, formMode } = props;
 
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
@@ -22,28 +22,29 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
   };
 
   const onFinish = async (values: any) => {
-    const sig1 = (await fileUploadValueExtract(values, 'validator1Signature'))[0];
-    const sig2 = (await fileUploadValueExtract(values, 'validator2Signature'))[0];
+    // const sig1 = (await fileUploadValueExtract(values, 'validator1Signature'))[0];
+    // const sig2 = (await fileUploadValueExtract(values, 'validator2Signature'))[0];
 
-    const validationOpinionFormValues: any = {
-      opinion: values?.opinion,
-      validator1Signature: sig1,
-      validator1Designation: values?.validator1Designation,
-      validator1Name: values?.validator1Name,
-      validator1DateOfSign: moment(values?.validator1DateOfSign).valueOf(),
-      validator2Designation: values?.validator2Designation,
-      validator2Name: values?.validator2Name,
-      validator2Signature: sig2,
-      validator2DateOfSign: moment(values?.validator2DateOfSign).valueOf(),
+    const body: any = {
+      summaryDescription: values?.summaryDescription,
+      //   opinion: values?.opinion,
+      //   validator1Signature: sig1,
+      //   validator1Designation: values?.validator1Designation,
+      //   validator1Name: values?.validator1Name,
+      //   validator1DateOfSign: moment(values?.validator1DateOfSign).valueOf(),
+      //   validator2Designation: values?.validator2Designation,
+      //   validator2Name: values?.validator2Name,
+      //   validator2Signature: sig2,
+      //   validator2DateOfSign: moment(values?.validator2DateOfSign).valueOf(),
     };
 
-    console.log(ProcessSteps.VR_VALIDATION_OPINION, validationOpinionFormValues);
-    handleValuesUpdate({ [ProcessSteps.VR_VALIDATION_OPINION]: validationOpinionFormValues });
+    // console.log(ProcessSteps.VR_VALIDATION_OPINION, body);
+    handleValuesUpdate({ executiveSummary: body });
   };
 
   return (
     <>
-      {current === 8 && (
+      {current === 2 && (
         <div>
           <div className="val-report-step-form-container">
             <Form
@@ -63,12 +64,12 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
             >
               <Form.Item
                 className="full-width-form-item"
-                label={`${t('validationReport:validationOpinion')}`}
-                name="opinion"
+                label={`${t('validationReport:summaryDescription')}`}
+                name="summaryDescription"
                 rules={[
                   {
                     required: true,
-                    message: `${t('validationReport:validationOpinion')} ${t('isRequired')}`,
+                    message: `${t('validationReport:summaryDescription')} ${t('isRequired')}`,
                   },
                 ]}
               >
@@ -91,4 +92,4 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
   );
 };
 
-export default ValidationOpinion;
+export default ExecutiveSummary;

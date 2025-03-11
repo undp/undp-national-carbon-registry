@@ -28,25 +28,25 @@ const ValidationReport = (props: { translator: i18n }) => {
     setSelectedVersion(value);
   };
 
-  const getDocVersions = async () => {
-    try {
-      const { data } = await post(API_PATHS.LAST_DOC_VERSIONS, {
-        programmeId: id,
-        docType: DocumentTypeEnum.VALIDATION_REPORT,
-      });
-      setVersions(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getDocVersions = async () => {
+  //   try {
+  //     const { data } = await post(API_PATHS.LAST_DOC_VERSIONS, {
+  //       programmeId: id,
+  //       docType: DocumentTypeEnum.VALIDATION_REPORT,
+  //     });
+  //     setVersions(data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleDocumentStatus = (value: string) => {
     setDocumentStatus(value);
   };
 
-  useEffect(() => {
-    getDocVersions();
-  }, []);
+  // useEffect(() => {
+  //   getDocVersions();
+  // }, []);
 
   useEffect(() => {
     if (versions.length > 0) {
