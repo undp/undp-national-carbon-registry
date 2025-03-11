@@ -128,7 +128,7 @@ export class DocumentManagementService {
 
           if (
             ![
-              ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER,
+              ProjectProposalStage.PDD_APPROVED_BY_DNA,
               ProjectProposalStage.REJECTED_VALIDATION,
             ].includes(project.projectProposalStage)
           ) {
