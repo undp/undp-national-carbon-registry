@@ -6,6 +6,7 @@
   "name": "Name",
   "hederaAccount": "Hedera Account",
   "hederaKey": "Hedera Key",
+  "hederaAccountRequired": "Please add the Hedera account details if available. If not we will create an account for you! ",
   "ic": "Independent Certifier",
   "email": "Email",
   "taxId": "Tax ID",

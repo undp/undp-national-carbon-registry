@@ -7,6 +7,7 @@ import { ProgrammeLedgerModule } from "../programme-ledger/programme-ledger.modu
 import { EmailHelperModule } from "../email-helper/email-helper.module";
 import { AuditLogsModule } from "../audit-logs/audit-logs.module";
 import { CompanyModule } from "../company/company.module";
+import { FileHandlerModule } from "../file-handler/filehandler.module";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CompanyModule } from "../company/company.module";
     EmailHelperModule,
     AuditLogsModule,
     CompanyModule,
+    FileHandlerModule,
   ],
   providers: [DocumentManagementService],
   exports: [DocumentManagementService],

@@ -32,6 +32,7 @@ import { AuditLogsService } from "../audit-logs/audit-logs.service";
 import { EmailHelperService } from "../email-helper/email-helper.service";
 import { EmailTemplates } from "../email-helper/email.template";
 import { DocumentManagementService } from "../document-management/document-management.service";
+import { ValidationReportDto } from "../dto/validationReport.dto";
 
 @Injectable()
 export class ProjectManagementService {

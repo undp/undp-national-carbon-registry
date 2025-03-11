@@ -68,7 +68,7 @@ const StepperComponent = (props: any) => {
   };
 
   const [values, setValues] = useState({
-    projectId: id,
+    projectRefId: id,
     name: 'PDD',
     companyId: undefined,
     documentType: DocumentEnum.PDD,
@@ -252,8 +252,8 @@ const StepperComponent = (props: any) => {
         message.open({
           type: 'success',
           content: isEdit
-            ? 'CMA form has been edited successfully'
-            : 'CMA form has been submitted successfully',
+            ? 'Project Design Document has been edited successfully'
+            : 'Project Design Document has been submitted successfully',
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
