@@ -513,7 +513,7 @@ export const AddNewCompanyComponent = (props: any) => {
         if (response.status === 200 || response.status === 201) {
           message.open({
             type: 'success',
-            content: t('companyRegisteredSuccess'),
+            content: response.message, //t('companyRegisteredSuccess'),
             duration: 3,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
           });
@@ -530,7 +530,7 @@ export const AddNewCompanyComponent = (props: any) => {
           }
           message.open({
             type: 'success',
-            content: t('companyAddedSuccess'),
+            content: response.message, // t('companyAddedSuccess'),
             duration: 3,
             style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
           });
@@ -1449,7 +1449,7 @@ export const AddNewCompanyComponent = (props: any) => {
             marginBottom: '10px',
           }}
         >
-          {t('addUser:hederaAccountRequired')}
+          {t('addCompany:hederaAccountRequired')}
         </label>
         <div className="company-details-form-container">
           <Form
@@ -1468,21 +1468,21 @@ export const AddNewCompanyComponent = (props: any) => {
                     name="hederaAccount"
                     rules={[
                       {
-                        required: true,
+                        required: false,
                         message: '',
                       },
-                      {
-                        validator: async (rule, value) => {
-                          if (
-                            String(value).trim() === '' ||
-                            String(value).trim() === undefined ||
-                            value === null ||
-                            value === undefined
-                          ) {
-                            throw new Error(`${t('addCompany:hederaAccount')} ${t('isRequired')}`);
-                          }
-                        },
-                      },
+                      // {
+                      //   validator: async (rule, value) => {
+                      //     if (
+                      //       String(value).trim() === '' ||
+                      //       String(value).trim() === undefined ||
+                      //       value === null ||
+                      //       value === undefined
+                      //     ) {
+                      //       throw new Error(`${t('addCompany:hederaAccount')} ${t('isRequired')}`);
+                      //     }
+                      //   },
+                      // },
                     ]}
                   >
                     <Input size="large" />
@@ -1496,21 +1496,21 @@ export const AddNewCompanyComponent = (props: any) => {
                     name="hederaKey"
                     rules={[
                       {
-                        required: true,
+                        required: false,
                         message: '',
                       },
-                      {
-                        validator: async (rule, value) => {
-                          if (
-                            String(value).trim() === '' ||
-                            String(value).trim() === undefined ||
-                            value === null ||
-                            value === undefined
-                          ) {
-                            throw new Error(`${t('addCompany:hederaKey')} ${t('isRequired')}`);
-                          }
-                        },
-                      },
+                      // {
+                      //   validator: async (rule, value) => {
+                      //     if (
+                      //       String(value).trim() === '' ||
+                      //       String(value).trim() === undefined ||
+                      //       value === null ||
+                      //       value === undefined
+                      //     ) {
+                      //       throw new Error(`${t('addCompany:hederaKey')} ${t('isRequired')}`);
+                      //     }
+                      //   },
+                      // },
                     ]}
                   >
                     <Input size="large" />

@@ -193,7 +193,7 @@ const NetEmissionReduction = (props: any) => {
             <>
               {fields.map(({ key, name, ...restField }, index: number) => (
                 <>
-                  <Row justify={'space-between'} align={'middle'}>
+                  <Row justify={'space-between'} align={'middle'} className="mg-top-1">
                     <Col md={6} xl={6} className="col1">
                       <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                         <Form.Item

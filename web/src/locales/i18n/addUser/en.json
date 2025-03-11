@@ -5,7 +5,7 @@
   "addUserSub": "",
   "name": "Name",
   "hederaAccount": "Hedera Account",
-  "hederaAccountRequired": "A user should have a Hedera account to be registered as a user in the system",
+  "hederaAccountRequired": "Please add the Hedera account details if available. If not we will create an account for you! ",
   "hederaKey": "Hedera Key",
   "email": "Email",
   "role": "Role",
