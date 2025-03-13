@@ -377,6 +377,28 @@ export class ProgrammeLedgerService {
               ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER,
             ];
             break;
+          case TxType.CREATE_VALIDATION_REPORT:
+            uPayload["projectProposalStage"] =
+              ProjectProposalStage.VALIDATION_REPORT_SUBMITTED;
+            expectedCurrentProposalStages = [
+              ProjectProposalStage.PDD_APPROVED_BY_DNA,
+              ProjectProposalStage.VALIDATION_DNA_REJECTED,
+            ];
+            break;
+          case TxType.APPROVE_VALIDATION:
+            uPayload["projectProposalStage"] =
+              ProjectProposalStage.VALIDATION_DNA_APPROVED;
+            expectedCurrentProposalStages = [
+              ProjectProposalStage.VALIDATION_REPORT_SUBMITTED,
+            ];
+            break;
+          case TxType.REJECT_VALIDATION:
+            uPayload["projectProposalStage"] =
+              ProjectProposalStage.VALIDATION_DNA_REJECTED;
+            expectedCurrentProposalStages = [
+              ProjectProposalStage.VALIDATION_REPORT_SUBMITTED,
+            ];
+            break;
           default:
             break;
         }

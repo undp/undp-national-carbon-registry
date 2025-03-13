@@ -366,6 +366,12 @@ export class DocumentManagementService {
             await this.performPDDAction(existingDocument, requestData, user);
           }
           break;
+
+        case DocumentTypeEnum.VALIDATION_REPORT:
+          {
+            await this.performVRAction(existingDocument, requestData, user);
+          }
+          break;
       }
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -399,6 +405,12 @@ export class DocumentManagementService {
         case DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT:
           {
             await this.performPDDAction(existingDocument, requestData, user);
+          }
+          break;
+
+        case DocumentTypeEnum.VALIDATION_REPORT:
+          {
+            await this.performVRAction(existingDocument, requestData, user);
           }
           break;
       }
@@ -481,6 +493,14 @@ export class DocumentManagementService {
         break;
       case TxType.REJECT_PDD_BY_DNA:
         docType = DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT;
+        docStatus = DocumentStatus.DNA_REJECTED;
+        break;
+      case TxType.APPROVE_VALIDATION:
+        docType = DocumentTypeEnum.VALIDATION_REPORT;
+        docStatus = DocumentStatus.DNA_APPROVED;
+        break;
+      case TxType.REJECT_VALIDATION:
+        docType = DocumentTypeEnum.VALIDATION_REPORT;
         docStatus = DocumentStatus.DNA_REJECTED;
         break;
     }
@@ -697,6 +717,101 @@ export class DocumentManagementService {
         await this.logProjectStage(
           project.refId,
           ProjectAuditLogType.PDD_APPROVED_BY_DNA,
+          user.id
+        );
+      }
+    } else {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "project.incorrectDocumentAction",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  async performVRAction(
+    document: DocumentEntity,
+    requestData: DocumentActionRequestDto,
+    user: User
+  ) {
+    const project = await this.programmeLedgerService.getProjectById(
+      document.programmeId
+    );
+
+    if (
+      requestData.action === DocumentStatus.DNA_APPROVED ||
+      requestData.action === DocumentStatus.DNA_REJECTED
+    ) {
+      if (document.status !== DocumentStatus.PENDING) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.documentNotInPendingState",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      if (user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.notAuthorised",
+            []
+          ),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+      const DNACompany = await this.companyServie.findByCompanyId(
+        user.companyId
+      );
+      if (requestData.action === DocumentStatus.DNA_REJECTED) {
+        const updateProjectProposalStage = {
+          programmeId: project.refId,
+          txType: TxType.REJECT_VALIDATION,
+        };
+        await this.updateProposalStage(
+          updateProjectProposalStage,
+          user,
+          this.getDocumentTxRef(
+            DocumentTypeEnum.VALIDATION_REPORT,
+            document.id,
+            user.id
+          )
+        );
+        await this.emailHelperService.sendEmailToICAdmins(
+          EmailTemplates.VALIDATION_REJECTED,
+          { organisationName: DNACompany.name, remark: requestData.remarks },
+          project.refId
+        );
+        await this.logProjectStage(
+          project.refId,
+          ProjectAuditLogType.VALIDATION_DNA_REJECTED,
+          user.id
+        );
+      } else if (requestData.action === DocumentStatus.DNA_APPROVED) {
+        const updateProjectProposalStage = {
+          programmeId: project.refId,
+          txType: TxType.APPROVE_VALIDATION,
+        };
+        await this.updateProposalStage(
+          updateProjectProposalStage,
+          user,
+          this.getDocumentTxRef(
+            DocumentTypeEnum.VALIDATION_REPORT,
+            document.id,
+            user.id
+          )
+        );
+        await this.emailHelperService.sendEmailToICAdmins(
+          EmailTemplates.VALIDATION_APPROVED,
+          {},
+          project.refId
+        );
+        await this.logProjectStage(
+          project.refId,
+          ProjectAuditLogType.VALIDATION_DNA_APPROVED,
           user.id
         );
       }
