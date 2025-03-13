@@ -8,6 +8,7 @@ import { EmailHelperModule } from "../email-helper/email-helper.module";
 import { AuditLogsModule } from "../audit-logs/audit-logs.module";
 import { CompanyModule } from "../company/company.module";
 import { FileHandlerModule } from "../file-handler/filehandler.module";
+import { UserModule } from "../user/user.module";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { FileHandlerModule } from "../file-handler/filehandler.module";
     AuditLogsModule,
     CompanyModule,
     FileHandlerModule,
+    UserModule,
   ],
   providers: [DocumentManagementService],
   exports: [DocumentManagementService],

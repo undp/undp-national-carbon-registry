@@ -517,7 +517,7 @@ export class EmailHelperService {
 
   public async sendEmailToICAdmins(
     template: EmailTemplateDto,
-    templateData: object,
+    templateData: any,
     refId: string
   ) {
     if (this.isEmailDisabled) return;
@@ -553,6 +553,26 @@ export class EmailHelperService {
       case "PDD_CREATE":
         templateData = {
           organisationName: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "PDD_DNA_REJECT_TO_IC":
+        templateData = {
+          icOrganisationName: templateData.icOrganisationName,
+          pdOrganisationName: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "PDD_APPROVAL_DNA_TO_IC":
+        templateData = {
+          icOrganisationName: templateData.icOrganisationName,
+          pdOrganisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
           programmePageLink:
@@ -653,6 +673,24 @@ export class EmailHelperService {
       case "PDD_IC_REJECT":
         templateData = {
           icOrganisationName: templateData.icOrganisationName,
+          organisationName: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "PDD_DNA_REJECT_TO_PD":
+        templateData = {
+          organisationName: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "PDD_APPROVAL_DNA_TO_PD":
+        templateData = {
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
