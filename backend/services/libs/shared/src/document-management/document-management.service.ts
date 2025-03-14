@@ -27,6 +27,7 @@ import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { DocType } from "../enum/document.type";
 import { UserService } from "../user/user.service";
+import { DocumentQueryDto } from "../dto/document.query.dto";
 
 @Injectable()
 export class DocumentManagementService {
@@ -834,5 +835,19 @@ export class DocumentManagementService {
     return `${docType}#${documentId}${
       lastActionByUserId ? `#${lastActionByUserId}` : ``
     }`;
+  }
+
+  async query(query: DocumentQueryDto) {
+    const lastDoc = await this.documentRepository.findOne({
+      where: {
+        type: query.documentType,
+        programmeId: query.projectRefId,
+      },
+      order: {
+        version: "DESC",
+      },
+    });
+
+    return lastDoc;
   }
 }
