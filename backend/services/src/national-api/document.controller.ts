@@ -6,6 +6,7 @@ import { PoliciesGuard } from "@app/shared/casl/policy.guard";
 import { DocumentManagementService } from "@app/shared/document-management/document-management.service";
 import { BaseDocumentDto } from "@app/shared/dto/base.document.dto";
 import { DocumentActionRequestDto } from "@app/shared/dto/document.action.request.dto";
+import { DocumentQueryDto } from "@app/shared/dto/document.query.dto";
 import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
 import {
   Body,
@@ -62,5 +63,15 @@ export class DocumentManagementController {
     @Request() req
   ) {
     return await this.documentManagementService.reject(refId, dto, req.user);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  // @CheckPolicies((ability: AppAbility) =>
+  //   ability.can(Action.Update, ProgrammeSl)
+  // )
+  @Post("query")
+  async query(@Body() query: DocumentQueryDto, @Request() req) {
+    return await this.documentManagementService.query(query);
   }
 }
