@@ -386,8 +386,9 @@ export class ProgrammeLedgerService {
             ];
             break;
           case TxType.APPROVE_VALIDATION:
-            uPayload["projectProposalStage"] =
-              ProjectProposalStage.VALIDATION_DNA_APPROVED;
+            uPayload["projectProposalStage"] = ProjectProposalStage.AUTHORISED;
+            uPayload["letterOfAuthorizationUrl"] =
+              data?.letterOfAuthorizationUrl;
             expectedCurrentProposalStages = [
               ProjectProposalStage.VALIDATION_REPORT_SUBMITTED,
             ];

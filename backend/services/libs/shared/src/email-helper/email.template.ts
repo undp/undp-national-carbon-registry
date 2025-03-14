@@ -278,9 +278,24 @@ export const EmailTemplates = {
     id: "VALIDATION_SUBMITTED",
     subject: "New Validation Report Submitted!",
     html: `
-        Hi {{name}}, <br><br>
+        Hi,<br><br>
 
-        A new Validation Report has been submitted by {{countryName}} Climate Fund for the project {{programmeName}} owned by {{organisationName}}. <br><br>
+        A new Validation Report has been submitted by {{organizationName}} Independant Certifier for the project {{programmeName}} owned by your {{pdOrganizationName}}. <br><br>
+
+        Designated National Authority can review and approve by clicking <a href="{{programmePageLink}}>"here</a>.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VALIDATION_SUBMITTED_TO_DNA: {
+    id: "VALIDATION_SUBMITTED_TO_DNA",
+    subject: "New Validation Report Submitted!",
+    html: `
+        Hi,<br><br>
+
+        A new Validation Report has been submitted by {{icOrganizationName}} Independant Certifier for the project {{programmeName}} owned by the {{pdOrganizationName}}. <br><br>
 
         Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -289,35 +304,54 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Registry Team
         `,
   },
-  VALIDATION_APPROVED: {
-    id: "VALIDATION_APPROVED",
+  VALIDATION_APPROVED_TO_PD: {
+    id: "VALIDATION_APPROVED_TO_PD",
     subject: "Validation Report Approved",
     html: `
-        Hi {{name}}, <br><br>
+        Hi, <br><br>
 
-        Validation Report submitted for the project {{programmeName}} by {{countryName}} Climate Fund has been approved by Executive Board of {{countryName}} Climate Fund. <br><br>
-
-        Now the project has been authorised.
-
-        Please click <a href="{{programmePageLink}}">here</a> to download the issued Project Registration Certificate.
-        <br><br>
-
-        Please proceed to the next phase and submit the Monitoring Report.<br><br>
+        Validation Report submitted by {{icOrganizationName}} Independant Certifier for the project {{programmeName}} owned by your {{pdOrganizationName}} has been approved by the Designated National Authority.<br><br>
 
         Sincerely,  <br>
         The {{countryName}} Carbon Registry Team
         `,
   },
-  VALIDATION_REJECTED: {
-    id: "VALIDATION_REJECTED",
+  VALIDATION_APPROVED_TO_IC: {
+    id: "VALIDATION_APPROVED_TO_IC",
+    subject: "Validation Report Approved",
+    html: `
+        Hi, <br><br>
+
+        Validation Report submitted by {{icOrganizationName}} Independant Certifier organisation for the project {{programmeName}} owned by {{pdOrganizationName}} has been approved by the Designated National Authority.<br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VALIDATION_REJECTED_TO_PD: {
+    id: "VALIDATION_REJECTED_TO_PD",
     subject: "Validation Report Rejected",
     html: `
-        Hi {{name}}, <br><br>
+        Hi, <br><br>
 
-        Validation report submitted for the project {{programmeName}} owned by {{organisationName}} organisation has been rejected by Executive Board of {{countryName}} Climate Fund due to the following reason/s:<br>
-        {{remark}} <br><br>
+        Validation Report submitted by {{icOrganizationName}} Independant Certifier for the project {{programmeName}} owned by your {{pdOrganizationName}} has been rejected by the Designated National Authority. <br><br>
 
-        Please submit again by clicking <a href="{{programmePageLink}}">here</a>.
+        {{icOrganizationName}} Independant Certifier can re-submit the Validation Report by clicking <a href={{programmePageLink}}>here</a>.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VALIDATION_REJECTED_TO_IC: {
+    id: "VALIDATION_REJECTED_TO_IC",
+    subject: "Validation Report Rejected",
+    html: `
+        Hi, <br><br>
+
+        Validation Report submitted by {{icOrganizationName}} Independant Certifier organisation for the project {{programmeName}} owned by {{pdOrganizationName}} has been rejected by the Designated National Authority. <br><br>
+
+        You can re-submit the Validation Report by clicking <a href={{programmePageLink}}>here</a>.
         <br><br>
 
         Sincerely,  <br>

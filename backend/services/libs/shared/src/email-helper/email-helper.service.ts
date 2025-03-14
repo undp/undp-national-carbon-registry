@@ -485,6 +485,16 @@ export class EmailHelperService {
             hostAddress + `/programmeManagementSLCF/view/${refId}`,
         };
         break;
+      case "VALIDATION_SUBMITTED_TO_DNA":
+        templateData = {
+          icOrganisationName: templateData.icOrganisationName,
+          pdOrganizationName: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
     }
 
     const users = await this.userService.getDNAAdminUsers();
@@ -570,6 +580,26 @@ export class EmailHelperService {
         };
         break;
       case "PDD_APPROVAL_DNA_TO_IC":
+        templateData = {
+          icOrganisationName: templateData.icOrganisationName,
+          pdOrganisationName: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "VALIDATION_APPROVED_TO_IC":
+        templateData = {
+          icOrganisationName: templateData.icOrganisationName,
+          pdOrganisationName: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "VALIDATION_REJECTED_TO_IC":
         templateData = {
           icOrganisationName: templateData.icOrganisationName,
           pdOrganisationName: company.name,
@@ -692,6 +722,36 @@ export class EmailHelperService {
       case "PDD_APPROVAL_DNA_TO_PD":
         templateData = {
           organisationName: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "VALIDATION_SUBMITTED":
+        templateData = {
+          pdOrganizationName: company.name,
+          organisationName: templateData.organisationName,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "VALIDATION_APPROVED_TO_PD":
+        templateData = {
+          pdOrganizationName: company.name,
+          icOrganizationName: templateData.icOrganizationName,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "VALIDATION_REJECTED_TO_PD":
+        templateData = {
+          pdOrganizationName: company.name,
+          icOrganizationName: templateData.icOrganizationName,
           countryName: systemCountryName,
           programmeName: project.title,
           programmePageLink:
