@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { HelperService } from "../helpers.service";
 import { ConfigService } from "@nestjs/config";
-import { FileHandlerInterface } from "../../file-handler/filehandler.interface";
+import { FileHandlerInterface } from "@app/shared/file-handler/filehandler.interface";
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 
@@ -20,10 +20,16 @@ export class LetterOfAuthorisationRequestGen {
     orgName: string,
     programmeLocations: any[]
   ) {
-    const filepath = `REQUEST_FOR_LETTER_OF_AUTHORISATION_${programmeId}.pdf`;
+    const fileName = `REQUEST_FOR_LETTER_OF_AUTHORISATION_${programmeId}.pdf`;
     const country = this.configService.get("systemCountryName");
     const date = new Date().toDateString();
     const refNo = this.helperService.generateRandomNumber();
+
+    const doc = new PDFDocument();
+    const tmpDir = "./";
+    const filepath = `${tmpDir}/${fileName}`;
+    const stream = fs.createWriteStream(filepath);
+    doc.pipe(stream);
 
     let programmeLocation;
     if (programmeLocations.length > 2) {
@@ -36,9 +42,6 @@ export class LetterOfAuthorisationRequestGen {
       programmeLocation = programmeLocations.join(" and ");
     }
 
-    const doc = new PDFDocument();
-    const stream = fs.createWriteStream("/tmp/" + filepath);
-    doc.pipe(stream);
     doc.fontSize(11);
 
     doc.text(refNo, {
@@ -103,15 +106,15 @@ export class LetterOfAuthorisationRequestGen {
     doc.end();
 
     const content = await new Promise<string>((resolve) => {
-      stream.on("finish", function () {
-        const contents = fs.readFileSync("/tmp/" + filepath, {
+      stream.on("finish", () => {
+        const contents = fs.readFileSync(filepath, {
           encoding: "base64",
         });
         resolve(contents);
       });
     });
     const url = await this.fileHandler.uploadFile(
-      "documents/" + filepath,
+      "documents/" + fileName,
       content
     );
 

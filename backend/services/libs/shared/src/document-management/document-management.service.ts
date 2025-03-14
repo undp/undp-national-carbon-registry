@@ -27,6 +27,7 @@ import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { DocType } from "../enum/document.type";
 import { UserService } from "../user/user.service";
+import { LetterOfAuthorisationRequestGen } from "../util/document-generators/letter.of.authorisation.request.gen";
 
 @Injectable()
 export class DocumentManagementService {
@@ -39,6 +40,7 @@ export class DocumentManagementService {
     private readonly auditLogService: AuditLogsService,
     private readonly companyServie: CompanyService,
     private fileHandler: FileHandlerInterface,
+    private readonly letterOfAuthorizationGenerateService: LetterOfAuthorisationRequestGen,
     private readonly userService: UserService
   ) {}
   async addDocument(addDocumentDto: BaseDocumentDto, user: User) {
@@ -138,7 +140,7 @@ export class DocumentManagementService {
           if (
             ![
               ProjectProposalStage.PDD_APPROVED_BY_DNA,
-              ProjectProposalStage.REJECTED_VALIDATION,
+              ProjectProposalStage.VALIDATION_DNA_REJECTED,
             ].includes(project.projectProposalStage)
           ) {
             throw new HttpException(
@@ -157,9 +159,17 @@ export class DocumentManagementService {
             txType: TxType.CREATE_VALIDATION_REPORT,
           };
 
-          const documentResponse = await this.documentRepository.insert(newDoc); //not a good method to handle this, ledger table can be used to gerantee the consistency
+          const documentResponse = await this.documentRepository.save(newDoc); //not a good method to handle this, ledger table can be used to gerantee the consistency
 
-          await this.updateProposalStage(updateProjectProposalStage, user);
+          await this.updateProposalStage(
+            updateProjectProposalStage,
+            user,
+            this.getDocumentTxRef(
+              DocumentTypeEnum.VALIDATION_REPORT,
+              documentResponse.id,
+              user.id
+            )
+          );
 
           await this.logProjectStage(
             project.refId,
@@ -167,9 +177,23 @@ export class DocumentManagementService {
             user.id
           );
 
-          await this.emailHelperService.sendEmailToExCom(
+          const ICCompany = await this.companyServie.findByCompanyId(
+            user.companyId
+          );
+
+          await this.emailHelperService.sendEmailToPDAdmins(
             EmailTemplates.VALIDATION_SUBMITTED,
-            null,
+            {
+              organizationName: ICCompany.name,
+            },
+            addDocumentDto.projectRefId
+          );
+
+          await this.emailHelperService.sendEmailToDNAAdmins(
+            EmailTemplates.VALIDATION_SUBMITTED_TO_DNA,
+            {
+              icOrganisationName: ICCompany.name,
+            },
             addDocumentDto.projectRefId
           );
 
@@ -763,8 +787,8 @@ export class DocumentManagementService {
           HttpStatus.UNAUTHORIZED
         );
       }
-      const DNACompany = await this.companyServie.findByCompanyId(
-        user.companyId
+      const vrSubmittedIC = await this.userService.getUserProfileDetails(
+        document.lastActionByUserId
       );
       if (requestData.action === DocumentStatus.DNA_REJECTED) {
         const updateProjectProposalStage = {
@@ -781,8 +805,13 @@ export class DocumentManagementService {
           )
         );
         await this.emailHelperService.sendEmailToICAdmins(
-          EmailTemplates.VALIDATION_REJECTED,
-          { organisationName: DNACompany.name, remark: requestData.remarks },
+          EmailTemplates.VALIDATION_REJECTED_TO_IC,
+          { icOrganisationName: vrSubmittedIC.Organisation.name },
+          project.refId
+        );
+        await this.emailHelperService.sendEmailToPDAdmins(
+          EmailTemplates.VALIDATION_REJECTED_TO_PD,
+          { icOrganisationName: vrSubmittedIC.Organisation.name },
           project.refId
         );
         await this.logProjectStage(
@@ -791,10 +820,25 @@ export class DocumentManagementService {
           user.id
         );
       } else if (requestData.action === DocumentStatus.DNA_APPROVED) {
+        const projectCompany = await this.companyServie.findByCompanyId(
+          project.companyId
+        );
+
+        const letterOfAuthorizationUrl =
+          await this.letterOfAuthorizationGenerateService.generateLetter(
+            project.refId,
+            project.title,
+            project.sectoralScope,
+            projectCompany.name,
+            []
+          );
+
         const updateProjectProposalStage = {
           programmeId: project.refId,
           txType: TxType.APPROVE_VALIDATION,
+          data: { letterOfAuthorizationUrl: letterOfAuthorizationUrl },
         };
+
         await this.updateProposalStage(
           updateProjectProposalStage,
           user,
@@ -804,14 +848,24 @@ export class DocumentManagementService {
             user.id
           )
         );
+        await this.emailHelperService.sendEmailToPDAdmins(
+          EmailTemplates.VALIDATION_APPROVED_TO_PD,
+          { icOrganizationName: vrSubmittedIC.Organisation.name },
+          project.refId
+        );
         await this.emailHelperService.sendEmailToICAdmins(
-          EmailTemplates.VALIDATION_APPROVED,
-          {},
+          EmailTemplates.VALIDATION_APPROVED_TO_IC,
+          { icOrganizationName: vrSubmittedIC.Organisation.name },
           project.refId
         );
         await this.logProjectStage(
           project.refId,
           ProjectAuditLogType.VALIDATION_DNA_APPROVED,
+          user.id
+        );
+        await this.logProjectStage(
+          project.refId,
+          ProjectAuditLogType.AUTHORIZED,
           user.id
         );
       }
