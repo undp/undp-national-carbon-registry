@@ -27,10 +27,10 @@ import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { DocType } from "../enum/document.type";
 import { UserService } from "../user/user.service";
-import { LetterOfAuthorisationRequestGen } from "../util/document-generators/letter.of.authorisation.request.gen";
 import { DocumentQueryDto } from "../dto/document.query.dto";
 import { ActivityEntity } from "../entities/activity.entity";
 import { ActivityStateEnum } from "../enum/activity.state.enum";
+import { LetterOfAuthorisationRequestGen } from "../util/document-generators/letter.of.authorisation.request.gen";
 
 @Injectable()
 export class DocumentManagementService {
@@ -46,7 +46,7 @@ export class DocumentManagementService {
     private readonly companyServie: CompanyService,
     private fileHandler: FileHandlerInterface,
     private readonly letterOfAuthorizationGenerateService: LetterOfAuthorisationRequestGen,
-    private readonly userService: UserService
+    private readonly userService: UserService,
     private entityManager: EntityManager
   ) {}
   async addDocument(addDocumentDto: BaseDocumentDto, user: User) {
@@ -121,7 +121,7 @@ export class DocumentManagementService {
           );
           break;
 
-        case DocumentTypeEnum.VALIDATION_REPORT:
+        case DocumentTypeEnum.VALIDATION:
           const validationReportDto: ValidationReportDto = plainToInstance(
             ValidationReportDto,
             addDocumentDto.data
@@ -161,7 +161,7 @@ export class DocumentManagementService {
           await this.createValidationReport(validationReportDto, newDoc);
 
           updateProjectProposalStage = {
-            programmeId: validationReportDto.programmeId,
+            programmeId: addDocumentDto.projectRefId,
             txType: TxType.CREATE_VALIDATION_REPORT,
           };
 
@@ -215,7 +215,7 @@ export class DocumentManagementService {
               HttpStatus.UNAUTHORIZED
             );
           }
-          if (project.projectProposalStage != ProjectProposalStage.AUTHORIZED) {
+          if (project.projectProposalStage != ProjectProposalStage.AUTHORISED) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
                 "project.programmeIsNotInSuitableStageToProceed",
@@ -332,7 +332,7 @@ export class DocumentManagementService {
                 )[0];
                 await em.update(
                   ActivityEntity,
-                  { where: { id: lastActivity.id } },
+                  { id: lastActivity.id },
                   { state: ActivityStateEnum.MONITORING_REPORT_UPLOADED }
                 );
                 activityId = lastActivity.id;
@@ -553,7 +553,7 @@ export class DocumentManagementService {
           }
           break;
 
-        case DocumentTypeEnum.VALIDATION_REPORT:
+        case DocumentTypeEnum.VALIDATION:
           {
             await this.performVRAction(existingDocument, requestData, user);
           }

@@ -196,6 +196,12 @@ export class ProjectManagementService {
       });
 
       const project = await this.programmeLedgerService.getProjectById(refId);
+      if (!project) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString("project.noProject", []),
+          HttpStatus.BAD_REQUEST
+        );
+      }
 
       const companyId = project.companyId;
 
