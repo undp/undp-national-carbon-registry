@@ -40,9 +40,9 @@ export class BaseDocumentDto {
   @IsNotEmpty()
   documentType: DocumentTypeEnum;
 
-  // @IsOptional()
-  // @IsString()
-  // activityRefId?: string;
+  @IsOptional()
+  @IsString()
+  activityRefId?: string;
 
   @ApiProperty({
     type: Object,

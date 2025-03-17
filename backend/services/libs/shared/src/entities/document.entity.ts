@@ -14,6 +14,9 @@ export class DocumentEntity implements EntitySubject {
   @Column({ nullable: true })
   verificationRequestId: number;
 
+  @Column({ nullable: true })
+  activityId?: number;
+
   @Column()
   userId: number;
 
