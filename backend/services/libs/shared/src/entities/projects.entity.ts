@@ -29,6 +29,9 @@ export class ProjectEntity {
   @Column({ nullable: true })
   noObjectionLetterUrl?: string;
 
+  @Column({ nullable: true })
+  letterOfAuthorizationUrl?: string;
+
   @Column()
   sectoralScope: string;
 
