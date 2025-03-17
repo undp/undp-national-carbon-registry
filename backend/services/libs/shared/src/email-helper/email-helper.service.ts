@@ -767,6 +767,27 @@ export class EmailHelperService {
             hostAddress + `/programmeManagementSLCF/view/${refId}`,
         };
         break;
+      case "MONITORING_REJECT":
+        templateData = {
+          icOrganisationName: templateData.icOrganisationName,
+          pdOrganisationName: company.name,
+          remarks: templateData.remarks,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "MONITORING_APPROVE":
+        templateData = {
+          icOrganisationName: templateData.icOrganisationName,
+          pdOrganisationName: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
     }
 
     const users: any[] = await this.userService.getOrganisationAdminUsers(
