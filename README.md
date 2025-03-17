@@ -7,8 +7,9 @@
 
 <a name="about"></a>
 
-# National Carbon Credit Registry
-CURRENTLY UNDER CONSTRUCTION. New updated release end of April 2025 will include improvements for UI/UX, credit serialisation and issuance, as well as reporting modules. 
+# National Carbon Credit Registry (NEW RELEASE END OF APRIL 2025) 
+
+CURRENTLY UNDER CONSTRUCTION. New updated release end of April 2025 will include improvements for UI/UX, credit serialisation and issuance, as well as reporting modules. Please check back then.
 
 
 
@@ -57,6 +58,7 @@ Under AGPL-3.0, any modifications to the code must be made publicly available by
 
 <a name="changelog"></a>
 ## Changelog
+CURRENTLY UNDER CONSTRUCTION. NEW RELEASE PLANNED FOR APRIL 2025. 
 [Learn about the latest improvements.](./CHANGES.md)
 
 <a name="userflow"></a>
