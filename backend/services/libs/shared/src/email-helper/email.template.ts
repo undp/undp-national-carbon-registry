@@ -1271,4 +1271,19 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Registry Team
                 `,
   },
+
+  MONITORING_UPLOADED: {
+    id: "MONITORING_UPLOADED",
+    subject: "Monitoring Report Submitted!",
+    html: `
+        Hi,<br>
+        <br>
+        A Monitoring Report has been submitted by {{organisationName}}.<br>
+        <br>
+        Please review and approve it by clicking <a href={{programmePageLink}}>here</a>.<br>
+        <br>
+        Sincerely,<br>
+        The {{countryName}} Carbon Credit Registry Team.
+                `,
+  },
 };

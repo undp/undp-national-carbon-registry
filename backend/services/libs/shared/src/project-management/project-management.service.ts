@@ -113,7 +113,7 @@ export class ProjectManagementService {
       const docUrls = [];
       if (projectCreateDto.additionalDocuments?.length > 0) {
         projectCreateDto.additionalDocuments.forEach(async (doc) => {
-          const docUrl = await this.uploadDocument(
+          const docUrl = await this.documentManagementService.uploadDocument(
             DocType.INF_ADDITIONAL_DOCUMENT,
             project.refId,
             doc
@@ -349,49 +349,6 @@ export class ProjectManagementService {
       return new DataResponseDto(HttpStatus.OK, response);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  private async uploadDocument(type: DocType, id: string, data: string) {
-    let filetype;
-    try {
-      filetype = this.getFileExtension(data);
-      data = data.split(",")[1];
-      if (filetype == undefined) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "project.invalidDocumentUpload",
-            []
-          ),
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-      }
-    } catch (Exception: any) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "project.invalidDocumentUpload",
-          []
-        ),
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-
-    const response: any = await this.fileHandler.uploadFile(
-      `documents/${this.helperService.enumToString(DocType, type)}${
-        id ? "_" + id : ""
-      }_${Date.now()}.${filetype}`,
-      data
-    );
-    if (response) {
-      return response;
-    } else {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "project.docUploadFailed",
-          []
-        ),
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
     }
   }
 

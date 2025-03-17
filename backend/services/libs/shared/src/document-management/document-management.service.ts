@@ -28,19 +28,24 @@ import { validate } from "class-validator";
 import { DocType } from "../enum/document.type";
 import { UserService } from "../user/user.service";
 import { DocumentQueryDto } from "../dto/document.query.dto";
+import { ActivityEntity } from "../entities/activity.entity";
+import { ActivityStateEnum } from "../enum/activity.state.enum";
 
 @Injectable()
 export class DocumentManagementService {
   constructor(
     @InjectRepository(DocumentEntity)
     private readonly documentRepository: Repository<DocumentEntity>,
+    @InjectRepository(ActivityEntity)
+    private readonly activityEntityRepository: Repository<ActivityEntity>,
     private readonly programmeLedgerService: ProgrammeLedgerService,
     private readonly helperService: HelperService,
     private readonly emailHelperService: EmailHelperService,
     private readonly auditLogService: AuditLogsService,
     private readonly companyServie: CompanyService,
     private fileHandler: FileHandlerInterface,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private entityManager: EntityManager
   ) {}
   async addDocument(addDocumentDto: BaseDocumentDto, user: User) {
     try {
@@ -175,6 +180,162 @@ export class DocumentManagementService {
           );
 
           break;
+
+        case DocumentTypeEnum.MONITORING:
+          if (user.companyId != project.companyId) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.notAuthorised",
+                []
+              ),
+              HttpStatus.UNAUTHORIZED
+            );
+          }
+          if (project.projectProposalStage != ProjectProposalStage.AUTHORIZED) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.programmeIsNotInSuitableStageToProceed",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          const lastActivity = await this.getLastActivity(
+            addDocumentDto.projectRefId
+          );
+          if (
+            lastActivity &&
+            addDocumentDto.activityRefId &&
+            lastActivity.refId != addDocumentDto.activityRefId
+          ) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.docCanBeAddedOnlyToLastActivity",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          if (
+            lastActivity &&
+            ![
+              ActivityStateEnum.MONITORING_REPORT_REJECTED,
+              ActivityStateEnum.VERIFICATION_REPORT_VERIFIED,
+            ].includes(lastActivity.state)
+          ) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.lastActivityNotInValidStateToUploadMonitoringReport",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          const monitoringData = addDocumentDto.data;
+
+          if (
+            monitoringData?.annexures?.optionalDocuments &&
+            monitoringData.annexures.optionalDocuments.length > 0
+          ) {
+            const docUrls = await this.uploadDocument(
+              monitoringData.annexures.optionalDocuments,
+              DocType.MONITORING_REPORT_ANNEXURES_OPTIONAL_DOCUMENT,
+              project.refId
+            );
+            monitoringData.annexures.optionalDocuments = docUrls;
+          }
+
+          if (
+            monitoringData?.projectActivity?.projectActivityLocationsList &&
+            monitoringData.projectActivity.projectActivityLocationsList.length >
+              0
+          ) {
+            for (const location of monitoringData.projectActivity
+              .projectActivityLocationsList) {
+              if (
+                location.optionalDocuments &&
+                location.optionalDocuments.length > 0
+              ) {
+                location.optionalDocuments = await this.uploadDocument(
+                  location.optionalDocuments,
+                  DocType.MONITORING_REPORT_LOCATION_OF_PROJECT_ACTIVITY_OPTIONAL_DOCUMENT,
+                  project.refId
+                );
+              }
+            }
+          }
+
+          if (
+            monitoringData?.quantifications?.optionalDocuments &&
+            monitoringData.quantifications.optionalDocuments.length > 0
+          ) {
+            const docUrls = await this.uploadDocument(
+              monitoringData.quantifications.optionalDocuments,
+              DocType.MONITORING_REPORT_QUANTIFICATIONS_OPTIONAL_DOCUMENT,
+              project.refId
+            );
+            monitoringData.quantifications.optionalDocuments = docUrls;
+          }
+
+          await this.entityManager
+            .transaction(async (em) => {
+              let documentVersion;
+              let activityId;
+              if (
+                !lastActivity ||
+                lastActivity.state ==
+                  ActivityStateEnum.VERIFICATION_REPORT_VERIFIED
+              ) {
+                const activity = new ActivityEntity();
+                activity.projectRefId = project.refId;
+                activity.version = lastActivity ? lastActivity.version + 1 : 1;
+                activity.state = ActivityStateEnum.MONITORING_REPORT_UPLOADED;
+                const savedActivity = await em.save(ActivityEntity, activity);
+
+                activityId = savedActivity.id;
+                documentVersion = 1;
+              } else {
+                const lastMonitoringReport = (
+                  await em.find(DocumentEntity, {
+                    where: {
+                      activityId: lastActivity.id,
+                      programmeId: project.refId,
+                    },
+                    order: {
+                      version: "DESC",
+                    },
+                  })
+                )[0];
+                await em.update(
+                  ActivityEntity,
+                  { where: { id: lastActivity.id } },
+                  { state: ActivityStateEnum.MONITORING_REPORT_UPLOADED }
+                );
+                activityId = lastActivity.id;
+                documentVersion = lastMonitoringReport.version + 1;
+              }
+              newDoc.version = documentVersion;
+              newDoc.activityId = activityId;
+              const doc = await this.documentRepository.save(newDoc);
+              await this.logProjectStage(
+                project.refId,
+                ProjectAuditLogType.MONITORING_REPORT_SUBMITTED,
+                user.id,
+                em
+              );
+            })
+            .catch((error: any) => {
+              throw new HttpException(
+                error.message,
+                HttpStatus.INTERNAL_SERVER_ERROR
+              );
+            });
+          await this.emailHelperService.sendEmailToICAdmins(
+            EmailTemplates.MONITORING_UPLOADED,
+            null,
+            project.refId
+          );
+          break;
       }
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -276,7 +437,7 @@ export class DocumentManagementService {
     return url.protocol === "http:" || url.protocol === "https:";
   }
 
-  private async uploadDocument(type: DocType, id: string, data: string) {
+  public async uploadDocument(type: DocType, id: string, data: string) {
     let filetype;
     try {
       filetype = this.getFileExtension(data);
@@ -536,14 +697,14 @@ export class DocumentManagementService {
   public async logProjectStage(
     refId: string,
     type: ProjectAuditLogType,
-    userId: number
+    userId: number,
+    em?: EntityManager
   ): Promise<void> {
     const log = new AuditEntity();
     log.refId = refId;
     log.logType = type;
     log.userId = userId;
-
-    await this.auditLogService.save(log);
+    em ? await em.save(AuditEntity, log) : await this.auditLogService.save(log);
   }
 
   async performPDDAction(
@@ -849,5 +1010,16 @@ export class DocumentManagementService {
     });
 
     return lastDoc;
+  }
+
+  private async getLastActivity(projectRefId: string): Promise<ActivityEntity> {
+    return this.activityEntityRepository.findOne({
+      where: {
+        projectRefId: projectRefId,
+      },
+      order: {
+        version: "DESC",
+      },
+    });
   }
 }
