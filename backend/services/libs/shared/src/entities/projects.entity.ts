@@ -3,6 +3,7 @@ import { ProjectProposalStage } from "../enum/projectProposalStage.enum";
 import { TxType } from "../enum/txtype.enum";
 import { BasicFieldsEntity } from "./basic.fields.entity";
 import { NumberTransformer } from "../functions/number.transformer.decorator";
+import { ActivityEntity } from "./activity.entity";
 
 @Entity()
 export class ProjectEntity {
@@ -34,6 +35,9 @@ export class ProjectEntity {
 
   @Column()
   sectoralScope: string;
+
+  @Column("jsonb", { array: false, nullable: true })
+  activities?: ActivityEntity[];
 
   @Column({
     type: "enum",

@@ -49,6 +49,7 @@ export class DocumentManagementService {
     private readonly userService: UserService,
     private entityManager: EntityManager
   ) {}
+
   async addDocument(addDocumentDto: BaseDocumentDto, user: User) {
     try {
       const project = await this.programmeLedgerService.getProjectById(
@@ -558,6 +559,15 @@ export class DocumentManagementService {
             await this.performVRAction(existingDocument, requestData, user);
           }
           break;
+        case DocumentTypeEnum.MONITORING:
+          {
+            await this.performMonitoringAction(
+              existingDocument,
+              requestData,
+              user
+            );
+          }
+          break;
       }
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -599,6 +609,13 @@ export class DocumentManagementService {
             await this.performVRAction(existingDocument, requestData, user);
           }
           break;
+        case DocumentTypeEnum.MONITORING: {
+          await this.performMonitoringAction(
+            existingDocument,
+            requestData,
+            user
+          );
+        }
       }
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -688,6 +705,23 @@ export class DocumentManagementService {
       case TxType.REJECT_VALIDATION:
         docType = DocumentTypeEnum.VALIDATION_REPORT;
         docStatus = DocumentStatus.DNA_REJECTED;
+        break;
+      case TxType.APPROVE_MONITORING:
+        docType = DocumentTypeEnum.MONITORING;
+        docStatus = DocumentStatus.IC_APPROVED;
+        const parts = txRef?.split("#");
+        const monitoringDocumentId = parseInt(parts[1], 10);
+        const monitoringDoc = await em.findOne(DocumentEntity, {
+          where: {
+            id: monitoringDocumentId,
+            type: DocumentTypeEnum.MONITORING,
+          },
+        });
+        await em.update(
+          ActivityEntity,
+          { id: monitoringDoc.activityId },
+          { state: ActivityStateEnum.MONITORING_REPORT_VERIFIED }
+        );
         break;
     }
     let updateWhere: QueryDeepPartialEntity<DocumentEntity>;
@@ -1028,6 +1062,116 @@ export class DocumentManagementService {
         await this.logProjectStage(
           project.refId,
           ProjectAuditLogType.AUTHORIZED,
+          user.id
+        );
+      }
+    } else {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "project.incorrectDocumentAction",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  async performMonitoringAction(
+    document: DocumentEntity,
+    requestData: DocumentActionRequestDto,
+    user: User
+  ) {
+    const project = await this.programmeLedgerService.getProjectById(
+      document.programmeId
+    );
+    if (
+      requestData.action === DocumentStatus.IC_APPROVED ||
+      requestData.action === DocumentStatus.IC_REJECTED
+    ) {
+      if (document.status !== DocumentStatus.PENDING) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.documentNotInPendingState",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      if (!project.independentCertifiers.includes(user.companyId)) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.notAuthorised",
+            []
+          ),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+      const ICCompany = await this.companyServie.findByCompanyId(
+        user.companyId
+      );
+      const activity = await this.activityEntityRepository.findOne({
+        where: { id: document.activityId },
+      });
+      if (requestData.action === DocumentStatus.IC_REJECTED) {
+        await this.entityManager
+          .transaction(async (em) => {
+            await em.update(
+              ActivityEntity,
+              { id: document.activityId },
+              { state: ActivityStateEnum.MONITORING_REPORT_REJECTED }
+            );
+            await em.update(
+              DocumentEntity,
+              { id: document.id },
+              {
+                lastActionByUserId: user.id,
+                updatedTime: new Date().getTime(),
+                status: DocumentStatus.IC_REJECTED,
+              }
+            );
+            await this.logProjectStage(
+              project.refId,
+              ProjectAuditLogType.MONITORING_REPORT_REJECTED,
+              user.id,
+              em
+            );
+          })
+          .catch((error: any) => {
+            throw new HttpException(
+              error.message,
+              HttpStatus.INTERNAL_SERVER_ERROR
+            );
+          });
+        await this.emailHelperService.sendEmailToPDAdmins(
+          EmailTemplates.MONITORING_REJECT,
+          { icOrganisationName: ICCompany.name, remarks: requestData.remarks },
+          project.refId
+        );
+      } else if (requestData.action === DocumentStatus.IC_APPROVED) {
+        activity.state = ActivityStateEnum.MONITORING_REPORT_VERIFIED;
+        const updateProjectProposalStage = {
+          programmeId: project.refId,
+          txType: TxType.APPROVE_MONITORING,
+          data: activity,
+        };
+        await this.updateProposalStage(
+          updateProjectProposalStage,
+          user,
+          this.getDocumentTxRef(
+            DocumentTypeEnum.MONITORING,
+            document.id,
+            user.id
+          )
+        );
+        await this.emailHelperService.sendEmailToPDAdmins(
+          EmailTemplates.MONITORING_APPROVE,
+          { icOrganisationName: ICCompany.name },
+          project.refId
+        );
+        await this.logProjectStage(
+          project.refId,
+          ProjectAuditLogType.MONITORING_REPORT_APPROVED,
           user.id
         );
       }
