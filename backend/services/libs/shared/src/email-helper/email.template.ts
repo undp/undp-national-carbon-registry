@@ -304,6 +304,25 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Registry Team
         `,
   },
+  VALIDATION_APPROVED: {
+    id: "VALIDATION_APPROVED",
+    subject: "Validation Report Approved",
+    html: `
+        Hi {{name}}, <br><br>
+
+        Validation Report submitted for the project {{programmeName}} by {{countryName}} Climate Fund has been approved by Executive Board of {{countryName}} Climate Fund. <br><br>
+
+        Now the project has been authorised.
+
+        Please click <a href="{{programmePageLink}}">here</a> to download the issued Project Registration Certificate.
+        <br><br>
+
+        Please proceed to the next phase and submit the Monitoring Report.<br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
   VALIDATION_APPROVED_TO_PD: {
     id: "VALIDATION_APPROVED_TO_PD",
     subject: "Validation Report Approved",
@@ -323,6 +342,22 @@ export const EmailTemplates = {
         Hi, <br><br>
 
         Validation Report submitted by {{icOrganizationName}} Independant Certifier organisation for the project {{programmeName}} owned by {{pdOrganizationName}} has been approved by the Designated National Authority.<br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VALIDATION_REJECTED: {
+    id: "VALIDATION_REJECTED",
+    subject: "Validation Report Rejected",
+    html: `
+        Hi {{name}}, <br><br>
+
+        Validation report submitted for the project {{programmeName}} owned by {{organisationName}} organisation has been rejected by Executive Board of {{countryName}} Climate Fund due to the following reason/s:<br>
+        {{remark}} <br><br>
+
+        Please submit again by clicking <a href="{{programmePageLink}}">here</a>.
+        <br><br>
 
         Sincerely,  <br>
         The {{countryName}} Carbon Registry Team
