@@ -8,6 +8,11 @@
 <a name="about"></a>
 
 # National Carbon Credit Registry
+CURRENTLY UNDER CONSTRUCTION. New updated release end of April 2025 will include improvements for UI/UX, credit serialisation and issuance, as well as reporting modules. 
+
+
+
+
 
 # About
 The National Carbon Credit Registry is an open-source toolkit developed by UNDP to help countries develop a national registry to fulfil the requirements of Article 6 (Paris Agreement). 
