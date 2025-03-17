@@ -278,9 +278,24 @@ export const EmailTemplates = {
     id: "VALIDATION_SUBMITTED",
     subject: "New Validation Report Submitted!",
     html: `
-        Hi {{name}}, <br><br>
+        Hi,<br><br>
 
-        A new Validation Report has been submitted by {{countryName}} Climate Fund for the project {{programmeName}} owned by {{organisationName}}. <br><br>
+        A new Validation Report has been submitted by {{organizationName}} Independant Certifier for the project {{programmeName}} owned by your {{pdOrganizationName}}. <br><br>
+
+        Designated National Authority can review and approve by clicking <a href="{{programmePageLink}}>"here</a>.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VALIDATION_SUBMITTED_TO_DNA: {
+    id: "VALIDATION_SUBMITTED_TO_DNA",
+    subject: "New Validation Report Submitted!",
+    html: `
+        Hi,<br><br>
+
+        A new Validation Report has been submitted by {{icOrganizationName}} Independant Certifier for the project {{programmeName}} owned by the {{pdOrganizationName}}. <br><br>
 
         Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -308,6 +323,30 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Registry Team
         `,
   },
+  VALIDATION_APPROVED_TO_PD: {
+    id: "VALIDATION_APPROVED_TO_PD",
+    subject: "Validation Report Approved",
+    html: `
+        Hi, <br><br>
+
+        Validation Report submitted by {{icOrganizationName}} Independant Certifier for the project {{programmeName}} owned by your {{pdOrganizationName}} has been approved by the Designated National Authority.<br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VALIDATION_APPROVED_TO_IC: {
+    id: "VALIDATION_APPROVED_TO_IC",
+    subject: "Validation Report Approved",
+    html: `
+        Hi, <br><br>
+
+        Validation Report submitted by {{icOrganizationName}} Independant Certifier organisation for the project {{programmeName}} owned by {{pdOrganizationName}} has been approved by the Designated National Authority.<br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
   VALIDATION_REJECTED: {
     id: "VALIDATION_REJECTED",
     subject: "Validation Report Rejected",
@@ -318,6 +357,36 @@ export const EmailTemplates = {
         {{remark}} <br><br>
 
         Please submit again by clicking <a href="{{programmePageLink}}">here</a>.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VALIDATION_REJECTED_TO_PD: {
+    id: "VALIDATION_REJECTED_TO_PD",
+    subject: "Validation Report Rejected",
+    html: `
+        Hi, <br><br>
+
+        Validation Report submitted by {{icOrganizationName}} Independant Certifier for the project {{programmeName}} owned by your {{pdOrganizationName}} has been rejected by the Designated National Authority. <br><br>
+
+        {{icOrganizationName}} Independant Certifier can re-submit the Validation Report by clicking <a href={{programmePageLink}}>here</a>.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VALIDATION_REJECTED_TO_IC: {
+    id: "VALIDATION_REJECTED_TO_IC",
+    subject: "Validation Report Rejected",
+    html: `
+        Hi, <br><br>
+
+        Validation Report submitted by {{icOrganizationName}} Independant Certifier organisation for the project {{programmeName}} owned by {{pdOrganizationName}} has been rejected by the Designated National Authority. <br><br>
+
+        You can re-submit the Validation Report by clicking <a href={{programmePageLink}}>here</a>.
         <br><br>
 
         Sincerely,  <br>
