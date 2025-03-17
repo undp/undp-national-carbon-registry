@@ -609,6 +609,15 @@ export class EmailHelperService {
             hostAddress + `/programmeManagementSLCF/view/${refId}`,
         };
         break;
+      case "MONITORING_UPLOADED":
+        templateData = {
+          organisationName: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
     }
 
     const users: any[] = [];
