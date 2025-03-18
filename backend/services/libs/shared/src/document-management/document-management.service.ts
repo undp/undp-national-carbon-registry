@@ -604,22 +604,6 @@ export class DocumentManagementService {
       verificationData.verificationOpinion.signature2 = signUrls;
     }
 
-    project.creditEst = 500;
-    project.creditIssued = 400; //for testing purpose
-
-    if (
-      project.creditEst - project.creditIssued <
-      Number(verificationData.projectDetails?.verifiedScer)
-    ) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "verification.cannotIssueMoreThanEstimatedCredits",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-
     await this.entityManager
       .transaction(async (em) => {
         let documentVersion;
@@ -641,7 +625,6 @@ export class DocumentManagementService {
           { id: lastActivity.id },
           {
             state: ActivityStateEnum.VERIFICATION_REPORT_UPLOADED,
-            creditAmount: verificationData.projectDetails?.verifiedScer,
           }
         );
         activityId = lastActivity.id;
