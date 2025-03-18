@@ -400,6 +400,26 @@ export class ProgrammeLedgerService {
               ProjectProposalStage.VALIDATION_REPORT_SUBMITTED,
             ];
             break;
+          case TxType.APPROVE_MONITORING:
+            expectedCurrentProposalStages = [ProjectProposalStage.AUTHORISED];
+            if (project.activities) {
+              const activityIndex = project.activities.findIndex(
+                (e) => e.id == data.id
+              );
+              if (activityIndex >= 0) {
+                throw new HttpException(
+                  this.helperService.formatReqMessagesString(
+                    "project.alreadyApprovedMonitoringReport",
+                    []
+                  ),
+                  HttpStatus.BAD_REQUEST
+                );
+              }
+              uPayload["activities"] = [...project.activities, data];
+            } else {
+              uPayload["activities"] = [data];
+            }
+            break;
           default:
             break;
         }
