@@ -37,4 +37,5 @@ export enum TxType {
   APPROVE_PDD_BY_IC = "35",
   REJECT_PDD_BY_DNA = "36",
   APPROVE_PDD_BY_DNA = "37",
+  APPROVE_MONITORING = "38",
 }
