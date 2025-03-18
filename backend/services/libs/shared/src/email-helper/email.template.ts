@@ -1340,4 +1340,49 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Registry Team
                 `,
   },
+
+  MONITORING_UPLOADED: {
+    id: "MONITORING_UPLOADED",
+    subject: "Monitoring Report Submitted!",
+    html: `
+        Hi,<br>
+        <br>
+        A Monitoring Report has been submitted by {{organisationName}}.<br>
+        <br>
+        Please review and approve it by clicking <a href={{programmePageLink}}>here</a>.<br>
+        <br>
+        Sincerely,<br>
+        The {{countryName}} Carbon Credit Registry Team.
+                `,
+  },
+
+  MONITORING_REJECT: {
+    id: "MONITORING_REJECT",
+    subject: "Monitoring Report Rejected",
+    html: `
+        Hi,<br>
+        <br>
+        The Monitoring Report submitted by your {{pdOrganisationName}} has been declined by the {{icOrganisationName}} Independant Certifier.
+        <br>
+        Remarks of Rejection:<br>
+        {{remarks}}
+        <br>
+        Sincerely,<br>
+        The {{countryName}} Carbon Credit Registry Team.
+        `,
+  },
+
+  MONITORING_APPROVE: {
+    id: "MONITORING_APPROVE",
+    subject: "Monitoring Report Certified",
+    html: `
+        Hi,<br>
+        <br>
+        The Monitoring Report submitted by your {{pdOrganisationName}} has been certified by the {{icOrganisationName}} Independant Certifier.
+        <br>
+        <br>
+        Sincerely,<br>
+        The {{countryName}} Carbon Credit Registry Team.
+        `,
+  },
 };
