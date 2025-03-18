@@ -635,7 +635,7 @@ export class DocumentManagementService {
         const doc = await this.documentRepository.save(newDoc);
         await this.logProjectStage(
           project.refId,
-          ProjectAuditLogType.VERIFICATION_CREATE,
+          ProjectAuditLogType.VERIFICATION_REPORT_SUBMITTED,
           user.id,
           em
         );
