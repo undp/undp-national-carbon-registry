@@ -70,6 +70,9 @@ export class DocumentManagementService {
       newDoc.updatedTime = newDoc.createdTime;
 
       let updateProjectProposalStage: UpdateProjectProposalStageDto;
+      let lastActivity: ActivityEntity;
+      let ICCompany;
+
       switch (addDocumentDto.documentType) {
         case DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT:
           if (user.companyId != project.companyId) {
@@ -171,7 +174,7 @@ export class DocumentManagementService {
             updateProjectProposalStage,
             user,
             this.getDocumentTxRef(
-              DocumentTypeEnum.VALIDATION_REPORT,
+              DocumentTypeEnum.VALIDATION,
               documentResponse.id,
               user.id
             )
@@ -183,9 +186,7 @@ export class DocumentManagementService {
             user.id
           );
 
-          const ICCompany = await this.companyServie.findByCompanyId(
-            user.companyId
-          );
+          ICCompany = await this.companyServie.findByCompanyId(user.companyId);
 
           await this.emailHelperService.sendEmailToPDAdmins(
             EmailTemplates.VALIDATION_SUBMITTED,
@@ -224,7 +225,7 @@ export class DocumentManagementService {
               HttpStatus.BAD_REQUEST
             );
           }
-          const lastActivity = await this.getLastActivity(
+          lastActivity = await this.getLastActivity(
             addDocumentDto.projectRefId
           );
           if (
@@ -360,6 +361,81 @@ export class DocumentManagementService {
             project.refId
           );
           break;
+
+        case DocumentTypeEnum.VERIFICATION:
+          if (user.companyRole != CompanyRole.INDEPENDENT_CERTIFIER) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.notAuthorised",
+                []
+              ),
+              HttpStatus.UNAUTHORIZED
+            );
+          }
+          if (project.projectProposalStage != ProjectProposalStage.AUTHORISED) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.programmeIsNotInSuitableStageToProceed",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          lastActivity = await this.getLastActivity(
+            addDocumentDto.projectRefId
+          );
+          if (
+            lastActivity &&
+            addDocumentDto.activityRefId &&
+            lastActivity.refId != addDocumentDto.activityRefId
+          ) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.docCanBeAddedOnlyToLastActivity",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          if (
+            lastActivity &&
+            ![
+              ActivityStateEnum.MONITORING_REPORT_VERIFIED,
+              ActivityStateEnum.VERIFICATION_REPORT_REJECTED,
+            ].includes(lastActivity.state)
+          ) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.lastActivityNotInValidStateToUploadVerificationReport",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+
+          const verificationData = addDocumentDto.data.content;
+
+          await this.createVerificationReport(
+            verificationData,
+            newDoc,
+            lastActivity,
+            user,
+            project
+          );
+
+          ICCompany = this.companyServie.findByCompanyId(user.companyId);
+
+          await this.emailHelperService.sendEmailToPDAdmins(
+            EmailTemplates.VERIFICATION_CREATE_TO_PD,
+            { icOrganisationName: ICCompany.name },
+            project.refId
+          );
+
+          await this.emailHelperService.sendEmailToDNAAdmins(
+            EmailTemplates.VERIFICATION_CREATE_TO_DNA,
+            { icOrganisationName: ICCompany.name },
+            project.refId
+          );
       }
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -429,6 +505,163 @@ export class DocumentManagementService {
     validationReportDto.content.projectDetails.reportID = `SLCCS/VDR/${new Date().getFullYear()}/${
       newDoc.programmeId
     }/${newDoc.version}`;
+  }
+
+  private async createVerificationReport(
+    verificationData,
+    newDoc: DocumentEntity,
+    lastActivity: ActivityEntity,
+    user: User,
+    project: ProjectEntity
+  ): Promise<void> {
+    if (
+      verificationData.annexures.optionalDocuments &&
+      verificationData.annexures.optionalDocuments.length > 0
+    ) {
+      const docUrls = [];
+      for (const doc of verificationData.annexures.optionalDocuments) {
+        let docUrl;
+
+        if (this.isValidHttpUrl(doc)) {
+          docUrl = doc;
+        } else {
+          docUrl = await this.uploadDocument(
+            DocType.VERIFICATION_REPORT_ANNEXURES_OPTIONAL_DOCUMENT,
+            project.refId,
+            doc
+          );
+        }
+        docUrls.push(docUrl);
+      }
+      verificationData.annexures.optionalDocuments = docUrls;
+    }
+
+    if (
+      verificationData.verificationFinding.optionalDocuments &&
+      verificationData.verificationFinding.optionalDocuments.length > 0
+    ) {
+      const docUrls = [];
+      for (const doc of verificationData.verificationFinding
+        .optionalDocuments) {
+        let docUrl;
+
+        if (this.isValidHttpUrl(doc)) {
+          docUrl = doc;
+        } else {
+          docUrl = await this.uploadDocument(
+            DocType.VERIFICATION_REPORT_VERIFICATION_FINDING_OPTIONAL_DOCUMENT,
+            project.refId,
+            doc
+          );
+        }
+        docUrls.push(docUrl);
+      }
+      verificationData.verificationFinding.optionalDocuments = docUrls;
+    }
+
+    if (
+      verificationData.verificationOpinion.signature1 &&
+      verificationData.verificationOpinion.signature1.length > 0
+    ) {
+      const signUrls = [];
+      for (const sign of verificationData.verificationOpinion.signature1) {
+        let signUrl;
+
+        if (this.isValidHttpUrl(sign)) {
+          signUrl = sign;
+        } else {
+          signUrl = await this.uploadDocument(
+            DocType.VERIFICATION_REPORT_VERIFICATION_OPINION_SIGN_1,
+            project.refId,
+            sign
+          );
+        }
+        signUrls.push(signUrl);
+      }
+      verificationData.verificationOpinion.signature1 = signUrls;
+    }
+
+    if (
+      verificationData.verificationOpinion.signature2 &&
+      verificationData.verificationOpinion.signature2.length > 0
+    ) {
+      const signUrls = [];
+      for (const sign of verificationData.verificationOpinion.signature2) {
+        let signUrl;
+
+        if (this.isValidHttpUrl(sign)) {
+          signUrl = sign;
+        } else {
+          signUrl = await this.uploadDocument(
+            DocType.VERIFICATION_REPORT_VERIFICATION_OPINION_SIGN_1,
+            project.refId,
+            sign
+          );
+        }
+        signUrls.push(signUrl);
+      }
+      verificationData.verificationOpinion.signature2 = signUrls;
+    }
+
+    project.creditEst = 500;
+    project.creditIssued = 400; //for testing purpose
+
+    if (
+      project.creditEst - project.creditIssued <
+      Number(verificationData.projectDetails?.verifiedScer)
+    ) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "verification.cannotIssueMoreThanEstimatedCredits",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    await this.entityManager
+      .transaction(async (em) => {
+        let documentVersion;
+        let activityId;
+
+        const lastVerificationReport = (
+          await em.find(DocumentEntity, {
+            where: {
+              activityId: lastActivity.id,
+              programmeId: project.refId,
+            },
+            order: {
+              version: "DESC",
+            },
+          })
+        )[0];
+        await em.update(
+          ActivityEntity,
+          { id: lastActivity.id },
+          {
+            state: ActivityStateEnum.VERIFICATION_REPORT_UPLOADED,
+            creditAmount: verificationData.projectDetails?.verifiedScer,
+          }
+        );
+        activityId = lastActivity.id;
+        documentVersion = lastVerificationReport.version + 1;
+
+        newDoc.version = documentVersion;
+        newDoc.activityId = activityId;
+        const doc = await this.documentRepository.save(newDoc);
+        await this.logProjectStage(
+          project.refId,
+          ProjectAuditLogType.VERIFICATION_CREATE,
+          user.id,
+          em
+        );
+      })
+      .catch((error: any) => {
+        throw new HttpException(
+          error.message,
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      });
   }
 
   private async processValidatorSignature(
@@ -555,7 +788,11 @@ export class DocumentManagementService {
 
         case DocumentTypeEnum.VALIDATION:
           {
-            await this.performVRAction(existingDocument, requestData, user);
+            await this.performValidationReportAction(
+              existingDocument,
+              requestData,
+              user
+            );
           }
           break;
       }
@@ -594,9 +831,13 @@ export class DocumentManagementService {
           }
           break;
 
-        case DocumentTypeEnum.VALIDATION_REPORT:
+        case DocumentTypeEnum.VALIDATION:
           {
-            await this.performVRAction(existingDocument, requestData, user);
+            await this.performValidationReportAction(
+              existingDocument,
+              requestData,
+              user
+            );
           }
           break;
       }
@@ -682,11 +923,11 @@ export class DocumentManagementService {
         docStatus = DocumentStatus.DNA_REJECTED;
         break;
       case TxType.APPROVE_VALIDATION:
-        docType = DocumentTypeEnum.VALIDATION_REPORT;
+        docType = DocumentTypeEnum.VALIDATION;
         docStatus = DocumentStatus.DNA_APPROVED;
         break;
       case TxType.REJECT_VALIDATION:
-        docType = DocumentTypeEnum.VALIDATION_REPORT;
+        docType = DocumentTypeEnum.VALIDATION;
         docStatus = DocumentStatus.DNA_REJECTED;
         break;
     }
@@ -917,7 +1158,7 @@ export class DocumentManagementService {
     }
   }
 
-  async performVRAction(
+  async performValidationReportAction(
     document: DocumentEntity,
     requestData: DocumentActionRequestDto,
     user: User
@@ -961,7 +1202,7 @@ export class DocumentManagementService {
           updateProjectProposalStage,
           user,
           this.getDocumentTxRef(
-            DocumentTypeEnum.VALIDATION_REPORT,
+            DocumentTypeEnum.VALIDATION,
             document.id,
             user.id
           )
@@ -1005,7 +1246,7 @@ export class DocumentManagementService {
           updateProjectProposalStage,
           user,
           this.getDocumentTxRef(
-            DocumentTypeEnum.VALIDATION_REPORT,
+            DocumentTypeEnum.VALIDATION,
             document.id,
             user.id
           )

@@ -454,6 +454,38 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Registry Team
         `,
   },
+  VERIFICATION_CREATE_TO_PD: {
+    id: "VERIFICATION_CREATE_TO_PD",
+    subject: "New Verification Report Submitted!",
+    html: `
+        Hi, <br><br>
+
+        A new Verfication Report has been submitted by {{organizationNameIC}}.<br>
+        Independant Certifier for the project {{projectName}} owned by your {{organizationNamePD}}. <br><br>
+
+        Designated National Authority can review and approve by clicking <a href="{{programmePageLink}}">here</a>.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VERIFICATION_CREATE_TO_DNA: {
+    id: "VERIFICATION_CREATE_TO_DNA",
+    subject: "New Verification Report Submitted!",
+    html: `
+        Hi, <br><br>
+
+        A new Verfication Report has been submitted by {{organizationNameIC}}.<br>
+        Independant Certifier for the project {{projectName}} owned by your {{organizationNamePD}}.<br><br>
+
+        Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
   VERIFICATION_APPROVED: {
     id: "VERIFICATION_APPROVED",
     subject: "Verification Report Approved",
