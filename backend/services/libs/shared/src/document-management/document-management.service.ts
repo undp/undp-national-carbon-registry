@@ -31,6 +31,7 @@ import { DocumentQueryDto } from "../dto/document.query.dto";
 import { ActivityEntity } from "../entities/activity.entity";
 import { ActivityStateEnum } from "../enum/activity.state.enum";
 import { LetterOfAuthorisationRequestGen } from "../util/document-generators/letter.of.authorisation.request.gen";
+import { UserCompanyViewEntity } from "../view-entities/userCompany.view.entity";
 
 @Injectable()
 export class DocumentManagementService {
@@ -39,6 +40,8 @@ export class DocumentManagementService {
     private readonly documentRepository: Repository<DocumentEntity>,
     @InjectRepository(ActivityEntity)
     private readonly activityEntityRepository: Repository<ActivityEntity>,
+    @InjectRepository(UserCompanyViewEntity)
+    private readonly userCompanyViewEntityRepository: Repository<UserCompanyViewEntity>,
     private readonly programmeLedgerService: ProgrammeLedgerService,
     private readonly helperService: HelperService,
     private readonly emailHelperService: EmailHelperService,
@@ -769,7 +772,6 @@ export class DocumentManagementService {
             await this.performPDDAction(existingDocument, requestData, user);
           }
           break;
-
         case DocumentTypeEnum.VALIDATION:
           {
             await this.performValidationReportAction(
@@ -782,6 +784,15 @@ export class DocumentManagementService {
         case DocumentTypeEnum.MONITORING:
           {
             await this.performMonitoringAction(
+              existingDocument,
+              requestData,
+              user
+            );
+          }
+          break;
+        case DocumentTypeEnum.VERIFICATION:
+          {
+            await this.performVerificationAction(
               existingDocument,
               requestData,
               user
@@ -823,7 +834,6 @@ export class DocumentManagementService {
             await this.performPDDAction(existingDocument, requestData, user);
           }
           break;
-
         case DocumentTypeEnum.VALIDATION:
           {
             await this.performValidationReportAction(
@@ -833,13 +843,24 @@ export class DocumentManagementService {
             );
           }
           break;
-        case DocumentTypeEnum.MONITORING: {
-          await this.performMonitoringAction(
-            existingDocument,
-            requestData,
-            user
-          );
-        }
+        case DocumentTypeEnum.MONITORING:
+          {
+            await this.performMonitoringAction(
+              existingDocument,
+              requestData,
+              user
+            );
+          }
+          break;
+        case DocumentTypeEnum.VERIFICATION:
+          {
+            await this.performVerificationAction(
+              existingDocument,
+              requestData,
+              user
+            );
+          }
+          break;
       }
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -945,6 +966,21 @@ export class DocumentManagementService {
           ActivityEntity,
           { id: monitoringDoc.activityId },
           { state: ActivityStateEnum.MONITORING_REPORT_VERIFIED }
+        );
+        break;
+      case TxType.APPROVE_VERIFICATION:
+        docType = DocumentTypeEnum.VERIFICATION;
+        docStatus = DocumentStatus.DNA_APPROVED;
+        const verificationDoc = await em.findOne(DocumentEntity, {
+          where: {
+            id: parseInt(txRef?.split("#")[1], 10),
+            type: DocumentTypeEnum.VERIFICATION,
+          },
+        });
+        await em.update(
+          ActivityEntity,
+          { id: verificationDoc.activityId },
+          { state: ActivityStateEnum.VERIFICATION_REPORT_VERIFIED }
         );
         break;
     }
@@ -1396,6 +1432,139 @@ export class DocumentManagementService {
         await this.logProjectStage(
           project.refId,
           ProjectAuditLogType.MONITORING_REPORT_APPROVED,
+          user.id
+        );
+      }
+    } else {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "project.incorrectDocumentAction",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  async performVerificationAction(
+    document: DocumentEntity,
+    requestData: DocumentActionRequestDto,
+    user: User
+  ) {
+    const project = await this.programmeLedgerService.getProjectById(
+      document.programmeId
+    );
+
+    if (
+      requestData.action === DocumentStatus.DNA_APPROVED ||
+      requestData.action === DocumentStatus.DNA_REJECTED
+    ) {
+      if (user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.notAuthorised",
+            []
+          ),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+
+      if (document.status !== DocumentStatus.PENDING) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.documentNotInPendingState",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      const activity = await this.activityEntityRepository.findOne({
+        where: { id: document.activityId },
+      });
+
+      if (requestData.action === DocumentStatus.DNA_REJECTED) {
+        await this.entityManager
+          .transaction(async (em) => {
+            await em.update(
+              ActivityEntity,
+              { id: document.activityId },
+              { state: ActivityStateEnum.VERIFICATION_REPORT_REJECTED }
+            );
+            await em.update(
+              DocumentEntity,
+              { id: document.id },
+              {
+                lastActionByUserId: user.id,
+                updatedTime: new Date().getTime(),
+                status: DocumentStatus.DNA_REJECTED,
+              }
+            );
+            await this.logProjectStage(
+              project.refId,
+              ProjectAuditLogType.VERIFICATION_REPORT_REJECTED,
+              user.id,
+              em
+            );
+          })
+          .catch((error: any) => {
+            throw new HttpException(
+              error.message,
+              HttpStatus.INTERNAL_SERVER_ERROR
+            );
+          });
+
+        const ICCompany = await this.userCompanyViewEntityRepository.findOne({
+          where: { id: document.userId },
+        });
+        await this.emailHelperService.sendEmailToPDAdmins(
+          EmailTemplates.VERIFICATION_REJECTED_TO_PD,
+          {
+            icOrganisationName: ICCompany.companyName,
+            remarks: requestData.remarks,
+          },
+          project.refId
+        );
+        await this.emailHelperService.sendEmailToICAdmins(
+          EmailTemplates.VERIFICATION_REJECTED_TO_IC,
+          {
+            icOrganisationName: ICCompany.companyName,
+            remarks: requestData.remarks,
+          },
+          project.refId
+        );
+      } else if (requestData.action === DocumentStatus.DNA_APPROVED) {
+        activity.state = ActivityStateEnum.VERIFICATION_REPORT_VERIFIED;
+        const updateProjectProposalStage = {
+          programmeId: project.refId,
+          txType: TxType.APPROVE_VERIFICATION,
+          data: activity,
+        };
+        await this.updateProposalStage(
+          updateProjectProposalStage,
+          user,
+          this.getDocumentTxRef(
+            DocumentTypeEnum.VERIFICATION,
+            document.id,
+            user.id
+          )
+        );
+        const ICCompany = await this.userCompanyViewEntityRepository.findOne({
+          where: { id: document.userId },
+        });
+        await this.emailHelperService.sendEmailToPDAdmins(
+          EmailTemplates.VERIFICATION_APPROVED_TO_PD,
+          { icOrganisationName: ICCompany.companyName },
+          project.refId
+        );
+        await this.emailHelperService.sendEmailToICAdmins(
+          EmailTemplates.VERIFICATION_APPROVED_TO_IC,
+          { icOrganisationName: ICCompany.companyName },
+          project.refId
+        );
+        await this.logProjectStage(
+          project.refId,
+          ProjectAuditLogType.VERIFICATION_REPORT_APPROVED,
           user.id
         );
       }

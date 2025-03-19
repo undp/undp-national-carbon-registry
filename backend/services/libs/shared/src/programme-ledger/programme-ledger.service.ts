@@ -32,6 +32,7 @@ import { OrganisationCreditAccounts } from "../enum/organisation.credit.accounts
 import { SLCFSerialNumberGeneratorService } from "../util/slcfSerialNumberGenerator.service";
 import { VerificationRequestEntity } from "../entities/verification.request.entity";
 import { ProjectEntity } from "../entities/projects.entity";
+import { ActivityStateEnum } from "../enum/activity.state.enum";
 
 @Injectable()
 export class ProgrammeLedgerService {
@@ -418,6 +419,41 @@ export class ProgrammeLedgerService {
               uPayload["activities"] = [...project.activities, data];
             } else {
               uPayload["activities"] = [data];
+            }
+            break;
+          case TxType.APPROVE_VERIFICATION:
+            expectedCurrentProposalStages = [ProjectProposalStage.AUTHORISED];
+            if (project.activities) {
+              const activityIndex = project.activities.findIndex(
+                (e) => e.id == data.id
+              );
+              if (activityIndex < 0) {
+                throw new HttpException(
+                  this.helperService.formatReqMessagesString(
+                    "project.notApprovedMonitoringReport",
+                    []
+                  ),
+                  HttpStatus.BAD_REQUEST
+                );
+              }
+
+              if (
+                ![
+                  ActivityStateEnum.MONITORING_REPORT_VERIFIED,
+                  ActivityStateEnum.VERIFICATION_REPORT_REJECTED,
+                ].includes(project.activities[activityIndex].state)
+              ) {
+                throw new HttpException(
+                  this.helperService.formatReqMessagesString(
+                    "project.programmeIsNotInSuitableStageToProceed",
+                    []
+                  ),
+                  HttpStatus.BAD_REQUEST
+                );
+              }
+              project.activities[activityIndex].state =
+                ActivityStateEnum.VERIFICATION_REPORT_VERIFIED;
+              uPayload["activities"] = [...project.activities];
             }
             break;
           default:
