@@ -423,53 +423,6 @@ export class ProgrammeLedgerService {
               uPayload["activities"] = [data];
             }
             break;
-          case TxType.APPROVE_VERIFICATION:
-            expectedCurrentProposalStages = [ProjectProposalStage.AUTHORISED];
-            if (project.activities) {
-              const activityIndex = project.activities.findIndex(
-                (e) => e.id == data.activity.id
-              );
-              if (activityIndex < 0) {
-                throw new HttpException(
-                  this.helperService.formatReqMessagesString(
-                    "project.notApprovedMonitoringReport",
-                    []
-                  ),
-                  HttpStatus.BAD_REQUEST
-                );
-              }
-
-              if (
-                ![
-                  ActivityStateEnum.MONITORING_REPORT_VERIFIED,
-                  ActivityStateEnum.VERIFICATION_REPORT_REJECTED,
-                ].includes(project.activities[activityIndex].state)
-              ) {
-                throw new HttpException(
-                  this.helperService.formatReqMessagesString(
-                    "project.programmeIsNotInSuitableStageToProceed",
-                    []
-                  ),
-                  HttpStatus.BAD_REQUEST
-                );
-              }
-              project.activities[activityIndex].state =
-                ActivityStateEnum.VERIFICATION_REPORT_VERIFIED;
-              project.activities[activityIndex].creditIssued =
-                data.requestData.data.creditVerified;
-              uPayload["activities"] = [...project.activities];
-              uPayload["creditBalance"] =
-                project.creditBalance !== undefined
-                  ? project.creditBalance + data.requestData.data.creditVerified
-                  : data.requestData.data.creditVerified;
-
-              uPayload["creditIssued"] =
-                project.creditIssued !== undefined
-                  ? project.creditIssued + data.requestData.data.creditVerified
-                  : data.requestData.data.creditVerified;
-              uPayload["creditChange"] = data.requestData.data.creditVerified;
-            }
-            break;
           default:
             break;
         }
@@ -732,9 +685,39 @@ export class ProgrammeLedgerService {
           : Number(creditVerified);
 
         project.creditChange = Number(creditVerified);
-        project.txType = TxType.ISSUE_SL;
+        project.txType = TxType.ISSUE;
         project.txRef = txRef;
         project.txTime = new Date().getTime();
+
+        const activityIndex = project.activities.findIndex(
+          (e) => e.id == activity.id
+        );
+        if (activityIndex < 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.notApprovedMonitoringReport",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        if (
+          ActivityStateEnum.MONITORING_REPORT_VERIFIED !==
+          project.activities[activityIndex].state
+        ) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.programmeIsNotInSuitableStageToProceed",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        project.activities[activityIndex].state =
+          ActivityStateEnum.VERIFICATION_REPORT_VERIFIED;
+        project.activities[activityIndex].creditIssued = creditVerified;
 
         updatedProject = project;
         const uPayload = {
@@ -745,6 +728,7 @@ export class ProgrammeLedgerService {
           creditBalance: project.creditBalance,
           companyId: project.companyId,
           creditIssued: project.creditIssued,
+          activities: [...project.activities],
         };
 
         // if (
@@ -762,8 +746,7 @@ export class ProgrammeLedgerService {
         let insertMap = {};
         updateMap[this.ledger.projectTable] = uPayload;
         updateWhereMap[this.ledger.projectTable] = {
-          projectId: project.refId,
-          projectProposalStage: ProjectProposalStage.AUTHORISED.valueOf(),
+          refId: project.refId,
           txTime: prvTxTime,
         };
 
@@ -786,7 +769,7 @@ export class ProgrammeLedgerService {
             credit:
               companyCreditBalances[companyAccount] + Number(creditVerified),
             txRef: activity.id + "#" + project.refId,
-            txType: TxType.ISSUE_SL,
+            txType: TxType.ISSUE,
           };
           updateWhereMap[this.ledger.companyTableName + "#" + companyAccount] =
             {
@@ -796,7 +779,7 @@ export class ProgrammeLedgerService {
           insertMap[this.ledger.companyTableName + "#" + companyAccount] = {
             credit: creditVerified,
             txRef: activity.id + "#" + project.refId,
-            txType: TxType.ISSUE_SL,
+            txType: TxType.ISSUE,
             txId: companyAccount,
           };
         }
