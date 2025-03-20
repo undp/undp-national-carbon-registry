@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { ProjectDataDto } from "../dto/project.data.dto";
 import { User } from "../entities/user.entity";
 import { CompanyRole } from "../enum/company.role.enum";
 import { HelperService } from "../util/helpers.service";
@@ -11,7 +10,6 @@ import { ProjectEntity } from "../entities/projects.entity";
 import { CounterService } from "../util/counter.service";
 import { CounterType } from "../util/counter.type.enum";
 import { DocType } from "../enum/document.type";
-import { FileHandlerInterface } from "../file-handler/filehandler.interface";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { ProjectCreateDto } from "../dto/project.create.dto";
 import { DocumentEntity } from "../entities/document.entity";
@@ -27,12 +25,10 @@ import { DataListResponseDto } from "../dto/data.list.response";
 import { ProjectViewEntity } from "../view-entities/project.view.entity";
 import { ProjectDetailsViewEntity } from "../view-entities/projectDetails.view.entity";
 import { ProjectAuditLogType } from "../enum/project.audit.log.type.enum";
-import { AuditEntity } from "../entities/audit.entity";
 import { AuditLogsService } from "../audit-logs/audit-logs.service";
 import { EmailHelperService } from "../email-helper/email-helper.service";
 import { EmailTemplates } from "../email-helper/email.template";
 import { DocumentManagementService } from "../document-management/document-management.service";
-import { ValidationReportDto } from "../dto/validationReport.dto";
 
 @Injectable()
 export class ProjectManagementService {
@@ -40,7 +36,6 @@ export class ProjectManagementService {
     private readonly helperService: HelperService,
     private readonly companyService: CompanyService,
     private readonly counterService: CounterService,
-    private fileHandler: FileHandlerInterface,
     private readonly programmeLedgerService: ProgrammeLedgerService,
     @InjectRepository(DocumentEntity)
     private documentRepo: Repository<DocumentEntity>,
@@ -358,25 +353,6 @@ export class ProjectManagementService {
     }
   }
 
-  private getFileExtension = (file: string): string => {
-    let fileType = file.split(";")[0].split("/")[1];
-    fileType = this.fileExtensionMap.get(fileType);
-    return fileType;
-  };
-
-  private fileExtensionMap = new Map([
-    ["pdf", "pdf"],
-    ["vnd.openxmlformats-officedocument.spreadsheetml.sheet", "xlsx"],
-    ["vnd.ms-excel", "xls"],
-    ["vnd.ms-powerpoint", "ppt"],
-    ["vnd.openxmlformats-officedocument.presentationml.presentation", "pptx"],
-    ["msword", "doc"],
-    ["vnd.openxmlformats-officedocument.wordprocessingml.document", "docx"],
-    ["csv", "csv"],
-    ["png", "png"],
-    ["jpeg", "jpg"],
-  ]);
-
   async getLogs(refId: string) {
     return await this.auditLogService.getLogs(refId);
   }
@@ -482,14 +458,10 @@ export class ProjectManagementService {
       purposeOfCreditDevelopment: "Carbon sequestration",
       endTime: 1862601600000,
       creditChange: 5000,
-      creditIssued: 5000,
-      creditEst: 25000,
       creditFrozen: 1000,
       creditTransferred: 10000,
       constantVersion: "1.2.0",
       creditUnit: "tCO2e",
-      txTime: 1709251200000,
-      txRef: "TX-20240301-56789",
       typeOfMitigation: "REMOVAL",
       projectLocation: { latitude: 7.2906, longitude: 80.6337 },
       mitigationActions: [
@@ -503,7 +475,6 @@ export class ProjectManagementService {
         "https://registry.example.com/certificates/PRG-2024-00123.pdf",
       dsDivision: "Ambagamuwa",
       community: "Local indigenous communities",
-      projectDescription: "This project aims to restore degraded land.",
       additionalDocuments: [],
       emissionReductionExpected: 25000,
       emissionReductionAchieved: 5000,

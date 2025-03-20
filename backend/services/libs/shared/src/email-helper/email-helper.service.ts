@@ -495,6 +495,16 @@ export class EmailHelperService {
             hostAddress + `/programmeManagementSLCF/view/${refId}`,
         };
         break;
+      case "VERIFICATION_CREATE_TO_DNA":
+        templateData = {
+          organizationNameIC: templateData.icOrganisationName,
+          organizationNamePD: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
     }
 
     const users = await this.userService.getDNAAdminUsers();
@@ -763,6 +773,16 @@ export class EmailHelperService {
           icOrganizationName: templateData.icOrganizationName,
           countryName: systemCountryName,
           programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "VERIFICATION_CREATE_TO_PD":
+        templateData = {
+          organizationNamePD: company.name,
+          organizationNameIC: templateData.icOrganizationName,
+          countryName: systemCountryName,
+          projectName: project.title,
           programmePageLink:
             hostAddress + `/programmeManagementSLCF/view/${refId}`,
         };
