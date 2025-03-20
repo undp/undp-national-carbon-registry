@@ -10,11 +10,16 @@ import { CompanyModule } from "../company/company.module";
 import { FileHandlerModule } from "../file-handler/filehandler.module";
 import { UserModule } from "../user/user.module";
 import { ActivityEntity } from "../entities/activity.entity";
+import { UserCompanyViewEntity } from "../view-entities/userCompany.view.entity";
 
 @Module({
   imports: [
     UtilModule,
-    TypeOrmModule.forFeature([DocumentEntity, ActivityEntity]),
+    TypeOrmModule.forFeature([
+      DocumentEntity,
+      ActivityEntity,
+      UserCompanyViewEntity,
+    ]),
     ProgrammeLedgerModule,
     EmailHelperModule,
     AuditLogsModule,

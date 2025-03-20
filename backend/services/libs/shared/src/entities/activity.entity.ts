@@ -25,10 +25,10 @@ export class ActivityEntity {
   @Column({ type: "enum", enum: ActivityStateEnum, nullable: false })
   state: ActivityStateEnum;
 
-  @Column({ type: "bigint", default: 0 })
+  @Column({ default: 0 })
   creditAmount: number;
 
-  @Column({ type: "bigint", default: 0 })
+  @Column({ default: 0 })
   creditIssued: number;
 
   @BeforeInsert()

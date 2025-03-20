@@ -628,6 +628,27 @@ export class EmailHelperService {
             hostAddress + `/programmeManagementSLCF/view/${refId}`,
         };
         break;
+      case "VERIFICATION_REJECTED_TO_IC":
+        templateData = {
+          organisationNameIC: templateData.icOrganisationName,
+          remarks: templateData.remarks,
+          organisationNamePD: company.name,
+          countryName: systemCountryName,
+          projectName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "VERIFICATION_APPROVED_TO_IC":
+        templateData = {
+          organisationNameIC: templateData.icOrganisationName,
+          organisationNamePD: company.name,
+          countryName: systemCountryName,
+          projectName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
     }
 
     const users: any[] = [];
@@ -804,6 +825,27 @@ export class EmailHelperService {
           pdOrganisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "VERIFICATION_REJECTED_TO_PD":
+        templateData = {
+          organisationNameIC: templateData.icOrganisationName,
+          remarks: templateData.remarks,
+          organisationNamePD: company.name,
+          countryName: systemCountryName,
+          projectName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "VERIFICATION_APPROVED_TO_PD":
+        templateData = {
+          organisationNameIC: templateData.icOrganisationName,
+          organisationNamePD: company.name,
+          countryName: systemCountryName,
+          projectName: project.title,
           programmePageLink:
             hostAddress + `/programmeManagementSLCF/view/${refId}`,
         };
