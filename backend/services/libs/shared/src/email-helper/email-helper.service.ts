@@ -495,6 +495,16 @@ export class EmailHelperService {
             hostAddress + `/programmeManagementSLCF/view/${refId}`,
         };
         break;
+      case "VERIFICATION_CREATE_TO_DNA":
+        templateData = {
+          organizationNameIC: templateData.icOrganisationName,
+          organizationNamePD: company.name,
+          countryName: systemCountryName,
+          programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
     }
 
     const users = await this.userService.getDNAAdminUsers();
@@ -614,6 +624,27 @@ export class EmailHelperService {
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "VERIFICATION_REJECTED_TO_IC":
+        templateData = {
+          organisationNameIC: templateData.icOrganisationName,
+          remarks: templateData.remarks,
+          organisationNamePD: company.name,
+          countryName: systemCountryName,
+          projectName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "VERIFICATION_APPROVED_TO_IC":
+        templateData = {
+          organisationNameIC: templateData.icOrganisationName,
+          organisationNamePD: company.name,
+          countryName: systemCountryName,
+          projectName: project.title,
           programmePageLink:
             hostAddress + `/programmeManagementSLCF/view/${refId}`,
         };
@@ -767,6 +798,16 @@ export class EmailHelperService {
             hostAddress + `/programmeManagementSLCF/view/${refId}`,
         };
         break;
+      case "VERIFICATION_CREATE_TO_PD":
+        templateData = {
+          organizationNamePD: company.name,
+          organizationNameIC: templateData.icOrganizationName,
+          countryName: systemCountryName,
+          projectName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
       case "MONITORING_REJECT":
         templateData = {
           icOrganisationName: templateData.icOrganisationName,
@@ -784,6 +825,27 @@ export class EmailHelperService {
           pdOrganisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "VERIFICATION_REJECTED_TO_PD":
+        templateData = {
+          organisationNameIC: templateData.icOrganisationName,
+          remarks: templateData.remarks,
+          organisationNamePD: company.name,
+          countryName: systemCountryName,
+          projectName: project.title,
+          programmePageLink:
+            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+        };
+        break;
+      case "VERIFICATION_APPROVED_TO_PD":
+        templateData = {
+          organisationNameIC: templateData.icOrganisationName,
+          organisationNamePD: company.name,
+          countryName: systemCountryName,
+          projectName: project.title,
           programmePageLink:
             hostAddress + `/programmeManagementSLCF/view/${refId}`,
         };

@@ -8,13 +8,17 @@ import { TxType } from "../enum/txtype.enum";
       p."refId" as "projectId", 
       p."title", 
       p."projectProposalStage", 
+      p."creditEst",
       p."creditBalance",
       p."creditRetired",
+      p."creditIssued",
+      p."creditChange",
       p."companyId",
       p."independentCertifiers" as "certifierId",
       p."createTime" as "createdTime",
       p."txTime",
       p."txType",
+      p."txRef",
       c."name", 
       c."logo",
       c."companyRole",
@@ -39,10 +43,19 @@ export class ProjectDetailsViewEntity {
   projectProposalStage: string;
 
   @ViewColumn()
+  creditEst: number;
+
+  @ViewColumn()
   creditBalance: number;
 
   @ViewColumn()
   creditRetired: number;
+
+  @ViewColumn()
+  creditIssued: number;
+  
+  @ViewColumn()
+  creditChange: number;
 
   @ViewColumn()
   companyId: number;
@@ -61,6 +74,9 @@ export class ProjectDetailsViewEntity {
 
   @ViewColumn()
   txType: TxType;
+
+  @ViewColumn()
+  txRef: TxType;
 
   @ViewColumn()
   name: string;
