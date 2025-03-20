@@ -35,6 +35,7 @@ export default () => ({
     companyTable: "company",
     programmeSlTable: "programmesl",
     projectTable: "project",
+    creditBlocksTable: "credit_blocks",
   },
   email: {
     source: process.env.SOURCE_EMAIL || "info@xeptagon.xyz",
@@ -128,5 +129,11 @@ export default () => ({
       limit: process.env.RATE_LIMIT_ORGANISATION_LIMIT || 100, // number of requests for the given time
       duration: process.env.RATE_LIMIT_ORGANISATION_DURATION || 60, // duration in seconds
     },
+  },
+  serialNumber: {
+    maxProjectId: parseInt(process.env.MAXIMUM_PROJECT_ID) || 999999,
+    creditIdentifier: process.env.CREDIT_IDENTIFIER || "CA0NNN",
+    firstTransferringPartyId: process.env.FIRST_TRANSFERRING_PARTY_ID || "XX",
+    seperator: process.env.SERIAL_NUMBER_SEPERATOR || "-",
   },
 });

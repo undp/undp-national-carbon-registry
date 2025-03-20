@@ -22,6 +22,7 @@ export abstract class LedgerDBInterface {
   public ledgerName: string;
   public programmeSlTable: string;
   public projectTable: string;
+  public creditBlocksTable: string;
 
   abstract createTable(tableName?: string): Promise<void>;
 

@@ -27,6 +27,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
   public overallTableName: string;
   public companyTableName: string;
   public programmeSlTable: string;
+  public creditBlocksTable: string;
   public projectTable: string;
   public ledgerName: string;
   private dbCon: Pool;
@@ -43,6 +44,9 @@ export class PgSqlLedgerService implements LedgerDBInterface {
       "ledger.programmeSlTable"
     );
     this.projectTable = configService.get<string>("ledger.projectTable");
+    this.creditBlocksTable = configService.get<string>(
+      "ledger.creditBlocksTable"
+    );
 
     let dbc = this.configService.get<any>("database");
 
@@ -147,6 +151,8 @@ export class PgSqlLedgerService implements LedgerDBInterface {
       return "data->>'programmeId'";
     } else if (tableName === this.projectTable) {
       return "data->>'refId'";
+    } else if (tableName === this.creditBlocksTable) {
+      return "data->>'creditBlockId'";
     } else {
       return "data->>'txId'";
     }

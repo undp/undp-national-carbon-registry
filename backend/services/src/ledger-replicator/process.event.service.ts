@@ -14,6 +14,7 @@ import { OrganisationCreditAccounts } from "@app/shared/enum/organisation.credit
 import { ProjectEntity } from "@app/shared/entities/projects.entity";
 import { DocumentEntity } from "@app/shared/entities/document.entity";
 import { DocumentManagementService } from "@app/shared/document-management/document-management.service";
+import { CreditBlocksEntity } from "@app/shared/entities/credit.blocks.entity";
 
 @Injectable()
 export class ProcessEventService {
@@ -25,6 +26,8 @@ export class ProcessEventService {
     private programmeSlRepo: Repository<ProgrammeSl>,
     @InjectRepository(ProjectEntity)
     private projectRepo: Repository<ProjectEntity>,
+    @InjectRepository(CreditBlocksEntity)
+    private creditBlocksEntityRepository: Repository<CreditBlocksEntity>,
     private asyncOperationsInterface: AsyncOperationsInterface,
     private locationService: LocationInterface,
     @InjectEntityManager() private entityManager: EntityManager,
@@ -379,6 +382,50 @@ export class ProcessEventService {
           `Skipping the programme due to old record ${JSON.stringify(
             project
           )} ${previousProject}`
+        );
+      }
+    }
+  }
+
+  async processCreditBlock(creditBlock: CreditBlocksEntity): Promise<any> {
+    this.logger.log(`Processing message ${creditBlock}`);
+    if (creditBlock) {
+      const previousCreditBlock =
+        await this.creditBlocksEntityRepository.findOneBy({
+          creditBlockId: creditBlock.creditBlockId,
+        });
+      if (
+        previousCreditBlock == null ||
+        creditBlock.txTime == undefined ||
+        previousCreditBlock.txTime == undefined ||
+        previousCreditBlock.txTime <= creditBlock.txTime
+      ) {
+        const columns =
+          this.creditBlocksEntityRepository.manager.connection.getMetadata(
+            "CreditBlocksEntity"
+          ).columns;
+
+        const columnNames = columns
+          .filter(function (item) {
+            return creditBlock[item.propertyName] != undefined;
+          })
+          .map((e) => e.propertyName);
+
+        this.logger.debug(`${columnNames} ${JSON.stringify(creditBlock)}`);
+        await this.entityManager.transaction(async (em) => {
+          await em
+            .getRepository(CreditBlocksEntity)
+            .createQueryBuilder()
+            .insert()
+            .values(creditBlock)
+            .orUpdate(columnNames, ["creditBlockId"])
+            .execute();
+        });
+      } else {
+        this.logger.error(
+          `Skipping the credit block due to old record ${JSON.stringify(
+            creditBlock
+          )} ${previousCreditBlock}`
         );
       }
     }
