@@ -968,7 +968,7 @@ export class DocumentManagementService {
           { state: ActivityStateEnum.MONITORING_REPORT_VERIFIED }
         );
         break;
-      case TxType.APPROVE_VERIFICATION:
+      case TxType.ISSUE:
         docType = DocumentTypeEnum.VERIFICATION;
         docStatus = DocumentStatus.DNA_APPROVED;
         const verificationDoc = await em.findOne(DocumentEntity, {
@@ -1555,20 +1555,6 @@ export class DocumentManagementService {
             user.id
           )
         );
-        const updateProjectProposalStage = {
-          programmeId: project.refId,
-          txType: TxType.APPROVE_VERIFICATION,
-          data: { activity, requestData },
-        };
-        await this.updateProposalStage(
-          updateProjectProposalStage,
-          user,
-          this.getDocumentTxRef(
-            DocumentTypeEnum.VERIFICATION,
-            document.id,
-            user.id
-          )
-        );
         const ICCompany = await this.userCompanyViewEntityRepository.findOne({
           where: { id: document.userId },
         });
@@ -1585,6 +1571,11 @@ export class DocumentManagementService {
         await this.logProjectStage(
           project.refId,
           ProjectAuditLogType.VERIFICATION_REPORT_APPROVED,
+          user.id
+        );
+        await this.logProjectStage(
+          project.refId,
+          ProjectAuditLogType.CREDIT_ISSUED,
           user.id
         );
       }
