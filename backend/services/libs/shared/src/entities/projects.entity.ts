@@ -69,4 +69,7 @@ export class ProjectEntity {
 
   @Column({ type: "bigint", default: 0 })
   creditIssued: number;
+
+  @Column({ type: "bigint", default: 0 })
+  creditChange: number;
 }
