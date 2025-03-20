@@ -58,15 +58,18 @@ export class ProjectEntity {
   @Column({ type: "bigint", transformer: NumberTransformer })
   updateTime: number;
 
-  @Column({ type: "bigint", default: 0 })
+  @Column({ default: 0 })
   creditEst: number;
 
-  @Column({ type: "bigint", default: 0 })
+  @Column({ default: 0 })
   creditBalance: number;
 
-  @Column({ type: "bigint", default: 0 })
+  @Column({ default: 0 })
   creditRetired: number;
 
-  @Column({ type: "bigint", default: 0 })
+  @Column({ default: 0 })
   creditIssued: number;
+
+  @Column({ default: 0 })
+  creditChange: number;
 }

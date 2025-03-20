@@ -32,6 +32,9 @@ import { OrganisationCreditAccounts } from "../enum/organisation.credit.accounts
 import { SLCFSerialNumberGeneratorService } from "../util/slcfSerialNumberGenerator.service";
 import { VerificationRequestEntity } from "../entities/verification.request.entity";
 import { ProjectEntity } from "../entities/projects.entity";
+import { ActivityStateEnum } from "../enum/activity.state.enum";
+import { ActivityEntity } from "../entities/activity.entity";
+import { DocumentActionRequestDto } from "../dto/document.action.request.dto";
 
 @Injectable()
 export class ProgrammeLedgerService {
@@ -609,6 +612,187 @@ export class ProgrammeLedgerService {
       return updatedProgramme;
     }
     return updatedProgramme;
+  }
+
+  public async issueCredits(
+    activity: ActivityEntity,
+    requestData: DocumentActionRequestDto,
+    companyId: number,
+    txRef: string
+  ) {
+    const creditVerified = requestData.data.creditVerified;
+    const companyAccount = companyId + "#" + requestData.data.creditType;
+
+    const getQueries = {};
+    getQueries[this.ledger.projectTable] = {
+      refId: activity.projectRefId,
+    };
+    getQueries[this.ledger.companyTableName] = {
+      txId: [companyAccount],
+    };
+
+    let updatedProject = undefined;
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        if (activity.state !== ActivityStateEnum.VERIFICATION_REPORT_UPLOADED) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.issueRequestALreadyProcessed",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        const projects: ProjectEntity[] = results[this.ledger.projectTable].map(
+          (domValue) => {
+            return plainToClass(
+              ProjectEntity,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+        if (projects.length <= 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.programmeNotExistWIthId",
+              [activity.projectRefId]
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        const project = projects[0];
+        const prvTxTime = project.txTime;
+
+        if (creditVerified > activity.creditAmount) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.cannotVerifyMoreThanCreditAmount",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        project.creditBalance = project.creditBalance
+          ? Number(project.creditBalance) + Number(creditVerified)
+          : Number(creditVerified);
+
+        project.creditIssued = project.creditIssued
+          ? Number(project.creditIssued) + Number(creditVerified)
+          : Number(creditVerified);
+
+        project.creditChange = Number(creditVerified);
+        project.txType = TxType.ISSUE;
+        project.txRef = txRef;
+        project.txTime = new Date().getTime();
+
+        const activityIndex = project.activities.findIndex(
+          (e) => e.id == activity.id
+        );
+        if (activityIndex < 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.notApprovedMonitoringReport",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        if (
+          ActivityStateEnum.MONITORING_REPORT_VERIFIED !==
+          project.activities[activityIndex].state
+        ) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.programmeIsNotInSuitableStageToProceed",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        project.activities[activityIndex].state =
+          ActivityStateEnum.VERIFICATION_REPORT_VERIFIED;
+        project.activities[activityIndex].creditIssued = creditVerified;
+
+        updatedProject = project;
+        const uPayload = {
+          txTime: project.txTime,
+          txRef: project.txRef,
+          txType: project.txType,
+          creditChange: project.creditChange,
+          creditBalance: project.creditBalance,
+          companyId: project.companyId,
+          creditIssued: project.creditIssued,
+          activities: [...project.activities],
+        };
+
+        // if (
+        //   !project.creditStartSerialNumber ||
+        //   project.creditStartSerialNumber == null ||
+        //   project.creditStartSerialNumber == ""
+        // ) {
+        //   project.creditStartSerialNumber = `SLCCS/REG/${project.projectId}/1`;
+        //   uPayload["creditStartSerialNumber"] =
+        //     project.creditStartSerialNumber;
+        // }
+
+        let updateMap = {};
+        let updateWhereMap = {};
+        let insertMap = {};
+        updateMap[this.ledger.projectTable] = uPayload;
+        updateWhereMap[this.ledger.projectTable] = {
+          refId: project.refId,
+          txTime: prvTxTime,
+        };
+
+        let companyCreditBalances = {};
+        const companies = results[this.ledger.companyTableName].map(
+          (domValue) => {
+            return plainToClass(
+              CreditOverall,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+        for (const company of companies) {
+          companyCreditBalances[company.txId] = company.credit;
+        }
+
+        // Increase Company credits
+        if (companyCreditBalances[companyAccount] != undefined) {
+          updateMap[this.ledger.companyTableName + "#" + companyAccount] = {
+            credit:
+              companyCreditBalances[companyAccount] + Number(creditVerified),
+            txRef: activity.id + "#" + project.refId,
+            txType: TxType.ISSUE,
+          };
+          updateWhereMap[this.ledger.companyTableName + "#" + companyAccount] =
+            {
+              txId: companyAccount,
+            };
+        } else {
+          insertMap[this.ledger.companyTableName + "#" + companyAccount] = {
+            credit: creditVerified,
+            txRef: activity.id + "#" + project.refId,
+            txType: TxType.ISSUE,
+            txId: companyAccount,
+          };
+        }
+
+        return [updateMap, updateWhereMap, insertMap];
+      }
+    );
+
+    const affected = resp[this.ledger.projectTable];
+    if (affected && affected.length > 0) {
+      return updatedProject;
+    }
+    return updatedProject;
   }
 
   //MARK: approve SLCF Credit Transfer

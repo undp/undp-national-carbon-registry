@@ -12,6 +12,7 @@ import { TxType } from "../enum/txtype.enum";
       p."creditBalance",
       p."creditRetired",
       p."creditIssued",
+      p."creditChange",
       p."companyId",
       p."independentCertifiers" as "certifierId",
       p."createTime" as "createdTime",
@@ -52,6 +53,9 @@ export class ProjectDetailsViewEntity {
 
   @ViewColumn()
   creditIssued: number;
+  
+  @ViewColumn()
+  creditChange: number;
 
   @ViewColumn()
   companyId: number;

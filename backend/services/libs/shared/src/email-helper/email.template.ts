@@ -501,6 +501,34 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Registry Team
         `,
   },
+  VERIFICATION_APPROVED_TO_PD: {
+    id: "VERIFICATION_APPROVED_TO_PD",
+    subject: "Verification Report Approved",
+    html: `
+        Hi, <br><br>
+
+        Verfication Report submitted by {{organisationNameIC}}<br> 
+        Independant Certifier for the project {{projectName}} owned by your {{organisationNamePD}}<br>
+        has been approved by the Designated National Authority. <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VERIFICATION_APPROVED_TO_IC: {
+    id: "VERIFICATION_APPROVED_TO_IC",
+    subject: "Verification Report Approved",
+    html: `
+        Hi, <br><br>
+
+        Verfication Report submitted by {{organisationNameIC}}<br>
+        Independant Certifier for the project {{projectName}} owned by {{organisationNamePD}}<br>
+        has been approved by the Designated National Authority.<br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
   VERIFICATION_REJECTED: {
     id: "VERIFICATION_REJECTED",
     subject: "Verification Report Rejected",
@@ -512,6 +540,43 @@ export const EmailTemplates = {
 
         Please submit again if required by clicking <a href="{{programmePageLink}}">here</a>. 
         <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VERIFICATION_REJECTED_TO_PD: {
+    id: "VERIFICATION_REJECTED_TO_PD",
+    subject: "Verification Report Rejected",
+    html: `
+        Hi, <br><br>
+
+        Verfication Report submitted by {{organisationNameIC}}<br>
+        Independant Certifier for the project {{projectName}} owned by your {{organisationNamePD}}<br>
+        has been rejected by the Designated National Authority.<br><br>
+
+        Remarks of Rejection:<br>
+        {{remarks}}<br>
+        You can re-submit the Project Design Document by by clicking <a href={{programmePageLink}}>here</a>.<br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VERIFICATION_REJECTED_TO_IC: {
+    id: "VERIFICATION_REJECTED_TO_IC",
+    subject: "Verification Report Rejected",
+    html: `
+        Hi, <br><br>
+
+        Verfication Report submitted by {{organisationNameIC}}<br>
+        Independant Certifier for the project {{projectName}} owned by {{organisationNamePD}}<br>
+        has been rejected by the Designated National Authority.
+
+        <br>
+        Remarks of Rejection:<br>
+        {{remarks}}<br>
+        You can re-submit the Project Design Document by by clicking <a href={{programmePageLink}}>here</a>.<br><br>
 
         Sincerely,  <br>
         The {{countryName}} Carbon Registry Team
