@@ -454,6 +454,38 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Registry Team
         `,
   },
+  VERIFICATION_CREATE_TO_PD: {
+    id: "VERIFICATION_CREATE_TO_PD",
+    subject: "New Verification Report Submitted!",
+    html: `
+        Hi, <br><br>
+
+        A new Verfication Report has been submitted by {{organizationNameIC}}.<br>
+        Independant Certifier for the project {{projectName}} owned by your {{organizationNamePD}}. <br><br>
+
+        Designated National Authority can review and approve by clicking <a href="{{programmePageLink}}">here</a>.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VERIFICATION_CREATE_TO_DNA: {
+    id: "VERIFICATION_CREATE_TO_DNA",
+    subject: "New Verification Report Submitted!",
+    html: `
+        Hi, <br><br>
+
+        A new Verfication Report has been submitted by {{organizationNameIC}}.<br>
+        Independant Certifier for the project {{projectName}} owned by your {{organizationNamePD}}.<br><br>
+
+        Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
+        <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
   VERIFICATION_APPROVED: {
     id: "VERIFICATION_APPROVED",
     subject: "Verification Report Approved",
@@ -464,6 +496,34 @@ export const EmailTemplates = {
 
         Please request for the credits transfer or retirement accordingly. 
         <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VERIFICATION_APPROVED_TO_PD: {
+    id: "VERIFICATION_APPROVED_TO_PD",
+    subject: "Verification Report Approved",
+    html: `
+        Hi, <br><br>
+
+        Verfication Report submitted by {{organisationNameIC}}<br> 
+        Independant Certifier for the project {{projectName}} owned by your {{organisationNamePD}}<br>
+        has been approved by the Designated National Authority. <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VERIFICATION_APPROVED_TO_IC: {
+    id: "VERIFICATION_APPROVED_TO_IC",
+    subject: "Verification Report Approved",
+    html: `
+        Hi, <br><br>
+
+        Verfication Report submitted by {{organisationNameIC}}<br>
+        Independant Certifier for the project {{projectName}} owned by {{organisationNamePD}}<br>
+        has been approved by the Designated National Authority.<br><br>
 
         Sincerely,  <br>
         The {{countryName}} Carbon Registry Team
@@ -480,6 +540,43 @@ export const EmailTemplates = {
 
         Please submit again if required by clicking <a href="{{programmePageLink}}">here</a>. 
         <br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VERIFICATION_REJECTED_TO_PD: {
+    id: "VERIFICATION_REJECTED_TO_PD",
+    subject: "Verification Report Rejected",
+    html: `
+        Hi, <br><br>
+
+        Verfication Report submitted by {{organisationNameIC}}<br>
+        Independant Certifier for the project {{projectName}} owned by your {{organisationNamePD}}<br>
+        has been rejected by the Designated National Authority.<br><br>
+
+        Remarks of Rejection:<br>
+        {{remarks}}<br>
+        You can re-submit the Project Design Document by by clicking <a href={{programmePageLink}}>here</a>.<br><br>
+
+        Sincerely,  <br>
+        The {{countryName}} Carbon Registry Team
+        `,
+  },
+  VERIFICATION_REJECTED_TO_IC: {
+    id: "VERIFICATION_REJECTED_TO_IC",
+    subject: "Verification Report Rejected",
+    html: `
+        Hi, <br><br>
+
+        Verfication Report submitted by {{organisationNameIC}}<br>
+        Independant Certifier for the project {{projectName}} owned by {{organisationNamePD}}<br>
+        has been rejected by the Designated National Authority.
+
+        <br>
+        Remarks of Rejection:<br>
+        {{remarks}}<br>
+        You can re-submit the Project Design Document by by clicking <a href={{programmePageLink}}>here</a>.<br><br>
 
         Sincerely,  <br>
         The {{countryName}} Carbon Registry Team
