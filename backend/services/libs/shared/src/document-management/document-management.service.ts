@@ -31,6 +31,7 @@ import { DocumentQueryDto } from "../dto/document.query.dto";
 import { ActivityEntity } from "../entities/activity.entity";
 import { ActivityStateEnum } from "../enum/activity.state.enum";
 import { LetterOfAuthorisationRequestGen } from "../util/document-generators/letter.of.authorisation.request.gen";
+import { SerialNumberManagementService } from "../serial-number-management/serial-number-management.service";
 
 @Injectable()
 export class DocumentManagementService {
@@ -47,7 +48,8 @@ export class DocumentManagementService {
     private fileHandler: FileHandlerInterface,
     private readonly letterOfAuthorizationGenerateService: LetterOfAuthorisationRequestGen,
     private readonly userService: UserService,
-    private entityManager: EntityManager
+    private entityManager: EntityManager,
+    private readonly serialNumberManagementService: SerialNumberManagementService
   ) {}
 
   async addDocument(addDocumentDto: BaseDocumentDto, user: User) {
@@ -914,6 +916,12 @@ export class DocumentManagementService {
         const updateProjectProposalStage = {
           programmeId: project.refId,
           txType: TxType.APPROVE_PDD_BY_DNA,
+          data: {
+            serialNumber:
+              this.serialNumberManagementService.getProjectSerialNumber(
+                Number(project.refId)
+              ),
+          },
         };
         await this.updateProposalStage(
           updateProjectProposalStage,

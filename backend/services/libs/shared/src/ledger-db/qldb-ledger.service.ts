@@ -15,6 +15,7 @@ export class QLDBLedgerService implements LedgerDBInterface {
   public companyTableName: string;
   public programmeSlTable: string;
   public projectTable: string;
+  public creditBlocksTable: string;
   public ledgerName: string;
   private driver: QldbDriver;
 
@@ -30,6 +31,9 @@ export class QLDBLedgerService implements LedgerDBInterface {
       "ledger.programmeSlTable"
     );
     this.projectTable = configService.get<string>("ledger.projectTable");
+    this.creditBlocksTable = configService.get<string>(
+      "ledger.creditBlocksTable"
+    );
     logger.log("QLDB Ledger init ", this.ledgerName);
   }
 
