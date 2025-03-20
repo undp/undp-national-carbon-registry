@@ -457,7 +457,6 @@ export class ProjectManagementService {
       projectCategory: "RENEWABLE_ENERGY",
       purposeOfCreditDevelopment: "Carbon sequestration",
       endTime: 1862601600000,
-      creditChange: 5000,
       creditFrozen: 1000,
       creditTransferred: 10000,
       constantVersion: "1.2.0",

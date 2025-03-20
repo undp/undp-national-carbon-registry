@@ -977,10 +977,21 @@ export class DocumentManagementService {
             type: DocumentTypeEnum.VERIFICATION,
           },
         });
+        const project = await em.findOne(ProjectEntity, {
+          where: {
+            refId: projectRefId,
+          },
+        });
+        const activity = project.activities.find(
+          (a) => a.id === verificationDoc.activityId
+        );
         await em.update(
           ActivityEntity,
           { id: verificationDoc.activityId },
-          { state: ActivityStateEnum.VERIFICATION_REPORT_VERIFIED }
+          {
+            state: ActivityStateEnum.VERIFICATION_REPORT_VERIFIED,
+            creditIssued: activity.creditIssued,
+          }
         );
         break;
     }
@@ -1534,11 +1545,20 @@ export class DocumentManagementService {
           project.refId
         );
       } else if (requestData.action === DocumentStatus.DNA_APPROVED) {
-        activity.state = ActivityStateEnum.VERIFICATION_REPORT_VERIFIED;
+        await this.programmeLedgerService.issueCredits(
+          activity,
+          requestData,
+          project.companyId,
+          this.getDocumentTxRef(
+            DocumentTypeEnum.VERIFICATION,
+            document.id,
+            user.id
+          )
+        );
         const updateProjectProposalStage = {
           programmeId: project.refId,
           txType: TxType.APPROVE_VERIFICATION,
-          data: activity,
+          data: { activity, requestData },
         };
         await this.updateProposalStage(
           updateProjectProposalStage,
