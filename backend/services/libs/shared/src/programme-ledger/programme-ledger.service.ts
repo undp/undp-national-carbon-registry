@@ -35,6 +35,7 @@ import { ProjectEntity } from "../entities/projects.entity";
 import { ActivityStateEnum } from "../enum/activity.state.enum";
 import { ActivityEntity } from "../entities/activity.entity";
 import { DocumentActionRequestDto } from "../dto/document.action.request.dto";
+import { DocumentEntity } from "../entities/document.entity";
 
 @Injectable()
 export class ProgrammeLedgerService {
@@ -619,6 +620,7 @@ export class ProgrammeLedgerService {
     activity: ActivityEntity,
     requestData: DocumentActionRequestDto,
     companyId: number,
+    document: DocumentEntity,
     txRef: string
   ) {
     const creditVerified = requestData.data.creditVerified;
@@ -667,7 +669,11 @@ export class ProgrammeLedgerService {
         const project = projects[0];
         const prvTxTime = project.txTime;
 
-        if (creditVerified > activity.creditAmount) {
+        const ledgerActivity = project.activities.find(
+          (act) => act.id === document.activityId
+        );
+
+        if (creditVerified > ledgerActivity.creditAmount) {
           throw new HttpException(
             this.helperService.formatReqMessagesString(
               "project.cannotVerifyMoreThanCreditAmount",
