@@ -36,6 +36,10 @@ import { ActivityStateEnum } from "../enum/activity.state.enum";
 import { ActivityEntity } from "../entities/activity.entity";
 import { DocumentActionRequestDto } from "../dto/document.action.request.dto";
 import { DocumentEntity } from "../entities/document.entity";
+import { ActivityVintageCreditsDto } from "../dto/activty.vintage.credits.dto";
+import { CreditBlocksEntity } from "../entities/credit.blocks.entity";
+import { CreditBlocksManagementService } from "../credit-blocks-management/credit-blocks-management.service";
+import { User } from "../entities/user.entity";
 
 @Injectable()
 export class ProgrammeLedgerService {
@@ -44,7 +48,8 @@ export class ProgrammeLedgerService {
     @InjectEntityManager() private entityManger: EntityManager,
     private ledger: LedgerDBInterface,
     private helperService: HelperService,
-    private serialNumberGenerator: SLCFSerialNumberGeneratorService
+    private serialNumberGenerator: SLCFSerialNumberGeneratorService,
+    private readonly creditBlocksManagementService: CreditBlocksManagementService
   ) {}
 
   public async createProgramme(programme: Programme): Promise<Programme> {
@@ -621,9 +626,11 @@ export class ProgrammeLedgerService {
     requestData: DocumentActionRequestDto,
     companyId: number,
     document: DocumentEntity,
-    txRef: string
+    txRef: string,
+    user: User
   ) {
-    const creditVerified = requestData.data.creditVerified;
+    const creditVerified: ActivityVintageCreditsDto[] =
+      requestData.data.creditVerified;
     const companyAccount = companyId + "#" + requestData.data.creditType;
 
     const getQueries = {};
@@ -672,26 +679,32 @@ export class ProgrammeLedgerService {
         const ledgerActivity = project.activities.find(
           (act) => act.id === document.activityId
         );
-
-        if (creditVerified > ledgerActivity.creditAmount) {
-          throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              "project.cannotVerifyMoreThanCreditAmount",
-              []
-            ),
-            HttpStatus.BAD_REQUEST
-          );
+        let totalCreditsToVerify = 0;
+        for (const creditVintageId in ledgerActivity.creditAmounts) {
+          if (
+            creditVerified[creditVintageId].creditAmount >
+            ledgerActivity.creditAmounts[creditVintageId].creditAmount
+          ) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.cannotVerifyMoreThanCreditAmount",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          totalCreditsToVerify += creditVerified[creditVintageId].creditAmount;
         }
 
         project.creditBalance = project.creditBalance
-          ? Number(project.creditBalance) + Number(creditVerified)
-          : Number(creditVerified);
+          ? Number(project.creditBalance) + Number(totalCreditsToVerify)
+          : Number(totalCreditsToVerify);
 
         project.creditIssued = project.creditIssued
-          ? Number(project.creditIssued) + Number(creditVerified)
-          : Number(creditVerified);
+          ? Number(project.creditIssued) + Number(totalCreditsToVerify)
+          : Number(totalCreditsToVerify);
 
-        project.creditChange = Number(creditVerified);
+        project.creditChange = Number(totalCreditsToVerify);
         project.txType = TxType.ISSUE;
         project.txRef = txRef;
         project.txTime = new Date().getTime();
@@ -738,16 +751,6 @@ export class ProgrammeLedgerService {
           activities: [...project.activities],
         };
 
-        // if (
-        //   !project.creditStartSerialNumber ||
-        //   project.creditStartSerialNumber == null ||
-        //   project.creditStartSerialNumber == ""
-        // ) {
-        //   project.creditStartSerialNumber = `SLCCS/REG/${project.projectId}/1`;
-        //   uPayload["creditStartSerialNumber"] =
-        //     project.creditStartSerialNumber;
-        // }
-
         let updateMap = {};
         let updateWhereMap = {};
         let insertMap = {};
@@ -756,6 +759,22 @@ export class ProgrammeLedgerService {
           refId: project.refId,
           txTime: prvTxTime,
         };
+
+        let alreadyIssuedCredits = project.creditIssued - totalCreditsToVerify;
+        for (const verfiedCredits of creditVerified) {
+          const newBlock = this.creditBlocksManagementService.issueCreditBlock(
+            verfiedCredits.creditAmount,
+            verfiedCredits.vintage,
+            project,
+            alreadyIssuedCredits,
+            project.txTime,
+            user
+          );
+          insertMap[
+            this.ledger.creditBlocksTable + "#" + newBlock.creditBlockId
+          ] = newBlock;
+          alreadyIssuedCredits += verfiedCredits.creditAmount;
+        }
 
         let companyCreditBalances = {};
         const companies = results[this.ledger.companyTableName].map(
@@ -774,7 +793,8 @@ export class ProgrammeLedgerService {
         if (companyCreditBalances[companyAccount] != undefined) {
           updateMap[this.ledger.companyTableName + "#" + companyAccount] = {
             credit:
-              companyCreditBalances[companyAccount] + Number(creditVerified),
+              companyCreditBalances[companyAccount] +
+              Number(totalCreditsToVerify),
             txRef: activity.id + "#" + project.refId,
             txType: TxType.ISSUE,
           };
@@ -784,7 +804,7 @@ export class ProgrammeLedgerService {
             };
         } else {
           insertMap[this.ledger.companyTableName + "#" + companyAccount] = {
-            credit: creditVerified,
+            credit: totalCreditsToVerify,
             txRef: activity.id + "#" + project.refId,
             txType: TxType.ISSUE,
             txId: companyAccount,

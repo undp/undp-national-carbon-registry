@@ -281,7 +281,7 @@ export class PgSqlReplicatorService implements LedgerReplicatorInterface {
             await this.eventProcessor.processCreditBlock(creditBlock);
             newSeq = row.hash;
             await this.counterRepo.save({
-              id: CounterType.PROJECT_REPLICATE_SEQ,
+              id: CounterType.CREDIT_BLOCKS_REPLICATE_SEQ,
               counter: newSeq,
             });
           }

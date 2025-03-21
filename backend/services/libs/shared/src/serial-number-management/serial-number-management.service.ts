@@ -36,13 +36,13 @@ export class SerialNumberManagementService {
   public getCreditBlockSerialNumber(
     serialNumberPrefix: string,
     creditAmount: number,
+    vintage: string,
     alreadyIssuedCreditAmount?: number
   ): string {
     const blockStart = alreadyIssuedCreditAmount
       ? alreadyIssuedCreditAmount + 1
       : 1;
     const blockEnd = blockStart + creditAmount - 1;
-    const vintage = new Date().getFullYear();
     const sep = this.configService.get("serialNumber.seperator");
     return (
       serialNumberPrefix +
