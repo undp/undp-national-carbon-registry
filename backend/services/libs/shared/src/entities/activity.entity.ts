@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ActivityStateEnum } from "../enum/activity.state.enum";
+import { ActivityVintageCreditsDto } from "../dto/activty.vintage.credits.dto";
 
 @Entity()
 export class ActivityEntity {
@@ -25,11 +26,11 @@ export class ActivityEntity {
   @Column({ type: "enum", enum: ActivityStateEnum, nullable: false })
   state: ActivityStateEnum;
 
-  @Column({ default: 0 })
-  creditAmount: number;
+  @Column("jsonb", { array: false, default: [] })
+  creditAmounts: ActivityVintageCreditsDto[];
 
-  @Column({ default: 0 })
-  creditIssued: number;
+  @Column("jsonb", { array: false, default: [] })
+  creditIssued: ActivityVintageCreditsDto[];
 
   @BeforeInsert()
   generateRefId() {

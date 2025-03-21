@@ -5,6 +5,7 @@ import { TxType } from "../enum/txtype.enum";
 import { User } from "../entities/user.entity";
 import { SerialNumberManagementService } from "../serial-number-management/serial-number-management.service";
 import { plainToClass } from "class-transformer";
+import { ProjectEntity } from "../entities/projects.entity";
 
 @Injectable()
 export class CreditBlocksManagementService {
@@ -162,21 +163,41 @@ export class CreditBlocksManagementService {
     return { newBlocks, updatedBlocks };
   }
 
-  //   public issueCreditBlock(toCompanyId:number,txTime: number): CreditBlocksEntity {
-  //     const newBlock = plainToClass(CreditBlocksEntity, {
-  //       creditBlockId: newBlockId,
-  //       txRef: this.getCreditBlockTxRef(fromCompanyId, toCompanyId, user.id),
-  //       txTime: txTime,
-  //       txType: TxType.ISSUE,
-  //       previousOwnerCompanyId: null,
-  //       ownerCompanyId: toCompanyId,
-  //       projectRefId: creditBlock.projectRefId,
-  //       serialNumber: secondSerialNumber,
-  //       vintage: creditBlock.vintage,
-  //       creditAmount: transferredCreditAmountFromBlock,
-  //     });
-  //     return newBlock;
-  //   }
+  public issueCreditBlock(
+    creditAmount: number,
+    vintage: string,
+    project: ProjectEntity,
+    alreadyIssuedCredits: number,
+    txTime: number,
+    user: User
+  ): CreditBlocksEntity {
+    const serialNumber =
+      this.serialNumberManagementService.getCreditBlockSerialNumber(
+        project.serialNumber,
+        creditAmount,
+        vintage,
+        alreadyIssuedCredits
+      );
+    const creditBlockId =
+      this.serialNumberManagementService.getCreditBlockId(serialNumber);
+    const newBlock = plainToClass(CreditBlocksEntity, {
+      creditBlockId: creditBlockId,
+      txRef: this.getCreditBlockTxRef(
+        project.companyId,
+        project.companyId,
+        user.id
+      ),
+      txTime: txTime,
+      txType: TxType.ISSUE,
+      previousOwnerCompanyId: null,
+      ownerCompanyId: project.companyId,
+      projectRefId: project.refId,
+      serialNumber: serialNumber,
+      vintage: vintage,
+      creditAmount: creditAmount,
+    });
+    return newBlock;
+  }
 
   public getCreditBlockTxRef(
     fromCompanyId: number,

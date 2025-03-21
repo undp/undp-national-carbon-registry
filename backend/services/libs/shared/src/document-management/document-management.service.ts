@@ -1431,6 +1431,7 @@ export class DocumentManagementService {
         );
       } else if (requestData.action === DocumentStatus.IC_APPROVED) {
         activity.state = ActivityStateEnum.MONITORING_REPORT_VERIFIED;
+        activity.creditAmounts = requestData.data.creditAmounts; //TODO need to remove
         const updateProjectProposalStage = {
           programmeId: project.refId,
           txType: TxType.APPROVE_MONITORING,
@@ -1564,7 +1565,8 @@ export class DocumentManagementService {
             DocumentTypeEnum.VERIFICATION,
             document.id,
             user.id
-          )
+          ),
+          user
         );
         const ICCompany = await this.userCompanyViewEntityRepository.findOne({
           where: { id: document.userId },
