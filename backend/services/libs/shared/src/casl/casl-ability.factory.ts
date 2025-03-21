@@ -193,10 +193,6 @@ export class CaslAbilityFactory {
           can(Action.Update, DocumentEntity);
           can(Action.Update, ProjectEntity);
         }
-
-        if (user.role === Role.Manager) {
-          can(Action.Update, DocumentEntity);
-        }
       }
 
       if (user.companyRole === CompanyRole.MINISTRY) {
@@ -249,7 +245,7 @@ export class CaslAbilityFactory {
         can(Action.Read, Programme);
         can(Action.Manage, DocumentAction);
 
-        if (user.role === Role.Admin || user.role === Role.Manager) {
+        if (user.role === Role.Admin) {
           can(Action.Update, DocumentEntity);
           can(Action.Create, DocumentEntity);
         }
@@ -294,13 +290,16 @@ export class CaslAbilityFactory {
           status: { $eq: InvestmentStatus.APPROVED },
         });
 
-        if (user.role == Role.Admin || user.role == Role.Manager) {
+        if (user.role === Role.Admin) {
+          can(Action.Create, DocumentEntity);
+          can(Action.Update, DocumentEntity);
+        }
+
+        if (user.role === Role.Admin || user.role === Role.Manager) {
           can(Action.Create, ProgrammeSl);
           can(Action.Update, ProgrammeSl);
           can(Action.Create, ProjectEntity);
           can(Action.Update, ProjectEntity);
-          can(Action.Create, DocumentEntity);
-          can(Action.Update, DocumentEntity);
           can(Action.Create, CreditRetirementSl);
           can(Action.Update, CreditRetirementSl);
           can(Action.Create, VerificationRequestEntity);
@@ -403,8 +402,6 @@ export class CaslAbilityFactory {
           can(Action.Update, CreditRetirementSl);
           can(Action.Update, ProgrammeSl);
           can(Action.Update, ProjectEntity);
-          can(Action.Create, DocumentEntity);
-          can(Action.Update, DocumentEntity);
           can(Action.Update, VerificationRequestEntity);
         }
 
