@@ -1029,12 +1029,14 @@ export class DocumentManagementService {
     refId: string,
     type: ProjectAuditLogType,
     userId: number,
-    em?: EntityManager
+    em?: EntityManager,
+    data?: any
   ): Promise<void> {
     const log = new AuditEntity();
     log.refId = refId;
     log.logType = type;
     log.userId = userId;
+    log.data = JSON.stringify(data);
     em ? await em.save(AuditEntity, log) : await this.auditLogService.save(log);
   }
 
@@ -1557,6 +1559,7 @@ export class DocumentManagementService {
           activity,
           requestData,
           project.companyId,
+          document,
           this.getDocumentTxRef(
             DocumentTypeEnum.VERIFICATION,
             document.id,
@@ -1584,7 +1587,9 @@ export class DocumentManagementService {
         await this.logProjectStage(
           project.refId,
           ProjectAuditLogType.CREDIT_ISSUED,
-          user.id
+          user.id,
+          undefined,
+          { creditIssued: requestData.data.creditIssued }
         );
       }
     } else {
