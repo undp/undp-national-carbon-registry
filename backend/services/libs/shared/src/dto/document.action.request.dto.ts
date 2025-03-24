@@ -1,6 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { DocumentStatus } from "../enum/document.status";
-import { IsEnum, IsNotEmpty, IsObject, IsString } from "class-validator";
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+} from "class-validator";
 
 export class DocumentActionRequestDto {
   @ApiProperty({ type: "string" })
@@ -13,7 +19,7 @@ export class DocumentActionRequestDto {
   @IsNotEmpty()
   action: DocumentStatus;
 
-  @IsNotEmpty()
+  @IsOptional() //TODO need to remove later
   @IsObject()
   @ApiProperty({ type: "object" })
   data?: Record<string, any>;

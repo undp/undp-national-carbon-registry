@@ -31,6 +31,7 @@ import { DocumentQueryDto } from "../dto/document.query.dto";
 import { ActivityEntity } from "../entities/activity.entity";
 import { ActivityStateEnum } from "../enum/activity.state.enum";
 import { LetterOfAuthorisationRequestGen } from "../util/document-generators/letter.of.authorisation.request.gen";
+import { SerialNumberManagementService } from "../serial-number-management/serial-number-management.service";
 import { UserCompanyViewEntity } from "../view-entities/userCompany.view.entity";
 
 @Injectable()
@@ -50,7 +51,8 @@ export class DocumentManagementService {
     private fileHandler: FileHandlerInterface,
     private readonly letterOfAuthorizationGenerateService: LetterOfAuthorisationRequestGen,
     private readonly userService: UserService,
-    private entityManager: EntityManager
+    private entityManager: EntityManager,
+    private readonly serialNumberManagementService: SerialNumberManagementService
   ) {}
 
   async addDocument(addDocumentDto: BaseDocumentDto, user: User) {
@@ -1187,6 +1189,12 @@ export class DocumentManagementService {
         const updateProjectProposalStage = {
           programmeId: project.refId,
           txType: TxType.APPROVE_PDD_BY_DNA,
+          data: {
+            serialNumber:
+              this.serialNumberManagementService.getProjectSerialNumber(
+                Number(project.refId)
+              ),
+          },
         };
         await this.updateProposalStage(
           updateProjectProposalStage,
@@ -1423,6 +1431,7 @@ export class DocumentManagementService {
         );
       } else if (requestData.action === DocumentStatus.IC_APPROVED) {
         activity.state = ActivityStateEnum.MONITORING_REPORT_VERIFIED;
+        activity.creditAmounts = requestData.data.creditAmounts; //TODO need to remove
         const updateProjectProposalStage = {
           programmeId: project.refId,
           txType: TxType.APPROVE_MONITORING,
@@ -1556,7 +1565,8 @@ export class DocumentManagementService {
             DocumentTypeEnum.VERIFICATION,
             document.id,
             user.id
-          )
+          ),
+          user
         );
         const ICCompany = await this.userCompanyViewEntityRepository.findOne({
           where: { id: document.userId },

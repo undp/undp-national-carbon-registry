@@ -10,6 +10,9 @@ export class ProjectEntity {
   @PrimaryColumn()
   refId: string;
 
+  @Column({ nullable: true })
+  serialNumber?: string;
+
   @Column()
   title: string;
 

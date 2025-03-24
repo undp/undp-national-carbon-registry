@@ -13,6 +13,7 @@ import { QLDBKinesisReplicatorService } from "./qldb-kinesis-replicator.service"
 import { LedgerReplicatorInterface } from "./replicator-interface.service";
 import { ProjectEntity } from "@app/shared/entities/projects.entity";
 import { DataImporterModule } from "src/data-importer/data-importer.module";
+import { CreditBlocksEntity } from "@app/shared/entities/credit.blocks.entity";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { DataImporterModule } from "src/data-importer/data-importer.module";
       Counter,
       ProgrammeSl,
       ProjectEntity,
+      CreditBlocksEntity,
     ]),
     SharedModule,
     CoreModule,

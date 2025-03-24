@@ -10,6 +10,7 @@ import { CompanyModule } from "../company/company.module";
 import { FileHandlerModule } from "../file-handler/filehandler.module";
 import { UserModule } from "../user/user.module";
 import { ActivityEntity } from "../entities/activity.entity";
+import { SerialNumberManagementModule } from "../serial-number-management/serial-number-management.module";
 import { UserCompanyViewEntity } from "../view-entities/userCompany.view.entity";
 
 @Module({
@@ -26,6 +27,7 @@ import { UserCompanyViewEntity } from "../view-entities/userCompany.view.entity"
     CompanyModule,
     FileHandlerModule,
     UserModule,
+    SerialNumberManagementModule,
   ],
   providers: [DocumentManagementService],
   exports: [DocumentManagementService],
