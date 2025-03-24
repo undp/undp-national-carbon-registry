@@ -15,6 +15,7 @@ import { ProjectEntity } from "@app/shared/entities/projects.entity";
 import { DocumentEntity } from "@app/shared/entities/document.entity";
 import { DocumentManagementService } from "@app/shared/document-management/document-management.service";
 import { CreditBlocksEntity } from "@app/shared/entities/credit.blocks.entity";
+import { CreditTransactionsManagementService } from "@app/shared/credit-transactions-management/credit-transactions-management.service";
 
 @Injectable()
 export class ProcessEventService {
@@ -31,7 +32,8 @@ export class ProcessEventService {
     private asyncOperationsInterface: AsyncOperationsInterface,
     private locationService: LocationInterface,
     @InjectEntityManager() private entityManager: EntityManager,
-    private readonly documentManagementService: DocumentManagementService
+    private readonly documentManagementService: DocumentManagementService,
+    private readonly creditTransactionsManagementService: CreditTransactionsManagementService
   ) {}
 
   async process(
@@ -420,6 +422,11 @@ export class ProcessEventService {
             .values(creditBlock)
             .orUpdate(columnNames, ["creditBlockId"])
             .execute();
+
+          await this.creditTransactionsManagementService.handleTransactionRecords(
+            creditBlock,
+            em
+          );
         });
       } else {
         this.logger.error(
