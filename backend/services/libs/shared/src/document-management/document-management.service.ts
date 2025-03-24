@@ -631,7 +631,11 @@ export class DocumentManagementService {
           }
         );
         activityId = lastActivity.id;
-        documentVersion = lastVerificationReport.version + 1;
+        const lastDocumentVersion = await this.getLastDocumentVersion(
+          DocumentTypeEnum.VERIFICATION,
+          project.refId
+        );
+        documentVersion = lastDocumentVersion + 1;
 
         newDoc.version = documentVersion;
         newDoc.activityId = activityId;
@@ -1617,6 +1621,19 @@ export class DocumentManagementService {
     });
 
     return lastDoc;
+  }
+
+  async queryAll(programmeId: string) {
+    const documents = await this.documentRepository.find({
+      where: {
+        programmeId: programmeId,
+      },
+      order: {
+        createdTime: "ASC",
+      },
+    });
+
+    return documents;
   }
 
   private async getLastActivity(projectRefId: string): Promise<ActivityEntity> {
