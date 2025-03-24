@@ -71,6 +71,9 @@ export class ProjectEntity {
   creditRetired: number;
 
   @Column({ default: 0 })
+  creditTransferred: number;
+
+  @Column({ default: 0 })
   creditIssued: number;
 
   @Column({ default: 0 })

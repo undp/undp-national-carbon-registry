@@ -26,7 +26,7 @@ export class CreditBlocksEntity {
   ownerCompanyId: number;
 
   @Column({ type: "text" })
-  projectRefId: number;
+  projectRefId: string;
 
   @Column({ type: "text" })
   serialNumber: string;
