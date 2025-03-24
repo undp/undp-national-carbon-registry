@@ -24,6 +24,8 @@ import { CaslModule } from "./casl/casl.module";
 import { ProjectManagementModule } from "./project-management/project-management.module";
 import { AuditLogsModule } from "./audit-logs/audit-logs.module";
 import { DocumentManagementModule } from "./document-management/document-management.module";
+import { SerialNumberManagementModule } from "./serial-number-management/serial-number-management.module";
+import { CreditBlocksManagementModule } from "./credit-blocks-management/credit-blocks-management.module";
 
 @Module({
   imports: [
@@ -51,6 +53,8 @@ import { DocumentManagementModule } from "./document-management/document-managem
     ProjectManagementModule,
     AuditLogsModule,
     DocumentManagementModule,
+    SerialNumberManagementModule,
+    CreditBlocksManagementModule,
   ],
   providers: [SharedService],
   exports: [
@@ -79,6 +83,8 @@ import { DocumentManagementModule } from "./document-management/document-managem
     ProjectManagementModule,
     AuditLogsModule,
     DocumentManagementModule,
+    SerialNumberManagementModule,
+    CreditBlocksManagementModule,
   ],
 })
 export class SharedModule {}
