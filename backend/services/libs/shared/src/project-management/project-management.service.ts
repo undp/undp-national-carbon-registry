@@ -450,6 +450,21 @@ export class ProjectManagementService {
       })
     );
 
+    const allDocuments = await this.documentManagementService.queryAll(
+      programmeId
+    );
+
+    const documents = {};
+    allDocuments.forEach((doc) => {
+      if (!documents[doc.type] || doc.version > documents[doc.type].version) {
+        documents[doc.type] = {
+          documentType: doc.type,
+          refId: doc.id,
+          version: doc.version,
+        };
+      }
+    });
+
     const staticValues = {
       externalId: "EXT-CARB-45678",
       serialNo: "SL-CARB",
@@ -477,14 +492,6 @@ export class ProjectManagementService {
       additionalDocuments: [],
       emissionReductionExpected: 25000,
       emissionReductionAchieved: 5000,
-      documents: {
-        projectDesign:
-          "https://registry.example.com/documents/PRG-2024-00123/design.pdf",
-        validationReport:
-          "https://registry.example.com/documents/PRG-2024-00123/validation.pdf",
-        monitoringReport:
-          "https://registry.example.com/documents/PRG-2024-00123/monitoring.pdf",
-      },
     };
 
     const programmeProperties = {
@@ -509,6 +516,7 @@ export class ProjectManagementService {
       ...projectWithoutContent,
       ...parsedContent,
       ...staticValues,
+      documents,
       programmeProperties,
       company: {
         companyId: project.companyId,
