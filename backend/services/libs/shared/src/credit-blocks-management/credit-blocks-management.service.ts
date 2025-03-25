@@ -69,7 +69,6 @@ export class CreditBlocksManagementService {
             user.id
           );
           creditBlock.txTime = txTime;
-          creditBlock.txType = TxType.CREDIT_BLOCK_SPLIT;
           updatedBlocks.push(creditBlock);
 
           //create new block
@@ -97,9 +96,10 @@ export class CreditBlocksManagementService {
           });
           newBlocks.push(newBlock);
         }
+        processedCreditAmount += transferredCreditAmountFromBlock;
         break;
       } else {
-        transferredCreditAmountFromBlock = creditBlock.creditAmount;
+        transferredCreditAmountFromBlock = unassignedAmountOfCreditBlock;
         if (creditBlock.reservedCreditAmount == 0) {
           //update current block
           creditBlock.ownerCompanyId = toCompanyId;
@@ -117,7 +117,7 @@ export class CreditBlocksManagementService {
           const { firstSerialNumber, secondSerialNumber } =
             this.serialNumberManagementService.splitCreditBlockSerialNumber(
               creditBlock.serialNumber,
-              remainingCreditAmount
+              transferredCreditAmountFromBlock
             );
 
           //update current block
@@ -158,8 +158,8 @@ export class CreditBlocksManagementService {
           });
           newBlocks.push(newBlock);
         }
+        processedCreditAmount += transferredCreditAmountFromBlock;
       }
-      processedCreditAmount += transferredCreditAmountFromBlock;
     }
     if (processedCreditAmount < creditAmount) {
       throw new HttpException(
