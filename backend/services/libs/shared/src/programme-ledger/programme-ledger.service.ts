@@ -901,13 +901,6 @@ export class ProgrammeLedgerService {
         let updateMap = {};
         let updateWhereMap = {};
         let insertMap = {};
-        if (newBlocks.length) {
-          for (const newBlock of newBlocks) {
-            insertMap[
-              this.ledger.creditBlocksTable + "#" + newBlock.creditBlockId
-            ] = newBlock;
-          }
-        }
         if (updatedBlocks.length) {
           for (const updatedBlock of updatedBlocks) {
             updateMap[
@@ -918,6 +911,13 @@ export class ProgrammeLedgerService {
             ] = {
               creditBlockId: updatedBlock.creditBlockId,
             };
+          }
+        }
+        if (newBlocks.length) {
+          for (const newBlock of newBlocks) {
+            insertMap[
+              this.ledger.creditBlocksTable + "#" + newBlock.creditBlockId
+            ] = newBlock;
           }
         }
 

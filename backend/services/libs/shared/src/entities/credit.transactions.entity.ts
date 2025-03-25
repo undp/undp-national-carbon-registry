@@ -7,8 +7,8 @@ export class CreditTransactionsEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "bigint" })
-  senderId: number;
+  @Column({ type: "bigint", nullable: true })
+  senderId?: number;
 
   @Column({ type: "bigint" })
   recieverId: number;

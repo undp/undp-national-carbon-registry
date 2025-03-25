@@ -119,27 +119,27 @@ export class CreditTransactionsManagementService {
     creditBlock: CreditBlocksEntity,
     em: EntityManager
   ) {
-    // if (creditBlock.txType == TxType.ISSUE) {
-    //   const existingIssueRecord = await em.findOne(CreditTransactionsEntity, {
-    //     where: {
-    //       creditBlockId: creditBlock.creditBlockId,
-    //       type: CreditTransactionTypesEnum.ISSUED,
-    //     },
-    //   });
-    //   if (!existingIssueRecord) {
-    //     const newIssueRecord = plainToClass(CreditTransactionsEntity, {
-    //       senderId: creditBlock.previousOwnerCompanyId,
-    //       recieverId: creditBlock.ownerCompanyId,
-    //       type: CreditTransactionTypesEnum.ISSUED,
-    //       status: CreditTransactionStatusEnum.COMPLETED,
-    //       creditBlockId: creditBlock.creditBlockId,
-    //       serialNumber: creditBlock.serialNumber,
-    //       amount: creditBlock.creditAmount,
-    //       projectRefId: creditBlock.projectRefId,
-    //     });
-    //     await em.save(CreditTransactionsEntity, newIssueRecord);
-    //   }
-    // }
+    if (creditBlock.txType == TxType.ISSUE) {
+      const existingIssueRecord = await em.findOne(CreditTransactionsEntity, {
+        where: {
+          creditBlockId: creditBlock.creditBlockId,
+          type: CreditTransactionTypesEnum.ISSUED,
+        },
+      });
+      if (!existingIssueRecord) {
+        const newIssueRecord = plainToClass(CreditTransactionsEntity, {
+          senderId: creditBlock.previousOwnerCompanyId,
+          recieverId: creditBlock.ownerCompanyId,
+          type: CreditTransactionTypesEnum.ISSUED,
+          status: CreditTransactionStatusEnum.COMPLETED,
+          creditBlockId: creditBlock.creditBlockId,
+          serialNumber: creditBlock.serialNumber,
+          amount: creditBlock.creditAmount,
+          projectRefId: creditBlock.projectRefId,
+        });
+        await em.save(CreditTransactionsEntity, newIssueRecord);
+      }
+    }
     if (creditBlock.txType == TxType.TRANSFER) {
       const newTranferRecord = plainToClass(CreditTransactionsEntity, {
         senderId: creditBlock.previousOwnerCompanyId,
