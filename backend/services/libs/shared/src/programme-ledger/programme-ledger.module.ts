@@ -7,6 +7,7 @@ import { LedgerDbModule } from "../ledger-db/ledger-db.module";
 import { UtilModule } from "../util/util.module";
 import { ProgrammeLedgerService } from "./programme-ledger.service";
 import { CreditBlocksManagementModule } from "../credit-blocks-management/credit-blocks-management.module";
+import { SerialNumberManagementModule } from "../serial-number-management/serial-number-management.module";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CreditBlocksManagementModule } from "../credit-blocks-management/credit
     TypeOrmModule.forFeature([Programme, ConstantEntity]),
     UtilModule,
     CreditBlocksManagementModule,
+    SerialNumberManagementModule,
   ],
   providers: [ProgrammeLedgerService, Logger],
   exports: [ProgrammeLedgerService],

@@ -50,6 +50,7 @@ export class CreditBlocksManagementService {
           );
           creditBlock.txType = TxType.TRANSFER;
           creditBlock.txTime = txTime;
+          creditBlock.isNotTransferred = false;
           updatedBlocks.push(creditBlock);
         } else {
           const { firstSerialNumber, secondSerialNumber } =
@@ -62,6 +63,7 @@ export class CreditBlocksManagementService {
           creditBlock.creditAmount =
             creditBlock.creditAmount - transferredCreditAmountFromBlock;
           creditBlock.serialNumber = firstSerialNumber;
+          creditBlock.txType = TxType.CREDIT_BLOCK_SPLIT;
           creditBlock.txRef = this.getCreditBlockTxRef(
             TxType.CREDIT_BLOCK_SPLIT,
             fromCompanyId,
@@ -93,6 +95,8 @@ export class CreditBlocksManagementService {
             vintage: creditBlock.vintage,
             creditAmount: transferredCreditAmountFromBlock,
             reservedCreditAmount: 0,
+            transactionRecords: [],
+            isNotTransferred: false,
           });
           newBlocks.push(newBlock);
         }
@@ -112,6 +116,7 @@ export class CreditBlocksManagementService {
           );
           creditBlock.txType = TxType.TRANSFER;
           creditBlock.txTime = txTime;
+          creditBlock.isNotTransferred = false;
           updatedBlocks.push(creditBlock);
         } else {
           const { firstSerialNumber, secondSerialNumber } =
@@ -124,6 +129,7 @@ export class CreditBlocksManagementService {
           creditBlock.creditAmount =
             creditBlock.creditAmount - transferredCreditAmountFromBlock;
           creditBlock.serialNumber = firstSerialNumber;
+          creditBlock.txType = TxType.CREDIT_BLOCK_SPLIT;
           creditBlock.txRef = this.getCreditBlockTxRef(
             TxType.CREDIT_BLOCK_SPLIT,
             fromCompanyId,
@@ -155,6 +161,8 @@ export class CreditBlocksManagementService {
             vintage: creditBlock.vintage,
             creditAmount: transferredCreditAmountFromBlock,
             reservedCreditAmount: 0,
+            transactionRecords: [],
+            isNotTransferred: false,
           });
           newBlocks.push(newBlock);
         }
@@ -207,6 +215,8 @@ export class CreditBlocksManagementService {
       vintage: vintage,
       creditAmount: creditAmount,
       reservedCreditAmount: 0,
+      transactionRecords: [],
+      isNotTransferred: true,
     });
     return newBlock;
   }
@@ -215,8 +225,11 @@ export class CreditBlocksManagementService {
     txType: TxType,
     fromCompanyId: number,
     toCompanyId: number,
-    actionByUserId: number
+    actionByUserId: number,
+    data?: string
   ) {
-    return `${txType}#${fromCompanyId}#${toCompanyId}#${actionByUserId}`;
+    return `${txType}#${fromCompanyId}#${toCompanyId}#${actionByUserId}${
+      data ? `#${data}` : ``
+    }`;
   }
 }

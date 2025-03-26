@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 import { TxType } from "../enum/txtype.enum";
+import { CreditTransactionLedgerRecordDto } from "../dto/credit.transaction.ledger.record.dto";
 
 @Entity()
 export class CreditBlocksEntity {
@@ -8,6 +9,9 @@ export class CreditBlocksEntity {
 
   @Column()
   txRef: string;
+
+  @Column("jsonb", { array: false, nullable: true })
+  txData?: any;
 
   @Column({
     type: "enum",
@@ -18,6 +22,9 @@ export class CreditBlocksEntity {
 
   @Column({ type: "bigint" })
   txTime: number;
+
+  @Column("jsonb", { array: false, default: [] })
+  transactionRecords?: CreditTransactionLedgerRecordDto[];
 
   @Column({ type: "bigint", nullable: true })
   previousOwnerCompanyId?: number;
@@ -36,6 +43,9 @@ export class CreditBlocksEntity {
 
   @Column()
   creditAmount: number;
+
+  @Column({ type: "boolean", default: true })
+  isNotTransferred: boolean;
 
   @Column({ default: 0 })
   reservedCreditAmount?: number;
