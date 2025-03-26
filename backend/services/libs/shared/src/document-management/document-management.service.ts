@@ -1346,7 +1346,7 @@ export class DocumentManagementService {
         );
         await this.logProjectStage(
           project.refId,
-          ProjectAuditLogType.AUTHORIZED,
+          ProjectAuditLogType.AUTHORISED,
           user.id
         );
       }
