@@ -77,21 +77,21 @@ export class AnalyticsController {
     );
   }
 
-  // @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @Post("getCreditSummary")
-  // async getCreditSummary(
-  //   @Body() filters: ProjectDataRequestDTO,
-  //   @Request() req
-  // ) {
-  //   return await this.analyticsService.getCreditSummary(filters, req.user);
-  // }
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Post("getCreditSummary")
+  async getCreditSummary(
+    @Body() filters: ProjectDataRequestDTO,
+    @Request() req
+  ) {
+    return await this.analyticsService.getCreditSummary(filters, req.user);
+  }
 
-  //   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  //   @Post("creditsSummaryByDate")
-  //   async creditsSummaryByDate(
-  //     @Body() filters: ProjectDataRequestDTO,
-  //     @Request() req
-  //   ) {
-  //     return await this.analyticsService.creditsSummaryByDate(filters, req.user);
-  //   }
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @Post("creditsSummaryByDate")
+  async creditsSummaryByDate(
+    @Body() filters: ProjectDataRequestDTO,
+    @Request() req
+  ) {
+    return await this.analyticsService.creditsSummaryByDate(filters, req.user);
+  }
 }
