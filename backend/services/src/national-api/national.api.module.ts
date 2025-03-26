@@ -17,6 +17,7 @@ import { VerificationController } from "./verification/verification.controller";
 import { ProjectManagementController } from "./project-management.controller";
 import { DocumentManagementController } from "./document.controller";
 import { AnalyticsController } from "./analytics.controller";
+import { CreditTransactionsManagementController } from "./credit.transactions.management.controller";
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { AnalyticsController } from "./analytics.controller";
     ProjectManagementController,
     DocumentManagementController,
     AnalyticsController,
+    CreditTransactionsManagementController,
   ],
   providers: [NationalAPIService, Logger],
 })

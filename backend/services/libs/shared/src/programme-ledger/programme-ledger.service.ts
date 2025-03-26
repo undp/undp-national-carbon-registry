@@ -40,6 +40,7 @@ import { ActivityVintageCreditsDto } from "../dto/activty.vintage.credits.dto";
 import { CreditBlocksEntity } from "../entities/credit.blocks.entity";
 import { CreditBlocksManagementService } from "../credit-blocks-management/credit-blocks-management.service";
 import { User } from "../entities/user.entity";
+import { CreditTransferDto } from "../dto/credit.transfer.dto";
 
 @Injectable()
 export class ProgrammeLedgerService {
@@ -762,7 +763,7 @@ export class ProgrammeLedgerService {
 
         let alreadyIssuedCredits = project.creditIssued - totalCreditsToVerify;
         for (const verfiedCredits of creditVerified) {
-          const newBlock = this.creditBlocksManagementService.issueCreditBlock(
+          const newBlock = this.creditBlocksManagementService.getNewCreditBlock(
             verfiedCredits.creditAmount,
             verfiedCredits.vintage,
             project,
@@ -820,6 +821,127 @@ export class ProgrammeLedgerService {
       return updatedProject;
     }
     return updatedProject;
+  }
+
+  public async transferCredits(
+    creditTransferDto: CreditTransferDto,
+    projectRefId: string,
+    user: User
+  ) {
+    const getQueries = {};
+    getQueries[this.ledger.projectTable] = {
+      refId: projectRefId,
+    };
+    getQueries[this.ledger.creditBlocksTable] = {
+      creditBlockId: creditTransferDto.creditBlockId,
+    };
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const projects: ProjectEntity[] = results[this.ledger.projectTable].map(
+          (domValue) => {
+            return plainToClass(
+              ProjectEntity,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+        if (projects.length <= 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.programmeNotExistWIthId",
+              [projectRefId]
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+        const project = projects[0];
+
+        const creditBlocks: CreditBlocksEntity[] = results[
+          this.ledger.creditBlocksTable
+        ].map((domValue) => {
+          return plainToClass(
+            CreditBlocksEntity,
+            JSON.parse(JSON.stringify(domValue))
+          );
+        });
+        if (creditBlocks.length <= 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.creditBlockNotExistWIthCreditBlockId",
+              [creditTransferDto.creditBlockId]
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+        const creditBlock = creditBlocks[0];
+
+        if (user.companyId != creditBlock.ownerCompanyId) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.creditBlockNotBelongsToOwner",
+              [creditTransferDto.creditBlockId]
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+
+        const txTime = new Date().getTime();
+
+        const { newBlocks, updatedBlocks } =
+          this.creditBlocksManagementService.transferCreditAmountFromBlocks(
+            creditTransferDto.amount,
+            [creditBlock],
+            user.companyId,
+            creditTransferDto.receiverCompanyId,
+            txTime,
+            user
+          );
+
+        let updateMap = {};
+        let updateWhereMap = {};
+        let insertMap = {};
+        if (updatedBlocks.length) {
+          for (const updatedBlock of updatedBlocks) {
+            updateMap[
+              this.ledger.creditBlocksTable + "#" + updatedBlock.creditBlockId
+            ] = updatedBlock;
+            updateWhereMap[
+              this.ledger.creditBlocksTable + "#" + updatedBlock.creditBlockId
+            ] = {
+              creditBlockId: updatedBlock.creditBlockId,
+            };
+          }
+        }
+        if (newBlocks.length) {
+          for (const newBlock of newBlocks) {
+            insertMap[
+              this.ledger.creditBlocksTable + "#" + newBlock.creditBlockId
+            ] = newBlock;
+          }
+        }
+
+        if (creditBlock.txType == TxType.ISSUE) {
+          updateMap[this.ledger.tableName] = {
+            creditBalance: project.creditBalance - creditTransferDto.amount,
+            creditChange: creditTransferDto.amount,
+            creditTransferred: project.creditTransferred
+              ? project.creditTransferred + creditTransferDto.amount
+              : creditTransferDto.amount,
+            txTime: txTime,
+            txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
+              TxType.TRANSFER,
+              user.companyId,
+              creditTransferDto.receiverCompanyId,
+              user.id
+            ),
+            txType: TxType.TRANSFER,
+          };
+          updateWhereMap[this.ledger.tableName] = { refId: projectRefId };
+        }
+        return [updateMap, updateWhereMap, insertMap];
+      }
+    );
   }
 
   //MARK: approve SLCF Credit Transfer

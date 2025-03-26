@@ -1000,6 +1000,8 @@ export class DocumentManagementService {
           }
         );
         break;
+      default:
+        return;
     }
     let updateWhere: QueryDeepPartialEntity<DocumentEntity>;
     if (txRef && txRef.split("#").length > 1) {
