@@ -14,7 +14,7 @@ export class CreditBlocksManagementService {
     private readonly serialNumberManagementService: SerialNumberManagementService
   ) {}
 
-  public transferCreditAmountFromBlock(
+  public transferCreditAmountFromBlocks(
     creditAmount: number,
     creditBlocks: CreditBlocksEntity[],
     fromCompanyId: number,
@@ -36,10 +36,14 @@ export class CreditBlocksManagementService {
 
       if (unassignedAmountOfCreditBlock >= remainingCreditAmount) {
         transferredCreditAmountFromBlock = remainingCreditAmount;
-        if (creditBlock.reservedCreditAmount == 0) {
+        if (
+          creditBlock.reservedCreditAmount == 0 &&
+          unassignedAmountOfCreditBlock == remainingCreditAmount
+        ) {
           creditBlock.ownerCompanyId = toCompanyId;
           creditBlock.previousOwnerCompanyId = fromCompanyId;
           creditBlock.txRef = this.getCreditBlockTxRef(
+            TxType.TRANSFER,
             fromCompanyId,
             toCompanyId,
             user.id
@@ -59,12 +63,12 @@ export class CreditBlocksManagementService {
             creditBlock.creditAmount - transferredCreditAmountFromBlock;
           creditBlock.serialNumber = firstSerialNumber;
           creditBlock.txRef = this.getCreditBlockTxRef(
+            TxType.CREDIT_BLOCK_SPLIT,
             fromCompanyId,
             toCompanyId,
             user.id
           );
           creditBlock.txTime = txTime;
-          creditBlock.txType = TxType.CREDIT_BLOCK_SPLIT;
           updatedBlocks.push(creditBlock);
 
           //create new block
@@ -75,6 +79,7 @@ export class CreditBlocksManagementService {
           const newBlock = plainToClass(CreditBlocksEntity, {
             creditBlockId: newBlockId,
             txRef: this.getCreditBlockTxRef(
+              TxType.TRANSFER,
               fromCompanyId,
               toCompanyId,
               user.id
@@ -87,17 +92,20 @@ export class CreditBlocksManagementService {
             serialNumber: secondSerialNumber,
             vintage: creditBlock.vintage,
             creditAmount: transferredCreditAmountFromBlock,
+            reservedCreditAmount: 0,
           });
           newBlocks.push(newBlock);
         }
+        processedCreditAmount += transferredCreditAmountFromBlock;
         break;
       } else {
-        transferredCreditAmountFromBlock = creditBlock.creditAmount;
+        transferredCreditAmountFromBlock = unassignedAmountOfCreditBlock;
         if (creditBlock.reservedCreditAmount == 0) {
           //update current block
           creditBlock.ownerCompanyId = toCompanyId;
           creditBlock.previousOwnerCompanyId = fromCompanyId;
           creditBlock.txRef = this.getCreditBlockTxRef(
+            TxType.TRANSFER,
             fromCompanyId,
             toCompanyId,
             user.id
@@ -109,7 +117,7 @@ export class CreditBlocksManagementService {
           const { firstSerialNumber, secondSerialNumber } =
             this.serialNumberManagementService.splitCreditBlockSerialNumber(
               creditBlock.serialNumber,
-              remainingCreditAmount
+              transferredCreditAmountFromBlock
             );
 
           //update current block
@@ -117,12 +125,12 @@ export class CreditBlocksManagementService {
             creditBlock.creditAmount - transferredCreditAmountFromBlock;
           creditBlock.serialNumber = firstSerialNumber;
           creditBlock.txRef = this.getCreditBlockTxRef(
+            TxType.CREDIT_BLOCK_SPLIT,
             fromCompanyId,
             toCompanyId,
             user.id
           );
           creditBlock.txTime = txTime;
-          creditBlock.txType = TxType.CREDIT_BLOCK_SPLIT;
           updatedBlocks.push(creditBlock);
 
           //create new block
@@ -133,6 +141,7 @@ export class CreditBlocksManagementService {
           const newBlock = plainToClass(CreditBlocksEntity, {
             creditBlockId: newBlockId,
             txRef: this.getCreditBlockTxRef(
+              TxType.TRANSFER,
               fromCompanyId,
               toCompanyId,
               user.id
@@ -145,11 +154,12 @@ export class CreditBlocksManagementService {
             serialNumber: secondSerialNumber,
             vintage: creditBlock.vintage,
             creditAmount: transferredCreditAmountFromBlock,
+            reservedCreditAmount: 0,
           });
           newBlocks.push(newBlock);
         }
+        processedCreditAmount += transferredCreditAmountFromBlock;
       }
-      processedCreditAmount += transferredCreditAmountFromBlock;
     }
     if (processedCreditAmount < creditAmount) {
       throw new HttpException(
@@ -163,7 +173,7 @@ export class CreditBlocksManagementService {
     return { newBlocks, updatedBlocks };
   }
 
-  public issueCreditBlock(
+  public getNewCreditBlock(
     creditAmount: number,
     vintage: string,
     project: ProjectEntity,
@@ -183,6 +193,7 @@ export class CreditBlocksManagementService {
     const newBlock = plainToClass(CreditBlocksEntity, {
       creditBlockId: creditBlockId,
       txRef: this.getCreditBlockTxRef(
+        TxType.ISSUE,
         project.companyId,
         project.companyId,
         user.id
@@ -195,15 +206,17 @@ export class CreditBlocksManagementService {
       serialNumber: serialNumber,
       vintage: vintage,
       creditAmount: creditAmount,
+      reservedCreditAmount: 0,
     });
     return newBlock;
   }
 
   public getCreditBlockTxRef(
+    txType: TxType,
     fromCompanyId: number,
     toCompanyId: number,
     actionByUserId: number
   ) {
-    return `${fromCompanyId}#${toCompanyId}#${actionByUserId}`;
+    return `${txType}#${fromCompanyId}#${toCompanyId}#${actionByUserId}`;
   }
 }

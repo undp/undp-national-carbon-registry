@@ -27,6 +27,7 @@ import { DocumentManagementModule } from "./document-management/document-managem
 import { SerialNumberManagementModule } from "./serial-number-management/serial-number-management.module";
 import { CreditBlocksManagementModule } from "./credit-blocks-management/credit-blocks-management.module";
 import { AnalyticsModule } from "./analytics/analytics.module";
+import { CreditTransactionsManagementModule } from "./credit-transactions-management/credit-transactions-management.module";
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { AnalyticsModule } from "./analytics/analytics.module";
     SerialNumberManagementModule,
     CreditBlocksManagementModule,
     AnalyticsModule,
+    CreditTransactionsManagementModule,
   ],
   providers: [SharedService],
   exports: [
@@ -88,6 +90,7 @@ import { AnalyticsModule } from "./analytics/analytics.module";
     SerialNumberManagementModule,
     CreditBlocksManagementModule,
     AnalyticsModule,
+    CreditTransactionsManagementModule,
   ],
 })
 export class SharedModule {}
