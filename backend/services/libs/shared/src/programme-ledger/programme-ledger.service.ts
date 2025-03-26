@@ -41,6 +41,15 @@ import { CreditBlocksEntity } from "../entities/credit.blocks.entity";
 import { CreditBlocksManagementService } from "../credit-blocks-management/credit-blocks-management.service";
 import { User } from "../entities/user.entity";
 import { CreditTransferDto } from "../dto/credit.transfer.dto";
+import { CreditRetireRequestDto } from "../dto/credit.retire.request.dto";
+import { CounterService } from "../util/counter.service";
+import { CounterType } from "../util/counter.type.enum";
+import { CreditTransactionTypesEnum } from "../enum/credit.transaction.types.enum";
+import { CreditTransactionStatusEnum } from "../enum/credit.transaction.status.enum";
+import { CreditTransactionsEntity } from "../entities/credit.transactions.entity";
+import { CreditRetireActionDto } from "../dto/credit.retire.action.dto";
+import { RetirementACtionEnum } from "../enum/retirement.action.enum";
+import { SerialNumberManagementService } from "../serial-number-management/serial-number-management.service";
 
 @Injectable()
 export class ProgrammeLedgerService {
@@ -50,7 +59,9 @@ export class ProgrammeLedgerService {
     private ledger: LedgerDBInterface,
     private helperService: HelperService,
     private serialNumberGenerator: SLCFSerialNumberGeneratorService,
-    private readonly creditBlocksManagementService: CreditBlocksManagementService
+    private readonly creditBlocksManagementService: CreditBlocksManagementService,
+    private readonly counterService: CounterService,
+    private readonly serialNumberManagementService: SerialNumberManagementService
   ) {}
 
   public async createProgramme(programme: Programme): Promise<Programme> {
@@ -875,6 +886,7 @@ export class ProgrammeLedgerService {
           );
         }
         const creditBlock = creditBlocks[0];
+        const updateProject = creditBlock.isNotTransferred;
 
         if (user.companyId != creditBlock.ownerCompanyId) {
           throw new HttpException(
@@ -920,9 +932,8 @@ export class ProgrammeLedgerService {
             ] = newBlock;
           }
         }
-
-        if (creditBlock.txType == TxType.ISSUE) {
-          updateMap[this.ledger.tableName] = {
+        if (updateProject) {
+          updateMap[this.ledger.projectTable] = {
             creditBalance: project.creditBalance - creditTransferDto.amount,
             creditChange: creditTransferDto.amount,
             creditTransferred: project.creditTransferred
@@ -937,8 +948,241 @@ export class ProgrammeLedgerService {
             ),
             txType: TxType.TRANSFER,
           };
-          updateWhereMap[this.ledger.tableName] = { refId: projectRefId };
+          updateWhereMap[this.ledger.projectTable] = { refId: projectRefId };
         }
+        return [updateMap, updateWhereMap, insertMap];
+      }
+    );
+  }
+
+  public async addRetireRequest(
+    newRetireId: string,
+    creditRetireReqDto: CreditRetireRequestDto,
+    user: User
+  ) {
+    const getQueries = {};
+    getQueries[this.ledger.creditBlocksTable] = {
+      creditBlockId: creditRetireReqDto.creditBlockId,
+    };
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const creditBlocks: CreditBlocksEntity[] = results[
+          this.ledger.creditBlocksTable
+        ].map((domValue) => {
+          return plainToClass(
+            CreditBlocksEntity,
+            JSON.parse(JSON.stringify(domValue))
+          );
+        });
+        if (creditBlocks.length <= 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.creditBlockNotExistWIthCreditBlockId",
+              [creditRetireReqDto.creditBlockId]
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+        const creditBlock = creditBlocks[0];
+        if (user.companyId != creditBlock.ownerCompanyId) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.creditBlockNotBelongsToOwner",
+              [creditRetireReqDto.creditBlockId]
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+        if (
+          creditBlock.creditAmount - creditBlock.reservedCreditAmount <
+          creditRetireReqDto.amount
+        ) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.notEnoughCreditAmount",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+        let updateMap = {};
+        let updateWhereMap = {};
+        let insertMap = {};
+        updateMap[this.ledger.creditBlocksTable] = {
+          txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
+            TxType.RETIRE_REQ,
+            user.companyId,
+            0,
+            user.id
+          ),
+          txData: creditRetireReqDto,
+          txType: TxType.RETIRE_REQ,
+          txTime: new Date().getTime(),
+          reservedCreditAmount:
+            creditBlock.reservedCreditAmount + creditRetireReqDto.amount,
+          transactionRecords: [
+            ...creditBlock.transactionRecords,
+            {
+              id: newRetireId,
+              type: CreditTransactionTypesEnum.RETIRED,
+              status: CreditTransactionStatusEnum.PENDING,
+              amount: creditRetireReqDto.amount,
+            },
+          ],
+        };
+        updateWhereMap[this.ledger.creditBlocksTable] = {
+          creditBlockId: creditRetireReqDto.creditBlockId,
+        };
+
+        return [updateMap, updateWhereMap, insertMap];
+      }
+    );
+  }
+
+  public async retirementRequestAction(
+    creditRetirementRequest: CreditTransactionsEntity,
+    retirementAction: CreditRetireActionDto,
+    user: User
+  ) {
+    const getQueries = {};
+    getQueries[this.ledger.creditBlocksTable] = {
+      creditBlockId: creditRetirementRequest.creditBlockId,
+    };
+    const resp = await this.ledger.getAndUpdateTx(
+      getQueries,
+      (results: Record<string, dom.Value[]>) => {
+        const creditBlocks: CreditBlocksEntity[] = results[
+          this.ledger.creditBlocksTable
+        ].map((domValue) => {
+          return plainToClass(
+            CreditBlocksEntity,
+            JSON.parse(JSON.stringify(domValue))
+          );
+        });
+        if (creditBlocks.length <= 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.creditBlockNotExistWIthCreditBlockId",
+              [creditRetirementRequest.creditBlockId]
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+        const creditBlock = creditBlocks[0];
+        const transactionRecordIndex = creditBlock.transactionRecords.findIndex(
+          (e) => e.id == retirementAction.transferId
+        );
+        if (transactionRecordIndex < 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.noTransactionRecord",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+        const retireRequestRecord =
+          creditBlock.transactionRecords[transactionRecordIndex];
+        if (retireRequestRecord.status != CreditTransactionStatusEnum.PENDING) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.noPendingTransactionRecord",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+        const txTime = new Date().getTime();
+        if (retirementAction.action == RetirementACtionEnum.ACCEPT) {
+          creditBlock.transactionRecords[transactionRecordIndex].status =
+            CreditTransactionStatusEnum.COMPLETED;
+        } else if (retirementAction.action == RetirementACtionEnum.REJECT) {
+          creditBlock.transactionRecords[transactionRecordIndex].status =
+            CreditTransactionStatusEnum.REJECTED;
+        } else if (retirementAction.action == RetirementACtionEnum.CANCEL) {
+          creditBlock.transactionRecords[transactionRecordIndex].status =
+            CreditTransactionStatusEnum.CANCELLED;
+        }
+        let updateMap = {};
+        let updateWhereMap = {};
+        let insertMap = {};
+        if (retirementAction.action == RetirementACtionEnum.ACCEPT) {
+          const { firstSerialNumber, secondSerialNumber } =
+            this.serialNumberManagementService.splitCreditBlockSerialNumber(
+              creditBlock.serialNumber,
+              retireRequestRecord.amount
+            );
+          updateMap[this.ledger.creditBlocksTable] = {
+            txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
+              TxType.CREDIT_BLOCK_SPLIT,
+              user.companyId,
+              0,
+              user.id
+            ),
+            txData: retirementAction,
+            txType: TxType.CREDIT_BLOCK_SPLIT,
+            txTime: txTime,
+            reservedCreditAmount:
+              creditBlock.reservedCreditAmount - retireRequestRecord.amount,
+            transactionRecords: creditBlock.transactionRecords,
+            serialNumber: firstSerialNumber,
+            creditAmount: creditBlock.creditAmount - retireRequestRecord.amount,
+          };
+          insertMap[this.ledger.creditBlocksTable] = plainToClass(
+            CreditBlocksEntity,
+            {
+              creditBlockId:
+                this.serialNumberManagementService.getCreditBlockId(
+                  secondSerialNumber
+                ),
+              txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
+                TxType.RETIRE,
+                user.companyId,
+                0,
+                user.id
+              ),
+              txTime: txTime,
+              txType: TxType.RETIRE,
+              txData: retirementAction,
+              previousOwnerCompanyId: user.companyId,
+              ownerCompanyId: 0,
+              projectRefId: creditBlock.projectRefId,
+              serialNumber: secondSerialNumber,
+              vintage: creditBlock.vintage,
+              creditAmount: retireRequestRecord.amount,
+              reservedCreditAmount: 0,
+              transactionRecords: [
+                {
+                  id: retireRequestRecord.id,
+                  type: CreditTransactionTypesEnum.RETIRED,
+                  status: CreditTransactionStatusEnum.COMPLETED,
+                  amount: retireRequestRecord.amount,
+                },
+              ],
+              isNotTransferred: false,
+            }
+          );
+        } else {
+          updateMap[this.ledger.creditBlocksTable] = {
+            txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
+              TxType.RETIRE,
+              user.companyId,
+              0,
+              user.id
+            ),
+            txData: retirementAction,
+            txType: TxType.RETIRE,
+            txTime: txTime,
+            reservedCreditAmount:
+              creditBlock.reservedCreditAmount - retireRequestRecord.amount,
+            transactionRecords: creditBlock.transactionRecords,
+          };
+        }
+        updateWhereMap[this.ledger.creditBlocksTable] = {
+          creditBlockId: creditRetirementRequest.creditBlockId,
+        };
+
         return [updateMap, updateWhereMap, insertMap];
       }
     );
