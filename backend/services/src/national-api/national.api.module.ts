@@ -16,6 +16,7 @@ import { UserController } from "./user.controller";
 import { VerificationController } from "./verification/verification.controller";
 import { ProjectManagementController } from "./project-management.controller";
 import { DocumentManagementController } from "./document.controller";
+import { AnalyticsController } from "./analytics.controller";
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { DocumentManagementController } from "./document.controller";
     ProgrammeAuditSlController,
     ProjectManagementController,
     DocumentManagementController,
+    AnalyticsController,
   ],
   providers: [NationalAPIService, Logger],
 })
