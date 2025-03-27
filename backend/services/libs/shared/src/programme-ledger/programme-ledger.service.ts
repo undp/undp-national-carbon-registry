@@ -1049,9 +1049,30 @@ export class ProgrammeLedgerService {
     getQueries[this.ledger.creditBlocksTable] = {
       creditBlockId: creditRetirementRequest.creditBlockId,
     };
+    getQueries[this.ledger.projectTable] = {
+      refId: creditRetirementRequest.projectRefId,
+    };
     const resp = await this.ledger.getAndUpdateTx(
       getQueries,
       (results: Record<string, dom.Value[]>) => {
+        const projects: ProjectEntity[] = results[this.ledger.projectTable].map(
+          (domValue) => {
+            return plainToClass(
+              ProjectEntity,
+              JSON.parse(JSON.stringify(domValue))
+            );
+          }
+        );
+        if (projects.length <= 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.programmeNotExistWIthId",
+              [creditRetirementRequest.projectRefId]
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+        const project = projects[0];
         const creditBlocks: CreditBlocksEntity[] = results[
           this.ledger.creditBlocksTable
         ].map((domValue) => {
@@ -1129,13 +1150,13 @@ export class ProgrammeLedgerService {
             serialNumber: firstSerialNumber,
             creditAmount: creditBlock.creditAmount - retireRequestRecord.amount,
           };
-          insertMap[this.ledger.creditBlocksTable] = plainToClass(
-            CreditBlocksEntity,
-            {
-              creditBlockId:
-                this.serialNumberManagementService.getCreditBlockId(
-                  secondSerialNumber
-                ),
+          const newBlockId =
+            this.serialNumberManagementService.getCreditBlockId(
+              secondSerialNumber
+            );
+          insertMap[this.ledger.creditBlocksTable + "#" + newBlockId] =
+            plainToClass(CreditBlocksEntity, {
+              creditBlockId: newBlockId,
               txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
                 TxType.RETIRE,
                 user.companyId,
@@ -1161,8 +1182,27 @@ export class ProgrammeLedgerService {
                 },
               ],
               isNotTransferred: false,
-            }
-          );
+            });
+          if (creditBlock.isNotTransferred) {
+            updateMap[this.ledger.projectTable] = {
+              creditBalance: project.creditBalance - retireRequestRecord.amount,
+              creditChange: retireRequestRecord.amount,
+              creditRetired: project.creditRetired
+                ? project.creditRetired + retireRequestRecord.amount
+                : retireRequestRecord.amount,
+              txTime: txTime,
+              txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
+                TxType.RETIRE,
+                user.companyId,
+                0,
+                user.id
+              ),
+              txType: TxType.RETIRE,
+            };
+            updateWhereMap[this.ledger.projectTable] = {
+              refId: creditBlock.projectRefId,
+            };
+          }
         } else {
           updateMap[this.ledger.creditBlocksTable] = {
             txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
