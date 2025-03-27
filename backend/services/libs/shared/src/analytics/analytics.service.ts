@@ -610,7 +610,7 @@ export class AnalyticsService {
 
     if (filters?.isMine) {
       if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
-        baseQb.andWhere("project.organization.id = :orgId", { orgId });
+        baseQb.andWhere("project.companyId = :orgId", { orgId });
       } else if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
         baseQb.andWhere(":orgId = ANY(project.independentCertifiers)", {
           orgId: orgId,
@@ -684,7 +684,7 @@ export class AnalyticsService {
 
     if (filters?.isMine) {
       if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
-        qb.andWhere("project.organization.id = :orgId", { orgId });
+        qb.andWhere("project.companyId = :orgId", { orgId });
       } else if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
         qb.andWhere(":orgId = ANY(project.independentCertifiers)", {
           orgId: orgId,
