@@ -7,6 +7,7 @@ import { ProgrammeLedgerModule } from "../programme-ledger/programme-ledger.modu
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { CreditTransactionsEntity } from "../entities/credit.transactions.entity";
 import { CreditBlocksEntity } from "../entities/credit.blocks.entity";
+import { DocumentManagementModule } from "../document-management/document-management.module";
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { CreditBlocksEntity } from "../entities/credit.blocks.entity";
     CompanyModule,
     ProgrammeLedgerModule,
     TypeOrmModule.forFeature([CreditTransactionsEntity, CreditBlocksEntity]),
+    DocumentManagementModule,
   ],
   providers: [CreditTransactionsManagementService],
   exports: [CreditTransactionsManagementService],

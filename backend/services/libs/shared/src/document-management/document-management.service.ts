@@ -1317,10 +1317,16 @@ export class DocumentManagementService {
             []
           );
 
+        const content = JSON.parse(document.content);
+        const creditEst = 500; //TODO need to remove
         const updateProjectProposalStage = {
           programmeId: project.refId,
           txType: TxType.APPROVE_VALIDATION,
-          data: { letterOfAuthorizationUrl: letterOfAuthorizationUrl },
+          data: {
+            letterOfAuthorizationUrl: letterOfAuthorizationUrl,
+            //creditEst: content.content.ghgProjectDescription.totalNetEmissionReductions,
+            creditEst: creditEst,
+          },
         };
 
         await this.updateProposalStage(
@@ -1346,6 +1352,18 @@ export class DocumentManagementService {
           project.refId,
           ProjectAuditLogType.VALIDATION_DNA_APPROVED,
           user.id
+        );
+
+        await this.logProjectStage(
+          project.refId,
+          ProjectAuditLogType.CREDITS_AUTHORISED,
+          user.id,
+          undefined,
+          {
+            //amount: content?.ghgProjectDescription?.totalNetEmissionReductions,
+            amount: creditEst,
+            toCompanyId: document.companyId,
+          }
         );
         await this.logProjectStage(
           project.refId,
