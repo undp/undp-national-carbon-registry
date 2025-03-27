@@ -18,6 +18,8 @@ import { CounterService } from "../util/counter.service";
 import { CounterType } from "../util/counter.type.enum";
 import { CreditRetireActionDto } from "../dto/credit.retire.action.dto";
 import { RetirementACtionEnum } from "../enum/retirement.action.enum";
+import { DocumentManagementService } from "../document-management/document-management.service";
+import { ProjectAuditLogType } from "../enum/project.audit.log.type.enum";
 
 @Injectable()
 export class CreditTransactionsManagementService {
@@ -29,7 +31,8 @@ export class CreditTransactionsManagementService {
     private creditBlocksEntityRepository: Repository<CreditBlocksEntity>,
     private readonly counterService: CounterService,
     @InjectRepository(CreditTransactionsEntity)
-    private creditTransactionsEntityRepository: Repository<CreditTransactionsEntity>
+    private creditTransactionsEntityRepository: Repository<CreditTransactionsEntity>,
+    private readonly documentManagementService: DocumentManagementService
   ) {}
 
   public async transferCredits(
@@ -116,6 +119,17 @@ export class CreditTransactionsManagementService {
         creditBlock.projectRefId,
         user
       );
+      await this.documentManagementService.logProjectStage(
+        creditBlock.projectRefId,
+        ProjectAuditLogType.CREDIT_TRANSFERED,
+        user.id,
+        undefined,
+        {
+          amount: creditTransferDto.amount,
+          toCompanyId: creditTransferDto.receiverCompanyId,
+          fromCompanyId: creditBlock.ownerCompanyId,
+        }
+      );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -188,6 +202,17 @@ export class CreditTransactionsManagementService {
         creditRetireRequestDto,
         user
       );
+
+      await this.documentManagementService.logProjectStage(
+        creditBlock.projectRefId,
+        ProjectAuditLogType.RETIRE_REQUESTED,
+        user.id,
+        undefined,
+        {
+          amount: creditRetireRequestDto.amount,
+          remarks: creditRetireRequestDto.remarks,
+        }
+      );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -254,6 +279,25 @@ export class CreditTransactionsManagementService {
         creditRetireRequest,
         retirementAction,
         user
+      );
+
+      const auditLogTypes: Record<RetirementACtionEnum, ProjectAuditLogType> = {
+        [RetirementACtionEnum.ACCEPT]: ProjectAuditLogType.RETIRE_APPROVED,
+        [RetirementACtionEnum.REJECT]: ProjectAuditLogType.RETIRE_REJECTED,
+        [RetirementACtionEnum.CANCEL]: ProjectAuditLogType.RETIRE_CANCELLED,
+      };
+
+      const logType = auditLogTypes[retirementAction.action];
+
+      await this.documentManagementService.logProjectStage(
+        creditRetireRequest.projectRefId,
+        logType,
+        user.id,
+        undefined,
+        {
+          amount: creditRetireRequest.amount,
+          remarks: retirementAction.remarks,
+        }
       );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
