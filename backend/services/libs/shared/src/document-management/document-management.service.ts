@@ -33,6 +33,7 @@ import { ActivityStateEnum } from "../enum/activity.state.enum";
 import { LetterOfAuthorisationRequestGen } from "../util/document-generators/letter.of.authorisation.request.gen";
 import { SerialNumberManagementService } from "../serial-number-management/serial-number-management.service";
 import { UserCompanyViewEntity } from "../view-entities/userCompany.view.entity";
+import { ActivityVintageCreditsDto } from "../dto/activty.vintage.credits.dto";
 
 @Injectable()
 export class DocumentManagementService {
@@ -1042,7 +1043,7 @@ export class DocumentManagementService {
     log.refId = refId;
     log.logType = type;
     log.userId = userId;
-    log.data = JSON.stringify(data);
+    log.data = data;
     em ? await em.save(AuditEntity, log) : await this.auditLogService.save(log);
   }
 
@@ -1348,7 +1349,7 @@ export class DocumentManagementService {
         );
         await this.logProjectStage(
           project.refId,
-          ProjectAuditLogType.AUTHORIZED,
+          ProjectAuditLogType.AUTHORISED,
           user.id
         );
       }
@@ -1592,12 +1593,19 @@ export class DocumentManagementService {
           ProjectAuditLogType.VERIFICATION_REPORT_APPROVED,
           user.id
         );
+
+        const totalCredits = requestData.data.creditIssued.reduce(
+          (sum: number, item: ActivityVintageCreditsDto) =>
+            sum + item.creditAmount,
+          0
+        );
+
         await this.logProjectStage(
           project.refId,
           ProjectAuditLogType.CREDIT_ISSUED,
           user.id,
           undefined,
-          { creditIssued: requestData.data.creditIssued }
+          { amount: totalCredits, toCompany: project.companyId }
         );
       }
     } else {

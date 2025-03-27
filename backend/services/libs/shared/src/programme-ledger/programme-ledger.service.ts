@@ -631,7 +631,7 @@ export class ProgrammeLedgerService {
     user: User
   ) {
     const creditVerified: ActivityVintageCreditsDto[] =
-      requestData.data.creditVerified;
+      requestData.data.creditIssued;
     const companyAccount = companyId + "#" + requestData.data.creditType;
 
     const getQueries = {};
