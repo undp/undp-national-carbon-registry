@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, PrimaryColumn } from "typeorm";
 import { TxType } from "../enum/txtype.enum";
 import { CreditTransactionLedgerRecordDto } from "../dto/credit.transaction.ledger.record.dto";
 
@@ -49,4 +49,13 @@ export class CreditBlocksEntity {
 
   @Column({ default: 0 })
   reservedCreditAmount?: number;
+
+  @Column({ type: "bigint" })
+  createTime: number;
+
+  @BeforeInsert()
+  async timestampAtInsert() {
+    const timestamp = new Date().getTime();
+    this.createTime = timestamp;
+  }
 }
