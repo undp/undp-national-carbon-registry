@@ -16,6 +16,7 @@ import { UserController } from "./user.controller";
 import { VerificationController } from "./verification/verification.controller";
 import { ProjectManagementController } from "./project-management.controller";
 import { DocumentManagementController } from "./document.controller";
+import { AnalyticsController } from "./analytics.controller";
 import { CreditTransactionsManagementController } from "./credit.transactions.management.controller";
 
 @Module({
@@ -40,6 +41,7 @@ import { CreditTransactionsManagementController } from "./credit.transactions.ma
     ProgrammeAuditSlController,
     ProjectManagementController,
     DocumentManagementController,
+    AnalyticsController,
     CreditTransactionsManagementController,
   ],
   providers: [NationalAPIService, Logger],

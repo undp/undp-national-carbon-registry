@@ -411,6 +411,7 @@ export class ProgrammeLedgerService {
             uPayload["projectProposalStage"] = ProjectProposalStage.AUTHORISED;
             uPayload["letterOfAuthorizationUrl"] =
               data?.letterOfAuthorizationUrl;
+            uPayload["creditEst"] = data?.creditEst;
             expectedCurrentProposalStages = [
               ProjectProposalStage.VALIDATION_REPORT_SUBMITTED,
             ];
@@ -642,7 +643,7 @@ export class ProgrammeLedgerService {
     user: User
   ) {
     const creditVerified: ActivityVintageCreditsDto[] =
-      requestData.data.creditVerified;
+      requestData.data.creditIssued;
     const companyAccount = companyId + "#" + requestData.data.creditType;
 
     const getQueries = {};
@@ -706,6 +707,16 @@ export class ProgrammeLedgerService {
             );
           }
           totalCreditsToVerify += creditVerified[creditVintageId].creditAmount;
+        }
+
+        if (totalCreditsToVerify > project.creditEst - project.creditIssued) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.estimatedCreditAmountExceeds",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
         }
 
         project.creditBalance = project.creditBalance

@@ -1,6 +1,7 @@
 import { ViewColumn, ViewEntity } from "typeorm";
 import { CompanyState } from "../enum/company.state.enum";
 import { TxType } from "../enum/txtype.enum";
+import { ActivityEntity } from "../entities/activity.entity";
 
 @ViewEntity({
   expression: `
@@ -19,6 +20,9 @@ import { TxType } from "../enum/txtype.enum";
       p."txTime",
       p."txType",
       p."txRef",
+      p."noObjectionLetterUrl",
+      p."letterOfAuthorizationUrl",
+      p."activities",
       c."name", 
       c."logo",
       c."companyRole",
@@ -53,7 +57,7 @@ export class ProjectDetailsViewEntity {
 
   @ViewColumn()
   creditIssued: number;
-  
+
   @ViewColumn()
   creditChange: number;
 
@@ -98,4 +102,13 @@ export class ProjectDetailsViewEntity {
 
   @ViewColumn()
   content: string;
+
+  @ViewColumn()
+  noObjectionLetterUrl: string;
+
+  @ViewColumn()
+  letterOfAuthorizationUrl: string;
+
+  @ViewColumn()
+  activities: ActivityEntity[];
 }
