@@ -21,9 +21,9 @@ export class CreditTransactionsManagementController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Action.Update, ProgrammeSl)
-  // )
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Update, ProjectEntity)
+  )
   @Post("transfer")
   async transfer(@Body() creditTransferDto: CreditTransferDto, @Request() req) {
     return await this.creditTransactionsManagementService.transferCredits(
@@ -34,9 +34,9 @@ export class CreditTransactionsManagementController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Action.Update, ProgrammeSl)
-  // )
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Update, ProjectEntity)
+  )
   @Post("retireRequest")
   async retireRequest(
     @Body() creditRetireRequestDto: CreditRetireRequestDto,
@@ -50,9 +50,9 @@ export class CreditTransactionsManagementController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Action.Update, ProgrammeSl)
-  // )
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Update, ProjectEntity)
+  )
   @Post("performRetireAction")
   async performRetireAction(
     @Body() retirementAction: CreditRetireActionDto,
@@ -66,7 +66,9 @@ export class CreditTransactionsManagementController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Read, ProjectEntity)
+  )
   @Post("queryBalance")
   async queryBalance(@Body() queryDto: QueryDto, @Request() req): Promise<any> {
     return this.creditTransactionsManagementService.queryCreditBalances(
@@ -78,7 +80,9 @@ export class CreditTransactionsManagementController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Read, ProjectEntity)
+  )
   @Post("queryTransfers")
   async queryTransfers(
     @Body() queryDto: QueryDto,
@@ -93,7 +97,9 @@ export class CreditTransactionsManagementController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Read, ProjectEntity)
+  )
   @Post("queryRetirements")
   async queryRetirements(
     @Body() queryDto: QueryDto,
