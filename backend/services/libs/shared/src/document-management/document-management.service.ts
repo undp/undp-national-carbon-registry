@@ -33,6 +33,7 @@ import { ActivityStateEnum } from "../enum/activity.state.enum";
 import { LetterOfAuthorisationRequestGen } from "../util/document-generators/letter.of.authorisation.request.gen";
 import { SerialNumberManagementService } from "../serial-number-management/serial-number-management.service";
 import { UserCompanyViewEntity } from "../view-entities/userCompany.view.entity";
+import { ActivityVintageCreditsDto } from "../dto/activty.vintage.credits.dto";
 
 @Injectable()
 export class DocumentManagementService {
@@ -633,7 +634,11 @@ export class DocumentManagementService {
           }
         );
         activityId = lastActivity.id;
-        documentVersion = lastVerificationReport.version + 1;
+        const lastDocumentVersion = await this.getLastDocumentVersion(
+          DocumentTypeEnum.VERIFICATION,
+          project.refId
+        );
+        documentVersion = lastDocumentVersion + 1;
 
         newDoc.version = documentVersion;
         newDoc.activityId = activityId;
@@ -1038,7 +1043,7 @@ export class DocumentManagementService {
     log.refId = refId;
     log.logType = type;
     log.userId = userId;
-    log.data = JSON.stringify(data);
+    log.data = data;
     em ? await em.save(AuditEntity, log) : await this.auditLogService.save(log);
   }
 
@@ -1312,10 +1317,16 @@ export class DocumentManagementService {
             []
           );
 
+        const content = JSON.parse(document.content);
+        const creditEst = 500; //TODO need to remove
         const updateProjectProposalStage = {
           programmeId: project.refId,
           txType: TxType.APPROVE_VALIDATION,
-          data: { letterOfAuthorizationUrl: letterOfAuthorizationUrl },
+          data: {
+            letterOfAuthorizationUrl: letterOfAuthorizationUrl,
+            //creditEst: content.content.ghgProjectDescription.totalNetEmissionReductions,
+            creditEst: creditEst,
+          },
         };
 
         await this.updateProposalStage(
@@ -1342,9 +1353,21 @@ export class DocumentManagementService {
           ProjectAuditLogType.VALIDATION_DNA_APPROVED,
           user.id
         );
+
         await this.logProjectStage(
           project.refId,
-          ProjectAuditLogType.AUTHORIZED,
+          ProjectAuditLogType.CREDITS_AUTHORISED,
+          user.id,
+          undefined,
+          {
+            //amount: content?.ghgProjectDescription?.totalNetEmissionReductions,
+            amount: creditEst,
+            toCompanyId: document.companyId,
+          }
+        );
+        await this.logProjectStage(
+          project.refId,
+          ProjectAuditLogType.AUTHORISED,
           user.id
         );
       }
@@ -1588,12 +1611,19 @@ export class DocumentManagementService {
           ProjectAuditLogType.VERIFICATION_REPORT_APPROVED,
           user.id
         );
+
+        const totalCredits = requestData.data.creditIssued.reduce(
+          (sum: number, item: ActivityVintageCreditsDto) =>
+            sum + item.creditAmount,
+          0
+        );
+
         await this.logProjectStage(
           project.refId,
           ProjectAuditLogType.CREDIT_ISSUED,
           user.id,
           undefined,
-          { creditIssued: requestData.data.creditIssued }
+          { amount: totalCredits, toCompany: project.companyId }
         );
       }
     } else {
@@ -1629,6 +1659,19 @@ export class DocumentManagementService {
     });
 
     return lastDoc;
+  }
+
+  async queryAll(programmeId: string) {
+    const documents = await this.documentRepository.find({
+      where: {
+        programmeId: programmeId,
+      },
+      order: {
+        createdTime: "ASC",
+      },
+    });
+
+    return documents;
   }
 
   private async getLastActivity(projectRefId: string): Promise<ActivityEntity> {

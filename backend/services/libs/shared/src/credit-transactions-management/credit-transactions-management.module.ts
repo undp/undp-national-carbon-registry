@@ -10,6 +10,7 @@ import { CreditBlocksEntity } from "../entities/credit.blocks.entity";
 import { CreditBlockBalancesViewEntity } from "../view-entities/credit.block.balances.view.entity";
 import { CreditBlockTransfersViewEntity } from "../view-entities/credit.block.transfers.view.entity";
 import { CreditBlockRetirementsViewEntity } from "../view-entities/credit.block.retirements.view.entity";
+import { DocumentManagementModule } from "../document-management/document-management.module";
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { CreditBlockRetirementsViewEntity } from "../view-entities/credit.block.
       CreditBlockTransfersViewEntity,
       CreditBlockRetirementsViewEntity,
     ]),
+    DocumentManagementModule,
   ],
   providers: [CreditTransactionsManagementService],
   exports: [CreditTransactionsManagementService],
