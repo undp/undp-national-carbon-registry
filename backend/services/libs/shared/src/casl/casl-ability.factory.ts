@@ -35,6 +35,7 @@ import { ProgrammeSl } from "../entities/programmeSl.entity";
 import { DocumentEntity } from "../entities/document.entity";
 import { VerificationRequestEntity } from "../entities/verification.request.entity";
 import { CreditRetirementSl } from "../entities/creditRetirementSl.entity";
+import { ProjectEntity } from "../entities/projects.entity";
 
 type Subjects = InferSubjects<typeof EntitySubject> | "all";
 
@@ -47,6 +48,7 @@ const unAuthErrorMessage = "This action is unauthorised";
 export class CaslAbilityFactory {
   createForUser(user: User) {
     const { can, cannot, build } = new AbilityBuilder(createAppAbility);
+
     if (user) {
       if (user.role == Role.Root) {
         can(Action.Manage, "all");
@@ -121,6 +123,11 @@ export class CaslAbilityFactory {
       can(Action.Read, Company);
       can(Action.Update, User, { id: { $eq: user.id } });
       can(Action.Delete, User, { id: { $eq: user.id } });
+      can(Action.Read, Emission);
+      can(Action.Read, Projection);
+      can(Action.Read, Stat);
+      cannot(Action.Read, CreditAuditLog);
+      cannot(Action.Read, CreditAuditLogViewEntity);
       cannot(
         Action.Update,
         User,
@@ -129,47 +136,97 @@ export class CaslAbilityFactory {
           id: { $eq: user.id },
         }
       );
+      cannot([Action.Delete], Company, {
+        companyRole: { $eq: CompanyRole.DESIGNATED_NATIONAL_AUTHORITY },
+      });
+      cannot([Action.Delete], Company, {
+        companyRole: { $eq: CompanyRole.MINISTRY },
+      });
+      cannot([Action.Delete], Company, {
+        companyRole: { $eq: CompanyRole.CLIMATE_FUND },
+      });
+      cannot([Action.Delete], Company, {
+        companyRole: { $eq: CompanyRole.EXECUTIVE_COMMITTEE },
+      });
 
-      if (user.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
-        if (user.role != Role.ViewOnly) {
+      if (user.companyState === 0) {
+        cannot(Action.Create, "all");
+        cannot(Action.Delete, Programme);
+        cannot(Action.Delete, Company);
+        cannot(Action.Update, User, { id: { $ne: user.id } });
+        cannot(Action.Update, Programme);
+        cannot(Action.Update, Company);
+      }
+
+      if (user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+        can(Action.Read, User);
+        can(Action.Read, ProgrammeSl);
+        can(Action.Read, ProjectEntity);
+        can(Action.Read, CreditRetirementSl);
+        can(Action.Read, DocumentEntity);
+        can(Action.Read, VerificationRequestEntity);
+        can([Action.Read], ProgrammeDocument);
+        can(Action.Read, Investment);
+        can(Action.Read, ProgrammeTransfer);
+        can(Action.Read, Programme);
+
+        if (user.role !== Role.ViewOnly) {
+          can(Action.Create, Emission);
+          can(Action.Create, Projection);
           can(Action.Manage, ProgrammeTransfer);
           can(Action.Manage, Programme);
           can(Action.Manage, ProgrammeTransferRequest);
           can(Action.Manage, DocumentAction);
           can(Action.Manage, Investment);
-        } else {
-          can(Action.Read, Investment);
-          can(Action.Read, ProgrammeTransfer);
-          can(Action.Read, Programme);
+          can(Action.Manage, ProgrammeCertify);
+        }
+
+        if (user.role === Role.Root) {
+          can(Action.Read, CreditAuditLog);
+          can(Action.Read, CreditAuditLogViewEntity);
+          can(Action.Update, DocumentEntity);
+        }
+
+        if (user.role === Role.Admin) {
+          can(Action.Read, CreditAuditLog);
+          can(Action.Read, CreditAuditLogViewEntity);
+          can(Action.Update, DocumentEntity);
+          can(Action.Update, ProjectEntity);
         }
       }
 
-      if (user.companyRole == CompanyRole.MINISTRY) {
-        if (user.role != Role.ViewOnly) {
+      if (user.companyRole === CompanyRole.MINISTRY) {
+        can(Action.Read, User);
+        can(Action.Read, ProgrammeSl);
+        can(Action.Read, ProjectEntity);
+        can(Action.Read, CreditRetirementSl);
+        can(Action.Read, DocumentEntity);
+        can(Action.Read, VerificationRequestEntity);
+        can([Action.Read], ProgrammeDocument);
+        can(Action.Read, Investment);
+        can(Action.Read, Programme);
+        can(Action.Read, ProgrammeTransfer);
+
+        if (user.role !== Role.ViewOnly) {
+          can(Action.Create, Emission);
+          can(Action.Create, Projection);
           can(Action.Manage, Programme);
           can(Action.Manage, DocumentAction);
           can(Action.Manage, Investment);
           can(Action.Manage, ProgrammeTransferRequest);
           can(Action.Manage, ProgrammeTransfer);
-        } else {
-          can(Action.Read, Investment);
-          can(Action.Read, Programme);
-          can(Action.Read, ProgrammeTransfer);
+          can(Action.Manage, ProgrammeCertify);
         }
       }
 
-      if (
-        user.role != Role.ViewOnly &&
-        user.companyRole != CompanyRole.PROJECT_DEVELOPER
-      ) {
-        can(Action.Manage, ProgrammeCertify);
-      }
-
-      if (user.role == Role.Admin && user.companyRole == CompanyRole.API) {
-        can([Action.Create, Action.Read, Action.Update], Programme);
-        can([Action.Create, Action.Read], User);
-        can([Action.Create, Action.Read, Action.Update], Company);
-      } else if (user.companyRole == CompanyRole.INDEPENDENT_CERTIFIER) {
+      if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
+        can(Action.Read, User);
+        can(Action.Read, ProgrammeSl);
+        can(Action.Read, ProjectEntity);
+        can(Action.Read, CreditRetirementSl);
+        can(Action.Read, DocumentEntity);
+        can(Action.Read, VerificationRequestEntity);
+        can([Action.Read], ProgrammeDocument);
         can(Action.Read, Programme, {
           currentStage: { $in: [ProgrammeStage.AUTHORISED] },
         });
@@ -187,7 +244,28 @@ export class CaslAbilityFactory {
         });
         can(Action.Read, Programme);
         can(Action.Manage, DocumentAction);
-      } else if (user.companyRole == CompanyRole.PROJECT_DEVELOPER) {
+
+        if (user.role === Role.Admin) {
+          can(Action.Update, DocumentEntity);
+          can(Action.Create, DocumentEntity);
+        }
+
+        if (user.role !== Role.ViewOnly) {
+          can(Action.Manage, ProgrammeCertify);
+        }
+      }
+
+      if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
+        can(Action.Read, ProgrammeSl);
+        can(Action.Read, ProjectEntity);
+        can(Action.Read, DocumentEntity);
+        can(Action.Read, CreditRetirementSl, {
+          toCompanyId: { $eq: user.companyId },
+        });
+        can(Action.Read, CreditRetirementSl, {
+          fromCompanyId: { $eq: user.companyId },
+        });
+        can(Action.Read, VerificationRequestEntity);
         // can(Action.Read, Programme, {
         //   currentStage: { $eq: ProgrammeStage.AUTHORISED },
         // });
@@ -211,6 +289,22 @@ export class CaslAbilityFactory {
         can(Action.Read, Investment, {
           status: { $eq: InvestmentStatus.APPROVED },
         });
+
+        if (user.role === Role.Admin) {
+          can(Action.Create, DocumentEntity);
+          can(Action.Update, DocumentEntity);
+        }
+
+        if (user.role === Role.Admin || user.role === Role.Manager) {
+          can(Action.Create, ProgrammeSl);
+          can(Action.Update, ProgrammeSl);
+          can(Action.Create, ProjectEntity);
+          can(Action.Update, ProjectEntity);
+          can(Action.Create, CreditRetirementSl);
+          can(Action.Update, CreditRetirementSl);
+          can(Action.Create, VerificationRequestEntity);
+        }
+
         if (user.role != Role.ViewOnly) {
           can(Action.Manage, Programme, {
             companyId: { $elemMatch: { $eq: user.companyId } },
@@ -260,177 +354,71 @@ export class CaslAbilityFactory {
         }
       }
 
-      if (user.companyRole == CompanyRole.INDEPENDENT_CERTIFIER) {
-        can(Action.Read, Stat);
-      } else {
-        can(Action.Read, Stat);
+      if (user.companyRole === CompanyRole.EXECUTIVE_COMMITTEE) {
+        can(Action.Read, ProgrammeSl);
+        can(Action.Read, ProjectEntity);
+        can(Action.Read, DocumentEntity);
+        can(Action.Read, VerificationRequestEntity);
+
+        if (user.role == Role.Admin) {
+          can(Action.Update, ProgrammeSl);
+          can(Action.Update, ProjectEntity);
+          can(Action.Update, VerificationRequestEntity);
+        }
+
+        if (user.role == Role.Manager) {
+          can(Action.Update, ProgrammeSl);
+          can(Action.Update, ProjectEntity);
+          can(Action.Update, VerificationRequestEntity);
+        }
+
+        if (user.role !== Role.ViewOnly) {
+          can(Action.Manage, ProgrammeCertify);
+        }
       }
 
-      cannot([Action.Delete], Company, {
-        companyRole: { $eq: CompanyRole.DESIGNATED_NATIONAL_AUTHORITY },
-      });
+      if (user.companyRole === CompanyRole.CLIMATE_FUND) {
+        can(Action.Read, User);
+        can(Action.Read, ProgrammeSl);
+        can(Action.Read, ProjectEntity);
+        can(Action.Read, CreditRetirementSl);
+        can(Action.Read, DocumentEntity);
+        can(Action.Read, VerificationRequestEntity);
 
-      cannot([Action.Delete], Company, {
-        companyRole: { $eq: CompanyRole.MINISTRY },
-      });
+        if (user.role == Role.Admin) {
+          can(Action.Create, Company);
+          can(Action.Approve, Company);
+          can(Action.Reject, Company);
+          can(Action.Update, CreditRetirementSl);
+          can(Action.Update, ProgrammeSl);
+          can(Action.Update, ProjectEntity);
+          can(Action.Create, DocumentEntity);
+          can(Action.Update, DocumentEntity);
+          can(Action.Update, VerificationRequestEntity);
+        }
 
-      cannot([Action.Delete], Company, {
-        companyRole: { $eq: CompanyRole.CLIMATE_FUND },
-      });
+        if (user.role == Role.Manager) {
+          can(Action.Create, Company);
+          can(Action.Update, CreditRetirementSl);
+          can(Action.Update, ProgrammeSl);
+          can(Action.Update, ProjectEntity);
+          can(Action.Update, VerificationRequestEntity);
+        }
 
-      cannot([Action.Delete], Company, {
-        companyRole: { $eq: CompanyRole.EXECUTIVE_COMMITTEE },
-      });
-
-      if (user.companyState === 0) {
-        cannot(Action.Create, "all");
-        cannot(Action.Delete, Programme);
-        cannot(Action.Delete, Company);
-        cannot(Action.Update, User, { id: { $ne: user.id } });
-        cannot(Action.Update, Programme);
-        cannot(Action.Update, Company);
-      }
-    }
-    if (
-      user.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
-      user.companyRole == CompanyRole.INDEPENDENT_CERTIFIER ||
-      user.companyRole == CompanyRole.MINISTRY
-    ) {
-      can([Action.Read], ProgrammeDocument);
-    }
-
-    if (
-      user.companyRole === CompanyRole.MINISTRY ||
-      user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
-    ) {
-      if (user.role !== Role.ViewOnly) {
-        can(Action.Create, Emission);
-        can(Action.Create, Projection);
-      }
-      can(Action.Read, Emission);
-      can(Action.Read, Projection);
-    } else {
-      can(Action.Read, Emission);
-      can(Action.Read, Projection);
-    }
-
-    if (
-      (user.role == Role.Root || user.role == Role.Admin) &&
-      user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
-    ) {
-      can(Action.Read, CreditAuditLog);
-      can(Action.Read, CreditAuditLogViewEntity);
-    } else {
-      cannot(Action.Read, CreditAuditLog);
-      cannot(Action.Read, CreditAuditLogViewEntity);
-    }
-
-    if (user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
-      can(Action.Read, ProgrammeSl);
-      can(Action.Read, DocumentEntity);
-      can(Action.Read, VerificationRequestEntity);
-    }
-
-    if (user.companyRole === CompanyRole.MINISTRY) {
-      can(Action.Read, ProgrammeSl);
-      can(Action.Read, DocumentEntity);
-      can(Action.Read, VerificationRequestEntity);
-    }
-
-    if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
-      can(Action.Read, ProgrammeSl);
-      can(Action.Read, DocumentEntity);
-      can(Action.Read, VerificationRequestEntity);
-    }
-
-    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
-      can(Action.Read, ProgrammeSl);
-      can(Action.Read, DocumentEntity);
-      can(Action.Read, CreditRetirementSl, {
-        toCompanyId: { $eq: user.companyId },
-      });
-      can(Action.Read, CreditRetirementSl, {
-        fromCompanyId: { $eq: user.companyId },
-      });
-      can(Action.Read, VerificationRequestEntity);
-
-      if (user.role == Role.Admin || user.role == Role.Manager) {
-        can(Action.Create, ProgrammeSl);
-        can(Action.Update, ProgrammeSl);
-        can(Action.Create, DocumentEntity);
-        can(Action.Update, DocumentEntity);
-        can(Action.Create, CreditRetirementSl);
-        can(Action.Update, CreditRetirementSl);
-        can(Action.Create, VerificationRequestEntity);
-      }
-    }
-
-    if (user.companyRole === CompanyRole.EXECUTIVE_COMMITTEE) {
-      can(Action.Read, ProgrammeSl);
-      can(Action.Read, DocumentEntity);
-      can(Action.Read, VerificationRequestEntity);
-
-      if (user.role == Role.Admin) {
-        can(Action.Update, ProgrammeSl);
-        can(Action.Update, VerificationRequestEntity);
+        if (user.role !== Role.ViewOnly) {
+          can(Action.Manage, ProgrammeCertify);
+        }
       }
 
-      if (user.role == Role.Manager) {
-        can(Action.Update, ProgrammeSl);
-        can(Action.Update, VerificationRequestEntity);
+      if (user.companyRole === CompanyRole.API) {
+        can([Action.Create, Action.Read, Action.Update], Programme);
+        can([Action.Create, Action.Read], User);
+        can([Action.Create, Action.Read, Action.Update], Company);
+
+        if (user.role !== Role.ViewOnly) {
+          can(Action.Manage, ProgrammeCertify);
+        }
       }
-    }
-
-    if (user.companyRole === CompanyRole.CLIMATE_FUND) {
-      can(Action.Read, User);
-      can(Action.Read, ProgrammeSl);
-      can(Action.Read, CreditRetirementSl);
-      can(Action.Read, DocumentEntity);
-      can(Action.Read, VerificationRequestEntity);
-
-      if (user.role == Role.Admin) {
-        can(Action.Create, Company);
-        can(Action.Approve, Company);
-        can(Action.Reject, Company);
-        can(Action.Update, CreditRetirementSl);
-        can(Action.Update, ProgrammeSl);
-        can(Action.Create, DocumentEntity);
-        can(Action.Update, DocumentEntity);
-        can(Action.Update, VerificationRequestEntity);
-      }
-
-      if (user.role == Role.Manager) {
-        can(Action.Create, Company);
-        can(Action.Update, CreditRetirementSl);
-        can(Action.Update, ProgrammeSl);
-        can(Action.Create, DocumentEntity);
-        can(Action.Update, DocumentEntity);
-        can(Action.Update, VerificationRequestEntity);
-      }
-    }
-
-    if (user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
-      can(Action.Read, User);
-      can(Action.Read, ProgrammeSl);
-      can(Action.Read, CreditRetirementSl);
-      can(Action.Read, DocumentEntity);
-      can(Action.Read, VerificationRequestEntity);
-    }
-
-    if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
-      can(Action.Read, User);
-      can(Action.Read, ProgrammeSl);
-      can(Action.Read, CreditRetirementSl);
-      can(Action.Read, DocumentEntity);
-      can(Action.Read, VerificationRequestEntity);
-    }
-
-    if (user.companyRole === CompanyRole.MINISTRY) {
-      can(Action.Read, User);
-      can(Action.Read, ProgrammeSl);
-      can(Action.Read, CreditRetirementSl);
-      can(Action.Read, DocumentEntity);
-      can(Action.Read, VerificationRequestEntity);
     }
 
     return build({

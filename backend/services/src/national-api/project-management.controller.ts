@@ -5,8 +5,7 @@ import { CheckPolicies } from "@app/shared/casl/policy.decorator";
 import { PoliciesGuard } from "@app/shared/casl/policy.guard";
 import { ProjectCreateDto } from "@app/shared/dto/project.create.dto";
 import { QueryDto } from "@app/shared/dto/query.dto";
-import { ValidationReportDto } from "@app/shared/dto/validationReport.dto";
-import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
+import { ProjectEntity } from "@app/shared/entities/projects.entity";
 import { ProjectManagementService } from "@app/shared/project-management/project-management.service";
 import {
   Body,
@@ -32,7 +31,7 @@ export class ProjectManagementController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Create, ProgrammeSl)
+    ability.can(Action.Create, ProjectEntity)
   )
   @Post("create")
   async addProject(@Body() body: any, @Request() req) {
@@ -49,7 +48,7 @@ export class ProjectManagementController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Update, ProgrammeSl)
+    ability.can(Action.Update, ProjectEntity)
   )
   @Post("inf/approve")
   async approveINF(@Body("refId") refId: string, @Request() req) {
@@ -59,7 +58,7 @@ export class ProjectManagementController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Update, ProgrammeSl)
+    ability.can(Action.Update, ProjectEntity)
   )
   @Post("inf/reject")
   async rejectINF(
@@ -72,7 +71,9 @@ export class ProjectManagementController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Read, ProjectEntity)
+  )
   @Post("query")
   async getAll(@Body() query: QueryDto, @Request() req) {
     return this.projectManagementService.query(query, req.abilityCondition);
@@ -80,12 +81,17 @@ export class ProjectManagementController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Read, ProjectEntity)
+  )
   @Post("getProjectById")
   async getProjectById(@Body("programmeId") programmeId: string) {
     return this.projectManagementService.getProjectById(programmeId);
   }
 
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, ProgrammeSl))
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Read, ProjectEntity)
+  )
   @Get("logs")
   getLogs(@Query("refId") refId: string, @Request() req) {
     return this.projectManagementService.getLogs(refId);
