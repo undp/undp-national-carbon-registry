@@ -7,7 +7,7 @@ import { DocumentManagementService } from "@app/shared/document-management/docum
 import { BaseDocumentDto } from "@app/shared/dto/base.document.dto";
 import { DocumentActionRequestDto } from "@app/shared/dto/document.action.request.dto";
 import { DocumentQueryDto } from "@app/shared/dto/document.query.dto";
-import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
+import { DocumentEntity } from "@app/shared/entities/document.entity";
 import {
   Body,
   Controller,
@@ -26,9 +26,9 @@ export class DocumentManagementController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Action.Update, ProgrammeSl)
-  // )
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Create, DocumentEntity)
+  )
   @Post("add")
   async add(@Body() documentDTO: BaseDocumentDto, @Request() req) {
     return await this.documentManagementService.addDocument(
@@ -39,9 +39,9 @@ export class DocumentManagementController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Action.Update, ProgrammeSl)
-  // )
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Update, DocumentEntity)
+  )
   @Post("approve")
   async approve(
     @Query("refId") refId: string,
@@ -53,9 +53,9 @@ export class DocumentManagementController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Action.Update, ProgrammeSl)
-  // )
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Update, DocumentEntity)
+  )
   @Post("reject")
   async reject(
     @Query("refId") refId: string,
@@ -67,9 +67,9 @@ export class DocumentManagementController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Action.Update, ProgrammeSl)
-  // )
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Read, DocumentEntity)
+  )
   @Post("query")
   async query(@Body() query: DocumentQueryDto, @Request() req) {
     return await this.documentManagementService.query(query);
