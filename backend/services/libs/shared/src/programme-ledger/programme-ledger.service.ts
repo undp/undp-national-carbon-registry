@@ -1140,60 +1140,83 @@ export class ProgrammeLedgerService {
         let updateWhereMap = {};
         let insertMap = {};
         if (retirementAction.action == RetirementACtionEnum.ACCEPT) {
-          const { firstSerialNumber, secondSerialNumber } =
-            this.serialNumberManagementService.splitCreditBlockSerialNumber(
-              creditBlock.serialNumber,
-              retireRequestRecord.amount
-            );
-          updateMap[this.ledger.creditBlocksTable] = {
-            txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
-              TxType.CREDIT_BLOCK_SPLIT,
-              user.companyId,
-              0,
-              user.id
-            ),
-            txData: retirementAction,
-            txType: TxType.CREDIT_BLOCK_SPLIT,
-            txTime: txTime,
-            reservedCreditAmount:
-              creditBlock.reservedCreditAmount - retireRequestRecord.amount,
-            transactionRecords: creditBlock.transactionRecords,
-            serialNumber: firstSerialNumber,
-            creditAmount: creditBlock.creditAmount - retireRequestRecord.amount,
-          };
-          const newBlockId =
-            this.serialNumberManagementService.getCreditBlockId(
-              secondSerialNumber
-            );
-          insertMap[this.ledger.creditBlocksTable + "#" + newBlockId] =
-            plainToClass(CreditBlocksEntity, {
-              creditBlockId: newBlockId,
+          if (
+            creditBlock.reservedCreditAmount == 0 &&
+            creditBlock.creditAmount == retireRequestRecord.amount
+          ) {
+            updateMap[this.ledger.creditBlocksTable] = {
               txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
                 TxType.RETIRE,
-                user.companyId,
+                creditBlock.ownerCompanyId,
                 0,
                 user.id
               ),
+              txData: retirementAction,
               txTime: txTime,
               txType: TxType.RETIRE,
-              txData: retirementAction,
-              previousOwnerCompanyId: user.companyId,
+              previousOwnerCompanyId: creditBlock.ownerCompanyId,
               ownerCompanyId: 0,
-              projectRefId: creditBlock.projectRefId,
-              serialNumber: secondSerialNumber,
-              vintage: creditBlock.vintage,
-              creditAmount: retireRequestRecord.amount,
-              reservedCreditAmount: 0,
-              transactionRecords: [
-                {
-                  id: retireRequestRecord.id,
-                  type: CreditTransactionTypesEnum.RETIRED,
-                  status: CreditTransactionStatusEnum.COMPLETED,
-                  amount: retireRequestRecord.amount,
-                },
-              ],
               isNotTransferred: false,
-            });
+              reservedCreditAmount: 0,
+              transactionRecords: creditBlock.transactionRecords,
+            };
+          } else {
+            const { firstSerialNumber, secondSerialNumber } =
+              this.serialNumberManagementService.splitCreditBlockSerialNumber(
+                creditBlock.serialNumber,
+                retireRequestRecord.amount
+              );
+            updateMap[this.ledger.creditBlocksTable] = {
+              txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
+                TxType.CREDIT_BLOCK_SPLIT,
+                creditBlock.ownerCompanyId,
+                0,
+                user.id
+              ),
+              txData: retirementAction,
+              txType: TxType.CREDIT_BLOCK_SPLIT,
+              txTime: txTime,
+              reservedCreditAmount:
+                creditBlock.reservedCreditAmount - retireRequestRecord.amount,
+              transactionRecords: creditBlock.transactionRecords,
+              serialNumber: firstSerialNumber,
+              creditAmount:
+                creditBlock.creditAmount - retireRequestRecord.amount,
+            };
+            const newBlockId =
+              this.serialNumberManagementService.getCreditBlockId(
+                secondSerialNumber
+              );
+            insertMap[this.ledger.creditBlocksTable + "#" + newBlockId] =
+              plainToClass(CreditBlocksEntity, {
+                creditBlockId: newBlockId,
+                txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
+                  TxType.RETIRE,
+                  creditBlock.ownerCompanyId,
+                  0,
+                  user.id
+                ),
+                txTime: txTime,
+                txType: TxType.RETIRE,
+                txData: retirementAction,
+                previousOwnerCompanyId: creditBlock.ownerCompanyId,
+                ownerCompanyId: 0,
+                projectRefId: creditBlock.projectRefId,
+                serialNumber: secondSerialNumber,
+                vintage: creditBlock.vintage,
+                creditAmount: retireRequestRecord.amount,
+                reservedCreditAmount: 0,
+                transactionRecords: [
+                  {
+                    id: retireRequestRecord.id,
+                    type: CreditTransactionTypesEnum.RETIRED,
+                    status: CreditTransactionStatusEnum.COMPLETED,
+                    amount: retireRequestRecord.amount,
+                  },
+                ],
+                isNotTransferred: false,
+              });
+          }
           if (creditBlock.isNotTransferred) {
             updateMap[this.ledger.projectTable] = {
               creditBalance: project.creditBalance - retireRequestRecord.amount,
@@ -1204,7 +1227,7 @@ export class ProgrammeLedgerService {
               txTime: txTime,
               txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
                 TxType.RETIRE,
-                user.companyId,
+                creditBlock.ownerCompanyId,
                 0,
                 user.id
               ),
@@ -1218,7 +1241,7 @@ export class ProgrammeLedgerService {
           updateMap[this.ledger.creditBlocksTable] = {
             txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
               TxType.RETIRE,
-              user.companyId,
+              creditBlock.ownerCompanyId,
               0,
               user.id
             ),
