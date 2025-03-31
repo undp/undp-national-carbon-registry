@@ -1,9 +1,9 @@
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Col, DatePicker, Form, Input, InputNumber, Row } from 'antd';
 import moment from 'moment';
-import { ProjectCategory } from '../../enum/slRegistryEnum';
-import { useEffect } from 'react';
 import { formatNumberWithDecimalPlaces } from '../../Utils/utilityHelper';
+import { useState } from 'react';
+import { ProjectCategory } from '../../Definitions/Enums/slRegistryEnum';
 
 const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
   baselineEmissionReductions: 'avgBaselineEmissionReductions',
@@ -14,11 +14,9 @@ const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
 };
 
 const NetEmissionReduction = (props: any) => {
-  const { form, t, existingEmission, projectCategory, disableFields } = props;
+  const { form, t, existingEmission, projectCategory, disabled } = props;
 
-  useEffect(() => {
-    // onPeriodEndChange()
-  }, []);
+  console.log('--------disabled-----------', disabled);
 
   const calculateNetGHGEmissions = (value: any, index?: number) => {
     let baselineEmissionReductionsVal = 0;
@@ -97,7 +95,7 @@ const NetEmissionReduction = (props: any) => {
       });
     }
 
-    const creditingYears = Number(form.getFieldValue('totalNumberOfCredingYears') || 0);
+    const creditingYears = Number(form.getFieldValue('totalNumberOfCreditingYears') || 0);
     if (creditingYears > 0) {
       form.setFieldValue(categoryToAdd, String(tempTotal));
       form.setFieldValue(
@@ -122,7 +120,7 @@ const NetEmissionReduction = (props: any) => {
       return total + (currentVal[category] || 0);
     }, 0);
 
-    const creditingYears = Number(form.getFieldValue('totalNumberOfCredingYears') || 0);
+    const creditingYears = Number(form.getFieldValue('totalNumberOfCreditingYears') || 0);
     if (creditingYears > 0) {
       form.setFieldValue(categoryToAdd, String(tempTotal));
       form.setFieldValue(
@@ -143,7 +141,7 @@ const NetEmissionReduction = (props: any) => {
     }, 0);
 
     const tempTotal = bufferPool;
-    const creditingYears = Number(form.getFieldValue('totalNumberOfCredingYears') || 0);
+    const creditingYears = Number(form.getFieldValue('totalNumberOfCreditingYears') || 0);
     form.setFieldValue(categoryToAdd, bufferPool);
     if (creditingYears > 0) {
       form.setFieldValue(
@@ -156,7 +154,7 @@ const NetEmissionReduction = (props: any) => {
   };
 
   const onPeriodEndChange = (value: any, fieldCounts: number) => {
-    form.setFieldValue('totalNumberOfCredingYears', fieldCounts);
+    form.setFieldValue('totalNumberOfCreditingYears', fieldCounts);
   };
 
   return (
@@ -224,7 +222,7 @@ const NetEmissionReduction = (props: any) => {
                             placeholder="Start Date"
                             picker="month"
                             format="YYYY MMM"
-                            disabled={disableFields}
+                            disabled={disabled}
                           />
                         </Form.Item>
                         <span style={{ marginBottom: 23 }}>to</span>
@@ -256,6 +254,10 @@ const NetEmissionReduction = (props: any) => {
                                 const duration = moment.duration(selectedDate.diff(startDate));
 
                                 const isOneYear = Math.round(duration.asMonths()) === 12;
+
+                                if (!isOneYear) {
+                                  throw new Error('Duration should be a year');
+                                }
                               },
                             },
                           ]}
@@ -281,7 +283,7 @@ const NetEmissionReduction = (props: any) => {
                               }
                               return false;
                             }}
-                            disabled={disableFields}
+                            disabled={disabled}
                           />
                         </Form.Item>
                       </div>
@@ -322,7 +324,7 @@ const NetEmissionReduction = (props: any) => {
                               'totalBaselineEmissionReductions'
                             );
                           }}
-                          disabled={disableFields}
+                          disabled={disabled}
                         />
                       </Form.Item>
                     </Col>
@@ -361,7 +363,7 @@ const NetEmissionReduction = (props: any) => {
                               'totalProjectEmissionReductions'
                             );
                           }}
-                          disabled={disableFields}
+                          disabled={disabled}
                         />
                       </Form.Item>
                     </Col>
@@ -400,7 +402,7 @@ const NetEmissionReduction = (props: any) => {
                               'totalLeakageEmissionReductions'
                             );
                           }}
-                          disabled={disableFields}
+                          disabled={disabled}
                         />
                       </Form.Item>
                     </Col>
@@ -474,7 +476,7 @@ const NetEmissionReduction = (props: any) => {
                                 'totalBufferPoolAllocations'
                               );
                             }}
-                            disabled={disableFields}
+                            disabled={disabled}
                           />
                         </Form.Item>
                       </Col>
@@ -514,7 +516,7 @@ const NetEmissionReduction = (props: any) => {
                             className="addMinusBtn"
                             // block
                             icon={<MinusOutlined />}
-                            disabled={disableFields}
+                            disabled={disabled}
                           >
                             {/* Add Entity */}
                           </Button>
@@ -530,7 +532,7 @@ const NetEmissionReduction = (props: any) => {
                             className="addMinusBtn"
                             // block
                             icon={<PlusOutlined />}
-                            disabled={disableFields}
+                            disabled={disabled}
                           >
                             {/* Add Entity */}
                           </Button>
@@ -699,7 +701,7 @@ const NetEmissionReduction = (props: any) => {
           </Col>
           <Col md={3} xl={3} className="total-cols">
             <Form.Item
-              name="totalNumberOfCredingYears"
+              name="totalNumberOfCreditingYears"
               rules={[
                 {
                   required: true,

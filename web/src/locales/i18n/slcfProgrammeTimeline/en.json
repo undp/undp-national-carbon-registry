@@ -6,89 +6,73 @@
   "programmeCreatedDescription": "The project was created by {}",
 
   "infApprovedTitle": "Initial Notification Approved",
-  "infApprovedDescription": "The Initial Notification was approved by {} of {{countryName}} Climate Fund",
+  "infApprovedDescription": "The Initial Notification was approved by {} ",
 
   "infRejectedTitle": "Initial Notification Rejected",
-  "infRejectedDescription": "The Initial Notification was rejected by {} of {{countryName}} Climate Fund",
+  "infRejectedDescription": "The Initial Notification was rejected by {}",
 
-  "costQuoteCreatedTitle": "Cost Quotation Created",
-  "costQuoteCreatedDescription": "The Cost Quotation was created by {} of {{countryName}} Climate Fund",
+  "noObjectionLetterGeneratedTitle": "Letter of No Objection Issued",
+  "noObjectionLetterGeneratedDescription": "The Letter of no objection was issued by Designated National Authority",
 
-  "proposalCreatedTitle": "Project Proposal Created",
-  "proposalCreatedDescription": "The Project Proposal was created by {} of {{countryName}} Climate Fund",
+  "pddSubmttedTitle": "Project Design Document Created",
+  "pddSubmittedDescription": "Project Design Document was created by {}",
 
-  "validationAgreementCreatedTitle": "Validation Agreement Created",
-  "validationAgreementCreatedDescription": "The Validation Agreement was created by {} of {{countryName}} Climate Fund",
+  "pddRejectedICTitle": "Project Design Document Rejected by Independent Certifier",
+  "pddRejectedDNATitle": "Project Design Document Rejected by DNA", 
+  "pddRejectedDescription": "Project Design Document was rejected by {}",
 
-  "projectProposalAcceptedTitle": "Project Proposal Accepted",
-  "projectProposalAcceptedDescription": "The Project Proposal was accepted by {}",
-
-  "projectProposalRejectedTitle": "Project Proposal Rejected",
-  "projectProposalRejectedDescription": "The Project Proposal was rejected by {}",
-
-  "cmaCreatedTitle": "Carbon Management Assessment Created",
-  "cmaCreatedDescription": "The Carbon Management Assessment was created by {}",
-
-  "cmaApprovedTitle": "Carbon Management Assessment Approved",
-  "cmaApprovedDescription": "The Carbon Management Assessment was approved by {} of {{countryName}} Climate Fund",
-
-  "cmaRejectedTitle": "Carbon Management Assessment Rejected",
-  "cmaRejectedDescription": "The Carbon Management Assessment was rejected by {} of {{countryName}} Climate Fund",
+  "pddApprovedICTitle": "Project Design Document Accepted by Independent Certifier",
+  "pddApprovedDNATitle": "Project Design Document Accepted by DNA",
+  "pddApprovedDescription": "Project Designed Document was approved by {}",
 
   "validationReportCreatedTitle": "Validation Report Created",
-  "validationReportCreatedDescription": "The Validation Report was created by {} of {{countryName}} Climate Fund",
-
-  "validationReportApprovedTitle": "Validation Report Approved",
-  "validationReportApprovedDescription": "The Validation Report was approved by {} of Executive Committee",
+  "validationReportCreatedDescription": "The Validation Report was created by {}",
 
   "validationReportRejectedTitle": "Validation Report Rejected",
-  "validationReportRejectedDescription": "The Validation Report was rejected by {} of Executive Committee",
+  "validationReportRejectedDescription": "The Validation Report was rejected by {}",
+  
+  "validationReportApprovedTitle": "Validation Report Rejected",
+  "validationReportApprovedDescription": "The Validation Report was rejected by {}",
 
-  "authorisedTitle": "Project Authorised",
-  "authorisedDescription": "The project was authorised and the Project Registration Certificate was generated",
+  "authorisedTitle": "Project Registered",
+  "authorisedDescription": "The project was registered under UNDP",
+
+  "creditsAuthorisedTitle": "Credits Authorised",
+  "creditsAuthorisedDescription": "{} number of credits were Authorised",
 
   "monitoringReportCreatedTitle": "Monitoring Report Created",
   "monitoringReportCreatedDescription": "The Monitoring Report was created by {}",
 
-  "monitoringReportApprovedTitle": "Monitoring Report Approved",
-  "monitoringReportApprovedDescription": "The Monitoring Report was approved by {} of {{countryName}} Climate Fund",
+  "monitoringReportApprovedTitle": "Monitoring Report Accepted",
+  "monitoringReportApprovedDescription": "The Monitoring Report was approved by {}",
 
   "monitoringReportRejectedTitle": "Monitoring Report Rejected",
-  "monitoringReportRejectedDescription": "The Monitoring Report was rejected by {} of {{countryName}} Climate Fund",
+  "monitoringReportRejectedDescription": "The Monitoring Report was rejected by {}",
 
   "verificationReportCreatedTitle": "Verification Report Created",
-  "verificationReportCreatedDescription": "The Verification Report was created by {} of {{countryName}} Climate Fund",
+  "verificationReportCreatedDescription": "The Verification Report was created by {}",
 
-  "verificationReportApprovedTitle": "Verification Report Approved",
-  "verificationReportApprovedDescription": "The Verification Report was approved by {} of Executive Committee",
+  "verificationReportApprovedTitle": "Verification Report Approved by DNA",
+  "verificationReportApprovedDescription": "The Verification Report was approved by {}",
 
-  "verificationReportRejectedTitle": "Verification Report Rejected",
-  "verificationReportRejectedDescription": "The Verification Report was rejected by {} of Executive Committee",
+  "verificationReportRejectedTitle": "Verification Report Rejected by DNA",
+  "verificationReportRejectedDescription": "The Verification Report was rejected by {}",
 
   "creditIssuedTitle": "Credit Issued",
-  "creditIssuedDescription": "{} credit(s) were issued for the project and the Credit Issuance Certificate was generated",
+  "creditIssuedDescription": "{} credits have been issued for the project",
 
-  "transferRequestedTitle": "Credit Transfer Requested",
-  "transferRequestedDescription": "{} has requested to transfer {} credit(s) to {} organisation",
+  "creditTransferedTitle": "Credit Transfered",
+  "creditTransferedDescription": "{} credits has been transferred to {}",
 
-  "transferApprovedTitle": "Credit Transfer Approved",
-  "transferApprovedDescription": "The credit transfer was approved by {} of {{countryName}} Climate Fund and the Voluntary Cancellation Certificate was generated",
+  "retireRequestedTitle": "Credit Retirement Request",
+  "retireRequestedDescription": "{} Credits has been requested to retire on {} for the type {}",
 
-  "transferRejectedTitle": "Credit Transfer Rejected",
-  "transferRejectedDescription": "{} of {{countryName}} Climate Fund has rejected the transfer of {} credit(s) to {} organisation",
+  "retirementApprovedTitle": "Credit Retirement Accepted",
+  "retirementApprovedDescription": "{} Credits has been accepted on {} for the type {} was Accepted",
 
-  "transferCancelledTitle": "Credit Transfer Cancelled",
-  "transferCancelledDescription": "{} has cancelled the request to transfer {} credit(s)",
+  "retirementCancelledTitle": "Credit Retirement Cancelled",
+  "retirementCancelledDescription": "{} Credits has been requested to retire on {} for the type {} was Cancelled",
 
-  "retireRequestedTitle": "Credit Retirement Requested",
-  "retireRequestedDescription": "{} has requested to retire {} credit(s)",
-
-  "retireApprovedTitle": "Credit Retirement Approved",
-  "retireApprovedDescription": "The credit retirement was approved by {} of {{countryName}} Climate Fund and the Voluntary Cancellation Certificate was generated",
-
-  "retireRejectedTitle": "Credit Retirement Rejected",
-  "retireRejectedDescription": "{} of {{countryName}} Climate Fund has rejected the retirement of {} credit(s)",
-
-  "retireCancelledTitle": "Credit Retirement Cancelled",
-  "retireCancelledDescription": "{} has cancelled the request to retire {} credit(s)"
+  "retirementRejectedTitle": "Credit Retirement Rejected",
+  "retirementRejectedDescription": "{} Credits has been rejected on {} for the type {} was cancelled"
 }

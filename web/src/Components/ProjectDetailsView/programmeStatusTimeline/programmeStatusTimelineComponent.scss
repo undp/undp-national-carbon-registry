@@ -98,6 +98,10 @@
       margin-left: -14px;
     }
 
+   
+    .timeline-description-pending-true {
+      list-style: circle;
+    }
     .timeline-description-accepted-true,
     .timeline-description-submitted-true,
     .timeline-description-rejected-true {
@@ -117,6 +121,24 @@
       list-style: circle;
     }
 
+
+    .list-style-none {
+      padding-left: 0 !important;
+      list-style: none;
+      margin-left: -14px;
+      display: flex;
+    }
+
+    .list-style-circle {
+      // padding-left: 0 !important;
+      list-style: circle;
+      // margin-left: -14px;
+      // display: flex;
+    }
+
+    .list-style-next {
+      color: #16B1FF;
+    }
     // .timeline-description-pending-false::before,
     // .timeline-description-submitted-false::before,
     // .timeline-description--false::before {
@@ -131,7 +153,7 @@
     // }
 
 
-    .cma-title {
+    .pdd-title {
       line-height: 1.5;
       margin-bottom: 6px;
       margin-top: 6px;
@@ -156,6 +178,19 @@
       // }
       }
     }
+
+    .no-objection-letter-pending-wait {
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+   
 
     .inf-submitted-process {
       background-color: #1890ff;
@@ -230,7 +265,7 @@
       margin-top: -3px;
     }
 
-    .cma-pending-wait {
+    .pdd-pending-wait {
       border: 1px solid rgba(0, 0, 0, 0.25);
       border-radius: 100%;
       /* margin-right: 10px; */
@@ -241,7 +276,7 @@
       line-height: 1.8;
     }
 
-    .cma-pending-process {
+    .pdd-pending-process {
       background-color: #fff;
       color: #1890ff;
       border: 1px solid #1890ff;
@@ -254,7 +289,7 @@
       line-height: 1.8;
     }
 
-    .cma-submitted-process {
+    .pdd-submitted-process {
       background-color: #1890ff;
       color: #fff;
       border: 1px solid #1890ff;
@@ -267,7 +302,7 @@
       line-height: 1.8;
     }
 
-    .cma-rejected-process {
+    .pdd-rejected-process {
       color: #ff4141;
       margin-top: -3px;
     }
@@ -324,5 +359,7 @@
       padding-top: 0px;
       line-height: 1.8;
     }
+
+    
   }
 }

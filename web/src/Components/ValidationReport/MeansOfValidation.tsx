@@ -6,7 +6,8 @@ import { ProcessSteps } from './ValidationStepperComponent';
 import moment from 'moment';
 import { fileUploadValueExtract } from '../../Utils/utilityHelper';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const clCols = [
   'finding-cl-1',
@@ -78,7 +79,15 @@ const farCols = [
 ];
 
 const MeansOfValidation = (props: ValidationStepsProps) => {
-  const { prev, next, form, current, t, countries, handleValuesUpdate, formMode } = props;
+  const { prev, next, form, current, t, countries, handleValuesUpdate, disableFields, formMode } =
+    props;
+
+  useEffect(() => {
+    if (formMode === FormMode.CREATE) {
+      form.setFieldValue('onSiteInspection', [{ activity: '' }]);
+      form.setFieldValue('interviewees', [{ lastName: '' }]);
+    }
+  }, [formMode]);
 
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
@@ -91,17 +100,29 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
     return e?.fileList;
   };
 
-  useEffect(() => {
-    form.setFieldValue('onSiteInspection', [{ activity: '' }]);
-    form.setFieldValue('interviewees', [{ lastName: '' }]);
-  }, []);
-
   const onFinish = async (values: any) => {
     const body: any = {
       ...values,
+      siteInspectionDurationStart: moment(values?.siteInspectionDurationStart)
+        .startOf('day')
+        .unix(),
+      siteInspectionDurationEnd: moment(values?.siteInspectionDurationEnd).startOf('day').unix(),
+      onSiteInspection: values?.onSiteInspection.map((item: any) => {
+        const temp = {
+          ...item,
+          date: moment(item?.date).startOf('day').unix(),
+        };
+        return temp;
+      }),
+      interviewees: values?.interviewees.map((item: any) => {
+        const temp = {
+          ...item,
+          date: moment(item?.date).startOf('day').unix(),
+        };
+        return temp;
+      }),
     };
 
-    console.log(ProcessSteps.VR_VALIDATION_OPINION, body);
     handleValuesUpdate({ meansOfValidation: body });
   };
 
@@ -163,10 +184,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea
-                  // disabled={FormMode.VIEW === formMode}
-                  rows={4}
-                />
+                <TextArea disabled={disableFields} rows={4} />
               </Form.Item>
 
               {/* On-site inspection table start */}
@@ -200,7 +218,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                         <DatePicker
                           size="small"
                           disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
-                          // disabled={disableFields}
+                          disabled={disableFields}
                         />
                       </Form.Item>
                       <p>to</p>
@@ -228,7 +246,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                         <DatePicker
                           size="small"
                           disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
-                          // disabled={disableFields}
+                          disabled={disableFields}
                         />
                       </Form.Item>
                     </Col>
@@ -284,7 +302,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Input />
+                                  <Input disabled={disableFields} />
                                 </Form.Item>
                               </Col>
                               <Col xl={5} className="other-cols col">
@@ -309,7 +327,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Input />
+                                  <Input disabled={disableFields} />
                                 </Form.Item>
                               </Col>
                               <Col xl={5} className="other-cols col">
@@ -339,7 +357,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                                     disabledDate={(currentDate: any) =>
                                       currentDate < moment().startOf('day')
                                     }
-                                    // disabled={disableFields}
+                                    disabled={disableFields}
                                   />
                                 </Form.Item>
                               </Col>
@@ -367,7 +385,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Input />
+                                  <Input disabled={disableFields} />
                                 </Form.Item>
                               </Col>
                               <Col xl={3} className="action-col">
@@ -377,6 +395,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                                     size="small"
                                     className="addMinusBtn"
                                     icon={<PlusOutlined />}
+                                    disabled={disableFields}
                                   ></Button>
                                 </Form.Item>
                                 {name > 0 && (
@@ -391,7 +410,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                                       className="addMinusBtn"
                                       // block
                                       icon={<MinusOutlined />}
-                                      // disabled={disableFields}
+                                      disabled={disableFields}
                                     >
                                       {/* Minus Participant */}
                                     </Button>
@@ -410,7 +429,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
 
               {/* Interviews table start */}
               <>
-                <h4 className="form-section-heading">{t('validationReport:interviews')}</h4>
+                <h4 className="form-section-heading">{t('verificationReport:interviews')}</h4>
                 <div className="interviews-table">
                   <Row className="header">
                     <Col xl={1} className="col-1 col">
@@ -430,7 +449,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           First name
                         </Col>
                         <Col xl={8} className="interviewee-col-subCols-last">
-                          Affliation name
+                          Affliation
                         </Col>
                       </Row>
                     </Col>
@@ -477,7 +496,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Input />
+                                  <Input disabled={disableFields} />
                                 </Form.Item>
                               </Col>
                               <Col xl={3} className="other-cols col">
@@ -502,7 +521,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Input />
+                                  <Input disabled={disableFields} />
                                 </Form.Item>
                               </Col>
                               <Col xl={3} className="other-cols col">
@@ -527,7 +546,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Input />
+                                  <Input disabled={disableFields} />
                                 </Form.Item>
                               </Col>
                               <Col xl={3} className="other-cols col">
@@ -557,7 +576,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                                     disabledDate={(currentDate: any) =>
                                       currentDate < moment().startOf('day')
                                     }
-                                    // disabled={disableFields}
+                                    disabled={disableFields}
                                   />
                                 </Form.Item>
                               </Col>
@@ -583,7 +602,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Input />
+                                  <Input disabled={disableFields} />
                                 </Form.Item>
                               </Col>
                               <Col xl={4} className="other-cols col">
@@ -608,7 +627,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Input />
+                                  <Input disabled={disableFields} />
                                 </Form.Item>
                               </Col>
                               <Col xl={4} className="action-col">
@@ -618,6 +637,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                                     size="small"
                                     className="addMinusBtn"
                                     icon={<PlusOutlined />}
+                                    disabled={disableFields}
                                   ></Button>
                                 </Form.Item>
                                 {name > 0 && (
@@ -632,7 +652,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                                       className="addMinusBtn"
                                       // block
                                       icon={<MinusOutlined />}
-                                      // disabled={disableFields}
+                                      disabled={disableFields}
                                     >
                                       {/* Minus Participant */}
                                     </Button>
@@ -660,10 +680,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea
-                  // disabled={FormMode.VIEW === formMode}
-                  rows={4}
-                />
+                <TextArea disabled={disableFields} rows={4} />
               </Form.Item>
 
               {/* Clarification Table start */}
@@ -718,7 +735,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -749,7 +769,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -780,7 +803,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -817,7 +843,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -848,7 +877,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -879,7 +911,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -916,7 +951,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -947,7 +985,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -978,7 +1019,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -1024,7 +1068,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1055,7 +1102,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1086,7 +1136,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -1123,7 +1176,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1154,7 +1210,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1185,7 +1244,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -1222,7 +1284,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1253,7 +1318,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1284,7 +1352,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -1321,7 +1392,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1352,7 +1426,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1383,7 +1460,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -1420,7 +1500,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1451,7 +1534,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1482,7 +1568,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -1519,7 +1608,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1550,7 +1642,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1581,7 +1676,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -1618,7 +1716,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1649,7 +1750,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1680,7 +1784,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -1717,7 +1824,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1748,7 +1858,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1779,7 +1892,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -1816,7 +1932,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1847,7 +1966,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1878,7 +2000,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -1915,7 +2040,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1946,7 +2074,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -1977,7 +2108,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -2014,7 +2148,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -2045,7 +2182,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -2076,7 +2216,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -2112,7 +2255,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -2143,7 +2289,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -2174,7 +2323,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -2211,7 +2363,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -2242,7 +2397,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -2273,7 +2431,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -2310,7 +2471,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -2341,7 +2505,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -2372,7 +2539,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -2409,7 +2579,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -2440,7 +2613,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -2471,7 +2647,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -2508,7 +2687,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -2539,7 +2721,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -2570,7 +2755,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -2598,7 +2786,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input placeholder={t('validationReport:others')} />
+                        <Input
+                          placeholder={t('validationReport:others')}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -2629,7 +2820,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCL(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -2660,7 +2854,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalCar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                     <Col xl={3} className="col other-cols">
@@ -2691,7 +2888,10 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input onChange={(e) => calculateTotalFar(Number(e.target.value))} />
+                        <Input
+                          onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                          disabled={disableFields}
+                        />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -2802,9 +3002,15 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                 <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
-                <Button type="primary" size={'large'} disabled={false} htmlType="submit">
-                  {t('validationReport:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" size={'large'} disabled={false} onClick={next}>
+                    {t('validationReport:next')}
+                  </Button>
+                ) : (
+                  <Button type="primary" size={'large'} disabled={false} htmlType="submit">
+                    {t('validationReport:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

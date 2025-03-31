@@ -2,19 +2,36 @@ import { ValidationStepsProps } from './StepProps';
 import { Row, Button, Form, Col, Input } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import LabelWithTooltip from '../LabelWithTooltip/LabelWithTooltip';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import NetEmissionReduction from '../Common/NetEmissonReduction';
+import { useLocation } from 'react-router-dom';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
+import moment from 'moment';
 
 const GHGProjectDescription = (props: ValidationStepsProps) => {
-  const { prev, next, form, current, t, countries, handleValuesUpdate } = props;
+  const { prev, next, form, current, t, countries, handleValuesUpdate, disableFields, formMode } =
+    props;
 
-  useEffect(() => {
-    form.setFieldValue('baselineEmissions', [{ location: '' }]);
-    form.setFieldValue('estimatedNetEmissionReductions', [{ baselineEmissionReductions: 0 }]);
-  }, []);
+  console.log('----------------', form.getFieldValue('baselineEmissions'));
+  // useEffect(() => {
+  //   if (formMode === FormMode.CREATE) {
+  //     //form.setFieldValue('baselineEmissions', [{ location: '' }]);
+  //     form.setFieldValue('estimatedNetEmissionReductions', [{ baselineEmissionReductions: 0 }]);
+  //   }
+  // }, []);
+
   const onFinish = (values: any) => {
     const body = {
+      ...values,
+      estimatedNetEmissionReductions: values?.estimatedNetEmissionReductions.map((item: any) => {
+        const temp = {
+          ...item,
+          startDate: item?.startDate ? moment(item?.startDate).startOf('day').unix() : undefined,
+          endDate: item?.endDate ? moment(item?.endDate).startOf('day').unix() : undefined,
+        };
+        return temp;
+      }),
       calculationOfBaselineEmissionFactor: values?.calculationOfBaselineEmissionFactor,
       plantFactor: values?.plantFactor,
       annualEmissionReductionCalculation: values?.annualEmissionReductionCalculation,
@@ -22,6 +39,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
       leakageEmission: values?.leakageEmission,
       baselineEmissions: values?.baselineEmissions,
     };
+    console.log('--------body---------', body);
     handleValuesUpdate({ ghgProjectDescription: body });
   };
   return (
@@ -36,6 +54,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
               layout="vertical"
               requiredMark={true}
               form={form}
+              disabled={disableFields}
               onFinish={(values: any) => {
                 onFinish(values);
                 if (next) {
@@ -56,7 +75,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
               {/* Grid Emissions start */}
               <Row gutter={[40, 16]} className="grid-emission-factor">
@@ -86,7 +105,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
               <Form.Item
@@ -102,7 +121,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
               {/* Baseline Emmission table start */}
@@ -181,7 +200,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
                                   },
                                 ]}
                               >
-                                <Input />
+                                <Input disabled={disableFields} />
                               </Form.Item>
                             </Col>
                             <Col xl={3}>
@@ -206,7 +225,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
                                   },
                                 ]}
                               >
-                                <Input />
+                                <Input disabled={disableFields} />
                               </Form.Item>
                             </Col>
 
@@ -232,7 +251,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
                                   },
                                 ]}
                               >
-                                <Input />
+                                <Input disabled={disableFields} />
                               </Form.Item>
                             </Col>
 
@@ -258,7 +277,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
                                   },
                                 ]}
                               >
-                                <Input />
+                                <Input disabled={disableFields} />
                               </Form.Item>
                             </Col>
 
@@ -284,7 +303,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
                                   },
                                 ]}
                               >
-                                <Input />
+                                <Input disabled={disableFields} />
                               </Form.Item>
                             </Col>
 
@@ -310,7 +329,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
                                   },
                                 ]}
                               >
-                                <Input />
+                                <Input disabled={disableFields} />
                               </Form.Item>
                             </Col>
                             <Col xl={3} className="actions">
@@ -320,6 +339,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
                                   size="small"
                                   className="addMinusBtn"
                                   icon={<PlusOutlined />}
+                                  disabled={disableFields}
                                 ></Button>
                               </Form.Item>
                               {name > 0 && (
@@ -334,7 +354,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
                                     className="addMinusBtn"
                                     // block
                                     icon={<MinusOutlined />}
-                                    // disabled={disableFields}
+                                    disabled={disableFields}
                                   >
                                     {/* Minus Participant */}
                                   </Button>
@@ -361,7 +381,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
               <Form.Item
@@ -375,7 +395,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea rows={4} />
+                <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
               {/* Estimated net emissions reduction start */}
@@ -386,22 +406,23 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
                 form={form}
                 t={t}
                 projectCategory={null}
-                disableFields={false}
+                disabled={disableFields}
               ></NetEmissionReduction>
               {/* Estimated net emissions reduction end */}
 
               <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev}>
+                <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
-                <Button
-                  type="primary"
-                  size={'large'}
-                  onClick={next}
-                  // htmlType="submit"
-                >
-                  {t('validationReport:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" size={'large'} disabled={false} onClick={next}>
+                    {t('validationReport:next')}
+                  </Button>
+                ) : (
+                  <Button type="primary" size={'large'} disabled={false} htmlType="submit">
+                    {t('validationReport:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

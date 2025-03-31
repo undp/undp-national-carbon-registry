@@ -49,7 +49,25 @@
 
 .ant-btn.slcf-default {
   border-radius: 0px 5px 5px 0px !important;
+}
 
+.pending-item-list {
+  margin-top: 1vh;
+  max-height: 420px;
+  overflow-y: auto;
+  .pending-action-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.pending-action-button {
+  border: none;
+  background-color: rgba(179, 233, 255, 0.24) !important;
+  .pending-action-button-icon {
+    margin-top: 5px;
+  }
 }
 
 .ant-btn.mid-default-btn {
@@ -77,7 +95,6 @@
 
   .dashboard-inner-container {
     background: white;
-    padding-top: 60px;
   }
 
   .header-and-title {
@@ -119,6 +136,7 @@
     flex-direction: row;
     width: 100%;
     align-items: center;
+    justify-content: space-between;
     margin-top: 2rem;
     padding: 0 1.2rem 0 1.2rem;
 
@@ -150,15 +168,18 @@
     height: 31rem;
 
     .apexcharts-legend {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between !important;
+      display: flex !important;
+      flex-direction: row !important;
+      justify-content: center !important; /* or space-between/space-around */
+      flex-wrap: wrap !important;
+      gap: 8px;
+      overflow: visible !important;
+      align-items: center !important;
     }
 
+    /* Force each legend item to take about 25% of the container width (adjust as needed) */
     .apexcharts-legend-series {
-      display: flex !important;
-      width: 42%;
+      text-align: center;
     }
   }
 
@@ -168,18 +189,20 @@
 
   .project-details-bar-chart {
     ul {
-      padding-left: 20px;
+      padding-left: 50px;
       list-style-type: none;
     }
     .list-title {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
       color: rgba(140, 140, 140, 1);
       margin-bottom: 6px;
+      margin-top: 20px;
     }
     .list-item {
+      margin-left: 10px;
       list-style-type: none;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 400;
       color: rgba(140, 140, 140, 1);
     }
@@ -199,13 +222,14 @@
       font-size: 40px;
       line-height: 1;
       margin-left: -22px;
-      margin-top: -13px;
+      margin-top: -10px;
     }
     .pie-charts-section {
       display: flex;
       align-items: start !important;
       justify-content: center;
       width: 100%;
+      margin-top: -10px;
     }
 
     .details-bar-chart-rejected-list .list-title::before {
@@ -215,7 +239,7 @@
       font-size: 40px;
       line-height: 1;
       margin-left: -22px;
-      margin-top: -13px;
+      margin-top: -10px;
     }
 
     .details-bar-chart-authorised-list .list-title::before {
@@ -225,7 +249,7 @@
       font-size: 40px;
       line-height: 1;
       margin-left: -22px;
-      margin-top: -13px;
+      margin-top: -10px;
     }
   }
 
@@ -235,8 +259,6 @@
 
   .credits-by-status-container {
     padding: 0 20px;
-
-    
 
     .credits-by-status-row {
       border: 1px solid #d8d8d8;
@@ -262,7 +284,13 @@
     }
   }
 
-  .credits-by-date-chart-col, .retirements-by-date-chart-col, .credits-by-purpose-chart-col {
+  .credits-by-date-chart-col {
+    padding-left: 10px;
+  }
+  .retirements-by-date-chart-col {
+    padding-left: 10px;
+  }
+  .credits-by-purpose-chart-col {
     rect {
       stroke: none !important;
     }
@@ -278,7 +306,7 @@
     .statistic-card-row {
       width: 100%;
       padding-left: 10px;
-      padding-right: 10px;
+      padding-right: 20px;
       .statistic-card-col {
         .statistics-and-pie-card {
           display: flex;
@@ -450,7 +478,7 @@
                     height: 30px;
                     font-size: 1.5rem;
                     margin-top: -8px;
-                    color: $card-title;
+                    color: rgba(72, 150, 254, 1);
                   }
                 }
               }
