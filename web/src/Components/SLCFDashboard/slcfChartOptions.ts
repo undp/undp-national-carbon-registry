@@ -3,37 +3,25 @@ import { addCommSepRound } from '../../Definitions/Definitions/programme.definit
 //MARK: Projects by status - Details
 export const totalProgrammesOptions: any = {
   states: {
-    normal: {
-      filter: {
-        type: 'none',
-        value: 0,
-      },
-    },
-    hover: {
-      filter: {
-        type: 'none',
-        value: 0,
-      },
-    },
+    normal: { filter: { type: 'none', value: 0 } },
+    hover: { filter: { type: 'none', value: 0 } },
     active: {
       allowMultipleDataPointsSelection: true,
-      filter: {
-        type: 'darken',
-        value: 0.7,
-      },
+      filter: { type: 'darken', value: 0.7 },
     },
   },
   dataLabels: {
     enabled: true,
-    offsetY: -20, // Adjust to position the label above the bar
+    offsetY: -20,
     style: {
       fontSize: '12px',
-      colors: ['#000'], // Optional: Customize label color
+      colors: ['rgba(140, 140, 140, 1)'],
       fontWeight: 500,
     },
   },
   plotOptions: {
     bar: {
+      distributed: true,
       dataLabels: {
         position: 'top', // Positions the label on top of the bar
       },
@@ -71,53 +59,38 @@ export const totalProgrammesOptions: any = {
   yaxis: {
     show: true,
     axisBorder: {
-      show: true, // Enable the Y-axis line
-      width: 1, // Thickness of the axis line
+      show: true,
+      width: 1,
     },
+    max: (max: number) => parseInt((max * 1.2).toString(), 10),
     title: {
       text: '',
       rotate: -90,
-      offsetX: 0,
-      offsetY: 0,
       style: {
-        color: '#263238',
+        color: 'rgba(140, 140, 140, 1)',
         fontSize: '10px',
         fontFamily: 'Inter-Regular',
         fontWeight: 500,
-        cssClass: 'apexcharts-yaxis-title',
       },
     },
     labels: {
-      formatter: (value: any) => {
-        return addCommSepRound(value);
+      formatter: (value: number) => Math.round(value),
+      style: {
+        colors: 'rgba(140, 140, 140, 1)',
+        fontSize: '12px',
       },
     },
+    tickAmount: 5,
   },
   noData: {
-    text: 'No data available', // Message to display
-    align: 'center', // Horizontal alignment
-    verticalAlign: 'middle', // Vertical alignment
-    style: {
-      fontSize: '16px',
-      color: '#999',
-    },
+    text: 'No data available',
+    align: 'center',
+    verticalAlign: 'middle',
+    style: { fontSize: '16px', color: '#999' },
   },
   fill: {
     opacity: 1,
-    colors: [
-      'rgba(72, 150, 254, 1)',
-      'rgba(72, 150, 254, 1)',
-      'rgba(255, 99, 97, 1)',
-      'rgba(72, 150, 254, 1)',
-      'rgba(72, 150, 254, 1)',
-      'rgba(255, 99, 97, 1)',
-      'rgba(72, 150, 254, 1)',
-      'rgba(72, 150, 254, 1)',
-      'rgba(72, 150, 254, 1)',
-      'rgba(72, 150, 254, 1)',
-      'rgba(72, 150, 254, 1)',
-      'rgba(22, 200, 199, 1)',
-    ],
+    colors: [],
   },
   title: {
     text: '',
@@ -130,7 +103,7 @@ export const totalProgrammesOptions: any = {
       fontSize: '16px',
       fontWeight: 'bold',
       fontFamily: 'Inter',
-      color: '#263238',
+      color: 'rgba(140, 140, 140, 1)',
     },
   },
   legend: {
@@ -153,7 +126,7 @@ export const totalProgrammesOptions: any = {
     offsetX: 0,
     offsetY: 5,
     labels: {
-      colors: '#000000d9',
+      colors: 'rgba(140, 140, 140, 1)',
       useSeriesColors: false,
     },
     markers: {
@@ -161,39 +134,17 @@ export const totalProgrammesOptions: any = {
       height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
-      fillColors: [
-        'rgba(72, 150, 254, 1)',
-        'rgba(72, 150, 254, 1)',
-        'rgba(255, 99, 97, 1)',
-        'rgba(72, 150, 254, 1)',
-        'rgba(72, 150, 254, 1)',
-        'rgba(255, 99, 97, 1)',
-        'rgba(72, 150, 254, 1)',
-        'rgba(72, 150, 254, 1)',
-        'rgba(72, 150, 254, 1)',
-        'rgba(72, 150, 254, 1)',
-        'rgba(72, 150, 254, 1)',
-        'rgba(22, 200, 199, 1)',
-      ],
+      fillColors: [],
       radius: 12,
-      customHTML: undefined,
-      onClick: undefined,
-      offsetX: 0,
-      offsetY: 0,
     },
     itemMargin: {
       horizontal: 5,
       vertical: 0,
     },
-    onItemClick: {
-      toggleDataSeries: true,
-    },
-    onItemHover: {
-      highlightDataSeries: true,
-    },
+    onItemClick: { toggleDataSeries: true },
+    onItemHover: { highlightDataSeries: true },
   },
 };
-
 //MARK: Retirements by Date
 export const retirementsByDateOptions: any = {
   states: {
@@ -303,7 +254,7 @@ export const retirementsByDateOptions: any = {
     showForSingleSeries: false,
     showForNullSeries: false,
     showForZeroSeries: false,
-    position: 'right',
+    position: 'bottom',
     horizontalAlign: 'center',
     floating: false,
     fontSize: '12px',
@@ -315,18 +266,18 @@ export const retirementsByDateOptions: any = {
     tooltipHoverFormatter: undefined,
     customLegendItems: ['Retirements', 'Transfers'],
     offsetX: 0,
-    offsetY: 5,
+    offsetY: 0,
     labels: {
       colors: '#000000d9',
       useSeriesColors: false,
     },
     formatter: function (seriesName: any) {
       // Return the legend item with added margin-top
-      return `<span style="display: inline-block; margin-top: 10px; padding-left: 5px; color: rgba(140, 140, 140, 1);">${seriesName}</span>`;
+      return `<span style="display: inline-block; margin-top: 0px; padding-left: 5px; color: rgba(140, 140, 140, 1);">${seriesName}</span>`;
     },
     markers: {
-      width: 8,
-      height: 8,
+      width: 12,
+      height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
       fillColors: ['rgba(255, 99, 97, 1)', 'rgba(72, 150, 254, 1)'],
@@ -346,6 +297,12 @@ export const retirementsByDateOptions: any = {
     onItemHover: {
       highlightDataSeries: true,
     },
+  },
+  noData: {
+    text: 'No data available',
+    align: 'center',
+    verticalAlign: 'middle',
+    style: { fontSize: '16px', color: '#999' },
   },
 };
 
@@ -468,7 +425,7 @@ export const creditsByDateOptions: any = {
     showForNullSeries: false,
     showForZeroSeries: false,
     position: 'bottom',
-    horizontalAlign: 'left',
+    horizontalAlign: 'center',
     floating: false,
     fontSize: '12px',
     fontFamily: 'Inter',
@@ -482,21 +439,21 @@ export const creditsByDateOptions: any = {
     offsetX: 0,
     offsetY: 5,
     labels: {
-      colors: '#000000d9',
+      colors: 'rgba(140, 140, 140, 1)',
       useSeriesColors: false,
     },
     markers: {
-      width: 8,
-      height: 8,
+      width: 12,
+      height: 12,
       strokeWidth: 0,
       strokeColor: '#fff',
+      radius: 2,
       fillColors: [
         'rgba(72, 150, 254, 1)',
         'rgba(22, 200, 199, 1)',
         'rgba(136, 124, 253, 1)',
         'rgba(255, 99, 97, 1)',
       ],
-      radius: 2,
       customHTML: undefined,
       onClick: undefined,
       offsetX: 0,
@@ -513,57 +470,101 @@ export const creditsByDateOptions: any = {
       highlightDataSeries: true,
     },
   },
+  noData: {
+    text: 'No data available',
+    align: 'center',
+    verticalAlign: 'middle',
+    style: { fontSize: '16px', color: '#999' },
+  },
 };
 
-//MARK: Credits by Purpose
-export const creditsByPurposeOptions: any = {
+//MARK: Credits by Status Donut
+export const optionSideBar: any = {
+  chart: {
+    type: 'bar',
+    toolbar: {
+      tools: { download: false },
+    },
+  },
   states: {
     normal: {
-      filter: {
-        type: 'none',
-        value: 0,
-      },
+      filter: { type: 'none', value: 0 },
     },
     hover: {
-      filter: {
-        type: 'none',
-        value: 0,
-      },
+      filter: { type: 'lighten', value: 0 },
     },
     active: {
       allowMultipleDataPointsSelection: true,
-      filter: {
-        type: 'darken',
-        value: 0.7,
+      filter: { type: 'darken', value: 0.7 },
+    },
+  },
+  plotOptions: {
+    bar: {
+      distributed: true,
+      horizontal: true,
+      barHeight: '90%',
+    },
+  },
+  colors: [],
+  xaxis: {
+    categories: [],
+  },
+  yaxis: {
+    labels: {
+      show: false,
+    },
+  },
+  noData: {
+    text: 'No data available',
+    align: 'center',
+    verticalAlign: 'middle',
+    style: { fontSize: '16px', color: '#999' },
+  },
+  tooltip: {
+    theme: 'dark',
+    x: { show: false },
+    y: {
+      title: {
+        formatter: function () {
+          return '';
+        },
       },
     },
   },
-  dataLabels: {
-    enabled: false,
-    formatter: function (val: any) {
-      if (val >= 1000) {
-        return `${(val / 1000).toFixed(1)}k`; // Convert to 'k' format for values >= 1000
-      }
-      return val; // For smaller values, show the original number
-    },
-    style: {
-      fontSize: '10px',
-      fontFamily: 'Inter',
-      fontWeight: 400,
-      colors: ['#000000d9'], // Customize label color
+  grid: {
+    show: false,
+    padding: {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
     },
   },
-  annotations: {
-    points: [], // To dynamically populate with totals
-  },
-  chart: {
-    type: 'bar',
-    height: 400,
-    stacked: true,
-    stackType: 'normal',
-    toolbar: {
-      show: false, // Disables the toolbar, removing zoom, pan, and home icons
+  legend: {
+    show: true,
+    showForSingleSeries: true,
+    position: 'bottom',
+    fontSize: '12px',
+    fontFamily: 'Inter',
+    fontWeight: 400,
+    labels: {
+      colors: 'rgba(140, 140, 140, 1)',
+      useSeriesColors: false,
     },
+    markers: {
+      width: 12,
+      height: 12,
+      strokeWidth: 0,
+      strokeColor: '#fff',
+      fillColors: [],
+      radius: 2,
+    },
+    itemMargin: {
+      horizontal: 2,
+      vertical: 0,
+    },
+    onItemClick: { toggleDataSeries: true },
+    onItemHover: { highlightDataSeries: true },
   },
   responsive: [
     {
@@ -577,215 +578,13 @@ export const creditsByPurposeOptions: any = {
       },
     },
   ],
-  xaxis: {
-    categories: [],
-  },
-  yaxis: {
-    show: true,
-    axisBorder: {
-      show: true, // Enable the Y-axis line
-      width: 1, // Thickness of the axis line
-    },
-    title: {
-      text: '',
-      rotate: -90,
-      offsetX: 0,
-      offsetY: 0,
-      style: {
-        color: '#263238',
-        fontSize: '12px',
-        fontFamily: 'Inter-Regular',
-        fontWeight: 500,
-        cssClass: 'apexcharts-yaxis-title',
-      },
-    },
-    labels: {
-      formatter: (value: any) => {
-        return addCommSepRound(value);
-      },
-    },
-  },
-  fill: {
-    opacity: 1,
-    colors: ['rgba(255, 99, 97, 1)', 'rgba(72, 150, 254, 1)'],
-  },
-  title: {
-    text: '',
-    align: 'left',
-    margin: 10,
-    offsetX: 0,
-    offsetY: 0,
-    floating: false,
-    style: {
-      fontSize: '16px',
-      fontWeight: 'bold',
-      fontFamily: 'Inter',
-      color: '#263238',
-    },
-  },
-  legend: {
-    show: true,
-    showForSingleSeries: false,
-    showForNullSeries: false,
-    showForZeroSeries: false,
-    position: 'bottom',
-    horizontalAlign: 'left',
-    floating: false,
-    fontSize: '12px',
-    fontFamily: 'Inter',
-    fontWeight: 400,
-    formatter: undefined,
-    inverseOrder: false,
-    width: undefined,
-    height: undefined,
-    tooltipHoverFormatter: undefined,
-    customLegendItems: [],
-    offsetX: 0,
-    offsetY: 5,
-    labels: {
-      colors: '#000000d9',
-      useSeriesColors: false,
-    },
-    markers: {
-      width: 8,
-      height: 8,
-      strokeWidth: 0,
-      strokeColor: '#fff',
-      fillColors: ['rgba(255, 99, 97, 1)', 'rgba(72, 150, 254, 1)'],
-      radius: 2,
-      customHTML: undefined,
-      onClick: undefined,
-      offsetX: 0,
-      offsetY: 0,
-    },
-    itemMargin: {
-      horizontal: 5,
-      vertical: 0,
-    },
-    onItemClick: {
-      toggleDataSeries: false,
-    },
-    onItemHover: {
-      highlightDataSeries: true,
-    },
-  },
-};
-
-//MARK: Credits by Status Donut
-export const optionDonutPieA: any = {
-  states: {
-    normal: {
-      filter: {
-        type: 'none',
-        value: 0,
-      },
-    },
-    hover: {
-      filter: {
-        type: 'none',
-        value: 0,
-      },
-    },
-    active: {
-      allowMultipleDataPointsSelection: true,
-      filter: {
-        type: 'darken',
-        value: 0.7,
-      },
-    },
-  },
-  chart: {
-    type: 'donut',
-  },
   dataLabels: {
     enabled: false,
-  },
-  colors: [
-    'rgba(72, 150, 254, 1)',
-    'rgba(22, 200, 199, 1)',
-    'rgba(136, 124, 253, 1)',
-    'rgba(255, 99, 97, 1)',
-  ],
-  labels: ['Renewable Energy', 'Afforestation', 'Reforestation', 'Other'],
-  plotOptions: {
-    pie: {
-      expandOnClick: false,
-      donut: {
-        size: '80%',
-        labels: {
-          show: true,
-          total: {
-            showAlways: true,
-            show: true,
-            label: 'Total',
-            formatter: () => {},
-          },
-        },
-      },
+    formatter: function (val: any) {
+      if (val >= 1000) {
+        return `${(val / 1000).toFixed(1)}k`; // Convert to 'k' format for values >= 1000
+      }
+      return val;
     },
   },
-  legend: {
-    show: true,
-    showForSingleSeries: false,
-    showForNullSeries: true,
-    showForZeroSeries: true,
-    position: 'bottom',
-    horizontalAlign: 'center',
-    floating: false,
-    fontSize: '14px',
-    fontFamily: 'Inter',
-    fontWeight: 400,
-    formatter: undefined,
-    inverseOrder: false,
-    width: undefined,
-    height: undefined,
-    tooltipHoverFormatter: undefined,
-    customLegendItems: [],
-    offsetX: 0,
-    offsetY: 5,
-    labels: {
-      colors: '#000000d9',
-      useSeriesColors: false,
-    },
-    markers: {
-      width: 12,
-      height: 12,
-      strokeWidth: 0,
-      strokeColor: '#fff',
-      fillColors: [
-        'rgba(72, 150, 254, 1)',
-        'rgba(22, 200, 199, 1)',
-        'rgba(136, 124, 253, 1)',
-        'rgba(255, 99, 97, 1)',
-      ],
-      radius: 12,
-      customHTML: undefined,
-      onClick: undefined,
-      offsetX: 0,
-      offsetY: 0,
-    },
-    itemMargin: {
-      horizontal: 10,
-      vertical: 3,
-    },
-    onItemClick: {
-      toggleDataSeries: true,
-    },
-    onItemHover: {
-      highlightDataSeries: true,
-    },
-  },
-  responsive: [
-    {
-      breakpoint: 480,
-      options: {
-        chart: {
-          width: 350,
-        },
-        legend: {
-          position: 'bottom',
-        },
-      },
-    },
-  ],
 };

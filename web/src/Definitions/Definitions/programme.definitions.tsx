@@ -93,34 +93,28 @@ export const getProgrammeStatus = (stage: ProgrammeStatus) => {
 
 export const getProjectProposalStage = (stage: ProjectProposalStage) => {
   switch (getProjectProposalStageEnumVal(stage)) {
-    // case ProjectProposalStage.SUBMITTED_INF:
-    //   return 'processing';
-    // case ProjectProposalStage.APPROVED_INF:
-    //   return 'purple';
-    // case ProjectProposalStage.SUBMITTED_COST_QUOTATION:
-    //   return 'processing';
-    // case ProjectProposalStage.SUBMITTED_PROPOSAL:
-    //   return 'processing';
-    // case ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT:
-    //   return 'processing';
-    // case ProjectProposalStage.ACCEPTED_PROPOSAL:
-    //   return 'purple';
-    // case ProjectProposalStage.SUBMITTED_CMA:
-    //   return 'processing';
-    // case ProjectProposalStage.VALIDATION_PENDING:
-    //   return 'processing';
-    // case ProjectProposalStage.AUTHORISED:
-    //   return 'purple';
-    // case ProjectProposalStage.REJECTED_VALIDATION:
-    //   return 'error';
-    // case ProjectProposalStage.APPROVED_CMA:
-    //   return 'purple';
-    // case ProjectProposalStage.REJECTED_CMA:
-    //   return 'error';
-    // case ProjectProposalStage.REJECTED_PROPOSAL:
-    //   return 'error';
-    // case ProjectProposalStage.REJECTED_INF:
-    //   return 'error';
+    case ProjectProposalStage.PENDING:
+      return 'warning';
+    case ProjectProposalStage.REJECTED:
+      return 'error';
+    case ProjectProposalStage.APPROVED:
+      return 'green';
+    case ProjectProposalStage.PDD_SUBMITTED:
+      return 'processing';
+    case ProjectProposalStage.PDD_REJECTED_BY_CERTIFIER:
+      return 'orange';
+    case ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER:
+      return 'green';
+    case ProjectProposalStage.PDD_APPROVED_BY_DNA:
+      return 'cyan';
+    case ProjectProposalStage.PDD_REJECTED_BY_DNA:
+      return 'error';
+    case ProjectProposalStage.VALIDATION_REPORT_SUBMITTED:
+      return 'default';
+    case ProjectProposalStage.VALIDATION_REPORT_REJECTED:
+      return 'volcano';
+    case ProjectProposalStage.AUTHORISED:
+      return 'geekblue';
     default:
       return 'default';
   }
@@ -284,6 +278,7 @@ export interface Programme {
 }
 export interface ProgrammeSl {
   programmeId: string;
+  tokenId: string;
   externalId: string;
   serialNo: string;
   title: string;
@@ -291,6 +286,8 @@ export interface ProgrammeSl {
   sector: string;
   countryCodeA2: string;
   projectStatus: ProgrammeStatus;
+  projectGeography: string;
+  independentCertifiers: string[];
   postalCode: number;
   projectCategory: ProgrammeCategory;
   purposeOfCreditDevelopment: string;
@@ -354,6 +351,7 @@ export interface ProgrammeT extends Programme {
 }
 
 export interface ProgrammeSlU extends ProgrammeSl {
+  activities: { stage: string; documents: any[]; activityLastUpdatedDate: string }[] | undefined;
   currentStage: ProgrammeStageUnified;
   projectProposalStage: ProjectProposalStage;
   programmeProperties: ProgrammePropertiesU;
@@ -362,6 +360,8 @@ export interface ProgrammeSlU extends ProgrammeSl {
   geographicalLocationCoordinates: any[];
   documents: any;
   contactPerson: string;
+  noObjectionLetterUrl: string;
+  infRefId: string;
 }
 
 export interface ProgrammeU extends Programme {
@@ -411,11 +411,16 @@ const safeNumber = (value: any) => {
 export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystemType) => {
   let res: Record<string, any> = {
     title: programme.title,
+    tokenId: programme.tokenId,
     registrationSerialNo: programme.serialNo,
     projectProposalStage: programme.projectProposalStage,
-    projectStatus: programme.projectStatus,
-    projectCategory: getProjectCategory[programme.projectCategory],
+    // projectStatus: programme.projectStatus,
+    // projectCategory: getProjectCategory[programme.projectCategory],
+    sectoralScope: programme.sectoralScope,
+    projectGeography: programme.projectGeography,
     startDate: DateTime.fromSeconds(Number(programme.startDate)),
+    estimatedProjectCost: programme.estimatedProjectCost,
+    independentCertifier: programme.independentCertifiers,
     // purposeOfCreditDevelopment: programme.purposeOfCreditDevelopment,
     creditReceived:
       safeNumber(programme.creditBalance) +
@@ -426,12 +431,9 @@ export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystem
     creditBalance: programme.creditBalance,
     province: programme.province,
     district: programme.district,
-    dsDivision: programme.dsDivision,
     postalCode: programme.postalCode,
     city: programme.city,
-    community: programme.community,
     projectDescription: programme.projectDescription,
-    additionalDocuments: programme.additionalDocuments,
   };
 
   return res;

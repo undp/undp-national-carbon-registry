@@ -1,5 +1,6 @@
 import { Alert, Button, Checkbox, Col, Form, Input, Modal, Row } from 'antd';
 import { FC, useEffect, useState } from 'react';
+import './Models.scss';
 
 export interface SlcfFormActionModelProps {
   icon: any;
@@ -7,8 +8,9 @@ export interface SlcfFormActionModelProps {
   onCancel: any;
   actionBtnText: string;
   onFinish: any;
-  subText: string;
+  subText?: string | null;
   openModal: boolean;
+  checkMessage?: string | null;
   type: string;
   remarkRequired: boolean;
   t: any;
@@ -27,6 +29,7 @@ export const SlcfFormActionModel: FC<SlcfFormActionModelProps> = (
     icon,
     type,
     remarkRequired,
+    checkMessage,
     t,
   } = props;
   // const t = translator;
@@ -34,6 +37,7 @@ export const SlcfFormActionModel: FC<SlcfFormActionModelProps> = (
   const [loading, setLoading] = useState<boolean>(false);
   const [checked, setChecked] = useState<boolean>(false);
 
+  console.log('------------checkMessage----------', checkMessage);
   // Reset the `checked` state whenever the modal opens
   useEffect(() => {
     if (openModal) {
@@ -47,6 +51,7 @@ export const SlcfFormActionModel: FC<SlcfFormActionModelProps> = (
         <div className="popup-header">
           <div className="icon">{icon}</div>
           <div>{title}</div>
+          {subText && <p className="model-subText">{subText}</p>}
         </div>
       }
       className={'popup-' + type}
@@ -57,7 +62,7 @@ export const SlcfFormActionModel: FC<SlcfFormActionModelProps> = (
       onCancel={onCancel}
       destroyOnClose={true}
     >
-      <div className="transfer-form">
+      <div className="transfer-form" style={{ display: 'flex', justifyContent: 'center' }}>
         <Form
           name="slcf_form_action_popup"
           layout="vertical"
@@ -104,7 +109,7 @@ export const SlcfFormActionModel: FC<SlcfFormActionModelProps> = (
             <Col span={24}>
               <Form.Item className="text-left" valuePropName="checked" label="" name="confirm">
                 <Checkbox className="label" onChange={(v) => setChecked(v.target.checked)}>
-                  {t('view:confirmClosure')}
+                  {checkMessage ? checkMessage : t('view:confirmClosure')}
                 </Checkbox>
               </Form.Item>
             </Col>

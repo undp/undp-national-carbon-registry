@@ -404,14 +404,12 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
               </>
 
               <>
-                <h4 className="form-section-title">{`${t('PDD:projectActivityLocations')}`}</h4>
+                <h4
+                  className="form-section-title"
+                  style={{ color: '#3A3541CC', fontWeight: '500' }}
+                >{`${t('PDD:projectActivityLocations')}`}</h4>
 
-                <h4 className="list-item-title">Location 1</h4>
                 <div className="form-section">
-                  <h4 className="form-section-title">{`1.5 ${t(
-                    'PDD:locationOfProjectActivity'
-                  )}`}</h4>
-
                   <Row
                     // justify={'space-between'}
                     gutter={[40, 16]}
@@ -677,19 +675,20 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                         required={false}
                         rules={[
                           {
-                            validator: async (rule, file) => {
-                              if (file?.length > 0) {
-                                if (file[0]?.size > maximumImageSize) {
-                                  // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                  throw new Error(`${t('common:maxSizeVal')}`);
-                                }
+                            validator: (_, value) => {
+                              if (
+                                value &&
+                                value.some((file: any) => file?.size / 1024 / 1024 >= 2)
+                              ) {
+                                return Promise.reject('Maximum upload file size is 2MB');
                               }
+                              return Promise.resolve();
                             },
                           },
                         ]}
                       >
                         <Upload
-                          accept=".doc, .docx, .pdf, .png, .jpg"
+                          accept=".png, .jpg, .svg"
                           beforeUpload={(file: any) => {
                             return false;
                           }}
@@ -721,7 +720,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       {fields.map(({ key, name, ...restField }) => (
                         <>
                           <div className="form-list-actions">
-                            <h4 className="list-item-title">Location {name + 2}</h4>
                             <Form.Item>
                               <Button
                                 // type="dashed"
@@ -748,9 +746,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                             </Form.Item>
                           </div>
                           <div className="form-section">
-                            <h4 className="form-section-title">
-                              {`${t('PDD:locationOfProjectActivity')}`}
-                            </h4>
                             <Row
                               justify={'space-between'}
                               gutter={[40, 16]}
@@ -1036,19 +1031,20 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   required={false}
                                   rules={[
                                     {
-                                      validator: async (rule, file) => {
-                                        if (file?.length > 0) {
-                                          if (file[0]?.size > maximumImageSize) {
-                                            // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                            throw new Error(`${t('common:maxSizeVal')}`);
-                                          }
+                                      validator: (_, value) => {
+                                        if (
+                                          value &&
+                                          value.some((file: any) => file?.size / 1024 / 1024 >= 2)
+                                        ) {
+                                          return Promise.reject('Maximum upload file size is 2MB');
                                         }
+                                        return Promise.resolve();
                                       },
                                     },
                                   ]}
                                 >
                                   <Upload
-                                    accept=".doc, .docx, .pdf, .png, .jpg"
+                                    accept=".png, .jpg, .svg"
                                     beforeUpload={(file: any) => {
                                       return false;
                                     }}
@@ -1438,11 +1434,12 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                   },
                 ]}
               >
-                <Input size="large" />
+                <Input size="large" disabled={disableFields} />
               </Form.Item>
 
               {/* project participant table start */}
               {/* need to check again */}
+              <h4 className="form-section-title">{t('PDD:projectParticipantTable')}</h4>
               <div className="projectParticipantsTable">
                 <div className="header">
                   <div className="col-1">{t('PDD:partiesInvolved')}</div>
@@ -1479,7 +1476,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                   },
                                 ]}
                               >
-                                <Input />
+                                <Input disabled={disableFields} />
                               </Form.Item>
                             </div>
                             <div className="col-2">
@@ -1517,7 +1514,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                             },
                                           ]}
                                         >
-                                          <Input />
+                                          <Input disabled={disableFields} />
                                         </Form.Item>
 
                                         <Form.Item>
@@ -1563,7 +1560,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                           </div>
                         ))}
 
-                        <div>
+                        <div className="mg-top-1" style={{ marginTop: '15px' }}>
                           <Form.Item>
                             <Button
                               onClick={() => {
@@ -1577,6 +1574,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                 console.log('---------temp after--------', temp);
                                 form.setFieldValue('projectParticipants', temp);
                               }}
+                              disabled={disableFields}
                             >
                               {t('PDD:addProjectParticipant')}
                             </Button>

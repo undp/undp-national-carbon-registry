@@ -20,6 +20,7 @@ import { API_PATHS } from '../../Config/apiConfig';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
 import { RcFile } from 'antd/lib/upload';
+import { useLocation } from 'react-router-dom';
 
 // import { Form } from 'react-router-dom';
 
@@ -33,7 +34,8 @@ const BasicInformation = (props: ValidationStepsProps) => {
     handleValuesUpdate,
     cmaDetails,
     existingFormValues,
-    formMode,
+    // formMode,
+    disableFields,
     prev,
   } = props;
 
@@ -118,54 +120,18 @@ const BasicInformation = (props: ValidationStepsProps) => {
   };
 
   const onFinish = async (values: any) => {
-    const approverSignature = (await fileUploadValueExtract(values, 'approveSignature'))[0];
+    const approverSignature = (await fileUploadValueExtract(values, 'approverSignature'))[0];
     const projectDetailsFormValues = {
-      titleOfTheProjectActivity: values?.titleOfTheProjectActivity,
-      versionNumberValidationReport: values?.versionNumberValidationReport,
-      versionNumberPDD: values?.versionNumberPDD,
-      projectParticipants: values?.projectParticipants,
-      projectScale: values?.projectScale,
-      appliedMethodologies: values?.appliedMethodologies,
-      titleOfSpecificCase: values?.titleOfSpecificCase,
-      completionDate: values?.completionDate,
-      pddUploadedGlobalStakeholderConsultation: values?.pddUploadedGlobalStakeholderConsultation,
-      hostParty: values?.hostParty,
-      mandatarySectoralScopes: values?.mandatarySectoralScopes,
-      annualAverageGHGReduction: values?.annualAverageGHGReduction,
+      ...values,
+      completionDate: moment(values?.completionDate).startOf('day').unix(),
+      pddUploadedGlobalStakeholderConsultation: moment(
+        values?.pddUploadedGlobalStakeholderConsultation
+      )
+        .startOf('day')
+        .unix(),
       approverSignature: approverSignature,
       locationsOfProjectActivity: await (async function () {
         const tempList: any[] = [];
-        const firstObj = {
-          locationOfProjectActivity: values?.locationOfProjectActivity,
-          siteNo: values?.siteNo,
-          province: values?.province,
-          district: values?.district,
-          // dsDivision: values?.dsDivision,
-          city: values?.city,
-          community: values?.community,
-          geographicalLocationCoordinates: values?.location,
-          additionalDocuments: await (async function () {
-            const base64Docs: string[] = [];
-
-            if (values?.optionalImages && values?.optionalImages.length > 0) {
-              const docs = values.optionalImages;
-              for (let i = 0; i < docs.length; i++) {
-                if (docs[i]?.originFileObj === undefined) {
-                  base64Docs.push(docs[i]?.url);
-                } else {
-                  const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-                  base64Docs.push(temp); // No need for Promise.resolve
-                }
-              }
-            }
-
-            return base64Docs;
-          })(),
-          projectFundings: values?.projectFundings,
-          startDate: moment(values?.projectStartDate).startOf('day').unix(),
-          commissioningDate: moment(values?.projectCommisionDate).startOf('day').unix(),
-        };
-        tempList.push(firstObj);
         if (values?.extraLocations) {
           values?.extraLocations.forEach(async (item: any) => {
             const tempObj = {
@@ -176,7 +142,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
               // dsDivision: item?.dsDivision,
               city: item?.city,
               community: item?.community,
-              geographicalLocationCoordinates: item?.location,
+              geographicalLocationCoordinates: item?.geographicalLocationCoordinates,
               additionalDocuments: await (async function () {
                 const base64Docs: string[] = [];
 
@@ -194,9 +160,6 @@ const BasicInformation = (props: ValidationStepsProps) => {
 
                 return base64Docs;
               })(),
-              projectFundings: item?.projectFundings,
-              startDate: moment(item?.projectStartDate).startOf('day').unix(),
-              commissioningDate: moment(item?.projectCommisionDate).startOf('day').unix(),
             };
 
             tempList.push(tempObj);
@@ -204,22 +167,21 @@ const BasicInformation = (props: ValidationStepsProps) => {
         }
         return tempList;
       })(),
-      // client: values?.client,
-      // dateOfIssue: moment(values?.dateOfIssue).valueOf(),
-      // versionNo: values?.versionNo,
-      // versionDate: moment(values?.versionDate).valueOf(),
-      // address: values?.address,
-      // telephone: values?.telephone,
-      // email: values?.email,
-      // website: values?.website,
-      // summary: values?.summary,
-      // projectTitle: values?.projectTitle,
-      // workCarriedOutBy: values?.workCarriedOutBy,
-      // workApprovedBy: values?.workApprovedBy,
-      // reportNo: values?.reportNo,
+      dateOfIssue: moment(values?.dateOfIssue).valueOf(),
+      versionNumberPDD: values?.versionNumberPDD,
+      versionNumberValidationReport: values?.versionNumberValidationReport,
+      versionDate: moment(values?.versionDate).valueOf(),
+      unfccRefNo: values?.unfccRefNo,
+      telephone: values?.telephone,
+      website: values?.website,
+      mandatarySectoralScopes: values?.mandatarySectoralScopes,
+      annualAverageGHGReduction: values?.annualAverageGHGReduction,
+      approverName: values?.approverName,
+      creditingPeriodStart: moment(values?.creditingPeriodStart).startOf('day').unix(),
+      creditingPeriodEnd: moment(values?.creditingPeriodEnd).startOf('day').unix(),
     };
 
-    console.log(ProcessSteps.VR_PROJECT_DETAILS, projectDetailsFormValues);
+    console.log('basicInformation', projectDetailsFormValues);
 
     handleValuesUpdate({
       // [ProcessSteps.VR_PROJECT_DETAILS]: projectDetailsFormValues
@@ -257,14 +219,14 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           name="titleOfTheProjectActivity"
                           rules={[
                             {
-                              required: true,
+                              required: false,
                               message: `${t('validationReport:titleOfTheProjectActivity')} ${t(
                                 'isRequired'
                               )}`,
                             },
                           ]}
                         >
-                          <Input size="large" />
+                          <Input size="large" disabled />
                         </Form.Item>
 
                         <Form.Item
@@ -272,14 +234,14 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           name="versionNumberValidationReport"
                           rules={[
                             {
-                              required: true,
+                              required: false,
                               message: `${t('validationReport:versionNumberValidationReport')} ${t(
                                 'isRequired'
                               )}`,
                             },
                           ]}
                         >
-                          <Input size="large" />
+                          <Input size="large" disabled />
                         </Form.Item>
 
                         <Form.Item
@@ -287,29 +249,29 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           name="versionNumberPDD"
                           rules={[
                             {
-                              required: true,
+                              required: false,
                               message: `${t('validationReport:versionNumberPDD')} ${t(
                                 'isRequired'
                               )}`,
                             },
                           ]}
                         >
-                          <Input size="large" />
+                          <Input size="large" disabled />
                         </Form.Item>
 
                         <Form.Item
-                          label={t('validationReport:projectParticipants2')}
-                          name="projectParticipants"
+                          label={t('validationReport:projectParticipants')}
+                          name="projectDeveloper"
                           rules={[
                             {
-                              required: true,
-                              message: `${t('validationReport:projectParticipants2')} ${t(
+                              required: false,
+                              message: `${t('validationReport:projectParticipants')} ${t(
                                 'isRequired'
                               )}`,
                             },
                           ]}
                         >
-                          <Input size="large" />
+                          <Input size="large" disabled />
                         </Form.Item>
 
                         <Form.Item
@@ -322,9 +284,12 @@ const BasicInformation = (props: ValidationStepsProps) => {
                             },
                           ]}
                         >
-                          <Radio.Group className="project-scale-radio-btns">
-                            <Radio value="smallScale">{t('validationReport:smallScale')}</Radio>
-                            <Radio value="largeScale">{t('validationReport:largeScale')}</Radio>
+                          <Radio.Group
+                            className="project-scale-radio-btns"
+                            disabled={disableFields}
+                          >
+                            <Radio value="Small Scale">{t('validationReport:smallScale')}</Radio>
+                            <Radio value="Large Scale">{t('validationReport:largeScale')}</Radio>
                           </Radio.Group>
                         </Form.Item>
 
@@ -340,14 +305,14 @@ const BasicInformation = (props: ValidationStepsProps) => {
                             },
                           ]}
                         >
-                          <Input size="large" />
+                          <Input size="large" disabled={disableFields} />
                         </Form.Item>
 
                         <Form.Item
                           label={t('validationReport:conditionalSectoralScopes')}
                           name="conditionalSectoralScopes"
                         >
-                          <Input size="large" />
+                          <Input size="large" disabled={disableFields} />
                         </Form.Item>
                       </div>
                     </Col>
@@ -365,7 +330,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled={disableFields} />
                       </Form.Item>
 
                       <Form.Item
@@ -379,6 +344,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         ]}
                       >
                         <DatePicker
+                          disabled={disableFields}
                           size="large"
                           disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
                         />
@@ -398,6 +364,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       >
                         <DatePicker
                           size="large"
+                          disabled={disableFields}
                           disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
                         />
                       </Form.Item>
@@ -407,12 +374,12 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         name="hostParty"
                         rules={[
                           {
-                            required: true,
+                            required: false,
                             message: `${t('validationReport:hostParty')} ${t('isRequired')}`,
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled />
                       </Form.Item>
 
                       <Form.Item
@@ -420,14 +387,14 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         name="mandatarySectoralScopes"
                         rules={[
                           {
-                            required: true,
+                            required: false,
                             message: `${t('validationReport:mandatarySectoralScopes')} ${t(
                               'isRequired'
                             )}`,
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled />
                       </Form.Item>
 
                       <Form.Item
@@ -442,125 +409,25 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input size="large" />
+                        <Input size="large" disabled={disableFields} />
+                      </Form.Item>
+
+                      <Form.Item
+                        label={t('validationReport:unfccRefNo')}
+                        name="unfccRefNo"
+                        rules={[
+                          {
+                            required: true,
+                            message: `${t('validationReport:unfccRefNo')} ${t('isRequired')}`,
+                          },
+                        ]}
+                      >
+                        <Input size="large" disabled={disableFields} />
                       </Form.Item>
                     </Col>
                   </Row>
                 </div>
               </>
-
-              {/* Approver and Independent Certifier start */}
-              <>
-                <Row justify={'space-between'} gutter={[40, 16]}>
-                  {/* Approver start */}
-                  <Col md={24} xl={12}>
-                    <h4 className="form-section-heading">
-                      {t('validationReport:validationReportApproverSectionTitle')}
-                    </h4>
-                    <Form.Item
-                      label={t('validationReport:approverName')}
-                      name="approverName"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('validationReport:approverName')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={t('validationReport:approverPosition')}
-                      name="approverPosition"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('validationReport:approverPosition')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-
-                    <Form.Item
-                      name="approverSignature"
-                      label={t('validationReport:signature')}
-                      valuePropName="fileList"
-                      getValueFromEvent={normFile}
-                      // required={true}
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('validationReport:signature')}  ${t('isRequired')}`,
-                        },
-                        {
-                          validator: async (rule, file) => {
-                            if (file?.length > 0) {
-                              if (file[0]?.size > maximumImageSize) {
-                                // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                throw new Error(`${t('common:maxSizeVal')}`);
-                              }
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      <Upload
-                        accept=".doc, .docx, .pdf, .png, .jpg"
-                        beforeUpload={(file: any) => {
-                          return false;
-                        }}
-                        className="design-upload-section"
-                        name="design"
-                        action="/upload.do"
-                        listType="picture"
-                        multiple={false}
-                        maxCount={1}
-                      >
-                        <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
-                          {t('validationReport:upload')}
-                        </Button>
-                      </Upload>
-                    </Form.Item>
-                  </Col>
-                  {/* Approver end */}
-
-                  {/* Independent Certifier start */}
-                  <Col md={24} xl={12}>
-                    <h4 className="form-section-heading">
-                      {t('validationReport:independentCertifierSectionTitle')}
-                    </h4>
-                    <Form.Item
-                      label={t('validationReport:certifierName')}
-                      name="certifierName"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('validationReport:certifierName')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={t('validationReport:UNFCCReferenceNo')}
-                      name="UNFCCReferenceNo"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('validationReport:UNFCCReferenceNo')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-                  </Col>
-                  {/* Independent Certifier end */}
-                </Row>
-              </>
-              {/* Approver and Independent Certifier end */}
 
               {/* Crediting Period  start */}
               <>
@@ -571,19 +438,19 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       name="creditingPeriod"
                       rules={[
                         {
-                          required: true,
+                          required: false,
                           message: `${t('validationReport:creditingPeriod')} ${t('isRequired')}`,
                         },
                       ]}
                     >
-                      <Input size="large" />
+                      <Input size="large" disabled />
                     </Form.Item>
                   </Col>
 
                   <Col md={24} xl={12}>
                     <LabelWithTooltip
                       label={t('validationReport:startDateofCreditingPeriod')}
-                      required={true}
+                      required={false}
                     />
                     <div className="crediting-period-duration">
                       <Form.Item
@@ -591,25 +458,25 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         name="creditingPeriodStart"
                         rules={[
                           {
-                            required: true,
+                            required: false,
                             message: `${t('validationReport:creditingPeriod')} ${t('isRequired')}`,
                           },
                         ]}
                       >
-                        <DatePicker size="large" />
+                        <DatePicker size="large" disabled />
                       </Form.Item>
                       <p className="crediting-period-duration-to">to</p>
                       <Form.Item
                         // label={t('validationReport:creditingPeriod')}
-                        name="creditingPeriodStart"
+                        name="creditingPeriodEnd"
                         rules={[
                           {
-                            required: true,
+                            required: false,
                             message: `${t('validationReport:creditingPeriod')} ${t('isRequired')}`,
                           },
                         ]}
                       >
-                        <DatePicker size="large" />
+                        <DatePicker size="large" disabled />
                       </Form.Item>
                     </div>
                   </Col>
@@ -639,7 +506,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         name="locationOfProjectActivity"
                         rules={[
                           {
-                            required: true,
+                            required: false,
                             message: ``,
                           },
                           {
@@ -660,10 +527,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input
-                          size="large"
-                          // disabled={disableFields}
-                        />
+                        <Input size="large" disabled />
                       </Form.Item>
 
                       <Form.Item
@@ -671,7 +535,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         name="siteNo"
                         rules={[
                           {
-                            required: true,
+                            required: false,
                             message: ``,
                           },
                           {
@@ -690,10 +554,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input
-                          size="large"
-                          // disabled={disableFields}
-                        />
+                        <Input size="large" disabled />
                       </Form.Item>
 
                       <Form.Item
@@ -701,7 +562,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         name="province"
                         rules={[
                           {
-                            required: true,
+                            required: false,
                             message: ``,
                           },
                           {
@@ -722,6 +583,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       >
                         <Select
                           size="large"
+                          disabled
                           onChange={(value) => onProvinceSelect(value, 0)}
                           // placeholder={t('validationReport:provincePlaceholder')}
                           // disabled={disableFields}
@@ -739,7 +601,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         name="district"
                         rules={[
                           {
-                            required: true,
+                            required: false,
                             message: ``,
                           },
                           {
@@ -760,6 +622,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       >
                         <Select
                           size="large"
+                          disabled
                           // placeholder={t('validationReport:districtPlaceholder')}
                           onSelect={(value) => onDistrictSelect(value, 0)}
                           // disabled={disableFields}
@@ -811,7 +674,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         name="city"
                         rules={[
                           {
-                            required: true,
+                            required: false,
                             message: ``,
                           },
                           {
@@ -831,7 +694,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         <Select
                           size="large"
                           // placeholder={t('validationReport:cityPlaceholder')}
-                          // disabled={disableFields}
+                          disabled
                         >
                           {cities[0]?.map((city: string, index) => (
                             <Select.Option value={city} key={city + index}>
@@ -845,7 +708,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         name="community"
                         rules={[
                           {
-                            required: true,
+                            required: false,
                             message: ``,
                           },
                           {
@@ -864,20 +727,17 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input
-                          size="large"
-                          // disabled={disableFields}
-                        />
+                        <Input size="large" disabled />
                       </Form.Item>
                     </Col>
 
                     <Col xl={12} md={24}>
                       <Form.Item
                         label={t('validationReport:setLocation')}
-                        name="location"
+                        name="geographicalLocationCoordinates"
                         rules={[
                           {
-                            required: true,
+                            required: false,
                             message: ``,
                           },
                           {
@@ -898,9 +758,9 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       >
                         <GetLocationMapComponent
                           form={form}
-                          formItemName={'location'}
-                          existingCordinate={form.getFieldValue('location')}
-                          // disabled={disableFields}
+                          formItemName={'geographicalLocationCoordinates'}
+                          existingCordinate={form.getFieldValue('geographicalLocationCoordinates')}
+                          disabled
                         />
                       </Form.Item>
                     </Col>
@@ -935,14 +795,14 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           action="/upload.do"
                           listType="picture"
                           multiple={false}
-                          // disabled={disableFields}
+                          disabled={true}
                           // maxCount={1}
                         >
                           <Button
                             className="upload-doc"
                             size="large"
                             icon={<UploadOutlined />}
-                            // disabled={disableFields}
+                            disabled={true}
                           >
                             {t('validationReport:upload')}
                           </Button>
@@ -977,7 +837,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                 size="large"
                                 className="addMinusBtn"
                                 // block
-                                // disabled={disableFields}
+                                disabled
                                 icon={<MinusOutlined />}
                               >
                                 {/* Remove Entity */}
@@ -1020,10 +880,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Input
-                                    size="large"
-                                    // disabled={disableFields}
-                                  />
+                                  <Input size="large" disabled />
                                 </Form.Item>
 
                                 <Form.Item
@@ -1050,10 +907,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Input
-                                    size="large"
-                                    // disabled={disableFields}
-                                  />
+                                  <Input size="large" disabled />
                                 </Form.Item>
 
                                 <Form.Item
@@ -1084,7 +938,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     size="large"
                                     onChange={(value) => onProvinceSelect(value, name + 1)}
                                     // placeholder={t('validationReport:provincePlaceholder')}
-                                    // disabled={disableFields}
+                                    disabled
                                   >
                                     {provinces.map((province: string, index: number) => (
                                       <Select.Option value={province} key={name + province + index}>
@@ -1122,7 +976,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     size="large"
                                     // placeholder={t('validationReport:districtPlaceholder')}
                                     onSelect={(value) => onDistrictSelect(value, name + 1)}
-                                    // disabled={disableFields}
+                                    disabled
                                   >
                                     {districts[name + 1]?.map((district: string, index: number) => (
                                       <Select.Option key={name + district + index} value={district}>
@@ -1200,7 +1054,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                   <Select
                                     size="large"
                                     // placeholder={t('validationReport:cityPlaceholder')}
-                                    // disabled={disableFields}
+                                    disabled
                                   >
                                     {cities[name + 1]?.map((city: string, index: number) => (
                                       <Select.Option value={city} key={name + city + index}>
@@ -1233,17 +1087,14 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Input
-                                    size="large"
-                                    // disabled={disableFields}
-                                  />
+                                  <Input size="large" disabled />
                                 </Form.Item>
                               </Col>
 
                               <Col xl={12} md={24}>
                                 <Form.Item
                                   label={t('validationReport:setLocation')}
-                                  name={[name, 'location']}
+                                  name={[name, 'geographicalLocationCoordinates']}
                                   rules={[
                                     {
                                       required: true,
@@ -1267,11 +1118,12 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                 >
                                   <GetLocationMapComponent
                                     form={form}
-                                    formItemName={[name, 'location']}
+                                    formItemName={[name, 'geographicalLocationCoordinates']}
                                     listName="extraLocations"
-                                    // disabled={disableFields}
+                                    disabled
                                     existingCordinate={
-                                      form?.getFieldValue('extraLocations')[name]?.location
+                                      form?.getFieldValue('extraLocations')[name]
+                                        ?.geographicalLocationCoordinates
                                     }
                                   />
                                 </Form.Item>
@@ -1307,7 +1159,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     action="/upload.do"
                                     listType="picture"
                                     multiple={false}
-                                    // disabled={disableFields}
+                                    disabled
                                     // maxCount={1}
                                   >
                                     <Button
@@ -1326,7 +1178,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         </>
                       ))}
 
-                      <div className="form-list-actions">
+                      {/* <div className="form-list-actions">
                         <Form.Item>
                           <Button
                             // type="dashed"
@@ -1337,12 +1189,12 @@ const BasicInformation = (props: ValidationStepsProps) => {
                             className="addMinusBtn"
                             // block
                             icon={<PlusOutlined />}
-                            // disabled={disableFields}
+                            disabled={disableFields}
                           >
-                            {/* Add Entity */}
+                            Add Entity
                           </Button>
                         </Form.Item>
-                      </div>
+                      </div> */}
                     </>
                   )}
                 </Form.List>
@@ -1352,9 +1204,15 @@ const BasicInformation = (props: ValidationStepsProps) => {
                 <Button danger size={'large'} disabled={false} onClick={prev}>
                   {t('validationReport:cancel')}
                 </Button>
-                <Button type="primary" size={'large'} disabled={false} htmlType="submit">
-                  {t('validationReport:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" size={'large'} disabled={false} onClick={next}>
+                    {t('validationReport:next')}
+                  </Button>
+                ) : (
+                  <Button type="primary" size={'large'} disabled={false} htmlType="submit">
+                    {t('validationReport:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

@@ -42,54 +42,54 @@ const LocalStakeholderConsultation = (props: CustomStepsProps) => {
                   required={true}
                   tooltipPosition={TooltipPostion.bottom}
                   tooltipWidth={700}
-                  tooltipContent={
-                    <div>
-                      <p>
-                        Describe the process for, and the outcomes from, the local stakeholder
-                        consultation conducted prior to validation. Include details on the
-                        following:
-                      </p>
-                      <ul>
-                        <li>
-                          The procedures or methods used for engaging local stakeholders (e.g.,
-                          dates of announcements or meetings, periods during which input was
-                          sought).
-                        </li>
-                        <li>
-                          The procedures or methods used for documenting the outcomes of the local
-                          stakeholder consultation.{' '}
-                        </li>
-                        <li>The mechanism for on-going communication with local stakeholders.</li>
-                        <li>
-                          How due account of all and any input received during the consultation has
-                          been taken. Include details on any updates to the project design or
-                          justify why updates are not appropriate.
-                        </li>
-                      </ul>
+                  // tooltipContent={
+                  //   <div>
+                  //     <p>
+                  //       Describe the process for, and the outcomes from, the local stakeholder
+                  //       consultation conducted prior to validation. Include details on the
+                  //       following:
+                  //     </p>
+                  //     <ul>
+                  //       <li>
+                  //         The procedures or methods used for engaging local stakeholders (e.g.,
+                  //         dates of announcements or meetings, periods during which input was
+                  //         sought).
+                  //       </li>
+                  //       <li>
+                  //         The procedures or methods used for documenting the outcomes of the local
+                  //         stakeholder consultation.{' '}
+                  //       </li>
+                  //       <li>The mechanism for on-going communication with local stakeholders.</li>
+                  //       <li>
+                  //         How due account of all and any input received during the consultation has
+                  //         been taken. Include details on any updates to the project design or
+                  //         justify why updates are not appropriate.
+                  //       </li>
+                  //     </ul>
 
-                      <p>
-                        For AFOLU projects, also demonstrate how the project has or will communicate
-                        the following:
-                      </p>
-                      <ul>
-                        <li>
-                          The project design and implementation, including the results of
-                          monitoring.
-                        </li>
-                        <li>
-                          The risks, costs and benefits the project may bring to local stakeholders.
-                        </li>
-                        <li>
-                          All relevant laws and regulations covering workers’ rights in the host
-                          country.
-                        </li>
-                        <li>
-                          The process of SLCCS validation and verification and the
-                          validation/verification body’s site visit.
-                        </li>
-                      </ul>
-                    </div>
-                  }
+                  //     <p>
+                  //       For AFOLU projects, also demonstrate how the project has or will communicate
+                  //       the following:
+                  //     </p>
+                  //     <ul>
+                  //       <li>
+                  //         The project design and implementation, including the results of
+                  //         monitoring.
+                  //       </li>
+                  //       <li>
+                  //         The risks, costs and benefits the project may bring to local stakeholders.
+                  //       </li>
+                  //       <li>
+                  //         All relevant laws and regulations covering workers’ rights in the host
+                  //         country.
+                  //       </li>
+                  //       <li>
+                  //         The process of SLCCS validation and verification and the
+                  //         validation/verification body’s site visit.
+                  //       </li>
+                  //     </ul>
+                  //   </div>
+                  // }
                 />
                 <Form.Item
                   className="full-width-form-item"

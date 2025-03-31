@@ -76,7 +76,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
         removeToken();
         setIsTokenExpired(false);
         return IsAuthenticated(response.data.access_token)
-          ? navigate(redirectLocation ? redirectLocation : ROUTES.VIEW_USERS, {
+          ? navigate(redirectLocation ? redirectLocation : ROUTES.DASHBOARD, {
               replace: true,
             })
           : navigate(ROUTES.LOGIN);
@@ -108,11 +108,10 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
             <div className="login-img-container container-image">
               <div className="text-ctn">
                 <span>
-                  {t('login:digital')} <br />
-                  {t('login:transformation')} <br />
-                  {t('login:countryName', { countryName: countryName })} {t('login:carbonMarket')}{' '}
-                  <br />
-                  {t('login:management')}
+                  {t('login:heading1')} <br />
+                  {t('login:heading2')} <br />
+                  {t('login:heading3')} <br />
+                  {t('login:heading4')} <br />
                 </span>
               </div>
             </div>

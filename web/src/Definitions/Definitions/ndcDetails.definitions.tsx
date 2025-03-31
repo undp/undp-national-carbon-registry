@@ -65,4 +65,6 @@ export type PopupInfo = {
   okAction: any;
   type: 'primary' | 'danger';
   remarkRequired: boolean;
+  subText?: string | null;
+  checkMessage?: string | null;
 };

@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { Steps, message } from 'antd';
-import { ProjectDetailsStep } from './ProjectDetailsStep';
+import { BasicInformationStep } from './BasicInformation';
 import './MonitoringReport.scss';
 import { ProjectActivityStep } from './ProjectActivityStep';
-import { ImplementationStatusStep } from './ImplementationStatusStep';
-import { SafeguardsStep } from './SafeguardsStep';
+import { ImplementationOfProjectActivityStep } from './ImplementationOfProjectActivity';
+import { DescriptionOfMSStep } from './DescriptionOfMonitoringSystemStep';
 import { DataAndParametersStep } from './DataAndParametersStep';
-import { QualificationStep } from './QuantificationStep';
-import { AnnexureStep } from './AnnexureStep';
+import { CalcEmissionReductionStep } from './CalcOfEmissionReductionStep';
+import { AnnexureStep } from './AppendixStep';
 import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import moment from 'moment';
 import { DocumentTypeEnum } from '../../Definitions/Enums/document.type.enum';
+import { DocumentEnum } from '../../Definitions/Enums/document.enum';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
 import { extractFilePropertiesFromLink, fileUploadValueExtract } from '../../Utils/utilityHelper';
 import { SlcfFormActionModel } from '../Models/SlcfFormActionModel';
@@ -20,395 +21,352 @@ import { PopupInfo } from '../../Definitions/Definitions/ndcDetails.definitions'
 import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { API_PATHS } from '../../Config/apiConfig';
 import { ROUTES } from '../../Config/uiRoutingConfig';
-const StepperComponent = (props: any) => {
+import { DocType } from '../../Definitions/Enums/document.type';
+import ProjectDetails from '../PDD/BasicInformation';
+import { CustomStepsProps } from './StepProps';
+import { Loading } from '../Loading/loading';
+import {
+  AnnexureMapDataToFields,
+  basicInformationMapDataToFields,
+  calcEmissionReductionMapDataToFields,
+  dataAndParametersMapDataToFields,
+  descriptionOfMMapDataToFields,
+  implementationOfProjectAcitivityMapDataToFields,
+  projectActivityMapDataToFields,
+} from './viewDataMap';
+import { mapBase64ToFields } from '../../Utils/mapBase64ToFields';
+import { INF_SECTORAL_SCOPE } from '../AddNewProgramme/ProgrammeCreationComponent';
+
+const StepperComponent = (props: CustomStepsProps) => {
   const navigate = useNavigate();
-  const { useLocation, translator, countries, selectedVersion, handleDocumentStatus } = props;
+  const { translator, t } = props;
   const [current, setCurrent] = useState(0);
   const [reportId, setReportId] = useState(0);
   const [status, setStatus] = useState(null);
-  const [formValues, setFormValues] = useState({});
   const { get, post } = useConnection();
   const { id, verificationRequestId } = useParams();
-  const navigationLocation = useLocation();
   const [projectCategory, setProjectCategory] = useState<string>('');
-  const { mode, docId } = navigationLocation.state || {};
-  const t = translator.t;
   const [popupInfo, setPopupInfo] = useState<PopupInfo>();
   const [slcfActionModalVisible, setSlcfActioModalVisible] = useState<boolean>(false);
+  const [versions, setVersions] = useState<number[]>([]);
+  const [selectedVersion, setSelectedVersion] = useState<number>();
+  const [documentStatus, setDocumentStatus] = useState('');
+  const [documentId, setDocumentId] = useState<string>();
 
-  const onValueChange = (newValues: any) => {
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      ...newValues,
-    }));
+  const [basicInformationForm] = useForm();
+  const [projectActivityForm] = useForm();
+  const [implementationStatusForm] = useForm();
+  const [descriptionOfMonitoringForm] = useForm();
+  const [dataAndParametersForm] = useForm();
+  const [qualificationForm] = useForm();
+  const [annexuresForm] = useForm();
+
+  const { state } = useLocation();
+  console.log('----state-----------', state);
+
+  const [loading, setLoading] = useState<boolean>(
+    state?.mode === FormMode.VIEW ||
+      state?.mode === FormMode.EDIT ||
+      state?.mode === FormMode?.VERIFY
+  );
+
+  const handleLoading = (val: boolean) => {
+    setLoading(val);
   };
 
   const scrollSection = useRef({} as any);
+
+  const [disableFields, setDisableFields] = useState<boolean>(false);
+
+  const [values, setValues] = useState({
+    projectRefId: id,
+    name: 'monitoringReport',
+    companyId: undefined,
+    documentType: DocumentEnum.MONITORING,
+    data: {},
+  });
+
+  const scrollToDiv = () => {
+    if (scrollSection.current) {
+      scrollSection.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  };
 
   const navigateToDetailsPage = () => {
     navigate(ROUTES.PROGRAMME_DETAILS_BY_ID(String(id)));
   };
 
-  const showModalOnAction = (info: PopupInfo) => {
-    setSlcfActioModalVisible(true);
-    setPopupInfo(info);
-  };
-
-  const approveOrReject = async (verify: boolean, remark?: string) => {
-    const body = {
-      verify: verify,
-      verificationRequestId: Number(verificationRequestId),
-      reportId: reportId,
-      remark,
-    };
-    try {
-      const res = await post(API_PATHS.VERIFY_MONITORING_REPORT, body);
-      if (res?.statusText === 'SUCCESS') {
-        message.open({
-          type: 'success',
-          content: verify
-            ? t('monitoringReport:monitoringReportApproveSuccess')
-            : t('monitoringReport:monitoringReportRejectSuccess'),
-          duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-        });
-        navigate(ROUTES.PROGRAMME_DETAILS_BY_ID(String(id)));
-      }
-    } catch (error: any) {
-      if (error && error.errors && error.errors.length > 0) {
-        error.errors.forEach((err: any) => {
-          Object.keys(err).forEach((field) => {
-            console.log(`Error in ${field}: ${err[field].join(', ')}`);
-            message.open({
-              type: 'error',
-              content: err[field].join(', '),
-              duration: 4,
-              style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-            });
-          });
-        });
-      } else {
-        message.open({
-          type: 'error',
-          content: error?.message,
-          duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-        });
-      }
-    }
-  };
-
-  const getProgrammeDetailsById = async () => {
-    try {
-      const { data } = await post(API_PATHS.PROJECT_BY_ID, {
-        programmeId: id,
-      });
-
-      const {
-        data: { user },
-      } = await get(API_PATHS.USER_PROFILE);
-
-      setProjectCategory(data?.projectCategory);
-    } catch (error) {
-      console.log('error');
-    }
-  };
-
-  const onFinish = async (newValues: any) => {
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      ...newValues,
-    }));
-    if (FormMode.VIEW === mode) {
-      navigateToDetailsPage();
-    } else {
-      const content = { ...formValues, ...newValues };
-
-      content.projectActivity.creditingPeriodFromDate = moment(
-        content?.projectActivity?.creditingPeriodFromDate
-      )
-        .startOf('day')
-        .valueOf();
-      content.projectActivity.creditingPeriodToDate = moment(
-        content?.projectActivity?.creditingPeriodToDate
-      )
-        .startOf('day')
-        .valueOf();
-      content.projectActivity.registrationDateOfTheActivity = moment(
-        content?.projectActivity?.registrationDateOfTheActivity
-      )
-        .startOf('day')
-        .valueOf();
-      await content.projectActivity?.projectActivityLocationsList?.forEach(async (val: any) => {
-        val.projectStartDate = moment(val?.projectStartDate).startOf('day').valueOf();
-        val.optionalDocuments = await fileUploadValueExtract(val, 'optionalDocuments');
-      });
-
-      content.projectDetails.dateOfIssue = moment(content?.projectDetails?.dateOfIssue)
-        .startOf('day')
-        .valueOf();
-
-      content?.quantification?.emissionReductionsRemovalsList?.forEach((val: any) => {
-        val.startDate = moment(content?.quantification?.startDate).startOf('day').valueOf();
-        val.endDate = moment(content?.quantification?.endDate).startOf('day').valueOf();
-      });
-      content.quantifications.optionalDocuments = await fileUploadValueExtract(
-        content?.quantifications,
-        'optionalDocuments'
-      );
-
-      content.annexures.optionalDocuments = await fileUploadValueExtract(
-        content?.annexures,
-        'optionalDocuments'
-      );
-      const body = { content: JSON.stringify(content), programmeId: id };
-      try {
-        const res = await post(API_PATHS.CREATE_MONITORING_REPORT, body);
-        if (res?.statusText === 'SUCCESS') {
-          message.open({
-            type: 'success',
-            content: t('monitoringReport:uploadMonitoringReportSuccess'),
-            duration: 4,
-            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-          });
-          navigateToDetailsPage();
-        }
-      } catch (error: any) {
-        if (error && error.errors && error.errors.length > 0) {
-          error.errors.forEach((err: any) => {
-            Object.keys(err).forEach((field) => {
-              console.log(`Error in ${field}: ${err[field].join(', ')}`);
-              message.open({
-                type: 'error',
-                content: err[field].join(', '),
-                duration: 4,
-                style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-              });
-            });
-          });
-        } else {
-          message.open({
-            type: 'error',
-            content: error?.message,
-            duration: 4,
-            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
-          });
-        }
-      }
-    }
-  };
-
   const next = () => {
     setCurrent(current + 1);
+    scrollToDiv();
   };
 
   const prev = () => {
     setCurrent(current - 1);
+    scrollToDiv();
   };
-  const [projectDetailsForm] = useForm();
-  const [projectActivityForm] = useForm();
-  const [implementationStatusForm] = useForm();
-  const [safeguardsForm] = useForm();
-  const [dataAndParametersForm] = useForm();
-  const [qualificationForm] = useForm();
-  const [annexuresForm] = useForm();
 
-  const getLatestReports = async (programId: any) => {
+  const fetchAndSetData = async (programId: any) => {
+    setLoading(true);
+
+    let programmeData = null;
+    //let orgData = null;
+    let pddData = null;
+    let validationData = null;
+
+    console.log('-------state mon---------', state);
     try {
-      // if (docId === null) {
-      if (mode === FormMode.CREATE) {
-        const { data } = await post(API_PATHS.LAST_DOC_VERSION, {
-          programmeId: programId,
-          docType: DocumentTypeEnum.CMA,
-        });
-        const { data: projectDetails } = await post(API_PATHS.PROJECT_BY_ID, {
-          programmeId: id,
-        });
-
-        if (data && data?.content && projectDetails) {
-          const cmaData = JSON.parse(data?.content);
-
-          projectDetailsForm.setFieldsValue({
-            title: cmaData?.projectDetails?.title,
-            projectProponent: cmaData?.projectDetails?.projectProponent,
-            dateOfIssue: moment(Date.now()),
-            physicalAddress: cmaData?.projectDetails?.physicalAddress,
-            email: cmaData?.projectDetails?.email,
-            telephone: cmaData?.projectDetails?.telephone,
-            website: cmaData?.projectDetails?.website,
-            preparedBy: cmaData?.projectDetails?.preparedBy,
-          });
-
-          projectActivityForm.setFieldsValue({
-            pp_organizationName: cmaData?.projectActivity?.projectProponent?.organizationName,
-            pp_contactPerson: cmaData?.projectActivity?.projectProponent?.contactPerson,
-            pp_telephone: cmaData?.projectActivity?.projectProponent?.telephone,
-            pp_email: cmaData?.projectActivity?.projectProponent?.email,
-            pp_address: cmaData?.projectActivity?.projectProponent?.address,
-            projectProponentsList: cmaData?.projectActivity.otherEntities.map((entity: any) => {
-              return {
-                ...entity,
-                organizationName: entity?.orgainzationName,
-                roleInTheProject: entity?.role,
-              };
-            }),
-            creditingPeriodFromDate: moment(
-              cmaData?.projectActivity?.creditingPeriodStartDate * 1000
-            ),
-            creditingPeriodToDate: moment(cmaData?.projectActivity?.creditingPeriodEndDate * 1000),
-            creditingPeriodComment: cmaData?.projectActivity?.creditingPeriodDescription,
-            registrationDateOfTheActivity: moment(projectDetails?.authorisedCreditUpdatedTime),
-            projectTrackAndCreditUse: cmaData?.projectActivity?.projectTrack,
-            projectActivityLocationsList: cmaData?.projectActivity?.locationsOfProjectActivity?.map(
-              (location: any) => {
-                return {
-                  ...location,
-                  optionalDocuments:
-                    location.additionalDocuments && location.additionalDocuments?.length > 0
-                      ? location.additionalDocuments?.map((document: string, index: number) => {
-                          return {
-                            uid: index,
-                            name: extractFilePropertiesFromLink(document).fileName,
-                            status: 'done',
-                            url: document,
-                          };
-                        })
-                      : [],
-                  location: location?.geographicalLocationCoordinates,
-                  projectStartDate: moment(location?.startDate * 1000),
-                };
-              }
-            ),
-          });
-        }
-
-        qualificationForm.setFieldsValue({
-          estimatedNetEmissionReductions: [
-            {
-              startDate: '',
-              endDate: '',
-              baselineEmissionReductions: '',
-              projectEmissionReductions: '',
-              leakageEmissionReductions: '',
-              netEmissionReductions: '',
-            },
-          ],
-        });
-      } else if (mode === FormMode.VIEW || mode === FormMode.EDIT) {
-        const { data } =
-          mode === FormMode.VIEW && selectedVersion
-            ? await post(API_PATHS.VERIFICATION_DOC_BY_VERSION, {
-                programmeId: id,
-                docType: DocumentTypeEnum.MONITORING_REPORT,
-                version: selectedVersion,
-                verificationRequestId: Number(verificationRequestId),
-              })
-            : await post(API_PATHS.VERIFICATION_DOC_LAST_VERSION, {
-                programmeId: id,
-                docType: DocumentTypeEnum.MONITORING_REPORT,
-                verificationRequestId: Number(verificationRequestId),
-              });
-
-        if (mode === FormMode.VIEW) {
-          handleDocumentStatus(data.status);
-        }
-        if (data && data?.content) {
-          setReportId(data?.id);
-          setStatus(data?.status);
-          projectDetailsForm.setFieldsValue({
-            ...data?.content?.projectDetails,
-            dateOfIssue: moment(data?.content?.projectDetails?.dateOfIssue),
-            reportID: data?.content?.projectDetails?.reportID,
-          });
-
-          projectActivityForm.setFieldsValue({
-            ...data?.content?.projectActivity,
-            creditingPeriodFromDate: moment(
-              data?.content?.projectActivity?.creditingPeriodFromDate
-            ),
-            creditingPeriodToDate: moment(data?.content?.projectActivity?.creditingPeriodToDate),
-            registrationDateOfTheActivity: moment(
-              data?.content?.projectActivity?.registrationDateOfTheActivity
-            ),
-            projectActivityLocationsList:
-              data?.content?.projectActivity?.projectActivityLocationsList?.map((val: any) => {
-                return {
-                  ...val,
-                  projectStartDate: moment(val?.projectStartDate),
-                  optionalDocuments: val?.optionalDocuments?.map(
-                    (document: string, index: number) => {
-                      return {
-                        uid: index,
-                        name: extractFilePropertiesFromLink(document).fileName,
-                        status: 'done',
-                        url: document,
-                      };
-                    }
-                  ),
-                };
-              }),
-          });
-          qualificationForm.setFieldsValue({
-            ...data?.content?.quantifications,
-            optionalDocuments: data?.content?.quantifications?.optionalDocuments?.map(
-              (document: string, index: number) => {
-                return {
-                  uid: index,
-                  name: extractFilePropertiesFromLink(document).fileName,
-                  status: 'done',
-                  url: document,
-                };
-              }
-            ),
-
-            estimatedNetEmissionReductions:
-              data?.content?.quantifications?.estimatedNetEmissionReductions?.map(
-                (netEmission: any) => {
-                  return {
-                    ...netEmission,
-                    startDate: moment(netEmission.startDate),
-                    endDate: moment(netEmission.endDate),
-                  };
-                }
-              ),
-          });
-          implementationStatusForm.setFieldsValue({
-            ...data?.content?.implementationStatus,
-          });
-          safeguardsForm.setFieldsValue({
-            ...data?.content?.safeguards,
-          });
-          dataAndParametersForm.setFieldsValue({
-            ...data?.content?.dataAndParameters,
-          });
-          annexuresForm.setFieldsValue({
-            ...data?.content?.annexures,
-            optionalDocuments: data?.content?.annexures?.optionalDocuments?.map(
-              (document: string, index: number) => {
-                return {
-                  uid: index,
-                  name: extractFilePropertiesFromLink(document).fileName,
-                  status: 'done',
-                  url: document,
-                };
-              }
-            ),
-          });
-        }
+      //fetch programme data
+      const programmeResponse = await post(API_PATHS.PROGRAMME_BY_ID, { programmeId: programId });
+      if (programmeResponse?.statusText === 'SUCCESS') {
+        programmeData = programmeResponse?.data;
+        console.log('-------programme data Monitoring-----------', programmeData);
+      } else {
+        console.log('Error: Programme API did not return SUCCESS status');
       }
     } catch (error) {
-      console.log('error');
+      console.log('Error fetching programme data:', error);
+    }
+
+    // try {
+    //   const orgDetailsResponse = await get(API_PATHS.USER_PROFILE_DETAILS);
+    //   console.log('---------org details------------', orgDetailsResponse);
+    //   if (orgDetailsResponse?.statusText === 'SUCCESS') {
+    //     orgData = orgDetailsResponse?.data?.Organisation;
+    //   } else {
+    //     console.log('Error: Org API fetch failed');
+    //   }
+    // } catch (error) {
+    //   console.log('Error fetching Org details', error);
+    // }
+
+    try {
+      // Fetch PDD Data
+      const pddResponse = await post(API_PATHS.QUERY_DOCUMENT, {
+        refId: state?.documents?.PDD?.refId,
+        documentType: DocumentEnum.PDD,
+      });
+      console.log('-----------------PDD Response-----------------', pddResponse);
+      if (pddResponse?.statusText === 'SUCCESS') {
+        pddData = pddResponse?.data;
+      } else {
+        console.log('Error: PDD API did not return SUCCESS status');
+      }
+    } catch (error) {
+      console.log('Error fetching PDD data:', error);
+    }
+
+    try {
+      //fetch validation data
+      const validationResponse = await post(API_PATHS.QUERY_DOCUMENT, {
+        refId: state?.documents?.VALIDATION?.refId,
+        documentType: DocumentEnum.VALIDATION,
+      });
+      if (validationResponse?.statusText === 'SUCCESS') {
+        validationData = validationResponse?.data?.data;
+        console.log('---------validation data monitoring----------', validationData);
+      }
+    } catch (error) {
+      console.log('Error fetching data from validation report', error);
+    }
+
+    if (programmeData && pddData && validationData) {
+      const docVersions = state?.documents?.[DocumentEnum.MONITORING as any]?.version;
+      const latestVersion = docVersions ? docVersions + 1 : 1;
+      basicInformationForm.setFieldsValue({
+        bi_sectoralScope: INF_SECTORAL_SCOPE[programmeData?.sectoralScope],
+        bi_projectTitle: validationData?.basicInformation?.titleOfTheProjectActivity,
+        bi_applicablePDDVersionNo: validationData?.basicInformation?.versionNumberPDD,
+        bi_projectDeveloper: programmeData?.projectParticipant,
+        bi_hostParty: validationData?.basicInformation?.hostParty,
+        bi_appliedMethodologies: validationData?.basicInformation?.appliedMethodologies,
+        bi_unfccRefNo: validationData?.basicInformation?.unfccRefNo,
+        bi_versionNoOfMR: latestVersion,
+      });
+      projectActivityForm.setFieldsValue({
+        projectParticipants: pddData?.data?.projectActivity?.projectParticipants,
+        pa_creditingPeriodType: pddData?.data?.startDateCreditingPeriod?.creditingPeriodType,
+        // locationOfProjectActivity:
+        //   data?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.locationOfProjectActivity,
+        // siteNo: data?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.siteNo,
+        // province: data?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.province,
+        // district: data?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.district,
+        // city: data?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.city,
+        // community: data?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.community,
+        // geographicalLocationCoordinates:
+        //   data?.data?.projectActivity?.locationsOfProjectActivity?.[0]
+        //     ?.geographicalLocationCoordinates,
+        // optionalImages: mapBase64ToFields(
+        //   data?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.additionalDocuments
+        // ),
+        extraLocations: pddData?.data?.projectActivity?.locationsOfProjectActivity?.map(
+          (location: any) => ({
+            ...location,
+            uploadImages: mapBase64ToFields(location?.additionalDocuments),
+          })
+        ),
+      });
+    }
+    setLoading(false);
+  };
+
+  // const setLatestVersion = () => {
+  //   if (state?.mode === FormMode.CREATE || state?.mode === FormMode.EDIT) {
+  //     basicInformationForm.setFieldsValue({
+  //       bi_versionNoOfMR: state?.documents?.[DocumentEnum.MONITORING as any]?.version ?? 0 + 1,
+  //     });
+  //   }
+  // };
+
+  useEffect(() => {
+    const getViewData = async () => {
+      if (
+        state?.mode === FormMode.EDIT ||
+        state?.mode === FormMode.VERIFY ||
+        state?.mode === FormMode.VIEW
+      ) {
+        setLoading(true);
+
+        let res;
+
+        if (state?.mode === FormMode.VIEW || state?.mode === FormMode.VERIFY) {
+          console.log(
+            '--------state?.mode 2---------',
+            state?.mode,
+            state?.mode === FormMode.VERIFY
+          );
+          setDisableFields(true);
+        }
+
+        try {
+          res = await post(API_PATHS.QUERY_DOCUMENT, {
+            refId: state?.documentRefId,
+            documentType: DocumentEnum.MONITORING,
+          });
+
+          console.log('--------mon res---------', res);
+          if (res?.statusText === 'SUCCESS') {
+            const data = res?.data;
+            setDocumentId(data?.refId);
+
+            console.log('--------mon res 2---------', data, data.data.basicInformation);
+
+            let basicInformation = basicInformationMapDataToFields(data.data.projectDetails);
+            console.log('-----------state getview monitoring-----------', state);
+            const docVersions = state?.documents?.[DocumentEnum.MONITORING as any]?.version;
+            const latestVersion = docVersions ? docVersions + 1 : 1;
+            console.log('------------latest version-----------', latestVersion);
+            if (state?.mode === FormMode.EDIT) {
+              basicInformation = {
+                ...basicInformation,
+                bi_versionNoOfMR: latestVersion,
+              };
+            }
+            basicInformationForm.setFieldsValue(basicInformation);
+
+            const projectActivity = projectActivityMapDataToFields(
+              data.data.projectActivityDetails
+            );
+            projectActivityForm.setFieldsValue(projectActivity);
+
+            const implementationOfProjectActivityDetails =
+              implementationOfProjectAcitivityMapDataToFields(
+                data.data.implementationOfProjectActivityDetails
+              );
+            implementationStatusForm.setFieldsValue(implementationOfProjectActivityDetails);
+
+            const descriptionOfMonitoringReport = descriptionOfMMapDataToFields(
+              data.data.descriptionOfMonitoringReport
+            );
+            descriptionOfMonitoringForm.setFieldsValue(descriptionOfMonitoringReport);
+
+            const dataAndParameterDetails = dataAndParametersMapDataToFields(
+              data.data.dataAndParameterDetails
+            );
+            dataAndParametersForm.setFieldsValue(dataAndParameterDetails);
+
+            const calcEmissionReductions = calcEmissionReductionMapDataToFields(
+              data.data.calcEmissionReductions
+            );
+            qualificationForm.setFieldsValue(calcEmissionReductions);
+
+            const appendix = AnnexureMapDataToFields(data.data.appendix);
+            annexuresForm.setFieldsValue(appendix);
+          }
+        } catch (error: any) {
+          console.log('-------error--------', error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    getViewData();
+  }, []);
+
+  const submitForm = async (appendixVals: any) => {
+    try {
+      console.log('----form vals-----', appendixVals);
+      setLoading(true);
+      const tempValues = {
+        ...values,
+        data: {
+          ...values.data,
+          appendix: appendixVals,
+        },
+      };
+
+      const res = await post(API_PATHS.ADD_DOCUMENT, tempValues);
+      if (res?.statusText === 'SUCCESS') {
+        message.open({
+          type: 'success',
+          content:
+            state?.mode === FormMode.EDIT
+              ? 'Monitoring Report has been edited successfully'
+              : 'Monitoring Report has been submitted successfully',
+          duration: 4,
+          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        });
+        navigateToDetailsPage();
+      }
+    } catch (error: any) {
+      message.open({
+        type: 'error',
+        content: 'Something went wrong',
+        duration: 4,
+        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    getLatestReports(id);
-    getProgrammeDetailsById();
-  }, [selectedVersion]);
+  const handleValuesUpdate = (val: any) => {
+    // console.log('----------temp vals stepper-------------', val);
+    setValues((prevVal: any) => {
+      const tempContent = {
+        ...prevVal.data,
+        ...val,
+      };
+      return { ...prevVal, data: tempContent };
+    });
+  };
+
+  console.log('----------state disableFields-------------', disableFields);
 
   useEffect(() => {
-    getLatestReports(id);
+    if (state?.mode === FormMode?.CREATE) {
+      fetchAndSetData(id);
+      //setLatestVersion();
+    }
+    projectActivityForm.setFieldValue('projectParticipants', [
+      { partiesInvolved: '', projectParticipants: [{ participant: '' }] },
+    ]);
   }, []);
+
   const steps = [
     {
       title: (
@@ -417,16 +375,16 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <ProjectDetailsStep
-          useLocation={useLocation}
+        <BasicInformationStep
           translator={translator}
+          t={t}
           current={current}
-          form={projectDetailsForm}
-          formMode={mode}
+          form={basicInformationForm}
+          formMode={state?.mode}
+          disableFields={disableFields}
           next={next}
-          cancel={navigateToDetailsPage}
-          countries={countries}
-          onValueChange={onValueChange}
+          prev={navigateToDetailsPage}
+          handleValuesUpdate={handleValuesUpdate}
         />
       ),
     },
@@ -439,15 +397,15 @@ const StepperComponent = (props: any) => {
       ),
       description: (
         <ProjectActivityStep
-          useLocation={useLocation}
           translator={translator}
+          t={t}
           current={current}
           form={projectActivityForm}
-          formMode={mode}
+          formMode={state?.mode}
+          disableFields={disableFields}
           next={next}
           prev={prev}
-          countries={countries}
-          onValueChange={onValueChange}
+          handleValuesUpdate={handleValuesUpdate}
         />
       ),
     },
@@ -459,15 +417,16 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <ImplementationStatusStep
-          useLocation={useLocation}
+        <ImplementationOfProjectActivityStep
           translator={translator}
+          t={t}
           current={current}
           form={implementationStatusForm}
-          formMode={mode}
+          formMode={state?.mode}
+          disableFields={disableFields}
           next={next}
           prev={prev}
-          onValueChange={onValueChange}
+          handleValuesUpdate={handleValuesUpdate}
         />
       ),
     },
@@ -479,15 +438,16 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <SafeguardsStep
-          useLocation={useLocation}
+        <DescriptionOfMSStep
           translator={translator}
+          t={t}
           current={current}
-          form={safeguardsForm}
-          formMode={mode}
+          form={descriptionOfMonitoringForm}
+          formMode={state?.mode}
+          disableFields={disableFields}
           next={next}
           prev={prev}
-          onValueChange={onValueChange}
+          handleValuesUpdate={handleValuesUpdate}
         />
       ),
     },
@@ -500,14 +460,15 @@ const StepperComponent = (props: any) => {
       ),
       description: (
         <DataAndParametersStep
-          useLocation={useLocation}
           translator={translator}
+          t={t}
           current={current}
           form={dataAndParametersForm}
-          formMode={mode}
+          formMode={state?.mode}
+          disableFields={disableFields}
           next={next}
           prev={prev}
-          onValueChange={onValueChange}
+          handleValuesUpdate={handleValuesUpdate}
         />
       ),
     },
@@ -519,16 +480,17 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        <QualificationStep
-          useLocation={useLocation}
+        <CalcEmissionReductionStep
           translator={translator}
+          t={t}
           current={current}
           form={qualificationForm}
-          formMode={mode}
+          formMode={state?.mode}
+          disableFields={disableFields}
           next={next}
           prev={prev}
-          projectCategory={projectCategory}
-          onValueChange={onValueChange}
+          // projectCategory={projectCategory}
+          handleValuesUpdate={handleValuesUpdate}
         />
       ),
     },
@@ -541,44 +503,51 @@ const StepperComponent = (props: any) => {
       ),
       description: (
         <AnnexureStep
-          useLocation={useLocation}
-          translator={translator}
+          t={t}
           current={current}
-          status={status}
+          translator={translator}
           form={annexuresForm}
-          formMode={mode}
+          formMode={state?.mode}
+          disableFields={disableFields}
           prev={prev}
-          cancel={navigateToDetailsPage}
-          approve={() => {
-            showModalOnAction({
-              actionBtnText: t('monitoringReport:btnApprove'),
-              icon: <CheckCircleOutlined />,
-              title: t('monitoringReport:approveMonitoringModalTitle'),
-              okAction: () => {
-                approveOrReject(true);
-              },
-              remarkRequired: false,
-              type: 'primary',
-            });
-          }}
-          reject={() => {
-            showModalOnAction({
-              actionBtnText: t('monitoringReport:btnReject'),
-              icon: <CloseCircleOutlined />,
-              title: t('monitoringReport:rejectMonitoringModalTitle'),
-              okAction: (remark: string) => {
-                approveOrReject(false, remark);
-              },
-              remarkRequired: true,
-              type: 'danger',
-            });
-          }}
-          onFinish={onFinish}
+          next={navigateToDetailsPage}
+          handleValuesUpdate={submitForm}
+          documentId={documentId}
+          handleLoading={handleLoading}
+          // approve={() => {
+          //   showModalOnAction({
+          //     actionBtnText: t('monitoringReport:btnApprove'),
+          //     icon: <CheckCircleOutlined />,
+          //     title: t('monitoringReport:approveMonitoringModalTitle'),
+          //     okAction: () => {
+          //       approveOrReject(true);
+          //     },
+          //     remarkRequired: false,
+          //     type: 'primary',
+          //   });
+          // }}
+          // reject={() => {
+          //   showModalOnAction({
+          //     actionBtnText: t('monitoringReport:btnReject'),
+          //     icon: <CloseCircleOutlined />,
+          //     title: t('monitoringReport:rejectMonitoringModalTitle'),
+          //     okAction: (remark: string) => {
+          //       approveOrReject(false, remark);
+          //     },
+          //     remarkRequired: true,
+          //     type: 'danger',
+          //   });
+          // }}
+          //submitForm={submitForm}
+          // onFinish={onFinish}
         />
       ),
     },
   ];
 
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <>
       <Steps
@@ -590,7 +559,7 @@ const StepperComponent = (props: any) => {
           description: step.description,
         }))}
       />
-      {popupInfo && (
+      {/* {popupInfo && (
         <SlcfFormActionModel
           onCancel={() => {
             setSlcfActioModalVisible(false);
@@ -605,7 +574,7 @@ const StepperComponent = (props: any) => {
           remarkRequired={popupInfo!.remarkRequired}
           t={t}
         />
-      )}
+      )} */}
     </>
   );
 };

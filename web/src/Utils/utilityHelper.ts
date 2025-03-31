@@ -41,7 +41,7 @@ function getBase64ImageFromUrl(imageUrl: string) {
 export const fileUploadValueExtract = async (formValues: any, key: string) => {
   return (async function () {
     const base64Docs: string[] = [];
-    if (formValues[key] && formValues[key].length > 0) {
+    if (formValues && formValues[key]) {
       const docs = formValues[key];
       for (let i = 0; i < docs.length; i++) {
         const temp = docs[i]?.url

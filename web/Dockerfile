@@ -1,4 +1,4 @@
-FROM node:16-alpine as build
+FROM node:20-alpine as build
 WORKDIR /app
 COPY ./web .
 RUN apk add python3 make g++ && rm -rf /var/cache/apk/*

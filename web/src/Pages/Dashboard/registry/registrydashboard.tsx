@@ -12,7 +12,7 @@ const RegistryDashboard = () => {
       t={t}
       ButtonGroup={ButtonGroup}
       Link={Link}
-      isMultipleDashboardsVisible={true}
+      isMultipleDashboardsVisible={false}
     ></RegistryDashboardComponent>
   );
 };

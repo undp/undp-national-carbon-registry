@@ -17,18 +17,22 @@ import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { ProcessSteps } from './ValidationStepperComponent';
 import { requiredValidationRule } from '../../Utils/validationHelper';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import LabelWithTooltip from '../LabelWithTooltip/LabelWithTooltip';
+import { useLocation } from 'react-router-dom';
 
 const ValidationMethodology = (props: ValidationStepsProps) => {
   const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
 
-  const { prev, next, form, current, t, countries, handleValuesUpdate, formMode } = props;
+  const { prev, next, form, current, t, countries, handleValuesUpdate, disableFields, formMode } =
+    props;
 
   useEffect(() => {
-    form.setFieldValue('validationTeamMembers', [{ role: '' }]);
-    form.setFieldValue('technicalReviews', [{ role: '' }]);
-  }, []);
+    if (formMode === FormMode.CREATE) {
+      form.setFieldValue('validationTeamMembers', [{ role: '' }]);
+      form.setFieldValue('technicalReviews', [{ role: '' }]);
+    }
+  }, [formMode]);
 
   const onFinish = async (values: any) => {
     console.log('--------values-----------', values);
@@ -59,7 +63,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                   next();
                 }
               }}
-              disabled={FormMode.VIEW === formMode}
+              // disabled={FormMode.VIEW === formMode}
             >
               {/* Validation team member table start */}
               <h4 className="form-section-heading">
@@ -140,7 +144,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                 },
                               ]}
                             >
-                              <Select>
+                              <Select disabled={disableFields}>
                                 <Select.Option value={'TL'}>
                                   {t('validationReport:teamLeader')}
                                 </Select.Option>
@@ -191,7 +195,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                 },
                               ]}
                             >
-                              <Radio.Group className="radio-btn-grp">
+                              <Radio.Group className="radio-btn-grp" disabled={disableFields}>
                                 <Radio value="IR">{t('validationReport:IR')}</Radio>
                                 <Radio value="ER">{t('validationReport:ER')}</Radio>
                               </Radio.Group>
@@ -223,7 +227,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                 },
                               ]}
                             >
-                              <Input />
+                              <Input disabled={disableFields} />
                             </Form.Item>
                           </Col>
                           <Col xl={3} className="other-cols col">
@@ -250,7 +254,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                 },
                               ]}
                             >
-                              <Input />
+                              <Input disabled={disableFields} />
                             </Form.Item>
                           </Col>
                           <Col xl={3} className="other-cols col">
@@ -277,14 +281,14 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                 },
                               ]}
                             >
-                              <Input />
+                              <Input disabled={disableFields} />
                             </Form.Item>
                           </Col>
                           <Col xl={4}>
                             <Row>
                               <Col xl={6} className="other-cols checkbox-cols">
                                 <Form.Item name={[name, 'documentReview']} valuePropName="checked">
-                                  <Checkbox />
+                                  <Checkbox disabled={disableFields} />
                                 </Form.Item>
                               </Col>
                               <Col xl={6} className="other-cols checkbox-cols">
@@ -292,12 +296,12 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   name={[name, 'onsiteInspections']}
                                   valuePropName="checked"
                                 >
-                                  <Checkbox />
+                                  <Checkbox disabled={disableFields} />
                                 </Form.Item>
                               </Col>
                               <Col xl={6} className="other-cols checkbox-cols">
                                 <Form.Item name={[name, 'interviews']} valuePropName="checked">
-                                  <Checkbox />
+                                  <Checkbox disabled={disableFields} />
                                 </Form.Item>
                               </Col>
                               <Col xl={6} className="other-cols checkbox-cols">
@@ -305,7 +309,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   name={[name, 'validationFindings']}
                                   valuePropName="checked"
                                 >
-                                  <Checkbox />
+                                  <Checkbox disabled={disableFields} />
                                 </Form.Item>
                               </Col>
                             </Row>
@@ -316,6 +320,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                 onClick={add}
                                 size="small"
                                 className="addMinusBtn"
+                                disabled={disableFields}
                                 icon={<PlusOutlined />}
                               ></Button>
                             </Form.Item>
@@ -331,7 +336,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   className="addMinusBtn"
                                   // block
                                   icon={<MinusOutlined />}
-                                  // disabled={disableFields}
+                                  disabled={disableFields}
                                 >
                                   {/* Minus Participant */}
                                 </Button>
@@ -408,7 +413,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   },
                                 ]}
                               >
-                                <Select>
+                                <Select disabled={disableFields}>
                                   <Select.Option value="technicalReviewer">
                                     {t('validationReport:technicalReviewer')}
                                   </Select.Option>
@@ -440,7 +445,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   },
                                 ]}
                               >
-                                <Radio.Group className="radio-btn-grp">
+                                <Radio.Group className="radio-btn-grp" disabled={disableFields}>
                                   <Radio value="IR">{t('validationReport:IR')}</Radio>
                                   <Radio value="ER">{t('validationReport:ER')}</Radio>
                                 </Radio.Group>
@@ -468,7 +473,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   },
                                 ]}
                               >
-                                <Input />
+                                <Input disabled={disableFields} />
                               </Form.Item>
                             </Col>
                             <Col xl={4} className="other-cols col">
@@ -493,7 +498,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   },
                                 ]}
                               >
-                                <Input />
+                                <Input disabled={disableFields} />
                               </Form.Item>
                             </Col>
                             <Col xl={4} className="other-cols col">
@@ -518,7 +523,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   },
                                 ]}
                               >
-                                <Input />
+                                <Input disabled={disableFields} />
                               </Form.Item>
                             </Col>
                             <Col xl={3} className="col action-col">
@@ -527,6 +532,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   onClick={add}
                                   size="small"
                                   className="addMinusBtn"
+                                  disabled={disableFields}
                                   icon={<PlusOutlined />}
                                 ></Button>
                               </Form.Item>
@@ -542,7 +548,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                     className="addMinusBtn"
                                     // block
                                     icon={<MinusOutlined />}
-                                    // disabled={disableFields}
+                                    disabled={disableFields}
                                   >
                                     {/* Minus Participant */}
                                   </Button>
@@ -562,9 +568,15 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                 <Button danger size={'large'} disabled={false} onClick={prev}>
                   {t('validationReport:cancel')}
                 </Button>
-                <Button type="primary" size={'large'} disabled={false} htmlType="submit">
-                  {t('validationReport:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" size={'large'} disabled={false} onClick={next}>
+                    {t('validationReport:next')}
+                  </Button>
+                ) : (
+                  <Button type="primary" size={'large'} disabled={false} htmlType="submit">
+                    {t('validationReport:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

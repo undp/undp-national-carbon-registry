@@ -1,25 +1,33 @@
-import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Col, DatePicker, Form, Input, Row, Select, Upload } from 'antd';
+import { Button, Form, Input, Row } from 'antd';
 
-import TextArea from 'antd/lib/input/TextArea';
-import moment from 'moment';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
+import { VerificationStepProps } from './StepProps';
+import TextArea from 'antd/lib/input/TextArea';
 
-export const VerificationFindingStep = (props: any) => {
-  const { useLocation, translator, current, form, formMode, next, prev, onValueChange } = props;
+export const VerificationFindingStep = (props: VerificationStepProps) => {
+  const { t, current, form, formMode, next, prev, handleValuesUpdate, disableFields } = props;
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
+
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
       return e;
     }
     return e?.fileList;
   };
-  const t = translator.t;
+
+  const onFinish = (values: any) => {
+    //console.log('--------values-----------', values);
+    const body = { ...values };
+    handleValuesUpdate({
+      verificationFindings: body,
+    });
+  };
+
   return (
     <>
-      {current === 3 && (
+      {current === 6 && (
         <div>
           <div className="step-form-container">
             <Form
@@ -29,857 +37,1291 @@ export const VerificationFindingStep = (props: any) => {
               layout="vertical"
               requiredMark={true}
               form={form}
-              disabled={FormMode.VIEW === formMode}
-              onFinish={async (values: any) => {
-                onValueChange({ verificationFinding: values });
-                next();
+              onFinish={(values: any) => {
+                onFinish(values);
+                if (next) {
+                  next();
+                }
               }}
             >
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={`${t('verificationReport:verificationFinding')}`}
-                      name="verificationFinding"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:verificationFinding')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
-                    </Form.Item>
+              <h4 className="verificationReport-findings-subHeading">
+                {t('verificationReport:remainingFARsFromValidation')}
+              </h4>
+              <Form.Item
+                className="full-width-form-item"
+                name="remainingFARsFromValidation"
+                rules={[
+                  {
+                    required: true,
+                    message: `${t('verificationReport:remainingFARsFromValidation')} ${t(
+                      'isRequired'
+                    )}`,
+                  },
+                ]}
+              >
+                <TextArea rows={6} disabled={disableFields} />
+              </Form.Item>
+              {/* Demonstration of prior consideration of the CDM start */}
+              <>
+                <h4 className="verificationReport-findings-heading">
+                  {t('verificationReport:complianceMonitoringReportForm')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="complianceMonitoringReportForm_MeansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-                    <Form.Item
-                      label={`3.1 ${t('verificationReport:remainingIssues')}`}
-                      name="remainingIssues"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:remainingIssues')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
-                    </Form.Item>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="complianceMonitoringReportForm_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-                    <Form.Item
-                      label={`3.2 ${t('verificationReport:monitoringReport')}`}
-                      name="monitoringReport"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:monitoringReport')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
-                    </Form.Item>
-                    <Form.Item
-                      label={`3.3 ${t('verificationReport:projectImplementation')}`}
-                      name="projectImplementation"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:projectImplementation')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={12} md={24}>
-                  <Row gutter={[40, 16]} className="form-section">
-                    <Col xl={9} md={24}>
-                      <div className="step-form-right-col">
-                        <h4>{t('verificationReport:siteLocation')}</h4>
-                      </div>
-                    </Col>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="complianceMonitoringReportForm_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Demonstration of prior consideration of the CDM end */}
 
-                    <Col xl={9} md={24}>
-                      <div className="step-form-right-col">
-                        <h4>{t('verificationReport:commissioningDate')}</h4>
-                      </div>
-                    </Col>
-                    <Col xl={6} md={24}></Col>
-                  </Row>
+              {/* Identification of project type start */}
+              <>
+                <h4 className="verificationReport-findings-heading">
+                  {t('verificationReport:complianceProjectImplementation')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="complianceProjectImplementation_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-                  <Form.List name="siteLocations">
-                    {(fields, { add, remove }) => (
-                      <>
-                        {fields.map(({ key, name, ...restField }) => (
-                          <>
-                            <Row
-                              justify={'space-between'}
-                              gutter={[16, 16]}
-                              className="form-section"
-                            >
-                              <Col xl={9} md={24}>
-                                <div className="step-form-right-col">
-                                  <Form.Item
-                                    name={[name, 'siteLocation']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('verificationReport:siteLocation')} ${t(
-                                          'isRequired'
-                                        )}`,
-                                      },
-                                    ]}
-                                  >
-                                    <Input size="large" disabled />
-                                  </Form.Item>
-                                </div>
-                              </Col>
-                              <Col xl={9} md={24}>
-                                <div className="step-form-right-col">
-                                  <Form.Item
-                                    name={[name, 'commissioningDate']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: '',
-                                      },
-                                      {
-                                        validator: async (rule, value) => {
-                                          if (
-                                            String(value).trim() === '' ||
-                                            String(value).trim() === undefined ||
-                                            value === null ||
-                                            value === undefined
-                                          ) {
-                                            throw new Error(
-                                              `${t('verificationReport:commissioningDate')} ${t(
-                                                'isRequired'
-                                              )}`
-                                            );
-                                          }
-                                        },
-                                      },
-                                    ]}
-                                  >
-                                    <DatePicker
-                                      size="large"
-                                      disabledDate={(currentDate: any) =>
-                                        currentDate < moment().startOf('day')
-                                      }
-                                      disabled
-                                    />
-                                  </Form.Item>
-                                </div>
-                              </Col>
-                              <Col md={24} xl={6} style={{ verticalAlign: 'top' }}>
-                                <Form.Item>
-                                  {fields.length > 1 && (
-                                    <Button
-                                      // type="dashed"
-                                      style={{ marginRight: 5 }}
-                                      onClick={() => {
-                                        // reduceTotalCreditingYears()
-                                        remove(name);
-                                      }}
-                                      size="small"
-                                      className="addMinusBtn"
-                                      // block
-                                      icon={<MinusOutlined />}
-                                      disabled
-                                    >
-                                      {/* Add Entity */}
-                                    </Button>
-                                  )}
-                                  {name === fields.length - 1 && (
-                                    <Button
-                                      // type="dashed"
-                                      onClick={() => {
-                                        // reduceTotalCreditingYears()
-                                        add();
-                                      }}
-                                      size="middle"
-                                      className="addMinusBtn"
-                                      // block
-                                      icon={<PlusOutlined />}
-                                      disabled
-                                    >
-                                      {/* Add Entity */}
-                                    </Button>
-                                  )}
-                                </Form.Item>
-                              </Col>
-                            </Row>
-                          </>
-                        ))}
-                      </>
-                    )}
-                  </Form.List>
-                </Col>
-                <Col xl={12} md={24}></Col>
-              </Row>
-              <h4 className="form-section-title">{`3.4  ${t(
-                'verificationReport:emissionReductionDeterminingMethodology'
-              )}`}</h4>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="complianceProjectImplementation_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={`3.4.1 ${t('verificationReport:applicability')}`}
-                      name="applicability"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:applicability')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
-                    </Form.Item>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="complianceProjectImplementation_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Identification of project type end */}
 
-                    <Form.Item
-                      label={`3.4.2 ${t('verificationReport:complianceWithMethodologyAndTools')}`}
-                      name="complianceWithMethodologyAndTools"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t(
-                            'verificationReport:complianceWithMethodologyAndTools'
-                          )} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
-                    </Form.Item>
+              {/* Description of project activity start */}
+              <>
+                <h4 className="verificationReport-findings-heading">
+                  {t('verificationReport:postRegistrationChanges')}
+                </h4>
+                <h6 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:temporaryDeviations')}
+                </h6>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="temporaryDeviations_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-                    <Form.Item
-                      label={`3.4.3 ${t('verificationReport:complianceWithMonitoringPlan')}`}
-                      name="complianceWithMonitoringPlan"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:complianceWithMonitoringPlan')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="temporaryDeviations_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <Row justify={'space-between'} gutter={[40, 16]} className="form-section">
-                    <Col xl={7} md={24}>
-                      <div className="step-form-right-col">
-                        <h4>{t('verificationReport:dataParameter')}</h4>
-                      </div>
-                    </Col>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="temporaryDeviations_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Description of project activity end */}
 
-                    <Col xl={7} md={24}>
-                      <div className="step-form-right-col">
-                        <h4>{t('verificationReport:sourceOfData')}</h4>
-                      </div>
-                    </Col>
-                    <Col xl={7} md={24}>
-                      <div className="step-form-right-col">
-                        <h4>{t('verificationReport:reportedValue')}</h4>
-                      </div>
-                    </Col>
-                    <Col xl={3} md={24}></Col>
-                  </Row>
+              {/* Application Methodologies main section */}
+              <h4 className="verificationReport-findings-subHeading">
+                {t('verificationReport:corrections')}
+              </h4>
+              {/* Application and selection of methodologies and standardized baselines start */}
+              <>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="corrections_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-                  <Form.List name="complianceList">
-                    {(fields, { add, remove }) => (
-                      <>
-                        {fields.map(({ key, name, ...restField }) => (
-                          <>
-                            <Row
-                              justify={'space-between'}
-                              gutter={[16, 16]}
-                              className="form-section"
-                            >
-                              <Col xl={7} md={24}>
-                                <div className="step-form-right-col">
-                                  <Form.Item
-                                    name={[name, 'dataParameter']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('verificationReport:dataParameter')} ${t(
-                                          'isRequired'
-                                        )}`,
-                                      },
-                                    ]}
-                                  >
-                                    <Input size="large" />
-                                  </Form.Item>
-                                </div>
-                              </Col>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="corrections_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-                              <Col xl={7} md={24}>
-                                <div className="step-form-right-col">
-                                  <Form.Item
-                                    name={[name, 'sourceOfData']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('verificationReport:sourceOfData')} ${t(
-                                          'isRequired'
-                                        )}`,
-                                      },
-                                    ]}
-                                  >
-                                    <Input size="large" />
-                                  </Form.Item>
-                                </div>
-                              </Col>
-                              <Col xl={7} md={24}>
-                                <div className="step-form-right-col">
-                                  <Form.Item
-                                    name={[name, 'reportedValue']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('verificationReport:reportedValue')} ${t(
-                                          'isRequired'
-                                        )}`,
-                                      },
-                                    ]}
-                                  >
-                                    <Input size="large" />
-                                  </Form.Item>
-                                </div>
-                              </Col>
-                              <Col md={24} xl={3} style={{ verticalAlign: 'top' }}>
-                                <Form.Item>
-                                  {fields.length > 1 && (
-                                    <Button
-                                      // type="dashed"
-                                      style={{ marginRight: 5 }}
-                                      onClick={() => {
-                                        // reduceTotalCreditingYears()
-                                        remove(name);
-                                      }}
-                                      size="small"
-                                      className="addMinusBtn"
-                                      // block
-                                      icon={<MinusOutlined />}
-                                    >
-                                      {/* Add Entity */}
-                                    </Button>
-                                  )}
-                                  {name === fields.length - 1 && (
-                                    <Button
-                                      // type="dashed"
-                                      onClick={() => {
-                                        // reduceTotalCreditingYears()
-                                        add();
-                                      }}
-                                      size="middle"
-                                      className="addMinusBtn"
-                                      // block
-                                      icon={<PlusOutlined />}
-                                    >
-                                      {/* Add Entity */}
-                                    </Button>
-                                  )}
-                                </Form.Item>
-                              </Col>
-                            </Row>
-                          </>
-                        ))}
-                      </>
-                    )}
-                  </Form.List>
-                </Col>
-              </Row>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="corrections_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Application and selection of methodologies and standardized baselines end */}
 
-              <h4 className="form-section-title">{`3.4.4  ${t(
-                'verificationReport:monitoredExPost'
-              )}`}</h4>
+              {/* Deviation from methodology and/or methodological tool start */}
 
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={12} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('verificationReport:exPostDataParameter')}
-                      name="exPostDataParameter"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:exPostDataParameter')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
+              <>
+                <h4 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:changesCreditingPeriodStartDate')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="changesCreditingPeriodStartDate_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-                    <Form.Item
-                      label={t('verificationReport:exPostFrequency')}
-                      name="exPostFrequency"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:exPostFrequency')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="changesCreditingPeriodStartDate_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-                    <Form.Item
-                      label={t('verificationReport:exPostIsMeasuring')}
-                      name="exPostIsMeasuring"
-                      rules={[
-                        {
-                          required: false,
-                          message: `${t('verificationReport:exPostIsMeasuring')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <Select size="large" placeholder={t('verificationReport:selectYourAnswer')}>
-                        <Select.Option value="yes">{t('verificationReport:yes')}</Select.Option>
-                        <Select.Option value="no">{t('verificationReport:no')}</Select.Option>
-                      </Select>
-                    </Form.Item>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="changesCreditingPeriodStartDate_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Deviation from methodology and/or methodological tool end */}
 
-                    <Form.Item
-                      label={t('verificationReport:exPostCalibration')}
-                      name="exPostCalibration"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:exPostCalibration')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" />
-                    </Form.Item>
-                    <Form.Item
-                      label={t('verificationReport:exPostMonitoringEquipment')}
-                      name="exPostMonitoringEquipment"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:exPostMonitoringEquipment')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
+              {/* Clarification on applicability of methodology, tool and/or standardized baseline start */}
+              <>
+                <h4 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:inclusionMonitoringPlan')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="inclusionMonitoringPlan_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={12} md={24}>
-                  <div className="step-form-left-col">
-                    <Row>
-                      <Col xl={12} md={24} style={{ paddingTop: '8px' }}>
-                        <label>{t('verificationReport:approachMentionedAbove')}</label>
-                      </Col>
-                      <Col xl={12} md={24}>
-                        <Form.Item
-                          name="aboveApproach"
-                          rules={[
-                            {
-                              required: false,
-                              message: `${t('verificationReport:aboveApproach')} ${t(
-                                'isRequired'
-                              )}`,
-                            },
-                          ]}
-                        >
-                          <Input size="large" />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  </div>
-                </Col>
-                <Col xl={12} md={24}></Col>
-                <Col xl={24} md={24}>
-                  <h4 className="form-section-title">
-                    <b>{t('verificationReport:projectEmissions')}</b>
-                  </h4>
-                  {t('verificationReport:projectEmissionsContent')}
-                  <h4 className="form-section-title">
-                    <b>{t('verificationReport:leakageEmissions')}</b>
-                  </h4>
-                  {t('verificationReport:leakageEmissionsContent')}
-                  <h4 className="form-section-title">
-                    <b>{t('verificationReport:emissionReductions')}</b>
-                  </h4>
-                  {t('verificationReport:emissionReductionsContent')}
-                </Col>
-                <Col xl={8} md={24}>
-                  <div className="step-form-left-col">
-                    <Row>
-                      <Col xl={10} md={24} style={{ paddingTop: '8px' }}>
-                        <label> ERy = 775– 0 – 0 =</label>
-                      </Col>
-                      <Col xl={14} md={24}>
-                        <Form.Item
-                          name="emissionReductions"
-                          rules={[
-                            {
-                              required: false,
-                              message: `${t('verificationReport:emissionReductions')} ${t(
-                                'isRequired'
-                              )}`,
-                            },
-                          ]}
-                        >
-                          <Input size="large" />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  </div>
-                </Col>
-                <Col xl={16} md={24}></Col>
-              </Row>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="inclusionMonitoringPlan_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={`3.1.1 ${t('verificationReport:accuracyOReductionCalculations')}`}
-                      name="accuracy"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('verificationReport:accuracyOReductionCalculations')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
-                    </Form.Item>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="inclusionMonitoringPlan_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Clarification on applicability of methodology, tool and/or standardized baseline end */}
 
-                    <Form.Item
-                      label={`3.1.2 ${t('verificationReport:managementSystemAndQualityControl')}`}
-                      name="qualityControl"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t(
-                            'verificationReport:managementSystemAndQualityControl'
-                          )} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={6} disabled={FormMode.VIEW === formMode} />
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-              <Row className="row" gutter={[40, 16]}>
-                <Col xl={24} md={24}>
-                  <div className="step-form-left-col">
-                    <Form.Item
-                      label={t('verificationReport:documentUpload')}
-                      name="optionalDocuments"
-                      valuePropName="fileList"
-                      getValueFromEvent={normFile}
-                      required={false}
-                      rules={
-                        FormMode.VIEW === formMode
-                          ? []
-                          : [
-                              {
-                                validator: async (rule, file) => {
-                                  if (file?.length > 0) {
-                                    if (file[0]?.size > maximumImageSize) {
-                                      // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                      throw new Error(`${t('common:maxSizeVal')}`);
-                                    }
-                                  }
-                                },
-                              },
-                            ]
-                      }
-                    >
-                      <Upload
-                        accept=".doc, .docx, .pdf, .png, .jpg"
-                        beforeUpload={(file: any) => {
-                          return false;
-                        }}
-                        className="design-upload-section"
-                        name="design"
-                        action="/upload.do"
-                        listType="picture"
-                        multiple={false}
-                        // maxCount={1}
-                      >
-                        <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
-                          {t('verificationReport:upload')}
-                        </Button>
-                      </Upload>
-                    </Form.Item>
-                  </div>
-                </Col>
-              </Row>
-              <h4 className="form-section-title">{`3.1.3  ${t(
-                'verificationReport:resolutionOfFindings'
-              )}`}</h4>
-              <Form.List name="resolutionOfFindings">
-                {(fields, { add, remove }) => (
-                  <>
-                    {fields.map(({ key, name, ...restField }) => (
-                      <>
-                        <Row justify={'space-between'} gutter={[16, 16]} className="form-section">
-                          <Col xl={22} md={24}>
-                            <Row>
-                              <Col xl={12} md={24}>
-                                <div className="step-form-right-col">
-                                  <label style={{ display: 'flex', marginTop: '5px' }}>
-                                    {t('verificationReport:typeOfTheFinding')}
-                                  </label>
-                                </div>
-                              </Col>
-                              <Col xl={12} md={24}>
-                                <div className="step-form-right-col">
-                                  <Form.Item
-                                    name={[name, 'type']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('verificationReport:typeOfTheFinding')} ${t(
-                                          'isRequired'
-                                        )}`,
-                                      },
-                                    ]}
-                                  >
-                                    <Checkbox.Group style={{ display: 'flex' }}>
-                                      <Checkbox value={t('verificationReport:cl')}>
-                                        {t('verificationReport:cl')}
-                                      </Checkbox>
-                                      <Checkbox value={t('verificationReport:car')}>
-                                        {t('verificationReport:car')}
-                                      </Checkbox>
-                                      <Checkbox value={t('verificationReport:far')}>
-                                        {t('verificationReport:far')}
-                                      </Checkbox>
-                                    </Checkbox.Group>
-                                  </Form.Item>
-                                </div>
-                              </Col>
+              {/* Project boundary, sources and GHGs start */}
+              <>
+                <h4 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:permanentChangesMonitoringPlan')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="permanentChangesMonitoringPlan_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-                              <Col xl={12} md={24}>
-                                <div className="step-form-right-col">
-                                  <label style={{ display: 'flex', marginTop: '5px' }}>
-                                    {t('verificationReport:findingNo')}
-                                  </label>
-                                </div>
-                              </Col>
-                              <Col xl={12} md={24}>
-                                <div className="step-form-right-col">
-                                  <Form.Item
-                                    name={[name, 'findingNo']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('verificationReport:findingNo')} ${t(
-                                          'isRequired'
-                                        )}`,
-                                      },
-                                    ]}
-                                  >
-                                    <Input size="large" />
-                                  </Form.Item>
-                                </div>
-                              </Col>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="permanentChangesMonitoringPlan_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-                              <Col xl={12} md={24}>
-                                <div className="step-form-right-col">
-                                  <label style={{ display: 'flex', marginTop: '5px' }}>
-                                    {t('verificationReport:refToMr')}
-                                  </label>
-                                </div>
-                              </Col>
-                              <Col xl={12} md={24}>
-                                <div className="step-form-right-col">
-                                  <Form.Item
-                                    name={[name, 'refToMr']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('verificationReport:refToMr')} ${t(
-                                          'isRequired'
-                                        )}`,
-                                      },
-                                    ]}
-                                  >
-                                    <Input size="large" />
-                                  </Form.Item>
-                                </div>
-                              </Col>
-                            </Row>
-                            <Row>
-                              <Col xl={24} md={24}>
-                                <div className="step-form-left-col">
-                                  <Form.Item
-                                    label={`${t('verificationReport:descriptionOfFinding')}`}
-                                    name={[name, 'description']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t(
-                                          'verificationReport:descriptionOfFinding'
-                                        )} ${t('isRequired')}`,
-                                      },
-                                    ]}
-                                  >
-                                    <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
-                                  </Form.Item>
-                                </div>
-                              </Col>
-                            </Row>
-                            <Row>
-                              <Col xl={24} md={24}>
-                                <div className="step-form-left-col">
-                                  <Form.Item
-                                    label={`${t('verificationReport:summaryOfOwnerResponse')}`}
-                                    name={[name, 'summary']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t(
-                                          'verificationReport:summaryOfOwnerResponse'
-                                        )} ${t('isRequired')}`,
-                                      },
-                                    ]}
-                                  >
-                                    <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
-                                  </Form.Item>
-                                </div>
-                              </Col>
-                            </Row>
-                            <Row>
-                              <Col xl={24} md={24}>
-                                <div className="step-form-left-col">
-                                  <Form.Item
-                                    label={`${t('verificationReport:verificationTeamAssessment')}`}
-                                    name={[name, 'assesment']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t(
-                                          'verificationReport:verificationTeamAssessment'
-                                        )} ${t('isRequired')}`,
-                                      },
-                                    ]}
-                                  >
-                                    <TextArea rows={4} disabled={FormMode.VIEW === formMode} />
-                                  </Form.Item>
-                                </div>
-                              </Col>
-                            </Row>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="permanentChangesMonitoringPlan_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Project boundary, sources and GHGs end */}
 
-                            <Row>
-                              <Col xl={12} md={24}>
-                                <div className="step-form-right-col">
-                                  <Form.Item
-                                    label={t('verificationReport:conclusion')}
-                                    name={[name, 'conclusion']}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('verificationReport:conclusion')} ${t(
-                                          'isRequired'
-                                        )}`,
-                                      },
-                                    ]}
-                                  >
-                                    <Checkbox.Group>
-                                      <Checkbox value="toBeChecked">
-                                        {t('verificationReport:toBeChecked')}
-                                      </Checkbox>
-                                      <br />
-                                      <Checkbox value="additionalActions">
-                                        {t('verificationReport:additionalActions')}
-                                      </Checkbox>
-                                      <br />
-                                      <Checkbox value="documentationCorrected">
-                                        {t('verificationReport:documentationCorrected')}
-                                      </Checkbox>
-                                      <br />
-                                      <Checkbox value="actionsTaken">
-                                        {t('verificationReport:actionsTaken')}
-                                      </Checkbox>
-                                    </Checkbox.Group>
-                                  </Form.Item>
-                                </div>
-                              </Col>
-                            </Row>
-                          </Col>
+              {/* Baseline scenario start */}
+              <>
+                <h4 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:changesProjectDesign')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="changesProjectDesign_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-                          <Col xl={2} md={24}>
-                            <div className="form-list-actions">
-                              {/* <h4>Entity {name + 2}</h4> */}
-                              <Form.Item>
-                                {name !== 0 && (
-                                  <Button
-                                    onClick={() => {
-                                      remove(name);
-                                    }}
-                                    size="large"
-                                    className="addMinusBtn"
-                                    icon={<MinusOutlined />}
-                                  >
-                                    {/* Remove Entity */}
-                                  </Button>
-                                )}
-                              </Form.Item>
-                            </div>
-                          </Col>
-                        </Row>
-                      </>
-                    ))}
-                    <div className="form-list-actions">
-                      <Form.Item>
-                        <Button
-                          // type="dashed"
-                          onClick={() => {
-                            add();
-                          }}
-                          size="large"
-                          className="addMinusBtn"
-                          // block
-                          icon={<PlusOutlined />}
-                        >
-                          {t('verificationReport:addFinding')}
-                        </Button>
-                      </Form.Item>
-                    </div>
-                  </>
-                )}
-              </Form.List>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="changesProjectDesign_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
 
-              <Row justify={'end'} className="step-actions-end">
-                <Button style={{ margin: '0 8px' }} onClick={prev} disabled={false}>
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="changesProjectDesign_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Baseline scenario end */}
+
+              {/* Demonstration Of Additionality start */}
+              <>
+                <h4 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:changesAfforestationReforestation')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="changesAfforestationReforestation_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="changesAfforestationReforestation_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="changesAfforestationReforestation_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Demonstration Of Additionality end */}
+
+              {/* Estimation of emission reductions or net anthropogenic removals start */}
+              <>
+                <h4 className="verificationReport-findings-heading">
+                  {t('verificationReport:complianceRegisteredMonitoringPlan')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="complianceRegisteredMonitoringPlan_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="complianceRegisteredMonitoringPlan_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="complianceRegisteredMonitoringPlan_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Estimation of emission reductions or net anthropogenic removals end */}
+
+              {/* Monitoring Plan start */}
+              <>
+                <h4 className="verificationReport-findings-heading">
+                  {t('verificationReport:complianceMonitoringActivities')}
+                </h4>
+                <h6 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:dataParametersFixedExAnte')}
+                </h6>
+
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="dataParametersFixedExAnte_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="dataParametersFixedExAnte_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="dataParametersFixedExAnte_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Monitoring Plan end */}
+
+              {/* Start date, crediting period type and duration start */}
+              <>
+                <h4 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:dataParametersMonitored')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="dataParametersMonitored_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="dataParametersMonitored_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="dataParametersMonitored_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Start date, crediting period type and duration end */}
+
+              {/* Environmental impacts start */}
+              <>
+                <h4 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:implementationSamplingPlan')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="implementationSamplingPlan_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="implementationSamplingPlan_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="implementationSamplingPlan_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Environmental impacts end */}
+
+              {/* Local Stakeholder Consultation start */}
+              <>
+                <h4 className="verificationReport-findings-heading">
+                  {t('verificationReport:complianceCalibrationFrequency')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="complianceCalibrationFrequency_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="complianceCalibrationFrequency_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="complianceCalibrationFrequency_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Local Stakeholder Consultation end */}
+
+              {/* Approval start */}
+              <>
+                <h4 className="verificationReport-findings-heading">
+                  {t('verificationReport:assessmentDataEmissionReductions')}
+                </h4>
+                <h6 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:calculationBaselineEmissions')}
+                </h6>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="calculationBaselineEmissions_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="calculationBaselineEmissions_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="calculationBaselineEmissions_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Approval end */}
+
+              {/* Authorization start */}
+              <>
+                <h4 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:calculationProjectEmissions')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="calculationProjectEmissions_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="calculationProjectEmissions_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="calculationProjectEmissions_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Authorization end */}
+
+              {/* Modalities of communication start */}
+              <>
+                <h4 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:calculationLeakageEmissions')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="calculationLeakageEmissions_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="calculationLeakageEmissions_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="calculationLeakageEmissions_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Modalities of communication end */}
+
+              {/* Summary Calculation start */}
+              <>
+                <h4 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:summaryGHGEmissionReductions')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="summaryGHGEmissionReductions_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input
+                      size="large"
+                      disabled={disableFields}
+                      // disabled={FormMode.VIEW === formMode}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="summaryGHGEmissionReductions_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input
+                      size="large"
+                      disabled={disableFields}
+                      // disabled={FormMode.VIEW === formMode}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="summaryGHGEmissionReductions_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input
+                      size="large"
+                      disabled={disableFields}
+                      // disabled={FormMode.VIEW === formMode}
+                    />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Global stakeholder consultation end */}
+
+              {/* comparison ghg start */}
+              <>
+                <h4 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:comparisonActualEmissionReductions')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="comparisonGHG_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="comparisonGHG_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="comparisonGHG_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* comparison ghg end */}
+
+              {/* remark dif start */}
+              <>
+                <h4 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:remarksDifferenceEstimatedValue')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="remarkDif_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="remarkDif_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="remarkDif_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* remark dif end */}
+
+              {/* actual ghg start */}
+              <>
+                <h4 className="verificationReport-findings-subHeading">
+                  {t('verificationReport:actualEmissionReductions')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="actualGHG_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="actualGHG_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="actualGHG_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* actual ghg end */}
+
+              {/* assesmentOfReport start */}
+              <>
+                <h4 className="verificationReport-findings-heading">
+                  {t('verificationReport:assessmentSustainableDevelopment')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="assesmentOfReport_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="assesmentOfReport_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="assesmentOfReport_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/*assesmentOfReport end */}
+
+              {/* Global stakeholder consultation start */}
+              <>
+                <h4 className="verificationReport-findings-heading">
+                  {t('verificationReport:globalStakeholderConsultation')}
+                </h4>
+                <section className="verificationReport-findings-section">
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:meansOfVerification')}`}
+                    name="globalStakeholderConsultation_meansOfVerification"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:meansOfVerification')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:findings')}`}
+                    name="globalStakeholderConsultation_findings"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:findings')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+
+                  <Form.Item
+                    className="full-width-form-item"
+                    label={`${t('verificationReport:conclusions')}`}
+                    name="globalStakeholderConsultation_conclusions"
+                    rules={[
+                      {
+                        required: true,
+                        message: `${t('verificationReport:conclusions')} ${t('isRequired')}`,
+                      },
+                    ]}
+                  >
+                    <Input size="large" disabled={disableFields} />
+                  </Form.Item>
+                </section>
+              </>
+              {/* Global stakeholder consultation end */}
+
+              <Row justify={'end'} className="step-actions-end mg-top-2">
+                <Button danger onClick={prev} disabled={false}>
                   {t('verificationReport:back')}
                 </Button>
-                <Button type="primary" htmlType="submit" disabled={false}>
-                  {t('verificationReport:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" onClick={next}>
+                    {t('verificationReport:next')}
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    size={'large'}
+                    htmlType={'submit'}
+                    // onClick={next}
+                  >
+                    {t('verificationReport:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>
