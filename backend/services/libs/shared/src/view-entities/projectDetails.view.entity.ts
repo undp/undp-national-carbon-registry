@@ -6,7 +6,7 @@ import { ActivityEntity } from "../entities/activity.entity";
 @ViewEntity({
   expression: `
     SELECT 
-      p."refId" as "projectId", 
+      p."refId", 
       p."title", 
       p."projectProposalStage", 
       p."creditEst",
@@ -27,7 +27,6 @@ import { ActivityEntity } from "../entities/activity.entity";
       c."logo",
       c."companyRole",
       c."state",
-      d."programmeId",
       d."status" as "currentStage",
       d."type",
       d."content"
@@ -38,7 +37,7 @@ import { ActivityEntity } from "../entities/activity.entity";
 })
 export class ProjectDetailsViewEntity {
   @ViewColumn()
-  projectId: string;
+  refId: string;
 
   @ViewColumn()
   title: string;
@@ -90,9 +89,6 @@ export class ProjectDetailsViewEntity {
 
   @ViewColumn()
   companyRole: string;
-
-  @ViewColumn()
-  programmeId: string;
 
   @ViewColumn()
   currentStage: string;
