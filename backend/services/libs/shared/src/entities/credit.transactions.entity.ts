@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { CreditTransactionTypesEnum } from "../enum/credit.transaction.types.enum";
 import { CreditTransactionStatusEnum } from "../enum/credit.transaction.status.enum";
 import { CreditRetirementTypeEnum } from "../enum/credit.retirement.type.enum";
@@ -40,4 +46,13 @@ export class CreditTransactionsEntity {
 
   @Column({ type: "text", nullable: true })
   country?: string;
+
+  @Column({ type: "bigint" })
+  createTime: number;
+
+  @BeforeInsert()
+  async timestampAtInsert() {
+    const timestamp = new Date().getTime();
+    this.createTime = timestamp;
+  }
 }

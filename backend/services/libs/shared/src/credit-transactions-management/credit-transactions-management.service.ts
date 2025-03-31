@@ -18,6 +18,12 @@ import { CounterService } from "../util/counter.service";
 import { CounterType } from "../util/counter.type.enum";
 import { CreditRetireActionDto } from "../dto/credit.retire.action.dto";
 import { RetirementACtionEnum } from "../enum/retirement.action.enum";
+import { QueryDto } from "../dto/query.dto";
+import { DataListResponseDto } from "../dto/data.list.response";
+import { CreditBlockBalancesViewEntity } from "../view-entities/credit.block.balances.view.entity";
+import { FilterEntry } from "../dto/filter.entry";
+import { CreditBlockTransfersViewEntity } from "../view-entities/credit.block.transfers.view.entity";
+import { CreditBlockRetirementsViewEntity } from "../view-entities/credit.block.retirements.view.entity";
 import { DocumentManagementService } from "../document-management/document-management.service";
 import { ProjectAuditLogType } from "../enum/project.audit.log.type.enum";
 
@@ -32,7 +38,13 @@ export class CreditTransactionsManagementService {
     private readonly counterService: CounterService,
     @InjectRepository(CreditTransactionsEntity)
     private creditTransactionsEntityRepository: Repository<CreditTransactionsEntity>,
-    private readonly documentManagementService: DocumentManagementService
+    private readonly documentManagementService: DocumentManagementService,
+    @InjectRepository(CreditBlockBalancesViewEntity)
+    private creditBlockBalancesViewEntityRepository: Repository<CreditBlockBalancesViewEntity>,
+    @InjectRepository(CreditBlockTransfersViewEntity)
+    private creditBlockTransfersViewEntityRepository: Repository<CreditBlockTransfersViewEntity>,
+    @InjectRepository(CreditBlockRetirementsViewEntity)
+    private creditBlockRetirementsViewEntityRepository: Repository<CreditBlockRetirementsViewEntity>
   ) {}
 
   public async transferCredits(
@@ -388,5 +400,120 @@ export class CreditTransactionsManagementService {
         updatedTranferRecord
       );
     }
+  }
+
+  public async queryCreditBalances(
+    query: QueryDto,
+    abilityCondition: string,
+    user: User
+  ): Promise<DataListResponseDto> {
+    if (user.companyRole == CompanyRole.PROJECT_DEVELOPER) {
+      const onlyOwn: FilterEntry = {
+        key: "receiverId",
+        value: user.companyId,
+        operation: "=",
+      };
+      query.filterAnd
+        ? query.filterAnd.push(onlyOwn)
+        : (query.filterAnd = [onlyOwn]);
+    }
+    const resp = await this.creditBlockBalancesViewEntityRepository
+      .createQueryBuilder("creditBlock")
+      .where(this.helperService.generateWhereSQL(query, abilityCondition))
+      .orderBy(
+        query?.sort?.key,
+        query?.sort?.order,
+        query?.sort?.nullFirst !== undefined
+          ? query?.sort?.nullFirst === true
+            ? "NULLS FIRST"
+            : "NULLS LAST"
+          : undefined
+      )
+      .skip(query.size * query.page - query.size)
+      .take(query.size)
+      .getManyAndCount();
+    return new DataListResponseDto(
+      resp.length > 0 ? resp[0] : undefined,
+      resp.length > 1 ? resp[1] : undefined
+    );
+  }
+
+  public async queryTransfers(
+    query: QueryDto,
+    abilityCondition: string,
+    user: User
+  ): Promise<DataListResponseDto> {
+    if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "project.notProjectParticipant",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    const ownTransfers: FilterEntry[] = [
+      { key: "senderId", value: user.companyId, operation: "=" },
+      { key: "recieverId", value: user.companyId, operation: "=" },
+    ];
+    query.filterOr
+      ? query.filterOr.push(...ownTransfers)
+      : (query.filterOr = ownTransfers);
+    const resp = await this.creditBlockTransfersViewEntityRepository
+      .createQueryBuilder("creditTx")
+      .addSelect(`"senderId"`, "dummyConfig")
+      .where(this.helperService.generateWhereSQL(query, abilityCondition))
+      .orderBy(
+        query?.sort?.key,
+        query?.sort?.order,
+        query?.sort?.nullFirst !== undefined
+          ? query?.sort?.nullFirst === true
+            ? "NULLS FIRST"
+            : "NULLS LAST"
+          : undefined
+      )
+      .skip(query.size * query.page - query.size)
+      .take(query.size)
+      .getManyAndCount();
+    return new DataListResponseDto(
+      resp.length > 0 ? resp[0] : undefined,
+      resp.length > 1 ? resp[1] : undefined
+    );
+  }
+
+  public async queryRetirements(
+    query: QueryDto,
+    abilityCondition: string,
+    user: User
+  ): Promise<DataListResponseDto> {
+    if (user.companyRole == CompanyRole.PROJECT_DEVELOPER) {
+      const onlyOwn: FilterEntry = {
+        key: "senderId",
+        value: user.companyId,
+        operation: "=",
+      };
+      query.filterAnd
+        ? query.filterAnd.push(onlyOwn)
+        : (query.filterAnd = [onlyOwn]);
+    }
+    const resp = await this.creditBlockRetirementsViewEntityRepository
+      .createQueryBuilder("creditTx")
+      .where(this.helperService.generateWhereSQL(query, abilityCondition))
+      .orderBy(
+        query?.sort?.key,
+        query?.sort?.order,
+        query?.sort?.nullFirst !== undefined
+          ? query?.sort?.nullFirst === true
+            ? "NULLS FIRST"
+            : "NULLS LAST"
+          : undefined
+      )
+      .skip(query.size * query.page - query.size)
+      .take(query.size)
+      .getManyAndCount();
+    return new DataListResponseDto(
+      resp.length > 0 ? resp[0] : undefined,
+      resp.length > 1 ? resp[1] : undefined
+    );
   }
 }
