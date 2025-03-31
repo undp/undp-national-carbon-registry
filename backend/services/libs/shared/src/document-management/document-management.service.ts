@@ -23,7 +23,7 @@ import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity
 import { CompanyService } from "../company/company.service";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
 import { ValidationReportDto } from "../dto/validationReport.dto";
-import { plainToInstance } from "class-transformer";
+import { plainToClass, plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { DocType } from "../enum/document.type";
 import { UserService } from "../user/user.service";
@@ -34,6 +34,12 @@ import { LetterOfAuthorisationRequestGen } from "../util/document-generators/let
 import { SerialNumberManagementService } from "../serial-number-management/serial-number-management.service";
 import { UserCompanyViewEntity } from "../view-entities/userCompany.view.entity";
 import { ActivityVintageCreditsDto } from "../dto/activty.vintage.credits.dto";
+import { Company } from "../entities/company.entity";
+import { CounterService } from "../util/counter.service";
+import { CounterType } from "../util/counter.type.enum";
+import { ProjectCreateDto } from "../dto/project.create.dto";
+import { DataResponseDto } from "../dto/data.response.dto";
+import { NoObjectionLetterGenerateService } from "../util/document-generators/no.objection.letter.gen";
 
 @Injectable()
 export class DocumentManagementService {
@@ -48,28 +54,52 @@ export class DocumentManagementService {
     private readonly helperService: HelperService,
     private readonly emailHelperService: EmailHelperService,
     private readonly auditLogService: AuditLogsService,
-    private readonly companyServie: CompanyService,
+    private readonly companyService: CompanyService,
     private fileHandler: FileHandlerInterface,
     private readonly letterOfAuthorizationGenerateService: LetterOfAuthorisationRequestGen,
     private readonly userService: UserService,
     private entityManager: EntityManager,
-    private readonly serialNumberManagementService: SerialNumberManagementService
+    private readonly serialNumberManagementService: SerialNumberManagementService,
+    private readonly counterService: CounterService,
+    private readonly noObjectionLetterGenerateService: NoObjectionLetterGenerateService
   ) {}
 
   async addDocument(addDocumentDto: BaseDocumentDto, user: User) {
     try {
-      const project = await this.programmeLedgerService.getProjectById(
-        addDocumentDto.projectRefId
-      );
+      let project: ProjectEntity;
+      let projectRefId: string;
+      let projectCompanyId: number;
+      if (
+        addDocumentDto.documentType ==
+        DocumentTypeEnum.INITIAL_NOTIFICATION_FORM
+      ) {
+        projectRefId = await this.counterService.incrementCount(
+          CounterType.PROJECT,
+          4
+        );
+        projectCompanyId = user.companyId;
+      } else {
+        project = await this.programmeLedgerService.getProjectById(
+          addDocumentDto.projectRefId
+        );
+        if (!project) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString("project.notExists", []),
+            HttpStatus.UNAUTHORIZED
+          );
+        }
+        projectRefId = project.refId;
+        projectCompanyId = project.companyId;
+      }
       const newDoc = new DocumentEntity();
       newDoc.content = JSON.stringify(addDocumentDto.data);
-      newDoc.programmeId = project.refId;
-      newDoc.companyId = project.companyId;
+      newDoc.programmeId = projectRefId;
+      newDoc.companyId = projectCompanyId;
       newDoc.userId = user.id;
       newDoc.type = addDocumentDto.documentType;
       const lastVersion = await this.getLastDocumentVersion(
         addDocumentDto.documentType,
-        project.refId
+        projectRefId
       );
       newDoc.version = lastVersion + 1;
       newDoc.status = DocumentStatus.PENDING;
@@ -78,10 +108,111 @@ export class DocumentManagementService {
 
       let updateProjectProposalStage: UpdateProjectProposalStageDto;
       let lastActivity: ActivityEntity;
-      let ICCompany;
+      let ICCompany: Company;
 
       switch (addDocumentDto.documentType) {
-        case DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT:
+        case DocumentTypeEnum.INITIAL_NOTIFICATION_FORM: {
+          if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.notProjectParticipant",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          const projectCompany = await this.companyService.findByCompanyId(
+            projectCompanyId
+          );
+          if (!projectCompany) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.noCompanyExistingInSystem",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+
+          const projectCreateDto: ProjectCreateDto = plainToInstance(
+            ProjectCreateDto,
+            addDocumentDto.data
+          );
+          const errors = await validate(projectCreateDto);
+          if (errors.length > 0) {
+            throw new HttpException(errors, HttpStatus.BAD_REQUEST);
+          }
+
+          for (const certifierId of projectCreateDto.independentCertifiers) {
+            const ICCompany = await this.companyService.findByCompanyId(
+              certifierId
+            );
+            if (
+              !ICCompany ||
+              ICCompany.companyRole != CompanyRole.INDEPENDENT_CERTIFIER
+            ) {
+              throw new HttpException(
+                this.helperService.formatReqMessagesString(
+                  "project.noICExistingInSystem",
+                  []
+                ),
+                HttpStatus.BAD_REQUEST
+              );
+            }
+          }
+          const project = plainToClass(ProjectEntity, projectCreateDto);
+          project.refId = projectRefId;
+          project.projectProposalStage = ProjectProposalStage.PENDING;
+          project.companyId = projectCompanyId;
+          project.txType = TxType.CREATE_PROJECT;
+          project.txTime = new Date().getTime();
+          project.createTime = project.txTime;
+          project.updateTime = project.txTime;
+
+          const docUrls = [];
+          if (projectCreateDto.additionalDocuments?.length > 0) {
+            projectCreateDto.additionalDocuments.forEach(async (doc) => {
+              const docUrl = await this.uploadDocument(
+                DocType.INF_ADDITIONAL_DOCUMENT,
+                project.refId,
+                doc
+              );
+              docUrls.push(docUrl);
+            });
+          }
+          projectCreateDto.additionalDocuments = docUrls;
+
+          newDoc.content = JSON.stringify(projectCreateDto);
+
+          const infDoc = await this.documentRepository.save(newDoc);
+          project.txRef = this.getDocumentTxRef(
+            DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
+            infDoc.id
+          );
+          let savedProgramme = await this.programmeLedgerService.createProject(
+            project
+          );
+
+          await this.emailHelperService.sendEmailToDNAAdmins(
+            EmailTemplates.INF_CREATE,
+            null,
+            project.refId
+          );
+          await this.emailHelperService.sendEmailToICAdmins(
+            EmailTemplates.INF_ASSIGN,
+            null,
+            project.refId
+          );
+
+          await this.logProjectStage(
+            project.refId,
+            ProjectAuditLogType.PENDING,
+            user.id
+          );
+          return new DataResponseDto(HttpStatus.OK, savedProgramme);
+          break;
+        }
+        case DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT: {
           if (user.companyId != project.companyId) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
@@ -130,8 +261,8 @@ export class DocumentManagementService {
             project.refId
           );
           break;
-
-        case DocumentTypeEnum.VALIDATION:
+        }
+        case DocumentTypeEnum.VALIDATION: {
           const validationReportDto: ValidationReportDto = plainToInstance(
             ValidationReportDto,
             addDocumentDto.data
@@ -193,7 +324,7 @@ export class DocumentManagementService {
             user.id
           );
 
-          ICCompany = await this.companyServie.findByCompanyId(user.companyId);
+          ICCompany = await this.companyService.findByCompanyId(user.companyId);
 
           await this.emailHelperService.sendEmailToPDAdmins(
             EmailTemplates.VALIDATION_SUBMITTED,
@@ -212,8 +343,8 @@ export class DocumentManagementService {
           );
 
           break;
-
-        case DocumentTypeEnum.MONITORING:
+        }
+        case DocumentTypeEnum.MONITORING: {
           if (user.companyId != project.companyId) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
@@ -368,8 +499,8 @@ export class DocumentManagementService {
             project.refId
           );
           break;
-
-        case DocumentTypeEnum.VERIFICATION:
+        }
+        case DocumentTypeEnum.VERIFICATION: {
           if (user.companyRole != CompanyRole.INDEPENDENT_CERTIFIER) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
@@ -430,7 +561,7 @@ export class DocumentManagementService {
             project
           );
 
-          ICCompany = this.companyServie.findByCompanyId(user.companyId);
+          ICCompany = await this.companyService.findByCompanyId(user.companyId);
 
           await this.emailHelperService.sendEmailToPDAdmins(
             EmailTemplates.VERIFICATION_CREATE_TO_PD,
@@ -443,6 +574,7 @@ export class DocumentManagementService {
             { icOrganisationName: ICCompany.name },
             project.refId
           );
+        }
       }
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -750,21 +882,12 @@ export class DocumentManagementService {
     ["jpeg", "jpg"],
   ]);
 
-  async approve(
-    refId: string,
-    requestData: DocumentActionRequestDto,
-    user: User
-  ) {
+  async verify(requestData: DocumentActionRequestDto, user: User) {
     try {
       const existingDocument = await this.documentRepository.findOne({
-        where: { id: Number(refId) },
+        where: { id: requestData.refId },
       });
-      if (
-        !existingDocument ||
-        ![DocumentStatus.PENDING, DocumentStatus.IC_APPROVED].includes(
-          existingDocument?.status
-        )
-      ) {
+      if (!existingDocument) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
             "project.noValidDocument",
@@ -774,68 +897,10 @@ export class DocumentManagementService {
         );
       }
       switch (existingDocument.type) {
-        case DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT:
-          {
-            await this.performPDDAction(existingDocument, requestData, user);
-          }
+        case DocumentTypeEnum.INITIAL_NOTIFICATION_FORM: {
+          await this.performINFAction(existingDocument, requestData, user);
           break;
-        case DocumentTypeEnum.VALIDATION:
-          {
-            await this.performValidationReportAction(
-              existingDocument,
-              requestData,
-              user
-            );
-          }
-          break;
-        case DocumentTypeEnum.MONITORING:
-          {
-            await this.performMonitoringAction(
-              existingDocument,
-              requestData,
-              user
-            );
-          }
-          break;
-        case DocumentTypeEnum.VERIFICATION:
-          {
-            await this.performVerificationAction(
-              existingDocument,
-              requestData,
-              user
-            );
-          }
-          break;
-      }
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  async reject(
-    refId: string,
-    requestData: DocumentActionRequestDto,
-    user: User
-  ) {
-    try {
-      const existingDocument = await this.documentRepository.findOne({
-        where: { id: Number(refId) },
-      });
-      if (
-        !existingDocument ||
-        ![DocumentStatus.PENDING, DocumentStatus.IC_APPROVED].includes(
-          existingDocument?.status
-        )
-      ) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "project.noValidDocument",
-            []
-          ),
-          HttpStatus.BAD_REQUEST
-        );
-      }
-      switch (existingDocument.type) {
+        }
         case DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT:
           {
             await this.performPDDAction(existingDocument, requestData, user);
@@ -1047,6 +1112,111 @@ export class DocumentManagementService {
     em ? await em.save(AuditEntity, log) : await this.auditLogService.save(log);
   }
 
+  private async performINFAction(
+    document: DocumentEntity,
+    requestData: DocumentActionRequestDto,
+    user: User
+  ) {
+    if (document.status !== DocumentStatus.PENDING) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "project.documentNotInPendingState",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("project.notAuthorised", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    const project = await this.programmeLedgerService.getProjectById(
+      document.programmeId
+    );
+    if (!project) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("project.noProject", []),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    const companyId = project.companyId;
+    const projectCompany = await this.companyService.findByCompanyId(companyId);
+    if (requestData.action == DocumentStatus.DNA_APPROVED) {
+      const noObjectionLetterUrl =
+        await this.noObjectionLetterGenerateService.generateReport(
+          projectCompany.name,
+          project.title,
+          project.refId
+        );
+
+      const updateProjectroposalStage: UpdateProjectProposalStageDto = {
+        programmeId: document.programmeId,
+        txType: TxType.APPROVE_INF,
+        data: { noObjectionLetterUrl: noObjectionLetterUrl },
+      };
+      const response = await this.updateProposalStage(
+        updateProjectroposalStage,
+        user,
+        this.getDocumentTxRef(
+          DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
+          document.id,
+          user.id
+        )
+      );
+
+      await this.emailHelperService.sendEmailToPDAdmins(
+        EmailTemplates.INF_APPROVE,
+        null,
+        project.refId
+      );
+
+      await this.logProjectStage(
+        project.refId,
+        ProjectAuditLogType.APPROVED,
+        user.id
+      );
+    } else if (requestData.action == DocumentStatus.DNA_REJECTED) {
+      const updateProjectProposalStage = {
+        programmeId: document.programmeId,
+        txType: TxType.REJECT_INF,
+      };
+
+      await this.updateProposalStage(
+        updateProjectProposalStage,
+        user,
+        this.getDocumentTxRef(
+          DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
+          document.id,
+          user.id
+        )
+      );
+
+      await this.emailHelperService.sendEmailToPDAdmins(
+        EmailTemplates.INF_REJECT,
+        null,
+        project.refId
+      );
+
+      await this.logProjectStage(
+        project.refId,
+        ProjectAuditLogType.REJECTED,
+        user.id
+      );
+    } else {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "project.incorrectDocumentAction",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    return new DataResponseDto(HttpStatus.OK, "SUCCESS");
+  }
+
   async performPDDAction(
     document: DocumentEntity,
     requestData: DocumentActionRequestDto,
@@ -1078,7 +1248,7 @@ export class DocumentManagementService {
           HttpStatus.UNAUTHORIZED
         );
       }
-      const ICCompany = await this.companyServie.findByCompanyId(
+      const ICCompany = await this.companyService.findByCompanyId(
         user.companyId
       );
       if (requestData.action === DocumentStatus.IC_REJECTED) {
@@ -1304,7 +1474,7 @@ export class DocumentManagementService {
           user.id
         );
       } else if (requestData.action === DocumentStatus.DNA_APPROVED) {
-        const projectCompany = await this.companyServie.findByCompanyId(
+        const projectCompany = await this.companyService.findByCompanyId(
           project.companyId
         );
 
@@ -1413,7 +1583,7 @@ export class DocumentManagementService {
           HttpStatus.UNAUTHORIZED
         );
       }
-      const ICCompany = await this.companyServie.findByCompanyId(
+      const ICCompany = await this.companyService.findByCompanyId(
         user.companyId
       );
       const activity = await this.activityEntityRepository.findOne({
