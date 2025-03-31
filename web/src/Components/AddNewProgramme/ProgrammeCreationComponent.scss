@@ -5,6 +5,10 @@
 .programme-details-form-container,
 .programme-sought-form-container {
   width: 100%;
+
+  .ant-steps-icon-dot {
+    display: none;
+  }
   .programme-details-form,
   .programme-sought-form {
     width: 100%;
@@ -42,11 +46,18 @@
 
     .ant-upload-list-item-name {
       color: $primary-color;
+      width: 40px;
     }
+
+    .ant-upload-list-item-image {
+      margin-top: 4px;
+      height: 35px;
+    }
+
     .steps-actions {
       display: flex;
       flex-direction: row-reverse;
-      margin-right: 1rem;
+      margin-right: 2.4rem;
 
       .action-btn {
         border: 1px solid $primary-color;

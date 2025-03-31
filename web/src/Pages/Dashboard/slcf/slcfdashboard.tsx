@@ -12,7 +12,7 @@ const SLCFDashboard = () => {
       t={t}
       ButtonGroup={ButtonGroup}
       Link={Link}
-      isMultipleDashboardsVisible={true}
+      isMultipleDashboardsVisible={false}
     ></SLCFDashboardComponent>
   );
 };

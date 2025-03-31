@@ -1,4 +1,4 @@
-import { Button, Checkbox, Modal } from 'antd';
+import { Button, Checkbox, Form, Modal } from 'antd';
 import React, { useState } from 'react';
 import './ConfirmDialog.scss';
 
@@ -11,9 +11,10 @@ interface IConfirmDialog {
   checkboxText?: string;
   okText: string;
   cancelText: string;
-  okAction?: () => void;
+  okAction?: (remarks?: string) => void;
   closeDialog: () => void;
   isReject: boolean; // if true modal is a reject action modal
+  getRemarks?: boolean;
 }
 const ConfirmDialog = (props: IConfirmDialog) => {
   const {
@@ -28,17 +29,24 @@ const ConfirmDialog = (props: IConfirmDialog) => {
     okAction,
     closeDialog,
     isReject,
+    getRemarks,
   } = props;
 
   const [allowOk, setAllowOk] = useState<boolean>();
 
   return (
-    <Modal open={showDialog} title={null} footer={null} className="dialog-box" closable={false}>
+    <Modal
+      open={showDialog}
+      title={null}
+      footer={null}
+      className="dialog-box"
+      onCancel={closeDialog}
+    >
       <div>
         <Icon className="icon" />
       </div>
       <h4 className="message">{message}</h4>
-      {subMessage && <p className="subMessage">{subMessage}</p>}
+      {subMessage && !getRemarks && <p className="subMessage">{subMessage}</p>}
 
       {showCheckbox && (
         <div>

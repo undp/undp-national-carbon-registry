@@ -6,9 +6,11 @@ import { ProcessSteps } from './ValidationStepperComponent';
 import moment from 'moment';
 import { fileUploadValueExtract } from '../../Utils/utilityHelper';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const ValidationOpinion = (props: ValidationStepsProps) => {
-  const { prev, next, form, current, t, countries, handleValuesUpdate, formMode } = props;
+  const { prev, next, form, current, t, countries, handleValuesUpdate, disableFields } = props;
 
   const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
     ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
@@ -27,23 +29,22 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
 
     const validationOpinionFormValues: any = {
       opinion: values?.opinion,
-      validator1Signature: sig1,
-      validator1Designation: values?.validator1Designation,
-      validator1Name: values?.validator1Name,
-      validator1DateOfSign: moment(values?.validator1DateOfSign).valueOf(),
-      validator2Designation: values?.validator2Designation,
-      validator2Name: values?.validator2Name,
-      validator2Signature: sig2,
-      validator2DateOfSign: moment(values?.validator2DateOfSign).valueOf(),
+      // validator1Signature: sig1,
+      // validator1Designation: values?.validator1Designation,
+      // validator1Name: values?.validator1Name,
+      // validator1DateOfSign: moment(values?.validator1DateOfSign).valueOf(),
+      // validator2Designation: values?.validator2Designation,
+      // validator2Name: values?.validator2Name,
+      // validator2Signature: sig2,
+      // validator2DateOfSign: moment(values?.validator2DateOfSign).valueOf(),
     };
 
-    console.log(ProcessSteps.VR_VALIDATION_OPINION, validationOpinionFormValues);
-    handleValuesUpdate({ [ProcessSteps.VR_VALIDATION_OPINION]: validationOpinionFormValues });
+    handleValuesUpdate({ validationOpinion: validationOpinionFormValues });
   };
 
   return (
     <>
-      {current === 8 && (
+      {current === 7 && (
         <div>
           <div className="val-report-step-form-container">
             <Form
@@ -59,7 +60,7 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                   next();
                 }
               }}
-              disabled={FormMode.VIEW === formMode}
+              // disabled={FormMode.VIEW === formMode}
             >
               <Form.Item
                 className="full-width-form-item"
@@ -72,16 +73,22 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
                   },
                 ]}
               >
-                <TextArea disabled={FormMode.VIEW === formMode} rows={4} />
+                <TextArea disabled={disableFields} rows={4} />
               </Form.Item>
 
               <Row justify={'end'} className="step-actions-end">
                 <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
-                <Button type="primary" size={'large'} disabled={false} htmlType="submit">
-                  {t('validationReport:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" size={'large'} disabled={false} onClick={next}>
+                    {t('validationReport:next')}
+                  </Button>
+                ) : (
+                  <Button type="primary" size={'large'} disabled={false} htmlType="submit">
+                    {t('validationReport:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

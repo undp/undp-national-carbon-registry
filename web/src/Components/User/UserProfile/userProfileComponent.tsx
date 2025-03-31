@@ -34,9 +34,9 @@ export const UserProfileComponent = (props: any) => {
         setUserDetails(response.data.user);
         setIsLoading(false);
       }
+      //console.log('---------profile details--------', response);
     } catch (exception) {}
   };
-
   useEffect(() => {
     getUserProfileDetails();
   }, []);

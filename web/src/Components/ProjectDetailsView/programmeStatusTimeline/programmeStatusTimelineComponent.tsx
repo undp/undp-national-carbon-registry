@@ -11,6 +11,7 @@ import {
   SafetyCertificateOutlined,
   LikeOutlined,
   CheckOutlined,
+  CloseCircleOutlined,
 } from '@ant-design/icons';
 import './programmeStatusTimelineComponent.scss';
 import * as Icon from 'react-bootstrap-icons';
@@ -22,37 +23,37 @@ interface ProgrammeStatusTimelineComponentProps {
   translator: any;
 }
 
+enum StatusKeys {
+  SUBMITTED = 'submitted',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+  PENDING = 'pending',
+}
+
 const getCurrentStep = (stage: ProjectProposalStage) => {
   switch (getProjectProposalStageEnumVal(stage)) {
-    // case ProjectProposalStage.SUBMITTED_INF:
-    //   return 0;
-    // case ProjectProposalStage.APPROVED_INF:
-    //   return 1;
-    // case ProjectProposalStage.REJECTED_INF:
-    //   return 0;
-    // case ProjectProposalStage.SUBMITTED_COST_QUOTATION:
-    //   return 1;
-    // case ProjectProposalStage.SUBMITTED_PROPOSAL:
-    //   return 1;
-    // case ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT:
-    //   return 1;
-    // case ProjectProposalStage.ACCEPTED_PROPOSAL:
-    //   return 2;
-    // case ProjectProposalStage.REJECTED_PROPOSAL:
-    //   return 1;
-    // case ProjectProposalStage.SUBMITTED_CMA:
-    //   return 2;
-    // case ProjectProposalStage.APPROVED_CMA:
-    //   return 3;
-    // case ProjectProposalStage.REJECTED_CMA:
-    //   return 2;
-    // case ProjectProposalStage.VALIDATION_PENDING:
-    //   return 3;
-    // case ProjectProposalStage.AUTHORISED:
-    //   return 4;
-    // case ProjectProposalStage.REJECTED_VALIDATION:
-    //   return 3;
-
+    case ProjectProposalStage.PENDING:
+      return 0;
+    case ProjectProposalStage.REJECTED:
+      return 0;
+    case ProjectProposalStage.APPROVED:
+      return 1;
+    case ProjectProposalStage.PDD_SUBMITTED:
+      return 2;
+    case ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER:
+      return 2;
+    case ProjectProposalStage.PDD_REJECTED_BY_CERTIFIER:
+      return 2;
+    case ProjectProposalStage.PDD_REJECTED_BY_DNA:
+      return 2;
+    case ProjectProposalStage.PDD_APPROVED_BY_DNA:
+      return 2;
+    case ProjectProposalStage.VALIDATION_REPORT_SUBMITTED:
+      return 3;
+    case ProjectProposalStage.VALIDATION_REPORT_REJECTED:
+      return 3;
+    case ProjectProposalStage.AUTHORISED:
+      return 4;
     default:
       return 0;
   }
@@ -60,251 +61,189 @@ const getCurrentStep = (stage: ProjectProposalStage) => {
 
 const getINFContent = (stage: ProjectProposalStage, t: any) => {
   switch (getProjectProposalStageEnumVal(stage)) {
-    // case ProjectProposalStage.SUBMITTED_INF:
-    //   return {
-    //     subTitle: t('slcfRoadmapTimeline:submitted'),
-    //     statusKey: 'submitted',
-    //     icon: <NotificationOutlined />,
-    //     className: 'inf-submitted',
-    //     subTaskOne: true,
-    //     subTaskTwo: false,
-    //   };
-    // case ProjectProposalStage.REJECTED_INF:
-    //   return {
-    //     subTitle: t('slcfRoadmapTimeline:rejected'),
-    //     statusKey: 'rejected',
-    //     icon: <CloseCircleFilled />,
-    //     className: 'inf-rejected',
-    //     subTaskOne: true,
-    //     subTaskTwo: true,
-    //   };
+    case ProjectProposalStage.PENDING:
+      return {
+        subTitle: t('slcfRoadmapTimeline:submitted'),
+        statusKey: StatusKeys.SUBMITTED,
+        icon: <NotificationOutlined />,
+        className: 'inf-submitted',
+        subTaskOne: true,
+        subTaskTwo: false,
+      };
+    case ProjectProposalStage.APPROVED:
+      return {
+        subTitle: t('slcfRoadmapTimeline:approved'),
+        statusKey: StatusKeys.APPROVED,
+        icon: <Icon.CheckCircleFill />,
+        className: 'inf-approved',
+        subTaskOne: true,
+        subTaskTwo: true,
+      };
+
+    case ProjectProposalStage.REJECTED:
+      return {
+        subTitle: t('slcfRoadMapTimeline:rejected'),
+        statusKey: StatusKeys.REJECTED,
+        icon: <CloseCircleOutlined />,
+        subTaskOne: true,
+        subTaskTwo: true,
+      };
     default:
       return {
         subTitle: t('slcfRoadmapTimeline:approved'),
-        statusKey: 'approved',
+        statusKey: StatusKeys.APPROVED,
         icon: <Icon.CheckCircleFill />,
-        className: 'inf-approved',
+        // className: 'inf-approved',
         subTaskOne: true,
         subTaskTwo: true,
       };
   }
 };
 // future
-// const getNoObjectionLetterContent = (stage: ProjectProposalStage, t: any) => {
-//   switch (getProjectProposalStageEnumVal(stage)) {
-//     // case ProjectProposalStage.NO_OBJECTION_LETTER_PENDING:
-//     //   return {
-//     //     subTitle: t('slcfRoadmapTimeline:pending'),
-//     //     statusKey: 'pending',
-//     //     icon: <ReadOutlined />,
-//     //     className: 'no-objection-letter-pending',
-//     //     subTasks: [t('slcfRoadmapTimeline:noObjectionPending')],
-//     //   };
-//     case ProjectProposalStage.NO_OBJECTION_LETTER_GENERATED:
-//       return {
-//         subTitle: t('slcfRoadmapTimeline:generated'),
-//         statusKey: 'generated',
-//         className: 'no-objection-letter-generated',
-//         icon: <ReadOutlined />,
-//         subTasks: [t('slcfRoadmapTimeline:noObjectionPending')],
-//       };
-//     default:
-//       return {
-//         subTitle: t('slcfRoadmapTimeline:pending'),
-//         statusKey: 'pending',
-//         icon: <ReadOutlined />,
-//         className: 'no-objection-letter-pending',
-//         subTasks: [t('slcfRoadmapTimeline:noObjectionPending')],
-//       };
-//   }
-// };
-
-const getProposalContent = (stage: ProjectProposalStage, t: any) => {
+const getNoObjectionLetterContent = (stage: ProjectProposalStage, t: any) => {
+  console.log('-------------stage-----------', stage);
   switch (getProjectProposalStageEnumVal(stage)) {
-    // case ProjectProposalStage.SUBMITTED_INF:
-    // case ProjectProposalStage.APPROVED_INF:
-    // case ProjectProposalStage.SUBMITTED_COST_QUOTATION:
-    // case ProjectProposalStage.SUBMITTED_PROPOSAL:
-    //   return {
-    //     subTitle: t('slcfRoadmapTimeline:pending'),
-    //     statusKey: 'pending',
-    //     icon: <ReadOutlined />,
-    //     className: 'proposal-pending',
-    //     subTaskOne: false,
-    //     subTaskTwo: false,
-    //   };
-    // case ProjectProposalStage.REJECTED_INF:
-    //   return {
-    //     subTitle: '',
-    //     statusKey: '',
-    //     icon: <CloseOutlined />,
-    //     className: 'proposal-pending',
-    //     subTaskOne: false,
-    //     subTaskTwo: false,
-    //   };
-    // case ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT:
-    //   return {
-    //     subTitle: t('slcfRoadmapTimeline:submitted'),
-    //     statusKey: 'submitted',
-    //     icon: <ReadOutlined />,
-    //     className: 'proposal-submitted',
-    //     subTaskOne: true,
-    //     subTaskTwo: false,
-    //   };
-    // case ProjectProposalStage.REJECTED_PROPOSAL:
-    //   return {
-    //     subTitle: t('slcfRoadmapTimeline:rejected'),
-    //     statusKey: 'rejected',
-    //     icon: <CloseCircleFilled />,
-    //     className: 'proposal-rejected',
-    //     subTaskOne: true,
-    //     subTaskTwo: true,
-    //   };
+    case ProjectProposalStage.PENDING:
+      return {
+        subTitle: t('slcfRoadmapTimeline:pending'),
+        statusKey: StatusKeys.PENDING,
+        icon: <ReadOutlined />,
+        className: 'no-objection-letter-pending',
+        subTaskOne: true,
+      };
+    case ProjectProposalStage.REJECTED:
+      return {
+        subTitle: t('slcfRoadmapTimeline:pending'),
+        statusKey: StatusKeys.REJECTED,
+        icon: <CloseOutlined />,
+        className: 'no-objection-letter-pending',
+        subTaskOne: true,
+      };
     default:
       return {
-        subTitle: t('slcfRoadmapTimeline:accepted'),
-        statusKey: 'accepted',
+        subTitle: t('slcfRoadmapTimeline:issued'),
+        statusKey: StatusKeys.APPROVED,
+        className: 'no-objection-letter-generated',
         icon: <Icon.CheckCircleFill />,
-        className: 'proposal-approved',
         subTaskOne: true,
-        subTaskTwo: true,
       };
   }
 };
 
-const getCMAContent = (stage: ProjectProposalStage, t: any) => {
+const getPDDContent = (stage: ProjectProposalStage, t: any) => {
   switch (getProjectProposalStageEnumVal(stage)) {
-    // case ProjectProposalStage.SUBMITTED_INF:
-    // case ProjectProposalStage.APPROVED_INF:
-    // case ProjectProposalStage.SUBMITTED_COST_QUOTATION:
-    // case ProjectProposalStage.SUBMITTED_PROPOSAL:
-    // case ProjectProposalStage.SUBMITTED_VALIDATION_AGREEMENT:
-    // case ProjectProposalStage.ACCEPTED_PROPOSAL:
-    //   return {
-    //     subTitle: t('slcfRoadmapTimeline:pending'),
-    //     statusKey: 'pending',
-    //     icon: <FileDoneOutlined />,
-    //     className: 'cma-pending',
-    //     subTaskOne: false,
-    //     subTaskTwo: false,
-    //   };
-    // case ProjectProposalStage.REJECTED_INF:
-    // case ProjectProposalStage.REJECTED_PROPOSAL:
-    //   return {
-    //     subTitle: '',
-    //     statusKey: '',
-    //     icon: <CloseOutlined />,
-    //     className: 'cma-pending',
-    //     subTaskOne: false,
-    //     subTaskTwo: false,
-    //   };
-    // case ProjectProposalStage.SUBMITTED_CMA:
-    //   return {
-    //     subTitle: t('slcfRoadmapTimeline:submitted'),
-    //     statusKey: 'submitted',
-    //     icon: <FileDoneOutlined />,
-    //     className: 'cma-submitted',
-    //     subTaskOne: true,
-    //     subTaskTwo: false,
-    //   };
-    // case ProjectProposalStage.REJECTED_CMA:
-    //   return {
-    //     subTitle: t('slcfRoadmapTimeline:rejected'),
-    //     statusKey: 'rejected',
-    //     icon: <CloseCircleFilled />,
-    //     className: 'cma-rejected',
-    //     subTaskOne: true,
-    //     subTaskTwo: true,
-    //   };
+    case ProjectProposalStage.PENDING:
+    case ProjectProposalStage.APPROVED:
+    case ProjectProposalStage.REJECTED:
+      return {
+        subTitle: t('slcfRoadmapTimeline:pending'),
+        statusKey: StatusKeys.PENDING,
+        icon: <FileDoneOutlined />,
+        className: 'pdd-pending',
+        subTaskOne: false,
+        subTaskTwo: false,
+      };
+    case ProjectProposalStage.PDD_SUBMITTED:
+      return {
+        subTitle: t('slcfRoadmapTimeline:submitted'),
+        statusKey: StatusKeys.SUBMITTED,
+        icon: <FileDoneOutlined />,
+        className: 'pdd-submitted',
+        subTaskOne: true,
+        subTaskTwo: false,
+        subTaskThree: false,
+      };
+    case ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER:
+      return {
+        subTitle: t('slcfRoadmapTimeline:submitted'),
+        statusKey: StatusKeys.APPROVED,
+        icon: <FileDoneOutlined />,
+        className: 'pdd-submitted',
+        subTaskOne: true,
+        subTaskTwo: true,
+        subTaskThree: false,
+      };
+    case ProjectProposalStage.PDD_REJECTED_BY_CERTIFIER:
+      return {
+        subTitle: t('slcfRoadmapTimeline:rejected'),
+        statusKey: StatusKeys.REJECTED,
+        icon: <CloseCircleFilled />,
+        className: 'pdd-rejected',
+        subTaskOne: true,
+        subTaskTwo: false,
+        subTaskThree: null,
+      };
+    case ProjectProposalStage.PDD_REJECTED_BY_DNA:
+      return {
+        subTitle: t('slcfRoadmapTimeline:rejected'),
+        statusKey: StatusKeys.REJECTED,
+        icon: <CloseCircleFilled />,
+        className: 'pdd-rejected',
+        subTaskOne: true,
+        subTaskTwo: true,
+        subTaskThree: false,
+      };
     default:
       return {
         subTitle: t('slcfRoadmapTimeline:approved'),
         statusKey: 'approved',
         icon: <Icon.CheckCircleFill />,
-        className: 'cma-approved',
+        className: 'pdd-approved',
         subTaskOne: true,
         subTaskTwo: true,
+        subTaskThree: true,
       };
   }
 };
 
 const getValidationContent = (stage: ProjectProposalStage, t: any) => {
   switch (getProjectProposalStageEnumVal(stage)) {
-    // case ProjectProposalStage.REJECTED_INF:
-    // case ProjectProposalStage.REJECTED_PROPOSAL:
-    // case ProjectProposalStage.REJECTED_CMA:
-    //   return {
-    //     subTitle: '',
-    //     statusKey: '',
-    //     icon: <CloseOutlined />,
-    //     className: 'validation-pending',
-    //     subTaskOne: false,
-    //     subTaskTwo: false,
-    //   };
-    // case ProjectProposalStage.VALIDATION_PENDING:
-    //   return {
-    //     subTitle: t('slcfRoadmapTimeline:submitted'),
-    //     statusKey: 'submitted',
-    //     icon: <SafetyCertificateOutlined />,
-    //     className: 'validation-submitted',
-    //     subTaskOne: true,
-    //     subTaskTwo: false,
-    //   };
-    // case ProjectProposalStage.AUTHORISED:
-    //   return {
-    //     subTitle: t('slcfRoadmapTimeline:approved'),
-    //     statusKey: 'approved',
-    //     icon: <Icon.CheckCircleFill />,
-    //     className: 'validation-approved',
-    //     subTaskOne: true,
-    //     subTaskTwo: true,
-    //   };
-    // case ProjectProposalStage.REJECTED_VALIDATION:
-    //   return {
-    //     subTitle: t('slcfRoadmapTimeline:rejected'),
-    //     statusKey: 'rejected',
-    //     icon: <CloseCircleFilled />,
-    //     className: 'validation-rejected',
-    //     subTaskOne: true,
-    //     subTaskTwo: true,
-    //   };
-    default:
+    case ProjectProposalStage.PENDING:
+    case ProjectProposalStage.APPROVED:
+    case ProjectProposalStage.REJECTED:
+    case ProjectProposalStage.PDD_SUBMITTED:
+    case ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER:
+    case ProjectProposalStage.PDD_APPROVED_BY_DNA:
+    case ProjectProposalStage.PDD_REJECTED_BY_CERTIFIER:
+    case ProjectProposalStage.PDD_REJECTED_BY_DNA:
       return {
         subTitle: t('slcfRoadmapTimeline:pending'),
-        statusKey: 'pending',
+        statusKey: StatusKeys.PENDING,
         icon: <SafetyCertificateOutlined />,
         className: 'validation-pending',
         subTaskOne: false,
         subTaskTwo: false,
+        subTaskThree: false,
       };
-  }
-};
 
-const getAuthorisedContent = (stage: ProjectProposalStage, t: any) => {
-  switch (getProjectProposalStageEnumVal(stage)) {
-    // case ProjectProposalStage.REJECTED_INF:
-    // case ProjectProposalStage.REJECTED_CMA:
-    // case ProjectProposalStage.REJECTED_PROPOSAL:
-    // case ProjectProposalStage.REJECTED_VALIDATION:
-    //   return {
-    //     subTitle: '',
-    //     statusKey: '',
-    //     icon: <CloseOutlined />,
-    //     className: 'auth-pending',
-    //   };
-    // case ProjectProposalStage.AUTHORISED:
-    //   return {
-    //     subTitle: t('slcfRoadmapTimeline:completed'),
-    //     statusKey: 'completed',
-    //     icon: <Icon.CheckCircleFill />,
-    //     className: 'auth-approved',
-    //   };
+    case ProjectProposalStage.VALIDATION_REPORT_SUBMITTED:
+      return {
+        subTitle: t('slcfRoadmapTimeline:submitted'),
+        statusKey: StatusKeys.SUBMITTED,
+        icon: <SafetyCertificateOutlined />,
+        className: 'validation-submitted',
+        subTaskOne: true,
+        subTaskTwo: false,
+        subTaskThree: false,
+      };
+    case ProjectProposalStage.VALIDATION_REPORT_REJECTED:
+      return {
+        subTitle: t('slcfRoadmapTimeline:rejected'),
+        statusKey: StatusKeys.REJECTED,
+        icon: <CloseCircleFilled />,
+        className: 'validation-rejected',
+        subTaskOne: true,
+        subTaskTwo: false,
+        subTaskThree: false,
+      };
     default:
       return {
-        subTitle: t('slcfRoadmapTimeline:pending'),
-        statusKey: 'pending',
-        icon: <LikeOutlined />,
-        className: 'auth-pending',
+        subTitle: t('slcfRoadmapTimeline:approved'),
+        statusKey: StatusKeys.APPROVED,
+        icon: <Icon.CheckCircleFill />,
+        className: 'validation-pending',
+        subTaskOne: false,
+        subTaskTwo: false,
       };
   }
 };
@@ -313,18 +252,16 @@ const ProgrammeStatusTimelineComponent: React.FC<ProgrammeStatusTimelineComponen
   programmeDetails,
   translator,
 }) => {
-  console.log('---------programmeStatus-----------', programmeDetails);
   const t = translator;
+  // programmeDetails.projectProposalStage = ProjectProposalStage.VALIDATION_REPORT_REJECTED;
   const currentStep = getCurrentStep(programmeDetails.projectProposalStage);
   const infContent = getINFContent(programmeDetails.projectProposalStage, t);
-  const proposalContent = getProposalContent(programmeDetails.projectProposalStage, t); // need to update
-  const cmaContent = getCMAContent(programmeDetails.projectProposalStage, t); // need to update
+  const noObjectionLetterContent = getNoObjectionLetterContent(
+    programmeDetails.projectProposalStage,
+    t
+  );
+  const pddContent = getPDDContent(programmeDetails.projectProposalStage, t); // need to update
   const validationContent = getValidationContent(programmeDetails.projectProposalStage, t); // need to update
-
-  // const noObjectionLetterContent = getNoObjectionLetterContent(
-  //   programmeDetails.projectProposalStage,
-  //   t
-  // );
 
   return (
     <Steps
@@ -336,19 +273,64 @@ const ProgrammeStatusTimelineComponent: React.FC<ProgrammeStatusTimelineComponen
           description: (
             <div className="item-description">
               <ul>
-                <li className="timeline-description-approved-true">
+                {infContent.statusKey === StatusKeys.SUBMITTED && (
+                  <>
+                    <li className="list-style-none ">
+                      <span className="timeline-description-item-complete">
+                        <CheckOutlined />
+                      </span>
+                      {t('slcfRoadmapTimeline:infSubTask1')}
+                    </li>
+                    <li className="list-style-circle list-style-next">
+                      {t('slcfRoadmapTimeline:infSubTask2')}
+                    </li>
+                  </>
+                )}
+                {infContent.statusKey === StatusKeys.REJECTED && (
+                  <>
+                    <li className="list-style-none">
+                      <span className="timeline-description-item-complete">
+                        <CheckOutlined />
+                      </span>
+                      {t('slcfRoadmapTimeline:infSubTask1')}
+                    </li>
+                    <li className="list-style-none">
+                      <span className="timeline-description-item-rejected">
+                        <CloseOutlined />
+                      </span>
+                      {t('slcfRoadmapTimeline:infSubTask2')}
+                    </li>
+                  </>
+                )}
+                {infContent.statusKey === StatusKeys.APPROVED && (
+                  <>
+                    <li className="list-style-none">
+                      <span className="timeline-description-item-complete">
+                        <CheckOutlined />
+                      </span>
+                      {t('slcfRoadmapTimeline:infSubTask1')}
+                    </li>
+                    <li className="list-style-none">
+                      <span className="timeline-description-item-complete">
+                        <CheckOutlined />
+                      </span>
+                      {t('slcfRoadmapTimeline:infSubTask2')}
+                    </li>
+                  </>
+                )}
+                {/* <li className="timeline-description-approved-true">
                   {infContent.subTaskOne && (
                     <span className="timeline-description-item-complete">
                       <CheckOutlined />
                     </span>
                   )}
-                  <div>{t('slcfRoadmapTimeline:submissionByPP')}</div>
+                  <div>{t('slcfRoadmapTimeline:infSubTask1')}</div>
                 </li>
                 <li
                   className={`timeline-description-${infContent.statusKey}-${infContent.subTaskTwo}`}
                 >
                   {infContent.subTaskTwo ? (
-                    infContent.statusKey === 'rejected' ? (
+                    infContent.statusKey === StatusKeys.REJECTED ? (
                       <span className="timeline-description-item-rejected">
                         <CloseOutlined />
                       </span>
@@ -358,8 +340,8 @@ const ProgrammeStatusTimelineComponent: React.FC<ProgrammeStatusTimelineComponen
                       </span>
                     )
                   ) : null}
-                  {t('slcfRoadmapTimeline:approveBySLCF')}
-                </li>
+                  {t('slcfRoadmapTimeline:infSubTask2')}
+                </li> */}
               </ul>
             </div>
           ),
@@ -375,98 +357,154 @@ const ProgrammeStatusTimelineComponent: React.FC<ProgrammeStatusTimelineComponen
           status: currentStep === 0 ? 'process' : 'finish',
         },
         {
-          title: t('slcfRoadmapTimeline:projectProposal'),
+          title: t('slcfRoadmapTimeline:noObjection'),
           description: (
             <div className="item-description">
               <ul>
                 <li
-                  className={`timeline-description-${proposalContent.statusKey}-${proposalContent.subTaskOne}`}
+                  className={`timeline-description-${noObjectionLetterContent.statusKey}-${noObjectionLetterContent.subTaskOne}`}
                 >
-                  {proposalContent.subTaskOne ? (
-                    <span className="timeline-description-item-complete">
-                      <CheckOutlined />
-                    </span>
-                  ) : null}
-                  <div>{t('slcfRoadmapTimeline:subCostQuoteBySLCF')}</div>
-                </li>
-                <li
-                  className={`timeline-description-${proposalContent.statusKey}-${proposalContent.subTaskTwo}`}
-                >
-                  {proposalContent.subTaskTwo ? (
-                    proposalContent.statusKey === 'rejected' ? (
+                  {noObjectionLetterContent?.subTaskOne ? (
+                    noObjectionLetterContent.statusKey === StatusKeys.REJECTED ? (
                       <span className="timeline-description-item-rejected">
                         <CloseOutlined />
                       </span>
-                    ) : (
+                    ) : noObjectionLetterContent.statusKey === StatusKeys.APPROVED ? (
                       <span className="timeline-description-item-complete">
                         <CheckOutlined />
                       </span>
-                    )
+                    ) : null
                   ) : null}
-                  {t('slcfRoadmapTimeline:acceptByPP')}
+                  <div>{t('slcfRoadmapTimeline:noObjectionTask1')}</div>
                 </li>
               </ul>
             </div>
           ),
-          subTitle: proposalContent.subTitle,
+          subTitle: noObjectionLetterContent.subTitle,
           icon: (
             <div
-              className={`${proposalContent.className}-${
+              className={`${noObjectionLetterContent.className}-${
                 currentStep === 1 ? 'process' : currentStep > 1 ? 'finish' : 'wait'
               } timeline-icon`}
             >
-              {proposalContent.icon}
+              {noObjectionLetterContent.icon}
             </div>
           ),
           status: currentStep === 1 ? 'process' : currentStep > 1 ? 'finish' : 'wait',
         },
         {
-          title: (
-            <div className="cma-title">
-              {t('slcfRoadmapTimeline:cmaTitlePart1')} <br />
-              {t('slcfRoadmapTimeline:cmaTitlePart2')}
-            </div>
-          ),
+          title: <div className="pdd-title">{t('slcfRoadmapTimeline:pddTitle')}</div>,
           description: (
             <div className="item-description">
               <ul>
-                <li
-                  className={`timeline-description-${cmaContent.statusKey}-${cmaContent.subTaskOne}`}
-                >
-                  {cmaContent.subTaskOne ? (
-                    <span className="timeline-description-item-complete">
-                      <CheckOutlined />
-                    </span>
-                  ) : null}
-                  {t('slcfRoadmapTimeline:submissionByPP')}
-                </li>
-                <li
-                  className={`timeline-description-${cmaContent.statusKey}-${cmaContent.subTaskTwo}`}
-                >
-                  {cmaContent.subTaskTwo ? (
-                    cmaContent.statusKey === 'rejected' ? (
-                      <span className="timeline-description-item-rejected">
-                        <CloseOutlined />
-                      </span>
-                    ) : (
+                {pddContent?.statusKey === StatusKeys.PENDING && (
+                  <>
+                    <li className="list-style-circle">{t('slcfRoadmapTimeline:pddSubTask1')}</li>
+                    <li className="list-style-circle">{t('slcfRoadmapTimeline:pddSubTask2')}</li>
+                    <li className="list-style-circle">{t('slcfRoadmapTimeline:pddSubTask3')}</li>
+                  </>
+                )}
+
+                {pddContent?.statusKey === StatusKeys.SUBMITTED && (
+                  <>
+                    <li className="list-style-none">
                       <span className="timeline-description-item-complete">
                         <CheckOutlined />
                       </span>
-                    )
-                  ) : null}
-                  {t('slcfRoadmapTimeline:approveBySLCF')}
-                </li>
+                      {t('slcfRoadmapTimeline:pddSubTask1')}
+                    </li>
+                    <li className="list-style-circle list-style-next">
+                      {t('slcfRoadmapTimeline:pddSubTask2')}
+                    </li>
+                    <li className="list-style-circle">{t('slcfRoadmapTimeline:pddSubTask3')}</li>
+                  </>
+                )}
+                {pddContent?.statusKey === StatusKeys.REJECTED && (
+                  <>
+                    <li className="list-style-none">
+                      <span className="timeline-description-item-complete">
+                        <CheckOutlined />
+                      </span>
+                      {t('slcfRoadmapTimeline:pddSubTask1')}
+                    </li>
+                    <li className={`list-style-none`}>
+                      {pddContent.subTaskTwo ? (
+                        <>
+                          <span className="timeline-description-item-complete">
+                            <CheckOutlined />
+                          </span>
+                          {t('slcfRoadmapTimeline:pddSubTask2')}
+                        </>
+                      ) : (
+                        <>
+                          <span className="timeline-description-item-rejected">
+                            <CloseOutlined />
+                          </span>
+                          {t('slcfRoadmapTimeline:pddSubTask2')}
+                        </>
+                      )}
+                    </li>
+
+                    {pddContent.subTaskThree === null ? (
+                      <li className="list-style-circle">
+                        <span>{t('slcfRoadmapTimeline:pddSubTask3')}</span>
+                      </li>
+                    ) : pddContent.subTaskThree ? (
+                      <li className="list-style-none">
+                        <span className="timeline-description-item-complete">
+                          <CheckOutlined />
+                        </span>
+                        {t('slcfRoadmapTimeline:pddSubTask3')}
+                      </li>
+                    ) : (
+                      <li className="list-style-none">
+                        <span className="timeline-description-item-rejected">
+                          <CloseOutlined />
+                        </span>
+                        {t('slcfRoadmapTimeline:pddSubTask3')}
+                      </li>
+                    )}
+                  </>
+                )}
+                {pddContent?.statusKey === StatusKeys.APPROVED && (
+                  <>
+                    <li className="list-style-none">
+                      <span className="timeline-description-item-complete">
+                        <CheckOutlined />
+                      </span>
+                      {t('slcfRoadmapTimeline:pddSubTask1')}
+                    </li>
+                    <li className={`list-style-none`}>
+                      <span className="timeline-description-item-complete">
+                        <CheckOutlined />
+                      </span>
+                      {t('slcfRoadmapTimeline:pddSubTask2')}
+                    </li>
+                    {pddContent?.subTaskThree ? (
+                      <li className="list-style-none">
+                        <span className="timeline-description-item-complete">
+                          <CheckOutlined />
+                        </span>
+                        {t('slcfRoadmapTimeline:pddSubTask3')}
+                      </li>
+                    ) : (
+                      <li className="list-style-circle list-style-next">
+                        {t('slcfRoadmapTimeline:pddSubTask3')}
+                      </li>
+                    )}
+                  </>
+                )}
               </ul>
             </div>
           ),
-          subTitle: cmaContent.subTitle,
+          subTitle: pddContent.subTitle,
           icon: (
             <div
-              className={`${cmaContent.className}-${
+              className={`${pddContent.className}-${
                 currentStep === 2 ? 'process' : currentStep > 2 ? 'finish' : 'wait'
               } timeline-icon`}
             >
-              {cmaContent.icon}
+              {pddContent.icon}
             </div>
           ),
           status: currentStep === 2 ? 'process' : currentStep > 2 ? 'finish' : 'wait',
@@ -476,32 +514,85 @@ const ProgrammeStatusTimelineComponent: React.FC<ProgrammeStatusTimelineComponen
           description: (
             <div className="item-description">
               <ul>
-                <li
-                  className={`timeline-description-${validationContent.statusKey}-${validationContent.subTaskOne}`}
-                >
-                  {validationContent.subTaskOne ? (
-                    <span className="timeline-description-item-complete">
-                      <CheckOutlined />
-                    </span>
-                  ) : null}
-                  {t('slcfRoadmapTimeline:submissionBySLCF')}
-                </li>
-                <li
-                  className={`timeline-description-${validationContent.statusKey}-${validationContent.subTaskTwo}`}
-                >
-                  {validationContent.subTaskTwo ? (
-                    validationContent.statusKey === 'rejected' ? (
-                      <span className="timeline-description-item-rejected">
-                        <CloseOutlined />
-                      </span>
-                    ) : (
+                {validationContent.statusKey === StatusKeys.PENDING && (
+                  <>
+                    <li className="list-style-circle">
+                      {t('slcfRoadmapTimeline:validationSubTask1part1')}
+                      <br />
+                      {t('slcfRoadmapTimeline:validationSubTask1part2')}
+                    </li>
+                    <li className="list-style-circle">
+                      {t('slcfRoadmapTimeline:validationSubTask2')}
+                    </li>
+                    <li className="list-style-circle">
+                      {t('slcfRoadmapTimeline:validationSubTask3')}
+                    </li>
+                  </>
+                )}
+
+                {validationContent.statusKey === StatusKeys.SUBMITTED && (
+                  <>
+                    <li className="list-style-none">
                       <span className="timeline-description-item-complete">
                         <CheckOutlined />
                       </span>
-                    )
-                  ) : null}
-                  {t('slcfRoadmapTimeline:approveByExCom')}
-                </li>
+                      {t('slcfRoadmapTimeline:validationSubTask1part1')}
+                      <br />
+                      {t('slcfRoadmapTimeline:validationSubTask1part2')}
+                    </li>
+                    <li className="list-style-circle list-style-next">
+                      {t('slcfRoadmapTimeline:validationSubTask2')}
+                    </li>
+                    <li className="list-style-circle">
+                      {t('slcfRoadmapTimeline:validationSubTask3')}
+                    </li>
+                  </>
+                )}
+
+                {validationContent.statusKey === StatusKeys.REJECTED && (
+                  <>
+                    <li className="list-style-none">
+                      <span className="timeline-description-item-complete">
+                        <CheckOutlined />
+                      </span>
+                      {t('slcfRoadmapTimeline:validationSubTask1part1')}
+                      <br />
+                      {t('slcfRoadmapTimeline:validationSubTask1part2')}
+                    </li>
+                    <li className="list-style-none">
+                      <span className="timeline-description-item-rejected">
+                        <CloseOutlined />
+                      </span>
+                      {t('slcfRoadmapTimeline:validationSubTask2')}
+                    </li>
+                    <li>{t('slcfRoadmapTimeline:validationSubTask3')}</li>
+                  </>
+                )}
+
+                {validationContent.statusKey === StatusKeys.APPROVED && (
+                  <>
+                    <li className="list-style-none">
+                      <span className="timeline-description-item-complete">
+                        <CheckOutlined />
+                      </span>
+                      {t('slcfRoadmapTimeline:validationSubTask1part1')}
+                      <br />
+                      {t('slcfRoadmapTimeline:validationSubTask1part2')}
+                    </li>
+                    <li className="list-style-none">
+                      <span className="timeline-description-item-complete">
+                        <CheckOutlined />
+                      </span>
+                      {t('slcfRoadmapTimeline:validationSubTask2')}
+                    </li>
+                    <li className="list-style-none">
+                      <span className="timeline-description-item-complete">
+                        <CheckOutlined />
+                      </span>
+                      {t('slcfRoadmapTimeline:validationSubTask3')}
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
           ),
@@ -516,20 +607,6 @@ const ProgrammeStatusTimelineComponent: React.FC<ProgrammeStatusTimelineComponen
             </div>
           ),
           status: currentStep === 3 ? 'process' : currentStep > 3 ? 'finish' : 'wait',
-        },
-        {
-          title: t('slcfRoadmapTimeline:authorisedTitle'),
-          subTitle: getAuthorisedContent(programmeDetails.projectProposalStage, t).subTitle,
-          icon: (
-            <div
-              className={`${
-                getAuthorisedContent(programmeDetails.projectProposalStage, t).className
-              }-${currentStep === 4 ? 'finish' : 'wait'} timeline-icon`}
-            >
-              {getAuthorisedContent(programmeDetails.projectProposalStage, t).icon}
-            </div>
-          ),
-          status: currentStep === 4 ? 'finish' : 'wait',
         },
       ]}
     />

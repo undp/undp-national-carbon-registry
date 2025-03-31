@@ -67,7 +67,7 @@
   "community": "Community",
   "street": "Street Name and Number",
   "projectGeography": "Geography of the Project",
-  "projectGeographyPlaceholder": "Select project activity",
+  "projectGeographyPlaceholder": "Select geography",
   "landExtent": "Land Extent",
   "landExtentAndSpeciesPlantedInfo": "(This is applicable to Afforestation and Reforestation projects only)",
   "speciesPlanted": "Species Planted/To Be Planted",
@@ -90,7 +90,7 @@
   "contactPersonName": "Contact Person",
   "email": "Email",
   "phoneNo": "Telephone",
-  "projectParticipant": "Name of the project participant",
+  "projectParticipant": "Name of the Project Developer",
   "fax": "Fax",
   "website": "Website",
   "address": "Address",
@@ -111,6 +111,6 @@
   "confirmModalSubMessage": "You can't undo this action",
   "sectorPlaceholder": "Select your Sector",
   "sectoralScopePlaceholder": "Select your Sectoral Scope",
-  "estimatedProjectCost": "Estimated Project Cost",
+  "estimatedProjectCost": "Estimated Project Cost (USD)",
   "shouldBeAnNumber": "Should be an number"
 }

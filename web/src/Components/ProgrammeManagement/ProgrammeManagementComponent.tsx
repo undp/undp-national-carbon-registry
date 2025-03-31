@@ -31,7 +31,7 @@ import {
 } from '../../Definitions/Definitions/programme.definitions';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ProgrammeManagementSlColumns } from '../../Definitions/Enums/programme.management.sl.columns.enum';
-import { PlusOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { PlusOutlined, EllipsisOutlined, DownloadOutlined } from '@ant-design/icons';
 import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
 import * as Icon from 'react-bootstrap-icons';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
@@ -45,6 +45,9 @@ import { ProfileIcon } from '../IconComponents/ProfileIcon/profile.icon';
 import { CreditTypeSl } from '../../Definitions/Enums/creditTypeSl.enum';
 import { Role } from '../../Definitions/Enums/role.enum';
 import { API_PATHS } from '../../Config/apiConfig';
+import { APPLICATION_STAGE } from '../../Definitions/Constants/ApplicationStage';
+import { downloadCSV } from '../../Utils/downloadCSV';
+import { deepCopy } from '../../Utils/deepCopy';
 
 const { Search } = Input;
 
@@ -89,6 +92,8 @@ export const ProgrammeManagementComponent = (props: any) => {
         operation: '=',
         value: value,
       });
+    } else {
+      setApplicationStageFilter(undefined);
     }
   };
 
@@ -97,8 +102,8 @@ export const ProgrammeManagementComponent = (props: any) => {
     value: k,
   }));
 
-  const applicationStageOptions = Object.keys(ProjectProposalStage).map((k, index) => ({
-    label: t(`projectList:${Object.values(ProjectProposalStage)[index]}`),
+  const applicationStageOptions = Object.keys(APPLICATION_STAGE).map((k, index) => ({
+    label: t(`projectList:${Object.values(APPLICATION_STAGE)[index]}`),
     value: k,
   }));
 
@@ -331,8 +336,8 @@ export const ProgrammeManagementComponent = (props: any) => {
     if (search && search !== '') {
       filter.push({
         key: 'title',
-        operation: 'like',
-        value: `%${search}%`,
+        operation: 'ilike',
+        value: `${search}%`,
       });
     }
 
@@ -442,7 +447,9 @@ export const ProgrammeManagementComponent = (props: any) => {
   // };
 
   const onSearch = async () => {
-    setSearch(searchText);
+    if (searchText) {
+      setSearch(searchText?.toLowerCase());
+    }
   };
 
   useEffect(() => {
@@ -476,6 +483,55 @@ export const ProgrammeManagementComponent = (props: any) => {
     // setCurrentPage(1);
   };
 
+  const mapBase64ToFields = (fileUrls: string[]) => {
+    let fileObjs: any[] = [];
+
+    if (fileUrls !== undefined && fileUrls.length > 0) {
+      fileObjs = fileUrls.map((item: any, index) => {
+        const nameParts = item.split('/');
+        const name = nameParts[nameParts.length - 1];
+        const tempObj = {
+          uid: name,
+          name: name,
+          status: 'done',
+          url: item,
+        };
+        return tempObj;
+      });
+    }
+
+    return fileObjs;
+  };
+
+  const downloadData = async () => {
+    try {
+      const res = await post(API_PATHS.GET_PROJECT, {
+        page: 1,
+        size: totalProgramme,
+      });
+
+      if (res?.data) {
+        console.log('--------res--------', res);
+        delete res.data.additionalDocuments;
+        res.data = {
+          ...res.data,
+          ...res.data.company,
+        };
+        downloadCSV(deepCopy(res.data), 'projectList.csv', [
+          'additionalDocuments',
+          'geographicalLocationCoordinates',
+          'documents',
+          'infRefId',
+          'refId',
+          'company',
+        ]);
+      }
+    } catch (error) {
+      console.log('------error--------', error);
+    }
+  };
+  // MARK: Main JSX START
+
   return (
     <div className="content-container programme-management">
       <div className="programme-title-bar">
@@ -485,6 +541,7 @@ export const ProgrammeManagementComponent = (props: any) => {
         <div className="actions">
           {userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER &&
             userInfoState.userRole !== Role.ViewOnly &&
+            userInfoState.userRole !== Role.Manager &&
             enableAddProgramme && (
               <div className="action-bar">
                 <Button
@@ -537,14 +594,16 @@ export const ProgrammeManagementComponent = (props: any) => {
                   onPressEnter={onSearch}
                   placeholder={`${t('projectList:searchByName')}`}
                   allowClear
-                  onChange={(e) =>
-                    e.target.value === ''
-                      ? setSearch(e.target.value)
-                      : setSearchText(e.target.value)
-                  }
-                  onSearch={setSearch}
+                  onChange={(e) => {}}
+                  onSearch={(value: string) => {
+                    console.log('----------value-----------', value);
+                    setSearch(value);
+                  }}
                   style={{ width: 265 }}
                 />
+              </div>
+              <div className="download-icon" onClick={downloadData}>
+                <DownloadOutlined />
               </div>
             </div>
           </Col>

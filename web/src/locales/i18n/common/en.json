@@ -28,5 +28,6 @@
   "totalCreditingYears": "Total Number of Crediting Years",
   "averageCreditingPeriod": "Annual Average Over the Crediting Period",
   "yes": "yes",
-  "no": "no"
+  "no": "no",
+  "somethingWentWrong": "Something went wrong!"
 }

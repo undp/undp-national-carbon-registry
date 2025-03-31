@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ValidationStepsProps } from './StepProps';
 import { Row, Button, Form, Input } from 'antd';
+import { useLocation } from 'react-router-dom';
+import { FormMode } from '../../Definitions/Enums/formMode.enum';
 
 const ValidationFindings = (props: ValidationStepsProps) => {
-  const { prev, next, form, current, t, countries, handleValuesUpdate } = props;
+  const { prev, next, form, current, t, countries, handleValuesUpdate, disableFields } = props;
 
   const onFinish = async (values: any) => {
     const body: any = {
@@ -15,7 +17,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
 
   return (
     <>
-      {current === 6 && (
+      {current === 5 && (
         <div>
           <div className="val-report-step-form-container">
             <Form
@@ -49,10 +51,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                       },
                     ]}
                   >
-                    <Input
-                      size="large"
-                      // disabled={FormMode.VIEW === formMode}
-                    />
+                    <Input size="large" disabled={disableFields} />
                   </Form.Item>
 
                   <Form.Item
@@ -68,6 +67,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -85,6 +85,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -111,6 +112,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -128,6 +130,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -145,6 +148,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -171,6 +175,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -188,6 +193,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -205,6 +211,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -235,6 +242,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -252,6 +260,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -269,6 +278,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -296,6 +306,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -313,6 +324,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -330,6 +342,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -356,6 +369,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -373,6 +387,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -390,6 +405,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -416,6 +432,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -433,6 +450,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -450,6 +468,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -476,6 +495,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -493,6 +513,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -510,6 +531,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -536,6 +558,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -553,6 +576,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -570,6 +594,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -596,6 +621,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -613,6 +639,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -630,6 +657,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -656,6 +684,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -673,6 +702,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -690,6 +720,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -716,6 +747,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -733,6 +765,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -750,6 +783,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -776,6 +810,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -793,6 +828,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -810,6 +846,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -836,6 +873,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -853,6 +891,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -870,6 +909,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -896,6 +936,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -913,6 +954,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -930,6 +972,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -954,6 +997,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -971,6 +1015,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -988,6 +1033,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -1014,6 +1060,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -1031,6 +1078,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -1048,6 +1096,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -1074,6 +1123,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -1091,6 +1141,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -1108,6 +1159,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                   >
                     <Input
                       size="large"
+                      disabled={disableFields}
                       // disabled={FormMode.VIEW === formMode}
                     />
                   </Form.Item>
@@ -1135,6 +1187,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                     <Input
                       size="large"
                       // disabled={FormMode.VIEW === formMode}
+                      disabled={disableFields}
                     />
                   </Form.Item>
 
@@ -1152,6 +1205,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                     <Input
                       size="large"
                       // disabled={FormMode.VIEW === formMode}
+                      disabled={disableFields}
                     />
                   </Form.Item>
 
@@ -1169,6 +1223,7 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                     <Input
                       size="large"
                       // disabled={FormMode.VIEW === formMode}
+                      disabled={disableFields}
                     />
                   </Form.Item>
                 </section>
@@ -1179,9 +1234,15 @@ const ValidationFindings = (props: ValidationStepsProps) => {
                 <Button danger size={'large'} onClick={prev}>
                   {t('validationReport:prev')}
                 </Button>
-                <Button type="primary" size={'large'} htmlType="submit">
-                  {t('validationReport:next')}
-                </Button>
+                {disableFields ? (
+                  <Button type="primary" size={'large'} disabled={false} onClick={next}>
+                    {t('validationReport:next')}
+                  </Button>
+                ) : (
+                  <Button type="primary" size={'large'} disabled={false} htmlType="submit">
+                    {t('validationReport:next')}
+                  </Button>
+                )}
               </Row>
             </Form>
           </div>

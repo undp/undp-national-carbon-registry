@@ -1,0 +1,57 @@
+@import '../../Styles/variables.scss';
+
+.transfer-form {
+  .popup-credit-input {
+    .ant-form-item-explain-error {
+      width: 200px;
+    }
+  }
+
+  .ant-row {
+    align-items: unset;
+  }
+  padding: 0px 15px;
+  .sub-text {
+    margin-bottom: 35px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .label {
+    text-align: left;
+    font-size: 0.9rem;
+    color: $body-text-color;
+  }
+  .seperator {
+    font-size: 1.2rem;
+    color: $line-colors;
+  }
+
+  .footer {
+    margin-bottom: 0px;
+    margin-top: 15px;
+  }
+  color: $body-text-color;
+
+  label {
+    font-size: 0.8rem;
+  }
+  .ant-radio-wrapper {
+    font-size: 0.9rem;
+  }
+
+  input {
+    color: $body-text-color;
+  }
+
+  button {
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+}
+
+.model-subText {
+  color: #3A354180;
+  font-size: 12px;
+  padding-top: 10px;
+  font-weight: 600;
+}

@@ -56,15 +56,16 @@
   "versionNumberValidationReport": "Version number of the validation report",
   "versionNumberPDD": "Version number of the PDD to which this report applies",
   "projectParticipants2": "Project Participants(s)",
-  "projectParticipants": "Project Developer(s)",
+  "projectParticipants": "Project Developer",
   "appliedMethodologies": "Applied methodologies and standardized baselines",
   "conditionalSectoralScopes": "Conditional sectoral scopes, if applicable",
   "mandatarySectoralScopes": "Mandatory sectoral scopes",
   "titleOfSpecificCase": "Title(s) of the Specific-case CPA(s)",
   "completionDate": "Completion date of the validation report",
   "pddUploadedGlobalStakeholderConsultation": "Date when PDD was uploaded for global stakeholder consultation",
-  "hostParty": "Host Party(ies)",
+  "hostParty": "Host Party",
   "annualAverageGHGReduction": "Estimated amount of annual average GHG emission reductions or GHG removals by sinks",
+  "unfccRefNo": "UNFCCC reference number of the project activity",
   "validationReportApproverSectionTitle": "Approver of the Validation Report",
   "independentCertifierSectionTitle": "Independent Certifier",
   "approverName": "Name",
@@ -364,6 +365,11 @@
   "technicalReview": "Technical Review",
   "documentReviewOption": "Document Review",
   "clarificationRequestsTableTitle": "Clarification requests (CLs), corrective action requests (CARs) and forward action requests (FARs) raised",
-  "siteVisit": "Site Visit"
-
+  "siteVisit": "Site Visit",
+  "confirmModalMessage": "Are you sure you want to submit ?",
+  "confirmModalSubMessage": "You can't undo this action",
+  "approve": "Approve",
+  "reject": "Reject",
+  "approveMessage": "Are you sure you want to approve this Validation report?",
+  "declineMessage": "Are you sure you want to reject this Validation report?"
 }
