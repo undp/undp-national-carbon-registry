@@ -57,6 +57,17 @@
       font-family: $primary-font-family;
       font-size: 0.8rem;
     }
+
+    .filter-section {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+
+      .download-icon {
+        color: #3a354180;
+        cursor: pointer;
+      }
+    }
   }
 
   .all-check {
@@ -110,4 +121,64 @@
 .programmeManagement-table-container {
   // padding: 0px 20px;
   padding: 0px;
+
+  .ant-tag-success {
+    color: #2ecc71;
+    background: #effbf4;
+    border-color: #2ecc71;
+  }
+
+  .ant-tag-processing {
+    color: #3498db;
+    background: #f3f8fd;
+    border-color: #3498db;
+  }
+
+  .ant-tag-error {
+    color: #ff694f;
+    background: #fff2f0;
+    border-color: #ff694f;
+  }
+
+  .ant-tag-orange {
+    color: #E67E22;
+    background: #fdf5ee;
+    border-color: #E67E22;
+  }
+
+  .ant-tag-default {
+    color: #5D6D7E;
+    background: #f2f4f5;
+    border-color: #5D6D7E;
+  }
+
+  .ant-tag-warning {
+    color: #f1c40f;
+    background: #fefbee;
+    border-color: #f1c40f;
+  }
+
+  .ant-tag-volcano {
+    color: #D35400;
+    background: #edfaf7;
+    border-color: #D35400;
+  }
+
+  .ant-tag-green {
+    color: #28B463;
+    background: #fcf2eb;
+    border-color: #28B463;
+  }
+
+  .ant-tag-cyan {
+    color: #2E86C1;
+    background: #edfaf7;
+    border-color: #1ABC9C;
+  }
+
+  .ant-tag-geekblue {
+    color: #2E86C1;
+    background: #eff6fa;
+    border-color: #2E86C1;
+  }
 }

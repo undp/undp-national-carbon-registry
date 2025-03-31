@@ -2,53 +2,53 @@ import { useEffect, useState } from 'react';
 import './MonitoringReport.scss';
 import StepperComponent from './StepperComponent';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { DocumentTypeEnum } from '../../Definitions/Enums/document.type';
-import { Col, Row, Select, Tag } from 'antd';
+import { Col, Row, Select, Tag, Form } from 'antd';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
 import { getDocumentStatusColor } from '../../Definitions/Definitions/programme.definitions';
 import { API_PATHS } from '../../Config/apiConfig';
+import { i18n } from 'i18next';
 
-export const SLCFMonitoringReportComponent = (props: any) => {
+export const MonitoringReportComponent = (props: { translator: i18n }) => {
   const [countries, setCountries] = useState<[]>([]);
   const { put, get, post } = useConnection();
-
-  const { useLocation, translator } = props;
-
   const { id, verificationRequestId } = useParams();
   const { state } = useLocation();
   const [versions, setVersions] = useState<number[]>([]);
   const [selectedVersion, setSelectedVersion] = useState<number>();
   const [documentStatus, setDocumentStatus] = useState('');
-
   const mode = state?.mode;
+  const [form] = Form.useForm();
+  const { translator } = props;
+  const t = translator.t;
 
   const onVersionSelect = async (value: number) => {
     setSelectedVersion(value);
   };
 
-  const getDocVersions = async () => {
-    try {
-      const { data } = await post(API_PATHS.VERIFICATION_DOC_VERSIONS, {
-        programmeId: id,
-        verificationRequestId: Number(verificationRequestId),
-        docType: DocumentTypeEnum.MONITORING_REPORT,
-      });
-      setVersions(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getDocVersions = async () => {
+  //   try {
+  //     const { data } = await post(API_PATHS.VERIFICATION_DOC_VERSIONS, {
+  //       programmeId: id,
+  //       verificationRequestId: Number(verificationRequestId),
+  //       docType: DocumentTypeEnum.MONITORING_REPORT,
+  //     });
+  //     setVersions(data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleDocumentStatus = (value: string) => {
     setDocumentStatus(value);
   };
 
-  useEffect(() => {
-    if (mode === FormMode.VIEW || mode === FormMode.EDIT) {
-      getDocVersions();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (mode === FormMode.VIEW || mode === FormMode.EDIT) {
+  //     getDocVersions();
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (versions.length > 0) {
@@ -56,19 +56,18 @@ export const SLCFMonitoringReportComponent = (props: any) => {
     }
   }, [versions]);
 
-  const getCountryList = async () => {
-    const response = await get(API_PATHS.COUNTRY_LIST);
-    if (response.data) {
-      const alpha2Names = response.data.map((item: any) => {
-        return item.alpha2;
-      });
-      setCountries(alpha2Names);
-    }
-  };
-  useEffect(() => {
-    getCountryList();
-  }, []);
-  const t = translator.t;
+  // const getCountryList = async () => {
+  //   const response = await get(API_PATHS.COUNTRY_LIST);
+  //   if (response.data) {
+  //     const alpha2Names = response.data.map((item: any) => {
+  //       return item.alpha2;
+  //     });
+  //     setCountries(alpha2Names);
+  //   }
+  // };
+  // useEffect(() => {
+  //   getCountryList();
+  // }, []);
   return (
     <div className="add-programme-main-container">
       <div className="title-container">
@@ -115,11 +114,11 @@ export const SLCFMonitoringReportComponent = (props: any) => {
         )}
         <div className="form-section">
           <StepperComponent
-            useLocation={useLocation}
             translator={translator}
-            countries={countries}
-            selectedVersion={selectedVersion}
-            handleDocumentStatus={handleDocumentStatus}
+            t={t}
+            current={0}
+            handleValuesUpdate={() => {}}
+            form={form}
           ></StepperComponent>
         </div>
       </div>

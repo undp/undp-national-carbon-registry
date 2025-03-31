@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { SLCFMonitoringReportComponent } from '../../Components/MonitoringReport/SLCFMonitoringReportComponent';
+import { MonitoringReportComponent } from '../../Components/MonitoringReport/MonitoringReportComponent';
 import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const MonitoringReport = () => {
@@ -12,11 +12,11 @@ const MonitoringReport = () => {
   };
 
   return (
-    <SLCFMonitoringReportComponent
+    <MonitoringReportComponent
       translator={i18n}
-      useLocation={useLocation}
-      onNavigateToProgrammeView={onNavigateToProgrammeManagementView}
-    ></SLCFMonitoringReportComponent>
+      // useLocation={useLocation}
+      // onNavigateToProgrammeView={onNavigateToProgrammeManagementView}
+    ></MonitoringReportComponent>
   );
 };
 

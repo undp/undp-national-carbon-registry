@@ -56,6 +56,9 @@ import Settings from './Pages/Settings/settings';
 import SLCFDashboard from './Pages/Dashboard/slcf/slcfdashboard';
 import AddProgramme from './Pages/ProgrammeManagement/addProgramme';
 import ProgrammeManagement from './Pages/ProgrammeManagement/programmeManagement';
+import { CreditBalancePage } from './Pages/CreditPages/creditBalancePage';
+import { CreditTransfersPage } from './Pages/CreditPages/creditTransfersPage';
+import { CreditRetirementsPage } from './Pages/CreditPages/creditRetirementsPage';
 
 const App = () => {
   const ability = defineAbility();
@@ -121,6 +124,7 @@ const App = () => {
                     <Route path="viewAllProjects" element={<ProgrammeManagement />} />
                     <Route path="view/:id" element={<ProjectDetailsView />} />
                     <Route path="addProgramme" element={<AddProgramme />} />
+                    <Route path="addProgramme/:id" element={<AddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
                     <Route path="monitoringReport/:id" element={<MonitoringReport />} />
                     <Route
@@ -142,7 +146,11 @@ const App = () => {
                     <Route path="pdd/:id/" element={<CMAFormPage />} />
                     <Route path="validationReport/:id" element={<ValidationReportPage />} />
                   </Route>
-
+                  <Route path="/credits" element={<CustomLayout />}>
+                    <Route path="balance" element={<CreditBalancePage />} />
+                    <Route path="transfers" element={<CreditTransfersPage />} />
+                    <Route path="retirements" element={<CreditRetirementsPage />} />
+                  </Route>
                   <Route
                     path="/retirementManagement"
                     element={<CustomLayout selectedKey="retirementManagement/viewAll" />}

@@ -14,4 +14,7 @@ export interface ValidationStepsProps {
   cmaDetails?: any;
   existingFormValues?: any;
   formMode?: FormMode;
+  disableFields?: boolean;
+  documentId?: string; 
+  handleLoading?: (val: boolean) => void;
 }

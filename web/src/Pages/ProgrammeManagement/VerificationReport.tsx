@@ -14,8 +14,8 @@ const VerificationReport = () => {
   return (
     <VerificationReportComponent
       translator={i18n}
-      useLocation={useLocation}
-      onNavigateToProgrammeView={onNavigateToProgrammeManagementView}
+      // useLocation={useLocation}
+      // onNavigateToProgrammeView={onNavigateToProgrammeManagementView}
     ></VerificationReportComponent>
   );
 };

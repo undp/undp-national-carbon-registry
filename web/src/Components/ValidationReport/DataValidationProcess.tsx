@@ -3,7 +3,7 @@ import { Button, Col, Form, Input, InputNumber, Row, Select, Table, TableProps }
 import TextArea from 'antd/lib/input/TextArea';
 import moment from 'moment';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { ProjectCategory } from '../../enum/slRegistryEnum';
+import { ProjectCategory } from '../../Definitions/Enums/slRegistryEnum';
 import { requiredValidationRule } from '../../Utils/validationHelper';
 import NetEmissionReduction from '../Common/NetEmissonReduction';
 import { ValidationStepsProps } from './StepProps';

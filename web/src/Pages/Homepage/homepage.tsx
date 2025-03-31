@@ -98,7 +98,6 @@ const Homepage = () => {
                 <span>
                   <Trans
                     i18nKey="homepage:heading"
-                    values={{ countryName }}
                     components={{
                       br: <br />,
                     }}

@@ -1,8 +1,8 @@
 {
   "dashboard": "Dashboard",
   "ghgInventory": "GHG Inventory",
-  "emissions" : "Emissions",
-  "projections" : "Projections",
+  "emissions": "Emissions",
+  "projections": "Projections",
   "slcfprogrammes": "Projects",
   "programmes": "Article 6.4",
   "transfers": "Transfers",
@@ -21,5 +21,7 @@
   "verra": "Verra",
   "goldStandards": "Gold Standard",
   "cdmTransitionProjects": "CDM Transition Requested Projects",
-  "projectList": "Project Details"
+  "projectList": "Project Details",
+  "creditBalance": "Credit Balance",
+  "credits": "Credits"
 }

@@ -1,12 +1,11 @@
 import moment from 'moment';
 
-export const projectDetailsDataMapToFields = (vals: any) => {
+export const BasicInformationDataMapToFields = (vals: any) => {
   if (vals === undefined) return;
 
   const tempValues = {
     ...vals,
-    dateOfIssue: vals?.dateOfIssue ? moment.unix(vals?.dateOfIssue) : undefined,
-    reportID: vals?.reportID,
+    completionDate: vals?.completionDate ? moment.unix(vals?.completionDate) : undefined,
   };
 
   return tempValues;
@@ -46,45 +45,11 @@ export const descriptionOfProjectActivityDataMapToFields = (vals: any) => {
       : undefined;
 
   const tempValues = {
+    ...vals,
     introduction: vals?.introduction,
-    sectoralScope: vals?.sectoralScope,
-    organizationName: vals?.projectProponent?.organizationName,
-    email: vals?.projectProponent?.email,
-    contactPerson: vals?.projectProponent?.contactPerson,
-    title: vals?.projectProponent?.title,
-    telephone: vals?.projectProponent?.telephone,
-    fax: vals?.projectProponent?.fax,
-    address: vals?.projectProponent?.address,
-    entityOrganizationName: firstEntity?.orgainzationName,
-    entityEmail: firstEntity?.email,
-    entityTitle: firstEntity?.title,
-    entityRoleInTheProject: firstEntity?.role,
-    entityTelephone: firstEntity?.telephone,
-    entityContactPerson: firstEntity?.contactPerson,
-    entityFax: firstEntity?.fax,
-    entityAddress: firstEntity?.address,
-    extraOtherEntities: (function () {
-      const tempEntities: any[] = [];
-      const otherEntities = vals?.otherEntities;
-      if (otherEntities !== undefined && otherEntities.length > 0) {
-        otherEntities.forEach((item: any) => {
-          const tempObj = {
-            organizationName: item?.organizationName,
-            email: item?.email,
-            contactPerson: item?.contactPerson,
-            roleInTheProject: item?.role,
-            title: item?.title,
-            telephone: item?.telephone,
-            fax: item?.fax,
-            address: item?.address,
-          };
-          tempEntities.push(tempObj);
-        });
-      }
-      return tempEntities;
-    })(),
     locationOfProjectActivity: firstLocation?.locationOfProjectActivity,
     province: firstLocation?.province,
+    siteNo: firstLocation?.siteNo,
     district: firstLocation?.district,
     dsDivision: firstLocation?.dsDivision,
     city: firstLocation?.city,
@@ -121,47 +86,6 @@ export const descriptionOfProjectActivityDataMapToFields = (vals: any) => {
       }
       return tempExtraLocations;
     })(),
-    projectOwnership: vals?.projectOwnership,
-    projectTrack: vals?.projectTrack,
-    creditingPeriodStartDate: vals?.creditingPeriodStartDate
-      ? moment.unix(vals?.creditingPeriodStartDate)
-      : undefined,
-    creditingPeriodEndDate: vals?.creditingPeriodEndDate
-      ? moment.unix(vals?.creditingPeriodEndDate)
-      : undefined,
-    creditingPeriodDescription: vals?.creditingPeriodDescription,
-    projectScale: vals?.projectScaleType,
-    extraGHGEmmissions: (function () {
-      const emmissions = vals?.estimatedAnnualGHGEmissions;
-
-      const tempEmmissions: any = [];
-      if (emmissions !== undefined && emmissions?.length > 0) {
-        emmissions.forEach((emmision: any) => {
-          const temp = {
-            estimatedAnnualGHGEmissionsYear: emmision?.year
-              ? moment.unix(emmision?.year)
-              : undefined,
-            estimatedAnnualGHGEmissionsValue: emmision?.ghgEmissionReduction,
-          };
-
-          tempEmmissions.push(temp);
-        });
-      }
-
-      return tempEmmissions;
-    })(),
-    totalEstimatedGHGERs: String(vals?.totalEstimatedGHGERs),
-    totalCreditingYears: String(vals?.totalCreditingYears),
-    avgAnnualERs: String(vals?.avgAnnualERs),
-    projectActivityDescription: vals?.description,
-    optionalProjectActivityDocuments: mapBase64ToFields(vals?.additionalDocuments),
-    conditionsPriorToProjectInitiation: vals?.conditionsPriorToProjectInitiation,
-    complianceWithLaws: vals?.complianceWithLaws,
-    participationPrograms: vals?.participationUnderOtherGHGPrograms,
-    otherFormsOfCredit: vals?.otherFormsOfCredit,
-    sustainableDevelopment: vals?.sustainableDevelopment,
-    leakageManagement: vals?.leakageManagement,
-    commerciallySensitiveInformation: vals?.commerciallySensitiveInfo,
   };
 
   return tempValues;
@@ -190,6 +114,16 @@ export const localStakeholderConsultationDataMaptoFields = (vals: any) => {
   return tempValues;
 };
 
+export const approvalAndAuthorizationDataMapToFields = (vals: any) => {
+  if (vals === undefined) return;
+
+  const tempValues = {
+    ...vals,
+  };
+
+  return vals;
+};
+
 export const eligibilityCriteriaDataMapToFields = (vals: any) => {
   if (vals === undefined) return;
 
@@ -213,11 +147,18 @@ export const applicationOfMethodologyDataMapToFields = (vals: any) => {
   const firstProject =
     projectArray !== undefined && projectArray?.length > 0 ? projectArray.shift() : undefined;
 
+  const ghgEmissionReductions = vals?.netGHGEmissionReductions;
+  const yearlyReductions = ghgEmissionReductions?.yearlyGHGEmissionReductions;
+  const firstYearlyReductions =
+    yearlyReductions !== undefined && yearlyReductions.length > 0
+      ? yearlyReductions.shift()
+      : undefined;
+
   const tempValues = {
+    ...vals,
     titleAndReferenceOfMethodology: vals?.titleAndReference,
     applicabilityOfMethodology: vals?.applicability,
-    baselineScenario: vals?.baselineScenario,
-    additionality: vals?.additionality,
+
     methodologyDeviations: vals?.methodologyDeviations,
     projectBoundary: projectBoundary?.description,
     baselineSource: firstBaseline?.source,
@@ -252,8 +193,85 @@ export const applicationOfMethodologyDataMapToFields = (vals: any) => {
       }
       return tempExtraProject;
     })(),
+    monitoringParameter: vals?.dataAndParametersMonitored?.monitoringParameter,
+    monitoringUnit: vals?.dataAndParametersMonitored?.monitoringUnit,
+    monitoringDescription: vals?.dataAndParametersMonitored?.monitoringDescription,
+    data_parameterDescription: vals?.dataAndParametersMonitored?.data_parameterDescription,
+    monitoringSource: vals?.dataAndParametersMonitored?.monitoringSource,
+    monitoringMeasurementMethods: vals?.dataAndParametersMonitored?.monitoringMeasurementMethods,
+    monitoringFrequency: vals?.dataAndParametersMonitored?.monitoringFrequency,
+    monitoringValueApplied: vals?.dataAndParametersMonitored?.monitoringValueApplied,
+    monitoringEquipment: vals?.dataAndParametersMonitored?.monitoringEquipment,
+    monitoringQAProcedures: vals?.dataAndParametersMonitored?.monitoringQAProcedures,
+    monitoringPurpose: vals?.dataAndParametersMonitored?.monitoringPurpose,
+    monitoringCalculation: vals?.dataAndParametersMonitored?.monitoringCalculation,
+    monitoringComments: vals?.dataAndParametersMonitored?.monitoringComments,
+    parameter: vals?.dataAndParametersExAnte?.parameter,
+    unit: vals?.dataAndParametersExAnte?.unit,
+    description: vals?.dataAndParametersExAnte?.description,
+    source: vals?.dataAndParametersExAnte?.source,
+    descriptionOfMeasurementMethods: vals?.dataAndParametersExAnte?.descriptionOfMeasurementMethods,
+    purpose: vals?.dataAndParametersExAnte?.purpose,
+    comments: vals?.dataAndParametersExAnte?.comments,
+    emissionsPeriodStart: firstYearlyReductions?.startDate
+      ? moment.unix(firstYearlyReductions?.startDate)
+      : undefined,
+    emissionsPeriodEnd: firstYearlyReductions?.endDate
+      ? moment.unix(firstYearlyReductions?.endDate)
+      : undefined,
+    baselineEmissionReductions: String(firstYearlyReductions?.baselineEmissionReductions),
+    projectEmissionReductions: String(firstYearlyReductions?.projectEmissionReductions),
+    leakageEmissionReductions: String(firstYearlyReductions?.leakageEmissionReductions),
+    netEmissionReductions: String(firstYearlyReductions?.netEmissionReductions),
+    extraEmissionReductions: (function () {
+      let tempExtraReductions: any = [];
+
+      if (yearlyReductions !== undefined && yearlyReductions?.length > 0) {
+        tempExtraReductions = yearlyReductions.map((reductions: any) => {
+          return {
+            emissionsPeriodStart: reductions?.startDate
+              ? moment.unix(reductions?.startDate)
+              : undefined,
+            emissionsPeriodEnd: reductions?.endDate ? moment.unix(reductions?.endDate) : undefined,
+            baselineEmissionReductions: String(reductions?.baselineEmissionReductions),
+            projectEmissionReductions: String(reductions?.projectEmissionReductions),
+            leakageEmissionReductions: String(reductions?.leakageEmissionReductions),
+            netEmissionReductions: String(reductions?.netEmissionReductions),
+          };
+        });
+      }
+      return tempExtraReductions;
+    })(),
+    totalBaselineEmissionReductions: String(ghgEmissionReductions?.totalBaselineEmissionReductions),
+    totalProjectEmissionReductions: String(ghgEmissionReductions?.totalProjectEmissionReductions),
+    totalLeakageEmissionReductions: String(ghgEmissionReductions?.totalLeakageEmissionReductions),
+    totalNetEmissionReductions: String(ghgEmissionReductions?.totalNetEmissionReductions),
+    totalCreditingYears: String(ghgEmissionReductions?.totalNumberOfCredingYears),
+    avgBaselineEmissionReductions: String(ghgEmissionReductions?.avgBaselineEmissionReductions),
+    avgProjectEmissionReductions: String(ghgEmissionReductions?.avgProjectEmissionReductions),
+    avgLeakageEmissionReductions: String(ghgEmissionReductions?.avgLeakageEmissionReductions),
+    avgNetEmissionReductions: String(ghgEmissionReductions?.avgNetEmissionReductions),
   };
 
+  return tempValues;
+};
+
+export const startDateCreditingPeriodDataMapToFields = (vals: any) => {
+  const tempValues = {
+    ...vals,
+    projectCreditingPeriodStartDate: vals?.projectCreditingPeriodStartDate
+      ? moment.unix(vals?.projectCreditingPeriodStartDate)
+      : undefined,
+    projectCreditingPeriodEndDate: vals?.projectCreditingPeriodEndDate
+      ? moment.unix(vals?.projectCreditingPeriodEndDate)
+      : undefined,
+    creditingPeriodStart: vals?.creditingPeriodStart
+      ? moment.unix(vals?.creditingPeriodStart)
+      : undefined,
+    projectActivityStartDate: vals?.projectActivityStartDate
+      ? moment.unix(vals?.projectActivityStartDate)
+      : undefined,
+  };
   return tempValues;
 };
 
@@ -350,8 +368,13 @@ export const appendixDataMapToFields = (vals: any) => {
   if (vals === undefined) return;
 
   const tempValues = {
-    additionalComments: vals?.annexures,
-    appendixDocuments: mapBase64ToFields(vals?.additionalDocuments),
+    ...vals,
+    appendix2Documents: mapBase64ToFields(vals?.appendix2Documents),
+    appendix3Documents: mapBase64ToFields(vals?.appendix3Documents),
+    appendix4Documents: mapBase64ToFields(vals?.appendix4Documents),
+    appendix5Documents: mapBase64ToFields(vals?.appendix5Documents),
+    appendix6Documents: mapBase64ToFields(vals?.appendix6Documents),
+    appendix7Documents: mapBase64ToFields(vals?.appendix7Documents),
   };
 
   return tempValues;

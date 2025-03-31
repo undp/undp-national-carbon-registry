@@ -1,20 +1,22 @@
 import { FC } from 'react';
-import { Skeleton, Tooltip } from 'antd';
+import { Row, Skeleton, Tooltip } from 'antd';
 import { InfoCircle } from 'react-bootstrap-icons';
 
-export interface PieChartStatsProps {
+export interface SideBarChartStatsProps {
   id: string;
   title: any;
   options: any;
-  series: any[];
-  lastUpdate: any;
+  series: any;
   loading: boolean;
+  width: string;
   toolTipText: string;
   Chart: any;
 }
 
-export const SLCFPieChartsStatComponent: FC<PieChartStatsProps> = (props: PieChartStatsProps) => {
-  const { id, title, options, series, lastUpdate, loading, toolTipText, Chart } = props;
+export const SLCFSideBarChartsStatComponent: FC<SideBarChartStatsProps> = (
+  props: SideBarChartStatsProps
+) => {
+  const { id, title, options, series, loading, toolTipText, Chart, width } = props;
   return (
     <div className="statistics-and-pie-card height-pie-rem">
       {loading ? (
@@ -24,31 +26,30 @@ export const SLCFPieChartsStatComponent: FC<PieChartStatsProps> = (props: PieCha
         </div>
       ) : (
         <>
-          <div className="pie-charts-top">
-            <div className="pie-charts-title">{title}</div>
-            <div className="info-container">
-              <Tooltip
-                arrowPointAtCenter
-                placement="bottomRight"
-                trigger="hover"
-                title={toolTipText}
-              >
-                <InfoCircle color="#000000" size={17} />
-              </Tooltip>
-            </div>
-          </div>
+          <Row justify={'space-between'} align={'middle'} className="pie-charts-top">
+            <Row align={'middle'}>
+              <div className="pie-charts-title">{title}</div>
+              <div className="info-container">
+                <Tooltip
+                  arrowPointAtCenter
+                  placement="bottomRight"
+                  trigger="hover"
+                  title={toolTipText}
+                >
+                  <InfoCircle color="#000000" size={17} />
+                </Tooltip>
+              </div>
+            </Row>
+          </Row>
           <div className="pie-charts-section">
             <Chart
               id={id}
               options={options}
               series={series}
-              type="donut"
-              height="370px"
-              width="400px"
+              type="bar"
+              width={width}
+              height="400px"
             />
-          </div>
-          <div className="updated-on margin-top-2">
-            {lastUpdate !== '0' && <div className="updated-moment-container">{lastUpdate}</div>}
           </div>
         </>
       )}

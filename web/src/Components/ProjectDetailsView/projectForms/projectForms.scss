@@ -1,5 +1,122 @@
 @import '../../../Styles/variables.scss';
 
+.projectDocuments {
+  .title-icon {
+    padding-right: 10px;
+  }
+
+  .title-text {
+    color: $title-text-color;
+    font-weight: 600;
+  }
+
+  .title {
+    margin-bottom: 5px;
+  }
+
+  .document-info-row {
+    &-first {
+      margin-top: 16px;
+    }
+    margin-top: 6px;
+  }
+
+  .document-action-btn {
+    width: 100%;
+  }
+}
+
+.verification-forms {
+  .title-icon {
+    padding-right: 10px;
+    font-size: 16px;
+  }
+
+  .title-text {
+    color: $title-text-color;
+    font-weight: 600;
+    margin-top: -2px;
+  }
+
+  .title {
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .document-info-row {
+    // &-first {
+    //   margin-top: 16px;
+    // }
+    margin-top: 4px;
+  }
+
+  .document-action-btn {
+    width: 100%;
+  }
+
+  .documentTitle-col {
+    font-size: 14px;
+  }
+
+  .tag-col {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .activity-container {
+    margin-top: 1rem;
+    width: 100%;
+
+    .ant-steps-item-container {
+      margin-bottom: 0.5rem;
+    }
+
+    .ant-steps-item-title {
+      width: 100% !important;
+    }
+  }
+  .stage-icon {
+    font-size: 14px;
+    margin-right: 8px;
+  }
+
+  .step-icon-completed {
+    font-size: 1.4rem;
+    color: white;
+    padding: 0.13rem 0.23rem 0rem 0.23rem;
+    border-radius: 100%;
+    background-color: #5dc380;
+  }
+  .step-icon-pending {
+    font-size: 14px;
+    color: #bfbfbf;
+    padding: 0.25rem 0.35rem 0.15rem 0.35rem;
+    border-radius: 100%;
+    border-color: #bfbfbf;
+    border-width: 1px;
+    border-style: solid;
+    background-color: white;
+  }
+  .step-icon-submitted {
+    font-size: 1rem;
+    color: #cfa42f;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+    border-radius: 100%;
+    background-color: #ffeec0;
+  }
+  .step-icon-rejected {
+    font-size: 1rem;
+    color: white;
+    padding: 0.15rem 0.30rem 0.25rem 0.30rem;
+    border-radius: 100%;
+    background-color: #ff4618;
+  }
+}
+
 .info-view {
   .title-icon {
     padding-right: 10px;
@@ -114,7 +231,10 @@
       left: 10px;
     }
 
-    .ant-steps-vertical > .ant-steps-item > .ant-steps-item-container > .ant-steps-item-tail::after {
+    .ant-steps-vertical
+      > .ant-steps-item
+      > .ant-steps-item-container
+      > .ant-steps-item-tail::after {
       background-color: #ffff !important;
       border-left: 1px solid #d9d9d9;
       border-style: solid;
