@@ -195,7 +195,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
         <div>
           <div className="val-report-step-form-container">
             <Form
-              labelCol={{ span: 20 }}
+              labelCol={{ span: 24 }}
               wrapperCol={{ span: 24 }}
               className="step-form"
               layout="vertical"
@@ -398,8 +398,24 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       </Form.Item>
 
                       <Form.Item
-                        label={t('validationReport:annualAverageGHGReduction')}
+                        label={
+                          <span>
+                            {t('validationReport:annualAverageGHGReduction')}
+                            <span
+                              style={{
+                                color: '#FF4D4F',
+                                marginLeft: 2,
+                                fontSize: '16px',
+                                position: 'relative',
+                                top: '3px',
+                              }}
+                            >
+                              *
+                            </span>
+                          </span>
+                        }
                         name="annualAverageGHGReduction"
+                        required={false}
                         rules={[
                           {
                             required: true,

@@ -49,7 +49,11 @@
   }
 
   .project-scale-radio-btns {
-    width: 40%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
   }
 
   .crediting-period-duration {
@@ -60,6 +64,14 @@
   .crediting-period-duration-to {
     margin-top: 4px;
   }
+}
+
+.ant-form-item-label
+  > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+  content: ' *';
+  color: red !important;
+  font-size: inherit !important;
+  margin-left: 2px !important;
 }
 
 .val-report-step-form-container {

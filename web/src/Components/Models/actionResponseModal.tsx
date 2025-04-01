@@ -2,6 +2,7 @@ import { FC } from 'react';
 import './Models.scss';
 import { Button, Col, Modal } from 'antd';
 import { ActionResponseType } from '../../Definitions/Enums/actionResponse.enum';
+import { COLOR_CONFIGS } from '../../Config/colorConfigs';
 
 export interface ActionResponseModalProps {
   type?: ActionResponseType;
@@ -33,22 +34,25 @@ export const ActionResponseModal: FC<ActionResponseModalProps> = (
       onCancel={onCancel}
       destroyOnClose={true}
     >
-      <div className="action-response-modal" style={{ display: 'flex', justifyContent: 'center' }}>
+      <div
+        className="action-response-modal"
+        style={{ marginRight: 30, display: 'flex', justifyContent: 'center' }}
+      >
         <Col>
           <Button
             style={{
               backgroundColor:
                 type === ActionResponseType.FAILED
-                  ? '#FF4D4F'
+                  ? COLOR_CONFIGS.FAILED_RESPONSE_COLOR
                   : type === ActionResponseType.SUCCESS
-                  ? '#70B554'
-                  : '#16B1FF',
+                  ? COLOR_CONFIGS.SUCCESS_RESPONSE_COLOR
+                  : COLOR_CONFIGS.PROCESSED_RESPONSE_COLOR,
               borderColor:
                 type === ActionResponseType.FAILED
-                  ? '#FF4D4F'
+                  ? COLOR_CONFIGS.FAILED_RESPONSE_COLOR
                   : type === ActionResponseType.SUCCESS
-                  ? '#70B554'
-                  : '#16B1FF',
+                  ? COLOR_CONFIGS.SUCCESS_RESPONSE_COLOR
+                  : COLOR_CONFIGS.PROCESSED_RESPONSE_COLOR,
             }}
             onClick={onCancel}
             className="mg-left-2"
