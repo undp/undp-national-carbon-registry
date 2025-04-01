@@ -1,0 +1,8 @@
+{
+  "creditsTransferred": "Credits transferred successfully",
+  "creditBlockNotExists": "The specified credit block does not exist.",
+  "creditBlockDoesNotOwnBySender": "The sender does not own the credit block.",
+  "notEnoughCreditAmount": "Not enough credit amount available for the transfer.",
+  "retirementReqCreated": "Credit retirement request created.",
+  "creditRetirementReqAction": "Credit retirement request {}ed"
+}

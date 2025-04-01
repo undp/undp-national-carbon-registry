@@ -184,7 +184,7 @@ export class CompanyService {
       return new BasicResponseDto(
         HttpStatus.OK,
         this.helperService.formatReqMessagesString(
-          "company.suspendCompanySuccess",
+          "company.companyDeactivation",
           []
         )
       );
@@ -365,7 +365,7 @@ export class CompanyService {
       return new BasicResponseDto(
         HttpStatus.OK,
         this.helperService.formatReqMessagesString(
-          "company.companyActivationSuccess",
+          "company.companyReactivationSuccess",
           []
         )
       );
