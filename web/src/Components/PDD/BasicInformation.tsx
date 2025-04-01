@@ -51,7 +51,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
         <div>
           <div className="step-form-container">
             <Form
-              labelCol={{ span: 20 }}
+              labelCol={{ span: 24 }}
               wrapperCol={{ span: 24 }}
               className="step-form"
               layout="vertical"
@@ -91,7 +91,7 @@ const ProjectDetails = (props: CustomStepsProps) => {
                         },
                       ]}
                     >
-                      <Input size="large" disabled={disableFields} />
+                      <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item

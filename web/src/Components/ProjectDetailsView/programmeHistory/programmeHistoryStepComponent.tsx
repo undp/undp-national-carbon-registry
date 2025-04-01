@@ -81,7 +81,7 @@ const getLogDescription = (log: any, t: any) => {
     case ProjectActivityStage.NO_OBJECTION_LETTER_GENERATED:
       return formatString('slcfProgrammeTimeline:noObjectionLetterGeneratedDescription', [], t);
     case ProjectActivityStage.PDD_SUBMITTED:
-      return formatString('slcfProgrammeTimeline:pddSubmttedTitle', [log.name], t);
+      return formatString('slcfProgrammeTimeline:pddSubmittedDescription', [log.name], t);
     case ProjectActivityStage.PDD_REJECTED_BY_CERTIFIER:
       return formatString('slcfProgrammeTimeline:pddRejectedDescription', [log.name], t);
     case ProjectActivityStage.PDD_APPROVED_BY_CERTIFIER:
@@ -91,7 +91,11 @@ const getLogDescription = (log: any, t: any) => {
     case ProjectActivityStage.PDD_APPROVED_BY_DNA:
       return formatString('slcfProgrammeTimeline:pddApprovedDescription', [log.name], t);
     case ProjectActivityStage.VALIDATION_REPORT_SUBMITTED:
-      return formatString('slcfProgrammeTimeline:validationReportCreatedTitle', [log.name], t);
+      return formatString(
+        'slcfProgrammeTimeline:validationReportCreatedDescription',
+        [log.name],
+        t
+      );
     case ProjectActivityStage.VALIDATION_REPORT_REJECTED:
       return formatString(
         'slcfProgrammeTimeline:validationReportRejectedDescription',
@@ -147,7 +151,7 @@ const getLogDescription = (log: any, t: any) => {
     case ProjectActivityStage.CREDIT_TRANSFERED:
       return formatString(
         'slcfProgrammeTimeline:creditTransferedDescription',
-        [log.data.amount, log.toCompanyName],
+        [log.data.amount, log.toCompanyName, log.fromCompanyName],
         t
       );
     case ProjectActivityStage.RETIRE_REQUESTED:
@@ -170,7 +174,7 @@ const getLogDescription = (log: any, t: any) => {
       );
     case ProjectActivityStage.RETIRE_REJECTED:
       return formatString(
-        'slcfProgrammeTimeline:retiremenRejectedDescription',
+        'slcfProgrammeTimeline:retirementRejectedDescription',
         [log.data.amount, log.fromCompanyName, log.data.retirementType],
         t
       );
@@ -374,7 +378,7 @@ const getLogTitle = (logType: any) => {
     case ProjectActivityStage.NO_OBJECTION_LETTER_GENERATED:
       return 'slcfProgrammeTimeline:noObjectionLetterGeneratedTitle';
       break;
-    case ProjectActivityStage.NO_OBJECTION_LETTER_GENERATED:
+    case ProjectActivityStage.PDD_SUBMITTED:
       return 'slcfProgrammeTimeline:pddSubmttedTitle';
       break;
     case ProjectActivityStage.PDD_APPROVED_BY_CERTIFIER:

@@ -186,7 +186,7 @@ const StepperComponent = (props: VerificationStepProps) => {
       basicInformationForm.setFieldsValue({
         b_projectDeveloper: programmeData?.projectParticipant,
         b_hostParty: pddData?.projectDetails?.hostParty,
-        b_mandatorySectoralScopes: INF_SECTORAL_SCOPE[pddData?.projectDetails?.sectoralScope],
+        b_mandatorySectoralScopes: pddData?.projectDetails?.sectoralScope,
         b_appliedMethodologies: pddData?.projectDetails?.appliedMethodologies,
         b_estimatedGHGEmissionReduction:
           pddData?.projectDetails?.estimatedAvgGHGEmissionReductionBasicInformation,
@@ -228,8 +228,13 @@ const StepperComponent = (props: VerificationStepProps) => {
         onSiteInspection: pddData?.projectActivity?.locationsOfProjectActivity?.map((loc: any) => ({
           siteLocation: loc.locationOfProjectActivity,
         })),
+        interviewees: [{ lastName: '' }],
       });
 
+      verficationTeamForm.setFieldsValue({
+        verificationTeamMembers: [{ role: '' }],
+        technicalReviews: [{ role: '' }],
+      });
       setLoading(false);
     }
   };
@@ -290,6 +295,7 @@ const StepperComponent = (props: VerificationStepProps) => {
   };
 
   useEffect(() => {
+    console.log('-------state?.mode-----------', state);
     if (state?.mode === FormMode.CREATE) {
       fetchAndSetData(id);
     }

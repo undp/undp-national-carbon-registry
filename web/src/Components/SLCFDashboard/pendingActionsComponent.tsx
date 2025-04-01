@@ -151,7 +151,7 @@ export const PendingActionsComponent: FC<PendingActionsCardItemProps> = ({
               </Tooltip>
             </div>
           </Row>
-          <div className="pending-item-list">{t('noPendingActions')}</div>
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('noPendingActions')} />
         </div>
       </div>
     );

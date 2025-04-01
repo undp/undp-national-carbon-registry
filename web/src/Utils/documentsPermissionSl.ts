@@ -67,6 +67,7 @@ export const formPermissions = (
       mode: FormMode.EDIT,
       userCompanyRole: userInfoState?.companyRole,
       documentRefId: documents?.PDD?.refId,
+      documents: documents,
     };
   }
   //PDD: Permissions for PD Other users at PDD_REJECTED_BY_CERTIFIER, PDD_REJECTED_BY_DNA
@@ -232,6 +233,7 @@ export const formPermissions = (
       mode: FormMode.EDIT,
       userCompanyRole: userInfoState?.companyRole,
       documentRefId: documents?.VALIDATION?.refId,
+      documents: documents,
     };
   }
   // VALIDATION_REPORT: for IC other users at VALIDATION_REPORT_REJECTED
