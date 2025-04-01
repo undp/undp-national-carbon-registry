@@ -25,6 +25,7 @@ import {
   RetirementActionEnum,
 } from '../Enums/creditRetirementProceedType.enum';
 import { CreditRetirementTypeEmnum } from '../Enums/creditRetirementType.enum';
+import { COLOR_CONFIGS } from '../../../Config/colorConfigs';
 
 interface CreditActionModalProps {
   icon?: any;
@@ -126,6 +127,12 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
           valid = false;
         }
       }
+      if (!Number.isInteger(Number(creditAmount))) {
+        valid = false;
+      }
+      if (data?.creditAmount && Number(creditAmount) > data?.creditAmount) {
+        valid = false;
+      }
       if (creditAmount === undefined || creditAmount === null) {
         valid = false;
       }
@@ -141,6 +148,7 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
     setChecked(type === CreditActionType.TRANSFER ? true : false);
     setActionDisable(true);
     setRemark('');
+    setReciveParty(undefined);
     if (isProceed) {
       setRetirementType(
         data &&
@@ -467,16 +475,16 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                     ? {
                         backgroundColor:
                           proceedAction === CreditRetirementProceedAction.ACCEPT
-                            ? '#70B554'
+                            ? COLOR_CONFIGS.PRIMARY_THEME_COLOR
                             : proceedAction === CreditRetirementProceedAction.REJECT
-                            ? '#FF4D4F'
-                            : '#FF4D4F',
+                            ? COLOR_CONFIGS.FAILED_RESPONSE_COLOR
+                            : COLOR_CONFIGS.FAILED_RESPONSE_COLOR,
                         borderColor:
                           proceedAction === CreditRetirementProceedAction.ACCEPT
-                            ? '#70B554'
+                            ? COLOR_CONFIGS.PRIMARY_THEME_COLOR
                             : proceedAction === CreditRetirementProceedAction.REJECT
-                            ? '#FF4D4F'
-                            : '#FF4D4F',
+                            ? COLOR_CONFIGS.FAILED_RESPONSE_COLOR
+                            : COLOR_CONFIGS.FAILED_RESPONSE_COLOR,
                       }
                     : {}
                 }

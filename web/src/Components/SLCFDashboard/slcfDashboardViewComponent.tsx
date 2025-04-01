@@ -501,11 +501,12 @@ export const SLCFDashboardComponent = (props: any) => {
         startDate: startDate || undefined,
         endDate: endDate || undefined,
         sector: sector || undefined,
+        timeZone: new Date().getTimezoneOffset(),
       });
       if (response && response.data) {
         const creditRetirementAndTranserStatuses = [
-          { key: 'CREDIT_TRANSFERED', name: 'Transferred' },
           { key: 'RETIRE_APPROVED', name: 'Retired' },
+          { key: 'CREDIT_TRANSFERED', name: 'Transferred' },
         ];
         const categoriesRetirement = [
           ...new Set(

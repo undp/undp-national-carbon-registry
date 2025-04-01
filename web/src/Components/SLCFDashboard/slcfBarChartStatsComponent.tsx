@@ -39,7 +39,7 @@ export const SLCFBarChartsStatComponent: FC<BarChartStatsProps> = (props: BarCha
             <Chart
               id={id}
               options={options}
-              series={series}
+              series={series ? series : []}
               type="bar"
               height={height}
               width={width}

@@ -8,6 +8,8 @@ import '../creditPageStyles.scss';
 import { CreditTransfersInterface } from '../Interfaces/creditTransfers.interface';
 import moment from 'moment';
 import { addCommSep } from '../../../Definitions/Definitions/programme.definitions';
+import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
+import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 
 const { Search } = Input;
 
@@ -41,6 +43,7 @@ export const CreditTransfersTableComponent = (props: any) => {
   const { t } = props;
 
   const { post } = useConnection();
+  const { userInfoState } = useUserContext();
   const isInitialRender = useRef(false);
   const [totalProgramme, setTotalProgramme] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -187,18 +190,22 @@ export const CreditTransfersTableComponent = (props: any) => {
         return <span style={{ marginLeft: '20px' }}>{addCommSep(String(item?.creditAmount))}</span>;
       },
     },
-    {
-      title: t(CrediTransferColumns.STATUS),
-      key: CrediTransferColumns.STATUS,
-      align: 'center' as const,
-      render: (item: CreditTransfersInterface) => {
-        return (
-          <Tag color={getStatusColor(item.transferStatus as TransferStatus)}>
-            {t(item.transferStatus)}
-          </Tag>
-        );
-      },
-    },
+    ...(userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER
+      ? [
+          {
+            title: t(CrediTransferColumns.STATUS),
+            key: CrediTransferColumns.STATUS,
+            align: 'center' as const,
+            render: (item: CreditTransfersInterface) => {
+              return (
+                <Tag color={getStatusColor(item.transferStatus as TransferStatus)}>
+                  {t(item.transferStatus)}
+                </Tag>
+              );
+            },
+          },
+        ]
+      : []),
   ];
 
   const onSearch = async (value: string) => {

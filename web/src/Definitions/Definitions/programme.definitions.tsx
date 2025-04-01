@@ -104,7 +104,7 @@ export const getProjectProposalStage = (stage: ProjectProposalStage) => {
     case ProjectProposalStage.PDD_REJECTED_BY_CERTIFIER:
       return 'orange';
     case ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER:
-      return 'green';
+      return 'lime';
     case ProjectProposalStage.PDD_APPROVED_BY_DNA:
       return 'cyan';
     case ProjectProposalStage.PDD_REJECTED_BY_DNA:
