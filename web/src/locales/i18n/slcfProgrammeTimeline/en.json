@@ -62,7 +62,7 @@
   "creditIssuedDescription": "{} credits have been issued for the project",
 
   "creditTransferedTitle": "Credit Transfered",
-  "creditTransferedDescription": "{} credits has been transferred to {}",
+  "creditTransferedDescription": "{} credits has been transferred to {} from {}",
 
   "retireRequestedTitle": "Credit Retirement Request",
   "retireRequestedDescription": "{} Credits has been requested to retire on {} for the type {}",

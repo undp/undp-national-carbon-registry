@@ -94,12 +94,12 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
     }
     return e?.fileList;
   };
-  useEffect(() => {
-    if (formMode === FormMode.CREATE) {
-      form.setFieldValue('onSiteInspection', [{ activity: '' }]);
-      form.setFieldValue('interviewees', [{ lastName: '' }]);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (formMode === FormMode.CREATE) {
+  //     form.setFieldValue('onSiteInspection', [{ activity: '' }]);
+  //     form.setFieldValue('interviewees', [{ lastName: '' }]);
+  //   }
+  // }, []);
 
   const calculateTotalCL = (value: number) => {
     let total = 0;
@@ -142,7 +142,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
           activityPerformedDate: moment(item?.activityPerformedDate).startOf('day').unix(),
         };
       }),
-      interviews: values?.interviews((item: any) => {
+      interviewees: values?.interviewees.map((item: any) => {
         return {
           ...item,
           date: moment.unix(item?.date).startOf('day').unix(),
@@ -467,7 +467,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                 First name
                               </Col>
                               <Col xl={8} className="interviewee-col-subCols-last">
-                                Affliation name
+                                Affliation
                               </Col>
                             </Row>
                           </Col>

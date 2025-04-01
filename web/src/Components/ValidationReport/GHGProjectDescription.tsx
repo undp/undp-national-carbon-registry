@@ -79,17 +79,56 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
               </Form.Item>
               {/* Grid Emissions start */}
               <Row gutter={[40, 16]} className="grid-emission-factor">
-                <Col xl={5}>
+                <Col xl={6}>
                   <p>{t('validationReport:gridEmissionFactorEFCM')}</p>
                 </Col>
-                <Col xl={4}>
-                  <Input disabled placeholder="0.7298" />
+                <Col xl={3}>
+                  <Form.Item
+                    className="full-width-form-item"
+                    name="gridEmissionFactorValue"
+                    rules={[
+                      {
+                        required: false,
+                        message: `${t('validationReport:gridEmissionFactorValue')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Value" />
+                  </Form.Item>
                 </Col>
                 <Col xl={5}>
-                  <Input disabled placeholder="tCO2e/MWh" />
+                  <Form.Item
+                    className="full-width-form-item"
+                    name="gridEmissionFactorUnit"
+                    rules={[
+                      {
+                        required: false,
+                        message: `${t('validationReport:gridEmissionFactorUnit')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Unit" />
+                  </Form.Item>
                 </Col>
                 <Col xl={5}>
-                  <Input disabled placeholder="Published by  SLSEA (2020)" />
+                  <Form.Item
+                    className="full-width-form-item"
+                    name="gridEmissionFactorSource"
+                    rules={[
+                      {
+                        required: false,
+                        message: `${t('validationReport:gridEmissionFactorSource')} ${t(
+                          'isRequired'
+                        )}`,
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Source" />
+                  </Form.Item>
                 </Col>
               </Row>
               {/* Grid Emissions end */}
@@ -125,7 +164,9 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
               </Form.Item>
 
               {/* Baseline Emmission table start */}
-              <LabelWithTooltip label={t('validationReport:baselineEmission')} required={true} />
+              <h4 className="form-section-heading">
+                {t('validationReport:baselineEmission')} <span style={{ color: '#FF4D4F' }}>*</span>
+              </h4>
 
               <div className="baseline-emisions-table">
                 <Row gutter={[40, 16]}>
@@ -137,7 +178,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
                     <br /> Output (EGy)
                   </Col>
                   <Col xl={3}>
-                    Average Emission
+                    Grid Emission
                     <br /> Factor (EFy)
                   </Col>
                   <Col xl={3}>
