@@ -31,6 +31,7 @@ import { EmailTemplates } from "../email-helper/email.template";
 import { DocumentManagementService } from "../document-management/document-management.service";
 import { Role } from "../casl/role.enum";
 import { DataResponseMessageDto } from "../dto/data.response.message";
+import { ActivityViewEntity } from "../view-entities/activity.view.entity";
 
 @Injectable()
 export class ProjectManagementService {
@@ -46,6 +47,8 @@ export class ProjectManagementService {
     private projectViewRepo: Repository<ProjectViewEntity>,
     @InjectRepository(ProjectDetailsViewEntity)
     private projectDetailsViewRepo: Repository<ProjectDetailsViewEntity>,
+    @InjectRepository(ActivityViewEntity)
+    private activityViewEntityRepo: Repository<ActivityViewEntity>,
     private readonly emailHelperService: EmailHelperService,
     private readonly documentManagementService: DocumentManagementService,
     private readonly auditLogService: AuditLogsService
@@ -155,7 +158,12 @@ export class ProjectManagementService {
 
     const independentCertifiers = certifiers?.map((company) => company.name);
 
+    const activities = await this.activityViewEntityRepo.find({
+      where: { projectRefId: programmeId },
+    });
+
     const projectDetails = {
+      activities,
       infRefId,
       ...project,
       ...infContent,
