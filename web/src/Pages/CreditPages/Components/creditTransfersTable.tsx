@@ -62,7 +62,7 @@ export const CreditTransfersTableComponent = (props: any) => {
 
     if (search && search !== '') {
       filter.push({
-        key: 'project.title',
+        key: 'project"."title',
         operation: 'like',
         value: `%${search}%`,
       });
