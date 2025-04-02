@@ -2245,7 +2245,7 @@ export class ProgrammeSlService {
         id: cNCertificateIssueDto.documentId,
       },
       {
-        content: JSON.stringify(certificateContent),
+        content: certificateContent,
         status: cNCertificateIssueDto.approve
           ? DocumentStatus.ACCEPTED
           : DocumentStatus.REJECTED,

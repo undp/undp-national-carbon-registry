@@ -31,47 +31,6 @@ export class ProjectManagementController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
   @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Create, ProjectEntity)
-  )
-  @Post("create")
-  async addProject(@Body() body: any, @Request() req) {
-    const dtoData = JSON.parse(body.data);
-    const dto = plainToInstance(ProjectCreateDto, dtoData);
-    const errors = await validate(dto);
-    if (errors.length > 0) {
-      console.log("validation failed");
-      throw new HttpException(errors, HttpStatus.BAD_REQUEST);
-    }
-    return this.projectManagementService.create(dto, req.user);
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Update, ProjectEntity)
-  )
-  @Post("inf/approve")
-  async approveINF(@Body("refId") refId: string, @Request() req) {
-    return this.projectManagementService.approveINF(refId, req.user);
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Update, ProjectEntity)
-  )
-  @Post("inf/reject")
-  async rejectINF(
-    @Body("refId") refId: string,
-    @Body("remark") remark: string,
-    @Request() req
-  ) {
-    return this.projectManagementService.rejectINF(refId, remark, req.user);
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) =>
     ability.can(Action.Read, ProjectEntity)
   )
   @Post("query")

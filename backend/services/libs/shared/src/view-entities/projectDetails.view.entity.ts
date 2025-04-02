@@ -6,42 +6,42 @@ import { ActivityEntity } from "../entities/activity.entity";
 @ViewEntity({
   expression: `
     SELECT 
-      p."refId" as "projectId", 
+      p."refId", 
       p."title", 
+      p."serialNumber" as "serialNo",
       p."projectProposalStage", 
       p."creditEst",
       p."creditBalance",
       p."creditRetired",
-      p."creditIssued",
-      p."creditChange",
-      p."companyId",
+      p."creditTransferred",
       p."independentCertifiers" as "certifierId",
-      p."createTime" as "createdTime",
-      p."txTime",
-      p."txType",
-      p."txRef",
       p."noObjectionLetterUrl",
-      p."letterOfAuthorizationUrl",
-      p."activities",
-      c."name", 
-      c."logo",
-      c."companyRole",
-      c."state",
-      d."programmeId",
-      d."status" as "currentStage",
-      d."type",
-      d."content"
+      jsonb_build_object(
+        'name', c."name",
+        'logo', c."logo",
+        'companyRole', c."companyRole",
+        'state', c."state",
+        'email', c."email",
+        'companyId',p."companyId"
+      ) AS "company",
+      COALESCE(
+        jsonb_agg(a.*) FILTER (WHERE a."refId" IS NOT NULL), '[]'::jsonb
+      ) AS "activities"
     FROM "project_entity" p
     JOIN "company" c ON p."companyId" = c."companyId"
-    LEFT JOIN "document_entity" d ON d."programmeId" = p."refId"
+    LEFT JOIN "activity_view_entity" a ON a."projectRefId" = p."refId"
+    GROUP BY p."refId", c."companyId"
   `,
 })
 export class ProjectDetailsViewEntity {
   @ViewColumn()
-  projectId: string;
+  refId: string;
 
   @ViewColumn()
   title: string;
+
+  @ViewColumn()
+  serialNo: string;
 
   @ViewColumn()
   projectProposalStage: string;
@@ -56,58 +56,22 @@ export class ProjectDetailsViewEntity {
   creditRetired: number;
 
   @ViewColumn()
-  creditIssued: number;
-
-  @ViewColumn()
-  creditChange: number;
-
-  @ViewColumn()
-  companyId: number;
-
-  @ViewColumn()
-  state: CompanyState;
+  creditTransferred: number;
 
   @ViewColumn()
   certifierId: number[];
 
   @ViewColumn()
-  createdTime: number;
-
-  @ViewColumn()
-  txTime: bigint;
-
-  @ViewColumn()
-  txType: TxType;
-
-  @ViewColumn()
-  txRef: TxType;
-
-  @ViewColumn()
-  name: string;
-
-  @ViewColumn()
-  logo: string;
-
-  @ViewColumn()
-  companyRole: string;
-
-  @ViewColumn()
-  programmeId: string;
-
-  @ViewColumn()
-  currentStage: string;
-
-  @ViewColumn()
-  type: string;
-
-  @ViewColumn()
-  content: string;
+  company: {
+    name: string;
+    logo: string;
+    companyRole: string;
+    state: CompanyState;
+    email: string;
+  };
 
   @ViewColumn()
   noObjectionLetterUrl: string;
-
-  @ViewColumn()
-  letterOfAuthorizationUrl: string;
 
   @ViewColumn()
   activities: ActivityEntity[];
