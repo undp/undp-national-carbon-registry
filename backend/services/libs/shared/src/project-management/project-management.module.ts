@@ -13,6 +13,7 @@ import { ProjectViewEntity } from "../view-entities/project.view.entity";
 import { ProjectDetailsViewEntity } from "../view-entities/projectDetails.view.entity";
 import { AuditLogsModule } from "../audit-logs/audit-logs.module";
 import { DocumentManagementModule } from "../document-management/document-management.module";
+import { ActivityViewEntity } from "../view-entities/activity.view.entity";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { DocumentManagementModule } from "../document-management/document-manage
       DocumentEntity,
       ProjectViewEntity,
       ProjectDetailsViewEntity,
+      ActivityViewEntity,
     ]),
     UtilModule,
     CompanyModule,

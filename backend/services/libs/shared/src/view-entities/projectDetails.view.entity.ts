@@ -23,14 +23,9 @@ import { ActivityEntity } from "../entities/activity.entity";
         'state', c."state",
         'email', c."email",
         'companyId',p."companyId"
-      ) AS "company",
-      COALESCE(
-        jsonb_agg(a.*) FILTER (WHERE a."refId" IS NOT NULL), '[]'::jsonb
-      ) AS "activities"
+      ) AS "company"
     FROM "project_entity" p
     JOIN "company" c ON p."companyId" = c."companyId"
-    LEFT JOIN "activity_view_entity" a ON a."projectRefId" = p."refId"
-    GROUP BY p."refId", c."companyId"
   `,
 })
 export class ProjectDetailsViewEntity {
@@ -73,6 +68,5 @@ export class ProjectDetailsViewEntity {
   @ViewColumn()
   noObjectionLetterUrl: string;
 
-  @ViewColumn()
   activities: ActivityEntity[];
 }
