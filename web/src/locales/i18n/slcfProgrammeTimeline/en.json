@@ -62,17 +62,17 @@
   "creditIssuedDescription": "{} credits have been issued for the project",
 
   "creditTransferedTitle": "Credit Transfered",
-  "creditTransferedDescription": "{} credits has been transferred to {}",
+  "creditTransferedDescription": "{} credits have been transferred to {} from {}",
 
   "retireRequestedTitle": "Credit Retirement Request",
-  "retireRequestedDescription": "{} Credits has been requested to retire on {} for the type {}",
+  "retireRequestedDescription": "{} Credits have been requested to retire on {} for the type {}",
 
   "retirementApprovedTitle": "Credit Retirement Accepted",
-  "retirementApprovedDescription": "{} Credits has been accepted on {} for the type {} was Accepted",
+  "retirementApprovedDescription": "{} Credits have been accepted on {} for the type {} was Accepted",
 
   "retirementCancelledTitle": "Credit Retirement Cancelled",
-  "retirementCancelledDescription": "{} Credits has been requested to retire on {} for the type {} was Cancelled",
+  "retirementCancelledDescription": "{} Credits have been requested to retire on {} for the type {} was Cancelled",
 
   "retirementRejectedTitle": "Credit Retirement Rejected",
-  "retirementRejectedDescription": "{} Credits has been rejected on {} for the type {} was cancelled"
+  "retirementRejectedDescription": "{} Credits have been rejected on {} for the type {} was cancelled"
 }

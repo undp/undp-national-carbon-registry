@@ -29,6 +29,8 @@ import { AuditLogsService } from "../audit-logs/audit-logs.service";
 import { EmailHelperService } from "../email-helper/email-helper.service";
 import { EmailTemplates } from "../email-helper/email.template";
 import { DocumentManagementService } from "../document-management/document-management.service";
+import { Role } from "../casl/role.enum";
+import { DataResponseMessageDto } from "../dto/data.response.message";
 
 @Injectable()
 export class ProjectManagementService {

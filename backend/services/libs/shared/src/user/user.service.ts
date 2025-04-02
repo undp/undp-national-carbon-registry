@@ -158,15 +158,26 @@ export class UserService {
 
   async update(
     userDto: UserUpdateDto,
-    abilityCondition: string
+    abilityCondition: string,
+    user: User
   ): Promise<DataResponseDto | undefined> {
     this.logger.verbose("User update received", abilityCondition);
 
     userDto.email = userDto.email?.toLowerCase();
 
+    if (user.role !== Role.Admin) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "user.noUserEditPermission",
+          []
+        ),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
     const { id, ...update } = userDto;
-    const user = await this.findById(id);
-    if (!user) {
+    const existinguser = await this.findById(id);
+    if (!existinguser) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("user.noUserFound", []),
         HttpStatus.NOT_FOUND
@@ -595,14 +606,21 @@ export class UserService {
       }
     }
 
-    return await this.create(userDto, companyId, companyRole, isRegistration);
+    return await this.create(
+      userDto,
+      companyId,
+      companyRole,
+      isRegistration,
+      null
+    );
   }
 
   async create(
     userDto: UserDto,
     companyId: number,
     companyRole: CompanyRole,
-    isRegistration?: boolean
+    isRegistration?: boolean,
+    userRole?: Role
   ): Promise<User | DataResponseMessageDto | undefined> {
     this.logger.verbose(`User create received  ${userDto.email} ${companyId}`);
     const isRegistrationValue = isRegistration || false; // Use false as the default value
@@ -611,6 +629,16 @@ export class UserService {
     if (userDto.company) {
       createdUserDto.company = { ...userDto.company };
     }
+    if (!isRegistrationValue && userRole !== Role.Admin) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "user.noUserCreatePermission",
+          []
+        ),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
     const user = await this.findOne(userDto.email);
     if (user) {
       throw new HttpException(
@@ -702,15 +730,15 @@ export class UserService {
         }
       }
       if (
-        companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-        companyRole != CompanyRole.API &&
-        companyRole !== CompanyRole.MINISTRY &&
-        companyRole !== CompanyRole.CLIMATE_FUND &&
-        companyRole !== CompanyRole.EXECUTIVE_COMMITTEE &&
+        (companyRole === CompanyRole.PROJECT_DEVELOPER ||
+          companyRole === CompanyRole.INDEPENDENT_CERTIFIER) &&
         !isRegistrationValue
       ) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("user.userUnAUth", []),
+          this.helperService.formatReqMessagesString(
+            "user.noCompanyCreatePersmission",
+            []
+          ),
           HttpStatus.FORBIDDEN
         );
       }
@@ -1225,11 +1253,25 @@ export class UserService {
     return exportData;
   }
 
-  async delete(userId: number, ability: string): Promise<BasicResponseDto> {
+  async delete(
+    userId: number,
+    ability: string,
+    user: User
+  ): Promise<BasicResponseDto> {
     this.logger.verbose(
       this.helperService.formatReqMessagesString("user.noUserFound", []),
       userId
     );
+
+    if (user.role !== Role.Admin) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "user.noUserDeletePermission",
+          []
+        ),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
 
     const result = await this.userRepo
       .createQueryBuilder()

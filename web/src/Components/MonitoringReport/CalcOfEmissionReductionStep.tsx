@@ -436,7 +436,12 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                         multiple={false}
                         // maxCount={1}
                       >
-                        <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                        <Button
+                          className="upload-doc"
+                          size="large"
+                          icon={<UploadOutlined />}
+                          disabled={disableFields}
+                        >
                           {t('monitoringReport:upload')}
                         </Button>
                       </Upload>

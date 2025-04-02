@@ -3,6 +3,6 @@
     "addAsyncActionQueueFailed": "{} functionality failed when adding to queue",
     "settingsSavedMsg": "Settings saved successfully",
     "settingsSaveFailedMsg": "Settings saving failed",
-    "invalidLogin": "Invalid login credentials",
+    "invalidLogin": "Invalid credentials. Please check your username and password and try again.",
     "programmeNotFound": "Programme not found for the given programmeId"
 }

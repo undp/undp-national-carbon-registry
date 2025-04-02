@@ -41,6 +41,8 @@ import { ProjectCreateDto } from "../dto/project.create.dto";
 import { DataResponseDto } from "../dto/data.response.dto";
 import { NoObjectionLetterGenerateService } from "../util/document-generators/no.objection.letter.gen";
 import { DocumentsViewEntity } from "../view-entities/documents.view.entity";
+import { Role } from "../casl/role.enum";
+import { BasicResponseDto } from "../dto/basic.response.dto";
 
 @Injectable()
 export class DocumentManagementService {
@@ -219,7 +221,7 @@ export class DocumentManagementService {
           if (user.companyId != project.companyId) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
-                "project.notAuthorised",
+                "project.noPddCreatePermission",
                 []
               ),
               HttpStatus.UNAUTHORIZED
@@ -350,7 +352,7 @@ export class DocumentManagementService {
           if (user.companyId != project.companyId) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
-                "project.notAuthorised",
+                "project.noMonitoringCreatePermission",
                 []
               ),
               HttpStatus.UNAUTHORIZED
@@ -839,6 +841,19 @@ export class DocumentManagementService {
           }
           break;
       }
+      const documentTypeMap = {
+        [DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT]: "pddRejected",
+        [DocumentTypeEnum.VALIDATION]: "validationRejected",
+        [DocumentTypeEnum.MONITORING]: "monitoringRejected",
+        [DocumentTypeEnum.VERIFICATION]: "verificationRejected",
+      };
+
+      const response = documentTypeMap[existingDocument.type];
+
+      return new BasicResponseDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString(`project.${response}`, [])
+      );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -1144,10 +1159,23 @@ export class DocumentManagementService {
         );
       }
 
+      if (
+        user.companyRole !== CompanyRole.INDEPENDENT_CERTIFIER ||
+        user.role !== Role.Admin
+      ) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.noPddActionPermission",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
       if (!project.independentCertifiers.includes(user.companyId)) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notAuthorised",
+            "project.icNotAssigned",
             []
           ),
           HttpStatus.UNAUTHORIZED
@@ -1214,10 +1242,13 @@ export class DocumentManagementService {
       requestData.action === DocumentStatus.DNA_APPROVED ||
       requestData.action === DocumentStatus.DNA_REJECTED
     ) {
-      if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+      if (
+        user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+        user.role !== Role.Admin
+      ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notAuthorised",
+            "project.noPddActionPermissionDna",
             []
           ),
           HttpStatus.UNAUTHORIZED
@@ -1293,7 +1324,7 @@ export class DocumentManagementService {
           project.refId
         );
         await this.emailHelperService.sendEmailToICAdmins(
-          EmailTemplates.PDD_DNA_REJECT_TO_IC,
+          EmailTemplates.PDD_APPROVAL_DNA_TO_IC,
           { icOrganisationName: certifiedByUserDetails.Organisation.name },
           project.refId
         );
@@ -1337,10 +1368,13 @@ export class DocumentManagementService {
         );
       }
 
-      if (user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+      if (
+        user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+        user.role !== Role.Admin
+      ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notAuthorised",
+            "project.noValidationActionPermission",
             []
           ),
           HttpStatus.UNAUTHORIZED
@@ -1472,10 +1506,23 @@ export class DocumentManagementService {
         );
       }
 
+      if (
+        user.companyRole !== CompanyRole.INDEPENDENT_CERTIFIER ||
+        user.role !== Role.Admin
+      ) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.noMonitoringActionPermission",
+            []
+          ),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+
       if (!project.independentCertifiers.includes(user.companyId)) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notAuthorised",
+            "project.icNotAssignedMonitoring",
             []
           ),
           HttpStatus.UNAUTHORIZED
@@ -1574,10 +1621,13 @@ export class DocumentManagementService {
       requestData.action === DocumentStatus.DNA_APPROVED ||
       requestData.action === DocumentStatus.DNA_REJECTED
     ) {
-      if (user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+      if (
+        user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+        user.role !== Role.Admin
+      ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notAuthorised",
+            "project.noVerificationActionPermission",
             []
           ),
           HttpStatus.UNAUTHORIZED
