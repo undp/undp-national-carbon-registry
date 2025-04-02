@@ -120,13 +120,13 @@ export const CreditRetirementsTableComponent = (props: any) => {
     const filter: any[] = [];
     const filterOr: any[] = [];
 
-    // if (checkBoxOptions && checkBoxOptions.length > 0) {
-    //   filter.push({
-    //     key: 'status',
-    //     operation: 'in',
-    //     value: checkBoxOptions,
-    //   });
-    // }
+    if (checkBoxOptions && checkBoxOptions.length > 0) {
+      filter.push({
+        key: 'creditTx"."status',
+        operation: 'in',
+        value: checkBoxOptions,
+      });
+    }
 
     if (search && search !== '') {
       filter.push({
