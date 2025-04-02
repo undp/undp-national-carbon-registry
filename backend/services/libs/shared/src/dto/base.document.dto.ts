@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
   IsEnum,
   IsNotEmpty,
@@ -6,6 +6,7 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  ValidateIf,
 } from "class-validator";
 import { DocumentTypeEnum } from "../enum/document.type.enum";
 
@@ -15,9 +16,12 @@ export class BaseDocumentDto {
   // @IsNumber()
   // id?: number;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsNotEmpty()
+  @ValidateIf(
+    (dto) => dto.documentType != DocumentTypeEnum.INITIAL_NOTIFICATION_FORM
+  )
   projectRefId: string;
 
   // @ApiProperty({

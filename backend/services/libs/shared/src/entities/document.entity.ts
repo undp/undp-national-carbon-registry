@@ -47,7 +47,7 @@ export class DocumentEntity implements EntitySubject {
     array: false,
     nullable: true,
   })
-  content: string;
+  content: any;
 
   @Column({ type: "bigint" })
   createdTime: number;

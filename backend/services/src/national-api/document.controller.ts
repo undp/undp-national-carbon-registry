@@ -42,27 +42,9 @@ export class DocumentManagementController {
   @CheckPolicies((ability: AppAbility) =>
     ability.can(Action.Update, DocumentEntity)
   )
-  @Post("approve")
-  async approve(
-    @Query("refId") refId: string,
-    @Body() dto: DocumentActionRequestDto,
-    @Request() req
-  ) {
-    return await this.documentManagementService.approve(refId, dto, req.user);
-  }
-
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard, PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Action.Update, DocumentEntity)
-  )
-  @Post("reject")
-  async reject(
-    @Query("refId") refId: string,
-    @Body() dto: DocumentActionRequestDto,
-    @Request() req
-  ) {
-    return await this.documentManagementService.reject(refId, dto, req.user);
+  @Post("verify")
+  async verify(@Body() dto: DocumentActionRequestDto, @Request() req) {
+    return await this.documentManagementService.verify(dto, req.user);
   }
 
   @ApiBearerAuth()
