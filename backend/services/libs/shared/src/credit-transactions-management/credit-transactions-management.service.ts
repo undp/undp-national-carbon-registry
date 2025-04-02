@@ -55,7 +55,7 @@ export class CreditTransactionsManagementService {
       if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notProjectParticipant",
+            "creditTransaction.noTransferPermission",
             []
           ),
           HttpStatus.BAD_REQUEST
@@ -155,7 +155,7 @@ export class CreditTransactionsManagementService {
       if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notProjectParticipant",
+            "creditTransaction.noRetirePermission",
             []
           ),
           HttpStatus.BAD_REQUEST
@@ -263,7 +263,10 @@ export class CreditTransactionsManagementService {
       ) {
         if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
           throw new HttpException(
-            this.helperService.formatReqMessagesString("project.notDNA", []),
+            this.helperService.formatReqMessagesString(
+              "creditTransaction.noRetireActionPermission",
+              []
+            ),
             HttpStatus.BAD_REQUEST
           );
         }

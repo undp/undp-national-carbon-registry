@@ -17,6 +17,10 @@
   "deleteUserSuccess": "The user has been deleted successfully",
   "deleteOneAdminWhenOnlyOneAdmin": "The user cannot be deleted as the user is the only admin",
   "userUnAUth": "This action is unauthorised",
+  "noCompanyCreatePersmission": "You do not have permission to create a new organisation.",
+  "noUserCreatePermission": "You do not have permission to create a new user.",
+  "noUserDeletePermission": "You do not have permission to delete users.",
+  "noUserEditPermission": "You do not have permission to edit users.",
   "noUserFound": "No visible user found",
   "passwordUpdateFailed": "Password update failed. Please try again",
   "rootUserDelete": "Root user cannot be deleted",
@@ -33,7 +37,6 @@
   "resetEmailSent": "User found, An email was sent",
   "invalidCountry": "Country is invalid",
   "editUserSuccess": "The user account has been updated successfully",
-
   "MinistryDepartmentAlreadyExist": "Government Department Already Exist",
   "createExistingUserInRegistry": "User already exists in the Carbon Registry System with the given email",
   "createExistingUserInTransparency": "User already exists in the National NDC Transparency System with the given email",
@@ -46,5 +49,4 @@
   "createExistingCompanyWithTaxIdInTransparency": "Organisation already exists in the National NDC Transparency System with the given Tax ID",
   "wrongMinistryAndGovDep": "Invalid Government Department Selected",
   "paymentIdExistAlready": "The organisation already exists with the given Registration Payment ID"
-  
 }

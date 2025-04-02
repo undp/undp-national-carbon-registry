@@ -34,6 +34,7 @@ import { LetterOfAuthorisationRequestGen } from "../util/document-generators/let
 import { SerialNumberManagementService } from "../serial-number-management/serial-number-management.service";
 import { UserCompanyViewEntity } from "../view-entities/userCompany.view.entity";
 import { ActivityVintageCreditsDto } from "../dto/activty.vintage.credits.dto";
+import { Role } from "../casl/role.enum";
 
 @Injectable()
 export class DocumentManagementService {
@@ -82,10 +83,10 @@ export class DocumentManagementService {
 
       switch (addDocumentDto.documentType) {
         case DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT:
-          if (user.companyId != project.companyId) {
+          if (user.companyId != project.companyId || user.role !== Role.Admin) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
-                "project.notAuthorised",
+                "project.noPddCreatePermission",
                 []
               ),
               HttpStatus.UNAUTHORIZED
@@ -143,10 +144,23 @@ export class DocumentManagementService {
             throw new HttpException(errors, HttpStatus.BAD_REQUEST);
           }
 
-          if (user.companyRole !== CompanyRole.INDEPENDENT_CERTIFIER) {
+          if (
+            user.companyRole !== CompanyRole.INDEPENDENT_CERTIFIER ||
+            user.role !== Role.Admin
+          ) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
-                "project.notAuthorised",
+                "project.noValidationCreatePermission",
+                []
+              ),
+              HttpStatus.UNAUTHORIZED
+            );
+          }
+
+          if (!project.independentCertifiers.includes(user.companyId)) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.icNotAssignedValidation",
                 []
               ),
               HttpStatus.UNAUTHORIZED
@@ -214,10 +228,10 @@ export class DocumentManagementService {
           break;
 
         case DocumentTypeEnum.MONITORING:
-          if (user.companyId != project.companyId) {
+          if (user.companyId != project.companyId || user.role !== Role.Admin) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
-                "project.notAuthorised",
+                "project.noMonitoringCreatePermission",
                 []
               ),
               HttpStatus.UNAUTHORIZED
@@ -370,10 +384,22 @@ export class DocumentManagementService {
           break;
 
         case DocumentTypeEnum.VERIFICATION:
-          if (user.companyRole != CompanyRole.INDEPENDENT_CERTIFIER) {
+          if (
+            user.companyRole != CompanyRole.INDEPENDENT_CERTIFIER ||
+            user.role !== Role.Admin
+          ) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
-                "project.notAuthorised",
+                "project.noVerificationCreatePermission",
+                []
+              ),
+              HttpStatus.UNAUTHORIZED
+            );
+          }
+          if (!project.independentCertifiers.includes(user.companyId)) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.icNotAssignedVerification",
                 []
               ),
               HttpStatus.UNAUTHORIZED
@@ -1069,10 +1095,23 @@ export class DocumentManagementService {
         );
       }
 
+      if (
+        user.companyRole !== CompanyRole.INDEPENDENT_CERTIFIER ||
+        user.role !== Role.Admin
+      ) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.noPddActionPermission",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
       if (!project.independentCertifiers.includes(user.companyId)) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notAuthorised",
+            "project.icNotAssigned",
             []
           ),
           HttpStatus.UNAUTHORIZED
@@ -1139,10 +1178,13 @@ export class DocumentManagementService {
       requestData.action === DocumentStatus.DNA_APPROVED ||
       requestData.action === DocumentStatus.DNA_REJECTED
     ) {
-      if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+      if (
+        user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+        user.role !== Role.Admin
+      ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notAuthorised",
+            "project.noPddActionPermissionDna",
             []
           ),
           HttpStatus.UNAUTHORIZED
@@ -1262,10 +1304,13 @@ export class DocumentManagementService {
         );
       }
 
-      if (user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+      if (
+        user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+        user.role !== Role.Admin
+      ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notAuthorised",
+            "project.noValidationActionPermission",
             []
           ),
           HttpStatus.UNAUTHORIZED
@@ -1404,10 +1449,23 @@ export class DocumentManagementService {
         );
       }
 
+      if (
+        user.companyRole !== CompanyRole.INDEPENDENT_CERTIFIER ||
+        user.role !== Role.Admin
+      ) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.noMonitoringActionPermission",
+            []
+          ),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+
       if (!project.independentCertifiers.includes(user.companyId)) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notAuthorised",
+            "project.icNotAssignedMonitoring",
             []
           ),
           HttpStatus.UNAUTHORIZED
@@ -1506,10 +1564,13 @@ export class DocumentManagementService {
       requestData.action === DocumentStatus.DNA_APPROVED ||
       requestData.action === DocumentStatus.DNA_REJECTED
     ) {
-      if (user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+      if (
+        user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+        user.role !== Role.Admin
+      ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notAuthorised",
+            "project.noVerificationActionPermission",
             []
           ),
           HttpStatus.UNAUTHORIZED
