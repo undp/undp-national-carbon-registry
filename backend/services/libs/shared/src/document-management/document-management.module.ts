@@ -12,6 +12,8 @@ import { UserModule } from "../user/user.module";
 import { ActivityEntity } from "../entities/activity.entity";
 import { SerialNumberManagementModule } from "../serial-number-management/serial-number-management.module";
 import { UserCompanyViewEntity } from "../view-entities/userCompany.view.entity";
+import { DocumentsViewEntity } from "../view-entities/documents.view.entity";
+import { ActivityViewEntity } from "../view-entities/activity.view.entity";
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { UserCompanyViewEntity } from "../view-entities/userCompany.view.entity"
       DocumentEntity,
       ActivityEntity,
       UserCompanyViewEntity,
+      DocumentsViewEntity,
+      ActivityViewEntity,
     ]),
     ProgrammeLedgerModule,
     EmailHelperModule,

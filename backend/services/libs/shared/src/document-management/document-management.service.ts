@@ -40,12 +40,15 @@ import { CounterType } from "../util/counter.type.enum";
 import { ProjectCreateDto } from "../dto/project.create.dto";
 import { DataResponseDto } from "../dto/data.response.dto";
 import { NoObjectionLetterGenerateService } from "../util/document-generators/no.objection.letter.gen";
+import { DocumentsViewEntity } from "../view-entities/documents.view.entity";
 
 @Injectable()
 export class DocumentManagementService {
   constructor(
     @InjectRepository(DocumentEntity)
     private readonly documentRepository: Repository<DocumentEntity>,
+    @InjectRepository(DocumentsViewEntity)
+    private readonly documentsViewEntityRepository: Repository<DocumentsViewEntity>,
     @InjectRepository(ActivityEntity)
     private readonly activityEntityRepository: Repository<ActivityEntity>,
     @InjectRepository(UserCompanyViewEntity)
@@ -92,7 +95,7 @@ export class DocumentManagementService {
         projectCompanyId = project.companyId;
       }
       const newDoc = new DocumentEntity();
-      newDoc.content = JSON.stringify(addDocumentDto.data);
+      newDoc.content = addDocumentDto.data;
       newDoc.programmeId = projectRefId;
       newDoc.companyId = projectCompanyId;
       newDoc.userId = user.id;
@@ -171,18 +174,18 @@ export class DocumentManagementService {
 
           const docUrls = [];
           if (projectCreateDto.additionalDocuments?.length > 0) {
-            projectCreateDto.additionalDocuments.forEach(async (doc) => {
+            for (const additionalDocument of projectCreateDto.additionalDocuments) {
               const docUrl = await this.uploadDocument(
                 DocType.INF_ADDITIONAL_DOCUMENT,
                 project.refId,
-                doc
+                additionalDocument
               );
               docUrls.push(docUrl);
-            });
+            }
           }
           projectCreateDto.additionalDocuments = docUrls;
 
-          newDoc.content = JSON.stringify(projectCreateDto);
+          newDoc.content = projectCreateDto;
 
           const infDoc = await this.documentRepository.save(newDoc);
           project.txRef = this.getDocumentTxRef(
@@ -241,6 +244,7 @@ export class DocumentManagementService {
             programmeId: addDocumentDto.projectRefId,
             txType: TxType.CREATE_PDD,
           };
+          await this.createPDD(newDoc.content, projectRefId);
           const doc = await this.documentRepository.save(newDoc); //not a good method to handle this, ledger table can be used to gerantee the consistency
           const response = await this.updateProposalStage(
             updateProjectProposalStage,
@@ -263,18 +267,16 @@ export class DocumentManagementService {
           break;
         }
         case DocumentTypeEnum.VALIDATION: {
-          const validationReportDto: ValidationReportDto = plainToInstance(
-            ValidationReportDto,
-            addDocumentDto.data
-          );
-
-          const errors = await validate(validationReportDto);
-          if (errors.length > 0) {
-            console.log("validation failed");
-            throw new HttpException(errors, HttpStatus.BAD_REQUEST);
-          }
-
           if (user.companyRole !== CompanyRole.INDEPENDENT_CERTIFIER) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.notAuthorised",
+                []
+              ),
+              HttpStatus.UNAUTHORIZED
+            );
+          }
+          if (!project.independentCertifiers.includes(user.companyId)) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
                 "project.notAuthorised",
@@ -299,7 +301,7 @@ export class DocumentManagementService {
             );
           }
 
-          await this.createValidationReport(validationReportDto, newDoc);
+          await this.createValidationReport(newDoc.content, projectRefId);
 
           updateProjectProposalStage = {
             programmeId: addDocumentDto.projectRefId,
@@ -394,51 +396,7 @@ export class DocumentManagementService {
               HttpStatus.BAD_REQUEST
             );
           }
-          const monitoringData = addDocumentDto.data;
-
-          if (
-            monitoringData?.annexures?.optionalDocuments &&
-            monitoringData.annexures.optionalDocuments.length > 0
-          ) {
-            const docUrls = await this.uploadDocument(
-              monitoringData.annexures.optionalDocuments,
-              DocType.MONITORING_REPORT_ANNEXURES_OPTIONAL_DOCUMENT,
-              project.refId
-            );
-            monitoringData.annexures.optionalDocuments = docUrls;
-          }
-
-          if (
-            monitoringData?.projectActivity?.projectActivityLocationsList &&
-            monitoringData.projectActivity.projectActivityLocationsList.length >
-              0
-          ) {
-            for (const location of monitoringData.projectActivity
-              .projectActivityLocationsList) {
-              if (
-                location.optionalDocuments &&
-                location.optionalDocuments.length > 0
-              ) {
-                location.optionalDocuments = await this.uploadDocument(
-                  location.optionalDocuments,
-                  DocType.MONITORING_REPORT_LOCATION_OF_PROJECT_ACTIVITY_OPTIONAL_DOCUMENT,
-                  project.refId
-                );
-              }
-            }
-          }
-
-          if (
-            monitoringData?.quantifications?.optionalDocuments &&
-            monitoringData.quantifications.optionalDocuments.length > 0
-          ) {
-            const docUrls = await this.uploadDocument(
-              monitoringData.quantifications.optionalDocuments,
-              DocType.MONITORING_REPORT_QUANTIFICATIONS_OPTIONAL_DOCUMENT,
-              project.refId
-            );
-            monitoringData.quantifications.optionalDocuments = docUrls;
-          }
+          await this.createMonitoringReport(newDoc.content, projectRefId);
 
           await this.entityManager
             .transaction(async (em) => {
@@ -510,6 +468,15 @@ export class DocumentManagementService {
               HttpStatus.UNAUTHORIZED
             );
           }
+          if (!project.independentCertifiers.includes(user.companyId)) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.notAuthorised",
+                []
+              ),
+              HttpStatus.UNAUTHORIZED
+            );
+          }
           if (project.projectProposalStage != ProjectProposalStage.AUTHORISED) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
@@ -522,6 +489,15 @@ export class DocumentManagementService {
           lastActivity = await this.getLastActivity(
             addDocumentDto.projectRefId
           );
+          if (!lastActivity) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.noActivity",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
           if (
             lastActivity &&
             addDocumentDto.activityRefId &&
@@ -536,7 +512,6 @@ export class DocumentManagementService {
             );
           }
           if (
-            lastActivity &&
             ![
               ActivityStateEnum.MONITORING_REPORT_VERIFIED,
               ActivityStateEnum.VERIFICATION_REPORT_REJECTED,
@@ -551,15 +526,42 @@ export class DocumentManagementService {
             );
           }
 
-          const verificationData = addDocumentDto.data.content;
+          await this.createVerificationReport(newDoc.content, projectRefId);
 
-          await this.createVerificationReport(
-            verificationData,
-            newDoc,
-            lastActivity,
-            user,
-            project
-          );
+          await this.entityManager
+            .transaction(async (em) => {
+              let documentVersion;
+              let activityId;
+              await em.update(
+                ActivityEntity,
+                { id: lastActivity.id },
+                {
+                  state: ActivityStateEnum.VERIFICATION_REPORT_UPLOADED,
+                }
+              );
+              activityId = lastActivity.id;
+              const lastDocumentVersion = await this.getLastDocumentVersion(
+                DocumentTypeEnum.VERIFICATION,
+                project.refId
+              );
+              documentVersion = lastDocumentVersion + 1;
+
+              newDoc.version = documentVersion;
+              newDoc.activityId = activityId;
+              const doc = await this.documentRepository.save(newDoc);
+              await this.logProjectStage(
+                project.refId,
+                ProjectAuditLogType.VERIFICATION_REPORT_SUBMITTED,
+                user.id,
+                em
+              );
+            })
+            .catch((error: any) => {
+              throw new HttpException(
+                error.message,
+                HttpStatus.INTERNAL_SERVER_ERROR
+              );
+            });
 
           ICCompany = await this.companyService.findByCompanyId(user.companyId);
 
@@ -581,243 +583,133 @@ export class DocumentManagementService {
     }
   }
 
-  private async createValidationReport(
-    validationReportDto: ValidationReportDto,
-    newDoc: DocumentEntity
-  ): Promise<void> {
+  private async createPDD(pddData: any, projectRefId: string) {
+    const additionalDocumentFields = [
+      {
+        field: "appendix2Documents",
+        type: DocType.PDD_APPENDIX_2_DOCUMENT,
+      },
+      {
+        field: "appendix3Documents",
+        type: DocType.PDD_APPENDIX_3_DOCUMENT,
+      },
+      {
+        field: "appendix4Documents",
+        type: DocType.PDD_APPENDIX_4_DOCUMENT,
+      },
+      {
+        field: "appendix5Documents",
+        type: DocType.PDD_APPENDIX_5_DOCUMENT,
+      },
+      {
+        field: "appendix6Documents",
+        type: DocType.PDD_APPENDIX_6_DOCUMENT,
+      },
+      {
+        field: "appendix7Documents",
+        type: DocType.PDD_APPENDIX_7_DOCUMENT,
+      },
+    ];
+
+    if (pddData.appendix) {
+      for (const docField of additionalDocumentFields) {
+        if (
+          pddData.appendix[docField.field] &&
+          pddData.appendix[docField.field].length > 0
+        ) {
+          console.log(pddData.appendix[docField.field]);
+          const docUrls = await this.uploadDocuments(
+            docField.type,
+            projectRefId,
+            pddData.appendix[docField.field]
+          );
+          pddData.appendix[docField.field] = docUrls;
+        }
+      }
+    }
+
     if (
-      validationReportDto.content.ghgProjectDescription
-        .locationsOfProjectActivity &&
-      validationReportDto.content.ghgProjectDescription
-        .locationsOfProjectActivity.length > 0
+      pddData?.projectActivity?.locationsOfProjectActivity &&
+      pddData.projectActivity.locationsOfProjectActivity.length > 0
     ) {
-      for (const location of validationReportDto.content.ghgProjectDescription
+      for (const location of pddData.projectActivity
         .locationsOfProjectActivity) {
         if (
           location.additionalDocuments &&
           location.additionalDocuments.length > 0
         ) {
-          const docUrls = [];
-          for (const doc of location.additionalDocuments) {
-            let docUrl = this.isValidHttpUrl(doc)
-              ? doc
-              : await this.uploadDocument(
-                  DocType.VALIDATION_REPORT_LOCATION_OF_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
-                  validationReportDto.programmeId,
-                  doc
-                );
-            docUrls.push(docUrl);
-          }
+          const docUrls = await this.uploadDocuments(
+            DocType.PDD_LOCATION_OF_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
+            projectRefId,
+            location.additionalDocuments
+          );
           location.additionalDocuments = docUrls;
         }
       }
     }
+  }
 
-    await this.processValidatorSignature(
-      validationReportDto,
-      "validator1Signature"
-    );
-    await this.processValidatorSignature(
-      validationReportDto,
-      "validator2Signature"
-    );
-
+  private async createValidationReport(
+    validationData: any,
+    projectRefId: string
+  ): Promise<void> {
     if (
-      validationReportDto.content.appendix.additionalDocuments &&
-      validationReportDto.content.appendix.additionalDocuments.length > 0
+      validationData?.appendix?.appendix1Documents &&
+      validationData.appendix.appendix1Documents.length > 0
     ) {
-      const docUrls = [];
-      for (const doc of validationReportDto.content.appendix
-        .additionalDocuments) {
-        let docUrl = this.isValidHttpUrl(doc)
-          ? doc
-          : await this.uploadDocument(
-              DocType.VALIDATION_REPORT_APPENDIX_ADDITIONAL_DOCUMENT,
-              validationReportDto.programmeId,
-              doc
-            );
-        docUrls.push(docUrl);
-      }
-      validationReportDto.content.appendix.additionalDocuments = docUrls;
+      const docUrls = await this.uploadDocuments(
+        DocType.VALIDATION_APPENDIX_DOCS,
+        projectRefId,
+        validationData.appendix.appendix1Documents
+      );
+      validationData.appendix.appendix1Documents = docUrls;
+    }
+  }
+
+  private async createMonitoringReport(
+    monitoringData: any,
+    projectRefId: string
+  ) {
+    if (
+      monitoringData?.appendix?.a_uploadDoc &&
+      monitoringData.appendix.a_uploadDoc.length > 0
+    ) {
+      const docUrls = await this.uploadDocuments(
+        DocType.MONITORING_REPORT_APPENDIX_ADDITIONAL_DOC,
+        projectRefId,
+        monitoringData.appendix.a_uploadDoc
+      );
+      monitoringData.appendix.a_uploadDoc = docUrls;
     }
 
-    validationReportDto.content.projectDetails.reportID = `SLCCS/VDR/${new Date().getFullYear()}/${
-      newDoc.programmeId
-    }/${newDoc.version}`;
+    if (
+      monitoringData?.calcEmissionReductions?.ce_documentUpload &&
+      monitoringData.calcEmissionReductions.ce_documentUpload.length > 0
+    ) {
+      const docUrls = await this.uploadDocuments(
+        DocType.MONITORING_REPORT_BASELINE_EMISSION_ADDITIONAL_DOC,
+        projectRefId,
+        monitoringData.calcEmissionReductions.ce_documentUpload
+      );
+      monitoringData.calcEmissionReductions.ce_documentUpload = docUrls;
+    }
   }
 
   private async createVerificationReport(
-    verificationData,
-    newDoc: DocumentEntity,
-    lastActivity: ActivityEntity,
-    user: User,
-    project: ProjectEntity
+    verificationData: any,
+    projectRefId: string
   ): Promise<void> {
     if (
-      verificationData.annexures.optionalDocuments &&
-      verificationData.annexures.optionalDocuments.length > 0
+      verificationData?.appendix?.appendix1Documents &&
+      verificationData?.appendix?.appendix1Documents.length > 0
     ) {
-      const docUrls = [];
-      for (const doc of verificationData.annexures.optionalDocuments) {
-        let docUrl;
-
-        if (this.isValidHttpUrl(doc)) {
-          docUrl = doc;
-        } else {
-          docUrl = await this.uploadDocument(
-            DocType.VERIFICATION_REPORT_ANNEXURES_OPTIONAL_DOCUMENT,
-            project.refId,
-            doc
-          );
-        }
-        docUrls.push(docUrl);
-      }
-      verificationData.annexures.optionalDocuments = docUrls;
+      const docUrls = await this.uploadDocuments(
+        DocType.VERIFICATION_REPORT_APPENDIX_ADDITIONAL_DOC,
+        projectRefId,
+        verificationData?.appendix?.appendix1Documents
+      );
+      verificationData.appendix.appendix1Documents = docUrls;
     }
-
-    if (
-      verificationData.verificationFinding.optionalDocuments &&
-      verificationData.verificationFinding.optionalDocuments.length > 0
-    ) {
-      const docUrls = [];
-      for (const doc of verificationData.verificationFinding
-        .optionalDocuments) {
-        let docUrl;
-
-        if (this.isValidHttpUrl(doc)) {
-          docUrl = doc;
-        } else {
-          docUrl = await this.uploadDocument(
-            DocType.VERIFICATION_REPORT_VERIFICATION_FINDING_OPTIONAL_DOCUMENT,
-            project.refId,
-            doc
-          );
-        }
-        docUrls.push(docUrl);
-      }
-      verificationData.verificationFinding.optionalDocuments = docUrls;
-    }
-
-    if (
-      verificationData.verificationOpinion.signature1 &&
-      verificationData.verificationOpinion.signature1.length > 0
-    ) {
-      const signUrls = [];
-      for (const sign of verificationData.verificationOpinion.signature1) {
-        let signUrl;
-
-        if (this.isValidHttpUrl(sign)) {
-          signUrl = sign;
-        } else {
-          signUrl = await this.uploadDocument(
-            DocType.VERIFICATION_REPORT_VERIFICATION_OPINION_SIGN_1,
-            project.refId,
-            sign
-          );
-        }
-        signUrls.push(signUrl);
-      }
-      verificationData.verificationOpinion.signature1 = signUrls;
-    }
-
-    if (
-      verificationData.verificationOpinion.signature2 &&
-      verificationData.verificationOpinion.signature2.length > 0
-    ) {
-      const signUrls = [];
-      for (const sign of verificationData.verificationOpinion.signature2) {
-        let signUrl;
-
-        if (this.isValidHttpUrl(sign)) {
-          signUrl = sign;
-        } else {
-          signUrl = await this.uploadDocument(
-            DocType.VERIFICATION_REPORT_VERIFICATION_OPINION_SIGN_1,
-            project.refId,
-            sign
-          );
-        }
-        signUrls.push(signUrl);
-      }
-      verificationData.verificationOpinion.signature2 = signUrls;
-    }
-
-    await this.entityManager
-      .transaction(async (em) => {
-        let documentVersion;
-        let activityId;
-
-        const lastVerificationReport = (
-          await em.find(DocumentEntity, {
-            where: {
-              activityId: lastActivity.id,
-              programmeId: project.refId,
-            },
-            order: {
-              version: "DESC",
-            },
-          })
-        )[0];
-        await em.update(
-          ActivityEntity,
-          { id: lastActivity.id },
-          {
-            state: ActivityStateEnum.VERIFICATION_REPORT_UPLOADED,
-          }
-        );
-        activityId = lastActivity.id;
-        const lastDocumentVersion = await this.getLastDocumentVersion(
-          DocumentTypeEnum.VERIFICATION,
-          project.refId
-        );
-        documentVersion = lastDocumentVersion + 1;
-
-        newDoc.version = documentVersion;
-        newDoc.activityId = activityId;
-        const doc = await this.documentRepository.save(newDoc);
-        await this.logProjectStage(
-          project.refId,
-          ProjectAuditLogType.VERIFICATION_REPORT_SUBMITTED,
-          user.id,
-          em
-        );
-      })
-      .catch((error: any) => {
-        throw new HttpException(
-          error.message,
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-      });
-  }
-
-  private async processValidatorSignature(
-    validationReportDto: ValidationReportDto,
-    signatureField: "validator1Signature" | "validator2Signature"
-  ): Promise<void> {
-    if (validationReportDto.content.validationOpinion[signatureField]) {
-      let signUrl = this.isValidHttpUrl(
-        validationReportDto.content.validationOpinion[signatureField]
-      )
-        ? validationReportDto.content.validationOpinion[signatureField]
-        : await this.uploadDocument(
-            DocType.VALIDATION_REPORT_VALIDATOR_SIGN,
-            validationReportDto.programmeId,
-            validationReportDto.content.validationOpinion[signatureField]
-          );
-      validationReportDto.content.validationOpinion[signatureField] = signUrl;
-    }
-  }
-
-  private isValidHttpUrl(attachment: string): boolean {
-    let url;
-
-    try {
-      url = new URL(attachment);
-    } catch (_) {
-      return false;
-    }
-
-    return url.protocol === "http:" || url.protocol === "https:";
   }
 
   public async uploadDocument(type: DocType, id: string, data: string) {
@@ -861,6 +753,19 @@ export class DocumentManagementService {
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
+  }
+
+  private async uploadDocuments(
+    type: DocType,
+    id: string,
+    dataArray: string
+  ): Promise<string[]> {
+    const docUrls: string[] = [];
+    for (const data of dataArray) {
+      const docUrl = await this.uploadDocument(type, id, data);
+      docUrls.push(docUrl);
+    }
+    return docUrls;
   }
 
   private getFileExtension = (file: string): string => {
@@ -1487,18 +1392,18 @@ export class DocumentManagementService {
             []
           );
 
-        const content = JSON.parse(document.content);
-        const creditEst = 500; //TODO need to remove
+        const creditEst = Number(
+          document.content.ghgProjectDescription?.totalNetEmissionReductions ??
+            0
+        );
         const updateProjectProposalStage = {
           programmeId: project.refId,
           txType: TxType.APPROVE_VALIDATION,
           data: {
             letterOfAuthorizationUrl: letterOfAuthorizationUrl,
-            //creditEst: content.content.ghgProjectDescription.totalNetEmissionReductions,
             creditEst: creditEst,
           },
         };
-
         await this.updateProposalStage(
           updateProjectProposalStage,
           user,
@@ -1520,25 +1425,18 @@ export class DocumentManagementService {
         );
         await this.logProjectStage(
           project.refId,
-          ProjectAuditLogType.VALIDATION_DNA_APPROVED,
+          ProjectAuditLogType.AUTHORISED,
           user.id
         );
-
         await this.logProjectStage(
           project.refId,
           ProjectAuditLogType.CREDITS_AUTHORISED,
           user.id,
           undefined,
           {
-            //amount: content?.ghgProjectDescription?.totalNetEmissionReductions,
             amount: creditEst,
             toCompanyId: document.companyId,
           }
-        );
-        await this.logProjectStage(
-          project.refId,
-          ProjectAuditLogType.AUTHORISED,
-          user.id
         );
       }
     } else {
@@ -1818,17 +1716,17 @@ export class DocumentManagementService {
   }
 
   async query(query: DocumentQueryDto) {
-    const lastDoc = await this.documentRepository.findOne({
+    const lastDoc = await this.documentsViewEntityRepository.findOne({
       where: {
-        type: query.documentType,
-        programmeId: query.projectRefId,
+        documentType: query.documentType,
+        refId: query.refId,
       },
       order: {
         version: "DESC",
       },
     });
 
-    return lastDoc;
+    return { data: lastDoc };
   }
 
   async queryAll(programmeId: string) {

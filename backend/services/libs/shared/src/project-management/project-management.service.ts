@@ -122,33 +122,12 @@ export class ProjectManagementService {
         this.helperService.formatReqMessagesString("Project not found", []),
         HttpStatus.NOT_FOUND
       );
-    let parsedContent = null;
-    if (project.content) {
-      try {
-        parsedContent = JSON.parse(project.content);
-      } catch (error) {
-        console.error("Error parsing content JSON:", error);
-      }
-    }
-
-    const certifiers = await this.companyService.findByCompanyIds({
-      companyIds: project.certifierId,
-    });
-
-    const certifiersInfo = certifiers?.map(
-      ({ companyId, name, logo, companyRole }) => ({
-        companyId,
-        name,
-        logo,
-        companyRole,
-      })
-    );
 
     const allDocuments = await this.documentManagementService.queryAll(
       programmeId
     );
-
     const documents = {};
+    const documentContents = {};
     allDocuments.forEach((doc) => {
       if (!documents[doc.type] || doc.version > documents[doc.type].version) {
         documents[doc.type] = {
@@ -156,73 +135,30 @@ export class ProjectManagementService {
           refId: doc.id,
           version: doc.version,
         };
+        documentContents[doc.type] = doc.content;
       }
     });
     const infRefId = documents[DocumentTypeEnum.INITIAL_NOTIFICATION_FORM]
       ? documents[DocumentTypeEnum.INITIAL_NOTIFICATION_FORM].refId
       : null;
-    const staticValues = {
-      externalId: "EXT-CARB-45678",
-      serialNo: "SL-CARB",
-      countryCodeA2: "LK",
-      projectCategory: "RENEWABLE_ENERGY",
-      purposeOfCreditDevelopment: "Carbon sequestration",
-      endTime: 1862601600000,
-      creditFrozen: 1000,
-      creditTransferred: 10000,
-      constantVersion: "1.2.0",
-      creditUnit: "tCO2e",
-      typeOfMitigation: "REMOVAL",
-      projectLocation: { latitude: 7.2906, longitude: 80.6337 },
-      mitigationActions: [
-        "Reforestation of degraded lands",
-        "Sustainable forest management practices",
-        "Community-based conservation",
-      ],
-      environmentalAssessmentRegistrationNo: "ENV-2023-LK-789",
-      article6trade: true,
-      registrationCertificateUrl:
-        "https://registry.example.com/certificates/PRG-2024-00123.pdf",
-      dsDivision: "Ambagamuwa",
-      community: "Local indigenous communities",
-      additionalDocuments: [],
-      emissionReductionExpected: 25000,
-      emissionReductionAchieved: 5000,
-    };
+    const infContent = documentContents[
+      DocumentTypeEnum.INITIAL_NOTIFICATION_FORM
+    ]
+      ? documentContents[DocumentTypeEnum.INITIAL_NOTIFICATION_FORM]
+      : null;
 
-    const programmeProperties = {
-      estimatedProgrammeCostUSD: parsedContent.estimatedProjectCost,
-      programmeCostUSD: 4000000,
-      maxInternationalTransferAmount: "1000000",
-      creditingPeriodInYears: 10,
-      sourceOfFunding: ["Government"],
-      grantEquivalentAmount: 2000000,
-      carbonPriceUSDPerTon: 25,
-      buyerCountryEligibility: "All",
-      geographicalLocation: ["USA", "Canada"],
-      greenHouseGasses: ["CO2", "CH4"],
-      creditYear: 2025,
-      programmeMaterials: [],
-      projectMaterial: [],
-    };
+    const certifiers = await this.companyService.findByCompanyIds({
+      companyIds: project.certifierId,
+    });
 
-    const { content, ...projectWithoutContent } = project;
+    const independentCertifiers = certifiers?.map((company) => company.name);
 
     const projectDetails = {
       infRefId,
-      ...projectWithoutContent,
-      ...parsedContent,
-      ...staticValues,
+      ...project,
+      ...infContent,
       documents,
-      programmeProperties,
-      company: {
-        companyId: project.companyId,
-        name: project.name,
-        logo: project.logo,
-        companyRole: project.companyRole,
-        state: project.state,
-      },
-      certifier: certifiersInfo,
+      independentCertifiers,
     };
 
     return projectDetails;

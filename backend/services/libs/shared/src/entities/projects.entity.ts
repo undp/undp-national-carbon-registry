@@ -1,7 +1,6 @@
 import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { ProjectProposalStage } from "../enum/projectProposalStage.enum";
 import { TxType } from "../enum/txtype.enum";
-import { BasicFieldsEntity } from "./basic.fields.entity";
 import { NumberTransformer } from "../functions/number.transformer.decorator";
 import { ActivityEntity } from "./activity.entity";
 
