@@ -29,6 +29,7 @@ import { AuditLogsService } from "../audit-logs/audit-logs.service";
 import { EmailHelperService } from "../email-helper/email-helper.service";
 import { EmailTemplates } from "../email-helper/email.template";
 import { DocumentManagementService } from "../document-management/document-management.service";
+import { DataResponseMessageDto } from "../dto/data.response.message";
 
 @Injectable()
 export class ProjectManagementService {
@@ -160,9 +161,22 @@ export class ProjectManagementService {
         ProjectAuditLogType.PENDING,
         user.id
       );
-      return new DataResponseDto(HttpStatus.OK, savedProgramme);
+      return new DataResponseMessageDto(
+        HttpStatus.CREATED,
+        this.helperService.formatReqMessagesString("project.infSubmitted", []),
+        {
+          refId: doc.id,
+          projectRefId: savedProgramme.refId,
+        }
+      );
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("project.failed", []),
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
   }
 
@@ -258,7 +272,11 @@ export class ProjectManagementService {
         user.id
       );
 
-      return new DataResponseDto(HttpStatus.OK, response);
+      return new DataResponseMessageDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString("project.infApproved", []),
+        response
+      );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -347,7 +365,11 @@ export class ProjectManagementService {
         user.id
       );
 
-      return new DataResponseDto(HttpStatus.OK, response);
+      return new DataResponseMessageDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString("project.infRejected", []),
+        response
+      );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

@@ -1,4 +1,6 @@
 {
+    "companyDeactivation": "The organisation has been deactivated successfully",
+    "companyReactivationSuccess": "The organisation has been reactivated successfully",
     "noActiveCompany": "No active company found",
     "suspendCompanySuccess": "Successfully suspended company",
     "suspendFailed": "Company suspend failed. Please try again",
