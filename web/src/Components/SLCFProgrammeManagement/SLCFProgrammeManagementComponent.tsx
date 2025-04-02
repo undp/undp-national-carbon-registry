@@ -206,9 +206,11 @@ export const SLCFProgrammeManagementComponent = (props: any) => {
       align: 'center' as const,
       render: (item: any) => {
         return (
-          <Tag color={getProjectProposalStage(item as ProjectProposalStage)}>
-            {t(`projectList:${getProjectProposalStageEnumVal(item as string)}`)}
-          </Tag>
+          <>a</>
+          // <Tag color={getProjectProposalStage(ProjectProposalStage.APPROVED)}>
+
+          //   {t(`projectList:${getProjectProposalStageEnumVal(item as string)}`)}
+          // </Tag>
         );
       },
     },

@@ -35,6 +35,7 @@ import { SerialNumberManagementService } from "../serial-number-management/seria
 import { UserCompanyViewEntity } from "../view-entities/userCompany.view.entity";
 import { ActivityVintageCreditsDto } from "../dto/activty.vintage.credits.dto";
 import { Role } from "../casl/role.enum";
+import { BasicResponseDto } from "../dto/basic.response.dto";
 
 @Injectable()
 export class DocumentManagementService {
@@ -470,6 +471,20 @@ export class DocumentManagementService {
             project.refId
           );
       }
+
+      const documentTypeMap = {
+        [DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT]: "pddSubmitted",
+        [DocumentTypeEnum.VALIDATION]: "validationSubmitted",
+        [DocumentTypeEnum.MONITORING]: "monitoringSubmitted",
+        [DocumentTypeEnum.VERIFICATION]: "verificationSubmitted",
+      };
+
+      const response = documentTypeMap[addDocumentDto.documentType];
+
+      return new BasicResponseDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString(`project.${response}`, [])
+      );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -833,6 +848,20 @@ export class DocumentManagementService {
           }
           break;
       }
+
+      const documentTypeMap = {
+        [DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT]: "pddApproved",
+        [DocumentTypeEnum.VALIDATION]: "validationApproved",
+        [DocumentTypeEnum.MONITORING]: "monitoringApproved",
+        [DocumentTypeEnum.VERIFICATION]: "verificationApproved",
+      };
+
+      const response = documentTypeMap[existingDocument.type];
+
+      return new BasicResponseDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString(`project.${response}`, [])
+      );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -895,6 +924,19 @@ export class DocumentManagementService {
           }
           break;
       }
+      const documentTypeMap = {
+        [DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT]: "pddRejected",
+        [DocumentTypeEnum.VALIDATION]: "validationRejected",
+        [DocumentTypeEnum.MONITORING]: "monitoringRejected",
+        [DocumentTypeEnum.VERIFICATION]: "verificationRejected",
+      };
+
+      const response = documentTypeMap[existingDocument.type];
+
+      return new BasicResponseDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString(`project.${response}`, [])
+      );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -1260,7 +1302,7 @@ export class DocumentManagementService {
           project.refId
         );
         await this.emailHelperService.sendEmailToICAdmins(
-          EmailTemplates.PDD_DNA_REJECT_TO_IC,
+          EmailTemplates.PDD_APPROVAL_DNA_TO_IC,
           { icOrganisationName: certifiedByUserDetails.Organisation.name },
           project.refId
         );

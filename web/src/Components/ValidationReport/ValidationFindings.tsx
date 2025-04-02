@@ -225,9 +225,9 @@ const ValidationFindings = (props: ValidationStepsProps) => {
               </h3>
               {/* Application and selection of methodologies and standardized baselines start */}
               <>
-                <h4 className="validation-findings-subHeading">
+                {/* <h4 className="validation-findings-subHeading">
                   {t('validationReport:applicationMethodologiesBaselines')}
-                </h4>
+                </h4> */}
                 <section className="validation-findings-section">
                   <Form.Item
                     className="full-width-form-item"

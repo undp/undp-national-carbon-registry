@@ -446,7 +446,7 @@ const Step08 = (props: CustomStepsProps) => {
             >
               <>
                 {/* appendix 1 start */}
-                <h4 className="appendix-title">
+                <h4 className="appendix-title custom-required">
                   <i>{`${t('PDD:appendix1')}`}</i> : {t('PDD:appendix1Title')}
                 </h4>
                 <div>
@@ -589,7 +589,7 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 1 end */}
 
               {/* appendix 2 start */}
-              <h4 className="appendix-title">
+              <h4 className="appendix-title custom-required">
                 <i>{`${t('PDD:appendix2')}`}</i> : {t('PDD:appendix2Title')}
               </h4>
               <Form.Item
@@ -663,7 +663,7 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 2 end */}
 
               {/* appendix 3 start */}
-              <h4 className="appendix-title">
+              <h4 className="appendix-title custom-required">
                 <i>{`${t('PDD:appendix3')}`}</i> : {t('PDD:appendix3Title')}
               </h4>
               <Form.Item
@@ -737,7 +737,7 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 3 end */}
 
               {/* appendix 4 start */}
-              <h4 className="appendix-title">
+              <h4 className="appendix-title custom-required">
                 <i>{`${t('PDD:appendix4')}`}</i> : {t('PDD:appendix4Title')}
               </h4>
               <Form.Item
@@ -812,7 +812,7 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 4 end */}
 
               {/* appendix 5 start */}
-              <h4 className="appendix-title">
+              <h4 className="appendix-title custom-required">
                 <i>{`${t('PDD:appendix5')}`}</i> : {t('PDD:appendix5Title')}
               </h4>
 
@@ -888,7 +888,7 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 5 end */}
 
               {/* appendix 6 start */}
-              <h4 className="appendix-title">
+              <h4 className="appendix-title custom-required">
                 <i>{`${t('PDD:appendix6')}`}</i> : {t('PDD:appendix6Title')}
               </h4>
 
@@ -964,7 +964,7 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 6 end */}
 
               {/* appendix 7 start */}
-              <h4 className="appendix-title">
+              <h4 className="appendix-title custom-required">
                 <i>{`${t('PDD:appendix7')}`}</i> : {t('PDD:appendix7Title')}
               </h4>
 

@@ -4,7 +4,7 @@ export const EmailTemplates = {
     subject: "Welcome!",
     html: `
         Welcome {{organisationName}},<br><br>
-        Your Organisation has been registered with the {{countryName}} {{systemName}} as a {{organisationRole}} Organisation. <br><br>
+        Your Organisation has been registered with the {{countryName}} Carbon Registry as a {{organisationRole}} Organisation. <br><br>
         Explore the System <a href="{{home}}">here</a>. <br><br>
 
         Sincerely,<br>
@@ -45,11 +45,12 @@ export const EmailTemplates = {
     html: `
         Welcome {{name}}, <br><br>
 
-        Thank you for supporting the {{countryName}} {{systemName}}.<br><br>
+        Thank you for supporting the {{countryName}} Carbon Credit Registry.<br><br>
 
         Your account has been created on: <a href="{{home}}">{{home}}</a> <br>
-        User: {{email}} <br>
-        Password (temporary): {{tempPassword}} <br><br>
+        Username: {{email}} <br>
+        Temporary Password: {{tempPassword}} <br>
+        Please keep this information secure.<br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Registry Team <br><br>
@@ -84,39 +85,35 @@ export const EmailTemplates = {
   },
   CHANGE_PASSOWRD: {
     id: "CHANGE_PASSOWRD",
-    subject: "Your Password was Changed",
+    subject: "Your {CountryName} Carbon Registry Account Password is Changed",
     html: `
-        Hi {{name}},<br><br>
-        The password of your Carbon Registry account was changed successfully. <br><br>
-        If you do not use {{countryName}} Carbon Credit Registry or did not request a password reset, please ignore this email or
-        <a href="mailto:help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
-        if you have questions.
+        Hi, <br><br>
+        The password of your {CountryName} Carbon Registry account was changed successfully. 
 
         <br><br>
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
     text: "",
   },
   FORGOT_PASSOWRD: {
     id: "FORGOT_PASSOWRD",
-    subject: "Password Reset Request",
+    subject:
+      "Password Reset Request for Your UNDP Demo Carbon Registry Account",
     html: `
-        Hi {{name}},<br><br>
-        We received a request to reset your Carbon Registry password. <br><br>
+        Hi,<br><br>
+        We received a request to reset your UNDP Demo Carbon Registry account password. <br><br>
         Use the link below to set a new password for your account. This password reset is only valid for the next hour.
         <br><br>
 
         <a href="{{home}}/resetPassword/{{requestId}}">Click here to reset the password</a>
         <br><br>
 
-        If you do not use {{countryName}} Carbon Credit Registry or did not request a password reset, please ignore this email or
-        <a href="mailto:help@carbreg.org?subject=Password Problem with the {{countryName}} Carbon Credit Registry">contact support</a>
-        if you have questions.
+        If you do not use UNDP Demo Carbon Credit Registry or did not request a password reset, please ignore this email or contact support if you have questions.
 
         <br><br>
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
     text: "",
   },
@@ -325,7 +322,7 @@ export const EmailTemplates = {
   },
   VALIDATION_APPROVED_TO_PD: {
     id: "VALIDATION_APPROVED_TO_PD",
-    subject: "Validation Report Approved",
+    subject: "Validation Report Accepted!",
     html: `
         Hi, <br><br>
 
@@ -337,7 +334,7 @@ export const EmailTemplates = {
   },
   VALIDATION_APPROVED_TO_IC: {
     id: "VALIDATION_APPROVED_TO_IC",
-    subject: "Validation Report Approved",
+    subject: "Validation Report Accepted!",
     html: `
         Hi, <br><br>
 
@@ -365,7 +362,7 @@ export const EmailTemplates = {
   },
   VALIDATION_REJECTED_TO_PD: {
     id: "VALIDATION_REJECTED_TO_PD",
-    subject: "Validation Report Rejected",
+    subject: "Validation Report Rejected!",
     html: `
         Hi, <br><br>
 
@@ -380,11 +377,11 @@ export const EmailTemplates = {
   },
   VALIDATION_REJECTED_TO_IC: {
     id: "VALIDATION_REJECTED_TO_IC",
-    subject: "Validation Report Rejected",
+    subject: "Validation Report Rejected!",
     html: `
         Hi, <br><br>
 
-        Validation Report submitted by {{icOrganizationName}} Independant Certifier organisation for the project {{programmeName}} owned by {{pdOrganizationName}} has been rejected by the Designated National Authority. <br><br>
+        Validation Report submitted by your {{icOrganizationName}} Independant Certifier organisation for the project {{programmeName}} owned by {{pdOrganizationName}} has been rejected by the Designated National Authority. <br><br>
 
         You can re-submit the Validation Report by clicking <a href={{programmePageLink}}>here</a>.
         <br><br>
@@ -477,7 +474,7 @@ export const EmailTemplates = {
         Hi, <br><br>
 
         A new Verfication Report has been submitted by {{organizationNameIC}}.<br>
-        Independant Certifier for the project {{projectName}} owned by your {{organizationNamePD}}.<br><br>
+        Independant Certifier for the project {{projectName}} owned by the {{organizationNamePD}}.<br><br>
 
         Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -503,12 +500,12 @@ export const EmailTemplates = {
   },
   VERIFICATION_APPROVED_TO_PD: {
     id: "VERIFICATION_APPROVED_TO_PD",
-    subject: "Verification Report Approved",
+    subject: "Verification Report Accepted!",
     html: `
         Hi, <br><br>
 
-        Verfication Report submitted by {{organisationNameIC}}<br> 
-        Independant Certifier for the project {{projectName}} owned by your {{organisationNamePD}}<br>
+        Verfication Report submitted by {{organisationNameIC}}
+        Independant Certifier for the project {{projectName}} owned by your {{organisationNamePD}}
         has been approved by the Designated National Authority. <br><br>
 
         Sincerely,  <br>
@@ -517,12 +514,12 @@ export const EmailTemplates = {
   },
   VERIFICATION_APPROVED_TO_IC: {
     id: "VERIFICATION_APPROVED_TO_IC",
-    subject: "Verification Report Approved",
+    subject: "Verification Report Accepted!",
     html: `
         Hi, <br><br>
 
-        Verfication Report submitted by {{organisationNameIC}}<br>
-        Independant Certifier for the project {{projectName}} owned by {{organisationNamePD}}<br>
+        Verfication Report submitted by {{organisationNameIC}}
+        Independant Certifier organisation for the project {{projectName}} owned by {{organisationNamePD}}
         has been approved by the Designated National Authority.<br><br>
 
         Sincerely,  <br>
@@ -547,17 +544,17 @@ export const EmailTemplates = {
   },
   VERIFICATION_REJECTED_TO_PD: {
     id: "VERIFICATION_REJECTED_TO_PD",
-    subject: "Verification Report Rejected",
+    subject: "Verification Report Rejected!",
     html: `
         Hi, <br><br>
 
-        Verfication Report submitted by {{organisationNameIC}}<br>
-        Independant Certifier for the project {{projectName}} owned by your {{organisationNamePD}}<br>
+        Verfication Report submitted by {{organisationNameIC}}
+        Independant Certifier for the project {{projectName}} owned by your {{organisationNamePD}}
         has been rejected by the Designated National Authority.<br><br>
 
         Remarks of Rejection:<br>
-        {{remarks}}<br>
-        You can re-submit the Project Design Document by by clicking <a href={{programmePageLink}}>here</a>.<br><br>
+        {{remarks}}<br><br>
+        You can re-submit the Verification Report by by clicking <a href={{programmePageLink}}>here</a>.<br><br>
 
         Sincerely,  <br>
         The {{countryName}} Carbon Registry Team
@@ -565,18 +562,18 @@ export const EmailTemplates = {
   },
   VERIFICATION_REJECTED_TO_IC: {
     id: "VERIFICATION_REJECTED_TO_IC",
-    subject: "Verification Report Rejected",
+    subject: "Verification Report Rejected!",
     html: `
         Hi, <br><br>
 
-        Verfication Report submitted by {{organisationNameIC}}<br>
-        Independant Certifier for the project {{projectName}} owned by {{organisationNamePD}}<br>
+        Verfication Report submitted by {{organisationNameIC}}
+        Independant Certifier for the project {{projectName}} owned by {{organisationNamePD}}
         has been rejected by the Designated National Authority.
 
         <br>
         Remarks of Rejection:<br>
-        {{remarks}}<br>
-        You can re-submit the Project Design Document by by clicking <a href={{programmePageLink}}>here</a>.<br><br>
+        {{remarks}}<br><br>
+        You can re-submit the Verification Report by by clicking <a href={{programmePageLink}}>here</a>.<br><br>
 
         Sincerely,  <br>
         The {{countryName}} Carbon Registry Team
@@ -949,18 +946,14 @@ export const EmailTemplates = {
   },
   PROGRAMME_DEVELOPER_ORG_DEACTIVATION: {
     id: "PROGRAMME_DEVELOPER_ORG_DEACTIVATION",
-    subject: "Organisation Deactivated",
+    subject: "Your {CountryName} Carbon Registry Organisation is Deactivated",
     html: `
         Hi,<br><br>
 
-        Your Organisation has been deactivated by the {{government}}. Your Organisation will still be visible but no further action will be able to take place. Following were the effects of deactivation:<br><br>
-         · All the users of the Organisation were deactivated. <br>
-         · All the credits owned by your Organisation were frozen.<br>
-         · All credit transfer requests sent and received by your Organisation were cancelled.<br>
-         · All the international transfer retire requests sent by your Organisation were cancelled.<br><br>
+        Your organisation in the {CountryName} Carbon Registry has been deactivated. <br><br>
 
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   CERTIFIER_ORG_DEACTIVATION: {
@@ -1068,14 +1061,14 @@ export const EmailTemplates = {
   },
   ORG_REACTIVATION: {
     id: "ORG_REACTIVATION",
-    subject: "Organisation Reactivated",
+    subject: "Your {CountryName} Carbon Registry Organisation is Reactivated",
     html: `
         Hi <br><br>
 
-        Your Organisation has been reactivated by the {{government}}. Your Organisation will be able to perform actions as before and all the users of the Organisation will be reactivated.  <br><br>
+        Your organization in the {CountryName} Carbon Registry has been reactivated. {Home} to login to the system.  <br><br>
 
         Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
+        The {{countryName}} Carbon Registry Team
         `,
   },
   CREDIT_ISSUANCE_SL: {
@@ -1289,7 +1282,7 @@ export const EmailTemplates = {
         You have been assigned to review the project authorization procedure for {{organisationName}} in the {{countryName}} Carbon Credit Registry. <br>  
 
         Please review the details and take the necessary action by clicking the link below: 
-        <br><a href={{programmePageLink}}>here</a>.<br> 
+        <br><a href={{programmePageLink}}>Review Project Authorization</a>.<br> 
         <br>
         Sincerely,<br>
 
@@ -1301,9 +1294,9 @@ export const EmailTemplates = {
     id: "INF_APPROVE",
     subject: "Initial Notification has been Approved",
     html: `
-        Hi {{user}},<br>
+        Hi,<br>
         <br>
-        Your Initial Notification has been approved by {{countryName}} Designated National Authority.<br>
+        Your Initial Notification has been approved by {{countryName}} Designated National Authority and the Letter of No Objection was generated.<br><br>
         Click <a href={{programmePageLink}}>here</a> for more details of the project.<br>
         <br>
         Sincerely,<br>
@@ -1315,7 +1308,7 @@ export const EmailTemplates = {
     id: "INF_REJECT",
     subject: "Initial Notification has been Rejected",
     html: `
-        Hi {{user}}
+        Hi,
         <br>
         <br>
         Initial Notification submitted by your {{organisationName}} organisation has been rejected by {{countryName}}  Designated National Authority.
@@ -1449,7 +1442,7 @@ export const EmailTemplates = {
         Please review and approve it by clicking <a href={{programmePageLink}}>here</a>.<br>
         <br>
         Sincerely,<br>
-        The {{countryName}} Carbon Credit Registry Team.
+        The {{countryName}} Carbon Registry Team.
                 `,
   },
 
@@ -1459,13 +1452,16 @@ export const EmailTemplates = {
     html: `
         Hi,<br>
         <br>
-        The Monitoring Report submitted by your {{pdOrganisationName}} has been declined by the {{icOrganisationName}} Independant Certifier.
+        Certfication for the Monitoring Report submitted by your {{pdOrganisationName}} has been declined by the {{icOrganisationName}} Independant Certifier.
         <br>
         Remarks of Rejection:<br>
         {{remarks}}
-        <br>
+        <br><br>
+
+        Please re-submit the Project Design Document by clicking  {{programmePageLink}} here. <br><br>
+
         Sincerely,<br>
-        The {{countryName}} Carbon Credit Registry Team.
+        The {{countryName}} Carbon Registry Team.
         `,
   },
 
@@ -1479,7 +1475,7 @@ export const EmailTemplates = {
         <br>
         <br>
         Sincerely,<br>
-        The {{countryName}} Carbon Credit Registry Team.
+        The {{countryName}} Carbon Registry Team.
         `,
   },
 };
