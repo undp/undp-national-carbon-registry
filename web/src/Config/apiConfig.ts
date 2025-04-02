@@ -101,7 +101,7 @@ export const API_PATHS = {
   CMA_CREATION: 'national/programmeSl/createCMA',
   //DOCUMENT
   ADD_DOCUMENT: 'national/documentManagement/add',
-  QUERY_DOCUMENT: 'document/query',
+  QUERY_DOCUMENT: 'national/documentManagement/query',
   APPROVE_DOCUMENT: (id: string) => `document/approve?id=${id}`,
   REJECT_DOCUMENT: (id: string) => `document/reject?id=${id}`,
   VERIFY_DOCUMENT: `national/documentManagement/verify`,
