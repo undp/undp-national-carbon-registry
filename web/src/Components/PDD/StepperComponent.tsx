@@ -42,7 +42,7 @@ const CMA_STEPS = {};
 
 const StepperComponent = (props: any) => {
   const { t, selectedVersion, handleDocumentStatus } = props;
-  const [current, setCurrent] = useState(3);
+  const [current, setCurrent] = useState(0);
   const [documentId, setDocumentId] = useState<string>();
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -140,6 +140,7 @@ const StepperComponent = (props: any) => {
       if (state?.mode === FormMode?.CREATE) {
         form1.setFieldsValue({
           projectTitle: data?.title,
+          versionNumber: 1,
           projectProponent: data?.company?.name,
           sectoralScope: INF_SECTORAL_SCOPE[data?.sectoralScope],
         });
@@ -201,7 +202,18 @@ const StepperComponent = (props: any) => {
             const data = res?.data;
             setDocumentId(data?.refId);
 
-            const projectDetails = BasicInformationDataMapToFields(data.data?.projectDetails);
+            let projectDetails = BasicInformationDataMapToFields(data.data?.projectDetails);
+
+            if (state?.mode === FormMode.EDIT) {
+              const docVersions = state?.documents?.[DocumentEnum.PDD]?.version;
+              console.log('----------state-------', state);
+              const latestVersion = docVersions ? docVersions + 1 : 1;
+
+              projectDetails = {
+                ...projectDetails,
+                versionNumber: latestVersion,
+              };
+            }
             form1.setFieldsValue(projectDetails);
 
             const descripitonOfProjectActivity = descriptionOfProjectActivityDataMapToFields(

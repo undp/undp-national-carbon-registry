@@ -4,19 +4,74 @@
   margin-bottom: 30px;
 }
 
+.all-check {
+  .ant-checkbox-inner::after {
+    background-color: rgba(#3a3541, 0.5);
+  }
+
+  .ant-checkbox-checked .ant-checkbox-inner::after {
+    background-color: transparent;
+  }
+  .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: rgba(#3a3541, 0.5);
+    border: none;
+  }
+  margin-right: 10px;
+}
+
+.ant-checkbox-checked {
+  .ant-checkbox-input[value='issued'] + .ant-checkbox-inner {
+    background-color: #0073ad;
+    border: none;
+  }
+
+  .ant-checkbox-input[value='received'] + .ant-checkbox-inner {
+    background-color: #2fa100;
+    border: none;
+  }
+
+  .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: rgba(#3a3541, 0.4) !important;
+    border: none;
+  }
+
+  .ant-checkbox-input[value='Pending'] + .ant-checkbox-inner {
+    background-color: #ab47ed;
+    border: none;
+  }
+
+  .ant-checkbox-input[value='Completed'] + .ant-checkbox-inner {
+    background-color: #16b1fe;
+    border: none;
+  }
+
+  .ant-checkbox-input[value='Rejected'] + .ant-checkbox-inner {
+    background-color: #ff8f56;
+    border: none;
+  }
+
+  .ant-checkbox-input[value='Cancelled'] + .ant-checkbox-inner {
+    background-color: #cb6957;
+    border: none;
+  }
+}
+
 .checkbox-accept .ant-checkbox-checked .ant-checkbox-inner {
-  background-color: #70b554;
-  border-color: #70b554;
+  background-color: $primary-color;
+  border-color: $primary-color;
+  border: none;
 }
 
 .checkbox-reject .ant-checkbox-checked .ant-checkbox-inner {
   background-color: #ff4d4f;
   border-color: #ff4d4f;
+  border: none;
 }
 
 .checkbox-process .ant-checkbox-checked .ant-checkbox-inner {
   background-color: #ff4d4f;
   border-color: #ff4d4f;
+  border: none;
 }
 
 .programme-management {
@@ -86,53 +141,6 @@
         color: #3a354180;
         cursor: pointer;
       }
-    }
-  }
-
-  .all-check {
-    .ant-checkbox-inner::after {
-      background-color: rgba(#3a3541, 0.5);
-    }
-
-    .ant-checkbox-checked .ant-checkbox-inner::after {
-      background-color: transparent;
-    }
-    .ant-checkbox-checked .ant-checkbox-inner {
-      background-color: rgba(#3a3541, 0.5);
-      border: none;
-    }
-    margin-right: 10px;
-  }
-
-  .ant-checkbox-checked {
-    .ant-checkbox-input[value='Retired'] + .ant-checkbox-inner {
-      background-color: rgba(#3a3541, 0.4);
-      border: none;
-    }
-
-    .ant-checkbox-input[value='AwaitingAuthorization'] + .ant-checkbox-inner {
-      background-color: rgba(#ed4d47, 0.6);
-      border: none;
-    }
-
-    .ant-checkbox-input[value='Rejected'] + .ant-checkbox-inner {
-      background-color: rgba(#3a3541, 0.4);
-      border: none;
-    }
-
-    .ant-checkbox-input[value='Authorised'] + .ant-checkbox-inner {
-      background-color: rgba(#16b1ff, 1);
-      border: none;
-    }
-
-    .ant-checkbox-input[value='Approved'] + .ant-checkbox-inner {
-      background-color: rgba(145, 85, 253, 0.6);
-      border: none;
-    }
-
-    .ant-checkbox-input[value='Transferred'] + .ant-checkbox-inner {
-      background-color: rgba(#76c327, 0.6);
-      border: none;
     }
   }
 }

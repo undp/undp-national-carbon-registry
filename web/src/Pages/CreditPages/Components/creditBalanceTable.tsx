@@ -39,6 +39,7 @@ import { CreditRetirementTypeEmnum } from '../Enums/creditRetirementType.enum';
 import moment from 'moment';
 import { addCommSep } from '../../../Definitions/Definitions/programme.definitions';
 import { Role } from '../../../Definitions/Enums/role.enum';
+import { COLOR_CONFIGS } from '../../../Config/colorConfigs';
 
 const { Search } = Input;
 
@@ -112,22 +113,22 @@ export const CreditBalanceTableComponent = (props: any) => {
     const filterAnd: any[] = [];
     const filterOr: any[] = [];
 
-    // if (checkBoxOptions) {
-    //   filterAnd.push({
-    //     key: 'type',
-    //     operation: 'in',
-    //     value: checkBoxOptions,
-    //   });
-    // }
+    if (checkBoxOptions) {
+      filterAnd.push({
+        key: 'creditBlock"."type',
+        operation: 'in',
+        value: checkBoxOptions,
+      });
+    }
 
     if (search && search !== '') {
       filterOr.push({
-        key: 'receiver.name',
+        key: 'receiver"."name',
         operation: 'like',
         value: `%${search}%`,
       });
       filterOr.push({
-        key: 'project.title',
+        key: 'project"."title',
         operation: 'like',
         value: `%${search}%`,
       });
@@ -179,10 +180,10 @@ export const CreditBalanceTableComponent = (props: any) => {
         dataSource={[
           {
             text: t('transfer'),
-            icon: <Icon.ArrowLeftRight color="#70B554" />,
+            icon: <Icon.ArrowLeftRight color={COLOR_CONFIGS.PRIMARY_THEME_COLOR} />,
             click: () => {
               setModalActionData({
-                icon: <Icon.BoxArrowRight color="#70B554" />,
+                icon: <Icon.BoxArrowRight color={COLOR_CONFIGS.PRIMARY_THEME_COLOR} />,
                 title: t('tranferCredit'),
                 type: CreditActionType.TRANSFER,
                 actionBtnText: t('transfer'),
@@ -198,7 +199,7 @@ export const CreditBalanceTableComponent = (props: any) => {
             icon: <Icon.ClockHistory color="#FF4D4F" />,
             click: () => {
               setModalActionData({
-                icon: <Icon.BoxArrowDown color="#70B554" />,
+                icon: <Icon.BoxArrowDown color={COLOR_CONFIGS.PRIMARY_THEME_COLOR} />,
                 title: t('areYouWantToRetireCredit'),
                 type: CreditActionType.RETIREMENT,
                 actionBtnText: t('retire'),

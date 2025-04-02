@@ -26,6 +26,9 @@ import { CreditBlockTransfersViewEntity } from "../view-entities/credit.block.tr
 import { CreditBlockRetirementsViewEntity } from "../view-entities/credit.block.retirements.view.entity";
 import { DocumentManagementService } from "../document-management/document-management.service";
 import { ProjectAuditLogType } from "../enum/project.audit.log.type.enum";
+import { DataResponseDto } from "../dto/data.response.dto";
+import { DataResponseMessageDto } from "../dto/data.response.message";
+import { BasicResponseDto } from "../dto/basic.response.dto";
 
 @Injectable()
 export class CreditTransactionsManagementService {
@@ -55,7 +58,7 @@ export class CreditTransactionsManagementService {
       if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notProjectParticipant",
+            "creditTransaction.noTransferPermission",
             []
           ),
           HttpStatus.BAD_REQUEST
@@ -99,7 +102,7 @@ export class CreditTransactionsManagementService {
       if (!creditBlock) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.creditBlockNotExists",
+            "creditTransaction.creditBlockNotExists",
             []
           ),
           HttpStatus.BAD_REQUEST
@@ -108,7 +111,7 @@ export class CreditTransactionsManagementService {
       if (creditBlock.ownerCompanyId != companyId) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.creditBlockDoesNotOwnBySender",
+            "creditTransaction.creditBlockDoesNotOwnBySender",
             []
           ),
           HttpStatus.BAD_REQUEST
@@ -120,7 +123,7 @@ export class CreditTransactionsManagementService {
       ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notEnoughCreditAmount",
+            "creditTransaction.notEnoughCreditAmount",
             []
           ),
           HttpStatus.BAD_REQUEST
@@ -142,6 +145,18 @@ export class CreditTransactionsManagementService {
           fromCompanyId: creditBlock.ownerCompanyId,
         }
       );
+      return new DataResponseMessageDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString(
+          "creditTransaction.creditsTransferred",
+          []
+        ),
+        {
+          amount: creditTransferDto.amount,
+          toCompanyId: creditTransferDto.receiverCompanyId,
+          fromCompanyId: creditBlock.ownerCompanyId,
+        }
+      );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -155,7 +170,7 @@ export class CreditTransactionsManagementService {
       if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notProjectParticipant",
+            "creditTransaction.noRetirePermission",
             []
           ),
           HttpStatus.BAD_REQUEST
@@ -178,7 +193,7 @@ export class CreditTransactionsManagementService {
       if (!creditBlock) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.creditBlockNotExists",
+            "creditTransaction.creditBlockNotExists",
             []
           ),
           HttpStatus.BAD_REQUEST
@@ -187,7 +202,7 @@ export class CreditTransactionsManagementService {
       if (creditBlock.ownerCompanyId != companyId) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.creditBlockDoesNotOwnBySender",
+            "creditTransaction.creditBlockDoesNotOwnBySender",
             []
           ),
           HttpStatus.BAD_REQUEST
@@ -199,7 +214,7 @@ export class CreditTransactionsManagementService {
       ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notEnoughCreditAmount",
+            "creditTransaction.notEnoughCreditAmount",
             []
           ),
           HttpStatus.BAD_REQUEST
@@ -223,6 +238,16 @@ export class CreditTransactionsManagementService {
         {
           amount: creditRetireRequestDto.amount,
           remarks: creditRetireRequestDto.remarks,
+        }
+      );
+      return new DataResponseMessageDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString(
+          "creditTransaction.retirementReqCreated",
+          []
+        ),
+        {
+          amount: creditRetireRequestDto.amount,
         }
       );
     } catch (error) {
@@ -263,7 +288,10 @@ export class CreditTransactionsManagementService {
       ) {
         if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
           throw new HttpException(
-            this.helperService.formatReqMessagesString("project.notDNA", []),
+            this.helperService.formatReqMessagesString(
+              "creditTransaction.noRetireActionPermission",
+              []
+            ),
             HttpStatus.BAD_REQUEST
           );
         }
@@ -309,6 +337,16 @@ export class CreditTransactionsManagementService {
         {
           amount: creditRetireRequest.amount,
           remarks: retirementAction.remarks,
+        }
+      );
+      return new DataResponseMessageDto(
+        HttpStatus.OK,
+        this.helperService.formatReqMessagesString(
+          "creditTransaction.creditRetirementReqAction",
+          [retirementAction.action.toLowerCase()]
+        ),
+        {
+          amount: creditRetireRequest.amount,
         }
       );
     } catch (error) {

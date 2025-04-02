@@ -65,7 +65,9 @@ export class UserController {
     return this.userService.create(
       user,
       req.user.companyId,
-      req.user.companyRole
+      req.user.companyRole,
+      false,
+      req.user.role
     );
   }
 
@@ -87,7 +89,7 @@ export class UserController {
   @Put("update")
   updateUser(@Body() user: UserUpdateDto, @Request() req) {
     global.baseUrl = `${req.protocol}://${req.get("Host")}`;
-    return this.userService.update(user, req.abilityCondition);
+    return this.userService.update(user, req.abilityCondition, req.user);
   }
 
   @ApiBearerAuth()
@@ -133,6 +135,6 @@ export class UserController {
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Delete, User))
   @Delete("delete")
   deleteUser(@Query("userId") userId: number, @Request() req) {
-    return this.userService.delete(userId, req.abilityCondition);
+    return this.userService.delete(userId, req.abilityCondition, req.user);
   }
 }

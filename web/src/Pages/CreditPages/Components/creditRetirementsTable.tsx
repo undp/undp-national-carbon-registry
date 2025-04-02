@@ -37,6 +37,7 @@ import { CreditRetirementInterface } from '../Interfaces/creditRetirement.interf
 import moment from 'moment';
 import { addCommSep } from '../../../Definitions/Definitions/programme.definitions';
 import { Role } from '../../../Definitions/Enums/role.enum';
+import { COLOR_CONFIGS } from '../../../Config/colorConfigs';
 
 const { Search } = Input;
 
@@ -119,13 +120,13 @@ export const CreditRetirementsTableComponent = (props: any) => {
     const filter: any[] = [];
     const filterOr: any[] = [];
 
-    // if (checkBoxOptions && checkBoxOptions.length > 0) {
-    //   filter.push({
-    //     key: 'status',
-    //     operation: 'in',
-    //     value: checkBoxOptions,
-    //   });
-    // }
+    if (checkBoxOptions && checkBoxOptions.length > 0) {
+      filter.push({
+        key: 'creditTx"."status',
+        operation: 'in',
+        value: checkBoxOptions,
+      });
+    }
 
     if (search && search !== '') {
       filter.push({
@@ -184,7 +185,7 @@ export const CreditRetirementsTableComponent = (props: any) => {
             icon: <Icon.Clipboard color="#6ACDFFFA" />,
             click: () => {
               setModalActionData({
-                icon: <Icon.Clipboard2Check color="#70B554" />,
+                icon: <Icon.Clipboard2Check color={COLOR_CONFIGS.PRIMARY_THEME_COLOR} />,
                 title: t('acceptCreditRetireRequest'),
                 type: CreditActionType.RETIREMENT,
                 actionBtnText: t('proceed'),
@@ -439,11 +440,11 @@ export const CreditRetirementsTableComponent = (props: any) => {
               : ActionResponseType.PROCESSSED,
           icon:
             action === RetirementActionEnum.ACCEPT ? (
-              <Icon.Check2Circle color="#70B554" />
+              <Icon.Check2Circle color={COLOR_CONFIGS.SUCCESS_RESPONSE_COLOR} />
             ) : action === RetirementActionEnum.REJECT ? (
-              <Icon.Check2Circle color="#16B1FF" />
+              <Icon.Check2Circle color={COLOR_CONFIGS.PROCESSED_RESPONSE_COLOR} />
             ) : (
-              <Icon.Check2Circle color="#16B1FF" />
+              <Icon.Check2Circle color={COLOR_CONFIGS.PROCESSED_RESPONSE_COLOR} />
             ),
           title: t(
             action === RetirementActionEnum.ACCEPT
@@ -457,7 +458,7 @@ export const CreditRetirementsTableComponent = (props: any) => {
       } else {
         setModalResponseData({
           type: ActionResponseType.FAILED,
-          icon: <Icon.ExclamationCircle color="#FF4D4F" />,
+          icon: <Icon.ExclamationCircle color={COLOR_CONFIGS.FAILED_RESPONSE_COLOR} />,
           title: t('creditRetirementSubmittedFailed'),
           buttonText: t('okay'),
         });
@@ -466,7 +467,7 @@ export const CreditRetirementsTableComponent = (props: any) => {
       message.error(error.message || t('somethingWentWrong'));
       setModalResponseData({
         type: ActionResponseType.FAILED,
-        icon: <Icon.ExclamationCircle color="#FF4D4F" />,
+        icon: <Icon.ExclamationCircle color={COLOR_CONFIGS.FAILED_RESPONSE_COLOR} />,
         title: t('somethingWentWrong'),
         buttonText: t('okay'),
       });
