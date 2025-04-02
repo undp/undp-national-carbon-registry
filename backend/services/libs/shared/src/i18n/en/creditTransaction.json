@@ -4,8 +4,8 @@
   "creditBlockDoesNotOwnBySender": "The sender does not own the credit block.",
   "notEnoughCreditAmount": "Not enough credit amount available for the transfer.",
   "retirementReqCreated": "Credit retirement request created.",
-  "creditRetirementReqAction": "Credit retirement request {}ed",
   "noTransferPermission": "You do not have permission to transfer credits.",
   "noRetirePermission": "You do not have permission to retire credits.",
-  "noRetireActionPermission": "You do not have permission to approve or reject credit retirement requests."
+  "noRetireActionPermission": "You do not have permission to approve or reject credit retirement requests.",
+  "creditRetirementReqAction": "Credit retirement request {}ed"
 }

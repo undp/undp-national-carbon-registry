@@ -156,30 +156,13 @@ export const AddNewCompanyComponent = (props: any) => {
 
   const getRegionList = async () => {
     // setLoadingList(true);
-    // try {
-    //   const response = await post('national/location/province', {
-    //     page: 1,
-    //     size: 100,
-    //     filterAnd: [
-    //       {
-    //         key: 'lang',
-    //         operation: '=',
-    //         value: 'en',
-    //       },
-    //     ],
-    //   });
-    //   if (response.data) {
-    //     const regionNames = response.data.map((item: any) => item.provinceName);
-    //     const uniqueRegionNames: any = Array.from(new Set(regionNames));
-    //     setRegionsList([t('national'), ...uniqueRegionNames]);
-    //   }
-    // } catch (error: any) {
-    //   console.log('Error in getting regions list', error);
-    // } finally {
-    //   setLoadingList(false);
-    // }
-
-    setRegionsList(provinces);
+    try {
+      const { data } = await post(API_PATHS.PROVINCES);
+      const tempProvinces = data.map((provinceData: any) => provinceData.provinceName);
+      setRegionsList(tempProvinces);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // const getGovDep = async (val: any) => {

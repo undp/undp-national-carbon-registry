@@ -71,6 +71,7 @@ export const descriptionOfProjectActivityDataMapToFields = (vals: any) => {
             province: location?.province,
             district: location?.district,
             dsDivision: location?.dsDivision,
+            siteNo: location?.siteNo,
             city: location?.city,
             community: location?.community,
             location: location?.geographicalLocationCoordinates,
