@@ -29,6 +29,7 @@ import { AuditLogsService } from "../audit-logs/audit-logs.service";
 import { EmailHelperService } from "../email-helper/email-helper.service";
 import { EmailTemplates } from "../email-helper/email.template";
 import { DocumentManagementService } from "../document-management/document-management.service";
+import { Role } from "../casl/role.enum";
 import { DataResponseMessageDto } from "../dto/data.response.message";
 
 @Injectable()
@@ -52,10 +53,13 @@ export class ProjectManagementService {
 
   async create(projectCreateDto: ProjectCreateDto, user: User): Promise<any> {
     try {
-      if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
+      if (
+        user.companyRole !== CompanyRole.PROJECT_DEVELOPER ||
+        user.role !== Role.Admin
+      ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notProjectParticipant",
+            "project.noInfCreatePermission",
             []
           ),
           HttpStatus.BAD_REQUEST
@@ -182,10 +186,13 @@ export class ProjectManagementService {
 
   async approveINF(refId: string, user: User): Promise<DataResponseDto> {
     try {
-      if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+      if (
+        user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+        user.role !== Role.Admin
+      ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notAuthorised",
+            "project.noInfActionPermission",
             []
           ),
           HttpStatus.UNAUTHORIZED
@@ -288,10 +295,13 @@ export class ProjectManagementService {
     user: User
   ): Promise<DataResponseDto> {
     try {
-      if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+      if (
+        user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+        user.role !== Role.Admin
+      ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
-            "project.notAuthorised",
+            "project.noInfActionPermission",
             []
           ),
           HttpStatus.UNAUTHORIZED
