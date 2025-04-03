@@ -198,8 +198,18 @@ export const CreditTransfersTableComponent = (props: any) => {
             align: 'center' as const,
             render: (item: CreditTransfersInterface) => {
               return (
-                <Tag color={getStatusColor(item.transferStatus as TransferStatus)}>
-                  {t(item.transferStatus)}
+                <Tag
+                  color={getStatusColor(
+                    item?.senderName && item?.senderName === userInfoState?.companyName
+                      ? TransferStatus.SENT
+                      : TransferStatus.RECEIVED
+                  )}
+                >
+                  {t(
+                    item?.senderName && item?.senderName === userInfoState?.companyName
+                      ? TransferStatus.SENT
+                      : TransferStatus.RECEIVED
+                  )}
                 </Tag>
               );
             },
