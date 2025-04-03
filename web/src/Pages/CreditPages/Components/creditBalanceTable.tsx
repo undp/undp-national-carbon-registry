@@ -403,7 +403,7 @@ export const CreditBalanceTableComponent = (props: any) => {
         response = await post(API_PATHS.CREDIT_TRANSFER_REQUEST, {
           receiverOrgId: reciveParty,
           blockId: blockId,
-          amount: creditAmount,
+          amount: Number(creditAmount),
           remarks: remark,
         });
       } else {
@@ -412,7 +412,7 @@ export const CreditBalanceTableComponent = (props: any) => {
           remarks: remark,
           retirementType: retirementType,
           country: reciveParty,
-          amount: creditAmount,
+          amount: Number(creditAmount),
         });
       }
       if (response.status === HttpStatusCode.Created) {

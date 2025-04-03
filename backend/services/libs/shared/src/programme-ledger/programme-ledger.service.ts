@@ -636,15 +636,13 @@ export class ProgrammeLedgerService {
 
   public async issueCredits(
     activity: ActivityEntity,
-    requestData: DocumentActionRequestDto,
+    creditVerified: ActivityVintageCreditsDto[],
     companyId: number,
     document: DocumentEntity,
     txRef: string,
     user: User
   ) {
-    const creditVerified: ActivityVintageCreditsDto[] =
-      requestData.data.creditIssued;
-    const companyAccount = companyId + "#" + requestData.data.creditType;
+    const companyAccount = companyId + "#";
 
     const getQueries = {};
     getQueries[this.ledger.projectTable] = {
@@ -693,20 +691,8 @@ export class ProgrammeLedgerService {
           (act) => act.id === document.activityId
         );
         let totalCreditsToVerify = 0;
-        for (const creditVintageId in ledgerActivity.creditAmounts) {
-          if (
-            creditVerified[creditVintageId].creditAmount >
-            ledgerActivity.creditAmounts[creditVintageId].creditAmount
-          ) {
-            throw new HttpException(
-              this.helperService.formatReqMessagesString(
-                "project.cannotVerifyMoreThanCreditAmount",
-                []
-              ),
-              HttpStatus.BAD_REQUEST
-            );
-          }
-          totalCreditsToVerify += creditVerified[creditVintageId].creditAmount;
+        for (const creditVintage of creditVerified) {
+          totalCreditsToVerify += creditVintage.creditAmount;
         }
 
         if (totalCreditsToVerify > project.creditEst - project.creditIssued) {
@@ -855,7 +841,7 @@ export class ProgrammeLedgerService {
       refId: projectRefId,
     };
     getQueries[this.ledger.creditBlocksTable] = {
-      creditBlockId: creditTransferDto.creditBlockId,
+      creditBlockId: creditTransferDto.blockId,
     };
     const resp = await this.ledger.getAndUpdateTx(
       getQueries,
@@ -891,7 +877,7 @@ export class ProgrammeLedgerService {
           throw new HttpException(
             this.helperService.formatReqMessagesString(
               "project.creditBlockNotExistWIthCreditBlockId",
-              [creditTransferDto.creditBlockId]
+              [creditTransferDto.blockId]
             ),
             HttpStatus.BAD_REQUEST
           );
@@ -903,7 +889,7 @@ export class ProgrammeLedgerService {
           throw new HttpException(
             this.helperService.formatReqMessagesString(
               "project.creditBlockNotBelongsToOwner",
-              [creditTransferDto.creditBlockId]
+              [creditTransferDto.blockId]
             ),
             HttpStatus.BAD_REQUEST
           );
@@ -916,7 +902,7 @@ export class ProgrammeLedgerService {
             creditTransferDto.amount,
             [creditBlock],
             user.companyId,
-            creditTransferDto.receiverCompanyId,
+            creditTransferDto.receiverOrgId,
             txTime,
             user
           );
@@ -954,7 +940,7 @@ export class ProgrammeLedgerService {
             txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
               TxType.TRANSFER,
               user.companyId,
-              creditTransferDto.receiverCompanyId,
+              creditTransferDto.receiverOrgId,
               user.id
             ),
             txType: TxType.TRANSFER,
@@ -973,7 +959,7 @@ export class ProgrammeLedgerService {
   ) {
     const getQueries = {};
     getQueries[this.ledger.creditBlocksTable] = {
-      creditBlockId: creditRetireReqDto.creditBlockId,
+      creditBlockId: creditRetireReqDto.blockId,
     };
     const resp = await this.ledger.getAndUpdateTx(
       getQueries,
@@ -990,7 +976,7 @@ export class ProgrammeLedgerService {
           throw new HttpException(
             this.helperService.formatReqMessagesString(
               "project.creditBlockNotExistWIthCreditBlockId",
-              [creditRetireReqDto.creditBlockId]
+              [creditRetireReqDto.blockId]
             ),
             HttpStatus.BAD_REQUEST
           );
@@ -1000,7 +986,7 @@ export class ProgrammeLedgerService {
           throw new HttpException(
             this.helperService.formatReqMessagesString(
               "project.creditBlockNotBelongsToOwner",
-              [creditRetireReqDto.creditBlockId]
+              [creditRetireReqDto.blockId]
             ),
             HttpStatus.BAD_REQUEST
           );
@@ -1043,7 +1029,7 @@ export class ProgrammeLedgerService {
           ],
         };
         updateWhereMap[this.ledger.creditBlocksTable] = {
-          creditBlockId: creditRetireReqDto.creditBlockId,
+          creditBlockId: creditRetireReqDto.blockId,
         };
 
         return [updateMap, updateWhereMap, insertMap];
@@ -1103,7 +1089,7 @@ export class ProgrammeLedgerService {
         }
         const creditBlock = creditBlocks[0];
         const transactionRecordIndex = creditBlock.transactionRecords.findIndex(
-          (e) => e.id == retirementAction.transferId
+          (e) => e.id == retirementAction.transactionId
         );
         if (transactionRecordIndex < 0) {
           throw new HttpException(
