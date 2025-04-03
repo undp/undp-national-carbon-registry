@@ -26,9 +26,4 @@ export class DocumentActionRequestDto {
   @IsEnum(DocumentStatus)
   @IsNotEmpty()
   action: DocumentStatus;
-
-  @IsOptional() //TODO need to remove later
-  @IsObject()
-  @ApiProperty({ type: "object" })
-  data?: Record<string, any>;
 }

@@ -459,7 +459,7 @@ export class CreditTransactionsManagementService {
       .createQueryBuilder("creditBlock")
       .where(this.helperService.generateWhereSQL(query, abilityCondition))
       .orderBy(
-        query?.sort?.key,
+        query?.sort?.key && `"${query?.sort?.key}"`,
         query?.sort?.order,
         query?.sort?.nullFirst !== undefined
           ? query?.sort?.nullFirst === true
@@ -502,7 +502,7 @@ export class CreditTransactionsManagementService {
       .addSelect(`"senderId"`, "dummyConfig")
       .where(this.helperService.generateWhereSQL(query, abilityCondition))
       .orderBy(
-        query?.sort?.key,
+        query?.sort?.key && `"${query?.sort?.key}"`,
         query?.sort?.order,
         query?.sort?.nullFirst !== undefined
           ? query?.sort?.nullFirst === true
@@ -538,7 +538,7 @@ export class CreditTransactionsManagementService {
       .createQueryBuilder("creditTx")
       .where(this.helperService.generateWhereSQL(query, abilityCondition))
       .orderBy(
-        query?.sort?.key,
+        query?.sort?.key && `"${query?.sort?.key}"`,
         query?.sort?.order,
         query?.sort?.nullFirst !== undefined
           ? query?.sort?.nullFirst === true

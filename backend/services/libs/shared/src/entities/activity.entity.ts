@@ -28,9 +28,6 @@ export class ActivityEntity {
   state: ActivityStateEnum;
 
   @Column("jsonb", { array: false, default: [] })
-  creditAmounts: ActivityVintageCreditsDto[];
-
-  @Column("jsonb", { array: false, default: [] })
   creditIssued: ActivityVintageCreditsDto[];
 
   @Column({ type: "bigint" })
