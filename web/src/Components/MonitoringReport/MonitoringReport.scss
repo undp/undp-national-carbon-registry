@@ -50,7 +50,15 @@
   .form-section-title {
     margin-bottom: 20px;
     color: rgba(58, 53, 65, 0.5);
-    font-weight: 400;
+    font-weight: bolder;
+  }
+
+  .form-section-heading {
+    margin-bottom: 20px;
+    margin-top: 30px;
+    color: #3a3541cc !important;
+    font-weight: 600;
+    font-size: 16px;
   }
 
   .form-section {
@@ -116,6 +124,11 @@
 
     // }
   }
+  .step-form-label {
+    text-align: center;
+    color: rgba(58, 53, 65, 0.58);
+    font-weight: bold;
+  }
 }
 
 .stepper-title-container {
@@ -157,7 +170,11 @@
     width: 20%;
     padding: 10px 20px;
   }
-
+  .bold-header {
+    display: flex;
+    flex-direction: row;
+    font-weight: bold;
+  }
   .header {
     display: flex;
     flex-direction: row;

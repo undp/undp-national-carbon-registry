@@ -177,14 +177,12 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                 <Col xl={24} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('verificationReport:meansOfVerification')}
-                      name="m_meansOfVerification"
+                      label={t('verificationReport:m_deskReview')}
+                      name="m_deskReview"
                       rules={[
                         {
                           required: true,
-                          message: `${t('verificationReport:meansOfVerification')} ${t(
-                            'isRequired'
-                          )}`,
+                          message: `${t('verificationReport:m_deskReview')} ${t('isRequired')}`,
                         },
                       ]}
                     >

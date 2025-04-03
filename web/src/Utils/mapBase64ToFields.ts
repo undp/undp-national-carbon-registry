@@ -1,7 +1,7 @@
 export const mapBase64ToFields = (fileUrls: string[]) => {
   let fileObjs: any[] = [];
 
-  console.log('---------fileUrls-----------', fileUrls);
+  //console.log('---------fileUrls-----------', fileUrls);
 
   if (fileUrls !== undefined && fileUrls.length > 0 && fileUrls[0] !== undefined) {
     fileObjs = fileUrls.map((item: any, index) => {

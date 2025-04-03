@@ -65,7 +65,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
     const tempVals: any = {
       ...values,
       documentsReviewed: values?.documentsReviewed,
-      appendix1Documents: (await fileUploadValueExtract(values, 'appendix1Documents'))[0],
+      appendix1Documents: await fileUploadValueExtract(values, 'appendix1Documents'),
       cl_date: moment(values?.cl_date).startOf('day').unix(),
       cl_projectParticipantResponseDate: moment(values?.cl_projectParticipantResponseDate)
         .startOf('day')
@@ -83,7 +83,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
       far_doeAssesmentDate: moment(values?.far_doeAssesmentDate).startOf('day').unix(),
     };
 
-    console.log('---------temVals-------------', tempVals);
+    //console.log('---------validation onFinish-------------', tempVals);
     handleValuesUpdate(tempVals);
   };
 
