@@ -6,12 +6,12 @@ export class CreditTransferDto {
   @IsInt()
   @IsPositive()
   @IsNotEmpty()
-  receiverCompanyId: number;
+  receiverOrgId: number;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  creditBlockId: string;
+  blockId: string;
 
   @ApiProperty()
   @IsInt()
