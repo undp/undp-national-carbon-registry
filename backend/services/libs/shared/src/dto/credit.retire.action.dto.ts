@@ -6,7 +6,7 @@ export class CreditRetireActionDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  transferId: string;
+  transactionId: string;
 
   @ApiProperty({ enum: RetirementACtionEnum })
   @IsEnum(RetirementACtionEnum)

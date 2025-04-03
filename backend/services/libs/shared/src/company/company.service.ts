@@ -10,7 +10,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { OrganisationDto } from "../dto/organisation.dto";
-import { QueryFailedError, Repository } from "typeorm";
+import { FindOptionsWhere, Not, QueryFailedError, Repository } from "typeorm";
 import { Company } from "../entities/company.entity";
 import { CompanyRole } from "../enum/company.role.enum";
 import { QueryDto } from "../dto/query.dto";
@@ -58,6 +58,9 @@ import { OrganisationDuplicateCheckDto } from "../dto/organisation.duplicate.che
 import { OrganisationSyncRequestDto } from "../dto/organisation.sync.request.dto";
 import { Cache } from "cache-manager";
 import { CompanyViewEntity } from "../view-entities/company.view.entity";
+import { GetOrganizationsRequest } from "../dto/organizations-request.dto";
+import { IDNameResponse } from "../dto/id-name.response.dto";
+import { Role } from "../casl/role.enum";
 
 @Injectable()
 export class CompanyService {
@@ -669,6 +672,35 @@ export class CompanyService {
       resp.length > 0 ? resp[0] : undefined,
       resp.length > 1 ? resp[1] : undefined
     );
+  }
+
+  async getOrganizationsOfType(
+    dto: GetOrganizationsRequest,
+    user: User
+  ): Promise<IDNameResponse[]> {
+    // request can only be made by admins of same org type
+    if (user.role !== Role.Admin || user.companyRole !== dto.type) {
+      throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
+    }
+
+    // send data
+    const where: FindOptionsWhere<Company> = {
+      companyRole: dto.type,
+    };
+
+    if (dto.filterOwn) {
+      where.companyId = Not(user.companyId);
+    }
+
+    const res = await this.companyRepo.find({
+      where: where,
+    });
+
+    if (res) {
+      return res.map((org) => new IDNameResponse(org.companyId, org.name));
+    }
+
+    return [];
   }
 
   // MARK: Query Organisation Public Details

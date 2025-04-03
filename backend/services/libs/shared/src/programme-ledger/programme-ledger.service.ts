@@ -841,7 +841,7 @@ export class ProgrammeLedgerService {
       refId: projectRefId,
     };
     getQueries[this.ledger.creditBlocksTable] = {
-      creditBlockId: creditTransferDto.creditBlockId,
+      creditBlockId: creditTransferDto.blockId,
     };
     const resp = await this.ledger.getAndUpdateTx(
       getQueries,
@@ -877,7 +877,7 @@ export class ProgrammeLedgerService {
           throw new HttpException(
             this.helperService.formatReqMessagesString(
               "project.creditBlockNotExistWIthCreditBlockId",
-              [creditTransferDto.creditBlockId]
+              [creditTransferDto.blockId]
             ),
             HttpStatus.BAD_REQUEST
           );
@@ -889,7 +889,7 @@ export class ProgrammeLedgerService {
           throw new HttpException(
             this.helperService.formatReqMessagesString(
               "project.creditBlockNotBelongsToOwner",
-              [creditTransferDto.creditBlockId]
+              [creditTransferDto.blockId]
             ),
             HttpStatus.BAD_REQUEST
           );
@@ -902,7 +902,7 @@ export class ProgrammeLedgerService {
             creditTransferDto.amount,
             [creditBlock],
             user.companyId,
-            creditTransferDto.receiverCompanyId,
+            creditTransferDto.receiverOrgId,
             txTime,
             user
           );
@@ -940,7 +940,7 @@ export class ProgrammeLedgerService {
             txRef: this.creditBlocksManagementService.getCreditBlockTxRef(
               TxType.TRANSFER,
               user.companyId,
-              creditTransferDto.receiverCompanyId,
+              creditTransferDto.receiverOrgId,
               user.id
             ),
             txType: TxType.TRANSFER,
@@ -959,7 +959,7 @@ export class ProgrammeLedgerService {
   ) {
     const getQueries = {};
     getQueries[this.ledger.creditBlocksTable] = {
-      creditBlockId: creditRetireReqDto.creditBlockId,
+      creditBlockId: creditRetireReqDto.blockId,
     };
     const resp = await this.ledger.getAndUpdateTx(
       getQueries,
@@ -976,7 +976,7 @@ export class ProgrammeLedgerService {
           throw new HttpException(
             this.helperService.formatReqMessagesString(
               "project.creditBlockNotExistWIthCreditBlockId",
-              [creditRetireReqDto.creditBlockId]
+              [creditRetireReqDto.blockId]
             ),
             HttpStatus.BAD_REQUEST
           );
@@ -986,7 +986,7 @@ export class ProgrammeLedgerService {
           throw new HttpException(
             this.helperService.formatReqMessagesString(
               "project.creditBlockNotBelongsToOwner",
-              [creditRetireReqDto.creditBlockId]
+              [creditRetireReqDto.blockId]
             ),
             HttpStatus.BAD_REQUEST
           );
@@ -1029,7 +1029,7 @@ export class ProgrammeLedgerService {
           ],
         };
         updateWhereMap[this.ledger.creditBlocksTable] = {
-          creditBlockId: creditRetireReqDto.creditBlockId,
+          creditBlockId: creditRetireReqDto.blockId,
         };
 
         return [updateMap, updateWhereMap, insertMap];
@@ -1089,7 +1089,7 @@ export class ProgrammeLedgerService {
         }
         const creditBlock = creditBlocks[0];
         const transactionRecordIndex = creditBlock.transactionRecords.findIndex(
-          (e) => e.id == retirementAction.transferId
+          (e) => e.id == retirementAction.transactionId
         );
         if (transactionRecordIndex < 0) {
           throw new HttpException(
