@@ -12,11 +12,7 @@ import {
   Typography,
   Tag,
 } from 'antd';
-import {
-  EllipsisOutlined,
-  CheckCircleOutlined,
-  ExclamationCircleOutlined,
-} from '@ant-design/icons';
+import { EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { useEffect, useRef, useState } from 'react';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
@@ -84,11 +80,11 @@ export const CreditBalanceTableComponent = (props: any) => {
   const [sortField, setSortField] = useState<string>();
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAllBox, setCheckAllBox] = useState<boolean>(true);
-  const [checkBoxOptions, setCheckBoxOptions] = useState<any[]>([]);
   const checkBoxMenu = Object.keys(IssuedOrReceivedOptions).map((k, index) => ({
     label: t(Object.values(IssuedOrReceivedOptions)[index]),
     value: Object.values(IssuedOrReceivedOptions)[index],
   }));
+  const [checkBoxOptions, setCheckBoxOptions] = useState<any[]>(checkBoxMenu.map((e) => e.value));
   const [modalActionVisible, setModalActionVisible] = useState<boolean>(false);
   const [modalActionLoading, setModalActionLoading] = useState<boolean>(false);
   const [modalActionData, setModalActionData] = useState<{
@@ -379,16 +375,17 @@ export const CreditBalanceTableComponent = (props: any) => {
     if (isInitialRender.current) {
       getQueryData();
     }
-  }, [
-    currentPage,
-    pageSize,
-    sortField,
-    sortOrder,
-    search,
-    checkBoxOptions,
-    modalActionVisible,
-    modalResponseVisible,
-  ]);
+  }, [currentPage, pageSize]);
+
+  useEffect(() => {
+    if (isInitialRender.current) {
+      if (currentPage !== 1) {
+        setCurrentPage(1);
+      } else {
+        getQueryData();
+      }
+    }
+  }, [sortField, sortOrder, search, checkBoxOptions, modalActionVisible, modalResponseVisible]);
 
   const onFinishAction = async (
     reciveParty: any,
@@ -420,7 +417,7 @@ export const CreditBalanceTableComponent = (props: any) => {
       if (response.status === HttpStatusCode.Created) {
         setModalResponseData({
           type: ActionResponseType.SUCCESS,
-          icon: <CheckCircleOutlined />,
+          icon: <Icon.CheckCircle color={COLOR_CONFIGS.SUCCESS_RESPONSE_COLOR} />,
           title: t(
             modalActionData?.type === CreditActionType.TRANSFER
               ? 'creditTransferInitiated'
@@ -431,7 +428,7 @@ export const CreditBalanceTableComponent = (props: any) => {
       } else {
         setModalResponseData({
           type: ActionResponseType.FAILED,
-          icon: <ExclamationCircleOutlined />,
+          icon: <ExclamationCircleOutlined color={COLOR_CONFIGS.FAILED_RESPONSE_COLOR} />,
           title: t(
             modalActionData?.type === CreditActionType.TRANSFER
               ? 'creditTransferInitiatedFailed'
@@ -444,7 +441,7 @@ export const CreditBalanceTableComponent = (props: any) => {
       message.error(error.message || t('somethingWentWrong'));
       setModalResponseData({
         type: ActionResponseType.FAILED,
-        icon: <Icon.ExclamationCircle color="#FF4D4F" />,
+        icon: <Icon.ExclamationCircle color={COLOR_CONFIGS.FAILED_RESPONSE_COLOR} />,
         title: t('somethingWentWrong'),
         buttonText: t('okay'),
       });
@@ -457,37 +454,44 @@ export const CreditBalanceTableComponent = (props: any) => {
 
   return (
     <div className="content-card">
-      <Row className="table-actions-section">
-        <Col lg={{ span: 15 }} md={{ span: 14 }}>
-          <div className="action-bar">
-            <Checkbox
-              className="all-check"
-              disabled={loading}
-              indeterminate={indeterminate}
-              onChange={onCheckBoxesChange}
-              checked={checkAllBox}
-              defaultChecked={true}
-            >
-              {t('all')}
-            </Checkbox>
-            <Checkbox.Group
-              disabled={loading}
-              options={checkBoxMenu}
-              defaultValue={checkBoxMenu.map((e) => e.value)}
-              value={checkBoxOptions}
-              onChange={onStatusQuery}
-            />
-          </div>
-        </Col>
-        <Col lg={{ span: 9 }} md={{ span: 10 }}>
+      <Row
+        justify={
+          userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER ? 'space-between' : 'end'
+        }
+        className="table-actions-section"
+      >
+        {userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER && (
+          <Col lg={{ span: 13 }} md={{ span: 12 }}>
+            <div className="action-bar">
+              <Checkbox
+                className="all-check"
+                disabled={loading}
+                indeterminate={indeterminate}
+                onChange={onCheckBoxesChange}
+                checked={checkAllBox}
+                defaultChecked={true}
+              >
+                {t('all')}
+              </Checkbox>
+              <Checkbox.Group
+                disabled={loading}
+                options={checkBoxMenu}
+                defaultValue={checkBoxMenu.map((e) => e.value)}
+                value={checkBoxOptions}
+                onChange={onStatusQuery}
+              />
+            </div>
+          </Col>
+        )}
+        <Col lg={{ span: 11 }} md={{ span: 12 }}>
           <div className="filter-section">
             <div className="search-bar">
               <Search
                 onPressEnter={(e) => onSearch((e.target as HTMLInputElement).value)}
                 placeholder={`${t('searchByProjectOrOrg')}`}
                 allowClear
-                onSearch={onSearch}
-                style={{ width: 265 }}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{ width: 285 }}
               />
             </div>
           </div>

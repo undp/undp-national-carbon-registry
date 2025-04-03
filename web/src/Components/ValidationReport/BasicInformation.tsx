@@ -122,7 +122,14 @@ const BasicInformation = (props: ValidationStepsProps) => {
   const onFinish = async (values: any) => {
     const approverSignature = (await fileUploadValueExtract(values, 'approverSignature'))[0];
     const projectDetailsFormValues = {
-      ...values,
+      // ...values,
+      titleOfTheProjectActivity: values?.titleOfTheProjectActivity,
+      projectDeveloper: values?.projectDeveloper,
+      projectScale: values?.projectScale,
+      appliedMethodologies: values?.appliedMethodologies,
+      conditionalSectoralScopes: values?.conditionalSectoralScopes,
+      titleOfSpecificCase: values?.titleOfSpecificCase,
+      hostParty: values?.hostParty,
       completionDate: moment(values?.completionDate).startOf('day').unix(),
       pddUploadedGlobalStakeholderConsultation: moment(
         values?.pddUploadedGlobalStakeholderConsultation
@@ -132,6 +139,34 @@ const BasicInformation = (props: ValidationStepsProps) => {
       approverSignature: approverSignature,
       locationsOfProjectActivity: await (async function () {
         const tempList: any[] = [];
+        const firstObj = {
+          locationOfProjectActivity: values?.locationOfProjectActivity,
+          siteNo: values?.siteNo,
+          province: values?.province,
+          district: values?.district,
+          // dsDivision: values?.dsDivision,
+          city: values?.city,
+          community: values?.community,
+          geographicalLocationCoordinates: values?.geographicalLocationCoordinates,
+          additionalDocuments: await (async function () {
+            const base64Docs: string[] = [];
+
+            if (values?.optionalImages && values?.optionalImages.length > 0) {
+              const docs = values.optionalImages;
+              for (let i = 0; i < docs.length; i++) {
+                if (docs[i]?.originFileObj === undefined) {
+                  base64Docs.push(docs[i]?.url);
+                } else {
+                  const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+                  base64Docs.push(temp); // No need for Promise.resolve
+                }
+              }
+            }
+
+            return base64Docs;
+          })(),
+        };
+        tempList.push(firstObj);
         if (values?.extraLocations) {
           values?.extraLocations.forEach(async (item: any) => {
             const tempObj = {
@@ -177,11 +212,12 @@ const BasicInformation = (props: ValidationStepsProps) => {
       mandatarySectoralScopes: values?.mandatarySectoralScopes,
       annualAverageGHGReduction: values?.annualAverageGHGReduction,
       approverName: values?.approverName,
+      creditingPeriod: values?.creditingPeriod,
       creditingPeriodStart: moment(values?.creditingPeriodStart).startOf('day').unix(),
       creditingPeriodEnd: moment(values?.creditingPeriodEnd).startOf('day').unix(),
     };
 
-    console.log('basicInformation', projectDetailsFormValues);
+    console.log('----------basicInformation validation-------------', projectDetailsFormValues);
 
     handleValuesUpdate({
       // [ProcessSteps.VR_PROJECT_DETAILS]: projectDetailsFormValues
@@ -507,9 +543,9 @@ const BasicInformation = (props: ValidationStepsProps) => {
 
                 <h4 className="list-item-title">Location 1</h4>
                 <div className="form-section">
-                  <h4 className="form-section-title">{`${t(
+                  {/* <h4 className="form-section-title">{`${t(
                     'validationReport:locationOfProjectActivity'
-                  )}`}</h4>
+                  )}`}</h4> */}
 
                   <Row
                     // justify={'space-between'}
@@ -861,9 +897,9 @@ const BasicInformation = (props: ValidationStepsProps) => {
                             </Form.Item>
                           </div>
                           <div className="form-section">
-                            <h4 className="form-section-title">
+                            {/* <h4 className="form-section-title">
                               {`${t('validationReport:locationOfProjectActivity')}`}
-                            </h4>
+                            </h4> */}
                             <Row
                               justify={'space-between'}
                               gutter={[40, 16]}
@@ -1136,7 +1172,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     form={form}
                                     formItemName={[name, 'geographicalLocationCoordinates']}
                                     listName="extraLocations"
-                                    disabled
+                                    disabled={true}
                                     existingCordinate={
                                       form?.getFieldValue('extraLocations')[name]
                                         ?.geographicalLocationCoordinates
@@ -1175,13 +1211,14 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     action="/upload.do"
                                     listType="picture"
                                     multiple={false}
-                                    disabled
+                                    disabled={true}
                                     // maxCount={1}
                                   >
                                     <Button
                                       className="upload-doc"
                                       size="large"
                                       icon={<UploadOutlined />}
+                                      disabled={true}
                                       // disabled={disableFields}
                                     >
                                       Upload
