@@ -206,6 +206,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
   };
 
   const onFinish = async (values: any) => {
+    console.log('--------------projectParticipants-----------', values?.projectParticipants);
     const tempValues: any = {
       introduction: values?.introduction,
       // sectoralScope: values?.sectoralScope,
@@ -1568,8 +1569,9 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
               </h4>
               <div className="projectParticipantsTable">
                 <div className="header">
-                  <div className="col-1">{t("PDD:partiesInvolved")}</div>
-                  <div className="col-2">{t("PDD:projectParticipant")}</div>
+                  <div className="col-1">{t('PDD:partiesInvolved')}</div>
+                  <div className="col-2">{t('PDD:projectParticipant')}</div>
+                  <div className="col-3"></div>
                 </div>
 
                 <div className="data-body">
@@ -1697,7 +1699,22 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                 )}
                               </Form.List>
                             </div>
-                            {/* <div className="col-3">hello</div> */}
+                            <div className="col-3">
+                              {key !== 0 && (
+                                <Form.Item>
+                                  <Button
+                                    onClick={() => {
+                                      console.log('------remove key---------', key);
+                                      remove(name);
+                                    }}
+                                    icon={<MinusOutlined />}
+                                    size="large"
+                                    className="addMinusBtn"
+                                    disabled={disableFields}
+                                  />
+                                </Form.Item>
+                              )}
+                            </div>
                           </div>
                         ))}
 
@@ -1729,68 +1746,6 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                       </>
                     )}
                   </Form.List>
-                  {/* <Form.List name="projectParticipants">
-                    {(fields, { add, remove }) => (
-                      <>
-                        1212345
-                        <>{console.log('fields', fields[0])}</>
-                        {fields.map(({ key, name, ...restField }) => {
-                          <div>
-                            123
-                            <div className="col-1">
-                              a
-                              <Form.Item
-                                name={[name, 'partiesInvolved']}
-                                rules={[
-                                  {
-                                    validator: async (rule, value) => {
-                                      if (
-                                        String(value).trim() === '' ||
-                                        String(value).trim() === undefined ||
-                                        value === null ||
-                                        value === undefined
-                                      ) {
-                                        throw new Error(
-                                          `${t('PDD:partiesInvolved')} ${t('isRequired')}`
-                                        );
-                                      }
-                                    },
-                                  },
-                                ]}
-                              >
-                                <Input />
-                              </Form.Item>
-                            </div>
-                            <div className="col-2">
-                              b
-                              <Form.Item
-                                name={[name, 'projectParticipant']}
-                                rules={[
-                                  {
-                                    validator: async (rule, value) => {
-                                      if (
-                                        String(value).trim() === '' ||
-                                        String(value).trim() === undefined ||
-                                        value === null ||
-                                        value === undefined
-                                      ) {
-                                        throw new Error(
-                                          `${t('PDD:projectParticipant')} ${t('isRequired')}`
-                                        );
-                                      }
-                                    },
-                                  },
-                                ]}
-                              >
-                                <Input />
-                              </Form.Item>
-                            </div>
-                            <button onClick={add}>+</button>
-                          </div>;
-                        })}
-                      </>
-                    )}
-                  </Form.List> */}
                 </div>
               </div>
               {/* project participant table end */}
