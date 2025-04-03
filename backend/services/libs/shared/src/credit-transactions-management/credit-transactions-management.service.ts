@@ -481,25 +481,17 @@ export class CreditTransactionsManagementService {
     abilityCondition: string,
     user: User
   ): Promise<DataListResponseDto> {
-    if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "project.notProjectParticipant",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
+    if (user.companyRole == CompanyRole.PROJECT_DEVELOPER) {
+      const ownTransfers: FilterEntry[] = [
+        { key: "senderId", value: user.companyId, operation: "=" },
+        { key: "recieverId", value: user.companyId, operation: "=" },
+      ];
+      query.filterOr
+        ? query.filterOr.push(...ownTransfers)
+        : (query.filterOr = ownTransfers);
     }
-    const ownTransfers: FilterEntry[] = [
-      { key: "senderId", value: user.companyId, operation: "=" },
-      { key: "recieverId", value: user.companyId, operation: "=" },
-    ];
-    query.filterOr
-      ? query.filterOr.push(...ownTransfers)
-      : (query.filterOr = ownTransfers);
     const resp = await this.creditBlockTransfersViewEntityRepository
       .createQueryBuilder("creditTx")
-      .addSelect(`"senderId"`, "dummyConfig")
       .where(this.helperService.generateWhereSQL(query, abilityCondition))
       .orderBy(
         query?.sort?.key && `"${query?.sort?.key}"`,
