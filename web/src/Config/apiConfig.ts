@@ -31,9 +31,9 @@ export const API_PATHS = {
   PROJECT_BY_CATEGORY: 'stats/programme/queryProgrammesByCategory',
   PROJECT_ACTION: (action: string) => `programme/${action}`,
   // CREDITS
-  CREDIT_BALANCE_QUERY: 'creditTokens/queryBalance',
-  CREDIT_TRANSFERS_QUERY: 'creditTokens/queryTransfers',
-  CREDIT_RETIREMENT_QUERY: 'creditTokens/queryRetirements',
+  CREDIT_BALANCE_QUERY: 'national/creditTransactionsManagement/queryBalance',
+  CREDIT_TRANSFERS_QUERY: 'national/creditTransactionsManagement/queryTransfers',
+  CREDIT_RETIREMENT_QUERY: 'national/creditTransactionsManagement/queryRetirements',
   TRANSFER_ORGANIZATIONS: 'organisation/getOrganizations',
   CB_RETIRE_COINTRY_QUERY: 'location/countries',
   CREDIT_RETIREMENT_REQUEST: 'creditTokens/retireRequest',

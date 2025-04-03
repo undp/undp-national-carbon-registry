@@ -636,15 +636,13 @@ export class ProgrammeLedgerService {
 
   public async issueCredits(
     activity: ActivityEntity,
-    requestData: DocumentActionRequestDto,
+    creditVerified: ActivityVintageCreditsDto[],
     companyId: number,
     document: DocumentEntity,
     txRef: string,
     user: User
   ) {
-    const creditVerified: ActivityVintageCreditsDto[] =
-      requestData.data.creditIssued;
-    const companyAccount = companyId + "#" + requestData.data.creditType;
+    const companyAccount = companyId + "#";
 
     const getQueries = {};
     getQueries[this.ledger.projectTable] = {
@@ -693,20 +691,8 @@ export class ProgrammeLedgerService {
           (act) => act.id === document.activityId
         );
         let totalCreditsToVerify = 0;
-        for (const creditVintageId in ledgerActivity.creditAmounts) {
-          if (
-            creditVerified[creditVintageId].creditAmount >
-            ledgerActivity.creditAmounts[creditVintageId].creditAmount
-          ) {
-            throw new HttpException(
-              this.helperService.formatReqMessagesString(
-                "project.cannotVerifyMoreThanCreditAmount",
-                []
-              ),
-              HttpStatus.BAD_REQUEST
-            );
-          }
-          totalCreditsToVerify += creditVerified[creditVintageId].creditAmount;
+        for (const creditVintage of creditVerified) {
+          totalCreditsToVerify += creditVintage.creditAmount;
         }
 
         if (totalCreditsToVerify > project.creditEst - project.creditIssued) {
