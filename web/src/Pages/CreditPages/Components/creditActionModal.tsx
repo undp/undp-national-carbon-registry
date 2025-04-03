@@ -380,7 +380,7 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                         />
                       ) : (
                         <Input
-                          placeholder={'receiverName' in data ? data.receiverName : data.senderName}
+                          placeholder={'countryName' in data ? data.countryName : 'N/A'}
                           disabled
                         />
                       )}

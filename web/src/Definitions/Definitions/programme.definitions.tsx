@@ -108,7 +108,7 @@ export const getProjectProposalStage = (stage: ProjectProposalStage) => {
     case ProjectProposalStage.PDD_APPROVED_BY_DNA:
       return 'cyan';
     case ProjectProposalStage.PDD_REJECTED_BY_DNA:
-      return 'error';
+      return 'magenta';
     case ProjectProposalStage.VALIDATION_REPORT_SUBMITTED:
       return 'default';
     case ProjectProposalStage.VALIDATION_REPORT_REJECTED:
