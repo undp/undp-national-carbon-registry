@@ -44,7 +44,7 @@ export const AnnexureStep = (props: CustomStepsProps) => {
   const onFinish = async (values: any) => {
     const appendixFormValues: any = {
       appendix: values?.a_appendix,
-      a_uploadDoc: (await fileUploadValueExtract(values, 'a_uploadDoc'))[0],
+      a_uploadDoc: await fileUploadValueExtract(values, 'a_uploadDoc'),
     };
     handleValuesUpdate(appendixFormValues);
   };
@@ -235,19 +235,17 @@ export const AnnexureStep = (props: CustomStepsProps) => {
                       required={false}
                       rules={[
                         {
-                          validator: async (rule, file) => {
-                            if (file?.length > 0) {
-                              if (file[0]?.size > maximumImageSize) {
-                                // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                throw new Error(`${t('common:maxSizeVal')}`);
-                              }
+                          validator: (_, value) => {
+                            if (value && value.some((file: any) => file?.size / 1024 / 1024 >= 2)) {
+                              return Promise.reject('Maximum upload file size is 2MB');
                             }
+                            return Promise.resolve();
                           },
                         },
                       ]}
                     >
                       <Upload
-                        accept=".doc, .docx, .pdf, .png, .jpg"
+                        accept=".png, .jpg, .svg"
                         beforeUpload={(file: any) => {
                           return false;
                         }}
