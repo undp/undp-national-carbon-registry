@@ -36,6 +36,7 @@ import moment from 'moment';
 import { addCommSep } from '../../../Definitions/Definitions/programme.definitions';
 import { Role } from '../../../Definitions/Enums/role.enum';
 import { COLOR_CONFIGS } from '../../../Config/colorConfigs';
+import { capitalize } from '../../../Utils/capitalize';
 
 const { Search } = Input;
 
@@ -275,13 +276,13 @@ export const CreditBalanceTableComponent = (props: any) => {
               return (
                 <Tag
                   color={getIssuedReceivedTagColor(
-                    record?.eventType === CreditEventTypeEnum.ISSUED
+                    capitalize(record?.eventType) === CreditEventTypeEnum.ISSUED
                       ? IssuedOrReceivedOptions.ISSUED
                       : IssuedOrReceivedOptions.RECEIVED
                   )}
                 >
                   {t(
-                    record?.eventType === CreditEventTypeEnum.ISSUED
+                    capitalize(record?.eventType) === CreditEventTypeEnum.ISSUED
                       ? IssuedOrReceivedOptions.ISSUED
                       : IssuedOrReceivedOptions.RECEIVED
                   )}
