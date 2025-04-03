@@ -18,6 +18,7 @@ import { AuditEntity } from "../entities/audit.entity";
 import { ProjectAuditLogType } from "../enum/project.audit.log.type.enum";
 import { ProjectSectorEnum } from "../enum/project.sector.enum";
 import { User } from "../entities/user.entity";
+import { ActivityEntity } from "../entities/activity.entity";
 
 @Injectable()
 export class AnalyticsService {
@@ -25,7 +26,9 @@ export class AnalyticsService {
     @InjectRepository(ProjectEntity)
     private readonly projectRepository: Repository<ProjectEntity>,
     @InjectRepository(AuditEntity)
-    private readonly auditRepository: Repository<AuditEntity>
+    private readonly auditRepository: Repository<AuditEntity>,
+    @InjectRepository(ActivityEntity)
+    private readonly activityRepo: Repository<ActivityEntity>
   ) {}
 
   async getProjectsData(filters: ProjectDataRequestDTO, user: User) {
@@ -78,101 +81,122 @@ export class AnalyticsService {
   }
 
   async getPendingActions(user: User) {
-    // if DNA
-    if (user.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
-      // get projects with pending actions
-      const statesList = [
-        ProjectProposalStage.PENDING,
-        // ProjectProposalStage.APPROVED,
-        ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER,
-        ProjectProposalStage.VALIDATION_REPORT_SUBMITTED,
-      ];
+    let projectStates: ProjectProposalStage[] = [];
+    let activityStates: ActivityStateEnum[] = [];
 
-      const results = await this.projectRepository.find({
-        where: {
-          projectProposalStage: In(statesList),
-        },
-      });
+    switch (user.companyRole) {
+      case CompanyRole.DESIGNATED_NATIONAL_AUTHORITY:
+        projectStates = [
+          ProjectProposalStage.PENDING,
+          ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER,
+          ProjectProposalStage.VALIDATION_REPORT_SUBMITTED,
+        ];
+        activityStates = [ActivityStateEnum.VERIFICATION_REPORT_UPLOADED];
+        break;
 
-      // get projects with activity states
-      const activityStatesList = [
-        ActivityStateEnum.VERIFICATION_REPORT_UPLOADED,
-        // ActivityStateEnum.VERIFICATION_REPORT_VERIFIED,
-      ];
+      case CompanyRole.PROJECT_DEVELOPER:
+        projectStates = [
+          ProjectProposalStage.APPROVED,
+          ProjectProposalStage.PDD_REJECTED_BY_CERTIFIER,
+          ProjectProposalStage.PDD_REJECTED_BY_DNA,
+        ];
+        activityStates = [ActivityStateEnum.MONITORING_REPORT_REJECTED];
+        break;
 
-      const activityResults = await this.projectRepository.find({
-        where: {
-          projectProposalStage: ProjectProposalStage.AUTHORISED,
-          activities: {
-            state: In(activityStatesList),
-          },
-        },
-      });
+      case CompanyRole.INDEPENDENT_CERTIFIER:
+        projectStates = [
+          ProjectProposalStage.PDD_SUBMITTED,
+          ProjectProposalStage.PDD_APPROVED_BY_DNA,
+          ProjectProposalStage.VALIDATION_DNA_REJECTED,
+        ];
+        activityStates = [
+          ActivityStateEnum.MONITORING_REPORT_UPLOADED,
+          ActivityStateEnum.MONITORING_REPORT_VERIFIED,
+          ActivityStateEnum.VERIFICATION_REPORT_REJECTED,
+        ];
+        break;
 
-      return results.concat(activityResults);
-    } else if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
-      const statesList = [
-        ProjectProposalStage.APPROVED,
-        ProjectProposalStage.PDD_REJECTED_BY_CERTIFIER,
-        ProjectProposalStage.PDD_REJECTED_BY_DNA,
-        ProjectProposalStage.AUTHORISED,
-      ];
-
-      const results = await this.projectRepository.find({
-        where: {
-          projectProposalStage: In(statesList),
-          companyId: user.companyId,
-          activities: null,
-        },
-      });
-
-      // get projects with activity states
-      const activityStatesList = [ActivityStateEnum.MONITORING_REPORT_REJECTED];
-
-      const activityResults = await this.projectRepository.find({
-        where: {
-          projectProposalStage: ProjectProposalStage.AUTHORISED,
-          companyId: user.companyId,
-          activities: {
-            state: In(activityStatesList),
-          },
-        },
-      });
-
-      return results.concat(activityResults);
-    } else if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
-      const statesList = [
-        ProjectProposalStage.PDD_SUBMITTED,
-        ProjectProposalStage.PDD_APPROVED_BY_DNA,
-        ProjectProposalStage.VALIDATION_DNA_REJECTED,
-      ];
-
-      const results = await this.projectRepository.find({
-        where: {
-          projectProposalStage: In(statesList),
-          independentCertifiers: ArrayContains([user.companyId]),
-        },
-      });
-
-      // get projects with activity states
-      const activityStatesList = [
-        ActivityStateEnum.MONITORING_REPORT_UPLOADED,
-        ActivityStateEnum.MONITORING_REPORT_VERIFIED,
-        ActivityStateEnum.VERIFICATION_REPORT_REJECTED,
-      ];
-
-      const activityResults = await this.projectRepository.find({
-        where: {
-          projectProposalStage: ProjectProposalStage.AUTHORISED,
-          activities: {
-            state: In(activityStatesList),
-          },
-          independentCertifiers: ArrayContains([user.companyId]),
-        },
-      });
-
-      return results.concat(activityResults);
+      default:
+        return [];
     }
+
+    const projectQueryOptions: any = {
+      where: {
+        projectProposalStage: In(projectStates),
+      },
+    };
+
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
+      projectQueryOptions.where.companyId = user.companyId;
+    } else if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
+      projectQueryOptions.where.independentCertifiers = ArrayContains([
+        user.companyId,
+      ]);
+    }
+
+    const projectResults = await this.projectRepository.find(
+      projectQueryOptions
+    );
+
+    const activityResults = await this.activityRepo.find({
+      where: {
+        state: In(activityStates),
+      },
+    });
+
+    const projectIds = [
+      ...new Set(activityResults.map((activity) => activity.projectRefId)),
+    ];
+
+    const projectsFromActivitiesQuery: any = {
+      where: {
+        refId: In(projectIds),
+      },
+    };
+
+    if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
+      projectsFromActivitiesQuery.where.companyId = user.companyId;
+    } else if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
+      projectsFromActivitiesQuery.where.independentCertifiers = ArrayContains([
+        user.companyId,
+      ]);
+    }
+
+    const projectsFromActivities = await this.projectRepository.find(
+      projectsFromActivitiesQuery
+    );
+
+    const activityMap = new Map();
+    activityResults.forEach((activity: ActivityEntity) => {
+      if (!activityMap.has(activity.projectRefId)) {
+        activityMap.set(activity.projectRefId, []);
+      }
+      activityMap.get(activity.projectRefId).push(activity);
+    });
+
+    projectsFromActivities.forEach((project: ProjectEntity) => {
+      const projectActivities = activityMap.get(project.refId) || [];
+
+      if (!project.activities) {
+        project.activities = [];
+      }
+
+      projectActivities.forEach((activity: ActivityEntity) => {
+        const existingActivityIndex = project.activities.findIndex(
+          (existingActivity) => existingActivity.refId === activity.refId
+        );
+
+        if (existingActivityIndex >= 0) {
+          project.activities[existingActivityIndex].state = activity.state;
+        } else {
+          project.activities.push(activity);
+        }
+      });
+    });
+
+    const allProjects = projectResults.concat(projectsFromActivities);
+
+    return allProjects;
   }
 
   async getProjectSummary(user: User) {
@@ -618,7 +642,7 @@ export class AnalyticsService {
       }
     }
 
-    const [result] = await baseQb.getRawMany();
+    const [result = {}] = await baseQb.getRawMany();
 
     return {
       authorisedAmount: parseInt(result.authorisedAmount, 10),
