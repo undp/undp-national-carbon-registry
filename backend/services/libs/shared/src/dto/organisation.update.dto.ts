@@ -8,14 +8,12 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsPositive,
   IsString,
   IsUrl,
   Max,
   MaxLength,
   Min,
   ValidateIf,
-  max,
 } from "class-validator";
 import { CompanyRole } from "../enum/company.role.enum";
 import { GovDepartment } from "../enum/govDep.enum";
