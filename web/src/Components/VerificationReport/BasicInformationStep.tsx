@@ -62,11 +62,11 @@ export const BasicInformationStep = (props: VerificationStepProps) => {
   };
 
   const onFinish = async (values: any) => {
-    const signature = (await fileUploadValueExtract(values, 'b_signature'))[0];
+    //const signature = (await fileUploadValueExtract(values, 'b_signature'))[0];
     const body = {
       ...values,
       b_completionDate: moment(values?.b_completionDate).startOf('day').unix(),
-      b_signature: signature,
+      //b_signature: signature,
     };
 
     handleValuesUpdate({

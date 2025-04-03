@@ -172,7 +172,7 @@ const StepperComponent = (props: any) => {
       const programmeResponse = await post(API_PATHS.PROGRAMME_BY_ID, { programmeId: programId });
       if (programmeResponse?.statusText === 'SUCCESS') {
         programmeData = programmeResponse?.data;
-        console.log('-----------------Programme Data-----------------', programmeData);
+        //console.log('-----------------Programme Data-----------------', programmeData);
       } else {
         console.log('Error: Programme API did not return SUCCESS status');
       }
@@ -186,7 +186,7 @@ const StepperComponent = (props: any) => {
         refId: state?.documents?.PDD?.refId,
         documentType: DocumentEnum.PDD,
       });
-      console.log('-----------------PDD Response-----------------', pddResponse);
+      //console.log('-----------------PDD Response-----------------', pddResponse);
       if (pddResponse?.statusText === 'SUCCESS') {
         pddData = pddResponse?.data;
       } else {
