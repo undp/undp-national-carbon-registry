@@ -76,7 +76,7 @@ export class CreditTransactionsManagementService {
         );
       }
       const recieverCompany = await this.companyService.findByCompanyId(
-        creditTransferDto.receiverCompanyId
+        creditTransferDto.receiverOrgId
       );
       if (!recieverCompany) {
         throw new HttpException(
@@ -97,7 +97,7 @@ export class CreditTransactionsManagementService {
         );
       }
       const creditBlock = await this.creditBlocksEntityRepository.findOne({
-        where: { creditBlockId: creditTransferDto.creditBlockId },
+        where: { creditBlockId: creditTransferDto.blockId },
       });
       if (!creditBlock) {
         throw new HttpException(
@@ -141,7 +141,7 @@ export class CreditTransactionsManagementService {
         undefined,
         {
           amount: creditTransferDto.amount,
-          toCompanyId: creditTransferDto.receiverCompanyId,
+          toCompanyId: creditTransferDto.receiverOrgId,
           fromCompanyId: creditBlock.ownerCompanyId,
         }
       );
@@ -153,7 +153,7 @@ export class CreditTransactionsManagementService {
         ),
         {
           amount: creditTransferDto.amount,
-          toCompanyId: creditTransferDto.receiverCompanyId,
+          toCompanyId: creditTransferDto.receiverOrgId,
           fromCompanyId: creditBlock.ownerCompanyId,
         }
       );
@@ -188,7 +188,7 @@ export class CreditTransactionsManagementService {
         );
       }
       const creditBlock = await this.creditBlocksEntityRepository.findOne({
-        where: { creditBlockId: creditRetireRequestDto.creditBlockId },
+        where: { creditBlockId: creditRetireRequestDto.blockId },
       });
       if (!creditBlock) {
         throw new HttpException(
@@ -262,7 +262,7 @@ export class CreditTransactionsManagementService {
     try {
       const creditRetireRequest =
         await this.creditTransactionsEntityRepository.findOne({
-          where: { id: retirementAction.transferId },
+          where: { id: retirementAction.transactionId },
         });
       if (!creditRetireRequest) {
         throw new HttpException(
@@ -416,7 +416,7 @@ export class CreditTransactionsManagementService {
     } else if (creditBlock.txType == TxType.RETIRE) {
       const txData: CreditRetireActionDto = creditBlock.txData;
       const transactionRecordIndex = creditBlock.transactionRecords.findIndex(
-        (e) => e.id == txData.transferId
+        (e) => e.id == txData.transactionId
       );
       const retireRequestRecord =
         creditBlock.transactionRecords[transactionRecordIndex];
@@ -434,7 +434,7 @@ export class CreditTransactionsManagementService {
       }
       await em.update(
         CreditTransactionsEntity,
-        { id: txData.transferId },
+        { id: txData.transactionId },
         updatedTranferRecord
       );
     }
