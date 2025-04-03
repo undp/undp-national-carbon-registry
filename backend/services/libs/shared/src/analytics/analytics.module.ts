@@ -6,11 +6,12 @@ import { ProjectEntity } from "../entities/projects.entity";
 import { AuditEntity } from "../entities/audit.entity";
 import { CaslModule } from "../casl/casl.module";
 import { UtilModule } from "../util/util.module";
+import { ActivityEntity } from "../entities/activity.entity";
 
 @Module({
   providers: [AnalyticsService],
   imports: [
-    TypeOrmModule.forFeature([ProjectEntity, AuditEntity]),
+    TypeOrmModule.forFeature([ProjectEntity, AuditEntity, ActivityEntity]),
     CaslModule,
     UtilModule,
   ],
