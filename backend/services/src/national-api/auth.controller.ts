@@ -28,18 +28,8 @@ export class AuthController {
 
   @Post("login")
   async login(@Body() login: LoginDto, @Request() req) {
-    const user = await this.authService.validateUser(
-      login.username,
-      login.password
-    );
-    if (user != null) {
-      global.baseUrl = `${req.protocol}://${req.get("Host")}`;
-      return this.authService.login(user);
-    }
-    throw new HttpException(
-      this.helperService.formatReqMessagesString("common.invalidLogin", []),
-      HttpStatus.UNAUTHORIZED
-    );
+    global.baseUrl = `${req.protocol}://${req.get("Host")}`;
+    return this.authService.login(login);
   }
 
   @Post("login/refresh")

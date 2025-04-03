@@ -20,6 +20,7 @@ import { HelperService } from "../util/helpers.service";
 import { EmailTemplates } from "./email.template";
 import { ProgrammeSl } from "../entities/programmeSl.entity";
 import { EmailTemplateDto } from "../dto/email.template.dto";
+import { ProjectEntity } from "../entities/projects.entity";
 
 @Injectable()
 export class EmailHelperService {
@@ -449,21 +450,23 @@ export class EmailHelperService {
     const systemCountryName = this.configService.get("systemCountryName");
     const hostAddress = this.configService.get("host");
 
-    let project = await this.programmeLedger.getProjectById(refId);
+    let project: ProjectEntity;
+    let company: Company;
 
-    if (!project) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "common.programmeNotFound",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
+    if (template.id !== "ORGANISATION_REGISTRATION") {
+      project = await this.programmeLedger.getProjectById(refId);
+      company = await this.companyService.findByCompanyId(project.companyId);
+
+      if (!project) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "common.programmeNotFound",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
     }
-
-    const company = await this.companyService.findByCompanyId(
-      project.companyId
-    );
 
     switch (template.id) {
       case "INF_CREATE":

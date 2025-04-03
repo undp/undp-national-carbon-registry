@@ -17,6 +17,7 @@ import { LocationModule } from "../location/location.module";
 import { Investment } from "../entities/investment.entity";
 import { CacheModule } from "@nestjs/cache-manager";
 import { CompanyViewEntity } from "../view-entities/company.view.entity";
+import { User } from "../entities/user.entity";
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { CompanyViewEntity } from "../view-entities/company.view.entity";
     }),
     TypeOrmModule.forFeature([
       Company,
+      User,
       ProgrammeTransfer,
       Investment,
       CompanyViewEntity,

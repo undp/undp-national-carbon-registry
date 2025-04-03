@@ -6,9 +6,6 @@ import {
   Post,
   Body,
   Query,
-  Req,
-  HttpException,
-  HttpStatus,
   Delete,
   Put,
 } from "@nestjs/common";
@@ -20,7 +17,6 @@ import { Action } from "@app/shared/casl/action.enum";
 import { CaslAbilityFactory } from "@app/shared/casl/casl-ability.factory";
 import { CheckPolicies } from "@app/shared/casl/policy.decorator";
 import { PoliciesGuard, PoliciesGuardEx } from "@app/shared/casl/policy.guard";
-import { Role } from "@app/shared/casl/role.enum";
 import { DataExportQueryDto } from "@app/shared/dto/data.export.query.dto";
 import { PasswordUpdateDto } from "@app/shared/dto/password.update.dto";
 import { QueryDto } from "@app/shared/dto/query.dto";
@@ -34,11 +30,7 @@ import { HelperService } from "@app/shared/util/helpers.service";
 @ApiBearerAuth()
 @Controller("user")
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private caslAbilityFactory: CaslAbilityFactory,
-    private helperService: HelperService
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
@@ -55,12 +47,6 @@ export class UserController {
   )
   @Post("add")
   addUser(@Body() user: UserDto, @Request() req) {
-    if (user.role == Role.Root) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString("user.rootCreatesRoot", []),
-        HttpStatus.FORBIDDEN
-      );
-    }
     global.baseUrl = `${req.protocol}://${req.get("Host")}`;
     return this.userService.create(
       user,
@@ -73,14 +59,8 @@ export class UserController {
 
   @Post("register")
   registerUser(@Body() user: UserDto, @Request() req) {
-    if (user.role == Role.Root) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString("user.rootCreatesRoot", []),
-        HttpStatus.FORBIDDEN
-      );
-    }
     global.baseUrl = `${req.protocol}://${req.get("Host")}`;
-    return this.userService.create(user, null, user.company.companyRole, true);
+    return this.userService.create(user, null, user.company?.companyRole, true);
   }
 
   @ApiBearerAuth()
