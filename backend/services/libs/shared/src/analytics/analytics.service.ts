@@ -212,9 +212,9 @@ export class AnalyticsService {
            WHERE "logType" = 'PENDING' 
            AND "refId" NOT IN (SELECT "refId" FROM audit_entity WHERE "logType" != 'PENDING')) 
            AS last_pending_project_time,
-          (SELECT COALESCE(SUM((data->>'amount')::INTEGER), 0) FROM audit_entity WHERE "logType" = 'CREDIT_ISSUED')
+          (SELECT COALESCE(SUM((data->>'amount')::INTEGER), 0) FROM audit_entity WHERE "logType" = 'CREDITS_ISSUED')
           AS total_credits_issued,
-          (SELECT MAX("createdTime") FROM audit_entity WHERE "logType" = 'CREDIT_ISSUED')
+          (SELECT MAX("createdTime") FROM audit_entity WHERE "logType" = 'CREDITS_ISSUED')
           AS last_credit_issued_time,
           (SELECT COALESCE(SUM((data->>'amount')::INTEGER), 0) FROM audit_entity WHERE "logType" = 'RETIRE_APPROVED')
           AS total_credits_retired,
@@ -235,6 +235,7 @@ export class AnalyticsService {
       ProjectAuditLogType.PDD_SUBMITTED,
       ProjectAuditLogType.PDD_APPROVED_BY_CERTIFIER,
       ProjectAuditLogType.PDD_APPROVED_BY_DNA,
+      ProjectAuditLogType.VALIDATION_REPORT_SUBMITTED,
     ];
 
     const rejectedStatuses = [
@@ -244,10 +245,26 @@ export class AnalyticsService {
       ProjectAuditLogType.VALIDATION_DNA_REJECTED,
     ];
 
+    const allLogTypes = [
+      ProjectAuditLogType.PENDING,
+      ProjectAuditLogType.REJECTED,
+      ProjectAuditLogType.APPROVED,
+      ProjectAuditLogType.PDD_SUBMITTED,
+      ProjectAuditLogType.PDD_REJECTED_BY_CERTIFIER,
+      ProjectAuditLogType.PDD_APPROVED_BY_CERTIFIER,
+      ProjectAuditLogType.PDD_REJECTED_BY_DNA,
+      ProjectAuditLogType.PDD_APPROVED_BY_DNA,
+      ProjectAuditLogType.VALIDATION_REPORT_SUBMITTED,
+      ProjectAuditLogType.VALIDATION_DNA_REJECTED,
+      ProjectAuditLogType.AUTHORISED,
+    ];
     const subQuery = this.auditRepository
       .createQueryBuilder("sub_audit")
       .select("sub_audit.refId", "projectId")
       .addSelect("MAX(sub_audit.createdTime)", "latestTime")
+      .where("sub_audit.logType IN (:...logTypes)", {
+        logTypes: allLogTypes,
+      })
       .groupBy("sub_audit.refId");
 
     const latestStatusQb = this.auditRepository
@@ -257,7 +274,10 @@ export class AnalyticsService {
         "latest",
         'latest."projectId" = audit.refId AND latest."latestTime" = audit.createdTime'
       )
-      .innerJoin(ProjectEntity, "project", "project.refId = audit.refId");
+      .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
+      .where("audit.logType IN (:...logTypes)", {
+        logTypes: allLogTypes,
+      });
 
     if (filters?.startDate) {
       latestStatusQb.andWhere("audit.createdTime >= :startDate", {
@@ -293,76 +313,27 @@ export class AnalyticsService {
 
     let pendingCount = 0;
     let rejectedCount = 0;
+    let authorisedCount = 0;
     let lastStatusUpdateTime: number = 0;
-    const seenProjects = new Set<string>();
-    const projectIdSetForFilter = new Set<string>();
 
     for (const row of latestAudits) {
       const status = row.audit_logType;
-      const projectId = row.audit_refId;
+
       const createdTime = Number(row.audit_createdTime);
 
-      seenProjects.add(projectId);
-      projectIdSetForFilter.add(projectId);
       lastStatusUpdateTime = Math.max(lastStatusUpdateTime, createdTime);
 
       if (pendingStatuses.includes(status)) {
         pendingCount++;
       } else if (rejectedStatuses.includes(status)) {
         rejectedCount++;
+      } else if (ProjectAuditLogType.AUTHORISED === status) {
+        authorisedCount++;
       }
     }
-
-    const authorisedQb = this.auditRepository
-      .createQueryBuilder("audit")
-      .select("DISTINCT audit.refId", "projectId")
-      .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
-      .where("audit.logType = :authType", {
-        authType: ProjectAuditLogType.AUTHORISED,
-      });
-
-    // Apply same filters again
-    if (filters?.startDate) {
-      authorisedQb.andWhere("audit.createdTime >= :startDate", {
-        startDate: filters.startDate,
-      });
-    }
-
-    if (filters?.endDate) {
-      authorisedQb.andWhere("audit.createdTime <= :endDate", {
-        endDate: filters.endDate,
-      });
-    }
-
-    if (filters?.sector) {
-      authorisedQb.andWhere("project.sectoralScope = :sector", {
-        sector: filters.sector,
-      });
-    }
-
-    if (filters?.isMine) {
-      if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
-        authorisedQb.andWhere("project.companyId = :orgId", {
-          orgId: user.companyId,
-        });
-      } else if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
-        authorisedQb.andWhere(":orgId = ANY(project.independentCertifiers)", {
-          orgId: user.companyId,
-        });
-      }
-    }
-
-    if (projectIdSetForFilter.size > 0) {
-      authorisedQb.andWhere("audit.refId IN (:...ids)", {
-        ids: Array.from(projectIdSetForFilter),
-      });
-    }
-
-    const authorisedProjects = await authorisedQb.getRawMany();
-    const authorisedCount = authorisedProjects.length;
 
     return {
-      totalProjects: seenProjects.size,
+      totalProjects: authorisedCount + pendingCount + rejectedCount,
       authorisedCount,
       pendingCount,
       rejectedCount,
@@ -371,7 +342,7 @@ export class AnalyticsService {
   }
 
   async getProjectsByStatusDetail(filters: ProjectDataRequestDTO, user: User) {
-    const nonAuthorisedLogTypes = [
+    const allLogTypes = [
       ProjectAuditLogType.PENDING,
       ProjectAuditLogType.REJECTED,
       ProjectAuditLogType.APPROVED,
@@ -382,10 +353,6 @@ export class AnalyticsService {
       ProjectAuditLogType.PDD_APPROVED_BY_DNA,
       ProjectAuditLogType.VALIDATION_REPORT_SUBMITTED,
       ProjectAuditLogType.VALIDATION_DNA_REJECTED,
-    ];
-
-    const allLogTypes = [
-      ...nonAuthorisedLogTypes,
       ProjectAuditLogType.AUTHORISED,
     ];
 
@@ -393,6 +360,9 @@ export class AnalyticsService {
       .createQueryBuilder("sub_audit")
       .select("sub_audit.refId", "projectId")
       .addSelect("MAX(sub_audit.createdTime)", "latestTime")
+      .where("sub_audit.logType IN (:...logTypes)", {
+        logTypes: allLogTypes,
+      })
       .groupBy("sub_audit.refId");
 
     const latestStatusQb = this.auditRepository
@@ -406,7 +376,7 @@ export class AnalyticsService {
       .select("audit.logType", "logType")
       .addSelect("COUNT(DISTINCT project.refId)", "count")
       .where("audit.logType IN (:...logTypes)", {
-        logTypes: nonAuthorisedLogTypes,
+        logTypes: allLogTypes,
       });
 
     if (filters?.startDate) {
@@ -439,44 +409,6 @@ export class AnalyticsService {
     latestStatusQb.groupBy("audit.logType");
     const latestResult = await latestStatusQb.getRawMany();
 
-    const authorisedQb = this.auditRepository
-      .createQueryBuilder("audit")
-      .select("DISTINCT audit.refId", "projectId")
-      .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
-      .where("audit.logType = :authType", {
-        authType: ProjectAuditLogType.AUTHORISED,
-      });
-
-    if (filters?.startDate) {
-      authorisedQb.andWhere("audit.createdTime >= :startDate", {
-        startDate: filters.startDate,
-      });
-    }
-    if (filters?.endDate) {
-      authorisedQb.andWhere("audit.createdTime <= :endDate", {
-        endDate: filters.endDate,
-      });
-    }
-    if (filters?.sector) {
-      authorisedQb.andWhere("project.sectoralScope = :sector", {
-        sector: filters.sector,
-      });
-    }
-    if (filters?.isMine) {
-      if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
-        authorisedQb.andWhere("project.companyId = :orgId", {
-          orgId: user.companyId,
-        });
-      } else if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
-        authorisedQb.andWhere(":orgId = ANY(project.independentCertifiers)", {
-          orgId: user.companyId,
-        });
-      }
-    }
-
-    const authorisedProjects = await authorisedQb.getRawMany();
-    const authorisedCount = authorisedProjects.length;
-
     const formatted: Record<string, number> = {};
     allLogTypes.forEach((logType) => {
       formatted[logType] = 0;
@@ -486,8 +418,6 @@ export class AnalyticsService {
       formatted[row.logType] = parseInt(row.count, 10);
     }
 
-    formatted[ProjectAuditLogType.AUTHORISED] = authorisedCount;
-
     return formatted;
   }
 
@@ -495,8 +425,19 @@ export class AnalyticsService {
     filters: ProjectDataRequestDTO,
     user: User
   ): Promise<Record<string, number>> {
+    const subQuery = this.auditRepository
+      .createQueryBuilder("sub_audit")
+      .select("sub_audit.refId", "projectId")
+      .addSelect("MAX(sub_audit.createdTime)", "latestTime")
+      .groupBy("sub_audit.refId");
+
     const qb = this.auditRepository
       .createQueryBuilder("audit")
+      .innerJoin(
+        `(${subQuery.getQuery()})`,
+        "latest",
+        'latest."projectId" = audit.refId AND latest."latestTime" = audit.createdTime'
+      )
       .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
       .select("project.sectoralScope", "sector")
       .addSelect("COUNT(DISTINCT project.refId)", "count")
