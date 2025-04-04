@@ -242,17 +242,6 @@ export const AddNewUserComponent = (props: any) => {
       <div className="title-container">
         <div className="titles">
           <div className="main">{isUpdate ? t('addUser:editUser') : t('addUser:addNewUser')}</div>
-          <label
-            style={{
-              display: 'inline-block',
-              color: 'rgba(58, 53, 65, 0.5)',
-              borderRadius: '4px',
-              fontSize: '14px',
-              fontWeight: 500,
-            }}
-          >
-            {t('addUser:hederaAccountRequired')}
-          </label>
         </div>
         {isUpdate && !ability.can(Action.Update, plainToClass(User, state?.record), 'email') && (
           <div className="actions">
@@ -276,70 +265,6 @@ export const AddNewUserComponent = (props: any) => {
           requiredMark={true}
           onFinish={onSubmitData}
         >
-          <Row className="row" gutter={[16, 16]}>
-            <Col xl={12} md={24}>
-              <div className="details-part-one">
-                <Form.Item
-                  label={t('addUser:hederaAccount')}
-                  name="hederaAccount"
-                  initialValue={state?.record?.hederaAccount}
-                  rules={[
-                    {
-                      required: false,
-                      message: '',
-                    },
-                    // {
-                    //   validator: async (rule, value) => {
-                    //     if (
-                    //       String(value).trim() === '' ||
-                    //       String(value).trim() === undefined ||
-                    //       value === null ||
-                    //       value === undefined
-                    //     ) {
-                    //       throw new Error(`${t('addUser:hederaAccount')} ${t('isRequired')}`);
-                    //     }
-                    //   },
-                    // },
-                  ]}
-                >
-                  <Input disabled={isUpdate} size="large" />
-                </Form.Item>
-              </div>
-            </Col>
-            <Col xl={12} md={24}>
-              <div className="details-part-two">
-                <Form.Item
-                  label={t('addUser:hederaKey')}
-                  name="hederaKey"
-                  initialValue={
-                    state?.record?.hederaAccount
-                      ? '##################################################'
-                      : null
-                  }
-                  rules={[
-                    {
-                      required: false,
-                      message: '',
-                    },
-                    // {
-                    //   validator: async (rule, value) => {
-                    //     if (
-                    //       String(value).trim() === '' ||
-                    //       String(value).trim() === undefined ||
-                    //       value === null ||
-                    //       value === undefined
-                    //     ) {
-                    //       throw new Error(`${t('addUser:hederaKey')} ${t('isRequired')}`);
-                    //     }
-                    //   },
-                    // },
-                  ]}
-                >
-                  <Input disabled={isUpdate} size="large" />
-                </Form.Item>
-              </div>
-            </Col>
-          </Row>
           <Row className="row" gutter={[16, 16]}>
             <Col xl={12} md={24}>
               <div className="details-part-one">
