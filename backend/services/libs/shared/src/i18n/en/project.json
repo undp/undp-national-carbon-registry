@@ -1,6 +1,6 @@
 {
   "projectExistsWithSameRefId": "Project exists with same Ref ID",
-  "noPermission": "You do not have permission to create a project.",
+  "noInfCreatePermission": "You do not have permission to create a project.",
   "noInfActionPermission": "You do not have permission to approve or reject Initial Notifications.",
   "noPddCreatePermission": "You do not have permission to submit Project Design Documents.",
   "noPddActionPermission": "You do not have permission to certify or decline Project Design Documents.",

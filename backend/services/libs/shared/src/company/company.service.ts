@@ -10,7 +10,7 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { OrganisationDto } from "../dto/organisation.dto";
-import { QueryFailedError, Repository } from "typeorm";
+import { FindOptionsWhere, Not, QueryFailedError, Repository } from "typeorm";
 import { Company } from "../entities/company.entity";
 import { CompanyRole } from "../enum/company.role.enum";
 import { QueryDto } from "../dto/query.dto";
@@ -58,11 +58,15 @@ import { OrganisationDuplicateCheckDto } from "../dto/organisation.duplicate.che
 import { OrganisationSyncRequestDto } from "../dto/organisation.sync.request.dto";
 import { Cache } from "cache-manager";
 import { CompanyViewEntity } from "../view-entities/company.view.entity";
+import { GetOrganizationsRequest } from "../dto/organizations-request.dto";
+import { IDNameResponse } from "../dto/id-name.response.dto";
+import { Role } from "../casl/role.enum";
 
 @Injectable()
 export class CompanyService {
   constructor(
     @InjectRepository(Company) private companyRepo: Repository<Company>,
+    @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(CompanyViewEntity)
     private companyViewRepo: Repository<CompanyViewEntity>,
     private logger: Logger,
@@ -130,6 +134,7 @@ export class CompanyService {
       });
 
     if (result.affected > 0) {
+      await this.userRepo.update({ companyId: companyId }, { isPending: true });
       // TODO: Currently there can be unfreezed credits after company suspend if transactions failed
       if (company.companyRole === CompanyRole.PROJECT_DEVELOPER) {
         await this.programmeLedgerService.freezeCompany(
@@ -351,6 +356,10 @@ export class CompanyService {
       });
 
     if (result.affected > 0) {
+      await this.userRepo.update(
+        { companyId: companyId },
+        { isPending: false }
+      );
       await this.programmeLedgerService.freezeCompany(
         companyId,
         this.getUserRefWithRemarks(user, `${remarks}#${company.name}`),
@@ -669,6 +678,35 @@ export class CompanyService {
       resp.length > 0 ? resp[0] : undefined,
       resp.length > 1 ? resp[1] : undefined
     );
+  }
+
+  async getOrganizationsOfType(
+    dto: GetOrganizationsRequest,
+    user: User
+  ): Promise<IDNameResponse[]> {
+    // request can only be made by admins of same org type
+    if (user.role !== Role.Admin || user.companyRole !== dto.type) {
+      throw new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED);
+    }
+
+    // send data
+    const where: FindOptionsWhere<Company> = {
+      companyRole: dto.type,
+    };
+
+    if (dto.filterOwn) {
+      where.companyId = Not(user.companyId);
+    }
+
+    const res = await this.companyRepo.find({
+      where: where,
+    });
+
+    if (res) {
+      return res.map((org) => new IDNameResponse(org.companyId, org.name));
+    }
+
+    return [];
   }
 
   // MARK: Query Organisation Public Details
@@ -1036,7 +1074,6 @@ export class CompanyService {
 
     if (
       company.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-      company.companyRole !== CompanyRole.MINISTRY &&
       company.taxId !== companyUpdateDto.taxId
     ) {
       throw new HttpException(
@@ -1046,56 +1083,6 @@ export class CompanyService {
         ),
         HttpStatus.BAD_REQUEST
       );
-    }
-
-    if (
-      company.companyRole == CompanyRole.MINISTRY ||
-      company.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
-    ) {
-      const ministrykey =
-        Object.keys(Ministry)[
-          Object.values(Ministry).indexOf(companyUpdateDto.ministry as Ministry)
-        ];
-      if (
-        !ministryOrgs[ministrykey].includes(
-          Object.keys(GovDepartment)[
-            Object.values(GovDepartment).indexOf(
-              companyUpdateDto.govDep as GovDepartment
-            )
-          ]
-        )
-      ) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "company.wrongMinistryAndGovDep",
-            []
-          ),
-          HttpStatus.BAD_REQUEST
-        );
-      }
-    }
-    if (
-      company.companyRole == CompanyRole.MINISTRY ||
-      company.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
-    ) {
-      const ministry = await this.findMinistryByDepartment(
-        companyUpdateDto.govDep
-      );
-      if (
-        company.govDep != companyUpdateDto.govDep &&
-        company.ministry != companyUpdateDto.ministry &&
-        ministry &&
-        ministry.ministry == companyUpdateDto.ministry &&
-        ministry.govDep == companyUpdateDto.govDep
-      ) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "company.MinistryDepartmentAlreadyExist",
-            []
-          ),
-          HttpStatus.BAD_REQUEST
-        );
-      }
     }
 
     if (companyUpdateDto.logo) {
@@ -1127,15 +1114,7 @@ export class CompanyService {
             return [...response];
           });
     }
-    if (company.companyRole == CompanyRole.MINISTRY) {
-      companyUpdateDto.taxId =
-        "00000" +
-        this.configService.get("systemCountry") +
-        "-" +
-        companyUpdateDto.ministry +
-        "-" +
-        companyUpdateDto.govDep;
-    }
+
     const { companyId, nationalSopValue, ...companyUpdateFields } =
       companyUpdateDto;
     if (!companyUpdateFields.hasOwnProperty("website")) {
@@ -1151,9 +1130,7 @@ export class CompanyService {
         {
           companyId: company.companyId,
         },
-        this.configService.get("systemType") !== SYSTEM_TYPE.CARBON_REGISTRY
-          ? { ...companyUpdateFields, nationalSopValue }
-          : { ...companyUpdateFields }
+        { ...companyUpdateFields }
       )
       .catch((err: any) => {
         this.logger.error(err);

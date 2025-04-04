@@ -17,6 +17,8 @@ import {
 } from "../async-operations/async-operations.interface";
 import { AsyncActionType } from "../enum/async.action.type.enum";
 import { PasswordHashService } from "../util/passwordHash.service";
+import { User } from "../entities/user.entity";
+import { LoginDto } from "../dto/login.dto";
 
 @Injectable()
 export class AuthService {
@@ -32,12 +34,12 @@ export class AuthService {
     private passwordHashService: PasswordHashService
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
+  async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userService.getUserCredentials(
-      username?.toLowerCase()
+      email?.toLowerCase()
     );
-    pass = this.passwordHashService.getPasswordHash(pass);
-    if (user && user.password === pass && !user.isPending) {
+    password = this.passwordHashService.getPasswordHash(password);
+    if (user && user.password === password && !user.isPending) {
       const { password, ...result } = user;
       return result;
     }
@@ -61,7 +63,15 @@ export class AuthService {
     return null;
   }
 
-  async login(user: any) {
+  async login(login: LoginDto) {
+    const user = await this.validateUser(login.username, login.password);
+    if (!user) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("common.invalidLogin", []),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
     const organisationDetails = await this.companyService.findByCompanyId(
       user.companyId
     );
@@ -147,8 +157,8 @@ export class AuthService {
       );
     }
 
-    let userId;
-    let companyId;
+    let userId: number;
+    let companyId: number;
 
     try {
       // Verify the refresh token
@@ -190,7 +200,7 @@ export class AuthService {
     }
   }
 
-  async forgotPassword(email: any) {
+  async forgotPassword(email: string) {
     const hostAddress = this.configService.get("host");
     const userDetails = await this.userService.findOne(email);
     if (userDetails && !userDetails.isPending) {

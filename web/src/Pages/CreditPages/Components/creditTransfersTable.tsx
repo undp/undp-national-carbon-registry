@@ -198,8 +198,18 @@ export const CreditTransfersTableComponent = (props: any) => {
             align: 'center' as const,
             render: (item: CreditTransfersInterface) => {
               return (
-                <Tag color={getStatusColor(item.transferStatus as TransferStatus)}>
-                  {t(item.transferStatus)}
+                <Tag
+                  color={getStatusColor(
+                    item?.senderName && item?.senderName === userInfoState?.companyName
+                      ? TransferStatus.SENT
+                      : TransferStatus.RECEIVED
+                  )}
+                >
+                  {t(
+                    item?.senderName && item?.senderName === userInfoState?.companyName
+                      ? TransferStatus.SENT
+                      : TransferStatus.RECEIVED
+                  )}
                 </Tag>
               );
             },
@@ -235,11 +245,20 @@ export const CreditTransfersTableComponent = (props: any) => {
   }, []);
 
   useEffect(() => {
-    if (!isInitialRender.current) return;
+    if (isInitialRender.current) {
+      getQueryData();
+    }
+  }, [currentPage, pageSize]);
 
-    getQueryData();
-  }, [currentPage, pageSize, sortField, sortOrder, search]);
-
+  useEffect(() => {
+    if (isInitialRender.current) {
+      if (currentPage !== 1) {
+        setCurrentPage(1);
+      } else {
+        getQueryData();
+      }
+    }
+  }, [sortField, sortOrder, search]);
   // MARK: Main JSX START
 
   return (
@@ -250,9 +269,9 @@ export const CreditTransfersTableComponent = (props: any) => {
             <div className="search-bar">
               <Search
                 onPressEnter={(e) => onSearch((e.target as HTMLInputElement).value)}
-                placeholder={`${t('search')}`}
+                placeholder={`${t('searchByNameProjectName')}`}
                 allowClear
-                onSearch={onSearch}
+                onChange={(e) => setSearch(e.target.value)}
                 style={{ width: 265 }}
               />
             </div>

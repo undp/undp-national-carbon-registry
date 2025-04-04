@@ -8,7 +8,7 @@ export const basicInformationMapDataToView = (vals: any) => {
   const tempVals = {
     ...vals,
     b_completionDate: vals?.b_completionDate ? moment.unix(vals?.b_completionDate) : undefined,
-    b_signature: mapBase64ToFields([vals?.b_signature]),
+    //b_signature: mapBase64ToFields([vals?.b_signature]),
     b_sectoralScope: INF_SECTORAL_SCOPE[vals?.b_sectoralScope],
   };
 
@@ -144,7 +144,7 @@ export const appendixMapDataToFields = (vals: any) => {
 
   const tempVals = {
     ...vals,
-    appendix1Document: mapBase64ToFields(vals?.appendix1Document),
+    appendix1Documents: mapBase64ToFields(vals?.appendix1Documents),
     farIdDate: vals?.farIdDate ? moment.unix(vals?.farIdDate) : undefined,
     responseDate: vals?.responseDate ? moment.unix(vals?.responseDate) : undefined,
     doeDate: vals?.doeDate ? moment.unix(vals?.doeDate) : undefined,

@@ -14,7 +14,7 @@ export class CreditRetireRequestDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  creditBlockId: string;
+  blockId: string;
 
   @ApiProperty()
   @IsPositive()

@@ -117,10 +117,13 @@ export class DocumentManagementService {
 
       switch (addDocumentDto.documentType) {
         case DocumentTypeEnum.INITIAL_NOTIFICATION_FORM: {
-          if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
+          if (
+            user.companyRole !== CompanyRole.PROJECT_DEVELOPER ||
+            user.role !== Role.Admin
+          ) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
-                "project.notProjectParticipant",
+                "project.noPermission",
                 []
               ),
               HttpStatus.BAD_REQUEST
@@ -218,7 +221,7 @@ export class DocumentManagementService {
           break;
         }
         case DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT: {
-          if (user.companyId != project.companyId) {
+          if (user.companyId != project.companyId || user.role !== Role.Admin) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
                 "project.noPddCreatePermission",
@@ -269,10 +272,13 @@ export class DocumentManagementService {
           break;
         }
         case DocumentTypeEnum.VALIDATION: {
-          if (user.companyRole !== CompanyRole.INDEPENDENT_CERTIFIER) {
+          if (
+            user.companyRole !== CompanyRole.INDEPENDENT_CERTIFIER ||
+            user.role !== Role.Admin
+          ) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
-                "project.notAuthorised",
+                "project.noValidationCreatePermission",
                 []
               ),
               HttpStatus.UNAUTHORIZED
@@ -281,7 +287,7 @@ export class DocumentManagementService {
           if (!project.independentCertifiers.includes(user.companyId)) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
-                "project.notAuthorised",
+                "project.icNotAssignedValidation",
                 []
               ),
               HttpStatus.UNAUTHORIZED
@@ -461,10 +467,13 @@ export class DocumentManagementService {
           break;
         }
         case DocumentTypeEnum.VERIFICATION: {
-          if (user.companyRole != CompanyRole.INDEPENDENT_CERTIFIER) {
+          if (
+            user.companyRole != CompanyRole.INDEPENDENT_CERTIFIER ||
+            user.role !== Role.Admin
+          ) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
-                "project.notAuthorised",
+                "project.noVerificationCreatePermission",
                 []
               ),
               HttpStatus.UNAUTHORIZED
@@ -473,7 +482,7 @@ export class DocumentManagementService {
           if (!project.independentCertifiers.includes(user.companyId)) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
-                "project.notAuthorised",
+                "project.icNotAssignedVerification",
                 []
               ),
               HttpStatus.UNAUTHORIZED
@@ -1046,9 +1055,15 @@ export class DocumentManagementService {
         HttpStatus.BAD_REQUEST
       );
     }
-    if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+    if (
+      user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+      user.role !== Role.Admin
+    ) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("project.notAuthorised", []),
+        this.helperService.formatReqMessagesString(
+          "project.noInfActionPermission",
+          []
+        ),
         HttpStatus.UNAUTHORIZED
       );
     }
@@ -1571,7 +1586,6 @@ export class DocumentManagementService {
         );
       } else if (requestData.action === DocumentStatus.IC_APPROVED) {
         activity.state = ActivityStateEnum.MONITORING_REPORT_VERIFIED;
-        activity.creditAmounts = requestData.data.creditAmounts; //TODO need to remove
         const updateProjectProposalStage = {
           programmeId: project.refId,
           txType: TxType.APPROVE_MONITORING,
@@ -1622,8 +1636,8 @@ export class DocumentManagementService {
       requestData.action === DocumentStatus.DNA_REJECTED
     ) {
       if (
-        user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
-        user.role !== Role.Admin
+        user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY //||
+        //user.role !== Role.Admin || user.role !== Role.Root
       ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
@@ -1699,9 +1713,38 @@ export class DocumentManagementService {
           project.refId
         );
       } else if (requestData.action === DocumentStatus.DNA_APPROVED) {
+        if (
+          !document.content.ghgProjectDescription
+            ?.estimatedNetEmissionReductions ||
+          document.content.ghgProjectDescription?.estimatedNetEmissionReductions
+            .length <= 0
+        ) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.invlaidCreditQuantityToIssue",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
+        const creditVerified: ActivityVintageCreditsDto[] = [];
+        document.content.ghgProjectDescription?.estimatedNetEmissionReductions.map(
+          (data: {
+            startDate: string;
+            endDate: string;
+            netEmissionReductions: string;
+          }) => {
+            creditVerified.push({
+              vintage: new Date(parseInt(data.endDate))
+                .getFullYear()
+                .toString(),
+              creditAmount: Number(data.netEmissionReductions),
+            });
+          }
+        );
         await this.programmeLedgerService.issueCredits(
           activity,
-          requestData,
+          creditVerified,
           project.companyId,
           document,
           this.getDocumentTxRef(
@@ -1730,7 +1773,7 @@ export class DocumentManagementService {
           user.id
         );
 
-        const totalCredits = requestData.data.creditIssued.reduce(
+        const totalCredits = creditVerified.reduce(
           (sum: number, item: ActivityVintageCreditsDto) =>
             sum + item.creditAmount,
           0
