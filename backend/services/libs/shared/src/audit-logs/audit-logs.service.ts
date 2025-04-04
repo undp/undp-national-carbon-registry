@@ -20,7 +20,8 @@ export class AuditLogsService {
         projectLogs.*, 
         "user".name, 
         "organization".name AS "userCompanyName",
-        "toOrganization".name AS "toCompanyName"
+        "toOrganization".name AS "toCompanyName",
+        "fromOrganization".name AS "fromCompanyName"
       FROM 
         audit_entity AS projectLogs
       LEFT JOIN 
@@ -29,6 +30,8 @@ export class AuditLogsService {
         "company" AS "organization" ON "user"."companyId" = "organization"."companyId"
       LEFT JOIN 
         "company" AS "toOrganization" ON projectLogs.data->>'toCompanyId' = CAST("toOrganization"."companyId" AS TEXT)
+      LEFT JOIN 
+        "company" AS "fromOrganization" ON projectLogs.data->>'fromCompanyId' = CAST("fromOrganization"."companyId" AS TEXT)
       WHERE 
         projectLogs."refId" = $1
       ORDER BY 
