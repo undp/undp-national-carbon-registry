@@ -101,8 +101,8 @@ export class UserService {
     return result;
   }
 
-  async getUserCredentials(username: string): Promise<User | undefined> {
-    const users = await this.userRepo.find({
+  async getUserCredentials(email: string): Promise<User | undefined> {
+    const user = await this.userRepo.findOne({
       select: [
         "id",
         "email",
@@ -115,10 +115,10 @@ export class UserService {
         "isPending",
       ],
       where: {
-        email: username,
+        email: email,
       },
     });
-    return users && users.length > 0 ? users[0] : undefined;
+    return user;
   }
 
   async findOne(username: string): Promise<User | undefined> {
@@ -162,8 +162,6 @@ export class UserService {
     user: User
   ): Promise<DataResponseDto | undefined> {
     this.logger.verbose("User update received", abilityCondition);
-
-    userDto.email = userDto.email?.toLowerCase();
 
     if (user.role !== Role.Admin) {
       throw new HttpException(
@@ -629,12 +627,31 @@ export class UserService {
     if (userDto.company) {
       createdUserDto.company = { ...userDto.company };
     }
-    if (!isRegistrationValue && userRole !== Role.Admin) {
+
+    if (userDto.role == Role.Root) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("user.rootCreatesRoot", []),
+        HttpStatus.FORBIDDEN
+      );
+    }
+
+    if (
+      !isRegistrationValue &&
+      userRole !== Role.Admin &&
+      userRole !== Role.Root
+    ) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "user.noUserCreatePermission",
           []
         ),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
+
+    if (!userDto.company && isRegistrationValue) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString("user.missingCompany", []),
         HttpStatus.UNAUTHORIZED
       );
     }
@@ -668,67 +685,6 @@ export class UserService {
     }
 
     if (company) {
-      if (company.companyRole == CompanyRole.CLIMATE_FUND) {
-        const companyCF =
-          await this.companyService.findOrganizationByCountryAndCompanyRole(
-            company.country,
-            CompanyRole.CLIMATE_FUND
-          );
-        if (companyCF) {
-          throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              "user.cfUserAlreadyExist",
-              [company.country]
-            ),
-            HttpStatus.BAD_REQUEST
-          );
-        }
-      }
-
-      if (company.companyRole == CompanyRole.EXECUTIVE_COMMITTEE) {
-        const companyCF =
-          await this.companyService.findOrganizationByCountryAndCompanyRole(
-            company.country,
-            CompanyRole.EXECUTIVE_COMMITTEE
-          );
-        if (companyCF) {
-          throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              "user.exComUserAlreadyExist",
-              [company.country]
-            ),
-            HttpStatus.BAD_REQUEST
-          );
-        }
-      }
-      if (
-        company.companyRole == CompanyRole.MINISTRY ||
-        company.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
-      ) {
-        const ministrykey =
-          Object.keys(Ministry)[
-            Object.values(Ministry).indexOf(company.ministry as Ministry)
-          ];
-        if (
-          (company.companyRole == CompanyRole.MINISTRY ||
-            company.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) &&
-          !ministryOrgs[ministrykey].includes(
-            Object.keys(GovDepartment)[
-              Object.values(GovDepartment).indexOf(
-                company.govDep as GovDepartment
-              )
-            ]
-          )
-        ) {
-          throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              "user.wrongMinistryAndGovDep",
-              []
-            ),
-            HttpStatus.BAD_REQUEST
-          );
-        }
-      }
       if (
         (companyRole === CompanyRole.PROJECT_DEVELOPER ||
           companyRole === CompanyRole.INDEPENDENT_CERTIFIER) &&
@@ -758,16 +714,6 @@ export class UserService {
       }
 
       if (
-        company.companyRole === CompanyRole.MINISTRY &&
-        companyRole === CompanyRole.MINISTRY
-      ) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString("user.userUnAUth", []),
-          HttpStatus.FORBIDDEN
-        );
-      }
-
-      if (
         company.companyRole != CompanyRole.INDEPENDENT_CERTIFIER ||
         !company.country
       ) {
@@ -783,34 +729,6 @@ export class UserService {
             this.helperService.formatReqMessagesString(
               "user.governmentUserAlreadyExist",
               [company.country]
-            ),
-            HttpStatus.BAD_REQUEST
-          );
-        }
-      }
-
-      if (company.companyRole == CompanyRole.MINISTRY) {
-        company.taxId =
-          "00000" +
-          this.configService.get("systemCountry") +
-          "-" +
-          company.ministry +
-          "-" +
-          company.govDep;
-        const ministry = await this.companyService.findMinistryByDepartment(
-          company.govDep
-        );
-        if (
-          (company.companyRole == CompanyRole.MINISTRY ||
-            company.companyRole == CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) &&
-          ministry &&
-          ministry.ministry == company.ministry &&
-          ministry.govDep == company.govDep
-        ) {
-          throw new HttpException(
-            this.helperService.formatReqMessagesString(
-              "user.MinistryDepartmentAlreadyExist",
-              []
             ),
             HttpStatus.BAD_REQUEST
           );
@@ -934,7 +852,7 @@ export class UserService {
           systemName: this.configService.get("systemName"),
           organisationRole:
             company.companyRole === CompanyRole.PROJECT_DEVELOPER
-              ? "Programme Developer"
+              ? "Project Developer"
               : company.companyRole,
           home: hostAddress,
         };
@@ -973,21 +891,19 @@ export class UserService {
       u.isPending = true;
 
       const hostAddress = this.configService.get("host");
-      await this.emailHelperService.sendEmailToGovernmentAdmins(
+      await this.emailHelperService.sendEmailToDNAAdmins(
         EmailTemplates.ORGANISATION_REGISTRATION,
         {
           home: hostAddress,
           organisationName: company.name,
           systemName: this.configService.get("systemName"),
+          countryName: this.configService.get("systemCountryName"),
           organisationRole:
             company.companyRole === CompanyRole.PROJECT_DEVELOPER
-              ? "Programme Developer"
+              ? "Project Developer"
               : company.companyRole,
           organisationPageLink: hostAddress + `/companyManagement/viewAll`,
         },
-        undefined,
-        undefined,
-        undefined,
         undefined
       );
     } else {

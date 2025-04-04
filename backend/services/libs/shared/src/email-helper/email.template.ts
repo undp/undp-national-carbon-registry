@@ -13,12 +13,12 @@ export const EmailTemplates = {
   },
   ORGANISATION_REGISTRATION: {
     id: "ORGANISATION_REGISTRATION",
-    subject: "Organisation Registration Request",
+    subject: "New Organisation Created!",
     html: `
-        Hi {{name}},<br><br>
+        Welcome,<br><br>
 
-        New Organisation {{organisationName}} has requested to register with the {{countryName}} {{systemName}} as a {{organisationRole}} Organisation. <br><br> 
-        Click <a href="{{organisationPageLink}}">here</a> for more details of the Organisation.
+        A new {{organisationRole}} organisation has been created for the {countryName} Carbon Registry. Please review and approve it by clicking
+        <a href="{{organisationPageLink}}">here</a>.
 
         <br><br>
         Sincerely,<br>

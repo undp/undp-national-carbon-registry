@@ -16,9 +16,9 @@ import { ViewColumn, ViewEntity } from "typeorm";
       s."name" AS "senderName",
       s."logo" AS "senderLogo",
       CASE 
-        WHEN cb."isNotTransferred" = TRUE THEN 'Issued'
-        ELSE 'Received'
-      END AS "eventType"
+        WHEN cb."isNotTransferred" = TRUE THEN 'issued'
+        ELSE 'received'
+      END AS "type"
     FROM credit_blocks_entity cb
     LEFT JOIN project_entity p ON cb."projectRefId" = p."refId"
     LEFT JOIN company r ON cb."ownerCompanyId" = r."companyId"
@@ -63,5 +63,5 @@ export class CreditBlockBalancesViewEntity {
   senderLogo: string;
 
   @ViewColumn()
-  eventType: string;
+  type: string;
 }
