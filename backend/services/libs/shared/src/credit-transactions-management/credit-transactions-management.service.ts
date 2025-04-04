@@ -337,6 +337,8 @@ export class CreditTransactionsManagementService {
         {
           amount: creditRetireRequest.amount,
           remarks: retirementAction.remarks,
+          retirementType: creditRetireRequest.retirementType,
+          fromCompanyId: creditRetireRequest.senderId,
         }
       );
       return new DataResponseMessageDto(
