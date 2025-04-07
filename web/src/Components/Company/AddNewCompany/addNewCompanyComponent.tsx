@@ -70,7 +70,7 @@ export const AddNewCompanyComponent = (props: any) => {
   const [contactNoInput] = useState<any>();
   const [current, setCurrent] = useState<number>(0);
   const [isUpdate, setIsUpdate] = useState(false);
-  const { post } = useConnection();
+  const { post, put } = useConnection();
   const { setUserInfo, userInfoState } = useUserContext();
   const { state } = useLocation();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -285,6 +285,7 @@ export const AddNewCompanyComponent = (props: any) => {
       if (companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
         requestData.company.name = 'Ministry of ' + requestData.company.ministry;
       }
+      console.log('--------------requestData---------------', requestData);
       if (isGuest) {
         const response = await post(API_PATHS.REGISTER_USER, requestData);
         if (response.status === 200 || response.status === 201) {
@@ -406,7 +407,9 @@ export const AddNewCompanyComponent = (props: any) => {
         }
       }
 
-      const response = await post(API_PATHS.UPDATE_ORGANIZATION, values);
+      console.log('--------------values---------------', values);
+      const response = await put(API_PATHS.UPDATE_ORGANIZATION, values);
+      console.log('-------------------ORg update response-------------------', response);
       if (response.status === 200 || response.status === 201) {
         setUserInfo({
           companyLogo: response.data.logo,
