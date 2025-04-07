@@ -227,7 +227,8 @@ export const handler: Handler = async (event) => {
       user,
       -1,
       CompanyRole.DESIGNATED_NATIONAL_AUTHORITY,
-      true
+      false,
+      Role.Root
     );
   } catch (e) {
     console.log(`User ${event["rootEmail"]} failed to create`, e);
