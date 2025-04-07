@@ -628,13 +628,6 @@ export class UserService {
       createdUserDto.company = { ...userDto.company };
     }
 
-    if (userDto.role == Role.Root) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString("user.rootCreatesRoot", []),
-        HttpStatus.FORBIDDEN
-      );
-    }
-
     if (
       !isRegistrationValue &&
       userRole !== Role.Admin &&
