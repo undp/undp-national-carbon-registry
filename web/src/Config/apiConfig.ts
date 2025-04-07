@@ -1,9 +1,10 @@
 export const API_PATHS = {
   //AUTH
-  LOGIN: "auth/login",
-  FORGOT_PW: "auth/forgotPassword",
-  RESET_PW: (requestId: string) => `auth/resetPassword?requestId=${requestId}`,
-  REFRESH_ACCESS_TOKEN: "auth/login/refresh",
+  LOGIN: "national/auth/login",
+  FORGOT_PW: "national/auth/forgotPassword",
+  RESET_PW: (requestId: string) =>
+    `national/auth/resetPassword?requestId=${requestId}`,
+  REFRESH_ACCESS_TOKEN: "national/auth/login/refresh",
   //USER
   USER_PROFILE: "national/user/profile",
   USER_DETAILS: "national/user/query",
@@ -40,10 +41,10 @@ export const API_PATHS = {
   CREDIT_RETIREMENT_PERFROM: "creditTokens/performRetireAction",
   CREDIT_TRANSFER_REQUEST: "creditTokens/transfer",
   //LOCATION
-  PROVINCES: "location/province",
-  DISTRICTS: "location/district",
-  CITIES: "location/city",
-  POSTALCODE: "location/postalCode",
+  PROVINCES: "national/location/province",
+  DISTRICTS: "national/location/district",
+  CITIES: "national/location/city",
+  POSTALCODE: "national/location/postalCode",
   DIVISIONS: "location/division",
   COUNTRIES: "location/countries",
   //DOC-VERSIONS
