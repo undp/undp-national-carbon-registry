@@ -1,20 +1,26 @@
-# Base image
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+    
+COPY ./backend/services/package.json ./backend/services/yarn.lock ./
+    
+RUN yarn install --frozen-lockfile
+    
+COPY ./backend/services .
+    
+RUN yarn build 
+    
 FROM node:20-alpine
-
-# Create app directory
-WORKDIR /app/backend/services
-
-COPY ./backend/services/package.json ./
-COPY ./backend/services/yarn.lock ./
-
-# Install app dependencies
-RUN yarn run sls:installProd
-
-# Bundle app source
-COPY ./backend/services ./
-
-ENV NODE_ENV production
-RUN yarn add @nestjs/cli@9.0.0 --dev && yarn run build && yarn remove @nestjs/cli && yarn cache clean
-
-# Start the server using the production build
-CMD [ "node", "dist/main.js" ]
+    
+WORKDIR /app
+    
+COPY --from=builder /app/node_modules ./node_modules
+    
+COPY --from=builder /app/dist ./dist
+    
+COPY ./backend/services/package.json .
+    
+ENV NODE_ENV=production
+    
+CMD ["node", "dist/main.js"]
+    
