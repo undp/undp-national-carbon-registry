@@ -1,4 +1,4 @@
-@import '../../Styles/variables.scss';
+@use '../../Styles/variables.scss';
 
 .programme-management {
   .programme-title-bar {
@@ -54,7 +54,7 @@
     margin-bottom: 0px;
 
     input {
-      font-family: $primary-font-family;
+      font-family: variables.$primary-font-family;
       font-size: 0.8rem;
     }
 
@@ -180,12 +180,6 @@
     color: #1ABC9C;
     background: #edfaf7;
     border-color: #1ABC9C;
-  }
-
-  .ant-tag-magenta {
-    color: #C0392B;
-    background: #faf0ee;
-    border-color: #C0392B;
   }
 
   .ant-tag-geekblue {

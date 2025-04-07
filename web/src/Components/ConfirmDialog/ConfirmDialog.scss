@@ -1,4 +1,4 @@
-@import '../../Styles/variables.scss';
+@use '../../Styles/variables.scss';
 
 .dialog-box {
   width: 400px !important;
@@ -6,11 +6,11 @@
     width: 95px;
   }
   .message {
-    color: $confirm-modal-message-color;
+    color: variables.$confirm-modal-message-color;
     margin-top: 10px;
   }
   .subMessage {
-    color: $confirm-modal-submessage-color;
+    color: variables.$confirm-modal-submessage-color;
   }
 
   .modal-actions {

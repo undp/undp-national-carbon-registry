@@ -1,20 +1,20 @@
-import { Button, Col, Form, Input, message, Row, Select, Spin } from 'antd';
-import React, { FC, Suspense, useContext, useEffect, useState } from 'react';
-import './login.scss';
-import countryLogo from '../../Assets/Images/logo-slider.png';
-import { useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { AbilityContext } from '../../Casl/Can';
-import { updateUserAbility } from '../../Casl/ability';
-import ForgotPassword from './forgotPassword';
-import ResetPassword from './resetPassword';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { LoginProps } from '../../Definitions/Definitions/userLogin.definitions';
-import { API_PATHS } from '../../Config/apiConfig';
-import { ROUTES } from '../../Config/uiRoutingConfig';
+import { Button, Col, Form, Input, message, Row, Select, Spin } from "antd";
+import React, { FC, Suspense, useContext, useEffect, useState } from "react";
+import "./login.scss";
+import countryLogo from "../../Assets/Images/logo-slider.png";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { AbilityContext } from "../../Casl/Can";
+import { updateUserAbility } from "../../Casl/ability";
+import ForgotPassword from "./forgotPassword";
+import ResetPassword from "./resetPassword";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
+import { LoginProps } from "../../Definitions/Definitions/userLogin.definitions";
+import { API_PATHS } from "../../Config/apiConfig";
+import { ROUTES } from "../../Config/uiRoutingConfig";
 
 export interface LoginPageProps {
   forgotPassword?: boolean;
@@ -23,17 +23,20 @@ export interface LoginPageProps {
 
 const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
   const { forgotPassword, resetPassword } = props;
-  const { post, updateToken, updateRefreshToken, removeToken } = useConnection();
-  const { IsAuthenticated, setUserInfo, isTokenExpired, setIsTokenExpired } = useUserContext();
-  const { i18n, t } = useTranslation(['common', 'login']);
+  const { post, updateToken, updateRefreshToken, removeToken } =
+    useConnection();
+  const { IsAuthenticated, setUserInfo, isTokenExpired, setIsTokenExpired } =
+    useUserContext();
+  const { i18n, t } = useTranslation(["common", "login"]);
   const [loading, setLoading] = useState<boolean>(false);
   const [showError, setShowError] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>();
   const navigate = useNavigate();
   const ability = useContext(AbilityContext);
   const { state } = useLocation();
-  const enableRegistration = process.env.REACT_APP_ENABLE_REGISTRATION || 'true';
-  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+  const enableRegistration =
+    import.meta.env.REACT_APP_ENABLE_REGISTRATION || "true";
+  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
 
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
@@ -82,7 +85,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
           : navigate(ROUTES.LOGIN);
       }
     } catch (error: any) {
-      console.log('Error in Login', error);
+      console.log("Error in Login", error);
       setErrorMsg(error?.message);
       setShowError(true);
     } finally {
@@ -91,8 +94,8 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
   };
 
   useEffect(() => {
-    if (localStorage.getItem('i18nextLng')!.length > 2) {
-      i18next.changeLanguage('en');
+    if (localStorage.getItem("i18nextLng")!.length > 2) {
+      i18next.changeLanguage("en");
     }
   }, []);
 
@@ -108,10 +111,10 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
             <div className="login-img-container container-image">
               <div className="text-ctn">
                 <span>
-                  {t('login:heading1')} <br />
-                  {t('login:heading2')} <br />
-                  {t('login:heading3')} <br />
-                  {t('login:heading4')} <br />
+                  {t("login:heading1")} <br />
+                  {t("login:heading2")} <br />
+                  {t("login:heading3")} <br />
+                  {t("login:heading4")} <br />
                 </span>
               </div>
             </div>
@@ -120,19 +123,23 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
             <Row>
               <Col lg={{ span: 18, offset: 4 }} md={{ span: 24 }} flex="auto">
                 <Row>
-                  <Col lg={{ span: 9, offset: 15 }} md={{ span: 24 }} flex="auto">
+                  <Col
+                    lg={{ span: 9, offset: 15 }}
+                    md={{ span: 24 }}
+                    flex="auto"
+                  >
                     <div className="login-country-logo">
                       <img
                         src={countryLogo}
                         alt="country-logo"
                         onClick={() => {
-                          navigate('/');
+                          navigate("/");
                         }}
                       />
                     </div>
                     <div className="login-country-name">
-                      <div className="title">{'CARBON MARKET'}</div>
-                      <div className="title-sub">{'DIGITAL PLATFORM'}</div>
+                      <div className="title">{"CARBON MARKET"}</div>
+                      <div className="title-sub">{"DIGITAL PLATFORM"}</div>
                       <span className="country-name">{countryName}</span>
                     </div>
                   </Col>
@@ -149,14 +156,20 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                   <Col lg={{ span: 18, offset: 3 }} md={24} flex="auto">
                     <div className="login-text-contents">
                       <span className="login-text-signin">
-                        {t('common:login')} <br />
-                        <span className="login-text-welcome">{t('login:welcome-back')}</span>
+                        {t("common:login")} <br />
+                        <span className="login-text-welcome">
+                          {t("login:welcome-back")}
+                        </span>
                       </span>
                     </div>
                   </Col>
                 </Row>
                 <Row>
-                  <Col lg={{ span: 18, offset: 3 }} md={{ span: 18 }} flex="fill">
+                  <Col
+                    lg={{ span: 18, offset: 3 }}
+                    md={{ span: 18 }}
+                    flex="fill"
+                  >
                     <div className="login-input-fields-container login-input-fields">
                       <Form
                         layout="vertical"
@@ -166,27 +179,29 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                       >
                         <Form.Item
                           name="email"
-                          label={`${t('common:email')}`}
-                          validateTrigger={'onSubmit'}
+                          label={`${t("common:email")}`}
+                          validateTrigger={"onSubmit"}
                           rules={[
                             ({ getFieldValue }) => ({
                               validator() {
                                 if (
-                                  getFieldValue('email') &&
-                                  !getFieldValue('email')
+                                  getFieldValue("email") &&
+                                  !getFieldValue("email")
                                     ?.trim()
                                     .match(
                                       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                                     )
                                 ) {
-                                  return Promise.reject('Please enter a valid email');
+                                  return Promise.reject(
+                                    "Please enter a valid email"
+                                  );
                                 }
                                 return Promise.resolve();
                               },
                             }),
                             {
                               required: true,
-                              message: 'Email cannot be empty',
+                              message: "Email cannot be empty",
                             },
                           ]}
                         >
@@ -196,12 +211,12 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                         </Form.Item>
                         <Form.Item
                           name="password"
-                          validateTrigger={'onSubmit'}
-                          label={`${t('common:pwd')}`}
+                          validateTrigger={"onSubmit"}
+                          label={`${t("common:pwd")}`}
                           rules={[
                             {
                               required: true,
-                              message: 'Password cannot be empty',
+                              message: "Password cannot be empty",
                             },
                           ]}
                         >
@@ -213,13 +228,13 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                           <div className="login-error-message-container">
                             <ExclamationCircleOutlined
                               style={{
-                                color: 'rgba(255, 77, 79, 0.8)',
-                                marginRight: '0.5rem',
-                                fontSize: '1.1rem',
+                                color: "rgba(255, 77, 79, 0.8)",
+                                marginRight: "0.5rem",
+                                fontSize: "1.1rem",
                               }}
                             />
                             <span className="ant-form-item-explain-error">
-                              {errorMsg ? errorMsg : t('common:loginFailed')}
+                              {errorMsg ? errorMsg : t("common:loginFailed")}
                             </span>
                           </div>
                         )}
@@ -228,7 +243,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                             onClick={() => onClickForgotPassword()}
                             className="login-forget-pwd-txt"
                           >
-                            {t('login:forgot-pwd')}?
+                            {t("login:forgot-pwd")}?
                           </span>
                         </div>
                         <Form.Item>
@@ -240,34 +255,43 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                               block
                               loading={loading}
                             >
-                              {t('common:login')}
+                              {t("common:login")}
                             </Button>
                           </div>
                         </Form.Item>
-                        {isTokenExpired && !forgotPassword && !resetPassword && !showError && (
-                          <div className="logged-out-section">
-                            <div className="info-icon">
-                              <ExclamationCircleOutlined
-                                style={{
-                                  color: 'rgba(255, 77, 79, 0.8)',
-                                  marginRight: '0.5rem',
-                                  fontSize: '1.1rem',
-                                }}
-                              />
+                        {isTokenExpired &&
+                          !forgotPassword &&
+                          !resetPassword &&
+                          !showError && (
+                            <div className="logged-out-section">
+                              <div className="info-icon">
+                                <ExclamationCircleOutlined
+                                  style={{
+                                    color: "rgba(255, 77, 79, 0.8)",
+                                    marginRight: "0.5rem",
+                                    fontSize: "1.1rem",
+                                  }}
+                                />
+                              </div>
+                              <div className="msg">
+                                {t("common:sessionExpiredErrorMsg")}
+                              </div>
                             </div>
-                            <div className="msg">{t('common:sessionExpiredErrorMsg')}</div>
-                          </div>
-                        )}
+                          )}
                       </Form>
-                      {enableRegistration === 'true' && (
+                      {enableRegistration === "true" && (
                         <div className="login-register-new-container">
                           <span className="login-register-new-txt">
-                            {t('login:register-acc')}&nbsp;&nbsp;
+                            {t("login:register-acc")}&nbsp;&nbsp;
                             <span
                               className="login-register-new-txt-span"
-                              onClick={() => navigate(ROUTES.REGISTER_ORGANIZATION_FROM_LOGIN)}
+                              onClick={() =>
+                                navigate(
+                                  ROUTES.REGISTER_ORGANIZATION_FROM_LOGIN
+                                )
+                              }
                             >
-                              {t('login:register-here')}
+                              {t("login:register-here")}
                             </span>
                           </span>
                         </div>
@@ -278,36 +302,38 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                 <Row>
                   <div className="login-language-selection-container">
                     <span className="login-language-selection-txt">
-                      {t('common:language')}
-                      <span className="sep">{':'}</span>
+                      {t("common:language")}
+                      <span className="sep">{":"}</span>
                       <Select
                         placeholder="Search to Select"
                         defaultValue={
-                          localStorage.getItem('i18nextLng') !== null
-                            ? localStorage.getItem('i18nextLng')
-                            : 'en'
+                          localStorage.getItem("i18nextLng") !== null
+                            ? localStorage.getItem("i18nextLng")
+                            : "en"
                         }
                         placement="topRight"
                         onChange={(lan: string) => handleLanguageChange(lan)}
                         optionFilterProp="children"
-                        filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                        filterOption={(input, option) =>
+                          (option?.label ?? "").includes(input)
+                        }
                         filterSort={(optionA, optionB) =>
-                          (optionA?.label ?? '')
+                          (optionA?.label ?? "")
                             .toLowerCase()
-                            .localeCompare((optionB?.label ?? '').toLowerCase())
+                            .localeCompare((optionB?.label ?? "").toLowerCase())
                         }
                         options={[
                           {
-                            value: 'en',
-                            label: 'English',
+                            value: "en",
+                            label: "English",
                           },
                           {
-                            value: 'es',
-                            label: 'Español',
+                            value: "es",
+                            label: "Español",
                           },
                           {
-                            value: 'fr',
-                            label: 'Français',
+                            value: "fr",
+                            label: "Français",
                           },
                         ]}
                       />

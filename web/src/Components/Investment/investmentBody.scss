@@ -1,4 +1,4 @@
-@import "../../Styles/variables.scss";
+@use "../../Styles/variables.scss";
 
 .margin-left-1 {
   margin-left: 1rem;
@@ -22,7 +22,7 @@
       width: 100%;
       .name {
         font-weight: 600;
-        color: $common-filter-color;
+        color: variables.$common-filter-color;
         margin-bottom: 0.3rem;
       }
       .progress {
@@ -40,7 +40,7 @@
     font-weight: 500;
     align-items: center;
     justify-content: center;
-    color: $common-filter-color;
+    color: variables.$common-filter-color;
     width: 32%;
   }
   .actions {
@@ -59,7 +59,7 @@
       border-radius: 50px;
 
       .action-icons {
-        color: $primary-color;
+        color: variables.$primary-color;
         font-size: 16px;
       }
     }

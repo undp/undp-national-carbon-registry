@@ -1,4 +1,4 @@
-@import '../../Styles/variables.scss';
+@use '../../Styles/variables.scss';
 
 .transfer-form {
   .popup-credit-input {
@@ -19,18 +19,18 @@
   .label {
     text-align: left;
     font-size: 0.9rem;
-    color: $body-text-color;
+    color: variables.$body-text-color;
   }
   .seperator {
     font-size: 1.2rem;
-    color: $line-colors;
+    color: variables.$line-colors;
   }
 
   .footer {
     margin-bottom: 0px;
     margin-top: 15px;
   }
-  color: $body-text-color;
+  color: variables.$body-text-color;
 
   label {
     font-size: 0.8rem;
@@ -40,7 +40,7 @@
   }
 
   input {
-    color: $body-text-color;
+    color: variables.$body-text-color;
   }
 
   button {

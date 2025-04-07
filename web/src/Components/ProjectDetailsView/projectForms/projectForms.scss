@@ -1,4 +1,4 @@
-@import '../../../Styles/variables.scss';
+@use "../../../Styles/variables.scss";
 
 .projectDocuments {
   .title-icon {
@@ -6,7 +6,7 @@
   }
 
   .title-text {
-    color: $title-text-color;
+    color: variables.$title-text-color;
     font-weight: 600;
   }
 
@@ -15,10 +15,10 @@
   }
 
   .document-info-row {
+    margin-top: 6px;
     &-first {
       margin-top: 16px;
     }
-    margin-top: 6px;
   }
 
   .document-action-btn {
@@ -33,7 +33,7 @@
   }
 
   .title-text {
-    color: $title-text-color;
+    color: variables.$title-text-color;
     font-weight: 600;
     margin-top: -2px;
   }
@@ -111,7 +111,7 @@
   .step-icon-rejected {
     font-size: 1rem;
     color: white;
-    padding: 0.15rem 0.30rem 0.25rem 0.30rem;
+    padding: 0.15rem 0.3rem 0.25rem 0.3rem;
     border-radius: 100%;
     background-color: #ff4618;
   }
@@ -123,7 +123,7 @@
   }
 
   .title-text {
-    color: $title-text-color;
+    color: variables.$title-text-color;
     font-weight: 600;
   }
 
@@ -132,7 +132,7 @@
   }
 
   .field-key {
-    color: $body-text-color;
+    color: variables.$body-text-color;
     font-weight: 500;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -148,7 +148,7 @@
     }
 
     .label-uploaded {
-      color: $common-filter-color;
+      color: variables.$common-filter-color;
       width: 70%;
     }
 
@@ -157,7 +157,7 @@
   }
 
   .field-value {
-    color: $body-text-color;
+    color: variables.$body-text-color;
     text-overflow: ellipsis;
     overflow: hidden;
 
@@ -227,7 +227,10 @@
       }
     }
 
-    .ant-steps-vertical > .ant-steps-item > .ant-steps-item-container > .ant-steps-item-tail {
+    .ant-steps-vertical
+      > .ant-steps-item
+      > .ant-steps-item-container
+      > .ant-steps-item-tail {
       left: 10px;
     }
 

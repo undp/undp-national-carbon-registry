@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CreditActionType } from '../Enums/creditActionType.enum';
 import {
   Button,
@@ -10,6 +10,7 @@ import {
   message,
   Modal,
   Radio,
+  RadioChangeEvent,
   Row,
   Select,
 } from 'antd';
@@ -65,15 +66,16 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
   } = props;
   const { get, post } = useConnection();
   const { userInfoState } = useUserContext();
-  const [form] = Form.useForm();
-  const [retirementType, setRetirementType] = useState<RetirementType>(RetirementType.CROSS_BORDER);
-  const creditAmountRef = useRef<number | undefined>(undefined);
-  const recivePartyRef = useRef<any>(undefined);
-  const remarkRef = useRef<string>('');
-  const checkedRef = useRef<boolean>(type === CreditActionType.TRANSFER);
+  const [remark, setRemark] = useState<string>('');
   const [actionDisable, setActionDisable] = useState<boolean>(true);
+  const [retirementType, setRetirementType] = useState<RetirementType>(RetirementType.CROSS_BORDER);
+  const [creditAmount, setCreditAmount] = useState<number>();
+  const [checked, setChecked] = useState<boolean>(
+    type === CreditActionType.TRANSFER ? true : false
+  );
   const [listLoading, setListLoading] = useState<boolean>(true);
   const [dropDownList, setDropDownList] = useState<{ value: string; label: string }[]>([]);
+  const [reciveParty, setReciveParty] = useState<any>();
 
   const getDropDownList = async () => {
     setListLoading(true);
@@ -107,135 +109,64 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
     }
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const handleValuesChange = (_: any, allValues: any) => {
-    creditAmountRef.current = allValues.creditAmount;
-    recivePartyRef.current =
-      type === CreditActionType.TRANSFER
-        ? allValues.toCompanyId
-        : type === CreditActionType.RETIREMENT &&
-          allValues.retirementType === RetirementType.CROSS_BORDER
-        ? allValues.toCountry
-        : undefined;
-    remarkRef.current = allValues.comment || '';
-    checkedRef.current = allValues.confirm || false;
-
+  useEffect(() => {
     let valid = true;
-    if (allValues.retirementType) {
-      if (type === CreditActionType.RETIREMENT && allValues.retirementType !== retirementType) {
-        form.setFieldValue('confirm', false);
-        valid = false;
-      }
-      setRetirementType(allValues.retirementType);
-    }
-    if (type !== CreditActionType.TRANSFER && !checkedRef.current) {
+    if (type !== CreditActionType.TRANSFER && !checked) {
       valid = false;
     }
     if (isProceed) {
-      if (remarkRequired && !remarkRef.current.trim()) {
+      if (remarkRequired && (!remark || remark.trim() === '')) {
         valid = false;
       }
     } else {
       if (
-        (type === CreditActionType.TRANSFER ||
-          (type === CreditActionType.RETIREMENT &&
-            allValues.retirementType === RetirementType.CROSS_BORDER)) &&
-        !recivePartyRef.current
+        type === CreditActionType.TRANSFER ||
+        (type === CreditActionType.RETIREMENT && retirementType === RetirementType.CROSS_BORDER)
       ) {
+        if (!reciveParty) {
+          valid = false;
+        }
+      }
+      if (!Number.isInteger(Number(creditAmount))) {
         valid = false;
       }
-
-      const amountNum = Number(creditAmountRef.current);
-      if (!Number.isInteger(amountNum) || amountNum <= 0 || !data?.creditAmount) {
-        valid = false;
-      } else if (amountNum > data.creditAmount) {
+      if (data?.creditAmount && Number(creditAmount) > data?.creditAmount) {
         valid = false;
       }
-      if (remarkRequired && !remarkRef.current.trim()) {
+      if (creditAmount === undefined || creditAmount === null) {
+        valid = false;
+      }
+      if (remarkRequired && (!remark || remark.trim() === '')) {
         valid = false;
       }
     }
     setActionDisable(!valid);
-  };
-
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  const handleSubmit = (_: any) => {
-    if (isProceed) {
-      onFinish(
-        data?.id,
-        proceedAction === CreditRetirementProceedAction.ACCEPT
-          ? RetirementActionEnum.ACCEPT
-          : proceedAction === CreditRetirementProceedAction.REJECT
-          ? RetirementActionEnum.REJECT
-          : RetirementActionEnum.CANCEL,
-        remarkRef.current
-      );
-      return;
-    }
-
-    if (type === CreditActionType.TRANSFER) {
-      onFinish(
-        recivePartyRef.current,
-        data?.id,
-        creditAmountRef.current,
-        remarkRef.current,
-        undefined
-      );
-    } else if (type === CreditActionType.RETIREMENT) {
-      const retType =
-        retirementType === RetirementType.CROSS_BORDER
-          ? CreditRetirementTypeEmnum.CROSS_BORDER_TRANSACTIONS
-          : CreditRetirementTypeEmnum.VOLUNTARY_CANCELLATIONS;
-
-      onFinish(
-        recivePartyRef.current,
-        data?.id,
-        creditAmountRef.current,
-        remarkRef.current,
-        retType
-      );
-    }
-  };
+  }, [remark, retirementType, creditAmount, reciveParty, checked, isProceed, type]);
 
   useEffect(() => {
-    if (openModal) {
-      form.resetFields();
-      let retirementTypeRef: RetirementType;
-      if (isProceed && data && 'retirementType' in data) {
-        retirementTypeRef =
+    setCreditAmount(undefined);
+    setChecked(type === CreditActionType.TRANSFER ? true : false);
+    setActionDisable(true);
+    setRemark('');
+    setReciveParty(undefined);
+    if (isProceed) {
+      setRetirementType(
+        data &&
+          'retirementType' in data &&
           data.retirementType.trim() === CreditRetirementTypeEmnum.VOLUNTARY_CANCELLATIONS
-            ? RetirementType.VOLUNTARY_CANCELLATION
-            : RetirementType.CROSS_BORDER;
-      } else {
-        retirementTypeRef = RetirementType.CROSS_BORDER;
-      }
-
-      if (
-        !isProceed &&
-        !(
-          type === CreditActionType.RETIREMENT &&
-          retirementType === RetirementType.VOLUNTARY_CANCELLATION
-        )
-      ) {
-        getDropDownList();
-      }
-
-      form.setFieldsValue({
-        project: data?.projectName,
-        retirementType: retirementTypeRef,
-        comment: '',
-        confirm: type === CreditActionType.TRANSFER,
-      });
-
-      remarkRef.current = '';
-      creditAmountRef.current = undefined;
-      recivePartyRef.current = undefined;
-      checkedRef.current = type === CreditActionType.TRANSFER ? true : false;
-
-      setRetirementType(retirementTypeRef);
-      setActionDisable(true);
+          ? RetirementType.VOLUNTARY_CANCELLATION
+          : RetirementType.CROSS_BORDER
+      );
     }
-  }, [openModal]);
+    if (
+      !(
+        type === CreditActionType.RETIREMENT &&
+        retirementType === RetirementType.VOLUNTARY_CANCELLATION
+      )
+    ) {
+      getDropDownList();
+    }
+  }, [type, retirementType, openModal]);
 
   return (
     <Modal
@@ -245,22 +176,42 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
           <div>{title}</div>
         </div>
       }
-      className={`popup-${type}`}
+      className={'popup-' + type}
       open={openModal}
       width={Math.min(430, window.innerWidth)}
-      centered
+      centered={true}
       footer={null}
       onCancel={onCancel}
-      destroyOnClose
+      destroyOnClose={true}
     >
       {data && (
         <div className="credit-action-model">
           <Form
-            form={form}
             name="credit-action-model-form"
             layout="vertical"
-            onValuesChange={handleValuesChange}
-            onFinish={handleSubmit}
+            onFinish={() =>
+              !isProceed && type === CreditActionType.TRANSFER
+                ? onFinish(reciveParty, data.id, creditAmount, remark, undefined)
+                : !isProceed && type === CreditActionType.RETIREMENT
+                ? onFinish(
+                    reciveParty,
+                    data.id,
+                    creditAmount,
+                    remark,
+                    retirementType === RetirementType.CROSS_BORDER
+                      ? CreditRetirementTypeEmnum.CROSS_BORDER_TRANSACTIONS
+                      : CreditRetirementTypeEmnum.VOLUNTARY_CANCELLATIONS
+                  )
+                : onFinish(
+                    data.id,
+                    proceedAction === CreditRetirementProceedAction.ACCEPT
+                      ? RetirementActionEnum.ACCEPT
+                      : proceedAction === CreditRetirementProceedAction.REJECT
+                      ? RetirementActionEnum.REJECT
+                      : RetirementActionEnum.CANCEL,
+                    remark
+                  )
+            }
           >
             <Row>
               <Col span={24}>
@@ -281,18 +232,13 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                     className="credit-action-company-select"
                     label={t('to')}
                     name="toCompanyId"
-                    rules={[
-                      {
-                        required: !isProceed,
-                        message: t('required'),
-                      },
-                    ]}
+                    required
                   >
                     <Select
                       showSearch
                       loading={listLoading}
                       placeholder={t('searchOrganizationByName')}
-                      showArrow
+                      showArrow={true}
                       autoClearSearchValue
                       filterOption={(input, option: any) => {
                         const optionLabel = option?.label?.props?.children || '';
@@ -311,6 +257,7 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                         value: item.value,
                       }))}
                       disabled={isProceed}
+                      onChange={(val) => setReciveParty(val)}
                     />
                   </Form.Item>
                 </Col>
@@ -320,14 +267,20 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
             {type === CreditActionType.RETIREMENT && (
               <Form.Item
                 label={
-                  <span style={{ color: `${COLOR_CONFIGS.PRIMARY_FONT_COLOR}` }}>
-                    {t('retirementType')}
-                  </span>
+                  <span style={{ color: '#666', fontWeight: 500 }}>{t('retirementType')}</span>
                 }
-                name="retirementType"
+                labelCol={{ span: 24 }}
+                wrapperCol={{ span: 24 }}
                 required
               >
-                <Radio.Group disabled={isProceed}>
+                <Radio.Group
+                  onChange={(e: RadioChangeEvent) => setRetirementType(e.target.value)}
+                  value={retirementType}
+                  style={{
+                    textAlign: 'left',
+                  }}
+                  disabled={isProceed}
+                >
                   <Radio value={RetirementType.CROSS_BORDER}>
                     {t(RetirementType.CROSS_BORDER)}
                   </Radio>
@@ -346,20 +299,14 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                       className="credit-action-country-select"
                       label={t('country')}
                       name="toCountry"
-                      rules={[
-                        {
-                          required: !isProceed,
-                          message: t('required'),
-                        },
-                      ]}
+                      required
                     >
                       {!isProceed ? (
                         <Select
                           showSearch
                           placeholder={t('selectCountry')}
-                          showArrow
+                          showArrow={true}
                           autoClearSearchValue
-                          loading={listLoading}
                           filterOption={(input, option: any) => {
                             const optionLabel = option?.label?.props?.children || '';
                             const optionValue = option?.label ? option?.label : '';
@@ -377,10 +324,11 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                             value: item.value,
                           }))}
                           disabled={isProceed}
+                          onChange={(val) => setReciveParty(val)}
                         />
                       ) : (
                         <Input
-                          placeholder={'countryName' in data ? data.countryName : 'N/A'}
+                          placeholder={'receiverName' in data ? data.receiverName : data.senderName}
                           disabled
                         />
                       )}
@@ -399,34 +347,25 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                 </Row>
               )}
 
-            <Row gutter={8} justify="space-between">
+            <Row gutter={8} justify={'space-between'}>
               <Col>
                 <label>
-                  <span style={{ color: `${COLOR_CONFIGS.PRIMARY_FONT_COLOR}` }}>
+                  <span style={{ color: '#666', fontWeight: 500 }}>
                     {t('creditAmount')}
-                    <span
-                      style={{
-                        color: `${COLOR_CONFIGS.PRIMARY_RED_COLOR}`,
-                        position: 'relative',
-                        top: '2px',
-                        marginLeft: 2,
-                      }}
-                    >
-                      *
-                    </span>
+                    <span style={{ color: 'red' }}>*</span>
                   </span>
                 </label>
               </Col>
 
               <Col lg={12} md={10}>
-                <Row justify="end">
+                <Row justify={'end'}>
                   <Col span={isProceed ? 12 : 24}>
                     <Form.Item
                       className="credit-action-credit-input"
+                      label=""
                       name="creditAmount"
                       rules={[
                         {
-                          // eslint-disable-next-line no-unused-vars
                           validator: (_, value) => {
                             if (isProceed) return Promise.resolve();
                             if (
@@ -434,15 +373,19 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                               value === null ||
                               value.toString().trim() === ''
                             ) {
+                              setActionDisable(true);
                               return Promise.reject(new Error(t('required')));
                             }
                             if (value <= 0 || isNaN(value)) {
+                              setActionDisable(true);
                               return Promise.reject(new Error(t('wrongInput')));
                             }
                             if (!Number.isInteger(Number(value))) {
+                              setActionDisable(true);
                               return Promise.reject(new Error(t('shouldBeInterger')));
                             }
                             if (Number(value) > data.creditAmount) {
+                              setActionDisable(true);
                               return Promise.reject(new Error(t('insufficientBalance')));
                             }
                             return Promise.resolve();
@@ -454,19 +397,19 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                         {!isProceed && (
                           <>
                             <InputNumber
-                              placeholder={data?.creditAmount ? addCommSep(data.creditAmount) : ''}
+                              onChange={(value) => setCreditAmount(Number(value))}
+                              placeholder={addCommSep(data.creditAmount)}
                               style={{ flex: 1, marginRight: 8 }}
                               disabled={isProceed}
+                              value={creditAmount}
                             />
                             <span style={{ margin: '0 8px' }}>/</span>
                           </>
                         )}
-
                         <InputNumber
-                          placeholder={data?.creditAmount ? addCommSep(data.creditAmount) : ''}
+                          placeholder={addCommSep(data.creditAmount)}
                           disabled
                           style={{ flex: 1 }}
-                          value={data?.creditAmount ?? ''}
                         />
                       </div>
                     </Form.Item>
@@ -487,9 +430,8 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                       message: t('required'),
                     },
                     {
-                      // eslint-disable-next-line no-unused-vars
-                      validator: (_, val) => {
-                        if (remarkRequired && val && val.trim() === '') {
+                      validator: (_, v) => {
+                        if (remarkRequired && v !== undefined && v !== '' && v.trim() === '') {
                           return Promise.reject(t('required'));
                         }
                         return Promise.resolve();
@@ -497,7 +439,7 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                     },
                   ]}
                 >
-                  <Input.TextArea placeholder="" />
+                  <Input.TextArea onChange={(e) => setRemark(e.target.value)} placeholder="" />
                 </Form.Item>
               </Col>
             </Row>
@@ -505,7 +447,7 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
             {type === CreditActionType.RETIREMENT && (
               <Row>
                 <Col span={24}>
-                  <Form.Item className="text-left" name="confirm" valuePropName="checked">
+                  <Form.Item className="text-left" valuePropName="checked" label="" name="confirm">
                     <Checkbox
                       className={
                         proceedAction === CreditRetirementProceedAction.ACCEPT
@@ -514,6 +456,7 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                           ? 'checkbox-reject'
                           : 'checkbox-process'
                       }
+                      onChange={(e) => setChecked(e.target.checked)}
                     >
                       {t(!isProceed ? 'checkBoxCreate' : 'checkBoxProceed')}
                     </Checkbox>

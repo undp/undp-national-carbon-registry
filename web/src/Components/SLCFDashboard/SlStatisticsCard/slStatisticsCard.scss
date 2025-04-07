@@ -1,4 +1,4 @@
-@import '../../../Styles/colors.dashboard.scss';
+@use '../../../Styles/colors.dashboard.scss';
 
 .background-purple {
   background: rgba(136, 124, 253, 0.3) !important;
@@ -149,7 +149,7 @@
       border-radius: 3.125rem;
       padding: 0.05rem 0.8rem 0.05rem 0.8rem;
       width: max-content;
-      color: $primary-blue;
+      color: colors.$primary-blue;
       background-color: #ffffff;
       line-height: 2.1;
       margin-bottom: 15px;

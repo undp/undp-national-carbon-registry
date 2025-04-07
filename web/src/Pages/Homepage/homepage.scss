@@ -1,15 +1,16 @@
-@import '../../Assets/Fonts/fonts.scss';
-@import '../../Styles/variables.scss';
+@use '../../Assets/Fonts/fonts.scss';
+@use '../../Styles/variables.scss';
 
 $max-pagewidth: 1600px;
 $title-color: #3a8ab5;
 
 .homepage-container {
   height: 100%;
+  width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  background-color: $background-color;
-  background-color: $outside-background-color;
+  background-color: variables.$background-color;
+  background-color: variables.$outside-background-color;
   scroll-behavior: smooth;
 
   .homepage-header-container {
@@ -30,7 +31,7 @@ $title-color: #3a8ab5;
     .title {
       font-family: 'MuseoSans';
       font-size: 1.2rem;
-      color: $logo-text-color;
+      color: variables.$logo-text-color;
       font-weight: 700;
       margin-right: 0.5rem;
       padding-left: 5px;
@@ -40,7 +41,7 @@ $title-color: #3a8ab5;
       font-weight: 100 !important;
       font-family: 'MuseoSans';
       font-size: 1.2rem;
-      color: $logo-text-color;
+      color: variables.$logo-text-color;
     }
 
     .logo {
@@ -56,7 +57,7 @@ $title-color: #3a8ab5;
 
     .country-name {
       font-size: 0.65rem;
-      color: $logo-text-color;
+      color: variables.$logo-text-color;
       margin-top: -5px;
       font-family: 'MuseoSans';
       margin-left: 6px;
@@ -81,13 +82,13 @@ $title-color: #3a8ab5;
     }
 
     .ant-btn-primary {
-      background: linear-gradient(to right, #1890ff, $gradient-background-end);
-      color: $dark-text-color;
+      background: linear-gradient(to right, #1890ff, variables.$gradient-background-end);
+      color: variables.$dark-text-color;
       border: none;
     }
 
     .ant-btn-primary:hover {
-      background: linear-gradient(to right, $gradient-background-end, #1890ff);
+      background: linear-gradient(to right, variables.$gradient-background-end, #1890ff);
     }
   }
 
@@ -135,7 +136,7 @@ $title-color: #3a8ab5;
       margin-left: -30px;
       bottom: 20px;
 
-      @media (max-width: $lg-size) {
+      @media (max-width: variables.$lg-size) {
         stroke-width: 2px;
         width: 30px;
         height: 36px;
@@ -149,7 +150,7 @@ $title-color: #3a8ab5;
       animation: arrow 2s infinite;
       -webkit-animation: arrow 2s infinite;
 
-      @media (max-width: $lg-size) {
+      @media (max-width: variables.$lg-size) {
         stroke-width: 2px;
       }
     }
@@ -210,9 +211,9 @@ $title-color: #3a8ab5;
     .text-ctn {
       margin-left: 5vw;
       bottom: 50px;
-      font-family: $secondary-font-family;
+      font-family: variables.$secondary-font-family;
       font-size: 4rem;
-      color: $outside-background-color;
+      color: variables.$outside-background-color;
       line-height: 1.2em;
       text-transform: uppercase;
       position: relative;
@@ -247,14 +248,14 @@ $title-color: #3a8ab5;
 
     .subhome {
       text-align: left;
-      font-family: $secondary-font-family;
+      font-family: variables.$secondary-font-family;
       font-size: 1.5rem;
-      color: $outside-background-color;
+      color: variables.$outside-background-color;
       line-height: 2rem;
       text-transform: uppercase;
       margin-top: 20px;
 
-      @media (max-width: $lg-size) {
+      @media (max-width: variables.$lg-size) {
         justify-content: center;
       }
 
@@ -271,14 +272,14 @@ $title-color: #3a8ab5;
   }
 
   .homepage-content-containerwhite {
-    background-color: $outside-background-color;
+    background-color: variables.$outside-background-color;
     height: fit-content;
     padding: 10px 60px 10px 60px;
     text-align: center;
     margin: 5px auto;
     max-width: $max-pagewidth;
 
-    @media (max-width: $lg-size) {
+    @media (max-width: variables.$lg-size) {
       height: fit-content;
       margin-top: 35px;
     }
@@ -290,19 +291,19 @@ $title-color: #3a8ab5;
     .title {
       font-size: 28px;
       font-weight: 700;
-      font-family: $primary-font-family;
-      color: $title-text-color;
+      font-family: variables.$primary-font-family;
+      color: variables.$title-text-color;
       color: $title-color;
       text-align: start;
       justify-content: center;
       text-transform: uppercase;
       padding: 50px 50px 0px 50px;
 
-      @media (max-width: $lg-size) {
+      @media (max-width: variables.$lg-size) {
         font-size: 24px;
         margin-top: 0rem;
         padding-top: 15px;
-        color: $title-text-color;
+        color: variables.$title-text-color;
         line-height: 1.5em;
       }
     }
@@ -311,21 +312,21 @@ $title-color: #3a8ab5;
       text-align: start;
       font-size: 0.875rem;
       font-weight: 400;
-      font-family: $primary-font-family;
-      color: $title-text-color;
+      font-family: variables.$primary-font-family;
+      color: variables.$title-text-color;
       justify-content: center;
       margin: 20px 50px;
 
-      @media (max-width: $lg-size) {
+      @media (max-width: variables.$lg-size) {
         font-size: 0.8rem;
         margin-top: 1rem;
-        color: $title-text-color;
+        color: variables.$title-text-color;
         line-height: 1.5em;
       }
 
       .homepagebody_text {
         font-size: 1.125rem;
-        color: $title-text-color;
+        color: variables.$title-text-color;
         margin-bottom: 10px;
 
         &.list {
@@ -338,9 +339,9 @@ $title-color: #3a8ab5;
           }
         }
 
-        @media (max-width: $lg-size) {
+        @media (max-width: variables.$lg-size) {
           font-size: 1rem;
-          color: $title-text-color;
+          color: variables.$title-text-color;
           line-height: 1.5em;
         }
 
@@ -356,10 +357,10 @@ $title-color: #3a8ab5;
         align-items: center;
         font-size: 1.125rem;
 
-        @media (max-width: $lg-size) {
+        @media (max-width: variables.$lg-size) {
           font-size: 1rem;
           margin-top: 1rem;
-          color: $title-text-color;
+          color: variables.$title-text-color;
           line-height: 1.5em;
         }
 
@@ -376,8 +377,8 @@ $title-color: #3a8ab5;
       .homepagebody_subtitle {
         font-size: 1.25rem;
         font-weight: 700;
-        font-family: $primary-font-family;
-        color: $title-text-color;
+        font-family: variables.$primary-font-family;
+        color: variables.$title-text-color;
         text-align: start;
         justify-content: center;
         margin-top: 2rem;
@@ -390,7 +391,7 @@ $title-color: #3a8ab5;
       min-height: 20rem;
       max-width: 26rem;
       justify-content: center;
-      background: linear-gradient(to right, $gradient-background-start, $gradient-background-end);
+      background: linear-gradient(to right, variables.$gradient-background-start, variables.$gradient-background-end);
       border-radius: 0.625rem;
       padding: 50px 25px 25px 25px;
       margin: 10px;
@@ -430,7 +431,7 @@ $title-color: #3a8ab5;
     }
 
     .aboutus-card-main-container:hover {
-      background: $gradient-background-end;
+      background: variables.$gradient-background-end;
       cursor: pointer;
     }
 
@@ -461,7 +462,7 @@ $title-color: #3a8ab5;
       }
 
       .aboutus-card-text {
-        color: $dark-text-color;
+        color: variables.$dark-text-color;
         font-size: 15px;
         line-height: 24px;
         // text-align: justify;
@@ -471,7 +472,7 @@ $title-color: #3a8ab5;
         font-size: 18px;
         font-weight: 700;
         display: flex;
-        color: $dark-text-color;
+        color: variables.$dark-text-color;
         line-height: 2;
         text-align: center;
         margin-bottom: 10px;
@@ -570,7 +571,7 @@ $title-color: #3a8ab5;
   }
 
   .homepage-image-content-container {
-    background-color: $outside-background-color;
+    background-color: variables.$outside-background-color;
     margin: 5px auto;
     max-width: $max-pagewidth;
 
@@ -604,8 +605,8 @@ $title-color: #3a8ab5;
     .title {
       font-size: 2rem;
       font-weight: 700;
-      font-family: $primary-font-family;
-      color: $title-text-color;
+      font-family: variables.$primary-font-family;
+      color: variables.$title-text-color;
       color: $title-color;
       text-align: left;
       justify-content: left;
@@ -613,11 +614,11 @@ $title-color: #3a8ab5;
       margin-left: 4.5rem;
       padding: 50px 50px 10px 0;
 
-      @media (max-width: $lg-size) {
+      @media (max-width: variables.$lg-size) {
         font-size: 24px;
         margin-top: 0rem;
         padding-top: 15px;
-        color: $title-text-color;
+        color: variables.$title-text-color;
         line-height: 1.5em;
       }
 
@@ -633,8 +634,8 @@ $title-color: #3a8ab5;
       text-align: left;
       font-size: 0.875rem;
       font-weight: 400;
-      font-family: $primary-font-family;
-      color: $title-text-color;
+      font-family: variables.$primary-font-family;
+      color: variables.$title-text-color;
       justify-content: left;
       margin: 20px 10px 20px 75px;
 
@@ -659,7 +660,7 @@ $title-color: #3a8ab5;
           }
         }
 
-        @media (max-width: $lg-size) {
+        @media (max-width: variables.$lg-size) {
           .ant-collapse-header-text {
             font-size: 16px;
           }
@@ -676,10 +677,10 @@ $title-color: #3a8ab5;
         }
       }
 
-      @media (max-width: $lg-size) {
+      @media (max-width: variables.$lg-size) {
         font-size: 0.8rem;
         margin-top: 1rem;
-        color: $title-text-color;
+        color: variables.$title-text-color;
         line-height: 1.5em;
       }
 
@@ -690,12 +691,12 @@ $title-color: #3a8ab5;
   }
 
   .homepage-resources-content-container {
-    background-color: $outside-background-color;
+    background-color: variables.$outside-background-color;
     height: fit-content;
     margin-top: 5px;
     height: fit-content;
 
-    @media (max-width: $lg-size) {
+    @media (max-width: variables.$lg-size) {
       height: fit-content;
     }
 
@@ -734,14 +735,14 @@ $title-color: #3a8ab5;
     .title {
       font-size: 2rem;
       font-weight: 700;
-      font-family: $primary-font-family;
-      color: $title-text-color;
+      font-family: variables.$primary-font-family;
+      color: variables.$title-text-color;
       text-transform: uppercase;
       padding: 50px 50px 10px 0;
 
-      @media (max-width: $lg-size) {
+      @media (max-width: variables.$lg-size) {
         font-size: 2rem;
-        color: $title-text-color;
+        color: variables.$title-text-color;
         line-height: 1.5em;
       }
 
@@ -755,13 +756,13 @@ $title-color: #3a8ab5;
     .homepagebody {
       font-size: 0.875rem;
       font-weight: 400;
-      font-family: $primary-font-family;
-      color: $title-text-color;
+      font-family: variables.$primary-font-family;
+      color: variables.$title-text-color;
       margin: 20px 60px 20px -80px;
 
-      @media (max-width: $lg-size) {
+      @media (max-width: variables.$lg-size) {
         font-size: 0.8rem;
-        color: $title-text-color;
+        color: variables.$title-text-color;
         line-height: 1.5em;
       }
 

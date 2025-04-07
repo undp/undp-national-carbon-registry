@@ -1,19 +1,28 @@
-import { ValidationStepsProps } from './StepProps';
-import { Row, Button, Form, Input, Col, Upload, DatePicker } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
-import TextArea from 'antd/lib/input/TextArea';
-import { ProcessSteps } from './ValidationStepperComponent';
-import moment from 'moment';
-import { fileUploadValueExtract } from '../../Utils/utilityHelper';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { ValidationStepsProps } from "./StepProps";
+import { Row, Button, Form, Input, Col, Upload, DatePicker } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import TextArea from "antd/lib/input/TextArea";
+import { ProcessSteps } from "./ValidationStepperComponent";
+import moment from "moment";
+import { fileUploadValueExtract } from "../../Utils/utilityHelper";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
+import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const ExecutiveSummary = (props: ValidationStepsProps) => {
-  const { prev, next, form, current, t, countries, handleValuesUpdate, disableFields } = props;
+  const {
+    prev,
+    next,
+    form,
+    current,
+    t,
+    countries,
+    handleValuesUpdate,
+    disableFields,
+  } = props;
 
-  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   const normFile = (e: any) => {
@@ -66,29 +75,41 @@ const ExecutiveSummary = (props: ValidationStepsProps) => {
             >
               <Form.Item
                 className="full-width-form-item"
-                label={`${t('validationReport:internalQualityControl')}`}
+                label={`${t("validationReport:internalQualityControl")}`}
                 name="internalQualityControl"
                 rules={[
                   {
                     required: true,
-                    message: `${t('validationReport:internalQualityControl')} ${t('isRequired')}`,
+                    message: `${t(
+                      "validationReport:internalQualityControl"
+                    )} ${t("isRequired")}`,
                   },
                 ]}
               >
                 <TextArea disabled={disableFields} rows={4} />
               </Form.Item>
 
-              <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev} disabled={false}>
-                  {t('validationReport:prev')}
+              <Row justify={"end"} className="step-actions-end">
+                <Button danger size={"large"} onClick={prev} disabled={false}>
+                  {t("validationReport:prev")}
                 </Button>
                 {disableFields ? (
-                  <Button type="primary" size={'large'} disabled={false} onClick={next}>
-                    {t('validationReport:next')}
+                  <Button
+                    type="primary"
+                    size={"large"}
+                    disabled={false}
+                    onClick={next}
+                  >
+                    {t("validationReport:next")}
                   </Button>
                 ) : (
-                  <Button type="primary" size={'large'} disabled={false} htmlType="submit">
-                    {t('validationReport:next')}
+                  <Button
+                    type="primary"
+                    size={"large"}
+                    disabled={false}
+                    htmlType="submit"
+                  >
+                    {t("validationReport:next")}
                   </Button>
                 )}
               </Row>

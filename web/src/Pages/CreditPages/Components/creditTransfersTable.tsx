@@ -62,7 +62,7 @@ export const CreditTransfersTableComponent = (props: any) => {
 
     if (search && search !== '') {
       filter.push({
-        key: 'project"."title',
+        key: 'project.title',
         operation: 'like',
         value: `%${search}%`,
       });
@@ -198,18 +198,8 @@ export const CreditTransfersTableComponent = (props: any) => {
             align: 'center' as const,
             render: (item: CreditTransfersInterface) => {
               return (
-                <Tag
-                  color={getStatusColor(
-                    item?.senderName && item?.senderName === userInfoState?.companyName
-                      ? TransferStatus.SENT
-                      : TransferStatus.RECEIVED
-                  )}
-                >
-                  {t(
-                    item?.senderName && item?.senderName === userInfoState?.companyName
-                      ? TransferStatus.SENT
-                      : TransferStatus.RECEIVED
-                  )}
+                <Tag color={getStatusColor(item.transferStatus as TransferStatus)}>
+                  {t(item.transferStatus)}
                 </Tag>
               );
             },
@@ -245,20 +235,11 @@ export const CreditTransfersTableComponent = (props: any) => {
   }, []);
 
   useEffect(() => {
-    if (isInitialRender.current) {
-      getQueryData();
-    }
-  }, [currentPage, pageSize]);
+    if (!isInitialRender.current) return;
 
-  useEffect(() => {
-    if (isInitialRender.current) {
-      if (currentPage !== 1) {
-        setCurrentPage(1);
-      } else {
-        getQueryData();
-      }
-    }
-  }, [sortField, sortOrder, search]);
+    getQueryData();
+  }, [currentPage, pageSize, sortField, sortOrder, search]);
+
   // MARK: Main JSX START
 
   return (
@@ -269,9 +250,9 @@ export const CreditTransfersTableComponent = (props: any) => {
             <div className="search-bar">
               <Search
                 onPressEnter={(e) => onSearch((e.target as HTMLInputElement).value)}
-                placeholder={`${t('searchByNameProjectName')}`}
+                placeholder={`${t('search')}`}
                 allowClear
-                onChange={(e) => setSearch(e.target.value)}
+                onSearch={onSearch}
                 style={{ width: 265 }}
               />
             </div>

@@ -1,33 +1,42 @@
-import { Button, Col, DatePicker, Form, Input, message, Row, Typography } from 'antd';
-import { useForm } from 'antd/lib/form/Form';
-import TextArea from 'antd/lib/input/TextArea';
-import { i18n } from 'i18next';
-import React, { useEffect, useState } from 'react';
-import './ProjectProposalComponent.scss';
-import moment from 'moment';
+import {
+  Button,
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Row,
+  Typography,
+} from "antd";
+import { useForm } from "antd/lib/form/Form";
+import TextArea from "antd/lib/input/TextArea";
+import { i18n } from "i18next";
+import React, { useEffect, useState } from "react";
+import "./ProjectProposalComponent.scss";
+import moment from "moment";
 import PhoneInput, {
   formatPhoneNumber,
   isPossiblePhoneNumber,
   formatPhoneNumberIntl,
   Country,
-} from 'react-phone-number-input';
-import validator from 'validator';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import ProjectTimeline, { IProjectTimelineData } from './ProjectTimeline';
+} from "react-phone-number-input";
+import validator from "validator";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import ProjectTimeline, { IProjectTimelineData } from "./ProjectTimeline";
 const { Text } = Typography;
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Loading } from '../Loading/loading';
-import { DocumentTypeEnum } from '../../Definitions/Enums/document.type';
-import { API_PATHS } from '../../Config/apiConfig';
-import { ROUTES } from '../../Config/uiRoutingConfig';
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Loading } from "../Loading/loading";
+import { DocumentTypeEnum } from "../../Definitions/Enums/document.type";
+import { API_PATHS } from "../../Config/apiConfig";
+import { ROUTES } from "../../Config/uiRoutingConfig";
 
 const ProjectProposalComponent = (props: { translator: i18n }) => {
   const { translator } = props;
 
   const t = translator.t;
 
-  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
 
   const { state } = useLocation();
   const [isView, setIsView] = useState<boolean>(!!state?.isView);
@@ -46,7 +55,8 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
   };
   const [countries, setCountries] = useState<[]>([]);
 
-  const [timelineData, setTimelineData] = useState<{ x: string; y: [number, number] }[]>();
+  const [timelineData, setTimelineData] =
+    useState<{ x: string; y: [number, number] }[]>();
 
   const { get, post } = useConnection();
 
@@ -99,16 +109,20 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
         })(),
       });
     } catch (error) {
-      console.log('error');
+      console.log("error");
     } finally {
       setLoading(false);
     }
   };
 
   const projectPlanChange = (value?: any) => {
-    const projectPlanActivity01StartDate = form.getFieldValue('projectPlanActivity01StartDate');
-    const projectPlanActivity01EndDate = form.getFieldValue('projectPlanActivity01EndDate');
-    const projectPlanActivity01 = form.getFieldValue('projectPlanActivity01');
+    const projectPlanActivity01StartDate = form.getFieldValue(
+      "projectPlanActivity01StartDate"
+    );
+    const projectPlanActivity01EndDate = form.getFieldValue(
+      "projectPlanActivity01EndDate"
+    );
+    const projectPlanActivity01 = form.getFieldValue("projectPlanActivity01");
 
     // console.log(
     //   '-----time Vals------',
@@ -119,13 +133,17 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
     const tempTimelineData: { x: string; y: [number, number] }[] = [];
 
-    if (projectPlanActivity01EndDate && projectPlanActivity01StartDate && projectPlanActivity01) {
+    if (
+      projectPlanActivity01EndDate &&
+      projectPlanActivity01StartDate &&
+      projectPlanActivity01
+    ) {
       // console.log(
       //   '--------time now -------------',
       //   new Date(projectPlanActivity01StartDate).getTime()
       // );
       const firstObj: { x: string; y: [number, number] } = {
-        x: '01.' + ' ' + projectPlanActivity01,
+        x: "01." + " " + projectPlanActivity01,
         y: [
           new Date(projectPlanActivity01StartDate).getTime(),
           new Date(projectPlanActivity01EndDate).getTime(),
@@ -134,9 +152,14 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
       tempTimelineData.push(firstObj);
     }
-    const extraProjectPlanActivities = form.getFieldValue('extraProjectPlanActivities');
+    const extraProjectPlanActivities = form.getFieldValue(
+      "extraProjectPlanActivities"
+    );
 
-    if (extraProjectPlanActivities !== undefined && extraProjectPlanActivities[0] !== undefined) {
+    if (
+      extraProjectPlanActivities !== undefined &&
+      extraProjectPlanActivities[0] !== undefined
+    ) {
       extraProjectPlanActivities
         .filter((item: any) => item !== undefined)
         .map((activity: any, index: number) => {
@@ -147,8 +170,8 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           ) {
             const tempObj: { x: string; y: [number, number] } = {
               x:
-                (index <= 7 ? '0' + String(index + 2) : String(index + 2)) +
-                `${'. '}` +
+                (index <= 7 ? "0" + String(index + 2) : String(index + 2)) +
+                `${". "}` +
                 activity.projectPlanActivity,
               y: [
                 new Date(activity.projectPlanActivityStartDate).getTime(),
@@ -185,11 +208,11 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
     getCountryList();
 
     const formInitialValues = {
-      projectCapacitySource: 'Proposed capacity',
-      plantFactorSource: 'Professional Judgement',
-      avgEnergyOutputSource: 'Calculated',
-      gridEmissionFactorSource: 'Energy Balance-2019, SLSEA',
-      emissionReductionValueSource: 'Calculated',
+      projectCapacitySource: "Proposed capacity",
+      plantFactorSource: "Professional Judgement",
+      avgEnergyOutputSource: "Calculated",
+      gridEmissionFactorSource: "Energy Balance-2019, SLSEA",
+      emissionReductionValueSource: "Calculated",
     };
 
     form.setFieldsValue(formInitialValues);
@@ -200,10 +223,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
   }, []);
 
   const calculateTotalCost = () => {
-    let tempTotal = Number(form.getFieldValue('totalCost') || 0);
-    const additionalServices = form.getFieldValue('additionalServices');
-    const costValidation = Number(form.getFieldValue('costValidation') || 0);
-    const costVerification = Number(form.getFieldValue('costVerification') || 0);
+    let tempTotal = Number(form.getFieldValue("totalCost") || 0);
+    const additionalServices = form.getFieldValue("additionalServices");
+    const costValidation = Number(form.getFieldValue("costValidation") || 0);
+    const costVerification = Number(
+      form.getFieldValue("costVerification") || 0
+    );
     tempTotal = costValidation + costVerification;
     if (
       additionalServices &&
@@ -216,7 +241,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
         }
       });
     }
-    form.setFieldValue('totalCost', String(tempTotal));
+    form.setFieldValue("totalCost", String(tempTotal));
   };
 
   const createProjectTimelineOnView = (
@@ -229,8 +254,8 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
         const endDate = timelineItem.period[1] * 1000; // converting into miliseconds
         const tempObj = {
           x:
-            (index < 9 ? '0' + String(index + 1) : String(index + 1)) +
-            '. ' +
+            (index < 9 ? "0" + String(index + 1) : String(index + 1)) +
+            ". " +
             timelineItem.activity,
           y: [startDate, endDate],
         };
@@ -242,25 +267,34 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
   };
 
   const viewDataMaptoFields = (vals: any) => {
-    const projectTimeline: { activity: string; period: [number, number] }[] = vals?.projectTimeline;
+    const projectTimeline: { activity: string; period: [number, number] }[] =
+      vals?.projectTimeline;
     createProjectTimelineOnView(projectTimeline);
-    const firstTimelineObj = projectTimeline.length > 0 ? projectTimeline.shift() : undefined;
+    const firstTimelineObj =
+      projectTimeline.length > 0 ? projectTimeline.shift() : undefined;
 
-    const teamMembers: { consultant: string; role: string }[] = vals?.teamMembers;
-    const firstMember = teamMembers.length > 0 ? teamMembers.shift() : undefined;
+    const teamMembers: { consultant: string; role: string }[] =
+      vals?.teamMembers;
+    const firstMember =
+      teamMembers.length > 0 ? teamMembers.shift() : undefined;
 
     const boardMembers: string[] = vals?.executiveBoardMembers;
-    const firstBoardMember = boardMembers.length > 0 ? boardMembers.shift() : undefined;
+    const firstBoardMember =
+      boardMembers.length > 0 ? boardMembers.shift() : undefined;
 
     const tempInitialVals = {
       introduction: vals?.introduction,
       projectTitle: vals?.title,
       proposalNo: vals?.proposalNo,
-      dateOfIssue: vals?.dateOfIssue ? moment.unix(vals?.dateOfIssue) : undefined,
+      dateOfIssue: vals?.dateOfIssue
+        ? moment.unix(vals?.dateOfIssue)
+        : undefined,
       revNo: vals?.revNo,
       durationOfService: vals?.durationOfService,
       validityPeriod: vals?.validityPeriodOfProposal,
-      dateOfRevision: vals?.dateOfRevision ? moment.unix(vals?.dateOfRevision) : undefined,
+      dateOfRevision: vals?.dateOfRevision
+        ? moment.unix(vals?.dateOfRevision)
+        : undefined,
       clientName: vals?.projectProponentName,
       clientContactPerson: vals?.projectProponentContactPerson,
       clientMobile: vals?.projectProponentMobile,
@@ -276,8 +310,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
       notificationSLCSS: vals?.notificationToSLCCSResponsible,
       prepareCMA: vals?.prepareCMAResponsible,
       validationCMA: vals?.submissionOfCMAForValidationResponsible,
-      preparationOfMonitoringReport: vals?.preparationOfMonitoringReportResponsible,
-      submissionOfMonitoringReport: vals?.submissionOfMonitoringReportForVerificationResponsible,
+      preparationOfMonitoringReport:
+        vals?.preparationOfMonitoringReportResponsible,
+      submissionOfMonitoringReport:
+        vals?.submissionOfMonitoringReportForVerificationResponsible,
       projectCapacityValue: String(vals?.projectCapacityValue),
       projectCapacityUnit: vals?.projectCapacityUnit,
       plantFactorValue: String(vals?.plantFactorValue),
@@ -290,7 +326,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
       emissionReductionUnit: vals?.emissionReductionUnit,
       avgCreditGenerationPerAnnum: String(vals?.avgCreditGenerationPerAnnum),
       projectPlanActivity01:
-        firstTimelineObj && firstTimelineObj?.activity ? firstTimelineObj.activity : undefined,
+        firstTimelineObj && firstTimelineObj?.activity
+          ? firstTimelineObj.activity
+          : undefined,
       projectPlanActivity01StartDate:
         firstTimelineObj && firstTimelineObj?.period.length === 2
           ? moment.unix(firstTimelineObj.period[0])
@@ -346,7 +384,8 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
       totalCost: String(vals?.totalCost),
       additionalServices: (function () {
         const servicesObjs: any[] = [];
-        const tempServices: { cost: number; service: string }[] = vals?.additionalServices;
+        const tempServices: { cost: number; service: string }[] =
+          vals?.additionalServices;
         if (tempServices !== undefined && tempServices.length > 0) {
           tempServices.forEach((service) => {
             const tempServiceObj = {
@@ -386,20 +425,20 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
         try {
           const res = await post(API_PATHS.LAST_DOC_VERSION, {
             programmeId: id,
-            docType: 'projectProposal',
+            docType: "projectProposal",
           });
 
-          if (res?.statusText === 'SUCCESS') {
+          if (res?.statusText === "SUCCESS") {
             const content = JSON.parse(res?.data.content);
             viewDataMaptoFields(content);
           }
         } catch (error) {
-          console.log('error', error);
+          console.log("error", error);
           message.open({
-            type: 'error',
+            type: "error",
             content: `Something went wrong!`,
             duration: 4,
-            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+            style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
         } finally {
           setLoading(false);
@@ -417,18 +456,18 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
   }, []);
 
   const onFinish = async (values: any) => {
-    console.log('-------------values--------------', values);
+    console.log("-------------values--------------", values);
     const tempValues = {
-      programmeId: id || '0001',
+      programmeId: id || "0001",
       content: {
         introduction: values?.introduction,
         title: values?.projectTitle,
         proposalNo: values?.proposalNo,
-        dateOfIssue: moment(values?.dateOfIssue).startOf('day').unix(),
+        dateOfIssue: moment(values?.dateOfIssue).startOf("day").unix(),
         revNo: Number(values?.revNo),
         durationOfService: values?.durationOfService,
         validityPeriodOfProposal: values?.validityPeriod,
-        dateOfRevision: moment(values?.dateOfRevision).startOf('day').unix(),
+        dateOfRevision: moment(values?.dateOfRevision).startOf("day").unix(),
         projectProponentName: values?.clientName,
         projectProponentContactPerson: values?.clientContactPerson,
         projectProponentMobile: values?.clientMobile,
@@ -444,7 +483,8 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
         notificationToSLCCSResponsible: values?.notificationSLCSS,
         prepareCMAResponsible: values?.prepareCMA,
         submissionOfCMAForValidationResponsible: values?.validationCMA,
-        preparationOfMonitoringReportResponsible: values?.preparationOfMonitoringReport,
+        preparationOfMonitoringReportResponsible:
+          values?.preparationOfMonitoringReport,
         submissionOfMonitoringReportForVerificationResponsible:
           values?.submissionOfMonitoringReport,
         projectCapacityValue: Number(values?.projectCapacityValue),
@@ -457,28 +497,38 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
         gridEmissionFactorUnit: values?.gridEmissionFactorUnit,
         emissionReductionValue: Number(values?.emissionReductionValue),
         emissionReductionUnit: values?.emissionReductionUnit,
-        avgCreditGenerationPerAnnum: Number(values?.avgCreditGenerationPerAnnum),
+        avgCreditGenerationPerAnnum: Number(
+          values?.avgCreditGenerationPerAnnum
+        ),
         projectTimeline: (function () {
           const activityObjs: any[] = [];
-          const activity01 = form.getFieldValue('projectPlanActivity01');
+          const activity01 = form.getFieldValue("projectPlanActivity01");
           const activityStartDate = moment(
-            form.getFieldValue('projectPlanActivity01StartDate')
+            form.getFieldValue("projectPlanActivity01StartDate")
           ).unix();
-          const activityEndDate = moment(form.getFieldValue('projectPlanActivity01EndDate')).unix();
+          const activityEndDate = moment(
+            form.getFieldValue("projectPlanActivity01EndDate")
+          ).unix();
           const firstObj = {
             activity: activity01,
             period: [activityStartDate, activityEndDate],
           };
           activityObjs.push(firstObj);
-          const extraProjectPlanActivities = form.getFieldValue('extraProjectPlanActivities');
+          const extraProjectPlanActivities = form.getFieldValue(
+            "extraProjectPlanActivities"
+          );
           if (
             extraProjectPlanActivities !== undefined &&
             extraProjectPlanActivities[0] !== undefined
           ) {
             extraProjectPlanActivities.forEach((activity: any) => {
               const name = activity.projectPlanActivity;
-              const startDate = moment(activity.projectPlanActivityStartDate).unix();
-              const endDate = moment(activity.projectPlanActivityEndDate).unix();
+              const startDate = moment(
+                activity.projectPlanActivityStartDate
+              ).unix();
+              const endDate = moment(
+                activity.projectPlanActivityEndDate
+              ).unix();
 
               const tempObj = {
                 activity: name,
@@ -525,7 +575,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
         additionalServices: (function () {
           const additionalServices = values?.additionalServices;
           const tempServices: any[] = [];
-          if (additionalServices !== undefined && additionalServices[0] !== undefined) {
+          if (
+            additionalServices !== undefined &&
+            additionalServices[0] !== undefined
+          ) {
             additionalServices.forEach((serviceItem: any) => {
               const tempService = {
                 cost: Number(serviceItem.cost),
@@ -562,21 +615,21 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
     try {
       setLoading(true);
       const res = await post(API_PATHS.CREATE_PROJECT_PROPOSAL, tempValues);
-      if (res?.statusText === 'SUCCESS') {
+      if (res?.statusText === "SUCCESS") {
         message.open({
-          type: 'success',
-          content: 'Project Proposal submitted successfully',
+          type: "success",
+          content: "Project Proposal submitted successfully",
           duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
         navigateToDetailsPage();
       }
     } catch (error) {
       message.open({
-        type: 'error',
-        content: 'Something went wrong!',
+        type: "error",
+        content: "Something went wrong!",
         duration: 4,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       setLoading(false);
@@ -590,7 +643,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
   return (
     <div className="proposal-form-container">
       <div className="title-container">
-        <div className="main">{t('projectProposal:proposalTitle')}</div>
+        <div className="main">{t("projectProposal:proposalTitle")}</div>
       </div>
 
       <div className="forms-container">
@@ -608,7 +661,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           {/* Introduction start */}
           <Form.Item
             className="full-width-form-item highlight-label"
-            label={`1. ${t('projectProposal:introduction')}`}
+            label={`1. ${t("projectProposal:introduction")}`}
             name="introduction"
             rules={[
               {
@@ -618,12 +671,14 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               {
                 validator: async (rule, value) => {
                   if (
-                    String(value).trim() === '' ||
+                    String(value).trim() === "" ||
                     String(value).trim() === undefined ||
                     value === null ||
                     value === undefined
                   ) {
-                    throw new Error(`${t('projectProposal:introduction')} ${t('isRequired')}`);
+                    throw new Error(
+                      `${t("projectProposal:introduction")} ${t("isRequired")}`
+                    );
                   }
                 },
               },
@@ -631,7 +686,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           >
             <TextArea
               rows={4}
-              placeholder={'Give a brief introduction about the project.'}
+              placeholder={"Give a brief introduction about the project."}
               disabled={disableFields}
             />
           </Form.Item>
@@ -640,7 +695,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
             <Col xl={12} md={24}>
               <div className="step-form-right-col">
                 <Form.Item
-                  label={t('projectProposal:projectTitle')}
+                  label={t("projectProposal:projectTitle")}
                   name="projectTitle"
                   rules={[
                     {
@@ -650,13 +705,15 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
                           throw new Error(
-                            `${t('projectProposal:projectTitle')} ${t('isRequired')}`
+                            `${t("projectProposal:projectTitle")} ${t(
+                              "isRequired"
+                            )}`
                           );
                         }
                       },
@@ -667,9 +724,11 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 </Form.Item>
 
                 <Form.Item
-                  label={t('projectProposal:proposalNo')}
+                  label={t("projectProposal:proposalNo")}
                   name="proposalNo"
-                  initialValue={`SLCF/PP/${new Date().getFullYear() % 100}/${id}`}
+                  initialValue={`SLCF/PP/${
+                    new Date().getFullYear() % 100
+                  }/${id}`}
                   rules={[
                     {
                       required: true,
@@ -678,12 +737,16 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:proposalNo')} ${t('isRequired')}`);
+                          throw new Error(
+                            `${t("projectProposal:proposalNo")} ${t(
+                              "isRequired"
+                            )}`
+                          );
                         }
                       },
                     },
@@ -693,22 +756,26 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 </Form.Item>
 
                 <Form.Item
-                  label={t('projectProposal:dateOfIssue')}
+                  label={t("projectProposal:dateOfIssue")}
                   name="dateOfIssue"
                   rules={[
                     {
                       required: true,
-                      message: '',
+                      message: "",
                     },
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:dateOfIssue')} ${t('isRequired')}`);
+                          throw new Error(
+                            `${t("projectProposal:dateOfIssue")} ${t(
+                              "isRequired"
+                            )}`
+                          );
                         }
                       },
                     },
@@ -716,13 +783,15 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 >
                   <DatePicker
                     size="large"
-                    disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                    disabledDate={(currentDate: any) =>
+                      currentDate < moment().startOf("day")
+                    }
                     disabled={disableFields}
                   />
                 </Form.Item>
 
                 <Form.Item
-                  label={t('projectProposal:revNo')}
+                  label={t("projectProposal:revNo")}
                   name="revNo"
                   rules={[
                     {
@@ -732,16 +801,20 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:revNo')} ${t('isRequired')}`);
+                          throw new Error(
+                            `${t("projectProposal:revNo")} ${t("isRequired")}`
+                          );
                         }
 
                         if (isNaN(value)) {
-                          return Promise.reject(new Error('Should be a number'));
+                          return Promise.reject(
+                            new Error("Should be a number")
+                          );
                         }
 
                         return Promise.resolve();
@@ -757,7 +830,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
             <Col xl={12} md={24}>
               <div className="step-form-left-col">
                 <Form.Item
-                  label={t('projectProposal:durationOfService')}
+                  label={t("projectProposal:durationOfService")}
                   name="durationOfService"
                   className="duration-of-service"
                   rules={[
@@ -768,13 +841,15 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
                           throw new Error(
-                            `${t('projectProposal:durationOfService')} ${t('isRequired')}`
+                            `${t("projectProposal:durationOfService")} ${t(
+                              "isRequired"
+                            )}`
                           );
                         }
                       },
@@ -785,7 +860,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 </Form.Item>
 
                 <Form.Item
-                  label={t('projectProposal:validityPeriod')}
+                  label={t("projectProposal:validityPeriod")}
                   name="validityPeriod"
                   rules={[
                     {
@@ -795,13 +870,15 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
                           throw new Error(
-                            `${t('projectProposal:validityPeriod')} ${t('isRequired')}`
+                            `${t("projectProposal:validityPeriod")} ${t(
+                              "isRequired"
+                            )}`
                           );
                         }
                       },
@@ -812,23 +889,25 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 </Form.Item>
 
                 <Form.Item
-                  label={t('projectProposal:dateOfRevision')}
+                  label={t("projectProposal:dateOfRevision")}
                   name="dateOfRevision"
                   rules={[
                     {
                       required: true,
-                      message: '',
+                      message: "",
                     },
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
                           throw new Error(
-                            `${t('projectProposal:dateOfRevision')} ${t('isRequired')}`
+                            `${t("projectProposal:dateOfRevision")} ${t(
+                              "isRequired"
+                            )}`
                           );
                         }
                       },
@@ -837,7 +916,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 >
                   <DatePicker
                     size="large"
-                    disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                    disabledDate={(currentDate: any) =>
+                      currentDate < moment().startOf("day")
+                    }
                     disabled={disableFields}
                   />
                 </Form.Item>
@@ -848,12 +929,14 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           {/* Details of project Proponent start */}
           <>
-            <h4 className="section-sub-title">{t('projectProposal:detailsOfProjectProponent')}</h4>
+            <h4 className="section-sub-title">
+              {t("projectProposal:detailsOfProjectProponent")}
+            </h4>
 
             <Row gutter={[40, 16]}>
               <Col xl={12} md={24}>
                 <Form.Item
-                  label={t('projectProposal:name')}
+                  label={t("projectProposal:name")}
                   name="clientName"
                   rules={[
                     {
@@ -863,12 +946,14 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:name')} ${t('isRequired')}`);
+                          throw new Error(
+                            `${t("projectProposal:name")} ${t("isRequired")}`
+                          );
                         }
                       },
                     },
@@ -878,7 +963,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 </Form.Item>
 
                 <Form.Item
-                  label={t('projectProposal:mobile')}
+                  label={t("projectProposal:mobile")}
                   name="clientMobile"
                   rules={[
                     {
@@ -889,20 +974,34 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:mobile')} ${t('isRequired')}`);
+                          throw new Error(
+                            `${t("projectProposal:mobile")} ${t("isRequired")}`
+                          );
                         } else {
                           const phoneNo = formatPhoneNumber(String(value));
-                          if (String(value).trim() !== '') {
-                            if (phoneNo === null || phoneNo === '' || phoneNo === undefined) {
-                              throw new Error(`${t('projectProposal:mobile')} ${t('isRequired')}`);
+                          if (String(value).trim() !== "") {
+                            if (
+                              phoneNo === null ||
+                              phoneNo === "" ||
+                              phoneNo === undefined
+                            ) {
+                              throw new Error(
+                                `${t("projectProposal:mobile")} ${t(
+                                  "isRequired"
+                                )}`
+                              );
                             } else {
                               if (!isPossiblePhoneNumber(String(value))) {
-                                throw new Error(`${t('projectProposal:mobile')} ${t('isInvalid')}`);
+                                throw new Error(
+                                  `${t("projectProposal:mobile")} ${t(
+                                    "isInvalid"
+                                  )}`
+                                );
                               }
                             }
                           }
@@ -925,7 +1024,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               </Col>
               <Col xl={12} md={24}>
                 <Form.Item
-                  label={t('projectProposal:contactPerson')}
+                  label={t("projectProposal:contactPerson")}
                   name="clientContactPerson"
                   rules={[
                     {
@@ -935,13 +1034,15 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
                           throw new Error(
-                            `${t('projectProposal:contactPerson')} ${t('isRequired')}`
+                            `${t("projectProposal:contactPerson")} ${t(
+                              "isRequired"
+                            )}`
                           );
                         }
                       },
@@ -951,29 +1052,33 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   <Input size="large" disabled />
                 </Form.Item>
                 <Form.Item
-                  label={t('projectProposal:email')}
+                  label={t("projectProposal:email")}
                   name="clientEmail"
                   rules={[
                     {
                       required: true,
-                      message: '',
+                      message: "",
                     },
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:email')} ${t('isRequired')}`);
+                          throw new Error(
+                            `${t("projectProposal:email")} ${t("isRequired")}`
+                          );
                         } else {
                           const val = value.trim();
                           const reg =
                             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                           const matches = val.match(reg) ? val.match(reg) : [];
                           if (matches.length === 0) {
-                            throw new Error(`${t('projectProposal:email')} ${t('isInvalid')}`);
+                            throw new Error(
+                              `${t("projectProposal:email")} ${t("isInvalid")}`
+                            );
                           }
                         }
                       },
@@ -989,12 +1094,14 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           {/* Details of Service Provider start */}
           <>
-            <h4 className="section-sub-title">{t('projectProposal:detailsOfServiceProvider')}</h4>
+            <h4 className="section-sub-title">
+              {t("projectProposal:detailsOfServiceProvider")}
+            </h4>
 
             <Row gutter={[40, 16]}>
               <Col xl={12} md={24}>
                 <Form.Item
-                  label={t('projectProposal:name')}
+                  label={t("projectProposal:name")}
                   name="serviceProviderName"
                   rules={[
                     {
@@ -1004,12 +1111,14 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:name')} ${t('isRequired')}`);
+                          throw new Error(
+                            `${t("projectProposal:name")} ${t("isRequired")}`
+                          );
                         }
                       },
                     },
@@ -1019,7 +1128,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 </Form.Item>
 
                 <Form.Item
-                  label={t('projectProposal:mobile')}
+                  label={t("projectProposal:mobile")}
                   name="serviceProviderMobile"
                   rules={[
                     {
@@ -1030,20 +1139,34 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:mobile')} ${t('isRequired')}`);
+                          throw new Error(
+                            `${t("projectProposal:mobile")} ${t("isRequired")}`
+                          );
                         } else {
                           const phoneNo = formatPhoneNumber(String(value));
-                          if (String(value).trim() !== '') {
-                            if (phoneNo === null || phoneNo === '' || phoneNo === undefined) {
-                              throw new Error(`${t('projectProposal:mobile')} ${t('isRequired')}`);
+                          if (String(value).trim() !== "") {
+                            if (
+                              phoneNo === null ||
+                              phoneNo === "" ||
+                              phoneNo === undefined
+                            ) {
+                              throw new Error(
+                                `${t("projectProposal:mobile")} ${t(
+                                  "isRequired"
+                                )}`
+                              );
                             } else {
                               if (!isPossiblePhoneNumber(String(value))) {
-                                throw new Error(`${t('projectProposal:mobile')} ${t('isInvalid')}`);
+                                throw new Error(
+                                  `${t("projectProposal:mobile")} ${t(
+                                    "isInvalid"
+                                  )}`
+                                );
                               }
                             }
                           }
@@ -1063,29 +1186,33 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   />
                 </Form.Item>
                 <Form.Item
-                  label={t('projectProposal:email')}
+                  label={t("projectProposal:email")}
                   name="servcieProviderEmail"
                   rules={[
                     {
                       required: true,
-                      message: '',
+                      message: "",
                     },
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:email')} ${t('isRequired')}`);
+                          throw new Error(
+                            `${t("projectProposal:email")} ${t("isRequired")}`
+                          );
                         } else {
                           const val = value.trim();
                           const reg =
                             /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                           const matches = val.match(reg) ? val.match(reg) : [];
                           if (matches.length === 0) {
-                            throw new Error(`${t('projectProposal:email')} ${t('isInvalid')}`);
+                            throw new Error(
+                              `${t("projectProposal:email")} ${t("isInvalid")}`
+                            );
                           }
                         }
                       },
@@ -1097,7 +1224,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               </Col>
               <Col xl={12} md={24}>
                 <Form.Item
-                  label={t('projectProposal:contactPerson')}
+                  label={t("projectProposal:contactPerson")}
                   name="serviceProviderContactPerson"
                   rules={[
                     {
@@ -1107,13 +1234,15 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
                           throw new Error(
-                            `${t('projectProposal:contactPerson')} ${t('isRequired')}`
+                            `${t("projectProposal:contactPerson")} ${t(
+                              "isRequired"
+                            )}`
                           );
                         }
                       },
@@ -1124,7 +1253,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 </Form.Item>
 
                 <Form.Item
-                  label={t('projectProposal:telephone')}
+                  label={t("projectProposal:telephone")}
                   name="serviceProviderTelephone"
                   rules={[
                     {
@@ -1135,20 +1264,34 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:mobile')} ${t('isRequired')}`);
+                          throw new Error(
+                            `${t("projectProposal:mobile")} ${t("isRequired")}`
+                          );
                         } else {
                           const phoneNo = formatPhoneNumber(String(value));
-                          if (String(value).trim() !== '') {
-                            if (phoneNo === null || phoneNo === '' || phoneNo === undefined) {
-                              throw new Error(`${t('projectProposal:mobile')} ${t('isRequired')}`);
+                          if (String(value).trim() !== "") {
+                            if (
+                              phoneNo === null ||
+                              phoneNo === "" ||
+                              phoneNo === undefined
+                            ) {
+                              throw new Error(
+                                `${t("projectProposal:mobile")} ${t(
+                                  "isRequired"
+                                )}`
+                              );
                             } else {
                               if (!isPossiblePhoneNumber(String(value))) {
-                                throw new Error(`${t('projectProposal:mobile')} ${t('isInvalid')}`);
+                                throw new Error(
+                                  `${t("projectProposal:mobile")} ${t(
+                                    "isInvalid"
+                                  )}`
+                                );
                               }
                             }
                           }
@@ -1175,7 +1318,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           {/* Overall background start */}
           <>
             <h4 className="section-title mg-top-2">
-              2. {t('projectProposal:overallProjectBackground')}
+              2. {t("projectProposal:overallProjectBackground")}
             </h4>
             <Form.Item
               // label={t('projectProposal:overallProjectBackground')}
@@ -1188,13 +1331,15 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 {
                   validator: async (rule, value) => {
                     if (
-                      String(value).trim() === '' ||
+                      String(value).trim() === "" ||
                       String(value).trim() === undefined ||
                       value === null ||
                       value === undefined
                     ) {
                       throw new Error(
-                        `${t('projectProposal:overallProjectBackground')} ${t('isRequired')}`
+                        `${t("projectProposal:overallProjectBackground")} ${t(
+                          "isRequired"
+                        )}`
                       );
                     }
                   },
@@ -1203,7 +1348,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
             >
               <TextArea
                 rows={4}
-                placeholder={`${t('projectProposal:overallProjectBackgroundPlaceHolder')}`}
+                placeholder={`${t(
+                  "projectProposal:overallProjectBackgroundPlaceHolder"
+                )}`}
                 disabled={disableFields}
               />
             </Form.Item>
@@ -1213,41 +1360,52 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           {/* Sri Lanka Carbon Crediting Scheme(SLCCS) start */}
           <>
             <h4 className="section-title mg-top-2">
-              3. {t('projectProposal:creditingScheme', { countryName: countryName })}
+              3.{" "}
+              {t("projectProposal:creditingScheme", {
+                countryName: countryName,
+              })}
             </h4>
 
             <p className="section-description">
-              {countryName} Carbon Crediting Scheme (SLCCS) is a Greenhouse Gas (GHG) reduction
-              programme which needs encouragement of every kind of active carbon reduction or
-              removal projects for the benefits of the Environment, Society and the Economy. It
-              brings quality assurance for such projects and carbon offsets. It is a voluntary
-              initiative that regulates and registers such projects which offsets the GHG emissions
-              from companies, project developers, or other entities within a context of quality,
-              credibility and transparency.
+              {countryName} Carbon Crediting Scheme (SLCCS) is a Greenhouse Gas
+              (GHG) reduction programme which needs encouragement of every kind
+              of active carbon reduction or removal projects for the benefits of
+              the Environment, Society and the Economy. It brings quality
+              assurance for such projects and carbon offsets. It is a voluntary
+              initiative that regulates and registers such projects which
+              offsets the GHG emissions from companies, project developers, or
+              other entities within a context of quality, credibility and
+              transparency.
             </p>
 
-            <h4 className="section-sub-title">{t('projectProposal:slccsObjectives')}</h4>
+            <h4 className="section-sub-title">
+              {t("projectProposal:slccsObjectives")}
+            </h4>
             <ol className="objectives-list section-description">
               <li>
-                To introduce more effective and user friendly programme that brings quality
-                assurance to authentic GHG reduction and removal project activities.
+                To introduce more effective and user friendly programme that
+                brings quality assurance to authentic GHG reduction and removal
+                project activities.
               </li>
               <li>
-                To provide transparent service to its clients in the process of project Validation,
-                Verification, Certification and Registration.
+                To provide transparent service to its clients in the process of
+                project Validation, Verification, Certification and
+                Registration.
               </li>
               <li>
-                To facilitate responsible GHG emitters for voluntary offsets of quality assured
-                emission reductions generated by their own GHG reduction projects.
+                To facilitate responsible GHG emitters for voluntary offsets of
+                quality assured emission reductions generated by their own GHG
+                reduction projects.
               </li>
               <li>
-                To encourage the projects benefited on aspects other than GHG reduction and/or
-                removal such as helping communities to improve their livelihood, enhancing
-                ecological services.
+                To encourage the projects benefited on aspects other than GHG
+                reduction and/or removal such as helping communities to improve
+                their livelihood, enhancing ecological services.
               </li>
               <li>
-                To innovate paths in carbon crediting to businesses, non-profits and government
-                entities that engage in on the ground climate action.
+                To innovate paths in carbon crediting to businesses, non-profits
+                and government entities that engage in on the ground climate
+                action.
               </li>
             </ol>
           </>
@@ -1257,7 +1415,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           <>
             <Form.Item
               className="full-width-form-item highlight-label mg-top-2"
-              label={`4. ${t('projectProposal:scopeForThisProposal')}`}
+              label={`4. ${t("projectProposal:scopeForThisProposal")}`}
               name="scopeForThisProposal"
               rules={[
                 {
@@ -1267,13 +1425,15 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 {
                   validator: async (rule, value) => {
                     if (
-                      String(value).trim() === '' ||
+                      String(value).trim() === "" ||
                       String(value).trim() === undefined ||
                       value === null ||
                       value === undefined
                     ) {
                       throw new Error(
-                        `${t('projectProposal:scopeForThisProposal')} ${t('isRequired')}`
+                        `${t("projectProposal:scopeForThisProposal")} ${t(
+                          "isRequired"
+                        )}`
                       );
                     }
                   },
@@ -1289,15 +1449,15 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           <div className="scope-table">
             <Row className="header">
               <Col md={12} xl={12} className="col-1">
-                <p style={{ fontWeight: 500, color: '#000000' }}>Activity</p>
+                <p style={{ fontWeight: 500, color: "#000000" }}>Activity</p>
               </Col>
               <Col md={12} xl={12} className="col-2">
-                <p style={{ fontWeight: 500, color: '#000000' }}>Responsible</p>
+                <p style={{ fontWeight: 500, color: "#000000" }}>Responsible</p>
               </Col>
             </Row>
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:developProjectConcept')}
+                {t("projectProposal:developProjectConcept")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
                 <Form.Item
@@ -1310,12 +1470,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:required')}`);
+                          throw new Error(`${t("projectProposal:required")}`);
                         }
                       },
                     },
@@ -1327,7 +1487,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
             </Row>
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:notificationSLCSS')}
+                {t("projectProposal:notificationSLCSS")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
                 <Form.Item
@@ -1340,12 +1500,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:required')}`);
+                          throw new Error(`${t("projectProposal:required")}`);
                         }
                       },
                     },
@@ -1357,7 +1517,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
             </Row>
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:prepareCMA')}
+                {t("projectProposal:prepareCMA")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
                 <Form.Item
@@ -1370,12 +1530,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:required')}`);
+                          throw new Error(`${t("projectProposal:required")}`);
                         }
                       },
                     },
@@ -1387,7 +1547,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
             </Row>
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:validationCMA')}
+                {t("projectProposal:validationCMA")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
                 <Form.Item
@@ -1400,12 +1560,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:required')}`);
+                          throw new Error(`${t("projectProposal:required")}`);
                         }
                       },
                     },
@@ -1418,70 +1578,70 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:cmaWebHosting')}
+                {t("projectProposal:cmaWebHosting")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:slccsAdministrator')}
+                {t("projectProposal:slccsAdministrator")}
               </Col>
             </Row>
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:validationSiteVisit')}
+                {t("projectProposal:validationSiteVisit")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:validationTeam')}
+                {t("projectProposal:validationTeam")}
               </Col>
             </Row>
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:draftValidationReport')}
+                {t("projectProposal:draftValidationReport")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:validationTeam')}
+                {t("projectProposal:validationTeam")}
               </Col>
             </Row>
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:resolutionCarsAndCLs')}
+                {t("projectProposal:resolutionCarsAndCLs")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:validationTeam')}
+                {t("projectProposal:validationTeam")}
               </Col>
             </Row>
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:submissionFinalValidation')}
+                {t("projectProposal:submissionFinalValidation")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:slccsAdministrator')}
+                {t("projectProposal:slccsAdministrator")}
               </Col>
             </Row>
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:issuesRaisedByEB')}
+                {t("projectProposal:issuesRaisedByEB")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:validationTeam')}
+                {t("projectProposal:validationTeam")}
               </Col>
             </Row>
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:registration')}
+                {t("projectProposal:registration")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:slccsAdministrator')}
+                {t("projectProposal:slccsAdministrator")}
               </Col>
             </Row>
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:preparationOfMonitoringReport')}
+                {t("projectProposal:preparationOfMonitoringReport")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
                 <Form.Item
@@ -1494,12 +1654,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:required')}`);
+                          throw new Error(`${t("projectProposal:required")}`);
                         }
                       },
                     },
@@ -1512,7 +1672,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:submissionOfMonitoringReport')}
+                {t("projectProposal:submissionOfMonitoringReport")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
                 <Form.Item
@@ -1525,12 +1685,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:required')}`);
+                          throw new Error(`${t("projectProposal:required")}`);
                         }
                       },
                     },
@@ -1543,133 +1703,155 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:verficationSiteVisit')}
+                {t("projectProposal:verficationSiteVisit")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:verificationTeam')}
+                {t("projectProposal:verificationTeam")}
               </Col>
             </Row>
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:draftVerficationReport')}
+                {t("projectProposal:draftVerficationReport")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:verificationTeam')}
+                {t("projectProposal:verificationTeam")}
               </Col>
             </Row>
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:resolutionOfCARSandCLs')}
+                {t("projectProposal:resolutionOfCARSandCLs")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:verificationTeam')}
+                {t("projectProposal:verificationTeam")}
               </Col>
             </Row>
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:submissionFinalReportsToEB')}
+                {t("projectProposal:submissionFinalReportsToEB")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:slccsAdministrator')}
+                {t("projectProposal:slccsAdministrator")}
               </Col>
             </Row>
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:respondingToIssues')}
+                {t("projectProposal:respondingToIssues")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:verificationTeam')}
+                {t("projectProposal:verificationTeam")}
               </Col>
             </Row>
 
             <Row className="data-row">
               <Col md={12} xl={12} className="col-1 data-col">
-                {t('projectProposal:issuance')}
+                {t("projectProposal:issuance")}
               </Col>
               <Col md={12} xl={12} className="col-2 data-col">
-                {t('projectProposal:slccsAdministrator')}
+                {t("projectProposal:slccsAdministrator")}
               </Col>
             </Row>
           </div>
           {/* Scope table end */}
 
           <>
-            <h4 className="section-description-title" style={{ marginTop: '8px', fontWeight: 500 }}>
-              {t('projectProposal:cma')}
+            <h4
+              className="section-description-title"
+              style={{ marginTop: "8px", fontWeight: 500 }}
+            >
+              {t("projectProposal:cma")}
             </h4>
             <p className="section-description mg-bottom-1">
-              CMA is the document containing description of the project to be submitted for the
-              validation and registration. This document can be prepared by Project Proponent (PP)
-              or other third-party on behalf of the PP according to the format given by SLCCS.
+              CMA is the document containing description of the project to be
+              submitted for the validation and registration. This document can
+              be prepared by Project Proponent (PP) or other third-party on
+              behalf of the PP according to the format given by SLCCS.
             </p>
           </>
 
           <>
-            <h4 className="section-description-title" style={{ fontWeight: 500 }}>
-              {t('projectProposal:validationoftheCMA')}
+            <h4
+              className="section-description-title"
+              style={{ fontWeight: 500 }}
+            >
+              {t("projectProposal:validationoftheCMA")}
             </h4>
             <p className="section-description mg-bottom-1">
-              Validation process would be done by Validation/Verification Team of {countryName}{' '}
-              Climate Fund based on the CMA provided by PP or 3rd Party by reviewing required
-              document on site and off site.
+              Validation process would be done by Validation/Verification Team
+              of {countryName} Climate Fund based on the CMA provided by PP or
+              3rd Party by reviewing required document on site and off site.
             </p>
           </>
 
           <>
-            <h4 className="section-description-title" style={{ fontWeight: 500 }}>
-              {t('projectProposal:projectRegistration')}
+            <h4
+              className="section-description-title"
+              style={{ fontWeight: 500 }}
+            >
+              {t("projectProposal:projectRegistration")}
             </h4>
             <p className="section-description mg-bottom-1">
-              Project registration would be done by SLCCS registry division of {countryName} Climate
-              Fund based on the Validation Report provided by Validation Division of {countryName}{' '}
-              Climate Fund.
+              Project registration would be done by SLCCS registry division of{" "}
+              {countryName} Climate Fund based on the Validation Report provided
+              by Validation Division of {countryName} Climate Fund.
             </p>
           </>
 
           <>
-            <h4 className="section-description-title" style={{ fontWeight: 500 }}>
-              {t('projectProposal:monitoringReport')}
+            <h4
+              className="section-description-title"
+              style={{ fontWeight: 500 }}
+            >
+              {t("projectProposal:monitoringReport")}
             </h4>
             <p className="section-description mg-bottom-1">
-              Monitoring report is the document containing quantification of the emission reduction
-              within the selected monitoring period to be submitted for verification. This document
-              can be prepared by Project Proponent (PP) or other third-party on behalf of the PP
+              Monitoring report is the document containing quantification of the
+              emission reduction within the selected monitoring period to be
+              submitted for verification. This document can be prepared by
+              Project Proponent (PP) or other third-party on behalf of the PP
               according to the format given by SLCCS.
             </p>
           </>
 
           <>
-            <h4 className="section-description-title" style={{ fontWeight: 500 }}>
-              {t('projectProposal:verificationOfMR')}
+            <h4
+              className="section-description-title"
+              style={{ fontWeight: 500 }}
+            >
+              {t("projectProposal:verificationOfMR")}
             </h4>
             <p className="section-description mg-bottom-1">
-              Verification process would be done by Verification Team of {countryName} Climate Fund
-              based on the MR provided by PP or 3rd Party by reviewing required document on site and
-              off site.
+              Verification process would be done by Verification Team of{" "}
+              {countryName} Climate Fund based on the MR provided by PP or 3rd
+              Party by reviewing required document on site and off site.
             </p>
           </>
 
           <>
-            <h4 className="section-description-title" style={{ fontWeight: 500 }}>
-              {t('projectProposal:issuanceOfSCER')}
+            <h4
+              className="section-description-title"
+              style={{ fontWeight: 500 }}
+            >
+              {t("projectProposal:issuanceOfSCER")}
             </h4>
             <p className="section-description mg-bottom-1">
-              The amount of {countryName} Certified Emission Reduction (SCER) would be certified by
-              SLCCS registry division and that amount would credited to PP.
+              The amount of {countryName} Certified Emission Reduction (SCER)
+              would be certified by SLCCS registry division and that amount
+              would credited to PP.
             </p>
           </>
 
           {/* Estimation of GHG Reduction start */}
           <>
             <h4 className="section-title mg-bottom-1">
-              5. {t('projectProposal:estimationOfGHGReduction')}
+              5. {t("projectProposal:estimationOfGHGReduction")}
             </h4>
             <p className="section-description">
-              Emission reduction resulting from the implementation of this project is as follows
+              Emission reduction resulting from the implementation of this
+              project is as follows
             </p>
 
             <p className="equation">
@@ -1690,13 +1872,15 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               </i>
               <br />
               <i>
-                EG<sub>y</sub> = Quantity of net electricity displaced as a result of the
-                implementation of the project activity in year y (MWh)
+                EG<sub>y</sub> = Quantity of net electricity displaced as a
+                result of the implementation of the project activity in year y
+                (MWh)
               </i>
               <br />
 
               <i>
-                EF<sub>y</sub> = CO<sub>2</sub> Emission factor of the grid in year y (tCO
+                EF<sub>y</sub> = CO<sub>2</sub> Emission factor of the grid in
+                year y (tCO
                 <sub>2</sub>/ MWh)
               </i>
               <br />
@@ -1704,7 +1888,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
             {/* Reduction table start */}
             <div className="reductions-table mg-top-1">
-              <Row justify={'space-between'} gutter={40} className="header">
+              <Row justify={"space-between"} gutter={40} className="header">
                 <Col md={6} xl={6}>
                   Parameter
                 </Col>
@@ -1719,7 +1903,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 </Col>
               </Row>
 
-              <Row justify={'space-between'} align={'middle'} gutter={40} className="data-row">
+              <Row
+                justify={"space-between"}
+                align={"middle"}
+                gutter={40}
+                className="data-row"
+              >
                 <Col md={6} xl={6}>
                   Project Capacity
                 </Col>
@@ -1738,17 +1927,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                           // }
 
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
 
                           // eslint-disable-next-line no-restricted-globals
                           if (isNaN(value)) {
-                            return Promise.reject(new Error('Should be a number!'));
+                            return Promise.reject(
+                              new Error("Should be a number!")
+                            );
                           }
 
                           return Promise.resolve();
@@ -1770,12 +1961,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
@@ -1795,23 +1986,28 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
                     ]}
                   >
-                    <Input size={'large'} disabled />
+                    <Input size={"large"} disabled />
                   </Form.Item>
                 </Col>
               </Row>
 
-              <Row justify={'space-between'} align={'middle'} gutter={40} className="data-row">
+              <Row
+                justify={"space-between"}
+                align={"middle"}
+                gutter={40}
+                className="data-row"
+              >
                 <Col md={6} xl={6}>
                   Plant Factor
                 </Col>
@@ -1830,17 +2026,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                           // }
 
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
 
                           // eslint-disable-next-line no-restricted-globals
                           if (isNaN(value)) {
-                            return Promise.reject(new Error('Should be a number!'));
+                            return Promise.reject(
+                              new Error("Should be a number!")
+                            );
                           }
 
                           return Promise.resolve();
@@ -1862,12 +2060,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
@@ -1887,23 +2085,28 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
                     ]}
                   >
-                    <Input size={'large'} disabled />
+                    <Input size={"large"} disabled />
                   </Form.Item>
                 </Col>
               </Row>
 
-              <Row justify={'space-between'} align={'middle'} gutter={40} className="data-row">
+              <Row
+                justify={"space-between"}
+                align={"middle"}
+                gutter={40}
+                className="data-row"
+              >
                 <Col md={6} xl={6}>
                   Average Energy Output
                 </Col>
@@ -1922,17 +2125,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                           // }
 
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
 
                           // eslint-disable-next-line no-restricted-globals
                           if (isNaN(value)) {
-                            return Promise.reject(new Error('Should be a number!'));
+                            return Promise.reject(
+                              new Error("Should be a number!")
+                            );
                           }
 
                           return Promise.resolve();
@@ -1954,12 +2159,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
@@ -1979,23 +2184,28 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
                     ]}
                   >
-                    <Input size={'large'} disabled />
+                    <Input size={"large"} disabled />
                   </Form.Item>
                 </Col>
               </Row>
 
-              <Row justify={'space-between'} align={'middle'} gutter={40} className="data-row">
+              <Row
+                justify={"space-between"}
+                align={"middle"}
+                gutter={40}
+                className="data-row"
+              >
                 <Col md={6} xl={6}>
                   Grid Emission Factor (EFCM,Grid,y)
                 </Col>
@@ -2014,17 +2224,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                           // }
 
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
 
                           // eslint-disable-next-line no-restricted-globals
                           if (isNaN(value)) {
-                            return Promise.reject(new Error('Should be a number'));
+                            return Promise.reject(
+                              new Error("Should be a number")
+                            );
                           }
 
                           return Promise.resolve();
@@ -2046,12 +2258,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
@@ -2071,23 +2283,28 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
                     ]}
                   >
-                    <Input size={'large'} disabled />
+                    <Input size={"large"} disabled />
                   </Form.Item>
                 </Col>
               </Row>
 
-              <Row justify={'space-between'} align={'middle'} gutter={40} className="data-row">
+              <Row
+                justify={"space-between"}
+                align={"middle"}
+                gutter={40}
+                className="data-row"
+              >
                 <Col md={6} xl={6}>
                   Emission Reduction (ERy)
                 </Col>
@@ -2106,17 +2323,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                           // }
 
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
 
                           // eslint-disable-next-line no-restricted-globals
                           if (isNaN(value)) {
-                            return Promise.reject(new Error('Should be a number'));
+                            return Promise.reject(
+                              new Error("Should be a number")
+                            );
                           }
 
                           return Promise.resolve();
@@ -2138,12 +2357,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
@@ -2163,25 +2382,29 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
                     ]}
                   >
-                    <Input size={'large'} disabled />
+                    <Input size={"large"} disabled />
                   </Form.Item>
                 </Col>
               </Row>
             </div>
             {/* Reduction table end */}
 
-            <Row align={'middle'} gutter={16} className="avg-credit-gen-row mg-top-1">
+            <Row
+              align={"middle"}
+              gutter={16}
+              className="avg-credit-gen-row mg-top-1"
+            >
               <Col>
                 <p>Average Credit Generation per annum:</p>
               </Col>
@@ -2200,17 +2423,19 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                         // }
 
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('projectProposal:required')}`);
+                          throw new Error(`${t("projectProposal:required")}`);
                         }
 
                         // eslint-disable-next-line no-restricted-globals
                         if (isNaN(value)) {
-                          return Promise.reject(new Error('Should be a number'));
+                          return Promise.reject(
+                            new Error("Should be a number")
+                          );
                         }
 
                         return Promise.resolve();
@@ -2218,25 +2443,32 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     },
                   ]}
                 >
-                  <Input type="number" disabled={disableFields} addonAfter={'tCO2e'} />
+                  <Input
+                    type="number"
+                    disabled={disableFields}
+                    addonAfter={"tCO2e"}
+                  />
                 </Form.Item>
               </Col>
             </Row>
 
             <p className="text-color">
-              Note that in the calculation of net emission reduction, in addition to baseline
-              emission, project and leakage emissions are required to be considered. In this
-              estimation, it is assumed assumed that no project and leakage emissions has occurred
-              in the project activity
+              Note that in the calculation of net emission reduction, in
+              addition to baseline emission, project and leakage emissions are
+              required to be considered. In this estimation, it is assumed
+              assumed that no project and leakage emissions has occurred in the
+              project activity
             </p>
           </>
           {/* Estimation of GHG Reduction end */}
 
           {/* Project Time Plan start */}
           <>
-            <h4 className="section-title">6. {t('projectProposal:projectTimePlan')}</h4>
+            <h4 className="section-title">
+              6. {t("projectProposal:projectTimePlan")}
+            </h4>
             <div className="project-timeline-table">
-              <Row className="header" justify={'space-between'}>
+              <Row className="header" justify={"space-between"}>
                 <Col md={3} xl={3} className="col-1">
                   NO.
                 </Col>
@@ -2247,11 +2479,11 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   Start Date and End Date
                 </Col>
                 <Col md={2} xl={2}>
-                  {' '}
+                  {" "}
                 </Col>
               </Row>
 
-              <Row justify={'space-between'}>
+              <Row justify={"space-between"}>
                 <Col md={3} xl={3} className="col-1">
                   01
                 </Col>
@@ -2266,12 +2498,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
@@ -2291,17 +2523,17 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: '',
+                        message: "",
                       },
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
@@ -2323,17 +2555,17 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: '',
+                        message: "",
                       },
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
@@ -2347,13 +2579,15 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       disabled={disableFields}
                       disabledDate={(currentDate: any) =>
                         currentDate <
-                        moment(form.getFieldValue('projectPlanActivity01StartDate')).endOf('day')
+                        moment(
+                          form.getFieldValue("projectPlanActivity01StartDate")
+                        ).endOf("day")
                       }
                     />
                   </Form.Item>
                 </Col>
                 <Col md={2} xl={2}>
-                  {' '}
+                  {" "}
                 </Col>
               </Row>
 
@@ -2362,13 +2596,13 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   <>
                     {fields.map(({ key, name, ...restField }) => (
                       <>
-                        <Row justify={'space-between'}>
+                        <Row justify={"space-between"}>
                           <Col md={3} xl={3} className="col-1">
-                            {name > 7 ? name + 2 : '0' + String(name + 2)}
+                            {name > 7 ? name + 2 : "0" + String(name + 2)}
                           </Col>
                           <Col md={9} xl={9} className="col-2">
                             <Form.Item
-                              name={[name, 'projectPlanActivity']}
+                              name={[name, "projectPlanActivity"]}
                               rules={[
                                 {
                                   required: true,
@@ -2377,12 +2611,14 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('projectProposal:required')}`);
+                                      throw new Error(
+                                        `${t("projectProposal:required")}`
+                                      );
                                     }
                                   },
                                 },
@@ -2397,22 +2633,24 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                           <Col md={8} xl={8} className="col-3">
                             <Form.Item
                               label={``}
-                              name={[name, 'projectPlanActivityStartDate']}
+                              name={[name, "projectPlanActivityStartDate"]}
                               className="datepicker"
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('projectProposal:required')}`);
+                                      throw new Error(
+                                        `${t("projectProposal:required")}`
+                                      );
                                     }
                                   },
                                 },
@@ -2430,22 +2668,24 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                             <p>to</p>
                             <Form.Item
                               label={``}
-                              name={[name, 'projectPlanActivityEndDate']}
+                              name={[name, "projectPlanActivityEndDate"]}
                               className="datepicker"
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('projectProposal:required')}`);
+                                      throw new Error(
+                                        `${t("projectProposal:required")}`
+                                      );
                                     }
                                   },
                                 },
@@ -2460,9 +2700,10 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                                 disabledDate={(currentDate: any) =>
                                   currentDate <
                                   moment(
-                                    form.getFieldValue('extraProjectPlanActivities')[name]
-                                      .projectPlanActivityStartDate
-                                  ).startOf('day')
+                                    form.getFieldValue(
+                                      "extraProjectPlanActivities"
+                                    )[name].projectPlanActivityStartDate
+                                  ).startOf("day")
                                 }
                               />
                             </Form.Item>
@@ -2497,18 +2738,22 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 )}
               </Form.List>
             </div>
-            {timelineData && timelineData.length > 0 && <ProjectTimeline data={timelineData} />}
+            {timelineData && timelineData.length > 0 && (
+              <ProjectTimeline data={timelineData} />
+            )}
           </>
           {/* Project Time Plan end */}
 
           <Form.Item
             className="full-width-form-item highlight-label"
-            label={`7. ${t('projectProposal:scopeOfWork')}`}
+            label={`7. ${t("projectProposal:scopeOfWork")}`}
             name="scopeOfWork"
             rules={[
               {
                 required: true,
-                message: `${t('projectProposal:scopeOfWork')} ${t('isRequired')}`,
+                message: `${t("projectProposal:scopeOfWork")} ${t(
+                  "isRequired"
+                )}`,
               },
             ]}
           >
@@ -2517,7 +2762,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           <Form.Item
             className="full-width-form-item highlight-label"
-            label={`8. ${t('projectProposal:teamComposition')}`}
+            label={`8. ${t("projectProposal:teamComposition")}`}
             name="teamComposition"
             rules={[
               {
@@ -2527,12 +2772,16 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               {
                 validator: async (rule, value) => {
                   if (
-                    String(value).trim() === '' ||
+                    String(value).trim() === "" ||
                     String(value).trim() === undefined ||
                     value === null ||
                     value === undefined
                   ) {
-                    throw new Error(`${t('projectProposal:teamComposition')} ${t('isRequired')}`);
+                    throw new Error(
+                      `${t("projectProposal:teamComposition")} ${t(
+                        "isRequired"
+                      )}`
+                    );
                   }
                 },
               },
@@ -2543,7 +2792,9 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           {/* Team members table start */}
           <>
-            <h4 className="section-title">{t('projectProposal:teamMembersGivenBelow')}:</h4>
+            <h4 className="section-title">
+              {t("projectProposal:teamMembersGivenBelow")}:
+            </h4>
             <div className="team-members-table">
               <Row className="header">
                 <Col md={11} xl={11} className="col-1">
@@ -2553,7 +2804,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   Role
                 </Col>
                 <Col md={2} xl={2}>
-                  {' '}
+                  {" "}
                 </Col>
               </Row>
 
@@ -2569,12 +2820,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
@@ -2594,12 +2845,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
@@ -2609,7 +2860,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   </Form.Item>
                 </Col>
                 <Col md={2} xl={2}>
-                  {' '}
+                  {" "}
                 </Col>
               </Row>
 
@@ -2618,31 +2869,37 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   <>
                     {fields.map(({ key, name, ...restField }) => (
                       <>
-                        <Row align={'middle'}>
+                        <Row align={"middle"}>
                           <Col md={11} xl={11} className="col-1">
                             <Form.Item
-                              name={[name, 'memberConsultant']}
+                              name={[name, "memberConsultant"]}
                               rules={[
                                 {
                                   required: true,
-                                  message: `${t('projectProposal:required')}`,
+                                  message: `${t("projectProposal:required")}`,
                                 },
                               ]}
                             >
-                              <Input placeholder="Name" disabled={disableFields} />
+                              <Input
+                                placeholder="Name"
+                                disabled={disableFields}
+                              />
                             </Form.Item>
                           </Col>
                           <Col md={11} xl={11} className="col-2">
                             <Form.Item
-                              name={[name, 'memberRole']}
+                              name={[name, "memberRole"]}
                               rules={[
                                 {
                                   required: true,
-                                  message: `${t('projectProposal:required')}`,
+                                  message: `${t("projectProposal:required")}`,
                                 },
                               ]}
                             >
-                              <Input placeholder="Role" disabled={disableFields} />
+                              <Input
+                                placeholder="Role"
+                                disabled={disableFields}
+                              />
                             </Form.Item>
                           </Col>
                           <Col md={2} xl={2}>
@@ -2679,7 +2936,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
           {/* Team members table end */}
           <Form.Item
             className="full-width-form-item highlight-label mg-top-1"
-            label={`9. ${t('projectProposal:costing')}`}
+            label={`9. ${t("projectProposal:costing")}`}
             name="costing"
             rules={[
               {
@@ -2689,12 +2946,14 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               {
                 validator: async (rule, value) => {
                   if (
-                    String(value).trim() === '' ||
+                    String(value).trim() === "" ||
                     String(value).trim() === undefined ||
                     value === null ||
                     value === undefined
                   ) {
-                    throw new Error(`${t('projectProposal:costing')} ${t('isRequired')}`);
+                    throw new Error(
+                      `${t("projectProposal:costing")} ${t("isRequired")}`
+                    );
                   }
                 },
               },
@@ -2705,7 +2964,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           {/* Costing table start */}
           <div className="costing-table">
-            <Row className="header" justify={'space-between'}>
+            <Row className="header" justify={"space-between"}>
               <Col md={2} xl={2}>
                 <Text strong>No</Text>
               </Col>
@@ -2716,16 +2975,24 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 <Text strong>Cost (LKR)</Text>
               </Col>
               <Col md={2} xl={2}>
-                {' '}
+                {" "}
               </Col>
             </Row>
-            <Row align={'middle'} justify={'space-between'} className="data-rows">
+            <Row
+              align={"middle"}
+              justify={"space-between"}
+              className="data-rows"
+            >
               <Col md={2} xl={2}>
                 1
               </Col>
               <Col md={10}>
                 <Form.Item name="serviceValidation">
-                  <Input size="large" defaultValue={'Project Validation & Registration'} disabled />
+                  <Input
+                    size="large"
+                    defaultValue={"Project Validation & Registration"}
+                    disabled
+                  />
                 </Form.Item>
               </Col>
               <Col md={4} xl={4}>
@@ -2739,16 +3006,18 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`Cost ${t('isRequired')}`);
+                          throw new Error(`Cost ${t("isRequired")}`);
                         }
 
                         if (isNaN(value)) {
-                          return Promise.reject(new Error('Should be a number'));
+                          return Promise.reject(
+                            new Error("Should be a number")
+                          );
                         }
                       },
                     },
@@ -2765,17 +3034,25 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 </Form.Item>
               </Col>
               <Col md={2} xl={2}>
-                {' '}
+                {" "}
               </Col>
             </Row>
 
-            <Row align={'middle'} justify={'space-between'} className="data-rows">
+            <Row
+              align={"middle"}
+              justify={"space-between"}
+              className="data-rows"
+            >
               <Col md={2} xl={2}>
                 2
               </Col>
               <Col md={10}>
                 <Form.Item name="serviceVerification">
-                  <Input size="large" defaultValue={'Verification & Credit Issuance'} disabled />
+                  <Input
+                    size="large"
+                    defaultValue={"Verification & Credit Issuance"}
+                    disabled
+                  />
                 </Form.Item>
               </Col>
               <Col md={4} xl={4}>
@@ -2789,16 +3066,18 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`Cost ${t('isRequired')}`);
+                          throw new Error(`Cost ${t("isRequired")}`);
                         }
 
                         if (isNaN(value)) {
-                          return Promise.reject(new Error('Should be a number'));
+                          return Promise.reject(
+                            new Error("Should be a number")
+                          );
                         }
                       },
                     },
@@ -2815,7 +3094,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 </Form.Item>
               </Col>
               <Col md={2} xl={2}>
-                {' '}
+                {" "}
               </Col>
             </Row>
             <Form.List name="additionalServices">
@@ -2823,42 +3102,50 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 <>
                   {fields.map(({ key, name, ...restField }) => (
                     <>
-                      <Row align={'middle'} justify={'space-between'} className="data-rows">
+                      <Row
+                        align={"middle"}
+                        justify={"space-between"}
+                        className="data-rows"
+                      >
                         <Col md={2} xl={2}>
                           {name + 3}
                         </Col>
                         <Col md={10}>
                           <Form.Item
-                            name={[name, 'service']}
+                            name={[name, "service"]}
                             rules={[
                               {
                                 required: true,
-                                message: '',
+                                message: "",
                               },
                               {
                                 validator: async (rule, value) => {
                                   if (
-                                    String(value).trim() === '' ||
+                                    String(value).trim() === "" ||
                                     String(value).trim() === undefined ||
                                     value === null ||
                                     value === undefined
                                   ) {
                                     throw new Error(
-                                      `${t('costQuotation:serviceCategory')} ${t(
-                                        'costQuotation:isRequired'
-                                      )}`
+                                      `${t(
+                                        "costQuotation:serviceCategory"
+                                      )} ${t("costQuotation:isRequired")}`
                                     );
                                   }
                                 },
                               },
                             ]}
                           >
-                            <Input size="large" onChange={(val) => {}} disabled />
+                            <Input
+                              size="large"
+                              onChange={(val) => {}}
+                              disabled
+                            />
                           </Form.Item>
                         </Col>
                         <Col md={4} xl={4}>
                           <Form.Item
-                            name={[name, 'cost']}
+                            name={[name, "cost"]}
                             rules={[
                               {
                                 required: true,
@@ -2867,16 +3154,20 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                               {
                                 validator: async (rule, value) => {
                                   if (
-                                    String(value).trim() === '' ||
+                                    String(value).trim() === "" ||
                                     String(value).trim() === undefined ||
                                     value === null ||
                                     value === undefined
                                   ) {
-                                    throw new Error(`${t('projectProposal:required')}`);
+                                    throw new Error(
+                                      `${t("projectProposal:required")}`
+                                    );
                                   }
 
                                   if (isNaN(value)) {
-                                    return Promise.reject(new Error('Should be a number'));
+                                    return Promise.reject(
+                                      new Error("Should be a number")
+                                    );
                                   }
                                 },
                               },
@@ -2943,9 +3234,13 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               )}
             </Form.List>
 
-            <Row align={'middle'} justify={'space-between'} className="data-rows">
+            <Row
+              align={"middle"}
+              justify={"space-between"}
+              className="data-rows"
+            >
               <Col md={2} xl={2}>
-                {' '}
+                {" "}
               </Col>
               <Col md={10} xl={10}>
                 <p>Total</p>
@@ -2956,7 +3251,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `Total ${t('isRequired')}`,
+                      message: `Total ${t("isRequired")}`,
                     },
                   ]}
                 >
@@ -2964,28 +3259,36 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 </Form.Item>
               </Col>
               <Col md={2} xl={2}>
-                {' '}
+                {" "}
               </Col>
             </Row>
           </div>
           <>
-            <h4 style={{ color: '#3A3541CC', fontWeight: '600' }} className="mg-top-1 margin-0">
+            <h4
+              style={{ color: "#3A3541CC", fontWeight: "600" }}
+              className="mg-top-1 margin-0"
+            >
               Conditions
             </h4>
-            <p className="mg-left-1 margin-0">50% Of The Payment On Up Front.</p>
+            <p className="mg-left-1 margin-0">
+              50% Of The Payment On Up Front.
+            </p>
             <p className="mg-left-1 mg-bottom-1">
-              50% Of The Payment On Completing The Validation And Verification{' '}
+              50% Of The Payment On Completing The Validation And Verification{" "}
             </p>
           </>
           {/* Costing table end */}
 
           {/* Executive Board Members start */}
           <>
-            <h4 className="section-title">10. Executive Board of SLCCS(SLCCS EB)</h4>
+            <h4 className="section-title">
+              10. Executive Board of SLCCS(SLCCS EB)
+            </h4>
             <p className="capitalize">
-              SLCF will validate/verify the project independently, and ensure the avoidance of the
-              double counting by the establishment of SLCCS Executive Board and responsible for
-              monitoring and regularly evaluating the process and performance, seeking to ensure the
+              SLCF will validate/verify the project independently, and ensure
+              the avoidance of the double counting by the establishment of SLCCS
+              Executive Board and responsible for monitoring and regularly
+              evaluating the process and performance, seeking to ensure the
               continuity of SLCCS functions
             </p>
 
@@ -3004,12 +3307,12 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('projectProposal:required')}`);
+                            throw new Error(`${t("projectProposal:required")}`);
                           }
                         },
                       },
@@ -3027,7 +3330,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                       <Row>
                         <Col md={20} xl={10}>
                           <Form.Item
-                            name={[name, 'name']}
+                            name={[name, "name"]}
                             rules={[
                               {
                                 required: true,
@@ -3036,24 +3339,29 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                               {
                                 validator: async (rule, value) => {
                                   if (
-                                    String(value).trim() === '' ||
+                                    String(value).trim() === "" ||
                                     String(value).trim() === undefined ||
                                     value === null ||
                                     value === undefined
                                   ) {
-                                    throw new Error(`${t('projectProposal:required')}`);
+                                    throw new Error(
+                                      `${t("projectProposal:required")}`
+                                    );
                                   }
                                 },
                               },
                             ]}
                           >
-                            <Input placeholder="Name" disabled={disableFields} />
+                            <Input
+                              placeholder="Name"
+                              disabled={disableFields}
+                            />
                           </Form.Item>
                         </Col>
                         <Col md={2} xl={2}>
                           <Form.Item>
                             <Button
-                              style={{ marginLeft: '8px' }}
+                              style={{ marginLeft: "8px" }}
                               onClick={() => {
                                 remove(name);
                               }}
@@ -3083,25 +3391,30 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           {/*  Introduction to climate fund start */}
           <>
-            <h4 className="section-title">11. Introduction to {countryName} Climate Fund</h4>
+            <h4 className="section-title">
+              11. Introduction to {countryName} Climate Fund
+            </h4>
             <p className="capitalize">
-              SLCF is a public-private partnership company established under the companies’ Act No.7
-              of 2007, under the Ministry of Environment and Renewable Energy to promote carbon
-              trading projects in {countryName}. Company provides technical and finance resources to
-              develop projects contribute to the sustainability of the environment in any sector.
-              SLCF also purchases carbon credits from project owners while providing any service
-              relating to CDM project development.
+              SLCF is a public-private partnership company established under the
+              companies’ Act No.7 of 2007, under the Ministry of Environment and
+              Renewable Energy to promote carbon trading projects in{" "}
+              {countryName}. Company provides technical and finance resources to
+              develop projects contribute to the sustainability of the
+              environment in any sector. SLCF also purchases carbon credits from
+              project owners while providing any service relating to CDM project
+              development.
             </p>
 
             <div className="mg-top-1">Our Vision </div>
             <div className="capitalize">
-              Carbon neutral and climate-resilient blue-green economy in {countryName}.
+              Carbon neutral and climate-resilient blue-green economy in{" "}
+              {countryName}.
             </div>
 
             <div className="mg-top-1">Mission</div>
             <div className="mg-bottom-1 capitalize">
-              To support the nation to achieve a low carbon and climate-resilient blue green
-              development
+              To support the nation to achieve a low carbon and
+              climate-resilient blue green development
             </div>
           </>
           {/*  Introduction to climate fund End */}
@@ -3110,7 +3423,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
           <Form.Item
             className="full-width-form-item highlight-label"
-            label={`12. ${t('projectProposal:slcssProjectDetails')}`}
+            label={`12. ${t("projectProposal:slcssProjectDetails")}`}
             name="slcssProjectDetails"
             rules={[
               {
@@ -3120,13 +3433,15 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               {
                 validator: async (rule, value) => {
                   if (
-                    String(value).trim() === '' ||
+                    String(value).trim() === "" ||
                     String(value).trim() === undefined ||
                     value === null ||
                     value === undefined
                   ) {
                     throw new Error(
-                      `${t('projectProposal:slcssProjectDetails')} ${t('isRequired')}`
+                      `${t("projectProposal:slcssProjectDetails")} ${t(
+                        "isRequired"
+                      )}`
                     );
                   }
                 },
@@ -3136,20 +3451,22 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
             <TextArea rows={4} disabled={disableFields} />
           </Form.Item>
 
-          <section className="mg-top-2" style={{ marginBottom: '48px' }}>
-            <h4 className="section-title">{t('projectProposal:documentInfo')}</h4>
-            <Row className="mg-top-1" justify={'space-between'}>
+          <section className="mg-top-2" style={{ marginBottom: "48px" }}>
+            <h4 className="section-title">
+              {t("projectProposal:documentInfo")}
+            </h4>
+            <Row className="mg-top-1" justify={"space-between"}>
               <>
                 <Col md={4} xl={4} className="section-title">
-                  {t('projectProposal:documentTitleLabel')}
+                  {t("projectProposal:documentTitleLabel")}
                 </Col>
                 <Col md={18} xl={18} className="section-title">
-                  {t('projectProposal:documentTitle')}
+                  {t("projectProposal:documentTitle")}
                 </Col>
               </>
               <>
                 <Col md={4} xl={4} className="mg-top-1">
-                  {t('projectProposal:documentNoLabel')}
+                  {t("projectProposal:documentNoLabel")}
                 </Col>
                 <Col md={18} xl={18} className="mg-top-1">
                   SLCCS-PRO-FRM
@@ -3157,23 +3474,23 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               </>
               <>
                 <Col md={4} xl={4} className="mg-top-1">
-                  {t('projectProposal:documentTypeLabel')}
+                  {t("projectProposal:documentTypeLabel")}
                 </Col>
                 <Col md={18} xl={18} className="mg-top-1">
-                  {t('projectProposal:documentType')}
+                  {t("projectProposal:documentType")}
                 </Col>
               </>
               <>
                 <Col md={4} xl={4} className="mg-top-1">
-                  {t('projectProposal:businessFunctionLabel')}
+                  {t("projectProposal:businessFunctionLabel")}
                 </Col>
                 <Col md={18} xl={18} className="mg-top-1">
-                  {t('projectProposal:businessFunction')}
+                  {t("projectProposal:businessFunction")}
                 </Col>
               </>
               <>
                 <Col md={4} xl={4} className="mg-top-1">
-                  {t('projectProposal:versionLabel')}
+                  {t("projectProposal:versionLabel")}
                 </Col>
                 <Col md={18} xl={18} className="mg-top-1">
                   02.1
@@ -3181,17 +3498,20 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
               </>
             </Row>
 
-            <h4 className="section-title mg-top-2"> {t('projectProposal:revisionLabel')}</h4>
-            <Row className="mg-top-1" justify={'space-between'}>
+            <h4 className="section-title mg-top-2">
+              {" "}
+              {t("projectProposal:revisionLabel")}
+            </h4>
+            <Row className="mg-top-1" justify={"space-between"}>
               <>
                 <Col md={4} xl={4} className="section-title">
-                  {t('projectProposal:versionLabel')}
+                  {t("projectProposal:versionLabel")}
                 </Col>
                 <Col md={6} xl={6} className="section-title">
-                  {t('projectProposal:dateLabel')}
+                  {t("projectProposal:dateLabel")}
                 </Col>
                 <Col md={12} xl={12} className="section-title">
-                  {t('projectProposal:descriptionLabel')}
+                  {t("projectProposal:descriptionLabel")}
                 </Col>
               </>
               <>
@@ -3226,26 +3546,29 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
                 <Col md={12} xl={12} className="mg-top-1">
                   Revisions to:
                   <ul>
-                    <li>Change the official address of the company on the front page.</li>
+                    <li>
+                      Change the official address of the company on the front
+                      page.
+                    </li>
                   </ul>
                 </Col>
               </>
             </Row>
           </section>
 
-          <Row justify={'end'} className="step-actions-end">
+          <Row justify={"end"} className="step-actions-end">
             {isView ? (
               <>
-                <Button danger size={'large'} onClick={navigateToDetailsPage}>
+                <Button danger size={"large"} onClick={navigateToDetailsPage}>
                   Back
                 </Button>
               </>
             ) : (
               <>
-                <Button danger size={'large'} onClick={navigateToDetailsPage}>
+                <Button danger size={"large"} onClick={navigateToDetailsPage}>
                   Cancel
                 </Button>
-                <Button type="primary" size={'large'} htmlType="submit">
+                <Button type="primary" size={"large"} htmlType="submit">
                   submit
                 </Button>
               </>

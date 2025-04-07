@@ -1,38 +1,51 @@
-import { Button, Col, Form, Row, Select, StepProps } from 'antd';
-import React from 'react';
-import { CustomStepsProps } from './StepProps';
-import { t } from 'i18next';
-import TextArea from 'antd/lib/input/TextArea';
+import { Button, Col, Form, Row, Select, StepProps } from "antd";
+import React from "react";
+import { CustomStepsProps } from "./StepProps";
+import { t } from "i18next";
+import TextArea from "antd/lib/input/TextArea";
 
 const EligibilityCriteria = (props: CustomStepsProps) => {
-  const { next, prev, form, current, handleValuesUpdate, disableFields } = props;
-  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+  const { next, prev, form, current, handleValuesUpdate, disableFields } =
+    props;
+  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
 
   const onFinish = (values: any) => {
     const tempValues = {
-      generalCriteria411ProjectActivity: values?.generalCriteria411ProjectActivity,
+      generalCriteria411ProjectActivity:
+        values?.generalCriteria411ProjectActivity,
       generalCriteria411IsAgreed: values?.generalCriteria411IsAgreed,
-      generalCriteria412ProjectActivity: values?.generalCriteria412ProjectActivity,
+      generalCriteria412ProjectActivity:
+        values?.generalCriteria412ProjectActivity,
       generalCriteria412IsAgreed: values?.generalCriteria412IsAgreed,
-      generalCriteria413ProjectActivity: values?.generalCriteria413ProjectActivity,
+      generalCriteria413ProjectActivity:
+        values?.generalCriteria413ProjectActivity,
       generalCriteria413IsAgreed: values?.generalCriteria413IsAgreed,
-      generalCriteria414ProjectActivity: values?.generalCriteria414ProjectActivity,
+      generalCriteria414ProjectActivity:
+        values?.generalCriteria414ProjectActivity,
       generalCriteria414IsAgreed: values?.generalCriteria414IsAgreed,
-      generalCriteria415ProjectActivity: values?.generalCriteria415ProjectActivity,
+      generalCriteria415ProjectActivity:
+        values?.generalCriteria415ProjectActivity,
       generalCriteria415IsAgreed: values?.generalCriteria415IsAgreed,
-      generalCriteria416ProjectActivity: values?.generalCriteria416ProjectActivity,
+      generalCriteria416ProjectActivity:
+        values?.generalCriteria416ProjectActivity,
       generalCriteria416IsAgreed: values?.generalCriteria416IsAgreed,
-      bundlingCriteria421ProjectActivity: values?.bundlingCriteria421ProjectActivity,
+      bundlingCriteria421ProjectActivity:
+        values?.bundlingCriteria421ProjectActivity,
       bundlingCriteria421IsAgreed: values?.bundlingCriteria421IsAgreed,
-      bundlingCriteria422ProjectActivity: values?.bundlingCriteria422ProjectActivity,
+      bundlingCriteria422ProjectActivity:
+        values?.bundlingCriteria422ProjectActivity,
       bundlingCriteria422IsAgreed: values?.bundlingCriteria422IsAgreed,
-      bundlingCriteria423ProjectActivity: values?.bundlingCriteria423ProjectActivity,
+      bundlingCriteria423ProjectActivity:
+        values?.bundlingCriteria423ProjectActivity,
       bundlingCriteria423IsAgreed: values?.bundlingCriteria423IsAgreed,
-      bundlingCriteria424ProjectActivity: values?.bundlingCriteria424ProjectActivity,
+      bundlingCriteria424ProjectActivity:
+        values?.bundlingCriteria424ProjectActivity,
       bundlingCriteria424IsAgreed: values?.bundlingCriteria424IsAgreed,
-      bundlingCriteria425ProjectActivity: values?.bundlingCriteria425ProjectActivity,
+      bundlingCriteria425ProjectActivity:
+        values?.bundlingCriteria425ProjectActivity,
       bundlingCriteria425IsAgreed: values?.bundlingCriteria425IsAgreed,
-      bundlingCriteria426ProjectActivity: values?.bundlingCriteria426ProjectActivity,
+      bundlingCriteria426ProjectActivity:
+        values?.bundlingCriteria426ProjectActivity,
       bundlingCriteria426IsAgreed: values?.bundlingCriteria426IsAgreed,
     };
 
@@ -59,22 +72,22 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
             >
               <>
                 <h4 className="form-section-title custom-required">{`4.1 ${t(
-                  'CMAForm:generalCriteria'
+                  "CMAForm:generalCriteria"
                 )}`}</h4>
 
                 <div className="eligibility-table-form">
                   <Row className="header" gutter={24}>
                     <Col md={4} xl={4}>
-                      {t('CMAForm:subSection')}
+                      {t("CMAForm:subSection")}
                     </Col>
                     <Col md={10} xl={10}>
-                      {t('CMAForm:eligibilityCriteria')}
+                      {t("CMAForm:eligibilityCriteria")}
                     </Col>
                     <Col md={6} xl={6}>
-                      {t('CMAForm:eligibilityCriteriaProjectActivityHeader')}
+                      {t("CMAForm:eligibilityCriteriaProjectActivityHeader")}
                     </Col>
                     <Col md={4} xl={4}>
-                      {t('CMAForm:yesNoHeader')}
+                      {t("CMAForm:yesNoHeader")}
                     </Col>
                   </Row>
 
@@ -83,7 +96,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.1
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria01')}
+                      {t("CMAForm:criteria01")}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -96,12 +109,12 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('CMAForm:required')}`);
+                                throw new Error(`${t("CMAForm:required")}`);
                               }
                             },
                           },
@@ -116,13 +129,21 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t("CMAForm:required")}`,
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
-                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
+                        <Select
+                          size="large"
+                          disabled={disableFields}
+                          placeholder="Select"
+                        >
+                          <Select.Option value={true}>
+                            {t("CMAForm:yes")}
+                          </Select.Option>
+                          <Select.Option value={false}>
+                            {t("CMAForm:no")}
+                          </Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -133,7 +154,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.2
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria02', { countryName: countryName })}
+                      {t("CMAForm:criteria02", { countryName: countryName })}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -146,12 +167,12 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('CMAForm:required')}`);
+                                throw new Error(`${t("CMAForm:required")}`);
                               }
                             },
                           },
@@ -166,13 +187,21 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t("CMAForm:required")}`,
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
-                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
+                        <Select
+                          size="large"
+                          disabled={disableFields}
+                          placeholder="Select"
+                        >
+                          <Select.Option value={true}>
+                            {t("CMAForm:yes")}
+                          </Select.Option>
+                          <Select.Option value={false}>
+                            {t("CMAForm:no")}
+                          </Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -183,7 +212,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.3
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria03', { countryName: countryName })}
+                      {t("CMAForm:criteria03", { countryName: countryName })}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -196,12 +225,12 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('CMAForm:required')}`);
+                                throw new Error(`${t("CMAForm:required")}`);
                               }
                             },
                           },
@@ -216,13 +245,21 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t("CMAForm:required")}`,
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
-                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
+                        <Select
+                          size="large"
+                          disabled={disableFields}
+                          placeholder="Select"
+                        >
+                          <Select.Option value={true}>
+                            {t("CMAForm:yes")}
+                          </Select.Option>
+                          <Select.Option value={false}>
+                            {t("CMAForm:no")}
+                          </Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -233,7 +270,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.4
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria04')}
+                      {t("CMAForm:criteria04")}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -246,12 +283,12 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('CMAForm:required')}`);
+                                throw new Error(`${t("CMAForm:required")}`);
                               }
                             },
                           },
@@ -266,13 +303,21 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t("CMAForm:required")}`,
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
-                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
+                        <Select
+                          size="large"
+                          disabled={disableFields}
+                          placeholder="Select"
+                        >
+                          <Select.Option value={true}>
+                            {t("CMAForm:yes")}
+                          </Select.Option>
+                          <Select.Option value={false}>
+                            {t("CMAForm:no")}
+                          </Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -283,7 +328,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.5
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria05')}
+                      {t("CMAForm:criteria05")}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -296,12 +341,12 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('CMAForm:required')}`);
+                                throw new Error(`${t("CMAForm:required")}`);
                               }
                             },
                           },
@@ -316,13 +361,21 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t("CMAForm:required")}`,
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
-                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
+                        <Select
+                          size="large"
+                          disabled={disableFields}
+                          placeholder="Select"
+                        >
+                          <Select.Option value={true}>
+                            {t("CMAForm:yes")}
+                          </Select.Option>
+                          <Select.Option value={false}>
+                            {t("CMAForm:no")}
+                          </Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -333,7 +386,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.1.6
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria06')}
+                      {t("CMAForm:criteria06")}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -346,12 +399,12 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('CMAForm:required')}`);
+                                throw new Error(`${t("CMAForm:required")}`);
                               }
                             },
                           },
@@ -366,13 +419,21 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t("CMAForm:required")}`,
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
-                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
+                        <Select
+                          size="large"
+                          disabled={disableFields}
+                          placeholder="Select"
+                        >
+                          <Select.Option value={true}>
+                            {t("CMAForm:yes")}
+                          </Select.Option>
+                          <Select.Option value={false}>
+                            {t("CMAForm:no")}
+                          </Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -382,22 +443,22 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
 
               <>
                 <h4 className="form-section-title custom-required">{`4.1 ${t(
-                  'CMAForm:bundlingCriteria'
+                  "CMAForm:bundlingCriteria"
                 )}`}</h4>
 
                 <div className="eligibility-table-form">
                   <Row className="header" gutter={24}>
                     <Col md={4} xl={4}>
-                      {t('CMAForm:subSection')}
+                      {t("CMAForm:subSection")}
                     </Col>
                     <Col md={10} xl={10}>
-                      {t('CMAForm:eligibilityCriteria')}
+                      {t("CMAForm:eligibilityCriteria")}
                     </Col>
                     <Col md={6} xl={6}>
-                      {t('CMAForm:eligibilityCriteriaProjectActivityHeader')}
+                      {t("CMAForm:eligibilityCriteriaProjectActivityHeader")}
                     </Col>
                     <Col md={4} xl={4}>
-                      {t('CMAForm:yesNoHeader')}
+                      {t("CMAForm:yesNoHeader")}
                     </Col>
                   </Row>
 
@@ -406,7 +467,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.2.1
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria07')}
+                      {t("CMAForm:criteria07")}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -419,12 +480,12 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('CMAForm:required')}`);
+                                throw new Error(`${t("CMAForm:required")}`);
                               }
                             },
                           },
@@ -439,13 +500,21 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t("CMAForm:required")}`,
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
-                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
+                        <Select
+                          size="large"
+                          disabled={disableFields}
+                          placeholder="Select"
+                        >
+                          <Select.Option value={true}>
+                            {t("CMAForm:yes")}
+                          </Select.Option>
+                          <Select.Option value={false}>
+                            {t("CMAForm:no")}
+                          </Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -456,7 +525,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.2.2
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria08')}
+                      {t("CMAForm:criteria08")}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -469,12 +538,12 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('CMAForm:required')}`);
+                                throw new Error(`${t("CMAForm:required")}`);
                               }
                             },
                           },
@@ -489,13 +558,21 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t("CMAForm:required")}`,
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
-                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
+                        <Select
+                          size="large"
+                          disabled={disableFields}
+                          placeholder="Select"
+                        >
+                          <Select.Option value={true}>
+                            {t("CMAForm:yes")}
+                          </Select.Option>
+                          <Select.Option value={false}>
+                            {t("CMAForm:no")}
+                          </Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -506,7 +583,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.2.3
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria09')}
+                      {t("CMAForm:criteria09")}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -519,12 +596,12 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('CMAForm:required')}`);
+                                throw new Error(`${t("CMAForm:required")}`);
                               }
                             },
                           },
@@ -539,13 +616,21 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t("CMAForm:required")}`,
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
-                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
+                        <Select
+                          size="large"
+                          disabled={disableFields}
+                          placeholder="Select"
+                        >
+                          <Select.Option value={true}>
+                            {t("CMAForm:yes")}
+                          </Select.Option>
+                          <Select.Option value={false}>
+                            {t("CMAForm:no")}
+                          </Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -556,7 +641,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.2.4
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria10')}
+                      {t("CMAForm:criteria10")}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -569,12 +654,12 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('CMAForm:required')}`);
+                                throw new Error(`${t("CMAForm:required")}`);
                               }
                             },
                           },
@@ -589,13 +674,21 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t("CMAForm:required")}`,
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
-                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
+                        <Select
+                          size="large"
+                          disabled={disableFields}
+                          placeholder="Select"
+                        >
+                          <Select.Option value={true}>
+                            {t("CMAForm:yes")}
+                          </Select.Option>
+                          <Select.Option value={false}>
+                            {t("CMAForm:no")}
+                          </Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -606,7 +699,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.2.5
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria11')}
+                      {t("CMAForm:criteria11")}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -619,12 +712,12 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('CMAForm:required')}`);
+                                throw new Error(`${t("CMAForm:required")}`);
                               }
                             },
                           },
@@ -639,13 +732,21 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t("CMAForm:required")}`,
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
-                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
+                        <Select
+                          size="large"
+                          disabled={disableFields}
+                          placeholder="Select"
+                        >
+                          <Select.Option value={true}>
+                            {t("CMAForm:yes")}
+                          </Select.Option>
+                          <Select.Option value={false}>
+                            {t("CMAForm:no")}
+                          </Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -656,7 +757,7 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                       4.2.6
                     </Col>
                     <Col md={10} xl={10} className="col-2">
-                      {t('CMAForm:criteria12')}
+                      {t("CMAForm:criteria12")}
                     </Col>
                     <Col md={6} xl={6}>
                       <Form.Item
@@ -669,12 +770,12 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('CMAForm:required')}`);
+                                throw new Error(`${t("CMAForm:required")}`);
                               }
                             },
                           },
@@ -689,13 +790,21 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('CMAForm:required')}`,
+                            message: `${t("CMAForm:required")}`,
                           },
                         ]}
                       >
-                        <Select size="large" disabled={disableFields} placeholder="Select">
-                          <Select.Option value={true}>{t('CMAForm:yes')}</Select.Option>
-                          <Select.Option value={false}>{t('CMAForm:no')}</Select.Option>
+                        <Select
+                          size="large"
+                          disabled={disableFields}
+                          placeholder="Select"
+                        >
+                          <Select.Option value={true}>
+                            {t("CMAForm:yes")}
+                          </Select.Option>
+                          <Select.Option value={false}>
+                            {t("CMAForm:no")}
+                          </Select.Option>
                         </Select>
                       </Form.Item>
                     </Col>
@@ -703,22 +812,22 @@ const EligibilityCriteria = (props: CustomStepsProps) => {
                 </div>
               </>
 
-              <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev}>
-                  {t('CMAForm:prev')}
+              <Row justify={"end"} className="step-actions-end">
+                <Button danger size={"large"} onClick={prev}>
+                  {t("CMAForm:prev")}
                 </Button>
                 {disableFields ? (
                   <Button type="primary" onClick={next}>
-                    {t('CMAForm:next')}
+                    {t("CMAForm:next")}
                   </Button>
                 ) : (
                   <Button
                     type="primary"
-                    size={'large'}
-                    htmlType={'submit'}
+                    size={"large"}
+                    htmlType={"submit"}
                     // onClick={next}
                   >
-                    {t('CMAForm:next')}
+                    {t("CMAForm:next")}
                   </Button>
                 )}
               </Row>

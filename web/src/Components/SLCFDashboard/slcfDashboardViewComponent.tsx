@@ -803,7 +803,7 @@ export const SLCFDashboardComponent = (props: any) => {
           <Row gutter={[40, 40]} className="statistics-card-row">
             <Col xxl={8} xl={8} md={12} className="statistics-card-col">
               <SLStatisticsCard
-                value={String(projectStatusSummary?.totalProjects)}
+                value={String(projectSummary.total_pending_projects)}
                 title={t('totalProjects')}
                 updatedDate={projectSummaryLastUpdated.last_pending_project_time}
                 icon={<AppstoreOutlined />}
