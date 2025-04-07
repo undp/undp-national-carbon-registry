@@ -112,8 +112,8 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
   const [includedInNAP, setIncludedInNAP] = useState<any>();
   const [form] = Form.useForm();
 
-  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   //changing value to N2O. Previously it was N20(N-Two-Zero)

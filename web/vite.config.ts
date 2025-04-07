@@ -33,4 +33,7 @@ export default defineConfig({
   define: {
     global: "window",
   },
+  optimizeDeps: {
+    exclude: ['chunk-IFXF74NO.js', 'chunk-44HY52FL.js', 'chunk-IXXC4J32.js', 'react-circle-flags.js']
+  }
 });
