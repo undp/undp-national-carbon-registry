@@ -1,4 +1,4 @@
-import { ValidationStepsProps } from './StepProps';
+import { ValidationStepsProps } from "./StepProps";
 import {
   Row,
   Button,
@@ -11,31 +11,40 @@ import {
   InputNumber,
   Radio,
   Select,
-} from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { ProcessSteps } from './ValidationStepperComponent';
-import { requiredValidationRule } from '../../Utils/validationHelper';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { useEffect, useState } from 'react';
-import LabelWithTooltip from '../LabelWithTooltip/LabelWithTooltip';
-import { useLocation } from 'react-router-dom';
+} from "antd";
+import TextArea from "antd/lib/input/TextArea";
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import { ProcessSteps } from "./ValidationStepperComponent";
+import { requiredValidationRule } from "../../Utils/validationHelper";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
+import { useEffect, useState } from "react";
+import LabelWithTooltip from "../LabelWithTooltip/LabelWithTooltip";
+import { useLocation } from "react-router-dom";
 
 const ValidationMethodology = (props: ValidationStepsProps) => {
-  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
 
-  const { prev, next, form, current, t, countries, handleValuesUpdate, disableFields, formMode } =
-    props;
+  const {
+    prev,
+    next,
+    form,
+    current,
+    t,
+    countries,
+    handleValuesUpdate,
+    disableFields,
+    formMode,
+  } = props;
 
   useEffect(() => {
     if (formMode === FormMode.CREATE) {
-      form.setFieldValue('validationTeamMembers', [{ role: '' }]);
-      form.setFieldValue('technicalReviews', [{ role: '' }]);
+      form.setFieldValue("validationTeamMembers", [{ role: "" }]);
+      form.setFieldValue("technicalReviews", [{ role: "" }]);
     }
   }, [formMode]);
 
   const onFinish = async (values: any) => {
-    console.log('--------values-----------', values);
+    console.log("--------values-----------", values);
     const body = { ...values };
 
     console.log(ProcessSteps.VR_VALIDATION_METHODOLOGY, body);
@@ -67,7 +76,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
             >
               {/* Validation team member table start */}
               <h4 className="form-section-heading">
-                {t('validationReport:validationTeamMemberTableTitle')}
+                {t("validationReport:validationTeamMemberTableTitle")}
               </h4>
               <div className="validation-team-member-table">
                 <Row className="header">
@@ -119,12 +128,12 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                       {fields.map(({ key, name, ...restFields }) => (
                         <>
                           <Col xl={1} className="col-1 col">
-                            {name + 1 < 10 && '0'}
+                            {name + 1 < 10 && "0"}
                             {name + 1}
                           </Col>
                           <Col xl={4} className="col other-cols">
                             <Form.Item
-                              name={[name, 'role']}
+                              name={[name, "role"]}
                               rules={[
                                 {
                                   required: true,
@@ -133,41 +142,45 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('validationReport:required')}`);
+                                      throw new Error(
+                                        `${t("validationReport:required")}`
+                                      );
                                     }
                                   },
                                 },
                               ]}
                             >
                               <Select disabled={disableFields}>
-                                <Select.Option value={'TL'}>
-                                  {t('validationReport:teamLeader')}
+                                <Select.Option value={"TL"}>
+                                  {t("validationReport:teamLeader")}
                                 </Select.Option>
-                                <Select.Option value={'TE'}>
-                                  {t('validationReport:technicalExpert')}
+                                <Select.Option value={"TE"}>
+                                  {t("validationReport:technicalExpert")}
                                 </Select.Option>
-                                <Select.Option value={'TM'}>
-                                  {t('validationReport:teamMember')}
+                                <Select.Option value={"TM"}>
+                                  {t("validationReport:teamMember")}
                                 </Select.Option>
-                                <Select.Option value={'ITR'}>
-                                  {t('validationReport:internalTechnicalReviewer')}
+                                <Select.Option value={"ITR"}>
+                                  {t(
+                                    "validationReport:internalTechnicalReviewer"
+                                  )}
                                 </Select.Option>
-                                <Select.Option value={'DR'}>
-                                  {t('validationReport:documentReviewOption')}
+                                <Select.Option value={"DR"}>
+                                  {t("validationReport:documentReviewOption")}
                                 </Select.Option>
-                                <Select.Option value={'SV'}>
-                                  {t('validationReport:siteVisit')}
+                                <Select.Option value={"SV"}>
+                                  {t("validationReport:siteVisit")}
                                 </Select.Option>
-                                <Select.Option value={'RI'}>
-                                  {t('validationReport:reportIssuance')}
+                                <Select.Option value={"RI"}>
+                                  {t("validationReport:reportIssuance")}
                                 </Select.Option>
-                                <Select.Option value={'TR'}>
-                                  {t('validationReport:technicalReview')}
+                                <Select.Option value={"TR"}>
+                                  {t("validationReport:technicalReview")}
                                 </Select.Option>
                               </Select>
                             </Form.Item>
@@ -175,7 +188,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
 
                           <Col xl={3} className="other-cols col">
                             <Form.Item
-                              name={[name, 'typeOfResource']}
+                              name={[name, "typeOfResource"]}
                               rules={[
                                 {
                                   required: true,
@@ -184,42 +197,80 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
-                                      String(value).trim() === undefined ||
-                                      value === null ||
-                                      value === undefined
-                                    ) {
-                                      throw new Error(`${t('validationReport:required')}`);
-                                    }
-                                  },
-                                },
-                              ]}
-                            >
-                              <Radio.Group className="radio-btn-grp" disabled={disableFields}>
-                                <Radio value="IR">{t('validationReport:IR')}</Radio>
-                                <Radio value="ER">{t('validationReport:ER')}</Radio>
-                              </Radio.Group>
-                            </Form.Item>
-                          </Col>
-                          <Col xl={3} className="other-cols col">
-                            <Form.Item
-                              name={[name, 'lastName']}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: ``,
-                                },
-                                {
-                                  validator: async (rule, value) => {
-                                    if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
                                       throw new Error(
-                                        `${t('validationReport:referencesToDocument')} ${t(
-                                          'isRequired'
+                                        `${t("validationReport:required")}`
+                                      );
+                                    }
+                                  },
+                                },
+                              ]}
+                            >
+                              <Radio.Group
+                                className="radio-btn-grp"
+                                disabled={disableFields}
+                              >
+                                <Radio value="IR">
+                                  {t("validationReport:IR")}
+                                </Radio>
+                                <Radio value="ER">
+                                  {t("validationReport:ER")}
+                                </Radio>
+                              </Radio.Group>
+                            </Form.Item>
+                          </Col>
+                          <Col xl={3} className="other-cols col">
+                            <Form.Item
+                              name={[name, "lastName"]}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: ``,
+                                },
+                                {
+                                  validator: async (rule, value) => {
+                                    if (
+                                      String(value).trim() === "" ||
+                                      String(value).trim() === undefined ||
+                                      value === null ||
+                                      value === undefined
+                                    ) {
+                                      throw new Error(
+                                        `${t(
+                                          "validationReport:referencesToDocument"
+                                        )} ${t("isRequired")}`
+                                      );
+                                    }
+                                  },
+                                },
+                              ]}
+                            >
+                              <Input disabled={disableFields} />
+                            </Form.Item>
+                          </Col>
+                          <Col xl={3} className="other-cols col">
+                            <Form.Item
+                              name={[name, "firstName"]}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: ``,
+                                },
+                                {
+                                  validator: async (rule, value) => {
+                                    if (
+                                      String(value).trim() === "" ||
+                                      String(value).trim() === undefined ||
+                                      value === null ||
+                                      value === undefined
+                                    ) {
+                                      throw new Error(
+                                        `${t("validationReport:provider")} ${t(
+                                          "isRequired"
                                         )}`
                                       );
                                     }
@@ -232,7 +283,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                           </Col>
                           <Col xl={3} className="other-cols col">
                             <Form.Item
-                              name={[name, 'firstName']}
+                              name={[name, "affliation"]}
                               rules={[
                                 {
                                   required: true,
@@ -241,40 +292,15 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
                                       throw new Error(
-                                        `${t('validationReport:provider')} ${t('isRequired')}`
-                                      );
-                                    }
-                                  },
-                                },
-                              ]}
-                            >
-                              <Input disabled={disableFields} />
-                            </Form.Item>
-                          </Col>
-                          <Col xl={3} className="other-cols col">
-                            <Form.Item
-                              name={[name, 'affliation']}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: ``,
-                                },
-                                {
-                                  validator: async (rule, value) => {
-                                    if (
-                                      String(value).trim() === '' ||
-                                      String(value).trim() === undefined ||
-                                      value === null ||
-                                      value === undefined
-                                    ) {
-                                      throw new Error(
-                                        `${t('validationReport:provider')} ${t('isRequired')}`
+                                        `${t("validationReport:provider")} ${t(
+                                          "isRequired"
+                                        )}`
                                       );
                                     }
                                   },
@@ -287,26 +313,32 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                           <Col xl={4}>
                             <Row>
                               <Col xl={6} className="other-cols checkbox-cols">
-                                <Form.Item name={[name, 'documentReview']} valuePropName="checked">
-                                  <Checkbox disabled={disableFields} />
-                                </Form.Item>
-                              </Col>
-                              <Col xl={6} className="other-cols checkbox-cols">
                                 <Form.Item
-                                  name={[name, 'onsiteInspections']}
+                                  name={[name, "documentReview"]}
                                   valuePropName="checked"
                                 >
                                   <Checkbox disabled={disableFields} />
                                 </Form.Item>
                               </Col>
                               <Col xl={6} className="other-cols checkbox-cols">
-                                <Form.Item name={[name, 'interviews']} valuePropName="checked">
+                                <Form.Item
+                                  name={[name, "onsiteInspections"]}
+                                  valuePropName="checked"
+                                >
                                   <Checkbox disabled={disableFields} />
                                 </Form.Item>
                               </Col>
                               <Col xl={6} className="other-cols checkbox-cols">
                                 <Form.Item
-                                  name={[name, 'validationFindings']}
+                                  name={[name, "interviews"]}
+                                  valuePropName="checked"
+                                >
+                                  <Checkbox disabled={disableFields} />
+                                </Form.Item>
+                              </Col>
+                              <Col xl={6} className="other-cols checkbox-cols">
+                                <Form.Item
+                                  name={[name, "validationFindings"]}
                                   valuePropName="checked"
                                 >
                                   <Checkbox disabled={disableFields} />
@@ -353,7 +385,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
 
               {/* Technical reviewer table start */}
               <h4 className="form-section-heading">
-                {t('validationReport:technicalReviewerTableTitle')}
+                {t("validationReport:technicalReviewerTableTitle")}
               </h4>
 
               <div className="technical-reviewer-table">
@@ -388,12 +420,12 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                         {fields.map(({ key, name, ...restFields }) => (
                           <>
                             <Col xl={1} className="col-1 col" key={key}>
-                              {name + 1 < 10 && '0'}
+                              {name + 1 < 10 && "0"}
                               {name + 1}
                             </Col>
                             <Col xl={4} className="other-cols col">
                               <Form.Item
-                                name={[name, 'role']}
+                                name={[name, "role"]}
                                 rules={[
                                   {
                                     required: true,
@@ -402,12 +434,14 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   {
                                     validator: async (rule, value) => {
                                       if (
-                                        String(value).trim() === '' ||
+                                        String(value).trim() === "" ||
                                         String(value).trim() === undefined ||
                                         value === null ||
                                         value === undefined
                                       ) {
-                                        throw new Error(`${t('validationReport:required')}`);
+                                        throw new Error(
+                                          `${t("validationReport:required")}`
+                                        );
                                       }
                                     },
                                   },
@@ -415,17 +449,17 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                               >
                                 <Select disabled={disableFields}>
                                   <Select.Option value="technicalReviewer">
-                                    {t('validationReport:technicalReviewer')}
+                                    {t("validationReport:technicalReviewer")}
                                   </Select.Option>
                                   <Select.Option value="approver">
-                                    {t('validationReport:approver')}
+                                    {t("validationReport:approver")}
                                   </Select.Option>
                                 </Select>
                               </Form.Item>
                             </Col>
                             <Col xl={4} className="other-cols col">
                               <Form.Item
-                                name={[name, 'typeOfResource']}
+                                name={[name, "typeOfResource"]}
                                 rules={[
                                   {
                                     required: true,
@@ -434,26 +468,35 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   {
                                     validator: async (rule, value) => {
                                       if (
-                                        String(value).trim() === '' ||
+                                        String(value).trim() === "" ||
                                         String(value).trim() === undefined ||
                                         value === null ||
                                         value === undefined
                                       ) {
-                                        throw new Error(`${t('validationReport:required')}`);
+                                        throw new Error(
+                                          `${t("validationReport:required")}`
+                                        );
                                       }
                                     },
                                   },
                                 ]}
                               >
-                                <Radio.Group className="radio-btn-grp" disabled={disableFields}>
-                                  <Radio value="IR">{t('validationReport:IR')}</Radio>
-                                  <Radio value="ER">{t('validationReport:ER')}</Radio>
+                                <Radio.Group
+                                  className="radio-btn-grp"
+                                  disabled={disableFields}
+                                >
+                                  <Radio value="IR">
+                                    {t("validationReport:IR")}
+                                  </Radio>
+                                  <Radio value="ER">
+                                    {t("validationReport:ER")}
+                                  </Radio>
                                 </Radio.Group>
                               </Form.Item>
                             </Col>
                             <Col xl={4} className="other-cols col">
                               <Form.Item
-                                name={[name, 'lastName']}
+                                name={[name, "lastName"]}
                                 rules={[
                                   {
                                     required: true,
@@ -462,12 +505,14 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   {
                                     validator: async (rule, value) => {
                                       if (
-                                        String(value).trim() === '' ||
+                                        String(value).trim() === "" ||
                                         String(value).trim() === undefined ||
                                         value === null ||
                                         value === undefined
                                       ) {
-                                        throw new Error(`${t('validationReport:required')}`);
+                                        throw new Error(
+                                          `${t("validationReport:required")}`
+                                        );
                                       }
                                     },
                                   },
@@ -478,7 +523,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                             </Col>
                             <Col xl={4} className="other-cols col">
                               <Form.Item
-                                name={[name, 'firstName']}
+                                name={[name, "firstName"]}
                                 rules={[
                                   {
                                     required: true,
@@ -487,12 +532,14 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   {
                                     validator: async (rule, value) => {
                                       if (
-                                        String(value).trim() === '' ||
+                                        String(value).trim() === "" ||
                                         String(value).trim() === undefined ||
                                         value === null ||
                                         value === undefined
                                       ) {
-                                        throw new Error(`${t('validationReport:required')}`);
+                                        throw new Error(
+                                          `${t("validationReport:required")}`
+                                        );
                                       }
                                     },
                                   },
@@ -503,7 +550,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                             </Col>
                             <Col xl={4} className="other-cols col">
                               <Form.Item
-                                name={[name, 'affliation']}
+                                name={[name, "affliation"]}
                                 rules={[
                                   {
                                     required: true,
@@ -512,12 +559,14 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                   {
                                     validator: async (rule, value) => {
                                       if (
-                                        String(value).trim() === '' ||
+                                        String(value).trim() === "" ||
                                         String(value).trim() === undefined ||
                                         value === null ||
                                         value === undefined
                                       ) {
-                                        throw new Error(`${t('validationReport:required')}`);
+                                        throw new Error(
+                                          `${t("validationReport:required")}`
+                                        );
                                       }
                                     },
                                   },
@@ -564,17 +613,30 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
               </div>
               {/* Technical reviewer table end */}
 
-              <Row justify={'end'} className="step-actions-end mg-top-2 mg-bottom-2">
-                <Button danger size={'large'} disabled={false} onClick={prev}>
-                  {t('validationReport:prev')}
+              <Row
+                justify={"end"}
+                className="step-actions-end mg-top-2 mg-bottom-2"
+              >
+                <Button danger size={"large"} disabled={false} onClick={prev}>
+                  {t("validationReport:cancel")}
                 </Button>
                 {disableFields ? (
-                  <Button type="primary" size={'large'} disabled={false} onClick={next}>
-                    {t('validationReport:next')}
+                  <Button
+                    type="primary"
+                    size={"large"}
+                    disabled={false}
+                    onClick={next}
+                  >
+                    {t("validationReport:next")}
                   </Button>
                 ) : (
-                  <Button type="primary" size={'large'} disabled={false} htmlType="submit">
-                    {t('validationReport:next')}
+                  <Button
+                    type="primary"
+                    size={"large"}
+                    disabled={false}
+                    htmlType="submit"
+                  >
+                    {t("validationReport:next")}
                   </Button>
                 )}
               </Row>

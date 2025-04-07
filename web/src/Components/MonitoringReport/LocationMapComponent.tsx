@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { MapSourceData } from '../../Definitions/Definitions/mapComponent.definitions';
-import { MapComponent } from '../Maps/mapComponent';
-import { FormInstance } from 'antd';
+import React, { useEffect, useMemo, useState } from "react";
+import { MapSourceData } from "../../Definitions/Definitions/mapComponent.definitions";
+import { MapComponent } from "../Maps/mapComponent";
+import { FormInstance } from "antd";
 
 interface MapComponentProps {
   form: FormInstance;
@@ -12,17 +12,19 @@ interface MapComponentProps {
 const LocationMapComponent = (props: MapComponentProps) => {
   const { form, formItemName, listName } = props;
 
-  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
-  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    : '';
+  const mapType = import.meta.env.REACT_APP_MAP_TYPE
+    ? import.meta.env.REACT_APP_MAP_TYPE
+    : "None";
+  const accessToken = import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    ? import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    : "";
 
   const getCenter = (list: any[]) => {
     let count = 0;
     let lat = 0;
     let long = 0;
     for (const l of list) {
-      if (l === null || l === 'null') {
+      if (l === null || l === "null") {
         continue;
       }
       count += 1;
@@ -33,24 +35,30 @@ const LocationMapComponent = (props: MapComponentProps) => {
   };
 
   const [projectLocation, setProjectLocation] = useState<any[]>([]);
-  const [projectLocationMapSource, setProjectLocationMapSource] = useState<any>();
+  const [projectLocationMapSource, setProjectLocationMapSource] =
+    useState<any>();
   const [projectLocationMapLayer, setProjectLocationMapLayer] = useState<any>();
-  const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();
-  const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<number[]>([]);
+  const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] =
+    useState<any>();
+  const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<
+    number[]
+  >([]);
 
   useEffect(() => {
     setProjectLocationMapCenter(
-      projectLocation?.length > 0 ? getCenter(projectLocation) : [80.7718, 7.8731]
+      projectLocation?.length > 0
+        ? getCenter(projectLocation)
+        : [80.7718, 7.8731]
     );
 
     const mapSource: MapSourceData = {
-      key: 'projectLocation',
+      key: "projectLocation",
       data: {
-        type: 'geojson',
+        type: "geojson",
         data: {
-          type: 'Feature',
+          type: "Feature",
           geometry: {
-            type: 'Polygon',
+            type: "Polygon",
             coordinates: [projectLocation],
           },
           properties: null,
@@ -61,24 +69,24 @@ const LocationMapComponent = (props: MapComponentProps) => {
     setProjectLocationMapSource(mapSource);
 
     setProjectLocationMapLayer({
-      id: 'projectLocation',
-      type: 'fill',
-      source: 'projectLocation',
+      id: "projectLocation",
+      type: "fill",
+      source: "projectLocation",
       layout: {},
       paint: {
-        'fill-color': '#0080ff',
-        'fill-opacity': 0.5,
+        "fill-color": "#0080ff",
+        "fill-opacity": 0.5,
       },
     });
 
     setProjectLocationMapOutlineLayer({
-      id: 'projectLocationOutline',
-      type: 'line',
-      source: 'projectLocation',
+      id: "projectLocationOutline",
+      type: "line",
+      source: "projectLocation",
       layout: {},
       paint: {
-        'line-color': '#000',
-        'line-width': 1,
+        "line-color": "#000",
+        "line-width": 1,
       },
     });
   }, [projectLocation]);

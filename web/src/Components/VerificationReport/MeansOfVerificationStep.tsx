@@ -1,91 +1,99 @@
-import { Button, Col, Form, Row, Input, DatePicker } from 'antd';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import TextArea from 'antd/lib/input/TextArea';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
-import { DocumentStatus } from '../../Definitions/Enums/document.status';
-import i18n from '../Internationalization/i18n';
-import { VerificationStepProps } from './StepProps';
-import moment from 'moment';
+import { Button, Col, Form, Row, Input, DatePicker } from "antd";
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import TextArea from "antd/lib/input/TextArea";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
+import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
+import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
+import { DocumentStatus } from "../../Definitions/Enums/document.status";
+import i18n from "../Internationalization/i18n";
+import { VerificationStepProps } from "./StepProps";
+import moment from "moment";
 
 const clCols = [
-  'finding-cl-1',
-  'finding-cl-2',
-  'finding-cl-3',
-  'finding-cl-4',
-  'finding-cl-5',
-  'finding-cl-6',
-  'finding-cl-7',
-  'finding-cl-8',
-  'finding-cl-9',
-  'finding-cl-10',
-  'finding-cl-11',
-  'finding-cl-12',
-  'finding-cl-13',
-  'finding-cl-14',
-  'finding-cl-15',
-  'finding-cl-16',
-  'finding-cl-17',
-  'finding-cl-18',
-  'finding-cl-19',
-  'finding-cl-20',
+  "finding-cl-1",
+  "finding-cl-2",
+  "finding-cl-3",
+  "finding-cl-4",
+  "finding-cl-5",
+  "finding-cl-6",
+  "finding-cl-7",
+  "finding-cl-8",
+  "finding-cl-9",
+  "finding-cl-10",
+  "finding-cl-11",
+  "finding-cl-12",
+  "finding-cl-13",
+  "finding-cl-14",
+  "finding-cl-15",
+  "finding-cl-16",
+  "finding-cl-17",
+  "finding-cl-18",
+  "finding-cl-19",
+  "finding-cl-20",
 ];
 
 const carCols = [
-  'finding-car-1',
-  'finding-car-2',
-  'finding-car-3',
-  'finding-car-4',
-  'finding-car-5',
-  'finding-car-6',
-  'finding-car-7',
-  'finding-car-8',
-  'finding-car-9',
-  'finding-car-10',
-  'finding-car-11',
-  'finding-car-12',
-  'finding-car-13',
-  'finding-car-14',
-  'finding-car-15',
-  'finding-car-16',
-  'finding-car-17',
-  'finding-car-18',
-  'finding-car-19',
-  'finding-car-20',
+  "finding-car-1",
+  "finding-car-2",
+  "finding-car-3",
+  "finding-car-4",
+  "finding-car-5",
+  "finding-car-6",
+  "finding-car-7",
+  "finding-car-8",
+  "finding-car-9",
+  "finding-car-10",
+  "finding-car-11",
+  "finding-car-12",
+  "finding-car-13",
+  "finding-car-14",
+  "finding-car-15",
+  "finding-car-16",
+  "finding-car-17",
+  "finding-car-18",
+  "finding-car-19",
+  "finding-car-20",
 ];
 
 const farCols = [
-  'finding-far-1',
-  'finding-far-2',
-  'finding-far-3',
-  'finding-far-4',
-  'finding-far-5',
-  'finding-far-6',
-  'finding-far-7',
-  'finding-far-8',
-  'finding-far-9',
-  'finding-far-10',
-  'finding-far-11',
-  'finding-far-12',
-  'finding-far-13',
-  'finding-far-14',
-  'finding-far-15',
-  'finding-far-16',
-  'finding-far-17',
-  'finding-far-18',
-  'finding-far-19',
-  'finding-far-20',
+  "finding-far-1",
+  "finding-far-2",
+  "finding-far-3",
+  "finding-far-4",
+  "finding-far-5",
+  "finding-far-6",
+  "finding-far-7",
+  "finding-far-8",
+  "finding-far-9",
+  "finding-far-10",
+  "finding-far-11",
+  "finding-far-12",
+  "finding-far-13",
+  "finding-far-14",
+  "finding-far-15",
+  "finding-far-16",
+  "finding-far-17",
+  "finding-far-18",
+  "finding-far-19",
+  "finding-far-20",
 ];
 
 export const MeansOfVerificationStep = (props: VerificationStepProps) => {
-  const { current, form, formMode, prev, handleValuesUpdate, next, disableFields } = props;
+  const {
+    current,
+    form,
+    formMode,
+    prev,
+    handleValuesUpdate,
+    next,
+    disableFields,
+  } = props;
   const { userInfoState } = useUserContext();
   const t = i18n.t;
-  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   const normFile = (e: any) => {
@@ -107,7 +115,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
       total += Number(form.getFieldValue(colKey)) || 0;
     });
 
-    form.setFieldValue('cl-total', total);
+    form.setFieldValue("cl-total", total);
   };
 
   const calculateTotalCar = (value: number) => {
@@ -116,7 +124,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
       total += Number(form.getFieldValue(colKey)) || 0;
     });
 
-    form.setFieldValue('car-total', total);
+    form.setFieldValue("car-total", total);
   };
 
   const calculateTotalFar = (value: number) => {
@@ -125,27 +133,31 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
       total += Number(form.getFieldValue(colKey)) || 0;
     });
 
-    form.setFieldValue('far-total', total);
+    form.setFieldValue("far-total", total);
   };
 
   const onFinish = (values: any) => {
-    console.log('--------values-----------', values);
+    console.log("--------values-----------", values);
     const body = {
       ...values,
       siteInspectionDurationStart: moment(values?.siteInspectionDurationStart)
-        .startOf('day')
+        .startOf("day")
         .unix(),
-      siteInspectionDurationEnd: moment(values?.siteInspectionDurationEnd).startOf('day').unix(),
+      siteInspectionDurationEnd: moment(values?.siteInspectionDurationEnd)
+        .startOf("day")
+        .unix(),
       onSiteInspection: values?.onSiteInspection.map((item: any) => {
         return {
           ...item,
-          activityPerformedDate: moment(item?.activityPerformedDate).startOf('day').unix(),
+          activityPerformedDate: moment(item?.activityPerformedDate)
+            .startOf("day")
+            .unix(),
         };
       }),
       interviewees: values?.interviewees.map((item: any) => {
         return {
           ...item,
-          date: moment.unix(item?.date).startOf('day').unix(),
+          date: moment.unix(item?.date).startOf("day").unix(),
         };
       }),
     };
@@ -177,12 +189,14 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                 <Col xl={24} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('verificationReport:m_deskReview')}
-                      name="m_deskReview"
+                      label={t("verificationReport:meansOfVerification")}
+                      name="m_meansOfVerification"
                       rules={[
                         {
                           required: true,
-                          message: `${t('verificationReport:m_deskReview')} ${t('isRequired')}`,
+                          message: `${t(
+                            "verificationReport:meansOfVerification"
+                          )} ${t("isRequired")}`,
                         },
                       ]}
                     >
@@ -192,7 +206,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                     {/* On-site inspection table start */}
                     <>
                       <h4 className="form-section-heading">
-                        {t('verificationReport:onSiteInspection')}
+                        {t("verificationReport:onSiteInspection")}
                       </h4>
                       <div className="onSiteInspection-table mg-bottom-2">
                         <Row>
@@ -203,17 +217,19 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
                                   },
                                 },
@@ -222,7 +238,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               <DatePicker
                                 size="small"
                                 disabledDate={(currentDate: any) =>
-                                  currentDate < moment().startOf('day')
+                                  currentDate < moment().startOf("day")
                                 }
                                 disabled={disableFields}
                               />
@@ -233,17 +249,19 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
                                   },
                                 },
@@ -252,7 +270,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               <DatePicker
                                 size="small"
                                 disabledDate={(currentDate: any) =>
-                                  currentDate < moment().startOf('day')
+                                  currentDate < moment().startOf("day")
                                 }
                                 disabled={disableFields}
                               />
@@ -285,12 +303,12 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                 {fields.map(({ key, name, ...restFields }) => (
                                   <>
                                     <Col xl={1} className="col-1 col" key={key}>
-                                      {name + 1 < 10 && '0'}
+                                      {name + 1 < 10 && "0"}
                                       {name + 1}
                                     </Col>
                                     <Col xl={6} className="other-cols col">
                                       <Form.Item
-                                        name={[name, 'activity']}
+                                        name={[name, "activity"]}
                                         rules={[
                                           {
                                             required: true,
@@ -299,13 +317,16 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                           {
                                             validator: async (rule, value) => {
                                               if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
+                                                String(value).trim() === "" ||
+                                                String(value).trim() ===
+                                                  undefined ||
                                                 value === null ||
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('verificationReport:required')}`
+                                                  `${t(
+                                                    "verificationReport:required"
+                                                  )}`
                                                 );
                                               }
                                             },
@@ -317,7 +338,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                     </Col>
                                     <Col xl={5} className="other-cols col">
                                       <Form.Item
-                                        name={[name, 'siteLocation']}
+                                        name={[name, "siteLocation"]}
                                         rules={[
                                           {
                                             required: true,
@@ -326,13 +347,16 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                           {
                                             validator: async (rule, value) => {
                                               if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
+                                                String(value).trim() === "" ||
+                                                String(value).trim() ===
+                                                  undefined ||
                                                 value === null ||
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('verificationReport:required')}`
+                                                  `${t(
+                                                    "verificationReport:required"
+                                                  )}`
                                                 );
                                               }
                                             },
@@ -344,7 +368,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                     </Col>
                                     <Col xl={5} className="other-cols col">
                                       <Form.Item
-                                        name={[name, 'activityPerformedDate']}
+                                        name={[name, "activityPerformedDate"]}
                                         rules={[
                                           {
                                             required: true,
@@ -353,13 +377,16 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                           {
                                             validator: async (rule, value) => {
                                               if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
+                                                String(value).trim() === "" ||
+                                                String(value).trim() ===
+                                                  undefined ||
                                                 value === null ||
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('verificationReport:required')}`
+                                                  `${t(
+                                                    "verificationReport:required"
+                                                  )}`
                                                 );
                                               }
                                             },
@@ -369,7 +396,8 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                         <DatePicker
                                           size="small"
                                           disabledDate={(currentDate: any) =>
-                                            currentDate < moment().startOf('day')
+                                            currentDate <
+                                            moment().startOf("day")
                                           }
                                           disabled={disableFields}
                                         />
@@ -377,7 +405,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                     </Col>
                                     <Col xl={4} className="other-cols col">
                                       <Form.Item
-                                        name={[name, 'teamMember']}
+                                        name={[name, "teamMember"]}
                                         rules={[
                                           {
                                             required: true,
@@ -386,15 +414,16 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                           {
                                             validator: async (rule, value) => {
                                               if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
+                                                String(value).trim() === "" ||
+                                                String(value).trim() ===
+                                                  undefined ||
                                                 value === null ||
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('verificationReport:provider')} ${t(
-                                                    'isRequired'
-                                                  )}`
+                                                  `${t(
+                                                    "verificationReport:provider"
+                                                  )} ${t("isRequired")}`
                                                 );
                                               }
                                             },
@@ -445,7 +474,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                     {/* Interviews table start */}
                     <>
-                      <h4 className="form-section-heading">{t('verificationReport:interviews')}</h4>
+                      <h4 className="form-section-heading">
+                        {t("verificationReport:interviews")}
+                      </h4>
                       <div className="interviews-table">
                         <Row className="header">
                           <Col xl={1} className="col-1 col">
@@ -458,13 +489,19 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               </Col>
                             </Row>
                             <Row>
-                              <Col xl={8} className="interviewee-col-subCols-first">
+                              <Col
+                                xl={8}
+                                className="interviewee-col-subCols-first"
+                              >
                                 Last name
                               </Col>
                               <Col xl={8} className="interviewee-col-subCols">
                                 First name
                               </Col>
-                              <Col xl={8} className="interviewee-col-subCols-last">
+                              <Col
+                                xl={8}
+                                className="interviewee-col-subCols-last"
+                              >
                                 Affliation
                               </Col>
                             </Row>
@@ -487,12 +524,12 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                 {fields.map(({ key, name, ...restFields }) => (
                                   <>
                                     <Col xl={1} className="col-1 col">
-                                      {name + 1 < 10 && '0'}
+                                      {name + 1 < 10 && "0"}
                                       {name + 1}
                                     </Col>
                                     <Col xl={3} className="other-cols col">
                                       <Form.Item
-                                        name={[name, 'lastName']}
+                                        name={[name, "lastName"]}
                                         rules={[
                                           {
                                             required: true,
@@ -501,13 +538,16 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                           {
                                             validator: async (rule, value) => {
                                               if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
+                                                String(value).trim() === "" ||
+                                                String(value).trim() ===
+                                                  undefined ||
                                                 value === null ||
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('validationReport:required')}`
+                                                  `${t(
+                                                    "validationReport:required"
+                                                  )}`
                                                 );
                                               }
                                             },
@@ -519,7 +559,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                     </Col>
                                     <Col xl={3} className="other-cols col">
                                       <Form.Item
-                                        name={[name, 'firstName']}
+                                        name={[name, "firstName"]}
                                         rules={[
                                           {
                                             required: true,
@@ -528,13 +568,16 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                           {
                                             validator: async (rule, value) => {
                                               if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
+                                                String(value).trim() === "" ||
+                                                String(value).trim() ===
+                                                  undefined ||
                                                 value === null ||
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('validationReport:required')}`
+                                                  `${t(
+                                                    "validationReport:required"
+                                                  )}`
                                                 );
                                               }
                                             },
@@ -546,7 +589,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                     </Col>
                                     <Col xl={3} className="other-cols col">
                                       <Form.Item
-                                        name={[name, 'affliationName']}
+                                        name={[name, "affliationName"]}
                                         rules={[
                                           {
                                             required: true,
@@ -555,13 +598,16 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                           {
                                             validator: async (rule, value) => {
                                               if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
+                                                String(value).trim() === "" ||
+                                                String(value).trim() ===
+                                                  undefined ||
                                                 value === null ||
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('validationReport:required')}`
+                                                  `${t(
+                                                    "validationReport:required"
+                                                  )}`
                                                 );
                                               }
                                             },
@@ -573,7 +619,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                     </Col>
                                     <Col xl={3} className="other-cols col">
                                       <Form.Item
-                                        name={[name, 'date']}
+                                        name={[name, "date"]}
                                         rules={[
                                           {
                                             required: true,
@@ -582,13 +628,16 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                           {
                                             validator: async (rule, value) => {
                                               if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
+                                                String(value).trim() === "" ||
+                                                String(value).trim() ===
+                                                  undefined ||
                                                 value === null ||
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('validationReport:required')}`
+                                                  `${t(
+                                                    "validationReport:required"
+                                                  )}`
                                                 );
                                               }
                                             },
@@ -598,7 +647,8 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                         <DatePicker
                                           size="small"
                                           disabledDate={(currentDate: any) =>
-                                            currentDate < moment().startOf('day')
+                                            currentDate <
+                                            moment().startOf("day")
                                           }
                                           disabled={disableFields}
                                         />
@@ -606,7 +656,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                     </Col>
                                     <Col xl={3} className="other-cols col">
                                       <Form.Item
-                                        name={[name, 'subject ']}
+                                        name={[name, "subject "]}
                                         rules={[
                                           {
                                             required: true,
@@ -615,13 +665,16 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                           {
                                             validator: async (rule, value) => {
                                               if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
+                                                String(value).trim() === "" ||
+                                                String(value).trim() ===
+                                                  undefined ||
                                                 value === null ||
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('validationReport:required')}`
+                                                  `${t(
+                                                    "validationReport:required"
+                                                  )}`
                                                 );
                                               }
                                             },
@@ -633,7 +686,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                     </Col>
                                     <Col xl={4} className="other-cols col">
                                       <Form.Item
-                                        name={[name, 'teamMember']}
+                                        name={[name, "teamMember"]}
                                         rules={[
                                           {
                                             required: true,
@@ -642,13 +695,16 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                           {
                                             validator: async (rule, value) => {
                                               if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
+                                                String(value).trim() === "" ||
+                                                String(value).trim() ===
+                                                  undefined ||
                                                 value === null ||
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('validationReport:required')}`
+                                                  `${t(
+                                                    "validationReport:required"
+                                                  )}`
                                                 );
                                               }
                                             },
@@ -698,12 +754,14 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                     {/* Interviews table end */}
 
                     <Form.Item
-                      label={t('verificationReport:samplingApproach')}
+                      label={t("verificationReport:samplingApproach")}
                       name="samplingApproach"
                       rules={[
                         {
                           required: true,
-                          message: `${t('verificationReport:samplingApproach')} ${t('isRequired')}`,
+                          message: `${t(
+                            "verificationReport:samplingApproach"
+                          )} ${t("isRequired")}`,
                         },
                       ]}
                     >
@@ -712,7 +770,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                     {/* Clarification Table start */}
                     <h4 className="form-section-heading">
-                      {t('verificationReport:clarificationRequestsTableTitle')}
+                      {t("verificationReport:clarificationRequestsTableTitle")}
                     </h4>
                     <div className="clarification-requests-table mg-bottom-2">
                       <Row className="header">
@@ -732,7 +790,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                       <div className="body">
                         <Row>
                           <Col xl={15} className="col col-1">
-                            {t('verificationReport:demonstrationPriorCDM')}
+                            {t("verificationReport:demonstrationPriorCDM")}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -740,21 +798,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -763,7 +825,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -774,21 +838,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -797,7 +865,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -808,21 +878,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -831,7 +905,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -840,7 +916,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1">
-                            {t('verificationReport:identificationOfProjectType')}
+                            {t(
+                              "verificationReport:identificationOfProjectType"
+                            )}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -848,21 +926,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -871,7 +953,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -882,21 +966,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -905,7 +993,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -916,21 +1006,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -939,7 +1033,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -948,7 +1044,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1">
-                            {t('verificationReport:descriptionOfProjectActivity')}
+                            {t(
+                              "verificationReport:descriptionOfProjectActivity"
+                            )}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -956,21 +1054,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -979,7 +1081,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -990,21 +1094,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1013,7 +1121,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1024,21 +1134,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1047,7 +1161,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1056,7 +1172,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1">
-                            {t('verificationReport:applicationMethodologiesSectionHeading')}
+                            {t(
+                              "verificationReport:applicationMethodologiesSectionHeading"
+                            )}
                           </Col>
                           <Col xl={3} className="col other-cols"></Col>
                           <Col xl={3} className="col other-cols"></Col>
@@ -1065,7 +1183,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1 pd-left">
-                            {t('verificationReport:applicationMethodologiesBaselines')}
+                            {t(
+                              "verificationReport:applicationMethodologiesBaselines"
+                            )}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -1073,21 +1193,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1096,7 +1220,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1107,21 +1233,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1130,7 +1260,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1141,21 +1273,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1164,7 +1300,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1173,7 +1311,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1 pd-left">
-                            {t('verificationReport:deviationMethodology')}
+                            {t("verificationReport:deviationMethodology")}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -1181,21 +1319,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1204,7 +1346,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1215,21 +1359,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1238,7 +1386,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1249,21 +1399,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1272,7 +1426,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1281,7 +1437,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1 pd-left">
-                            {t('verificationReport:clarificationOnMethodology')}
+                            {t("verificationReport:clarificationOnMethodology")}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -1289,21 +1445,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1312,7 +1472,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1323,21 +1485,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1346,7 +1512,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1357,21 +1525,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1380,7 +1552,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1389,7 +1563,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1 pd-left">
-                            {t('verificationReport:projectBoundarySources')}
+                            {t("verificationReport:projectBoundarySources")}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -1397,21 +1571,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1420,7 +1598,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1431,21 +1611,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1454,7 +1638,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1465,21 +1651,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1488,7 +1678,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1497,7 +1689,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1 pd-left">
-                            {t('verificationReport:baselineScenario')}
+                            {t("verificationReport:baselineScenario")}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -1505,21 +1697,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1528,7 +1724,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1539,21 +1737,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1562,7 +1764,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1573,21 +1777,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1596,7 +1804,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1605,7 +1815,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1 pd-left">
-                            {t('verificationReport:demonstrationOfAdditionality')}
+                            {t(
+                              "verificationReport:demonstrationOfAdditionality"
+                            )}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -1613,21 +1825,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1636,7 +1852,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1647,21 +1865,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1670,7 +1892,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1681,21 +1905,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1704,7 +1932,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1713,7 +1943,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1 pd-left">
-                            {t('verificationReport:estimationOfEmissionReduction')}
+                            {t(
+                              "verificationReport:estimationOfEmissionReduction"
+                            )}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -1721,21 +1953,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1744,7 +1980,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1755,21 +1993,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1778,7 +2020,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1789,21 +2033,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1812,7 +2060,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1821,7 +2071,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1 pd-left">
-                            {t('verificationReport:monitoringPlan')}
+                            {t("verificationReport:monitoringPlan")}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -1829,21 +2079,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1852,7 +2106,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1863,21 +2119,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1886,7 +2146,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1897,21 +2159,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1920,7 +2186,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1929,7 +2197,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1">
-                            {t('verificationReport:startDateCreditingPeriod')}
+                            {t("verificationReport:startDateCreditingPeriod")}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -1937,21 +2205,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1960,7 +2232,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -1971,21 +2245,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -1994,7 +2272,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2005,21 +2285,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2028,7 +2312,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2037,7 +2323,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1">
-                            {t('verificationReport:environmentImpacts')}
+                            {t("verificationReport:environmentImpacts")}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -2045,21 +2331,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2068,7 +2358,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2079,21 +2371,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2102,7 +2398,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2113,21 +2411,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2136,7 +2438,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2145,7 +2449,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1">
-                            {t('verificationReport:localStakeholderConsultation')}
+                            {t(
+                              "verificationReport:localStakeholderConsultation"
+                            )}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -2153,21 +2459,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2176,7 +2486,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2187,21 +2499,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2210,7 +2526,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2221,21 +2539,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2244,7 +2566,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2252,7 +2576,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                         </Row>
                         <Row>
                           <Col xl={15} className="col col-1">
-                            {t('verificationReport:sustainableDevelopment')}
+                            {t("verificationReport:sustainableDevelopment")}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -2260,21 +2584,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2283,7 +2611,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2294,21 +2624,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2317,7 +2651,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2328,21 +2664,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2351,7 +2691,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2360,7 +2702,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1">
-                            {t('verificationReport:approval')}
+                            {t("verificationReport:approval")}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -2368,21 +2710,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2391,7 +2737,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2402,21 +2750,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2425,7 +2777,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2436,21 +2790,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2459,7 +2817,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2468,7 +2828,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1">
-                            {t('verificationReport:authorization')}
+                            {t("verificationReport:authorization")}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -2476,21 +2836,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2499,7 +2863,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2510,21 +2876,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2533,7 +2903,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2544,21 +2916,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2567,7 +2943,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2576,7 +2954,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1">
-                            {t('verificationReport:modalitiesOfCommunication')}
+                            {t("verificationReport:modalitiesOfCommunication")}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -2584,21 +2962,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2607,7 +2989,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2618,21 +3002,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2641,7 +3029,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2652,21 +3042,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2675,7 +3069,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2684,7 +3080,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
 
                         <Row>
                           <Col xl={15} className="col col-1">
-                            {t('verificationReport:globalStakeholderConsultation')}
+                            {t(
+                              "verificationReport:globalStakeholderConsultation"
+                            )}
                           </Col>
                           <Col xl={3} className="col other-cols">
                             <Form.Item
@@ -2692,21 +3090,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2715,7 +3117,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2726,21 +3130,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2749,7 +3157,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2760,21 +3170,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2783,7 +3197,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2814,7 +3230,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               //   ]}
                             >
                               <Input
-                                placeholder={`${t('verificationReport:others')}`}
+                                placeholder={`${t(
+                                  "verificationReport:others"
+                                )}`}
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2848,7 +3266,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               //   ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCL(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCL(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2882,7 +3302,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               //   ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalCar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalCar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2916,7 +3338,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               //   ]}
                             >
                               <Input
-                                onChange={(e) => calculateTotalFar(Number(e.target.value))}
+                                onChange={(e) =>
+                                  calculateTotalFar(Number(e.target.value))
+                                }
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -2933,21 +3357,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2964,21 +3392,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -2995,21 +3427,25 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: '',
+                                  message: "",
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`${t('verificationReport:required')}`);
+                                      throw new Error(
+                                        `${t("verificationReport:required")}`
+                                      );
                                     }
 
                                     if (isNaN(value)) {
-                                      return Promise.reject(new Error('Should be a number'));
+                                      return Promise.reject(
+                                        new Error("Should be a number")
+                                      );
                                     }
 
                                     return Promise.resolve();
@@ -3027,22 +3463,22 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                   </div>
                 </Col>
               </Row>
-              <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev} disabled={false}>
-                  {t('verificationReport:back')}
+              <Row justify={"end"} className="step-actions-end">
+                <Button danger size={"large"} onClick={prev} disabled={false}>
+                  {t("verificationReport:back")}
                 </Button>
                 {disableFields ? (
                   <Button type="primary" onClick={next}>
-                    {t('verificationReport:next')}
+                    {t("verificationReport:next")}
                   </Button>
                 ) : (
                   <Button
                     type="primary"
-                    size={'large'}
-                    htmlType={'submit'}
+                    size={"large"}
+                    htmlType={"submit"}
                     // onClick={next}
                   >
-                    {t('verificationReport:next')}
+                    {t("verificationReport:next")}
                   </Button>
                 )}
               </Row>

@@ -1,20 +1,28 @@
-import { Button, Col, Form, Row, Upload } from 'antd';
+import { Button, Col, Form, Row, Upload } from "antd";
 
-import TextArea from 'antd/lib/input/TextArea';
-import { UploadOutlined } from '@ant-design/icons';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { useLocation } from 'react-router-dom';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
-import { DocumentStatus } from '../../Definitions/Enums/document.status';
-import i18n from '../Internationalization/i18n';
-import { VerificationStepProps } from './StepProps';
+import TextArea from "antd/lib/input/TextArea";
+import { UploadOutlined } from "@ant-design/icons";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
+import { useLocation } from "react-router-dom";
+import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
+import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
+import { DocumentStatus } from "../../Definitions/Enums/document.status";
+import i18n from "../Internationalization/i18n";
+import { VerificationStepProps } from "./StepProps";
 
 export const ExecutiveSummaryStep = (props: VerificationStepProps) => {
-  const { current, form, formMode, prev, next, handleValuesUpdate, disableFields } = props;
+  const {
+    current,
+    form,
+    formMode,
+    prev,
+    next,
+    handleValuesUpdate,
+    disableFields,
+  } = props;
   const { userInfoState } = useUserContext();
-  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
@@ -28,7 +36,7 @@ export const ExecutiveSummaryStep = (props: VerificationStepProps) => {
     // const tempValues: any = {
     //   executiveSummary: values?.e_executiveSummary,
     // };
-    console.log('--------values-----------', values);
+    console.log("--------values-----------", values);
     const body = { ...values };
     handleValuesUpdate({
       executiveSummary: body,
@@ -58,14 +66,14 @@ export const ExecutiveSummaryStep = (props: VerificationStepProps) => {
                 <Col xl={24} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t('verificationReport:e_executiveSummary')}
+                      label={t("verificationReport:e_executiveSummary")}
                       name="e_executiveSummary"
                       rules={[
                         {
                           required: true,
-                          message: `${t('verificationReport:e_executiveSummary')} ${t(
-                            'isRequired'
-                          )}`,
+                          message: `${t(
+                            "verificationReport:e_executiveSummary"
+                          )} ${t("isRequired")}`,
                         },
                       ]}
                     >
@@ -74,22 +82,22 @@ export const ExecutiveSummaryStep = (props: VerificationStepProps) => {
                   </div>
                 </Col>
               </Row>
-              <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev} disabled={false}>
-                  {t('verificationReport:back')}
+              <Row justify={"end"} className="step-actions-end">
+                <Button danger size={"large"} onClick={prev} disabled={false}>
+                  {t("verificationReport:back")}
                 </Button>
                 {disableFields ? (
                   <Button type="primary" onClick={next}>
-                    {t('monitoringReport:next')}
+                    {t("monitoringReport:next")}
                   </Button>
                 ) : (
                   <Button
                     type="primary"
-                    size={'large'}
-                    htmlType={'submit'}
+                    size={"large"}
+                    htmlType={"submit"}
                     // onClick={next}
                   >
-                    {t('monitoringReport:next')}
+                    {t("monitoringReport:next")}
                   </Button>
                 )}
               </Row>

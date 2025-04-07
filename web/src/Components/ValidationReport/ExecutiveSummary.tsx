@@ -1,16 +1,25 @@
-import { ValidationStepsProps } from './StepProps';
-import { Row, Button, Form, Input, Col, Upload, DatePicker } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
-import TextArea from 'antd/lib/input/TextArea';
-import { ProcessSteps } from './ValidationStepperComponent';
-import moment from 'moment';
-import { fileUploadValueExtract } from '../../Utils/utilityHelper';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { ValidationStepsProps } from "./StepProps";
+import { Row, Button, Form, Input, Col, Upload, DatePicker } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import TextArea from "antd/lib/input/TextArea";
+import { ProcessSteps } from "./ValidationStepperComponent";
+import moment from "moment";
+import { fileUploadValueExtract } from "../../Utils/utilityHelper";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
+import { useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 const ExecutiveSummary = (props: ValidationStepsProps) => {
-  const { prev, next, form, current, t, countries, handleValuesUpdate, disableFields } = props;
+  const {
+    prev,
+    next,
+    form,
+    current,
+    t,
+    countries,
+    handleValuesUpdate,
+    disableFields,
+  } = props;
 
   // const { state } = useLocation();
   // const [disableFields, setDisableFields] = useState<boolean>(false);
@@ -21,8 +30,8 @@ const ExecutiveSummary = (props: ValidationStepsProps) => {
   //   }
   // }, []);
 
-  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   const normFile = (e: any) => {
@@ -75,29 +84,41 @@ const ExecutiveSummary = (props: ValidationStepsProps) => {
             >
               <Form.Item
                 className="full-width-form-item"
-                label={`${t('validationReport:summaryDescription')}`}
+                label={`${t("validationReport:summaryDescription")}`}
                 name="summaryDescription"
                 rules={[
                   {
                     required: true,
-                    message: `${t('validationReport:summaryDescription')} ${t('isRequired')}`,
+                    message: `${t("validationReport:summaryDescription")} ${t(
+                      "isRequired"
+                    )}`,
                   },
                 ]}
               >
                 <TextArea disabled={disableFields} rows={4} />
               </Form.Item>
 
-              <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev} disabled={false}>
-                  {t('validationReport:prev')}
+              <Row justify={"end"} className="step-actions-end">
+                <Button danger size={"large"} onClick={prev} disabled={false}>
+                  {t("validationReport:prev")}
                 </Button>
                 {disableFields ? (
-                  <Button type="primary" size={'large'} disabled={false} onClick={next}>
-                    {t('validationReport:next')}
+                  <Button
+                    type="primary"
+                    size={"large"}
+                    disabled={false}
+                    onClick={next}
+                  >
+                    {t("validationReport:next")}
                   </Button>
                 ) : (
-                  <Button type="primary" size={'large'} disabled={false} htmlType="submit">
-                    {t('validationReport:next')}
+                  <Button
+                    type="primary"
+                    size={"large"}
+                    disabled={false}
+                    htmlType="submit"
+                  >
+                    {t("validationReport:next")}
                   </Button>
                 )}
               </Row>

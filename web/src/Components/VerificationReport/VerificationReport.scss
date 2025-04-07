@@ -1,6 +1,6 @@
-@import '../../Styles/colors.addProgramme.scss';
-@import '../../Styles/colors.role.scss';
-@import '../../Styles/variables.scss';
+@use '../../Styles/colors.addProgramme.scss';
+@use '../../Styles/colors.role.scss' as colors2;
+@use '../../Styles/variables.scss';
 
 .to-lable {
   text-align: center;
@@ -34,7 +34,7 @@
   }
 
   &-section {
-    background-color: $form-sections-bg-color;
+    background-color: variables.$form-sections-bg-color;
     padding: 16px;
     border: 1px solid #dddddd;
   }
@@ -54,19 +54,19 @@
     .main {
       font-size: 1.25rem;
       font-weight: 500;
-      color: $primary-color;
+      color: variables.$primary-color;
     }
 
     .sub {
       font-size: 0.8rem;
-      color: $title-sub;
+      color: colors.$title-sub;
     }
   }
 
   .forms-container {
     display: flex;
     flex-direction: column;
-    background-color: $common-form-white;
+    background-color: colors.$common-form-white;
     margin: 1rem 0 1rem 0;
     border-radius: 10px;
     padding: 2.5rem 1.5rem 2.5rem 1.5rem;
@@ -132,7 +132,7 @@
   }
 
   .ant-upload-list-item-name {
-    color: $primary-color;
+    color: variables.$primary-color;
   }
 
   .step-actions {
@@ -241,13 +241,13 @@
     font-size: 2.2rem;
     font-weight: 800;
     margin-right: 0.4rem;
-    color: $steps-count;
+    color: colors.$steps-count;
   }
 
   .title {
     font-size: 1rem;
     font-weight: 600;
-    color: $steps-title;
+    color: colors.$steps-title;
   }
 }
 .verification-team-member-table {
@@ -422,14 +422,14 @@
         border-top: none;
         border-right: none;
         border-left: none;
-        padding: 10px 15px;
+        padding: 8px;
       }
 
       &-subCols-last {
         background-color: #fbfbfb;
         border: 1px solid #c6c6c6;
         border-top: none;
-        padding: 10px 15px;
+        padding: 8px;
       }
     }
 
@@ -581,25 +581,17 @@
   }
 }
 .appendix-table-section {
-  background-color: $form-sections-bg-color;
+  background-color: variables.$form-sections-bg-color;
   padding: 16px;
 }
 
 .appendix-title {
   font-size: 18px;
   margin-top: 36px;
-  font-weight: 500;
-  color: #1c1b1bcc !important;
-
-  .i {
+  color: #3a3541cc;
+  i {
     color: rgba(58, 53, 65, 0.5);
   }
-}
-.appendix-sub-title {
-  font-size: 18px;
-  margin-top: 36px;
-  color: rgba(49, 45, 52, 0.5);
-  font-weight: 400;
 }
 
 .appendix-documents-reviewed-table {

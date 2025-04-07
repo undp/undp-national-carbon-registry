@@ -1,4 +1,4 @@
-@import '../../Styles/variables.scss';
+@use '../../Styles/variables.scss';
 
 .programme-sl-view {
   padding: 0px 50px;
@@ -52,9 +52,9 @@
     width: 100px;
     height: 100px;
     border-radius: 100%;
-    background-color: $dev-bg-color;
+    background-color: variables.$dev-bg-color;
     font-size: 50px;
-    color: $dev-color;
+    color: variables.$dev-color;
     text-align: center;
     padding: 12px;
     margin: auto;
@@ -69,7 +69,7 @@
   }
 
   .separator {
-    border-bottom: 1px solid $sep-line-color;
+    border-bottom: 1px solid variables.$sep-line-color;
     width: 100%;
   }
 
@@ -90,22 +90,22 @@
     width: 60px;
     height: 60px;
     border-radius: 100%;
-    background-color: $dev-bg-color;
+    background-color: variables.$dev-bg-color;
     font-size: 30px;
-    color: $dev-color;
+    color: variables.$dev-color;
     text-align: center;
     padding: 6px;
     margin: 0 auto;
   }
 
   .cert-name {
-    color: $title-text-color;
+    color: variables.$title-text-color;
     margin-top: 14px;
     font-weight: 600;
   }
 
   .cert-date {
-    color: $body-text-color;
+    color: variables.$body-text-color;
     font-weight: 400;
     font-size: 0.8rem;
   }
@@ -120,18 +120,18 @@
     .progress-bar {
       width: calc(max(200px, 100%));
       font-size: 0.8rem;
-      color: $body-text-color;
+      color: variables.$body-text-color;
       margin: 15px auto 0px;
     }
 
     .ant-progress-success-bg,
     .ant-progress-bg {
-      background-color: $primary-color;
+      background-color: variables.$primary-color;
     }
   }
 
   .programme-name {
-    color: $title-text-color;
+    color: variables.$title-text-color;
     margin-top: 14px;
     font-weight: 600;
     display: flex;
@@ -139,10 +139,10 @@
 
   .file-name {
     cursor: pointer;
-    color: $body-text-color;
+    color: variables.$body-text-color;
   }
   .file-name:hover {
-    color: $primary-color;
+    color: variables.$primary-color;
   }
 }
 
@@ -159,7 +159,7 @@
     display: block;
     margin-left: 0px;
     font-size: 0.8rem;
-    color: $light-text-color;
+    color: variables.$light-text-color;
     margin-top: -12px;
     font-weight: 500;
   }
@@ -168,7 +168,7 @@
     > .ant-steps-item-container
     > .ant-steps-item-content
     > .ant-steps-item-title {
-    color: $title-text-color;
+    color: variables.$title-text-color;
     font-size: 0.8rem;
     font-weight: 600;
   }
@@ -179,7 +179,7 @@
     > .ant-steps-item-description {
     font-size: 0.8rem;
     font-weight: 500;
-    color: $body-text-color;
+    color: variables.$body-text-color;
   }
 
   .step-icon {
@@ -254,7 +254,7 @@
 
 .loc-tag {
   padding: 10px 20px 0px 0px;
-  color: $body-text-color;
+  color: variables.$body-text-color;
 }
 
 .loc-icon {
@@ -268,8 +268,8 @@
 }
 
 .apexcharts-datalabels-group {
-  font-family: $primary-font-family !important;
-  color: $title-text-color !important;
+  font-family: variables.$primary-font-family !important;
+  color: variables.$title-text-color !important;
 }
 
 .remark {
@@ -301,20 +301,20 @@
       font-size: 1.2rem;
       line-height: 0.5rem;
       cursor: pointer;
-      color: $title-text-color;
+      color: variables.$title-text-color;
     }
   }
 }
 
 .mapboxgl-popup-tip {
-  border-bottom-color: $primary-color !important;
-  border-top-color: $primary-color !important;
+  border-bottom-color: variables.$primary-color !important;
+  border-top-color: variables.$primary-color !important;
 }
 
 .mapboxgl-popup-content {
-  background-color: $primary-color;
+  background-color: variables.$primary-color;
   color: white;
-  font-family: $primary-font-family;
+  font-family: variables.$primary-font-family;
   font-weight: 500;
   min-width: 60px;
   height: 30px;

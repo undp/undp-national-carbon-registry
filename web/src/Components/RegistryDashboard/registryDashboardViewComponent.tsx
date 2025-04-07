@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Col,
@@ -11,10 +11,14 @@ import {
   Dropdown,
   Space,
   MenuProps,
-} from 'antd';
-import './dashboard.scss';
-import { BookOutlined, DownloadOutlined, CaretDownOutlined } from '@ant-design/icons';
-import moment from 'moment';
+} from "antd";
+import "./dashboard.scss";
+import {
+  BookOutlined,
+  DownloadOutlined,
+  CaretDownOutlined,
+} from "@ant-design/icons";
+import moment from "moment";
 import {
   ClockHistory,
   BoxArrowInRight,
@@ -24,14 +28,14 @@ import {
   ShieldCheck,
   Gem,
   InfoCircle,
-} from 'react-bootstrap-icons';
+} from "react-bootstrap-icons";
 import {
   ChartSeriesItem,
   totalCertifiedCreditsSeriesInitialValues,
   totalCreditsSeriesInitialValues,
   getTotalProgrammesInitialValues,
   getTotalProgrammesSectorInitialValues,
-} from './dashboardTypesInitialValues';
+} from "./dashboardTypesInitialValues";
 import {
   optionDonutPieA,
   optionDonutPieB,
@@ -39,90 +43,115 @@ import {
   totalCreditsOptions,
   totalProgrammesOptions,
   totalProgrammesOptionsSub,
-} from './registryChartOptions';
-import { ProgrammeRejectAndTransferComponent } from './programmeRejectAndTransferComponent';
-import { RegistryPieChartsStatComponent } from './registryPieChartStatComponent';
-import { RegistryBarChartsStatComponent } from './registryBarChartStatsComponent';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { SystemNames } from '../../Definitions/Enums/statsCards.type.enum';
+} from "./registryChartOptions";
+import { ProgrammeRejectAndTransferComponent } from "./programmeRejectAndTransferComponent";
+import { RegistryPieChartsStatComponent } from "./registryPieChartStatComponent";
+import { RegistryBarChartsStatComponent } from "./registryBarChartStatsComponent";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
+import { SystemNames } from "../../Definitions/Enums/statsCards.type.enum";
 import {
   MapSourceData,
   MapTypes,
   MarkerData,
-} from '../../Definitions/Definitions/mapComponent.definitions';
+} from "../../Definitions/Definitions/mapComponent.definitions";
 import {
   getStageEnumVal,
   addRoundNumber,
   addCommSep,
-} from '../../Definitions/Definitions/programme.definitions';
-import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
-import { ProgrammeStageLegend, ProgrammeStageR } from '../../Definitions/Enums/programmeStage.enum';
-import { Sector } from '../../Definitions/Enums/sector.enum';
-import { LegendItem } from '../LegendItem/legendItem';
-import { MapComponent } from '../Maps/mapComponent';
-import { StasticCard } from '../StatisticsCard/statisticsCard';
-import { API_PATHS } from '../../Config/apiConfig';
-import { ROUTES } from '../../Config/uiRoutingConfig';
+} from "../../Definitions/Definitions/programme.definitions";
+import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
+import {
+  ProgrammeStageLegend,
+  ProgrammeStageR,
+} from "../../Definitions/Enums/programmeStage.enum";
+import { Sector } from "../../Definitions/Enums/sector.enum";
+import { LegendItem } from "../LegendItem/legendItem";
+import { MapComponent } from "../Maps/mapComponent";
+import { StasticCard } from "../StatisticsCard/statisticsCard";
+import { API_PATHS } from "../../Config/apiConfig";
+import { ROUTES } from "../../Config/uiRoutingConfig";
 const { RangePicker } = DatePicker;
 
 export const RegistryDashboardComponent = (props: any) => {
-  const { Chart, t, ButtonGroup, Link, isMultipleDashboardsVisible = false } = props;
+  const {
+    Chart,
+    t,
+    ButtonGroup,
+    Link,
+    isMultipleDashboardsVisible = false,
+  } = props;
   const { get, post, delete: del, statServerUrl } = useConnection();
   const { userInfoState } = useUserContext();
-  const [loadingWithoutTimeRange, setLoadingWithoutTimeRange] = useState<boolean>(false);
+  const [loadingWithoutTimeRange, setLoadingWithoutTimeRange] =
+    useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingCharts, setLoadingCharts] = useState<boolean>(false);
   const [totalProjects, setTotalProjects] = useState<number>(0);
-  const [pendingProjectsWithoutTimeRange, setPendingProjectsWithoutTimeRange] = useState<number>(0);
+  const [pendingProjectsWithoutTimeRange, setPendingProjectsWithoutTimeRange] =
+    useState<number>(0);
   const [pendingProjects, setPendingProjects] = useState<number>(0);
   const [rejectedProjects, setRejectedProjects] = useState<number>(0);
   const [authorisedProjects, setAuthorisedProjects] = useState<number>(0);
   const [creditBalance, setCreditBalance] = useState<number>(0);
-  const [creditBalanceWithoutTimeRange, setCreditBalanceWithoutTimeRange] = useState<number>(0);
-  const [creditCertiedBalanceWithoutTimeRange, setCreditCertifiedBalanceWithoutTimeRange] =
+  const [creditBalanceWithoutTimeRange, setCreditBalanceWithoutTimeRange] =
     useState<number>(0);
-  const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([1, 1, 0, 0]);
-  const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<number[]>([1, 1, 0]);
+  const [
+    creditCertiedBalanceWithoutTimeRange,
+    setCreditCertifiedBalanceWithoutTimeRange,
+  ] = useState<number>(0);
+  const [creditsPieSeries, setCreditPieSeries] = useState<number[]>([
+    1, 1, 0, 0,
+  ]);
+  const [creditsCertifiedPieSeries, setCreditCertifiedPieSeries] = useState<
+    number[]
+  >([1, 1, 0]);
   const [creditsPieChartTotal, setCreditsPieChartTotal] = useState<any>(0);
-  const [certifiedCreditsPieChartTotal, setCertifiedCreditsPieChartTotal] = useState<any>(0);
+  const [certifiedCreditsPieChartTotal, setCertifiedCreditsPieChartTotal] =
+    useState<any>(0);
 
   const [startTime, setStartTime] = useState<number>(
-    Date.parse(String(moment().subtract('13', 'days').startOf('day')))
+    Date.parse(String(moment().subtract("13", "days").startOf("day")))
   );
-  const [endTime, setEndTime] = useState<number>(Date.parse(String(moment().endOf('day'))));
-  const [categoryType, setCategoryType] = useState<string>('overall');
+  const [endTime, setEndTime] = useState<number>(
+    Date.parse(String(moment().endOf("day")))
+  );
+  const [categoryType, setCategoryType] = useState<string>("overall");
 
   // states for totalProgrammes chart
-  const [totalProgrammesSeries, setTotalProgrammesSeries] = useState<ChartSeriesItem[]>(
-    getTotalProgrammesInitialValues()
-  );
-  const [totalProgrammesOptionsLabels, setTotalProgrammesOptionsLabels] = useState<any[]>([]);
+  const [totalProgrammesSeries, setTotalProgrammesSeries] = useState<
+    ChartSeriesItem[]
+  >(getTotalProgrammesInitialValues());
+  const [totalProgrammesOptionsLabels, setTotalProgrammesOptionsLabels] =
+    useState<any[]>([]);
 
   // states for totalProgrammes sub sector chart
-  const [totalProgrammesSectorSeries, setTotalProgrammesSectorSeries] = useState<ChartSeriesItem[]>(
-    getTotalProgrammesSectorInitialValues()
-  );
-  const [totalProgrammesSectorOptionsLabels, setTotalProgrammesSectorOptionsLabels] = useState<
+  const [totalProgrammesSectorSeries, setTotalProgrammesSectorSeries] =
+    useState<ChartSeriesItem[]>(getTotalProgrammesSectorInitialValues());
+  const [
+    totalProgrammesSectorOptionsLabels,
+    setTotalProgrammesSectorOptionsLabels,
+  ] = useState<any[]>([]);
+  // states for totalCredits chart
+  const [totalCreditsSeries, setTotalCreditsSeries] = useState<
+    ChartSeriesItem[]
+  >(totalCreditsSeriesInitialValues);
+  const [totalCreditsOptionsLabels, setTotalCreditsOptionsLabels] = useState<
     any[]
   >([]);
-  // states for totalCredits chart
-  const [totalCreditsSeries, setTotalCreditsSeries] = useState<ChartSeriesItem[]>(
-    totalCreditsSeriesInitialValues
-  );
-  const [totalCreditsOptionsLabels, setTotalCreditsOptionsLabels] = useState<any[]>([]);
 
   // states for totalCreditsCertified chart
-  const [totalCertifiedCreditsSeries, setTotalCertifiedCreditsSeries] = useState<ChartSeriesItem[]>(
-    totalCertifiedCreditsSeriesInitialValues
-  );
-  const [totalCertifiedCreditsOptionsLabels, setTotalCertifiedCreditsOptionsLabels] = useState<
-    any[]
-  >([]);
+  const [totalCertifiedCreditsSeries, setTotalCertifiedCreditsSeries] =
+    useState<ChartSeriesItem[]>(totalCertifiedCreditsSeriesInitialValues);
+  const [
+    totalCertifiedCreditsOptionsLabels,
+    setTotalCertifiedCreditsOptionsLabels,
+  ] = useState<any[]>([]);
 
   // locations of programmes
   const [programmeLocations, setProgrammeLocations] = useState<any>();
-  const [programmeTransferLocations, setProgrammeTransferLocations] = useState<any>();
+  const [programmeTransferLocations, setProgrammeTransferLocations] =
+    useState<any>();
 
   //certifier view states
   const [programmesCertifed, setProgrammesCertifed] = useState<number>(0);
@@ -130,99 +159,142 @@ export const RegistryDashboardComponent = (props: any) => {
 
   //programmeDeveloper
   const [transferRequestSent, setTransferRequestSent] = useState<number>(0);
-  const [transferRequestReceived, setTransferRequestReceived] = useState<number>(0);
+  const [transferRequestReceived, setTransferRequestReceived] =
+    useState<number>(0);
 
   //last time updates
-  const [lastUpdateProgrammesStatsEpoch, setLastUpdateProgrammesStatsEpoch] = useState<number>(0);
-  const [lastUpdateProgrammesStats, setLastUpdateProgrammesStats] = useState<string>('0');
-
-  const [lastUpdatePendingTransferSentEpoch, setLastUpdatePendingTransferSentEpoch] =
+  const [lastUpdateProgrammesStatsEpoch, setLastUpdateProgrammesStatsEpoch] =
     useState<number>(0);
-  const [lastUpdatePendingTransferSent, setLastUpdatePendingTransferSent] = useState<string>('0');
+  const [lastUpdateProgrammesStats, setLastUpdateProgrammesStats] =
+    useState<string>("0");
 
-  const [lastUpdateCreditBalanceEpoch, setLastUpdateCreditBalanceEpoch] = useState<number>(0);
-  const [lastUpdateCreditBalance, setLastUpdateCreditBalance] = useState<string>('0');
+  const [
+    lastUpdatePendingTransferSentEpoch,
+    setLastUpdatePendingTransferSentEpoch,
+  ] = useState<number>(0);
+  const [lastUpdatePendingTransferSent, setLastUpdatePendingTransferSent] =
+    useState<string>("0");
 
-  const [lastUpdatePendingTransferReceivedEpoch, setLastUpdatePendingTransferReceivedEpoch] =
+  const [lastUpdateCreditBalanceEpoch, setLastUpdateCreditBalanceEpoch] =
     useState<number>(0);
-  const [lastUpdatePendingTransferReceived, setLastUpdatePendingTransferReceived] =
-    useState<string>('0');
+  const [lastUpdateCreditBalance, setLastUpdateCreditBalance] =
+    useState<string>("0");
 
-  const [lastUpdateProgrammesCertifiableEpoch, setLastUpdateProgrammesCertifiableEpoch] =
-    useState<number>(0);
+  const [
+    lastUpdatePendingTransferReceivedEpoch,
+    setLastUpdatePendingTransferReceivedEpoch,
+  ] = useState<number>(0);
+  const [
+    lastUpdatePendingTransferReceived,
+    setLastUpdatePendingTransferReceived,
+  ] = useState<string>("0");
+
+  const [
+    lastUpdateProgrammesCertifiableEpoch,
+    setLastUpdateProgrammesCertifiableEpoch,
+  ] = useState<number>(0);
   const [lastUpdateProgrammesCertifiable, setLastUpdateProgrammesCertifiable] =
-    useState<string>('0');
+    useState<string>("0");
 
-  const [lastUpdateCertifiedCreditsStatsEpoch, setLastUpdateCertifiedCreditsStatsEpoch] =
-    useState<number>(0);
+  const [
+    lastUpdateCertifiedCreditsStatsEpoch,
+    setLastUpdateCertifiedCreditsStatsEpoch,
+  ] = useState<number>(0);
   const [lastUpdateCertifiedCreditsStats, setLastUpdateCertifiedCreditsStats] =
-    useState<string>('0');
+    useState<string>("0");
 
-  const [lastUpdateProgrammesCertifiedEpoch, setLastUpdateProgrammesCertifiedEpoch] =
+  const [
+    lastUpdateProgrammesCertifiedEpoch,
+    setLastUpdateProgrammesCertifiedEpoch,
+  ] = useState<number>(0);
+  const [lastUpdateProgrammesCertified, setLastUpdateProgrammesCertified] =
+    useState<string>("0");
+
+  const [lastUpdateProgrammesStatsCEpoch, setLastUpdateProgrammesStatsCEpoch] =
     useState<number>(0);
-  const [lastUpdateProgrammesCertified, setLastUpdateProgrammesCertified] = useState<string>('0');
+  const [lastUpdateProgrammesStatsC, setLastUpdateProgrammesStatsC] =
+    useState<string>("0");
 
-  const [lastUpdateProgrammesStatsCEpoch, setLastUpdateProgrammesStatsCEpoch] = useState<number>(0);
-  const [lastUpdateProgrammesStatsC, setLastUpdateProgrammesStatsC] = useState<string>('0');
+  const [
+    lastUpdateProgrammesCreditsStatsEpoch,
+    setLastUpdateProgrammesCreditsStatsEpoch,
+  ] = useState<number>(0);
+  const [
+    lastUpdateProgrammesCreditsStats,
+    setLastUpdateProgrammesCreditsStats,
+  ] = useState<string>("0");
 
-  const [lastUpdateProgrammesCreditsStatsEpoch, setLastUpdateProgrammesCreditsStatsEpoch] =
+  const [
+    lastUpdateProgrammesSectorStatsCEpoch,
+    setLastUpdateProgrammesSectorStatsCEpoch,
+  ] = useState<number>(0);
+  const [
+    lastUpdateProgrammesSectorStatsC,
+    setLastUpdateProgrammesSectorStatsC,
+  ] = useState<string>("0");
+  const [lastUpdateTotalCreditsEpoch, setLastUpdateTotalCreditsEpoch] =
     useState<number>(0);
-  const [lastUpdateProgrammesCreditsStats, setLastUpdateProgrammesCreditsStats] =
-    useState<string>('0');
+  const [lastUpdateTotalCredits, setLastUpdateTotalCredits] =
+    useState<string>("0");
 
-  const [lastUpdateProgrammesSectorStatsCEpoch, setLastUpdateProgrammesSectorStatsCEpoch] =
-    useState<number>(0);
-  const [lastUpdateProgrammesSectorStatsC, setLastUpdateProgrammesSectorStatsC] =
-    useState<string>('0');
-  const [lastUpdateTotalCreditsEpoch, setLastUpdateTotalCreditsEpoch] = useState<number>(0);
-  const [lastUpdateTotalCredits, setLastUpdateTotalCredits] = useState<string>('0');
-
-  const [lastUpdateTotalCreditsCertifiedEpoch, setLastUpdateTotalCreditsCertifiedEpoch] =
-    useState<number>(0);
+  const [
+    lastUpdateTotalCreditsCertifiedEpoch,
+    setLastUpdateTotalCreditsCertifiedEpoch,
+  ] = useState<number>(0);
   const [lastUpdateTotalCreditsCertified, setLastUpdateTotalCreditsCertified] =
-    useState<string>('0');
+    useState<string>("0");
 
-  const [lastUpdateTransferLocationsEpoch, setLastUpdateTransferLocationsEpoch] =
-    useState<number>(0);
-  const [lastUpdateTransferLocations, setLastUpdateTransferLocations] = useState<string>('0');
+  const [
+    lastUpdateTransferLocationsEpoch,
+    setLastUpdateTransferLocationsEpoch,
+  ] = useState<number>(0);
+  const [lastUpdateTransferLocations, setLastUpdateTransferLocations] =
+    useState<string>("0");
 
-  const [transferLocationsMapSource, setTransferLocationsMapSource] = useState<MapSourceData>();
+  const [transferLocationsMapSource, setTransferLocationsMapSource] =
+    useState<MapSourceData>();
   const [txLocationMapData, setTxLocationMapData] = useState<any>();
-  const [transferLocationsMapLayer, setTransferLocationsMapLayer] = useState<any>();
+  const [transferLocationsMapLayer, setTransferLocationsMapLayer] =
+    useState<any>();
 
-  const [programmeLocationsMapCenter, setProgrammeLocationsMapCenter] = useState<number[]>([]);
-  const [programmeLocationsMapSource, setProgrammeLocationsMapSource] = useState<MapSourceData>();
-  const [programmeLocationsMapLayer, setProgrammeLocationsMapLayer] = useState<any>();
+  const [programmeLocationsMapCenter, setProgrammeLocationsMapCenter] =
+    useState<number[]>([]);
+  const [programmeLocationsMapSource, setProgrammeLocationsMapSource] =
+    useState<MapSourceData>();
+  const [programmeLocationsMapLayer, setProgrammeLocationsMapLayer] =
+    useState<any>();
 
   const [fileList, setFileList] = useState<any[]>([]);
-  const [selectedFile, setSelectedFile] = useState('-');
-  const [selectedurl, setSelectedurl] = useState<string>('');
-  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
-  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    : '';
+  const [selectedFile, setSelectedFile] = useState("-");
+  const [selectedurl, setSelectedurl] = useState<string>("");
+  const mapType = import.meta.env.REACT_APP_MAP_TYPE
+    ? import.meta.env.REACT_APP_MAP_TYPE
+    : "None";
+  const accessToken = import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    ? import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    : "";
 
   const getAllProgrammeAnalyticsStatsParamsWithoutTimeRange = () => {
     return {
       system: SystemNames.CARBON_REGISTRY,
       stats: [
         {
-          type: 'AGG_PROGRAMME_BY_STATUS',
+          type: "AGG_PROGRAMME_BY_STATUS",
         },
         {
-          type: 'PENDING_TRANSFER_INIT',
+          type: "PENDING_TRANSFER_INIT",
         },
         {
-          type: 'MY_CREDIT',
+          type: "MY_CREDIT",
         },
         {
-          type: 'PENDING_TRANSFER_RECV',
+          type: "PENDING_TRANSFER_RECV",
         },
         {
-          type: 'UNCERTIFIED_BY_ME',
+          type: "UNCERTIFIED_BY_ME",
         },
         {
-          type: 'CERTIFIED_BY_ME',
+          type: "CERTIFIED_BY_ME",
         },
       ],
     };
@@ -233,48 +305,21 @@ export const RegistryDashboardComponent = (props: any) => {
         system: SystemNames.CARBON_REGISTRY,
         stats: [
           {
-            type: 'MY_AGG_PROGRAMME_BY_STATUS',
+            type: "MY_AGG_PROGRAMME_BY_STATUS",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
             },
           },
           {
-            type: 'MY_AGG_AUTH_PROGRAMME_BY_STATUS',
+            type: "MY_AGG_AUTH_PROGRAMME_BY_STATUS",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
             },
           },
           {
-            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-        ],
-      };
-    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'mine') {
-      return {
-        system: SystemNames.CARBON_REGISTRY,
-        stats: [
-          {
-            type: 'CERTIFIED_BY_ME_BY_STATE',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-          {
-            type: 'AUTH_CERTIFIED_BY_ME_BY_STATE',
-            statFilter: {
-              startTime: startTime !== 0 ? startTime : undefined,
-              endTime: endTime !== 0 ? endTime : undefined,
-            },
-          },
-          {
-            type: 'CERTIFIED_REVOKED_BY_ME',
+            type: "MY_CERTIFIED_REVOKED_PROGRAMMES",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -282,26 +327,59 @@ export const RegistryDashboardComponent = (props: any) => {
           },
         ],
       };
-    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'overall') {
+    } else if (
+      userInfoState?.companyRole === "Certifier" &&
+      categoryType === "mine"
+    ) {
       return {
         system: SystemNames.CARBON_REGISTRY,
         stats: [
           {
-            type: 'AGG_PROGRAMME_BY_STATUS',
+            type: "CERTIFIED_BY_ME_BY_STATE",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
             },
           },
           {
-            type: 'AGG_AUTH_PROGRAMME_BY_STATUS',
+            type: "AUTH_CERTIFIED_BY_ME_BY_STATE",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
             },
           },
           {
-            type: 'CERTIFIED_REVOKED_PROGRAMMES',
+            type: "CERTIFIED_REVOKED_BY_ME",
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+        ],
+      };
+    } else if (
+      userInfoState?.companyRole === "Certifier" &&
+      categoryType === "overall"
+    ) {
+      return {
+        system: SystemNames.CARBON_REGISTRY,
+        stats: [
+          {
+            type: "AGG_PROGRAMME_BY_STATUS",
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: "AGG_AUTH_PROGRAMME_BY_STATUS",
+            statFilter: {
+              startTime: startTime !== 0 ? startTime : undefined,
+              endTime: endTime !== 0 ? endTime : undefined,
+            },
+          },
+          {
+            type: "CERTIFIED_REVOKED_PROGRAMMES",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -314,21 +392,21 @@ export const RegistryDashboardComponent = (props: any) => {
         system: SystemNames.CARBON_REGISTRY,
         stats: [
           {
-            type: 'AGG_PROGRAMME_BY_STATUS',
+            type: "AGG_PROGRAMME_BY_STATUS",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
             },
           },
           {
-            type: 'AGG_AUTH_PROGRAMME_BY_STATUS',
+            type: "AGG_AUTH_PROGRAMME_BY_STATUS",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
             },
           },
           {
-            type: 'CERTIFIED_REVOKED_PROGRAMMES',
+            type: "CERTIFIED_REVOKED_PROGRAMMES",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -345,7 +423,7 @@ export const RegistryDashboardComponent = (props: any) => {
         system: SystemNames.CARBON_REGISTRY,
         stats: [
           {
-            type: 'MY_AGG_PROGRAMME_BY_STATUS',
+            type: "MY_AGG_PROGRAMME_BY_STATUS",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -353,7 +431,7 @@ export const RegistryDashboardComponent = (props: any) => {
             },
           },
           {
-            type: 'MY_AGG_PROGRAMME_BY_SECTOR',
+            type: "MY_AGG_PROGRAMME_BY_SECTOR",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -361,7 +439,7 @@ export const RegistryDashboardComponent = (props: any) => {
             },
           },
           {
-            type: 'MY_CERTIFIED_REVOKED_PROGRAMMES',
+            type: "MY_CERTIFIED_REVOKED_PROGRAMMES",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -369,14 +447,14 @@ export const RegistryDashboardComponent = (props: any) => {
             },
           },
           {
-            type: 'MY_TRANSFER_LOCATION',
+            type: "MY_TRANSFER_LOCATION",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
             },
           },
           {
-            type: 'MY_PROGRAMME_LOCATION',
+            type: "MY_PROGRAMME_LOCATION",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -384,12 +462,15 @@ export const RegistryDashboardComponent = (props: any) => {
           },
         ],
       };
-    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'mine') {
+    } else if (
+      userInfoState?.companyRole === "Certifier" &&
+      categoryType === "mine"
+    ) {
       return {
         system: SystemNames.CARBON_REGISTRY,
         stats: [
           {
-            type: 'CERTIFIED_BY_ME_BY_STATE',
+            type: "CERTIFIED_BY_ME_BY_STATE",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -397,7 +478,7 @@ export const RegistryDashboardComponent = (props: any) => {
             },
           },
           {
-            type: 'CERTIFIED_BY_ME_BY_SECTOR',
+            type: "CERTIFIED_BY_ME_BY_SECTOR",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -405,7 +486,7 @@ export const RegistryDashboardComponent = (props: any) => {
             },
           },
           {
-            type: 'CERTIFIED_REVOKED_BY_ME',
+            type: "CERTIFIED_REVOKED_BY_ME",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -413,14 +494,14 @@ export const RegistryDashboardComponent = (props: any) => {
             },
           },
           {
-            type: 'MY_TRANSFER_LOCATION',
+            type: "MY_TRANSFER_LOCATION",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
             },
           },
           {
-            type: 'MY_PROGRAMME_LOCATION',
+            type: "MY_PROGRAMME_LOCATION",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -428,12 +509,15 @@ export const RegistryDashboardComponent = (props: any) => {
           },
         ],
       };
-    } else if (userInfoState?.companyRole === 'Certifier' && categoryType === 'overall') {
+    } else if (
+      userInfoState?.companyRole === "Certifier" &&
+      categoryType === "overall"
+    ) {
       return {
         system: SystemNames.CARBON_REGISTRY,
         stats: [
           {
-            type: 'AGG_PROGRAMME_BY_STATUS',
+            type: "AGG_PROGRAMME_BY_STATUS",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -441,7 +525,7 @@ export const RegistryDashboardComponent = (props: any) => {
             },
           },
           {
-            type: 'AGG_PROGRAMME_BY_SECTOR',
+            type: "AGG_PROGRAMME_BY_SECTOR",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -449,7 +533,7 @@ export const RegistryDashboardComponent = (props: any) => {
             },
           },
           {
-            type: 'CERTIFIED_REVOKED_PROGRAMMES',
+            type: "CERTIFIED_REVOKED_PROGRAMMES",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -457,14 +541,14 @@ export const RegistryDashboardComponent = (props: any) => {
             },
           },
           {
-            type: 'ALL_TRANSFER_LOCATION',
+            type: "ALL_TRANSFER_LOCATION",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
             },
           },
           {
-            type: 'ALL_PROGRAMME_LOCATION',
+            type: "ALL_PROGRAMME_LOCATION",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -477,7 +561,7 @@ export const RegistryDashboardComponent = (props: any) => {
         system: SystemNames.CARBON_REGISTRY,
         stats: [
           {
-            type: 'AGG_PROGRAMME_BY_STATUS',
+            type: "AGG_PROGRAMME_BY_STATUS",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -485,7 +569,7 @@ export const RegistryDashboardComponent = (props: any) => {
             },
           },
           {
-            type: 'AGG_PROGRAMME_BY_SECTOR',
+            type: "AGG_PROGRAMME_BY_SECTOR",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -493,7 +577,7 @@ export const RegistryDashboardComponent = (props: any) => {
             },
           },
           {
-            type: 'CERTIFIED_REVOKED_PROGRAMMES',
+            type: "CERTIFIED_REVOKED_PROGRAMMES",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -501,14 +585,14 @@ export const RegistryDashboardComponent = (props: any) => {
             },
           },
           {
-            type: 'ALL_TRANSFER_LOCATION',
+            type: "ALL_TRANSFER_LOCATION",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
             },
           },
           {
-            type: 'ALL_PROGRAMME_LOCATION',
+            type: "ALL_PROGRAMME_LOCATION",
             statFilter: {
               startTime: startTime !== 0 ? startTime : undefined,
               endTime: endTime !== 0 ? endTime : undefined,
@@ -526,8 +610,10 @@ export const RegistryDashboardComponent = (props: any) => {
         setEndTime(0);
       }
       if (dateMoment !== null && dateMoment[1] !== null) {
-        setStartTime(Date.parse(String(moment(dateMoment[0]?._d).startOf('day'))));
-        setEndTime(Date.parse(String(moment(dateMoment[1]?._d).endOf('day'))));
+        setStartTime(
+          Date.parse(String(moment(dateMoment[0]?._d).startOf("day")))
+        );
+        setEndTime(Date.parse(String(moment(dateMoment[1]?._d).endOf("day"))));
       } else {
         setStartTime(0);
         setEndTime(0);
@@ -558,232 +644,340 @@ export const RegistryDashboardComponent = (props: any) => {
       let transferLocationsStats: any;
       if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
         if (
-          response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
-          String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
+          response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all
+            ?.creditUpdateTime &&
+          String(
+            response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all
+              ?.creditUpdateTime
+          ) !== "0"
         ) {
           setLastUpdateTotalCreditsEpoch(
-            parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            parseInt(
+              response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all
+                ?.creditUpdateTime
+            )
           );
           setLastUpdateTotalCredits(
             moment(
-              parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+              parseInt(
+                response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all
+                  ?.creditUpdateTime
+              )
             ).fromNow()
           );
         }
-        programmesAggByStatus = response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
+        programmesAggByStatus =
+          response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         if (
           response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime &&
-          String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime) !== '0'
+          String(
+            response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime
+          ) !== "0"
         ) {
           setLastUpdateProgrammesSectorStatsCEpoch(
-            parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
+            parseInt(
+              response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all
+                ?.createdTime
+            )
           );
           setLastUpdateProgrammesSectorStatsC(
             moment(
-              parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
+              parseInt(
+                response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.all
+                  ?.createdTime
+              )
             ).fromNow()
           );
         }
-        programmesAggBySector = response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
+        programmesAggBySector =
+          response?.data?.stats?.MY_AGG_PROGRAMME_BY_SECTOR?.data;
         if (
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last &&
-          String(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+          String(
+            response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last
+          ) !== "0"
         ) {
           setLastUpdateTotalCreditsCertifiedEpoch(
-            parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)
+            parseInt(
+              response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last
+            )
           );
           setLastUpdateTotalCreditsCertified(
-            moment(parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+            moment(
+              parseInt(
+                response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last
+              )
+            ).fromNow()
           );
         }
-        totalCreditsCertifiedStats = response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
+        totalCreditsCertifiedStats =
+          response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
         if (
           response?.data?.stats?.MY_TRANSFER_LOCATION?.last &&
-          String(response?.data?.stats?.MY_TRANSFER_LOCATION?.last) !== '0'
+          String(response?.data?.stats?.MY_TRANSFER_LOCATION?.last) !== "0"
         ) {
           setLastUpdateTransferLocationsEpoch(
             parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)
           );
           setLastUpdateTransferLocations(
-            moment(parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)).fromNow()
+            moment(
+              parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)
+            ).fromNow()
           );
         }
-        transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
+        transferLocationsStats =
+          response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
         programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
-      } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
+      } else if (
+        userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+        categoryType === "mine"
+      ) {
         if (
           response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last &&
-          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last) !== '0'
+          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last) !== "0"
         ) {
           setLastUpdateTotalCreditsEpoch(
             parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last)
           );
           setLastUpdateTotalCredits(
-            moment(parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last)).fromNow()
+            moment(
+              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.last)
+            ).fromNow()
           );
         } else {
-          setLastUpdateTotalCredits('0');
+          setLastUpdateTotalCredits("0");
           setLastUpdateTotalCreditsEpoch(0);
         }
-        programmesAggByStatus = response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
+        programmesAggByStatus =
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
         if (
-          response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime &&
-          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime) !== '0'
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all
+            ?.certifiedTime &&
+          String(
+            response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime
+          ) !== "0"
         ) {
           setLastUpdateProgrammesSectorStatsCEpoch(
-            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime)
+            parseInt(
+              response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all
+                ?.certifiedTime
+            )
           );
           setLastUpdateProgrammesSectorStatsC(
             moment(
-              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all?.certifiedTime)
+              parseInt(
+                response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.all
+                  ?.certifiedTime
+              )
             ).fromNow()
           );
         } else {
           setLastUpdateProgrammesSectorStatsCEpoch(0);
-          setLastUpdateProgrammesSectorStatsC('0');
+          setLastUpdateProgrammesSectorStatsC("0");
         }
-        programmesAggBySector = response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
+        programmesAggBySector =
+          response?.data?.stats?.CERTIFIED_BY_ME_BY_SECTOR?.data;
         if (
           response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last &&
-          String(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last) !== '0'
+          String(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last) !== "0"
         ) {
           setLastUpdateTotalCreditsCertifiedEpoch(
             parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)
           );
           setLastUpdateTotalCreditsCertified(
-            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)).fromNow()
+            moment(
+              parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)
+            ).fromNow()
           );
         } else {
           setLastUpdateTotalCreditsCertifiedEpoch(0);
-          setLastUpdateTotalCreditsCertified('0');
+          setLastUpdateTotalCreditsCertified("0");
         }
-        totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
+        totalCreditsCertifiedStats =
+          response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
         if (
           response?.data?.stats?.MY_TRANSFER_LOCATION?.last &&
-          String(response?.data?.stats?.MY_TRANSFER_LOCATION?.last) !== '0'
+          String(response?.data?.stats?.MY_TRANSFER_LOCATION?.last) !== "0"
         ) {
           setLastUpdateTransferLocationsEpoch(
             parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)
           );
           setLastUpdateTransferLocations(
-            moment(parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)).fromNow()
+            moment(
+              parseInt(response?.data?.stats?.MY_TRANSFER_LOCATION?.last)
+            ).fromNow()
           );
         } else {
           setLastUpdateTransferLocationsEpoch(0);
-          setLastUpdateTransferLocations('0');
+          setLastUpdateTransferLocations("0");
         }
-        transferLocationsStats = response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
+        transferLocationsStats =
+          response?.data?.stats?.MY_TRANSFER_LOCATION?.data;
         programmeLocationsStats = response?.data?.stats?.MY_PROGRAMME_LOCATION;
       } else if (
         userInfoState?.companyRole === CompanyRole.CERTIFIER &&
-        categoryType === 'overall'
+        categoryType === "overall"
       ) {
         if (
-          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
-          String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
+          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+            ?.creditUpdateTime &&
+          String(
+            response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+              ?.creditUpdateTime
+          ) !== "0"
         ) {
           setLastUpdateTotalCreditsEpoch(
-            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            parseInt(
+              response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+                ?.creditUpdateTime
+            )
           );
           setLastUpdateTotalCredits(
             moment(
-              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+              parseInt(
+                response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+                  ?.creditUpdateTime
+              )
             ).fromNow()
           );
         }
-        programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        programmesAggByStatus =
+          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         if (
           response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime &&
-          String(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime) !== '0'
+          String(
+            response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime
+          ) !== "0"
         ) {
           setLastUpdateProgrammesSectorStatsCEpoch(
-            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
+            parseInt(
+              response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime
+            )
           );
           setLastUpdateProgrammesSectorStatsC(
             moment(
-              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
+              parseInt(
+                response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime
+              )
             ).fromNow()
           );
         }
-        programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
+        programmesAggBySector =
+          response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
         if (
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
-          String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+          String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !==
+            "0"
         ) {
           setLastUpdateTotalCreditsCertifiedEpoch(
             parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
           );
           setLastUpdateTotalCreditsCertified(
-            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+            moment(
+              parseInt(
+                response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last
+              )
+            ).fromNow()
           );
         }
-        totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+        totalCreditsCertifiedStats =
+          response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
         if (
           response?.data?.stats?.ALL_TRANSFER_LOCATION?.last &&
-          String(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last) !== '0'
+          String(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last) !== "0"
         ) {
           setLastUpdateTransferLocationsEpoch(
             parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)
           );
           setLastUpdateTransferLocations(
-            moment(parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)).fromNow()
+            moment(
+              parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)
+            ).fromNow()
           );
         }
-        transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
+        transferLocationsStats =
+          response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
         programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
       } else {
         if (
-          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
-          String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
+          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+            ?.creditUpdateTime &&
+          String(
+            response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+              ?.creditUpdateTime
+          ) !== "0"
         ) {
           setLastUpdateTotalCreditsEpoch(
-            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            parseInt(
+              response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+                ?.creditUpdateTime
+            )
           );
           setLastUpdateTotalCredits(
             moment(
-              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+              parseInt(
+                response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+                  ?.creditUpdateTime
+              )
             ).fromNow()
           );
         }
-        programmesAggByStatus = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        programmesAggByStatus =
+          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         if (
           response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime &&
-          String(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime) !== '0'
+          String(
+            response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime
+          ) !== "0"
         ) {
           setLastUpdateProgrammesSectorStatsCEpoch(
-            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
+            parseInt(
+              response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime
+            )
           );
           setLastUpdateProgrammesSectorStatsC(
             moment(
-              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime)
+              parseInt(
+                response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.all?.createdTime
+              )
             ).fromNow()
           );
         }
-        programmesAggBySector = response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
+        programmesAggBySector =
+          response?.data?.stats?.AGG_PROGRAMME_BY_SECTOR?.data;
         if (
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
-          String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+          String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !==
+            "0"
         ) {
           setLastUpdateTotalCreditsCertifiedEpoch(
             parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
           );
           setLastUpdateTotalCreditsCertified(
-            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+            moment(
+              parseInt(
+                response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last
+              )
+            ).fromNow()
           );
         }
-        totalCreditsCertifiedStats = response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
+        totalCreditsCertifiedStats =
+          response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
         if (
           response?.data?.stats?.ALL_TRANSFER_LOCATION?.last &&
-          String(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last) !== '0'
+          String(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last) !== "0"
         ) {
           setLastUpdateTransferLocationsEpoch(
             parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)
           );
           setLastUpdateTransferLocations(
-            moment(parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)).fromNow()
+            moment(
+              parseInt(response?.data?.stats?.ALL_TRANSFER_LOCATION?.last)
+            ).fromNow()
           );
         }
-        transferLocationsStats = response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
+        transferLocationsStats =
+          response?.data?.stats?.ALL_TRANSFER_LOCATION?.data;
         programmeLocationsStats = response?.data?.stats?.ALL_PROGRAMME_LOCATION;
       }
       let timeLabelDataStatus = [];
@@ -795,7 +989,7 @@ export const RegistryDashboardComponent = (props: any) => {
       if (programmesAggByStatus) {
         timeLabelDataStatus = programmesAggByStatus?.timeLabel;
         formattedTimeLabelDataStatus = timeLabelDataStatus?.map((item: any) => {
-          return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
+          return moment(new Date(item.substr(0, 16))).format("DD-MM-YYYY");
         });
         setTotalProgrammesOptionsLabels(formattedTimeLabelDataStatus);
         setTotalCreditsOptionsLabels(formattedTimeLabelDataStatus);
@@ -803,7 +997,7 @@ export const RegistryDashboardComponent = (props: any) => {
         const totalProgrammesValues: ChartSeriesItem[] = [];
         statusArray?.map((status: any) => {
           totalProgrammesValues.push({
-            name: status === 'AwaitingAuthorization' ? 'Pending' : status,
+            name: status === "AwaitingAuthorization" ? "Pending" : status,
             data: programmesAggByStatus[firstLower(status)],
           });
         });
@@ -812,23 +1006,23 @@ export const RegistryDashboardComponent = (props: any) => {
 
         const totalCreditsValues: ChartSeriesItem[] = [
           {
-            name: 'Authorised',
+            name: "Authorised",
             data: programmesAggByStatus?.authorisedCredits,
           },
           {
-            name: 'Issued',
+            name: "Issued",
             data: programmesAggByStatus?.issuedCredits,
           },
           {
-            name: 'Transferred',
+            name: "Transferred",
             data: programmesAggByStatus?.transferredCredits,
           },
           {
-            name: 'Retired',
+            name: "Retired",
             data: programmesAggByStatus?.retiredCredits,
           },
           {
-            name: 'Frozen',
+            name: "Frozen",
             data: programmesAggByStatus?.frozenCredits,
           },
         ];
@@ -838,7 +1032,7 @@ export const RegistryDashboardComponent = (props: any) => {
       if (programmesAggBySector) {
         timeLabelDataSector = programmesAggByStatus?.timeLabel;
         formattedTimeLabelDataSector = timeLabelDataSector?.map((item: any) => {
-          return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
+          return moment(new Date(item.substr(0, 16))).format("DD-MM-YYYY");
         });
         setTotalProgrammesSectorOptionsLabels(formattedTimeLabelDataSector);
         const progarmmesSectorSeriesData: ChartSeriesItem[] = [];
@@ -852,33 +1046,36 @@ export const RegistryDashboardComponent = (props: any) => {
           }
         });
         setTotalProgrammesSectorSeries(progarmmesSectorSeriesData);
-        totalProgrammesOptionsSub.xaxis.categories = formattedTimeLabelDataSector;
+        totalProgrammesOptionsSub.xaxis.categories =
+          formattedTimeLabelDataSector;
       }
       if (totalCreditsCertifiedStats) {
         timeLabelCertifiedCreditsStats = totalCreditsCertifiedStats?.timeLabel;
-        formattedTimeLabelCertifiedCreditsStats = timeLabelCertifiedCreditsStats?.map(
-          (item: any) => {
-            return moment(new Date(item.substr(0, 16))).format('DD-MM-YYYY');
-          }
-        );
+        formattedTimeLabelCertifiedCreditsStats =
+          timeLabelCertifiedCreditsStats?.map((item: any) => {
+            return moment(new Date(item.substr(0, 16))).format("DD-MM-YYYY");
+          });
         const totalCertifiedCreditsSeriesValues = [
           {
-            name: 'Certified',
+            name: "Certified",
             data: totalCreditsCertifiedStats?.certifiedSum,
           },
           {
-            name: 'Uncertified',
+            name: "Uncertified",
             data: totalCreditsCertifiedStats?.uncertifiedSum,
           },
           {
-            name: 'Revoked',
+            name: "Revoked",
             data: totalCreditsCertifiedStats?.revokedSum,
           },
         ];
         setTotalCertifiedCreditsSeries(totalCertifiedCreditsSeriesValues);
-        setTotalCertifiedCreditsOptionsLabels(formattedTimeLabelCertifiedCreditsStats);
+        setTotalCertifiedCreditsOptionsLabels(
+          formattedTimeLabelCertifiedCreditsStats
+        );
 
-        totalCreditsCertifiedOptions.xaxis.categories = formattedTimeLabelCertifiedCreditsStats;
+        totalCreditsCertifiedOptions.xaxis.categories =
+          formattedTimeLabelCertifiedCreditsStats;
       }
       if (transferLocationsStats) {
         setProgrammeTransferLocations(transferLocationsStats);
@@ -887,12 +1084,12 @@ export const RegistryDashboardComponent = (props: any) => {
         setProgrammeLocations(programmeLocationsStats);
       }
     } catch (error: any) {
-      console.log('Error in getting users', error);
+      console.log("Error in getting users", error);
       message.open({
-        type: 'error',
+        type: "error",
         content: error.message,
         duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       setLoadingCharts(false);
@@ -914,25 +1111,36 @@ export const RegistryDashboardComponent = (props: any) => {
         response?.data?.stats?.PENDING_TRANSFER_INIT?.data;
       const pendingTransferReceivedAggregationResponse =
         response?.data?.stats?.PENDING_TRANSFER_RECV?.data;
-      const myCreditAggregationResponse = response?.data?.stats?.MY_CREDIT?.data;
-      const certifiedByMeAggregationResponse = response?.data?.stats?.CERTIFIED_BY_ME?.data[0];
-      const unCertifiedByMeAggregationResponse = response?.data?.stats?.UNCERTIFIED_BY_ME?.data;
-      programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
-        if (responseItem?.currentStage === 'AwaitingAuthorization') {
-          setPendingProjectsWithoutTimeRange(parseInt(responseItem?.count));
+      const myCreditAggregationResponse =
+        response?.data?.stats?.MY_CREDIT?.data;
+      const certifiedByMeAggregationResponse =
+        response?.data?.stats?.CERTIFIED_BY_ME?.data[0];
+      const unCertifiedByMeAggregationResponse =
+        response?.data?.stats?.UNCERTIFIED_BY_ME?.data;
+      programmeByStatusAggregationResponse?.map(
+        (responseItem: any, index: any) => {
+          if (responseItem?.currentStage === "AwaitingAuthorization") {
+            setPendingProjectsWithoutTimeRange(parseInt(responseItem?.count));
+          }
         }
-      });
+      );
       if (pendingTransferInitAggregationResponse) {
-        setTransferRequestSent(parseInt(pendingTransferInitAggregationResponse[0]?.count));
+        setTransferRequestSent(
+          parseInt(pendingTransferInitAggregationResponse[0]?.count)
+        );
       }
       if (myCreditAggregationResponse) {
         setCreditBalanceWithoutTimeRange(myCreditAggregationResponse?.primary);
       }
       if (pendingTransferReceivedAggregationResponse) {
-        setTransferRequestReceived(parseInt(pendingTransferReceivedAggregationResponse[0]?.count));
+        setTransferRequestReceived(
+          parseInt(pendingTransferReceivedAggregationResponse[0]?.count)
+        );
       }
       if (certifiedByMeAggregationResponse) {
-        setProgrammesCertifed(parseInt(certifiedByMeAggregationResponse?.count));
+        setProgrammesCertifed(
+          parseInt(certifiedByMeAggregationResponse?.count)
+        );
         setCreditCertifiedBalanceWithoutTimeRange(
           certifiedByMeAggregationResponse?.certifiedSum === null
             ? 0
@@ -940,81 +1148,102 @@ export const RegistryDashboardComponent = (props: any) => {
         );
       }
       if (unCertifiedByMeAggregationResponse) {
-        setProgrammesUnCertifed(parseInt(unCertifiedByMeAggregationResponse?.uncertifiedCount));
+        setProgrammesUnCertifed(
+          parseInt(unCertifiedByMeAggregationResponse?.uncertifiedCount)
+        );
       }
       if (
         response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
-        String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
+        String(
+          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime
+        ) !== "0"
       ) {
         setLastUpdateProgrammesStatsEpoch(
-          parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+          parseInt(
+            response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+              ?.statusUpdateTime
+          )
         );
         setLastUpdateProgrammesStats(
           moment(
-            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+            parseInt(
+              response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+                ?.statusUpdateTime
+            )
           ).fromNow()
         );
       }
       if (
         response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime &&
-        String(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime) !== '0'
+        String(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime) !==
+          "0"
       ) {
         setLastUpdatePendingTransferSentEpoch(
           parseInt(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime)
         );
         setLastUpdatePendingTransferSent(
-          moment(parseInt(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime)).fromNow()
+          moment(
+            parseInt(response?.data?.stats?.PENDING_TRANSFER_INIT?.all?.txTime)
+          ).fromNow()
         );
       }
       if (
         response?.data?.stats?.MY_CREDIT?.last &&
-        String(response?.data?.stats?.MY_CREDIT?.last) !== '0'
+        String(response?.data?.stats?.MY_CREDIT?.last) !== "0"
       ) {
-        setLastUpdateCreditBalanceEpoch(parseInt(response?.data?.stats?.MY_CREDIT?.last));
+        setLastUpdateCreditBalanceEpoch(
+          parseInt(response?.data?.stats?.MY_CREDIT?.last)
+        );
         setLastUpdateCreditBalance(
           moment(parseInt(response?.data?.stats?.MY_CREDIT?.last)).fromNow()
         );
       }
       if (
         response?.data?.stats?.UNCERTIFIED_BY_ME?.last &&
-        String(response?.data?.stats?.UNCERTIFIED_BY_ME?.last) !== '0'
+        String(response?.data?.stats?.UNCERTIFIED_BY_ME?.last) !== "0"
       ) {
         setLastUpdateProgrammesCertifiableEpoch(
           parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)
         );
         setLastUpdateProgrammesCertifiable(
-          moment(parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)).fromNow()
+          moment(
+            parseInt(response?.data?.stats?.UNCERTIFIED_BY_ME?.last)
+          ).fromNow()
         );
       }
       if (
         response?.data?.stats?.CERTIFIED_BY_ME?.last &&
-        String(response?.data?.stats?.CERTIFIED_BY_ME?.last) !== '0'
+        String(response?.data?.stats?.CERTIFIED_BY_ME?.last) !== "0"
       ) {
         setLastUpdateProgrammesCertifiedEpoch(
           parseInt(response?.data?.stats?.CERTIFIED_BY_ME?.last)
         );
         setLastUpdateProgrammesCertified(
-          moment(parseInt(response?.data?.stats?.CERTIFIED_BY_ME?.last)).fromNow()
+          moment(
+            parseInt(response?.data?.stats?.CERTIFIED_BY_ME?.last)
+          ).fromNow()
         );
       }
       if (
         response?.data?.stats?.PENDING_TRANSFER_RECV?.last &&
-        String(response?.data?.stats?.PENDING_TRANSFER_RECV?.last) !== '0'
+        String(response?.data?.stats?.PENDING_TRANSFER_RECV?.last) !== "0"
       ) {
         setLastUpdatePendingTransferReceivedEpoch(
           parseInt(response?.data?.stats?.PENDING_TRANSFER_RECV?.last)
         );
         setLastUpdatePendingTransferReceived(
-          moment(parseInt(response?.data?.stats?.PENDING_TRANSFER_RECV?.last)).fromNow()
+          moment(
+            parseInt(response?.data?.stats?.PENDING_TRANSFER_RECV?.last)
+          ).fromNow()
         );
       }
     } catch (error: any) {
-      console.log('Error in getting users', error);
+      console.log("Error in getting users", error);
       message.open({
-        type: 'error',
+        type: "error",
         content: error.message,
         duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       setLoadingWithoutTimeRange(false);
@@ -1037,32 +1266,49 @@ export const RegistryDashboardComponent = (props: any) => {
       let certifiedRevokedAggregationResponse: any;
       if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
         if (
-          response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
-          String(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
+          response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all
+            ?.statusUpdateTime &&
+          String(
+            response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all
+              ?.statusUpdateTime
+          ) !== "0"
         ) {
           setLastUpdateProgrammesStatsCEpoch(
-            parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+            parseInt(
+              response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all
+                ?.statusUpdateTime
+            )
           );
           setLastUpdateProgrammesStatsC(
             moment(
-              parseInt(response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+              parseInt(
+                response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.all
+                  ?.statusUpdateTime
+              )
             ).fromNow()
           );
         }
         programmeByStatusAggregationResponse =
           response?.data?.stats?.MY_AGG_PROGRAMME_BY_STATUS?.data;
         if (
-          response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
-          String(response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !==
-            '0'
+          response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all
+            ?.creditUpdateTime &&
+          String(
+            response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all
+              ?.creditUpdateTime
+          ) !== "0"
         ) {
           setLastUpdateProgrammesCreditsStatsEpoch(
-            parseInt(response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            parseInt(
+              response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all
+                ?.creditUpdateTime
+            )
           );
           setLastUpdateProgrammesCreditsStats(
             moment(
               parseInt(
-                response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime
+                response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.all
+                  ?.creditUpdateTime
               )
             ).fromNow()
           );
@@ -1071,95 +1317,143 @@ export const RegistryDashboardComponent = (props: any) => {
           response?.data?.stats?.MY_AGG_AUTH_PROGRAMME_BY_STATUS?.data;
         if (
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last &&
-          String(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+          String(
+            response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last
+          ) !== "0"
         ) {
           setLastUpdateCertifiedCreditsStatsEpoch(
-            parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)
+            parseInt(
+              response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last
+            )
           );
           setLastUpdateCertifiedCreditsStats(
-            moment(parseInt(response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+            moment(
+              parseInt(
+                response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.last
+              )
+            ).fromNow()
           );
         }
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.MY_CERTIFIED_REVOKED_PROGRAMMES?.data;
-      } else if (userInfoState?.companyRole === CompanyRole.CERTIFIER && categoryType === 'mine') {
+      } else if (
+        userInfoState?.companyRole === CompanyRole.CERTIFIER &&
+        categoryType === "mine"
+      ) {
         if (
           response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime &&
-          String(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime) !== '0'
+          String(
+            response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime
+          ) !== "0"
         ) {
           setLastUpdateProgrammesStatsCEpoch(
-            parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
+            parseInt(
+              response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all
+                ?.certifiedTime
+            )
           );
           setLastUpdateProgrammesStatsC(
             moment(
-              parseInt(response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all?.certifiedTime)
+              parseInt(
+                response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.all
+                  ?.certifiedTime
+              )
             ).fromNow()
           );
         } else {
           setLastUpdateProgrammesStatsCEpoch(0);
-          setLastUpdateProgrammesStatsC('0');
+          setLastUpdateProgrammesStatsC("0");
         }
         programmeByStatusAggregationResponse =
           response?.data?.stats?.CERTIFIED_BY_ME_BY_STATE?.data;
         if (
           response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last &&
-          String(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last) !== '0'
+          String(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last) !==
+            "0"
         ) {
           setLastUpdateProgrammesCreditsStatsEpoch(
             parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last)
           );
           setLastUpdateProgrammesCreditsStats(
-            moment(parseInt(response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last)).fromNow()
+            moment(
+              parseInt(
+                response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.last
+              )
+            ).fromNow()
           );
         } else {
           setLastUpdateProgrammesCreditsStatsEpoch(0);
-          setLastUpdateProgrammesCreditsStats('0');
+          setLastUpdateProgrammesCreditsStats("0");
         }
         programmeByStatusAuthAggregationResponse =
           response?.data?.stats?.AUTH_CERTIFIED_BY_ME_BY_STATE?.data;
         if (
           response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last &&
-          String(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last) !== '0'
+          String(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last) !== "0"
         ) {
           setLastUpdateCertifiedCreditsStatsEpoch(
             parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)
           );
           setLastUpdateCertifiedCreditsStats(
-            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)).fromNow()
+            moment(
+              parseInt(response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.last)
+            ).fromNow()
           );
         } else {
           setLastUpdateCertifiedCreditsStatsEpoch(0);
-          setLastUpdateCertifiedCreditsStats('0');
+          setLastUpdateCertifiedCreditsStats("0");
         }
-        certifiedRevokedAggregationResponse = response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
+        certifiedRevokedAggregationResponse =
+          response?.data?.stats?.CERTIFIED_REVOKED_BY_ME?.data;
       } else if (
         userInfoState?.companyRole === CompanyRole.CERTIFIER &&
-        categoryType === 'overall'
+        categoryType === "overall"
       ) {
         if (
-          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
-          String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
+          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+            ?.statusUpdateTime &&
+          String(
+            response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+              ?.statusUpdateTime
+          ) !== "0"
         ) {
           setLastUpdateProgrammesStatsCEpoch(
-            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+            parseInt(
+              response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+                ?.statusUpdateTime
+            )
           );
           setLastUpdateProgrammesStatsC(
             moment(
-              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+              parseInt(
+                response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+                  ?.statusUpdateTime
+              )
             ).fromNow()
           );
         }
-        programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        programmeByStatusAggregationResponse =
+          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         if (
-          response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
-          String(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
+          response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all
+            ?.creditUpdateTime &&
+          String(
+            response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all
+              ?.creditUpdateTime
+          ) !== "0"
         ) {
           setLastUpdateProgrammesCreditsStatsEpoch(
-            parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            parseInt(
+              response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all
+                ?.creditUpdateTime
+            )
           );
           setLastUpdateProgrammesCreditsStats(
             moment(
-              parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+              parseInt(
+                response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all
+                  ?.creditUpdateTime
+              )
             ).fromNow()
           );
         }
@@ -1167,42 +1461,68 @@ export const RegistryDashboardComponent = (props: any) => {
           response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.data;
         if (
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
-          String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+          String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !==
+            "0"
         ) {
           setLastUpdateCertifiedCreditsStatsEpoch(
             parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
           );
           setLastUpdateCertifiedCreditsStats(
-            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+            moment(
+              parseInt(
+                response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last
+              )
+            ).fromNow()
           );
         }
         certifiedRevokedAggregationResponse =
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.data;
       } else {
         if (
-          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime &&
-          String(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime) !== '0'
+          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+            ?.statusUpdateTime &&
+          String(
+            response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+              ?.statusUpdateTime
+          ) !== "0"
         ) {
           setLastUpdateProgrammesStatsCEpoch(
-            parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+            parseInt(
+              response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+                ?.statusUpdateTime
+            )
           );
           setLastUpdateProgrammesStatsC(
             moment(
-              parseInt(response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all?.statusUpdateTime)
+              parseInt(
+                response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.all
+                  ?.statusUpdateTime
+              )
             ).fromNow()
           );
         }
-        programmeByStatusAggregationResponse = response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
+        programmeByStatusAggregationResponse =
+          response?.data?.stats?.AGG_PROGRAMME_BY_STATUS?.data;
         if (
-          response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime &&
-          String(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime) !== '0'
+          response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all
+            ?.creditUpdateTime &&
+          String(
+            response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all
+              ?.creditUpdateTime
+          ) !== "0"
         ) {
           setLastUpdateProgrammesCreditsStatsEpoch(
-            parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+            parseInt(
+              response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all
+                ?.creditUpdateTime
+            )
           );
           setLastUpdateProgrammesCreditsStats(
             moment(
-              parseInt(response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all?.creditUpdateTime)
+              parseInt(
+                response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.all
+                  ?.creditUpdateTime
+              )
             ).fromNow()
           );
         }
@@ -1210,13 +1530,18 @@ export const RegistryDashboardComponent = (props: any) => {
           response?.data?.stats?.AGG_AUTH_PROGRAMME_BY_STATUS?.data;
         if (
           response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last &&
-          String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !== '0'
+          String(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last) !==
+            "0"
         ) {
           setLastUpdateCertifiedCreditsStatsEpoch(
             parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)
           );
           setLastUpdateCertifiedCreditsStats(
-            moment(parseInt(response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last)).fromNow()
+            moment(
+              parseInt(
+                response?.data?.stats?.CERTIFIED_REVOKED_PROGRAMMES?.last
+              )
+            ).fromNow()
           );
         }
         certifiedRevokedAggregationResponse =
@@ -1237,22 +1562,29 @@ export const RegistryDashboardComponent = (props: any) => {
       let rejectedProgrammesC: any = 0;
       const programmeStatusA = Object.values(ProgrammeStageLegend);
       if (programmeByStatusAggregationResponse?.length > 0) {
-        programmeByStatusAggregationResponse?.map((responseItem: any, index: any) => {
-          if (
-            ProgrammeStageR.AwaitingAuthorization === getStageEnumVal(responseItem?.currentStage)
-          ) {
-            totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-            pendingProgrammesC = parseInt(responseItem?.count);
+        programmeByStatusAggregationResponse?.map(
+          (responseItem: any, index: any) => {
+            if (
+              ProgrammeStageR.AwaitingAuthorization ===
+              getStageEnumVal(responseItem?.currentStage)
+            ) {
+              totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
+              pendingProgrammesC = parseInt(responseItem?.count);
+            }
+            if (
+              [ProgrammeStageR.Rejected].includes(responseItem?.currentStage)
+            ) {
+              totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
+              rejectedProgrammesC = parseInt(responseItem?.count);
+            }
+            if (
+              [ProgrammeStageR.Authorised].includes(responseItem?.currentStage)
+            ) {
+              totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
+              authorisedProgrammesC = parseInt(responseItem?.count);
+            }
           }
-          if ([ProgrammeStageR.Rejected].includes(responseItem?.currentStage)) {
-            totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-            rejectedProgrammesC = parseInt(responseItem?.count);
-          }
-          if ([ProgrammeStageR.Authorised].includes(responseItem?.currentStage)) {
-            totalProgrammes = totalProgrammes + parseInt(responseItem?.count);
-            authorisedProgrammesC = parseInt(responseItem?.count);
-          }
-        });
+        );
         setTotalProjects(totalProgrammes);
         setPendingProjects(pendingProgrammesC);
         setAuthorisedProjects(authorisedProgrammesC);
@@ -1265,23 +1597,40 @@ export const RegistryDashboardComponent = (props: any) => {
       }
       if (programmeByStatusAuthAggregationResponse?.length > 0) {
         programmeByStatusAuthAggregationResponse?.map((responseItem: any) => {
-          totalEstCredits = totalEstCredits + parseFloat(responseItem?.totalestcredit);
-          totalIssuedCredits = totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
-          totalRetiredCredits = totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
-          totalBalancecredit = totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
-          totalTxCredits = totalTxCredits + parseFloat(responseItem?.totaltxcredit);
-          totalFrozenCredits = totalFrozenCredits + parseFloat(responseItem?.totalfreezecredit);
+          totalEstCredits =
+            totalEstCredits + parseFloat(responseItem?.totalestcredit);
+          totalIssuedCredits =
+            totalIssuedCredits + parseFloat(responseItem?.totalissuedcredit);
+          totalRetiredCredits =
+            totalRetiredCredits + parseFloat(responseItem?.totalretiredcredit);
+          totalBalancecredit =
+            totalBalancecredit + parseFloat(responseItem?.totalbalancecredit);
+          totalTxCredits =
+            totalTxCredits + parseFloat(responseItem?.totaltxcredit);
+          totalFrozenCredits =
+            totalFrozenCredits + parseFloat(responseItem?.totalfreezecredit);
         });
       }
       if (certifiedRevokedAggregationResponse) {
-        totalCertifiedCredit = parseFloat(certifiedRevokedAggregationResponse?.certifiedSum);
-        totalUnCertifiedredit = parseFloat(certifiedRevokedAggregationResponse?.uncertifiedSum);
-        totalRevokedCredits = parseFloat(certifiedRevokedAggregationResponse?.revokedSum);
+        totalCertifiedCredit = parseFloat(
+          certifiedRevokedAggregationResponse?.certifiedSum
+        );
+        totalUnCertifiedredit = parseFloat(
+          certifiedRevokedAggregationResponse?.uncertifiedSum
+        );
+        totalRevokedCredits = parseFloat(
+          certifiedRevokedAggregationResponse?.revokedSum
+        );
       }
-      setCreditBalance(parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum));
+      setCreditBalance(
+        parseFloat(response?.data?.stats?.CREDIT_STATS_BALANCE?.sum)
+      );
       const creditAuthorized = totalEstCredits - totalIssuedCredits;
       const creditIssued =
-        totalIssuedCredits - totalTxCredits - totalRetiredCredits - totalFrozenCredits;
+        totalIssuedCredits -
+        totalTxCredits -
+        totalRetiredCredits -
+        totalFrozenCredits;
       pieSeriesCreditsData.push(addRoundNumber(creditAuthorized));
       pieSeriesCreditsData.push(addRoundNumber(creditIssued));
       pieSeriesCreditsData.push(addRoundNumber(totalTxCredits));
@@ -1295,23 +1644,32 @@ export const RegistryDashboardComponent = (props: any) => {
         totalCertifiedCredit + totalUnCertifiedredit + totalRevokedCredits
       );
       setCreditsPieChartTotal(
-        String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0
+        String(addCommSep(totalEstCredits)) !== "NaN"
+          ? addCommSep(totalEstCredits)
+          : 0
       );
       setCertifiedCreditsPieChartTotal(addCommSep(totalCreditsCertified));
-      const output = '<p>' + 'ITMOs' + '</p><p>' + addCommSep(totalCreditsCertified) + '</p>';
+      const output =
+        "<p>" +
+        "ITMOs" +
+        "</p><p>" +
+        addCommSep(totalCreditsCertified) +
+        "</p>";
       optionDonutPieA.plotOptions.pie.donut.labels.total.formatter = () =>
-        '' + String(addCommSep(totalEstCredits)) !== 'NaN' ? addCommSep(totalEstCredits) : 0;
+        "" + String(addCommSep(totalEstCredits)) !== "NaN"
+          ? addCommSep(totalEstCredits)
+          : 0;
       optionDonutPieB.plotOptions.pie.donut.labels.total.formatter = () =>
-        '' + addCommSep(totalCreditsCertified);
+        "" + addCommSep(totalCreditsCertified);
       setCreditPieSeries(pieSeriesCreditsData);
       setCreditCertifiedPieSeries(pieSeriesCreditsCerifiedData);
     } catch (error: any) {
-      console.log('Error in getting users', error);
+      console.log("Error in getting users", error);
       message.open({
-        type: 'error',
+        type: "error",
         content: error.message,
         duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       setLoading(false);
@@ -1321,7 +1679,7 @@ export const RegistryDashboardComponent = (props: any) => {
   useEffect(() => {
     getAllProgrammeAnalyticsStatsWithoutTimeRange();
     if (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER) {
-      setCategoryType('mine');
+      setCategoryType("mine");
     }
   }, []);
 
@@ -1331,21 +1689,25 @@ export const RegistryDashboardComponent = (props: any) => {
   }, [startTime, endTime, categoryType]);
 
   useEffect(() => {
-    ApexCharts.exec('total-programmes-sector', 'updateSeries', {
+    ApexCharts.exec("total-programmes-sector", "updateSeries", {
       data: totalProgrammesSectorSeries,
     });
-    ApexCharts.exec('total-programmes-sector', 'updateOptions', {
+    ApexCharts.exec("total-programmes-sector", "updateOptions", {
       xaxis: {
         categories: totalProgrammesSectorOptionsLabels,
       },
     });
-  }, [totalProgrammesSectorSeries, categoryType, totalProgrammesSectorOptionsLabels]);
+  }, [
+    totalProgrammesSectorSeries,
+    categoryType,
+    totalProgrammesSectorOptionsLabels,
+  ]);
 
   useEffect(() => {
-    ApexCharts.exec('total-programmes', 'updateSeries', {
+    ApexCharts.exec("total-programmes", "updateSeries", {
       data: totalProgrammesSeries,
     });
-    ApexCharts.exec('total-programmes', 'updateOptions', {
+    ApexCharts.exec("total-programmes", "updateOptions", {
       xaxis: {
         categories: totalProgrammesOptionsLabels,
       },
@@ -1353,10 +1715,10 @@ export const RegistryDashboardComponent = (props: any) => {
   }, [totalProgrammesSeries, categoryType, totalProgrammesOptionsLabels]);
 
   useEffect(() => {
-    ApexCharts.exec('total-credits', 'updateSeries', {
+    ApexCharts.exec("total-credits", "updateSeries", {
       data: totalCreditsSeries,
     });
-    ApexCharts.exec('total-credits', 'updateOptions', {
+    ApexCharts.exec("total-credits", "updateOptions", {
       xaxis: {
         categories: totalCreditsOptionsLabels,
       },
@@ -1364,21 +1726,25 @@ export const RegistryDashboardComponent = (props: any) => {
   }, [totalCreditsSeries, categoryType, totalCreditsOptionsLabels]);
 
   useEffect(() => {
-    ApexCharts.exec('total-credits-certified', 'updateSeries', {
+    ApexCharts.exec("total-credits-certified", "updateSeries", {
       data: totalCertifiedCreditsSeries,
     });
-    ApexCharts.exec('total-credits-certified', 'updateOptions', {
+    ApexCharts.exec("total-credits-certified", "updateOptions", {
       xaxis: {
         categories: totalCertifiedCreditsOptionsLabels,
       },
     });
-  }, [totalCertifiedCreditsSeries, categoryType, totalCertifiedCreditsOptionsLabels]);
+  }, [
+    totalCertifiedCreditsSeries,
+    categoryType,
+    totalCertifiedCreditsOptionsLabels,
+  ]);
 
   useEffect(() => {
-    ApexCharts.exec('credits', 'updateSeries', {
+    ApexCharts.exec("credits", "updateSeries", {
       series: creditsPieSeries,
     });
-    ApexCharts.exec('credits', 'updateOptions', {
+    ApexCharts.exec("credits", "updateOptions", {
       plotOptions: {
         pie: {
           labels: {
@@ -1392,10 +1758,10 @@ export const RegistryDashboardComponent = (props: any) => {
   }, [creditsPieSeries, categoryType, creditsPieChartTotal]);
 
   useEffect(() => {
-    ApexCharts.exec('certified-credits', 'updateSeries', {
+    ApexCharts.exec("certified-credits", "updateSeries", {
       series: creditsCertifiedPieSeries,
     });
-    ApexCharts.exec('credits', 'updateOptions', {
+    ApexCharts.exec("credits", "updateOptions", {
       plotOptions: {
         pie: {
           labels: {
@@ -1411,16 +1777,24 @@ export const RegistryDashboardComponent = (props: any) => {
   useEffect(() => {
     const timer = setInterval(() => {
       if (lastUpdateProgrammesStatsEpoch !== 0) {
-        setLastUpdateProgrammesStats(moment(lastUpdateProgrammesStatsEpoch).fromNow());
+        setLastUpdateProgrammesStats(
+          moment(lastUpdateProgrammesStatsEpoch).fromNow()
+        );
       }
       if (lastUpdateProgrammesStatsCEpoch !== 0) {
-        setLastUpdateProgrammesStatsC(moment(lastUpdateProgrammesStatsCEpoch).fromNow());
+        setLastUpdateProgrammesStatsC(
+          moment(lastUpdateProgrammesStatsCEpoch).fromNow()
+        );
       }
       if (lastUpdatePendingTransferSentEpoch !== 0) {
-        setLastUpdatePendingTransferSent(moment(lastUpdatePendingTransferSentEpoch).fromNow());
+        setLastUpdatePendingTransferSent(
+          moment(lastUpdatePendingTransferSentEpoch).fromNow()
+        );
       }
       if (lastUpdateCreditBalanceEpoch !== 0) {
-        setLastUpdateCreditBalance(moment(lastUpdateCreditBalanceEpoch).fromNow());
+        setLastUpdateCreditBalance(
+          moment(lastUpdateCreditBalanceEpoch).fromNow()
+        );
       }
       if (lastUpdatePendingTransferReceivedEpoch !== 0) {
         setLastUpdatePendingTransferReceived(
@@ -1428,13 +1802,19 @@ export const RegistryDashboardComponent = (props: any) => {
         );
       }
       if (lastUpdateProgrammesCertifiableEpoch !== 0) {
-        setLastUpdateProgrammesCertifiable(moment(lastUpdateProgrammesCertifiableEpoch).fromNow());
+        setLastUpdateProgrammesCertifiable(
+          moment(lastUpdateProgrammesCertifiableEpoch).fromNow()
+        );
       }
       if (lastUpdateProgrammesCertifiedEpoch !== 0) {
-        setLastUpdateProgrammesCertified(moment(lastUpdateProgrammesCertifiedEpoch).fromNow());
+        setLastUpdateProgrammesCertified(
+          moment(lastUpdateProgrammesCertifiedEpoch).fromNow()
+        );
       }
       if (lastUpdateCertifiedCreditsStatsEpoch !== 0) {
-        setLastUpdateCertifiedCreditsStats(moment(lastUpdateCertifiedCreditsStatsEpoch).fromNow());
+        setLastUpdateCertifiedCreditsStats(
+          moment(lastUpdateCertifiedCreditsStatsEpoch).fromNow()
+        );
       }
       if (lastUpdateProgrammesCreditsStatsEpoch !== 0) {
         setLastUpdateProgrammesCreditsStats(
@@ -1447,13 +1827,19 @@ export const RegistryDashboardComponent = (props: any) => {
         );
       }
       if (lastUpdateTotalCreditsEpoch !== 0) {
-        setLastUpdateTotalCredits(moment(lastUpdateTotalCreditsEpoch).fromNow());
+        setLastUpdateTotalCredits(
+          moment(lastUpdateTotalCreditsEpoch).fromNow()
+        );
       }
       if (lastUpdateTotalCreditsCertifiedEpoch !== 0) {
-        setLastUpdateTotalCreditsCertified(moment(lastUpdateTotalCreditsCertifiedEpoch).fromNow());
+        setLastUpdateTotalCreditsCertified(
+          moment(lastUpdateTotalCreditsCertifiedEpoch).fromNow()
+        );
       }
       if (lastUpdateTransferLocationsEpoch !== 0) {
-        setLastUpdateTransferLocations(moment(lastUpdateTransferLocationsEpoch).fromNow());
+        setLastUpdateTransferLocations(
+          moment(lastUpdateTransferLocationsEpoch).fromNow()
+        );
       }
     }, 60 * 1000);
     return () => {
@@ -1475,13 +1861,13 @@ export const RegistryDashboardComponent = (props: any) => {
     lastUpdateTransferLocationsEpoch,
   ]);
 
-  const countS = ['all', ['>=', ['get', 'count'], 0]];
-  const pending = ['all', ['==', ['get', 'stage'], 'AwaitingAuthorization']];
-  const authorised = ['all', ['==', ['get', 'stage'], 'Authorised']];
-  const rejected = ['all', ['==', ['get', 'stage'], 'Rejected']];
-  const news = ['all', ['==', ['get', 'stage'], 'Approved']];
+  const countS = ["all", [">=", ["get", "count"], 0]];
+  const pending = ["all", ["==", ["get", "stage"], "AwaitingAuthorization"]];
+  const authorised = ["all", ["==", ["get", "stage"], "Authorised"]];
+  const rejected = ["all", ["==", ["get", "stage"], "Rejected"]];
+  const news = ["all", ["==", ["get", "stage"], "Approved"]];
 
-  const colors = ['#6ACDFF', '#CDCDCD', '#FF8183', '#B7A4FE'];
+  const colors = ["#6ACDFF", "#CDCDCD", "#FF8183", "#B7A4FE"];
 
   const donutSegment = (start: any, end: any, r: any, r0: any, color: any) => {
     if (end - start === 1) end -= 0.00001;
@@ -1496,9 +1882,11 @@ export const RegistryDashboardComponent = (props: any) => {
     // draw an SVG path
     return `<path d="M ${r + r0 * x0} ${r + r0 * y0} L ${r + r * x0} ${
       r + r * y0
-    } A ${r} ${r} 0 ${largeArc} 1 ${r + r * x1} ${r + r * y1} L ${r + r0 * x1} ${
-      r + r0 * y1
-    } A ${r0} ${r0} 0 ${largeArc} 0 ${r + r0 * x0} ${r + r0 * y0}" fill="${color}" />`;
+    } A ${r} ${r} 0 ${largeArc} 1 ${r + r * x1} ${r + r * y1} L ${
+      r + r0 * x1
+    } ${r + r0 * y1} A ${r0} ${r0} 0 ${largeArc} 0 ${r + r0 * x0} ${
+      r + r0 * y0
+    }" fill="${color}" />`;
   };
 
   // code for creating an SVG donut chart from feature properties
@@ -1519,13 +1907,13 @@ export const RegistryDashboardComponent = (props: any) => {
         properties.new,
       ];
     } else {
-      if (properties?.stage === 'AwaitingAuthorization') {
+      if (properties?.stage === "AwaitingAuthorization") {
         programmeStageCounts = [0, 0, properties.count, 0];
-      } else if (properties?.stage === 'Authorised') {
+      } else if (properties?.stage === "Authorised") {
         programmeStageCounts = [properties.count, 0, 0, 0];
-      } else if (properties?.stage === 'Rejected') {
+      } else if (properties?.stage === "Rejected") {
         programmeStageCounts = [0, properties.count, 0, 0];
-      } else if (properties?.stage === 'New') {
+      } else if (properties?.stage === "New") {
         programmeStageCounts = [0, 0, 0, properties.count];
       }
     }
@@ -1539,7 +1927,8 @@ export const RegistryDashboardComponent = (props: any) => {
       offsetsStage.push(totalStage);
       totalStage += count;
     }
-    const fontSize = total >= 1000 ? 22 : total >= 500 ? 20 : total >= 100 ? 18 : 16;
+    const fontSize =
+      total >= 1000 ? 22 : total >= 500 ? 20 : total >= 100 ? 18 : 16;
     const r = total >= 1000 ? 52 : total >= 500 ? 36 : total >= 100 ? 30 : 18;
     const r0 = Math.round(r * 0.6);
     const w = r * 2;
@@ -1565,7 +1954,7 @@ ${total}
 </svg>
 </div>`;
 
-    const el = document.createElement('div');
+    const el = document.createElement("div");
     el.innerHTML = html;
     return el.firstChild;
   };
@@ -1573,10 +1962,10 @@ ${total}
   useEffect(() => {
     setTimeout(() => {
       const mapSource: MapSourceData = {
-        key: 'countries',
+        key: "countries",
         data: {
-          type: 'vector',
-          url: 'mapbox://mapbox.country-boundaries-v1',
+          type: "vector",
+          url: "mapbox://mapbox.country-boundaries-v1",
         },
       };
 
@@ -1584,7 +1973,7 @@ ${total}
 
       // Build a GL match expression that defines the color for every vector tile feature
       // Use the ISO 3166-1 alpha 3 code as the lookup key for the country shape
-      const matchExpression: any = ['match', ['get', 'iso_3166_1']];
+      const matchExpression: any = ["match", ["get", "iso_3166_1"]];
       const txLocationMap: any = {};
 
       if (programmeTransferLocations) {
@@ -1599,12 +1988,12 @@ ${total}
             row.count < 2
               ? `#4da6ff`
               : row.count < 10
-              ? '#0080ff'
+              ? "#0080ff"
               : row.count < 50
-              ? '#0059b3'
+              ? "#0059b3"
               : row.count < 100
-              ? '#003366'
-              : '#000d1a';
+              ? "#003366"
+              : "#000d1a";
 
           matchExpression.push(row.country, color);
           txLocationMap[row.country] = row.count;
@@ -1613,15 +2002,15 @@ ${total}
 
       setTxLocationMapData(txLocationMap);
 
-      matchExpression.push('rgba(0, 0, 0, 0)');
+      matchExpression.push("rgba(0, 0, 0, 0)");
 
       setTransferLocationsMapLayer({
-        id: 'countries-join',
-        type: 'fill',
-        source: 'countries',
-        'source-layer': 'country_boundaries',
+        id: "countries-join",
+        type: "fill",
+        source: "countries",
+        "source-layer": "country_boundaries",
         paint: {
-          'fill-color': matchExpression,
+          "fill-color": matchExpression,
         },
       });
     }, 1000);
@@ -1630,25 +2019,26 @@ ${total}
   useEffect(() => {
     setTimeout(() => {
       setProgrammeLocationsMapCenter(
-        programmeLocations?.features && programmeLocations?.features[0]?.geometry?.coordinates
+        programmeLocations?.features &&
+          programmeLocations?.features[0]?.geometry?.coordinates
           ? programmeLocations?.features[0]?.geometry?.coordinates
           : [7.4924165, 5.5324032]
       );
 
       const mapSource: MapSourceData = {
-        key: 'programmeLocations',
+        key: "programmeLocations",
         data: {
-          type: 'geojson',
+          type: "geojson",
           data: programmeLocations,
           cluster: true,
           clusterRadius: 40,
           clusterProperties: {
             // keep separate counts for each programmeStage category in a cluster
-            count: ['+', ['case', countS, ['get', 'count'], 0]],
-            pending: ['+', ['case', pending, ['get', 'count'], 0]],
-            authorised: ['+', ['case', authorised, ['get', 'count'], 0]],
-            rejected: ['+', ['case', rejected, ['get', 'count'], 0]],
-            new: ['+', ['case', news, ['get', 'count'], 0]],
+            count: ["+", ["case", countS, ["get", "count"], 0]],
+            pending: ["+", ["case", pending, ["get", "count"], 0]],
+            authorised: ["+", ["case", authorised, ["get", "count"], 0]],
+            rejected: ["+", ["case", rejected, ["get", "count"], 0]],
+            new: ["+", ["case", news, ["get", "count"], 0]],
           },
         },
       };
@@ -1656,14 +2046,21 @@ ${total}
       setProgrammeLocationsMapSource(mapSource);
 
       setProgrammeLocationsMapLayer({
-        id: 'programmes_circle',
-        type: 'circle',
-        source: 'programmeLocations',
-        filter: ['!=', 'cluster', true],
+        id: "programmes_circle",
+        type: "circle",
+        source: "programmeLocations",
+        filter: ["!=", "cluster", true],
         paint: {
-          'circle-color': ['case', pending, colors[0], authorised, colors[1], colors[2]],
-          'circle-opacity': 1,
-          'circle-radius': 10,
+          "circle-color": [
+            "case",
+            pending,
+            colors[0],
+            authorised,
+            colors[1],
+            colors[2],
+          ],
+          "circle-opacity": 1,
+          "circle-radius": 10,
         },
       });
     }, 1000);
@@ -1676,7 +2073,7 @@ ${total}
   const transferLocationsMapOnClick = function (map: any, e: any) {
     if (!map) return;
     const features = map.queryRenderedFeatures(e.point, {
-      layers: ['countries-join'],
+      layers: ["countries-join"],
     });
     if (!features.length) {
       return;
@@ -1687,7 +2084,9 @@ ${total}
       return;
     }
 
-    return `${feature.properties?.name_en} : ${txLocationMapData[feature.properties?.iso_3166_1]}`;
+    return `${feature.properties?.name_en} : ${
+      txLocationMapData[feature.properties?.iso_3166_1]
+    }`;
   };
 
   // Use the same approach as above to indicate that the symbols are clickable
@@ -1695,24 +2094,29 @@ ${total}
   const transferLocationsMapOnMouseMove = function (map: any, e: any) {
     if (!map) return;
     const features = map.queryRenderedFeatures(e.point, {
-      layers: ['countries-join'],
+      layers: ["countries-join"],
     });
     map.getCanvas().style.cursor =
-      features.length > 0 && txLocationMapData[features[0].properties?.iso_3166_1] ? 'pointer' : '';
+      features.length > 0 &&
+      txLocationMapData[features[0].properties?.iso_3166_1]
+        ? "pointer"
+        : "";
   };
 
   const programmeLocationsMapOnRender = function (map: any) {
-    if (!map.isSourceLoaded('programmeLocations')) return;
+    if (!map.isSourceLoaded("programmeLocations")) return;
 
     const currentMarkers: MarkerData[] = [];
-    const features: any = map.querySourceFeatures('programmeLocations');
+    const features: any = map.querySourceFeatures("programmeLocations");
 
     // for every cluster on the screen, create an HTML marker for it (if we didn't yet),
     // and add it to the map if it's not there already
     for (const feature of features) {
       const coords = feature.geometry.coordinates;
       const properties = feature.properties;
-      const id = properties.cluster_id ? properties.cluster_id : Number(properties.id);
+      const id = properties.cluster_id
+        ? properties.cluster_id
+        : Number(properties.id);
 
       const el: any = createDonutChart(properties);
       const marker = {
@@ -1733,9 +2137,9 @@ ${total}
         size: 100,
         filterAnd: [
           {
-            key: 'type',
-            operation: '=',
-            value: '6',
+            key: "type",
+            operation: "=",
+            value: "6",
           },
         ],
       });
@@ -1759,7 +2163,7 @@ ${total}
         setFileList(initlist);
       }
     } catch (error) {
-      console.error('Error fetching AnnualReports:', error);
+      console.error("Error fetching AnnualReports:", error);
     }
   };
   useEffect(() => {
@@ -1768,16 +2172,16 @@ ${total}
     }
   }, []);
   const fileListFlat = fileList.flat();
-  const items: MenuProps['items'] = fileListFlat.map((item) => ({
+  const items: MenuProps["items"] = fileListFlat.map((item) => ({
     label: item.label,
     key: item.key,
   }));
 
-  const handleMenuClick: MenuProps['onClick'] = (e) => {
+  const handleMenuClick: MenuProps["onClick"] = (e) => {
     setSelectedurl(String(e.key));
-    const parts = String(e.key).split('/');
+    const parts = String(e.key).split("/");
     const fileName = parts[parts.length - 1];
-    const fileNameWithoutExtension = fileName.replace('.pdf', '');
+    const fileNameWithoutExtension = fileName.replace(".pdf", "");
     const lastFourElements = fileNameWithoutExtension.slice(-4);
     setSelectedFile(lastFourElements);
   };
@@ -1808,28 +2212,32 @@ ${total}
               value={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? pendingProjectsWithoutTimeRange
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
                   ? transferRequestReceived
                   : programmesUnCertifed
               }
               title={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'programmesPending'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'trasnferReqReceived'
-                  : 'programmesUnCertified'
+                  ? "programmesPending"
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
+                  ? "trasnferReqReceived"
+                  : "programmesUnCertified"
               }
               updatedDate={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? lastUpdateProgrammesStats
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
                   ? lastUpdatePendingTransferReceived
                   : lastUpdateProgrammesCertifiable
               }
               icon={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
                   <ClockHistory color="#16B1FF" size={80} />
-                ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
+                ) : userInfoState?.companyRole ===
+                  CompanyRole.PROGRAMME_DEVELOPER ? (
                   <BoxArrowInRight color="#16B1FF" size={80} />
                 ) : (
                   <ShieldX color="#16B1FF" size={80} />
@@ -1839,10 +2247,11 @@ ${total}
               companyRole={userInfoState?.companyRole}
               tooltip={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTprogrammespendingGoverment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTTransferReqRecProgrammeDev'
-                  : 'tTProgrammesUnCertiCertifier'
+                  ? "tTprogrammespendingGoverment"
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
+                  ? "tTTransferReqRecProgrammeDev"
+                  : "tTProgrammesUnCertiCertifier"
               )}
               t={t}
             />
@@ -1852,28 +2261,32 @@ ${total}
               value={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? transferRequestSent
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
                   ? transferRequestSent
                   : programmesCertifed
               }
               title={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'trasnferReqInit'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'trasnferReqInit'
-                  : 'programmesCertified'
+                  ? "trasnferReqInit"
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
+                  ? "trasnferReqInit"
+                  : "programmesCertified"
               }
               updatedDate={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? lastUpdatePendingTransferSent
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
                   ? lastUpdatePendingTransferSent
                   : lastUpdateProgrammesCertified
               }
               icon={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
                   <BoxArrowRight color="#16B1FF" size={80} />
-                ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
+                ) : userInfoState?.companyRole ===
+                  CompanyRole.PROGRAMME_DEVELOPER ? (
                   <BoxArrowRight color="#16B1FF" size={80} />
                 ) : (
                   <ShieldCheck color="#16B1FF" size={80} />
@@ -1883,10 +2296,11 @@ ${total}
               companyRole={userInfoState?.companyRole}
               tooltip={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTTransferReqSentGovernment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTTransferReqInitProgrammeDev'
-                  : 'tTProgrammesCertiCertifier'
+                  ? "tTTransferReqSentGovernment"
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
+                  ? "tTTransferReqInitProgrammeDev"
+                  : "tTProgrammesCertiCertifier"
               )}
               t={t}
             />
@@ -1896,28 +2310,32 @@ ${total}
               value={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? creditBalanceWithoutTimeRange
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
                   ? creditBalanceWithoutTimeRange
                   : creditCertiedBalanceWithoutTimeRange
               }
               title={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'creditBal'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'creditBal'
-                  : 'creditCertified'
+                  ? "creditBal"
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
+                  ? "creditBal"
+                  : "creditCertified"
               }
               updatedDate={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
                   ? lastUpdateCreditBalance
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
                   ? lastUpdateCreditBalance
                   : lastUpdateProgrammesCertified
               }
               icon={
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT ? (
                   <Gem color="#16B1FF" size={80} />
-                ) : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER ? (
+                ) : userInfoState?.companyRole ===
+                  CompanyRole.PROGRAMME_DEVELOPER ? (
                   <Gem color="#16B1FF" size={80} />
                 ) : (
                   <ShieldExclamation color="#16B1FF" size={80} />
@@ -1927,10 +2345,11 @@ ${total}
               companyRole={userInfoState?.companyRole}
               tooltip={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTCreditBalanceGovernment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTCreditBalanceProgrammeDev'
-                  : 'tTCreditCertifiedCertifier'
+                  ? "tTCreditBalanceGovernment"
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
+                  ? "tTCreditBalanceProgrammeDev"
+                  : "tTCreditCertifiedCertifier"
               )}
               t={t}
             />
@@ -1954,15 +2373,26 @@ ${total}
             {selectedurl.trim().length === 0 && (
               <Button className="annual-report-downloadbutton">
                 <Space>
-                  <BookOutlined className="common-progress-icon" style={{ color: '#3F3A47' }} />
+                  <BookOutlined
+                    className="common-progress-icon"
+                    style={{ color: "#3F3A47" }}
+                  />
                 </Space>
               </Button>
             )}
             {selectedurl.trim().length > 0 && (
-              <a href={selectedurl} target="_blank" rel="noopener noreferrer" download>
+              <a
+                href={selectedurl}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+              >
                 <Button className="annual-report-downloadbutton">
                   <Space>
-                    <BookOutlined className="common-progress-icon" style={{ color: '#3F3A47' }} />
+                    <BookOutlined
+                      className="common-progress-icon"
+                      style={{ color: "#3F3A47" }}
+                    />
                   </Space>
                 </Button>
               </a>
@@ -1974,10 +2404,10 @@ ${total}
           <RangePicker
             ranges={{
               Today: [moment(), moment()],
-              'Last 7 days': [moment().subtract('6', 'days'), moment()],
-              'Last 14 days': [moment().subtract('13', 'days'), moment()],
+              "Last 7 days": [moment().subtract("6", "days"), moment()],
+              "Last 14 days": [moment().subtract("13", "days"), moment()],
             }}
-            defaultValue={[moment().subtract('13', 'days'), moment()]}
+            defaultValue={[moment().subtract("13", "days"), moment()]}
             showTime
             allowClear={true}
             format="DD:MM:YYYY"
@@ -2009,12 +2439,13 @@ ${total}
               loading={loading}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTProgrammesGoverment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTProgrammesProgrammeDev'
-                  : categoryType === 'mine'
-                  ? 'tTProgrammesCertifierMine'
-                  : 'tTProgrammesCertifierOverall'
+                  ? "tTProgrammesGoverment"
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
+                  ? "tTProgrammesProgrammeDev"
+                  : categoryType === "mine"
+                  ? "tTProgrammesCertifierMine"
+                  : "tTProgrammesCertifierOverall"
               )}
               t={t}
             />
@@ -2022,19 +2453,20 @@ ${total}
           <Col xxl={8} xl={8} md={12} className="stastic-card-col pie">
             <RegistryPieChartsStatComponent
               id="credits"
-              title={t('credits')}
+              title={t("credits")}
               options={optionDonutPieA}
               series={creditsPieSeries}
               lastUpdate={lastUpdateProgrammesCreditsStats}
               loading={loading}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTCreditsGovernment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTCreditsProgrammeDev'
-                  : categoryType === 'mine'
-                  ? 'tTCreditsCertifierMine'
-                  : 'tTCreditsCertifierOverall'
+                  ? "tTCreditsGovernment"
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
+                  ? "tTCreditsProgrammeDev"
+                  : categoryType === "mine"
+                  ? "tTCreditsCertifierMine"
+                  : "tTCreditsCertifierOverall"
               )}
               Chart={Chart}
             />
@@ -2042,19 +2474,20 @@ ${total}
           <Col xxl={8} xl={8} md={12} className="stastic-card-col">
             <RegistryPieChartsStatComponent
               id="certified-credits"
-              title={t('certifiedCredits')}
+              title={t("certifiedCredits")}
               options={optionDonutPieB}
               series={creditsCertifiedPieSeries}
               lastUpdate={lastUpdateCertifiedCreditsStats}
               loading={loading}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTCertifiedCreditsGovernment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTCertifiedCreditsProgrammeDev'
-                  : categoryType === 'mine'
-                  ? 'tTCertifiedCreditsCertifierMine'
-                  : 'tTCertifiedCreditsCertifierOverall'
+                  ? "tTCertifiedCreditsGovernment"
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
+                  ? "tTCertifiedCreditsProgrammeDev"
+                  : categoryType === "mine"
+                  ? "tTCertifiedCreditsCertifierMine"
+                  : "tTCertifiedCreditsCertifierOverall"
               )}
               Chart={Chart}
             />
@@ -2066,19 +2499,20 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <RegistryBarChartsStatComponent
               id="total-programmes"
-              title={t('totalProgrammes')}
+              title={t("totalProgrammes")}
               options={totalProgrammesOptions}
               series={totalProgrammesSeries}
               lastUpdate={lastUpdateProgrammesStatsC}
               loading={loadingCharts}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTTotalProgrammesGovernment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTTotalProgrammesProgrammeDev'
-                  : categoryType === 'mine'
-                  ? 'tTTotalProgrammesCertifierMine'
-                  : 'tTTotalProgrammesCertifierOverall'
+                  ? "tTTotalProgrammesGovernment"
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
+                  ? "tTTotalProgrammesProgrammeDev"
+                  : categoryType === "mine"
+                  ? "tTTotalProgrammesCertifierMine"
+                  : "tTTotalProgrammesCertifierOverall"
               )}
               Chart={Chart}
             />
@@ -2086,19 +2520,20 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <RegistryBarChartsStatComponent
               id="total-programmes-sector"
-              title={t('totalProgrammesSector')}
+              title={t("totalProgrammesSector")}
               options={totalProgrammesOptionsSub}
               series={totalProgrammesSectorSeries}
               lastUpdate={lastUpdateProgrammesSectorStatsC}
               loading={loadingCharts}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTTotalProgrammesSectorGovernment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTTotalProgrammesSecProgrammeDev'
-                  : categoryType === 'mine'
-                  ? 'tTTotalProgrammesSecCertifierMine'
-                  : 'tTTotalProgrammesSecCertifierOverall'
+                  ? "tTTotalProgrammesSectorGovernment"
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
+                  ? "tTTotalProgrammesSecProgrammeDev"
+                  : categoryType === "mine"
+                  ? "tTTotalProgrammesSecCertifierMine"
+                  : "tTTotalProgrammesSecCertifierOverall"
               )}
               Chart={Chart}
             />
@@ -2110,19 +2545,20 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <RegistryBarChartsStatComponent
               id="total-credits"
-              title={t('totalCredits')}
+              title={t("totalCredits")}
               options={totalCreditsOptions}
               series={totalCreditsSeries}
               lastUpdate={lastUpdateTotalCredits}
               loading={loadingCharts}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTTotalCreditsGovernment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTTotalCreditsProgrammeDev'
-                  : categoryType === 'mine'
-                  ? 'tTTotalCreditsCertifierMine'
-                  : 'tTTotalCreditsCertifierOverall'
+                  ? "tTTotalCreditsGovernment"
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
+                  ? "tTTotalCreditsProgrammeDev"
+                  : categoryType === "mine"
+                  ? "tTTotalCreditsCertifierMine"
+                  : "tTTotalCreditsCertifierOverall"
               )}
               Chart={Chart}
             />
@@ -2130,19 +2566,20 @@ ${total}
           <Col xxl={12} xl={12} md={12} className="stastic-card-col">
             <RegistryBarChartsStatComponent
               id="total-credits-certified"
-              title={t('totalCreditsCertified')}
+              title={t("totalCreditsCertified")}
               options={totalCreditsCertifiedOptions}
               series={totalCertifiedCreditsSeries}
               lastUpdate={lastUpdateTotalCreditsCertified}
               loading={loadingCharts}
               toolTipText={t(
                 userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                  ? 'tTTotalCreditsCertifiedGovernment'
-                  : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                  ? 'tTTotalCertifiedCreditsProgrammeDev'
-                  : categoryType === 'mine'
-                  ? 'tTTotalCertifiedCreditsCertifierMine'
-                  : 'tTTotalCertifiedCreditsCertifierOverall'
+                  ? "tTTotalCreditsCertifiedGovernment"
+                  : userInfoState?.companyRole ===
+                    CompanyRole.PROGRAMME_DEVELOPER
+                  ? "tTTotalCertifiedCreditsProgrammeDev"
+                  : categoryType === "mine"
+                  ? "tTTotalCertifiedCreditsCertifierMine"
+                  : "tTTotalCertifiedCreditsCertifierOverall"
               )}
               Chart={Chart}
             />
@@ -2155,7 +2592,9 @@ ${total}
             <Col xxl={12} xl={12} md={12} className="stastic-card-col">
               <div className="stastics-and-pie-card height-map-rem">
                 <div className="pie-charts-top">
-                  <div className="pie-charts-title">{t('programmeLocations')}</div>
+                  <div className="pie-charts-title">
+                    {t("programmeLocations")}
+                  </div>
                   <div className="info-container">
                     <div className="info-container">
                       <Tooltip
@@ -2164,12 +2603,13 @@ ${total}
                         trigger="hover"
                         title={t(
                           userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                            ? 'tTProgrammeLocationsGovernment'
-                            : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                            ? 'tTProgrammeLocationsProgrammeDev'
-                            : categoryType === 'mine'
-                            ? 'tTProgrammeLocationsCertifierMine'
-                            : 'tTProgrammeLocationsCertifierOverall'
+                            ? "tTProgrammeLocationsGovernment"
+                            : userInfoState?.companyRole ===
+                              CompanyRole.PROGRAMME_DEVELOPER
+                            ? "tTProgrammeLocationsProgrammeDev"
+                            : categoryType === "mine"
+                            ? "tTProgrammeLocationsCertifierMine"
+                            : "tTProgrammeLocationsCertifierOverall"
                         )}
                       >
                         <InfoCircle color="#000000" size={17} />
@@ -2201,7 +2641,7 @@ ${total}
                       <LegendItem text="Authorised" color="#6ACDFF" />
                       {!(
                         userInfoState?.companyRole === CompanyRole.CERTIFIER &&
-                        categoryType === 'mine'
+                        categoryType === "mine"
                       ) && (
                         <>
                           <LegendItem text="Rejected" color="#CDCDCD" />
@@ -2212,7 +2652,8 @@ ${total}
                     </div>
                     <div className="updated-on margin-top-1">
                       <div className="updated-moment-container">
-                        {lastUpdateProgrammesStatsC !== '0' && lastUpdateProgrammesStatsC}
+                        {lastUpdateProgrammesStatsC !== "0" &&
+                          lastUpdateProgrammesStatsC}
                       </div>
                     </div>
                   </>
@@ -2222,7 +2663,9 @@ ${total}
             <Col xxl={12} xl={12} md={12} className="stastic-card-col">
               <div className="stastics-and-pie-card height-map-rem">
                 <div className="pie-charts-top">
-                  <div className="pie-charts-title">{t('trasnferLocations')}</div>
+                  <div className="pie-charts-title">
+                    {t("trasnferLocations")}
+                  </div>
                   <div className="info-container">
                     <Tooltip
                       arrowPointAtCenter
@@ -2230,12 +2673,13 @@ ${total}
                       trigger="hover"
                       title={t(
                         userInfoState?.companyRole === CompanyRole.GOVERNMENT
-                          ? 'tTTransferLocationsGovernment'
-                          : userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER
-                          ? 'tTTrasnferLocationsProgrammeDev'
-                          : categoryType === 'mine'
-                          ? 'tTTrasnferLocationsCertifierMine'
-                          : 'tTTrasnferLocationsCertifierOverall'
+                          ? "tTTransferLocationsGovernment"
+                          : userInfoState?.companyRole ===
+                            CompanyRole.PROGRAMME_DEVELOPER
+                          ? "tTTrasnferLocationsProgrammeDev"
+                          : categoryType === "mine"
+                          ? "tTTrasnferLocationsCertifierMine"
+                          : "tTTrasnferLocationsCertifierOverall"
                       )}
                     >
                       <InfoCircle color="#000000" size={17} />
@@ -2266,7 +2710,8 @@ ${total}
                     </div>
                     <div className="updated-on margin-top-2">
                       <div className="updated-moment-container">
-                        {lastUpdateTransferLocations !== '0' && lastUpdateTransferLocations}
+                        {lastUpdateTransferLocations !== "0" &&
+                          lastUpdateTransferLocations}
                       </div>
                     </div>
                   </>
@@ -2276,7 +2721,7 @@ ${total}
           </Row>
         </div>
       ) : (
-        ''
+        ""
       )}
     </div>
   );

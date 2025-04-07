@@ -1,28 +1,40 @@
-import { Button, Col, DatePicker, Form, Input, message, Row, Upload } from 'antd';
-import { useForm } from 'antd/lib/form/Form';
-import { i18n } from 'i18next';
-import moment from 'moment';
-import React, { useEffect, useState } from 'react';
-import './ValidationAgreement.scss';
-import TextArea from 'antd/lib/input/TextArea';
-import { UploadOutlined } from '@ant-design/icons';
-import { isValidateFileType } from '../../Utils/DocumentValidator';
-import { DocType } from '../../Definitions/Enums/document.type';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { getBase64, getFileName } from '../../Definitions/Definitions/programme.definitions';
-import { RcFile } from 'antd/lib/upload';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import LabelWithTooltip from '../LabelWithTooltip/LabelWithTooltip';
-import { Loading } from '../Loading/loading';
-import { API_PATHS } from '../../Config/apiConfig';
-import { ROUTES } from '../../Config/uiRoutingConfig';
+import {
+  Button,
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Row,
+  Upload,
+} from "antd";
+import { useForm } from "antd/lib/form/Form";
+import { i18n } from "i18next";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
+import "./ValidationAgreement.scss";
+import TextArea from "antd/lib/input/TextArea";
+import { UploadOutlined } from "@ant-design/icons";
+import { isValidateFileType } from "../../Utils/DocumentValidator";
+import { DocType } from "../../Definitions/Enums/document.type";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  getBase64,
+  getFileName,
+} from "../../Definitions/Definitions/programme.definitions";
+import { RcFile } from "antd/lib/upload";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import LabelWithTooltip from "../LabelWithTooltip/LabelWithTooltip";
+import { Loading } from "../Loading/loading";
+import { API_PATHS } from "../../Config/apiConfig";
+import { ROUTES } from "../../Config/uiRoutingConfig";
 
 const ValidationAgreement = (props: { translator: i18n }) => {
   const { translator } = props;
   const t = translator.t;
 
-  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
-  const registryName = process.env.REACT_APP_REGISTRY_NAME || 'RegistryX';
+  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
+  const registryName = import.meta.env.REACT_APP_REGISTRY_NAME || "RegistryX";
 
   const { state } = useLocation();
   const [isView, setIsView] = useState<boolean>(!!state?.isView);
@@ -57,27 +69,27 @@ const ValidationAgreement = (props: { translator: i18n }) => {
       settlementFee: val?.settlementFee,
       SLCFSignature: [
         {
-          uid: 'slcf_signature',
+          uid: "slcf_signature",
           name: getFileName(val?.climateFundSignature),
-          status: 'done',
+          status: "done",
           url: val?.climateFundSignature,
         },
       ],
       clientBehalf: val?.projectParticipantName,
       clientSignature: [
         {
-          uid: 'participant_signature',
+          uid: "participant_signature",
           name: getFileName(val?.projectParticipantSignature),
-          status: 'done',
+          status: "done",
           url: val?.projectParticipantSignature,
         },
       ],
       clientAuthorizedSignatory: val?.projectParticipantSignatory,
       SLCFWitnessSignature: [
         {
-          uid: 'witness_1_sign',
+          uid: "witness_1_sign",
           name: getFileName(val?.climateFundWitnessSignature),
-          status: 'done',
+          status: "done",
           url: val?.climateFundWitnessSignature,
         },
       ],
@@ -86,9 +98,9 @@ const ValidationAgreement = (props: { translator: i18n }) => {
       ClientWitness: val?.witness2Label,
       ClientWitnessSignature: [
         {
-          uid: 'witness_2_sign',
+          uid: "witness_2_sign",
           name: getFileName(val?.projectParticipantWitnessSignature),
-          status: 'done',
+          status: "done",
           url: val?.projectParticipantWitnessSignature,
         },
       ],
@@ -97,18 +109,18 @@ const ValidationAgreement = (props: { translator: i18n }) => {
       annexureAadditionalComments: val?.annexureAComment,
       annexureAadditionalDocs: val?.annexureADoc && [
         {
-          uid: 'appendix_1',
+          uid: "appendix_1",
           name: getFileName(val?.annexureADoc),
-          status: 'done',
+          status: "done",
           url: val?.annexureADoc,
         },
       ],
       annexureBadditionalComments: val?.annexureBComment,
       annexureBadditionalDocs: val?.annexureBDoc && [
         {
-          uid: 'appendix_2',
+          uid: "appendix_2",
           name: getFileName(val?.annexureBDoc),
-          status: 'done',
+          status: "done",
           url: val?.annexureBDoc,
         },
       ],
@@ -117,8 +129,8 @@ const ValidationAgreement = (props: { translator: i18n }) => {
     form.setFieldsValue(tempInitialValues);
   };
 
-  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   const setMigratedData = async () => {
@@ -132,7 +144,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
         clientBehalf: data?.company?.name,
       });
     } catch (error) {
-      console.log('error');
+      console.log("error");
     } finally {
       setLoading(false);
     }
@@ -145,15 +157,15 @@ const ValidationAgreement = (props: { translator: i18n }) => {
         try {
           const res = await post(API_PATHS.LAST_DOC_VERSION, {
             programmeId: id,
-            docType: 'validationAgreement',
+            docType: "validationAgreement",
           });
 
-          if (res?.statusText === 'SUCCESS') {
+          if (res?.statusText === "SUCCESS") {
             const content = JSON.parse(res?.data.content);
             viewDataMapToFields(content);
           }
         } catch (error) {
-          console.log('error', error);
+          console.log("error", error);
         } finally {
           setLoading(false);
         }
@@ -176,12 +188,16 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
   const onFinish = async (values: any) => {
     const climateFundSignature =
-      values?.SLCFSignature && values?.SLCFSignature?.length > 0 && values?.SLCFSignature[0]
+      values?.SLCFSignature &&
+      values?.SLCFSignature?.length > 0 &&
+      values?.SLCFSignature[0]
         ? await convertFileToBase64(values?.SLCFSignature[0])
         : undefined;
 
     const projectParticipantSignature =
-      values?.clientSignature && values?.clientSignature?.length > 0 && values?.clientSignature[0]
+      values?.clientSignature &&
+      values?.clientSignature?.length > 0 &&
+      values?.clientSignature[0]
         ? await convertFileToBase64(values?.clientSignature[0])
         : undefined;
 
@@ -242,21 +258,21 @@ const ValidationAgreement = (props: { translator: i18n }) => {
     try {
       setLoading(true);
       const res = await post(API_PATHS.CREATE_VALIDATION_AGGREMENT, tempValues);
-      if (res?.statusText === 'SUCCESS') {
+      if (res?.statusText === "SUCCESS") {
         message.open({
-          type: 'success',
-          content: 'Validation agreement submitted successfully',
+          type: "success",
+          content: "Validation agreement submitted successfully",
           duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
         navigateToDetailsPage();
       }
     } catch (error) {
       message.open({
-        type: 'error',
-        content: 'Something went wrong!',
+        type: "error",
+        content: "Something went wrong!",
         duration: 4,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       setLoading(false);
@@ -269,7 +285,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
   return (
     <div className="validation-agreement-container">
       <div className="title-container">
-        <div className="main">{t('validationAgreement:title')}</div>
+        <div className="main">{t("validationAgreement:title")}</div>
       </div>
 
       <div className="agreement-container">
@@ -296,12 +312,12 @@ const ValidationAgreement = (props: { translator: i18n }) => {
               {
                 validator: async (rule, value) => {
                   if (
-                    String(value).trim() === '' ||
+                    String(value).trim() === "" ||
                     String(value).trim() === undefined ||
                     value === null ||
                     value === undefined
                   ) {
-                    throw new Error(`Date of Issue ${t('isRequired')}`);
+                    throw new Error(`Date of Issue ${t("isRequired")}`);
                   }
                 },
               },
@@ -309,7 +325,9 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           >
             <DatePicker
               size="large"
-              disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+              disabledDate={(currentDate: any) =>
+                currentDate < moment().startOf("day")
+              }
               disabled={isView}
             />
           </Form.Item>
@@ -320,7 +338,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
             rules={[
               {
                 required: true,
-                message: `Between ${t('isRequired')}`,
+                message: `Between ${t("isRequired")}`,
               },
             ]}
           >
@@ -333,7 +351,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
             rules={[
               {
                 required: true,
-                message: `And ${t('isRequired')}`,
+                message: `And ${t("isRequired")}`,
               },
             ]}
           >
@@ -346,7 +364,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
             rules={[
               {
                 required: true,
-                message: `Definitions ${t('isRequired')}`,
+                message: `Definitions ${t("isRequired")}`,
               },
             ]}
           >
@@ -359,7 +377,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
             rules={[
               {
                 required: true,
-                message: `Whereas ${t('isRequired')}`,
+                message: `Whereas ${t("isRequired")}`,
               },
             ]}
           >
@@ -369,26 +387,30 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           {/* section 1 start */}
           <>
             <h4 className="mg-top-1 section-title">
-              {t('validationAgreement:sectionTitlePart01')}
+              {t("validationAgreement:sectionTitlePart01")}
               <br />
-              {t('validationAgreement:sectionTitlePart02')}
+              {t("validationAgreement:sectionTitlePart02")}
             </h4>
 
             <div className="section-list mg-bottom-1">
               <ul>
-                <li className="mg-bottom-1">{t('validationAgreement:point1.1')}</li>
-                <li className="mg-bottom-1">{t('validationAgreement:point1.2')}</li>
                 <li className="mg-bottom-1">
-                  {t('validationAgreement:point1.3')}
+                  {t("validationAgreement:point1.1")}
+                </li>
+                <li className="mg-bottom-1">
+                  {t("validationAgreement:point1.2")}
+                </li>
+                <li className="mg-bottom-1">
+                  {t("validationAgreement:point1.3")}
                   <ul className="inner-list">
-                    <li>{t('validationAgreement:point1.3Item01')}</li>
-                    <li>{t('validationAgreement:point1.3Item02')}</li>
-                    <li>{t('validationAgreement:point1.3Item03')}</li>
-                    <li>{t('validationAgreement:point1.3Item04')}</li>
-                    <li>{t('validationAgreement:point1.3Item05')}</li>
+                    <li>{t("validationAgreement:point1.3Item01")}</li>
+                    <li>{t("validationAgreement:point1.3Item02")}</li>
+                    <li>{t("validationAgreement:point1.3Item03")}</li>
+                    <li>{t("validationAgreement:point1.3Item04")}</li>
+                    <li>{t("validationAgreement:point1.3Item05")}</li>
                   </ul>
                 </li>
-                <li>{t('validationAgreement:point1.4')}</li>
+                <li>{t("validationAgreement:point1.4")}</li>
               </ul>
             </div>
           </>
@@ -396,16 +418,16 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           <br />
           {/* section 2 start */}
           <div></div>
-          <h4 className="section-title">{t('validationAgreement:point2')}</h4>
+          <h4 className="section-title">{t("validationAgreement:point2")}</h4>
 
           <div className="section-list mg-bottom-1">
             <ul>
               <li>
-                {t('validationAgreement:point2.1')}
+                {t("validationAgreement:point2.1")}
                 <ul className="inner-list">
-                  <li>{t('validationAgreement:point2.1Item01')}</li>
-                  <li>{t('validationAgreement:point2.1Item02')}</li>
-                  <li>{t('validationAgreement:point2.1Item03')}</li>
+                  <li>{t("validationAgreement:point2.1Item01")}</li>
+                  <li>{t("validationAgreement:point2.1Item02")}</li>
+                  <li>{t("validationAgreement:point2.1Item03")}</li>
                 </ul>
               </li>
             </ul>
@@ -414,18 +436,20 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           <br />
           {/* section 3 start */}
           <>
-            <h4 className="section-title">{t('validationAgreement:point3')}</h4>
+            <h4 className="section-title">{t("validationAgreement:point3")}</h4>
             <div className="section-description mg-bottom-1">
-              <p className="settlement-fee-label">{t('validationAgreement:point3.1')}</p>
+              <p className="settlement-fee-label">
+                {t("validationAgreement:point3.1")}
+              </p>
               <div className="mg-left-1 settlement-fee">
-                {t('validationAgreement:point3.1Label01')}
+                {t("validationAgreement:point3.1Label01")}
                 <Form.Item
                   name="settlementFee"
                   className="settlement-fee-input"
                   rules={[
                     {
                       required: true,
-                      message: `Verification fee ${t('isRequired')}`,
+                      message: `Verification fee ${t("isRequired")}`,
                     },
                     {
                       validator(rule, value) {
@@ -435,7 +459,9 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
                         // eslint-disable-next-line no-restricted-globals
                         if (isNaN(value)) {
-                          return Promise.reject(new Error('Should be a number!'));
+                          return Promise.reject(
+                            new Error("Should be a number!")
+                          );
                         }
 
                         return Promise.resolve();
@@ -445,25 +471,33 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                 >
                   <Input disabled={isView} />
                 </Form.Item>
-                {t('validationAgreement:point3.1Label02')}
+                {t("validationAgreement:point3.1Label02")}
               </div>
 
-              <p>{t('validationAgreement:point3.2')}</p>
-              <p className="no-margin-p">{t('validationAgreement:point3.2Item01')}</p>
-              <p className="no-margin-p">{t('validationAgreement:point3.2Item02')}</p>
+              <p>{t("validationAgreement:point3.2")}</p>
+              <p className="no-margin-p">
+                {t("validationAgreement:point3.2Item01")}
+              </p>
+              <p className="no-margin-p">
+                {t("validationAgreement:point3.2Item02")}
+              </p>
             </div>
           </>
           {/* section 3 end */}
           <br />
           {/* section 4 start */}
-          <h4 className="section-title">{t('validationAgreement:point4')}</h4>
+          <h4 className="section-title">{t("validationAgreement:point4")}</h4>
           <div className="section-list">
             <ul>
               <li>
-                {t('validationAgreement:point4.1')}
+                {t("validationAgreement:point4.1")}
                 <ul className="inner-list">
-                  <li className="mg-bottom-1">{t('validationAgreement:point4.1Item01')}</li>
-                  <li className="mg-bottom-1">{t('validationAgreement:point4.1Item02')}</li>
+                  <li className="mg-bottom-1">
+                    {t("validationAgreement:point4.1Item01")}
+                  </li>
+                  <li className="mg-bottom-1">
+                    {t("validationAgreement:point4.1Item02")}
+                  </li>
                 </ul>
               </li>
             </ul>
@@ -472,9 +506,9 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
           {/* section 5 start */}
           <>
-            <h4 className="section-title">{t('validationAgreement:point5')}</h4>
+            <h4 className="section-title">{t("validationAgreement:point5")}</h4>
             <div className="section-description mg-bottom-1">
-              {t('validationAgreement:point5.1')}
+              {t("validationAgreement:point5.1")}
             </div>
           </>
           {/* section 5 end */}
@@ -482,39 +516,39 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
           {/* section 6 start */}
           <>
-            <h4 className="section-title">{t('validationAgreement:point6')}</h4>
+            <h4 className="section-title">{t("validationAgreement:point6")}</h4>
             <div className="section-description mg-bottom-1">
-              {t('validationAgreement:point6.1')}
+              {t("validationAgreement:point6.1")}
             </div>
           </>
           {/* section 6 end */}
           <br />
           {/* section 7 start */}
           <>
-            <h4 className="section-title">{t('validationAgreement:point7')}</h4>
+            <h4 className="section-title">{t("validationAgreement:point7")}</h4>
             <div className="section-description mg-bottom-1">
-              <p>{t('validationAgreement:point7.1')}</p>
-              <p>{t('validationAgreement:point7.2')}</p>
+              <p>{t("validationAgreement:point7.1")}</p>
+              <p>{t("validationAgreement:point7.2")}</p>
             </div>
           </>
           {/* section 7 end */}
           <br />
           {/* section 8 start */}
           <>
-            <h4 className="section-title">{t('validationAgreement:point8')}</h4>
+            <h4 className="section-title">{t("validationAgreement:point8")}</h4>
             <div className="section-description mg-bottom-1">
-              <p>{t('validationAgreement:point8.1')}</p>
-              <p>{t('validationAgreement:point8.2')}</p>
-              <p>{t('validationAgreement:point8.3')}</p>
+              <p>{t("validationAgreement:point8.1")}</p>
+              <p>{t("validationAgreement:point8.2")}</p>
+              <p>{t("validationAgreement:point8.3")}</p>
             </div>
           </>
           {/* section 8 end */}
           <br />
           {/* section 9 start */}
           <>
-            <h4 className="section-title">{t('validationAgreement:point9')}</h4>
+            <h4 className="section-title">{t("validationAgreement:point9")}</h4>
             <div className="section-description mg-bottom-1">
-              <p>{t('validationAgreement:point9.1')}</p>
+              <p>{t("validationAgreement:point9.1")}</p>
             </div>
           </>
           {/* section 9 end */}
@@ -523,11 +557,15 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
           {/* Signatures and annexure start */}
           <div className="signatures-annexures">
-            <h4 className="section-description">{t('validationAgreement:inWitness')}</h4>
+            <h4 className="section-description">
+              {t("validationAgreement:inWitness")}
+            </h4>
 
-            <Row justify={'space-between'} gutter={40} className="mg-top-1">
+            <Row justify={"space-between"} gutter={40} className="mg-top-1">
               <Col md={24} xl={10}>
-                <p className="no-margin-p">{t('validationAgreement:onBehalf')}</p>
+                <p className="no-margin-p">
+                  {t("validationAgreement:onBehalf")}
+                </p>
                 <p className="no-margin-p">{registryName}</p>
 
                 <div className="signature-upload">
@@ -541,7 +579,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `Signature ${t('isRequired')}`,
+                        message: `Signature ${t("isRequired")}`,
                       },
                       {
                         validator: async (rule, file) => {
@@ -552,10 +590,12 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                                 DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
                               )
                             ) {
-                              throw new Error(`${t('CMAForm:invalidFileFormat')}`);
+                              throw new Error(
+                                `${t("CMAForm:invalidFileFormat")}`
+                              );
                             } else if (file[0]?.size > maximumImageSize) {
                               // default size format of files would be in bytes -> 1MB = 1000000bytes
-                              throw new Error(`${t('common:maxSizeVal')}`);
+                              throw new Error(`${t("common:maxSizeVal")}`);
                             }
                           }
                         },
@@ -574,7 +614,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       multiple={false}
                       maxCount={1}
                       // defaultFileList={form.getFieldValue('SLCFSignature') || []}
-                      fileList={form.getFieldValue('SLCFSignature') || []}
+                      fileList={form.getFieldValue("SLCFSignature") || []}
                       disabled={isView}
                     >
                       <Button
@@ -583,7 +623,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                         icon={<UploadOutlined />}
                         disabled={isView}
                       >
-                        {t('validationAgreement:upload')}
+                        {t("validationAgreement:upload")}
                       </Button>
                     </Upload>
                   </Form.Item>
@@ -607,7 +647,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `On Behalf of; ${t('isRequired')}`,
+                        message: `On Behalf of; ${t("isRequired")}`,
                       },
                     ]}
                   >
@@ -626,7 +666,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `Signature ${t('isRequired')}`,
+                        message: `Signature ${t("isRequired")}`,
                       },
                       {
                         validator: async (rule, file) => {
@@ -637,10 +677,12 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                                 DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
                               )
                             ) {
-                              throw new Error(`${t('CMAForm:invalidFileFormat')}`);
+                              throw new Error(
+                                `${t("CMAForm:invalidFileFormat")}`
+                              );
                             } else if (file[0]?.size > maximumImageSize) {
                               // default size format of files would be in bytes -> 1MB = 1000000bytes
-                              throw new Error(`${t('common:maxSizeVal')}`);
+                              throw new Error(`${t("common:maxSizeVal")}`);
                             }
                           }
                         },
@@ -658,7 +700,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       listType="picture"
                       multiple={false}
                       maxCount={1}
-                      fileList={form.getFieldValue('clientSignature') || []}
+                      fileList={form.getFieldValue("clientSignature") || []}
                       disabled={isView}
                     >
                       <Button
@@ -667,7 +709,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                         icon={<UploadOutlined />}
                         disabled={isView}
                       >
-                        {t('validationAgreement:upload')}
+                        {t("validationAgreement:upload")}
                       </Button>
                     </Upload>
                   </Form.Item>
@@ -677,7 +719,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationAgreement:required')}`,
+                        message: `${t("validationAgreement:required")}`,
                       },
                     ]}
                   >
@@ -687,10 +729,18 @@ const ValidationAgreement = (props: { translator: i18n }) => {
               </Col>
             </Row>
 
-            <Row justify={'space-between'} gutter={40} className="mg-top-1">
+            <Row justify={"space-between"} gutter={40} className="mg-top-1">
               <Col md={24} xl={10}>
-                <Form.Item name="SLCFWitness" label="Witness" className="witness-input">
-                  <Input defaultValue={registryName} placeholder={registryName} disabled />
+                <Form.Item
+                  name="SLCFWitness"
+                  label="Witness"
+                  className="witness-input"
+                >
+                  <Input
+                    defaultValue={registryName}
+                    placeholder={registryName}
+                    disabled
+                  />
                 </Form.Item>
 
                 <div>
@@ -702,7 +752,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `Signature ${t('isRequired')}`,
+                        message: `Signature ${t("isRequired")}`,
                       },
                       {
                         validator: async (rule, file) => {
@@ -713,10 +763,12 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                                 DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
                               )
                             ) {
-                              throw new Error(`${t('CMAForm:invalidFileFormat')}`);
+                              throw new Error(
+                                `${t("CMAForm:invalidFileFormat")}`
+                              );
                             } else if (file[0]?.size > maximumImageSize) {
                               // default size format of files would be in bytes -> 1MB = 1000000bytes
-                              throw new Error(`${t('common:maxSizeVal')}`);
+                              throw new Error(`${t("common:maxSizeVal")}`);
                             }
                           }
                         },
@@ -735,7 +787,9 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       multiple={false}
                       maxCount={1}
                       disabled={isView}
-                      fileList={form.getFieldValue('SLCFWitnessSignature') || []}
+                      fileList={
+                        form.getFieldValue("SLCFWitnessSignature") || []
+                      }
                     >
                       <Button
                         className="upload-doc"
@@ -743,7 +797,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                         icon={<UploadOutlined />}
                         disabled={isView}
                       >
-                        {t('validationAgreement:upload')}
+                        {t("validationAgreement:upload")}
                       </Button>
                     </Upload>
                   </Form.Item>
@@ -754,7 +808,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `Name ${t('isRequired')}`,
+                        message: `Name ${t("isRequired")}`,
                       },
                     ]}
                   >
@@ -767,7 +821,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `Designation ${t('isRequired')}`,
+                        message: `Designation ${t("isRequired")}`,
                       },
                     ]}
                   >
@@ -783,7 +837,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                   rules={[
                     {
                       required: true,
-                      message: `Witness ${t('isRequired')}`,
+                      message: `Witness ${t("isRequired")}`,
                     },
                   ]}
                 >
@@ -801,7 +855,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `Signature ${t('isRequired')}`,
+                        message: `Signature ${t("isRequired")}`,
                       },
                       {
                         validator: async (rule, file) => {
@@ -812,10 +866,12 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                                 DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
                               )
                             ) {
-                              throw new Error(`${t('CMAForm:invalidFileFormat')}`);
+                              throw new Error(
+                                `${t("CMAForm:invalidFileFormat")}`
+                              );
                             } else if (file[0]?.size > maximumImageSize) {
                               // default size format of files would be in bytes -> 1MB = 1000000bytes
-                              throw new Error(`${t('common:maxSizeVal')}`);
+                              throw new Error(`${t("common:maxSizeVal")}`);
                             }
                           }
                         },
@@ -835,7 +891,9 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                       maxCount={1}
                       disabled={isView}
                       // defaultFileList={form.getFieldValue('ClientWitnessSignature') || []}
-                      fileList={form.getFieldValue('ClientWitnessSignature') || []}
+                      fileList={
+                        form.getFieldValue("ClientWitnessSignature") || []
+                      }
                     >
                       <Button
                         className="upload-doc"
@@ -843,7 +901,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                         icon={<UploadOutlined />}
                         disabled={isView}
                       >
-                        {t('validationAgreement:upload')}
+                        {t("validationAgreement:upload")}
                       </Button>
                     </Upload>
                   </Form.Item>
@@ -854,7 +912,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `Name is ${t('isRequired')}`,
+                        message: `Name is ${t("isRequired")}`,
                       },
                     ]}
                   >
@@ -867,7 +925,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `Designation ${t('isRequired')}`,
+                        message: `Designation ${t("isRequired")}`,
                       },
                     ]}
                   >
@@ -877,7 +935,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
               </Col>
             </Row>
 
-            <h4 className="annexures">{t('validationAgreement:annexureA')}</h4>
+            <h4 className="annexures">{t("validationAgreement:annexureA")}</h4>
 
             <Form.Item
               label="Additional Comments"
@@ -885,7 +943,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
               rules={[
                 {
                   required: true,
-                  message: `Additional Comments ${t('isRequired')}`,
+                  message: `Additional Comments ${t("isRequired")}`,
                 },
               ]}
             >
@@ -894,7 +952,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
             <>
               <LabelWithTooltip
-                label={`${t('validationAgreement:uploadAdditionalDocuments')}`}
+                label={`${t("validationAgreement:uploadAdditionalDocuments")}`}
                 required={true}
               />
               <Form.Item
@@ -912,10 +970,10 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                             DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
                           )
                         ) {
-                          throw new Error(`${t('CMAForm:invalidFileFormat')}`);
+                          throw new Error(`${t("CMAForm:invalidFileFormat")}`);
                         } else if (file[0]?.size > maximumImageSize) {
                           // default size format of files would be in bytes -> 1MB = 1000000bytes
-                          throw new Error(`${t('common:maxSizeVal')}`);
+                          throw new Error(`${t("common:maxSizeVal")}`);
                         }
                       }
                     },
@@ -933,7 +991,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                   multiple={false}
                   maxCount={1}
                   disabled={isView}
-                  fileList={form.getFieldValue('annexureAadditionalDocs') || []}
+                  fileList={form.getFieldValue("annexureAadditionalDocs") || []}
                 >
                   <Button
                     className="upload-doc"
@@ -941,13 +999,13 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     icon={<UploadOutlined />}
                     disabled={isView}
                   >
-                    {t('validationAgreement:upload')}
+                    {t("validationAgreement:upload")}
                   </Button>
                 </Upload>
               </Form.Item>
             </>
 
-            <h4 className="annexures">{t('validationAgreement:annexureB')}</h4>
+            <h4 className="annexures">{t("validationAgreement:annexureB")}</h4>
 
             <Form.Item
               label="Additional Comments"
@@ -955,7 +1013,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
               rules={[
                 {
                   required: true,
-                  message: `Additional Comments ${t('isRequired')}`,
+                  message: `Additional Comments ${t("isRequired")}`,
                 },
               ]}
             >
@@ -964,7 +1022,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
 
             <>
               <LabelWithTooltip
-                label={`${t('validationAgreement:uploadAdditionalDocuments')}`}
+                label={`${t("validationAgreement:uploadAdditionalDocuments")}`}
                 required={true}
               />
               <Form.Item
@@ -982,10 +1040,10 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                             DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
                           )
                         ) {
-                          throw new Error(`${t('CMAForm:invalidFileFormat')}`);
+                          throw new Error(`${t("CMAForm:invalidFileFormat")}`);
                         } else if (file[0]?.size > maximumImageSize) {
                           // default size format of files would be in bytes -> 1MB = 1000000bytes
-                          throw new Error(`${t('common:maxSizeVal')}`);
+                          throw new Error(`${t("common:maxSizeVal")}`);
                         }
                       }
                     },
@@ -1003,7 +1061,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                   multiple={false}
                   maxCount={1}
                   disabled={isView}
-                  fileList={form.getFieldValue('annexureBadditionalDocs') || []}
+                  fileList={form.getFieldValue("annexureBadditionalDocs") || []}
                 >
                   <Button
                     className="upload-doc"
@@ -1011,7 +1069,7 @@ const ValidationAgreement = (props: { translator: i18n }) => {
                     icon={<UploadOutlined />}
                     disabled={isView}
                   >
-                    {t('validationAgreement:upload')}
+                    {t("validationAgreement:upload")}
                   </Button>
                 </Upload>
               </Form.Item>
@@ -1019,20 +1077,20 @@ const ValidationAgreement = (props: { translator: i18n }) => {
           </div>
           {/* Signatures and annexure end */}
 
-          <Row justify={'end'} className="step-actions-end">
+          <Row justify={"end"} className="step-actions-end">
             {isView ? (
               <>
-                <Button danger size={'large'} onClick={navigateToDetailsPage}>
-                  {t('validationAgreement:back')}
+                <Button danger size={"large"} onClick={navigateToDetailsPage}>
+                  {t("validationAgreement:back")}
                 </Button>
               </>
             ) : (
               <>
-                <Button danger size={'large'} onClick={navigateToDetailsPage}>
-                  {t('validationAgreement:cancel')}
+                <Button danger size={"large"} onClick={navigateToDetailsPage}>
+                  {t("validationAgreement:cancel")}
                 </Button>
-                <Button type="primary" size={'large'} htmlType="submit">
-                  {t('validationAgreement:submit')}
+                <Button type="primary" size={"large"} htmlType="submit">
+                  {t("validationAgreement:submit")}
                 </Button>
               </>
             )}

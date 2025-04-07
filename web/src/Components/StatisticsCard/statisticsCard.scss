@@ -1,4 +1,4 @@
-@import '../../Styles/colors.dashboard.scss';
+@use '../../Styles/colors.dashboard.scss';
 
 .stastic-card-main-container {
   display: flex;
@@ -60,7 +60,7 @@
         font-size: 2rem;
         font-weight: 600;
         width: 100%;
-        color: $primary-blue;
+        color: colors.$primary-blue;
         padding: 0;
       }
 
@@ -107,7 +107,7 @@
     border-radius: 3.125rem;
     padding: 0.05rem 0.8rem 0.05rem 0.8rem;
     width: max-content;
-    color: $primary-blue;
+    color: colors.$primary-blue;
     background-color: rgba($color: #b9e2f4, $alpha: 0.4);
   }
 }

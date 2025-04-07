@@ -23,9 +23,9 @@ const GetLocationMapComponent = (props: CMAMapComponentProps) => {
     isShowCordinate = false,
   } = props;
 
-  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
-  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+  const mapType = import.meta.env.REACT_APP_MAP_TYPE ? import.meta.env.REACT_APP_MAP_TYPE : 'None';
+  const accessToken = import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    ? import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     : '';
 
   const getCenter = (list: any[]) => {

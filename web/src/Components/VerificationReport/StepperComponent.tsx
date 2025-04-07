@@ -1,32 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import { Steps, message } from 'antd';
-import { BasicInformationStep } from './BasicInformationStep';
-import './VerificationReport.scss';
-import { GHGProjectDescriptionStep } from './GHGProjectDescription';
-import { ExecutiveSummaryStep } from './ExecutiveSummaryStep';
-import { VerificationTeamStep } from './VerificationTeamStep';
-import { ApplicationOfMaterialityStep } from './ApplicationOfMaterialityStep';
-import { MeansOfVerificationStep } from './MeansOfVerificationStep';
-import { VerificationFindingStep } from './VerificationFindingStep';
-import { InternalQualityControlStep } from './InternalQualityControlStep';
-import { VerificationOpinionStep } from './VerificationOpinionStep';
-import { CertificationStep } from './CertificationStatementStep';
-import { AppendixStep } from './AppendixStep';
-import { useForm } from 'antd/lib/form/Form';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import moment from 'moment';
-import { DocumentTypeEnum } from '../../Definitions/Enums/document.type.enum';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { extractFilePropertiesFromLink, fileUploadValueExtract } from '../../Utils/utilityHelper';
-import { PopupInfo } from '../../Definitions/Definitions/ndcDetails.definitions';
-import { SlcfFormActionModel } from '../Models/SlcfFormActionModel';
-import { CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { API_PATHS } from '../../Config/apiConfig';
-import { ROUTES } from '../../Config/uiRoutingConfig';
-import { VerificationStepProps } from './StepProps';
-import { NULL } from 'sass';
-import { DocumentEnum } from '../../Definitions/Enums/document.enum';
+import React, { useEffect, useState } from "react";
+import { Steps, message } from "antd";
+import { BasicInformationStep } from "./BasicInformationStep";
+import "./VerificationReport.scss";
+import { GHGProjectDescriptionStep } from "./GHGProjectDescription";
+import { ExecutiveSummaryStep } from "./ExecutiveSummaryStep";
+import { VerificationTeamStep } from "./VerificationTeamStep";
+import { ApplicationOfMaterialityStep } from "./ApplicationOfMaterialityStep";
+import { MeansOfVerificationStep } from "./MeansOfVerificationStep";
+import { VerificationFindingStep } from "./VerificationFindingStep";
+import { InternalQualityControlStep } from "./InternalQualityControlStep";
+import { VerificationOpinionStep } from "./VerificationOpinionStep";
+import { CertificationStep } from "./CertificationStatementStep";
+import { AppendixStep } from "./AppendixStep";
+import { useForm } from "antd/lib/form/Form";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import moment from "moment";
+import { DocumentTypeEnum } from "../../Definitions/Enums/document.type.enum";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
+import {
+  extractFilePropertiesFromLink,
+  fileUploadValueExtract,
+} from "../../Utils/utilityHelper";
+import { PopupInfo } from "../../Definitions/Definitions/ndcDetails.definitions";
+import { SlcfFormActionModel } from "../Models/SlcfFormActionModel";
+import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { API_PATHS } from "../../Config/apiConfig";
+import { ROUTES } from "../../Config/uiRoutingConfig";
+import { VerificationStepProps } from "./StepProps";
+import { NULL } from "sass";
+import { DocumentEnum } from "../../Definitions/Enums/document.enum";
 // import { basicInformationMapDataToFields } from '../ValidationReport/viewDataMap';
 import {
   appendixMapDataToFields,
@@ -40,9 +43,9 @@ import {
   verificationFindingsMapDataToFields,
   verificationOpinionMapDataToFields,
   verificationTeamsMapDataToFields,
-} from './viewDataMap';
-import { Loading } from '../Loading/loading';
-import { INF_SECTORAL_SCOPE } from '../AddNewProgramme/ProgrammeCreationComponent';
+} from "./viewDataMap";
+import { Loading } from "../Loading/loading";
+import { INF_SECTORAL_SCOPE } from "../AddNewProgramme/ProgrammeCreationComponent";
 
 const StepperComponent = (props: VerificationStepProps) => {
   const { translator, t } = props;
@@ -58,13 +61,17 @@ const StepperComponent = (props: VerificationStepProps) => {
 
   const { state } = useLocation();
 
-  console.log('---------------------verification state--------------------', state);
+  console.log(
+    "---------------------verification state--------------------",
+    state
+  );
 
   const [popupInfo, setPopupInfo] = useState<PopupInfo>();
-  const [slcfActionModalVisible, setSlcfActioModalVisible] = useState<boolean>(false);
+  const [slcfActionModalVisible, setSlcfActioModalVisible] =
+    useState<boolean>(false);
 
-  // const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
-  // const registryName = process.env.REACT_APP_REGISTRY_NAME || 'RegistryX';
+  // const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+  // const registryName = import.meta.env.REACT_APP_REGISTRY_NAME || 'RegistryX';
   const [basicInformationForm] = useForm();
   const [ghgProjectDescriptionForm] = useForm();
   const [executiveSummaryForm] = useForm();
@@ -79,7 +86,7 @@ const StepperComponent = (props: VerificationStepProps) => {
 
   const [values, setValues] = useState({
     projectRefId: id,
-    name: 'verification',
+    name: "verification",
     companyId: undefined,
     documentType: DocumentEnum.VERIFICATION,
     data: {},
@@ -111,13 +118,15 @@ const StepperComponent = (props: VerificationStepProps) => {
 
     //fetch programme data
     try {
-      const programmeResponse = await post(API_PATHS.PROGRAMME_BY_ID, { programmeId: programId });
-      if (programmeResponse?.statusText === 'SUCCESS') {
+      const programmeResponse = await post(API_PATHS.PROGRAMME_BY_ID, {
+        programmeId: programId,
+      });
+      if (programmeResponse?.statusText === "SUCCESS") {
         programmeData = programmeResponse?.data;
       }
-      console.log('---------------programmeData--------------', programmeData);
+      console.log("---------------programmeData--------------", programmeData);
     } catch (error) {
-      console.log('Error fetching programme data', error);
+      console.log("Error fetching programme data", error);
     }
 
     //fetch PDD data
@@ -126,12 +135,12 @@ const StepperComponent = (props: VerificationStepProps) => {
         refId: state?.documents?.PDD?.refId,
         documentType: DocumentEnum.PDD,
       });
-      if (pddResponse?.statusText === 'SUCCESS') {
+      if (pddResponse?.statusText === "SUCCESS") {
         pddData = pddResponse?.data?.data;
       }
-      console.log('-----------pddData--------------', pddData);
+      console.log("-----------pddData--------------", pddData);
     } catch (error) {
-      console.log('Error fetching PDD data', error);
+      console.log("Error fetching PDD data", error);
     }
 
     //fetch validation data
@@ -140,12 +149,12 @@ const StepperComponent = (props: VerificationStepProps) => {
         refId: state?.documents?.VALIDATION?.refId,
         documentType: DocumentEnum.VALIDATION,
       });
-      if (validationResponse?.statusText === 'SUCCESS') {
+      if (validationResponse?.statusText === "SUCCESS") {
         validationData = validationResponse?.data?.data;
       }
-      console.log('-----------validationData--------------', validationData);
+      console.log("-----------validationData--------------", validationData);
     } catch (error) {
-      console.log('Error fetching validation data', error);
+      console.log("Error fetching validation data", error);
     }
 
     //fetch monitoring data
@@ -154,11 +163,11 @@ const StepperComponent = (props: VerificationStepProps) => {
         refId: state?.documents?.MONITORING?.refId,
         documentType: DocumentEnum.MONITORING,
       });
-      if (monitoringResponse?.statusText === 'SUCCESS') {
+      if (monitoringResponse?.statusText === "SUCCESS") {
         monitoringData = monitoringResponse?.data?.data;
       }
     } catch (error) {
-      console.log('Error fetching monitoring data', error);
+      console.log("Error fetching monitoring data", error);
     }
 
     const creditingPeriodStartDate = moment.unix(
@@ -167,21 +176,23 @@ const StepperComponent = (props: VerificationStepProps) => {
     const creditingPeriodEndDate = moment.unix(
       monitoringData?.projectActivityDetails?.pa_projectCreditingPeriodEndDate
     );
-    console.log('creditingPeriodStartDate', creditingPeriodStartDate);
-    console.log('creditingPeriodEndDate', creditingPeriodEndDate);
+    console.log("creditingPeriodStartDate", creditingPeriodStartDate);
+    console.log("creditingPeriodEndDate", creditingPeriodEndDate);
     const creditingPeriodDuration = moment.duration(
       creditingPeriodEndDate.diff(creditingPeriodStartDate)
     );
     const durationString = `${creditingPeriodDuration.years()} years, ${creditingPeriodDuration.months()} months and ${creditingPeriodDuration.days()} days`;
-    console.log('durationString', durationString);
+    console.log("durationString", durationString);
 
-    const netEmReductions = monitoringData?.calcEmissionReductions?.netGHGEmissionReductions;
+    const netEmReductions =
+      monitoringData?.calcEmissionReductions?.netGHGEmissionReductions;
     const emReduction = netEmReductions?.yearlyGHGEmissionReductions;
 
     if (programmeData && pddData && validationData && monitoringData) {
-      const docVersions = state?.documents?.[DocumentEnum.VERIFICATION as any]?.version;
-      console.log('------------docVersions-----------', docVersions);
-      console.log('--------state---------', state);
+      const docVersions =
+        state?.documents?.[DocumentEnum.VERIFICATION as any]?.version;
+      console.log("------------docVersions-----------", docVersions);
+      console.log("--------state---------", state);
       const latestVersion = docVersions ? docVersions + 1 : 1;
       basicInformationForm.setFieldsValue({
         b_projectDeveloper: programmeData?.projectParticipant,
@@ -189,14 +200,19 @@ const StepperComponent = (props: VerificationStepProps) => {
         b_mandatorySectoralScopes: pddData?.projectDetails?.sectoralScope,
         b_appliedMethodologies: pddData?.projectDetails?.appliedMethodologies,
         b_estimatedGHGEmissionReduction:
-          pddData?.projectDetails?.estimatedAvgGHGEmissionReductionBasicInformation,
-        b_projectTitle: validationData?.basicInformation?.titleOfTheProjectActivity,
+          pddData?.projectDetails
+            ?.estimatedAvgGHGEmissionReductionBasicInformation,
+        b_projectTitle:
+          validationData?.basicInformation?.titleOfTheProjectActivity,
         b_unfccRefNo: validationData?.basicInformation?.unfccRefNo,
         b_scaleOfProject: validationData?.basicInformation?.projectScale,
-        b_conditionalSectoralScopes: validationData?.basicInformation?.conditionalSectoralScopes,
-        b_monitoringPeriodNo: monitoringData?.projectDetails?.bi_monitoringPeriodNo,
+        b_conditionalSectoralScopes:
+          validationData?.basicInformation?.conditionalSectoralScopes,
+        b_monitoringPeriodNo:
+          monitoringData?.projectDetails?.bi_monitoringPeriodNo,
         b_monitoringPeriodDuration: monitoringData?.projectDetails?.bi_duration,
-        b_versionNoOfMonitoringReport: monitoringData?.projectDetails?.bi_versionNoOfMR,
+        b_versionNoOfMonitoringReport:
+          monitoringData?.projectDetails?.bi_versionNoOfMR,
         b_creditingPeriod: durationString,
         b_versionNoOfVerificationReport: latestVersion,
       });
@@ -205,35 +221,58 @@ const StepperComponent = (props: VerificationStepProps) => {
         estimatedNetEmissionReductions: emReduction.map((item: any) => {
           return {
             ...item,
-            startDate: item?.startDate ? moment.unix(item?.startDate) : undefined,
+            startDate: item?.startDate
+              ? moment.unix(item?.startDate)
+              : undefined,
             endDate: item?.endDate ? moment.unix(item?.endDate) : undefined,
           };
         }),
-        totalBaselineEmissionReductions: Number(netEmReductions?.totalBaselineEmissionReductions),
-        totalProjectEmissionReductions: Number(netEmReductions?.totalProjectEmissionReductions),
-        totalLeakageEmissionReductions: Number(netEmReductions?.totalLeakageEmissionReductions),
-        totalNetEmissionReductions: Number(netEmReductions?.totalNetEmissionReductions),
-        totalNumberOfCreditingYears: Number(netEmReductions?.totalNumberOfCreditingYears),
-        avgBaselineEmissionReductions: Number(netEmReductions?.avgBaselineEmissionReductions),
-        avgProjectEmissionReductions: Number(netEmReductions?.avgProjectEmissionReductions),
-        avgLeakageEmissionReductions: Number(netEmReductions?.avgLeakageEmissionReductions),
-        avgNetEmissionReductions: Number(netEmReductions?.avgNetEmissionReductions),
+        totalBaselineEmissionReductions: Number(
+          netEmReductions?.totalBaselineEmissionReductions
+        ),
+        totalProjectEmissionReductions: Number(
+          netEmReductions?.totalProjectEmissionReductions
+        ),
+        totalLeakageEmissionReductions: Number(
+          netEmReductions?.totalLeakageEmissionReductions
+        ),
+        totalNetEmissionReductions: Number(
+          netEmReductions?.totalNetEmissionReductions
+        ),
+        totalNumberOfCreditingYears: Number(
+          netEmReductions?.totalNumberOfCreditingYears
+        ),
+        avgBaselineEmissionReductions: Number(
+          netEmReductions?.avgBaselineEmissionReductions
+        ),
+        avgProjectEmissionReductions: Number(
+          netEmReductions?.avgProjectEmissionReductions
+        ),
+        avgLeakageEmissionReductions: Number(
+          netEmReductions?.avgLeakageEmissionReductions
+        ),
+        avgNetEmissionReductions: Number(
+          netEmReductions?.avgNetEmissionReductions
+        ),
       });
 
       console.log(
-        '----------pdd-data loc-----------------',
+        "----------pdd-data loc-----------------",
         pddData?.projectActivity?.locationsOfProjectActivity
       );
       meansOfVerificationForm.setFieldsValue({
-        onSiteInspection: pddData?.projectActivity?.locationsOfProjectActivity?.map((loc: any) => ({
-          siteLocation: loc.locationOfProjectActivity,
-        })),
-        interviewees: [{ lastName: '' }],
+        onSiteInspection:
+          pddData?.projectActivity?.locationsOfProjectActivity?.map(
+            (loc: any) => ({
+              siteLocation: loc.locationOfProjectActivity,
+            })
+          ),
+        interviewees: [{ lastName: "" }],
       });
 
       verficationTeamForm.setFieldsValue({
-        verificationTeamMembers: [{ role: '' }],
-        technicalReviews: [{ role: '' }],
+        verificationTeamMembers: [{ role: "" }],
+        technicalReviews: [{ role: "" }],
       });
       setLoading(false);
     }
@@ -249,7 +288,10 @@ const StepperComponent = (props: VerificationStepProps) => {
   const submitForm = async (appendixVals: any) => {
     setLoading(true);
     try {
-      console.log('---------------activityRefId-------------', state?.activityRefId);
+      console.log(
+        "---------------activityRefId-------------",
+        state?.activityRefId
+      );
 
       const tempValues = {
         ...values,
@@ -261,21 +303,21 @@ const StepperComponent = (props: VerificationStepProps) => {
       };
       const res = await post(API_PATHS.ADD_DOCUMENT, tempValues);
       console.log(res);
-      if (res?.statusText === 'SUCCESS') {
+      if (res?.statusText === "SUCCESS") {
         message.open({
-          type: 'success',
-          content: 'Verification report has been submitted successfully',
+          type: "success",
+          content: "Verification report has been submitted successfully",
           duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
         navigateToDetailsPage();
       }
     } catch (error: any) {
       message.open({
-        type: 'error',
-        content: 'Something went wrong',
+        type: "error",
+        content: "Something went wrong",
         duration: 4,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       setLoading(false);
@@ -283,7 +325,7 @@ const StepperComponent = (props: VerificationStepProps) => {
   };
 
   const handleValuesUpdate = (val: any) => {
-    console.log('----------temp vals stepper-------------', val);
+    console.log("----------temp vals stepper-------------", val);
 
     setValues((prevVal: any) => {
       const tempContent = {
@@ -295,7 +337,7 @@ const StepperComponent = (props: VerificationStepProps) => {
   };
 
   useEffect(() => {
-    console.log('-------state?.mode-----------', state);
+    console.log("-------state?.mode-----------", state);
     if (state?.mode === FormMode.CREATE) {
       fetchAndSetData(id);
     }
@@ -318,7 +360,7 @@ const StepperComponent = (props: VerificationStepProps) => {
 
         if (state?.mode === FormMode.VIEW || state?.mode === FormMode.VERIFY) {
           console.log(
-            '--------state?.mode 2---------',
+            "--------state?.mode 2---------",
             state?.mode,
             state?.mode === FormMode.VERIFY
           );
@@ -331,17 +373,24 @@ const StepperComponent = (props: VerificationStepProps) => {
             documentType: DocumentEnum.VERIFICATION,
           });
 
-          console.log('--------ver res---------', res);
-          if (res?.statusText === 'SUCCESS') {
+          console.log("--------ver res---------", res);
+          if (res?.statusText === "SUCCESS") {
             const data = res?.data;
             setDocumentId(data?.refId);
 
-            console.log('--------ver res 2---------', data, data.data.basicInformation);
+            console.log(
+              "--------ver res 2---------",
+              data,
+              data.data.basicInformation
+            );
 
-            let basicInformation = basicInformationMapDataToView(data.data.basicInformation);
-            const docVersions = state?.documents?.[DocumentEnum.VERIFICATION as any]?.version;
+            let basicInformation = basicInformationMapDataToView(
+              data.data.basicInformation
+            );
+            const docVersions =
+              state?.documents?.[DocumentEnum.VERIFICATION as any]?.version;
             const latestVersion = docVersions ? docVersions + 1 : 1;
-            console.log('------------latest version-----------', latestVersion);
+            console.log("------------latest version-----------", latestVersion);
             if (state?.mode === FormMode.EDIT) {
               basicInformation = {
                 ...basicInformation,
@@ -355,17 +404,24 @@ const StepperComponent = (props: VerificationStepProps) => {
             );
             ghgProjectDescriptionForm.setFieldsValue(ghgProjectDescription);
 
-            const executiveSummary = executiveSummaryMapDataToFields(data.data.executiveSummary);
+            const executiveSummary = executiveSummaryMapDataToFields(
+              data.data.executiveSummary
+            );
             executiveSummaryForm.setFieldsValue(executiveSummary);
 
             //
-            const verificationTeam = verificationTeamsMapDataToFields(data.data.verificationTeam);
+            const verificationTeam = verificationTeamsMapDataToFields(
+              data.data.verificationTeam
+            );
             verficationTeamForm.setFieldsValue(verificationTeam);
 
-            const applicationOfMateriality = applicationOfMaterialityMapDataToFields(
-              data.data.applicationOfMateriality
+            const applicationOfMateriality =
+              applicationOfMaterialityMapDataToFields(
+                data.data.applicationOfMateriality
+              );
+            applicationOfMeterialityForm.setFieldsValue(
+              applicationOfMateriality
             );
-            applicationOfMeterialityForm.setFieldsValue(applicationOfMateriality);
 
             const meansOfVerification = meansOfVerificationMapDataToFields(
               data.data.meansOfVerification
@@ -377,9 +433,10 @@ const StepperComponent = (props: VerificationStepProps) => {
             );
             verificationFindingForm.setFieldsValue(verificationFindings);
 
-            const internalQualityControl = internalQualityControlMapDataToFields(
-              data.data.internalQualityControl
-            );
+            const internalQualityControl =
+              internalQualityControlMapDataToFields(
+                data.data.internalQualityControl
+              );
             internalQualityControlForm.setFieldsValue(internalQualityControl);
 
             const verificationOpinion = verificationOpinionMapDataToFields(
@@ -396,7 +453,7 @@ const StepperComponent = (props: VerificationStepProps) => {
             appendixForm.setFieldsValue(appendix);
           }
         } catch (error: any) {
-          console.log('-------error--------', error);
+          console.log("-------error--------", error);
         } finally {
           setLoading(false);
         }
@@ -616,7 +673,7 @@ const StepperComponent = (props: VerificationStepProps) => {
     {
       title: (
         <div className="stepper-title-container">
-          <div className="title">{t('verificationReport:title01')}</div>
+          <div className="title">{t("verificationReport:title01")}</div>
         </div>
       ),
       description: (
@@ -638,7 +695,7 @@ const StepperComponent = (props: VerificationStepProps) => {
     {
       title: (
         <div className="stepper-title-container">
-          <div className="title">{t('verificationReport:title02')}</div>
+          <div className="title">{t("verificationReport:title02")}</div>
         </div>
       ),
       description: (
@@ -660,7 +717,7 @@ const StepperComponent = (props: VerificationStepProps) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">01</div>
-          <div className="title">{t('verificationReport:title03')}</div>
+          <div className="title">{t("verificationReport:title03")}</div>
         </div>
       ),
       description: (
@@ -682,7 +739,7 @@ const StepperComponent = (props: VerificationStepProps) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">02</div>
-          <div className="title">{t('verificationReport:title04')}</div>
+          <div className="title">{t("verificationReport:title04")}</div>
         </div>
       ),
       description: (
@@ -703,7 +760,7 @@ const StepperComponent = (props: VerificationStepProps) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">03</div>
-          <div className="title">{t('verificationReport:title05')}</div>
+          <div className="title">{t("verificationReport:title05")}</div>
         </div>
       ),
       description: (
@@ -724,7 +781,7 @@ const StepperComponent = (props: VerificationStepProps) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">04</div>
-          <div className="title">{t('verificationReport:title06')}</div>
+          <div className="title">{t("verificationReport:title06")}</div>
         </div>
       ),
       description: (
@@ -745,7 +802,7 @@ const StepperComponent = (props: VerificationStepProps) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">05</div>
-          <div className="title">{t('verificationReport:title07')}</div>
+          <div className="title">{t("verificationReport:title07")}</div>
         </div>
       ),
       description: (
@@ -766,7 +823,7 @@ const StepperComponent = (props: VerificationStepProps) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">06</div>
-          <div className="title">{t('verificationReport:title08')}</div>
+          <div className="title">{t("verificationReport:title08")}</div>
         </div>
       ),
       description: (
@@ -787,7 +844,7 @@ const StepperComponent = (props: VerificationStepProps) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">07</div>
-          <div className="title">{t('verificationReport:title09')}</div>
+          <div className="title">{t("verificationReport:title09")}</div>
         </div>
       ),
       description: (
@@ -808,7 +865,7 @@ const StepperComponent = (props: VerificationStepProps) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">08</div>
-          <div className="title">{t('verificationReport:title10')}</div>
+          <div className="title">{t("verificationReport:title10")}</div>
         </div>
       ),
       description: (
@@ -829,7 +886,7 @@ const StepperComponent = (props: VerificationStepProps) => {
       title: (
         <div className="stepper-title-container">
           <div className="step-count">09</div>
-          <div className="title">{t('verificationReport:title11')}</div>
+          <div className="title">{t("verificationReport:title11")}</div>
         </div>
       ),
       description: (

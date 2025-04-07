@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Row,
   Col,
@@ -15,12 +15,12 @@ import {
   Space,
   Form,
   Tooltip,
-} from 'antd';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import './programmeView.scss';
-import Chart from 'react-apexcharts';
-import { useTranslation } from 'react-i18next';
-import * as Icon from 'react-bootstrap-icons';
+} from "antd";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import "./programmeView.scss";
+import Chart from "react-apexcharts";
+import { useTranslation } from "react-i18next";
+import * as Icon from "react-bootstrap-icons";
 import {
   BlockOutlined,
   BuildOutlined,
@@ -38,13 +38,13 @@ import {
   QrcodeOutlined,
   SafetyOutlined,
   TransactionOutlined,
-} from '@ant-design/icons';
-import { DateTime } from 'luxon';
-import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
-import TextArea from 'antd/lib/input/TextArea';
-import { ShieldCheck } from 'react-bootstrap-icons';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+} from "@ant-design/icons";
+import { DateTime } from "luxon";
+import Geocoding from "@mapbox/mapbox-sdk/services/geocoding";
+import TextArea from "antd/lib/input/TextArea";
+import { ShieldCheck } from "react-bootstrap-icons";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
 import {
   addCommSep,
   addCommSepRound,
@@ -56,46 +56,56 @@ import {
   ProgrammeU,
   sumArray,
   UnitField,
-} from '../../Definitions/Definitions/programme.definitions';
+} from "../../Definitions/Definitions/programme.definitions";
 import {
   MapSourceData,
   MapTypes,
   MarkerData,
-} from '../../Definitions/Definitions/mapComponent.definitions';
-import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
-import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
-import { Role } from '../../Definitions/Enums/role.enum';
-import { InvestmentBody } from '../../Components/Investment/investmentBody';
-import { isBase64 } from '../../Components/IconComponents/ProfileIcon/profile.icon';
-import { ProgrammeTransfer } from '../../Definitions/Entities/programmeTransfer';
+} from "../../Definitions/Definitions/mapComponent.definitions";
+import { useSettingsContext } from "../../Context/SettingsContext/settingsContext";
+import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
+import { Role } from "../../Definitions/Enums/role.enum";
+import { InvestmentBody } from "../../Components/Investment/investmentBody";
+import { isBase64 } from "../../Components/IconComponents/ProfileIcon/profile.icon";
+import { ProgrammeTransfer } from "../../Definitions/Entities/programmeTransfer";
 import {
   creditUnit,
   dateFormat,
   dateTimeFormat,
-} from '../../Definitions/Definitions/common.definitions';
-import { addNdcDesc, TimelineBody } from '../../Components/TimelineBody/timelineBody';
-import { RetireType } from '../../Definitions/Enums/retireType.enum';
-import { CreditTransferStage } from '../../Definitions/Enums/creditTransferStage.enum';
-import { ProgrammeStageUnified } from '../../Definitions/Enums/programmeStage.enum';
-import { TxType } from '../../Definitions/Enums/TxType.enum';
-import { DocType } from '../../Definitions/Enums/document.type';
-import { DocumentStatus } from '../../Definitions/Enums/document.status';
-import { CompanyState } from '../../Definitions/Enums/company.state.enum';
-import { NdcActionBody } from '../../Components/NdcActions/NdcActionBody/ndcActionBody';
-import { Loading } from '../../Components/Loading/loading';
-import { OrganisationStatus } from '../../Components/OrganisationStatus/organisationStatus';
-import { DevBGColor, DevColor, TooltipColor } from '../../Styles/role.color.constants';
-import { getValidNdcActions, ProgrammeIssueForm } from '../../Components/Models/programmeIssueForm';
-import { ProgrammeRevokeForm } from '../../Components/Models/programmeRevokeForm';
-import { CarbonSystemType } from '../../Definitions/Enums/carbonSystemType.enum';
-import { RoleIcon } from '../../Components/IconComponents/RoleIcon/role.icon';
-import { ProgrammeRetireForm } from '../../Components/Models/programmeRetireForm';
-import { ProgrammeTransferForm } from '../../Components/Models/programmeTransferForm';
-import { InfoView } from '../../Components/InfoView/info.view';
-import { ProgrammeDocuments } from '../../Components/ProgrammeDocuments/programmeDocuments';
-import { MapComponent } from '../../Components/Maps/mapComponent';
-import { API_PATHS } from '../../Config/apiConfig';
-import { ROUTES } from '../../Config/uiRoutingConfig';
+} from "../../Definitions/Definitions/common.definitions";
+import {
+  addNdcDesc,
+  TimelineBody,
+} from "../../Components/TimelineBody/timelineBody";
+import { RetireType } from "../../Definitions/Enums/retireType.enum";
+import { CreditTransferStage } from "../../Definitions/Enums/creditTransferStage.enum";
+import { ProgrammeStageUnified } from "../../Definitions/Enums/programmeStage.enum";
+import { TxType } from "../../Definitions/Enums/TxType.enum";
+import { DocType } from "../../Definitions/Enums/document.type";
+import { DocumentStatus } from "../../Definitions/Enums/document.status";
+import { CompanyState } from "../../Definitions/Enums/company.state.enum";
+import { NdcActionBody } from "../../Components/NdcActions/NdcActionBody/ndcActionBody";
+import { Loading } from "../../Components/Loading/loading";
+import { OrganisationStatus } from "../../Components/OrganisationStatus/organisationStatus";
+import {
+  DevBGColor,
+  DevColor,
+  TooltipColor,
+} from "../../Styles/role.color.constants";
+import {
+  getValidNdcActions,
+  ProgrammeIssueForm,
+} from "../../Components/Models/programmeIssueForm";
+import { ProgrammeRevokeForm } from "../../Components/Models/programmeRevokeForm";
+import { CarbonSystemType } from "../../Definitions/Enums/carbonSystemType.enum";
+import { RoleIcon } from "../../Components/IconComponents/RoleIcon/role.icon";
+import { ProgrammeRetireForm } from "../../Components/Models/programmeRetireForm";
+import { ProgrammeTransferForm } from "../../Components/Models/programmeTransferForm";
+import { InfoView } from "../../Components/InfoView/info.view";
+import { ProgrammeDocuments } from "../../Components/ProgrammeDocuments/programmeDocuments";
+import { MapComponent } from "../../Components/Maps/mapComponent";
+import { API_PATHS } from "../../Config/apiConfig";
+import { ROUTES } from "../../Config/uiRoutingConfig";
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -107,11 +117,15 @@ const ProgrammeView = () => {
   const [historyData, setHistoryData] = useState<any>([]);
   const [investmentHistory, setInvestmentHistory] = useState<any>([]);
   const [loadingInvestment, setLoadingInvestment] = useState<boolean>(true);
-  const { t, i18n } = useTranslation(['view']);
-  const { t: companyProfileTranslations } = useTranslation(['companyProfile']);
-  const { i18n: programmeViewTranslator } = useTranslation(['programme', 'common']);
+  const { t, i18n } = useTranslation(["view"]);
+  const { t: companyProfileTranslations } = useTranslation(["companyProfile"]);
+  const { i18n: programmeViewTranslator } = useTranslation([
+    "programme",
+    "common",
+  ]);
   const [loadingHistory, setLoadingHistory] = useState<boolean>(false);
-  const [programmeHistoryLoaded, setProgrammeHistoryLoaded] = useState<boolean>(false);
+  const [programmeHistoryLoaded, setProgrammeHistoryLoaded] =
+    useState<boolean>(false);
   const [loadingAll, setLoadingAll] = useState<boolean>(true);
   const [openModal, setOpenModal] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -125,36 +139,57 @@ const ProgrammeView = () => {
   const [loadingNDC, setLoadingNDC] = useState<boolean>(true);
   const [ndcActionDocumentData, setNdcActionDocumentData] = useState<any>([]);
   const [documentsData, setDocumentsData] = useState<any[]>([]);
-  const [uploadMonitoringReport, setUploadMonitoringReport] = useState<boolean>(false);
-  const mapType = process.env.REACT_APP_MAP_TYPE ? process.env.REACT_APP_MAP_TYPE : 'None';
+  const [uploadMonitoringReport, setUploadMonitoringReport] =
+    useState<boolean>(false);
+  const mapType = import.meta.env.REACT_APP_MAP_TYPE
+    ? import.meta.env.REACT_APP_MAP_TYPE
+    : "None";
   const [isAllOwnersDeactivated, setIsAllOwnersDeactivated] = useState(true);
   const { isTransferFrozen, setTransferFrozen } = useSettingsContext();
   const [programmeOwnerId, setProgrammeOwnerId] = useState<any[]>([]);
   const [ministrySectoralScope, setMinistrySectoralScope] = useState<any[]>([]);
-  const [curentProgrammeStatus, setCurrentProgrammeStatus] = useState<any>('');
+  const [curentProgrammeStatus, setCurrentProgrammeStatus] = useState<any>("");
   const [ndcActionHistoryData, setNdcActionHistoryData] = useState<any>([]);
-  const [emissionsReductionExpected, setEmissionsReductionExpected] = useState(0);
-  const [emissionsReductionAchieved, setEmissionsReductionAchieved] = useState(0);
+  const [emissionsReductionExpected, setEmissionsReductionExpected] =
+    useState(0);
+  const [emissionsReductionAchieved, setEmissionsReductionAchieved] =
+    useState(0);
   const { id } = useParams();
-  const [ndcActionDocumentDataLoaded, setNdcActionDocumentDataLoaded] = useState(false);
-  const [upcomingTimeLineMonitoringVisible, setUpcomingTimeLineMonitoringVisible] = useState(false);
-  const [upcomingTimeLineVerificationVisible, setUpcomingTimeLineVerificationVisible] =
+  const [ndcActionDocumentDataLoaded, setNdcActionDocumentDataLoaded] =
     useState(false);
+  const [
+    upcomingTimeLineMonitoringVisible,
+    setUpcomingTimeLineMonitoringVisible,
+  ] = useState(false);
+  const [
+    upcomingTimeLineVerificationVisible,
+    setUpcomingTimeLineVerificationVisible,
+  ] = useState(false);
   const [activityTimelineKey, setActivityTimelineKey] = useState(0);
-  const [projectLocationMapSource, setProjectLocationMapSource] = useState<any>();
+  const [projectLocationMapSource, setProjectLocationMapSource] =
+    useState<any>();
   const [projectLocationMapLayer, setProjectLocationMapLayer] = useState<any>();
-  const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();
-  const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<number[]>([]);
+  const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] =
+    useState<any>();
+  const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<
+    number[]
+  >([]);
 
-  const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    : '';
+  const accessToken = import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    ? import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+    : "";
 
   const showModal = () => {
     setOpenModal(true);
   };
 
-  const locationColors = ['#6ACDFF', '#FF923D', '#CDCDCD', '#FF8183', '#B7A4FE'];
+  const locationColors = [
+    "#6ACDFF",
+    "#FF923D",
+    "#CDCDCD",
+    "#FF8183",
+    "#B7A4FE",
+  ];
 
   const ministryLevelPermission =
     data &&
@@ -163,28 +198,38 @@ const ProgrammeView = () => {
     userInfoState?.userRole !== Role.ViewOnly;
 
   const getFileName = (filepath: string) => {
-    const index = filepath.indexOf('?');
+    const index = filepath.indexOf("?");
     if (index > 0) {
       filepath = filepath.substring(0, index);
     }
     const lastCharcter = filepath.charAt(filepath.length - 1);
-    if (lastCharcter === '/') {
+    if (lastCharcter === "/") {
       filepath = filepath.slice(0, -1);
     }
-    return filepath.substring(filepath.lastIndexOf('/') + 1);
+    return filepath.substring(filepath.lastIndexOf("/") + 1);
   };
 
   const fileItemContent = (filePath: any) => {
     return (
       <Row className="field" key={filePath}>
         <Col span={12} className="field-key">
-          <a target="_blank" href={filePath} rel="noopener noreferrer" className="file-name">
+          <a
+            target="_blank"
+            href={filePath}
+            rel="noopener noreferrer"
+            className="file-name"
+          >
             {getFileName(filePath)}
           </a>
         </Col>
         <Col span={12} className="field-value">
-          <a target="_blank" href={filePath} rel="noopener noreferrer" className="file-name">
-            <Icon.Link45deg style={{ verticalAlign: 'middle' }} />
+          <a
+            target="_blank"
+            href={filePath}
+            rel="noopener noreferrer"
+            className="file-name"
+          >
+            <Icon.Link45deg style={{ verticalAlign: "middle" }} />
           </a>
         </Col>
       </Row>
@@ -203,7 +248,7 @@ const ProgrammeView = () => {
 
   const getTxRefValues = (value: string, position: number, sep?: string) => {
     if (sep === undefined) {
-      sep = '#';
+      sep = "#";
     }
     const parts = value.split(sep);
     if (parts.length - 1 < position) {
@@ -218,7 +263,11 @@ const ProgrammeView = () => {
 
   const getPieChartData = (d: ProgrammeU) => {
     const frozen = d.creditFrozen
-      ? Number(d.creditFrozen.reduce((a, b) => numIsExist(a) + numIsExist(b), 0).toFixed(2))
+      ? Number(
+          d.creditFrozen
+            .reduce((a, b) => numIsExist(a) + numIsExist(b), 0)
+            .toFixed(2)
+        )
       : 0;
     const dt = [
       Number((numIsExist(d.creditEst) - numIsExist(d.creditIssued)).toFixed(2)),
@@ -242,7 +291,7 @@ const ProgrammeView = () => {
     let lat = 0;
     let long = 0;
     for (const l of list) {
-      if (l === null || l === 'null') {
+      if (l === null || l === "null") {
         continue;
       }
       count += 1;
@@ -261,8 +310,8 @@ const ProgrammeView = () => {
         size: 100,
         filterAnd: [
           {
-            key: 'programmeId',
-            operation: '=',
+            key: "programmeId",
+            operation: "=",
             value: programmeId,
           },
         ],
@@ -284,28 +333,33 @@ const ProgrammeView = () => {
         };
         return investmentData;
       });
-      const elArr = investmentHisData?.map((investmentData: any, index: any) => {
-        const element = {
-          status: 'process',
-          title: t('view:investment') + ' - ' + String(investmentData?.requestId), // Extracting the last 3 characters from actionNo
-          subTitle: '',
-          description: <InvestmentBody data={investmentData} translator={i18n} />,
-          icon: (
-            <span className="step-icon freeze-step">
-              <Icon.Circle />
-            </span>
-          ),
-        };
-        return element;
-      });
+      const elArr = investmentHisData?.map(
+        (investmentData: any, index: any) => {
+          const element = {
+            status: "process",
+            title:
+              t("view:investment") + " - " + String(investmentData?.requestId), // Extracting the last 3 characters from actionNo
+            subTitle: "",
+            description: (
+              <InvestmentBody data={investmentData} translator={i18n} />
+            ),
+            icon: (
+              <span className="step-icon freeze-step">
+                <Icon.Circle />
+              </span>
+            ),
+          };
+          return element;
+        }
+      );
       setInvestmentHistory(elArr);
     } catch (error: any) {
-      console.log('Error in getting programme', error);
+      console.log("Error in getting programme", error);
       message.open({
-        type: 'error',
+        type: "error",
         content: error.message,
         duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       setLoadingHistory(false);
@@ -318,13 +372,13 @@ const ProgrammeView = () => {
       if (data?.projectLocation && data.projectLocation.length > 0) {
         setProjectLocationMapCenter(getCenter(data.projectLocation));
         const mapSource: MapSourceData = {
-          key: 'projectLocation',
+          key: "projectLocation",
           data: {
-            type: 'geojson',
+            type: "geojson",
             data: {
-              type: 'Feature',
+              type: "Feature",
               geometry: {
-                type: 'Polygon',
+                type: "Polygon",
                 // These coordinates outline Maine.
                 coordinates: [data.projectLocation],
               },
@@ -336,24 +390,24 @@ const ProgrammeView = () => {
         setProjectLocationMapSource(mapSource);
 
         setProjectLocationMapLayer({
-          id: 'projectLocation',
-          type: 'fill',
-          source: 'projectLocation',
+          id: "projectLocation",
+          type: "fill",
+          source: "projectLocation",
           layout: {},
           paint: {
-            'fill-color': '#0080ff',
-            'fill-opacity': 0.5,
+            "fill-color": "#0080ff",
+            "fill-opacity": 0.5,
           },
         });
 
         setProjectLocationMapOutlineLayer({
-          id: 'projectLocationOutline',
-          type: 'line',
-          source: 'projectLocation',
+          id: "projectLocationOutline",
+          type: "line",
+          source: "projectLocation",
           layout: {},
           paint: {
-            'line-color': '#000',
-            'line-width': 1,
+            "line-color": "#000",
+            "line-width": 1,
           },
         });
       }
@@ -364,7 +418,7 @@ const ProgrammeView = () => {
     // ['Authorised', 'Issued', 'Transferred', 'Retired', 'Frozen']
 
     const dt = getPieChartData(d);
-    ApexCharts.exec('creditChart', 'updateSeries', {
+    ApexCharts.exec("creditChart", "updateSeries", {
       series: dt,
     });
   };
@@ -377,17 +431,24 @@ const ProgrammeView = () => {
         <div className="">
           <div className="cert-info">
             {isBase64(cert.logo) ? (
-              <img alt="certifier logo" src={'data:image/jpeg;base64,' + cert.logo} />
+              <img
+                alt="certifier logo"
+                src={"data:image/jpeg;base64," + cert.logo}
+              />
             ) : cert.logo ? (
               <img alt="certifier logo" src={cert.logo} />
             ) : cert.name ? (
-              <div className="cert-logo">{cert.name.charAt(0).toUpperCase()}</div>
+              <div className="cert-logo">
+                {cert.name.charAt(0).toUpperCase()}
+              </div>
             ) : (
-              <div className="cert-logo">{'A'}</div>
+              <div className="cert-logo">{"A"}</div>
             )}
             <div className="text-center cert-name">{cert.name}</div>
             {certifiedTime[cert.companyId] && (
-              <div className="text-center cert-date">{certifiedTime[cert.companyId]}</div>
+              <div className="text-center cert-date">
+                {certifiedTime[cert.companyId]}
+              </div>
             )}
           </div>
         </div>
@@ -403,8 +464,8 @@ const ProgrammeView = () => {
         size: 2,
         filterAnd: [
           {
-            key: 'programmeId',
-            operation: '=',
+            key: "programmeId",
+            operation: "=",
             value: programmeId,
           },
         ],
@@ -412,15 +473,15 @@ const ProgrammeView = () => {
       if (response.data && response.data.length > 0) {
         const d = response.data[0];
         setData(d);
-        navigate('.', { state: { record: d } });
+        navigate(".", { state: { record: d } });
       }
     } catch (error: any) {
-      console.log('Error in getting programme', error);
+      console.log("Error in getting programme", error);
       message.open({
-        type: 'error',
+        type: "error",
         content: error.message,
         duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     }
     setLoadingAll(false);
@@ -436,29 +497,31 @@ const ProgrammeView = () => {
 
   const formatString = (langTag: string, vargs: any[]) => {
     const str = t(langTag);
-    const parts = str.split('{}');
+    const parts = str.split("{}");
     let insertAt = 1;
     for (const arg of vargs) {
       parts.splice(insertAt, 0, arg);
       insertAt += 2;
     }
-    return parts.join('');
+    return parts.join("");
   };
 
   const getTxActivityLog = (transfers: ProgrammeTransfer[], txDetails: any) => {
     const hist: any = {};
     for (const transfer of transfers) {
       txDetails[transfer.requestId!] = transfer;
-      const createdTime = Number(transfer.createdTime ? transfer.createdTime : transfer.txTime!);
+      const createdTime = Number(
+        transfer.createdTime ? transfer.createdTime : transfer.txTime!
+      );
       let d: any;
       if (!transfer.isRetirement) {
         d = {
-          status: 'process',
-          title: t('view:tlInitTitle'),
+          status: "process",
+          title: t("view:tlInitTitle"),
           subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
           description: (
             <TimelineBody
-              text={formatString('view:tlInitDesc', [
+              text={formatString("view:tlInitDesc", [
                 addCommSep(transfer.creditAmount),
                 creditUnit,
                 transfer.sender[0]?.name,
@@ -478,17 +541,22 @@ const ProgrammeView = () => {
         };
       } else {
         d = {
-          status: 'process',
-          title: t('view:tlRetInit'),
+          status: "process",
+          title: t("view:tlRetInit"),
           subTitle: DateTime.fromMillis(createdTime).toFormat(dateTimeFormat),
           description: (
             <TimelineBody
-              text={formatString('view:tlRetInitDesc', [
+              text={formatString("view:tlRetInitDesc", [
                 addCommSep(
                   transfer.creditAmount
                     ? transfer.retirementType === RetireType.CROSS_BORDER
                       ? transfer.creditAmount -
-                        Number(((transfer.omgePercentage * transfer.creditAmount) / 100).toFixed(2))
+                        Number(
+                          (
+                            (transfer.omgePercentage * transfer.creditAmount) /
+                            100
+                          ).toFixed(2)
+                        )
                       : transfer.creditAmount
                     : transfer.creditAmount
                 ),
@@ -497,22 +565,27 @@ const ProgrammeView = () => {
                 `${
                   transfer.toCompanyMeta?.countryName
                     ? `to ${transfer.toCompanyMeta?.countryName} `
-                    : ''
+                    : ""
                 }`,
                 transfer.retirementType === RetireType.CROSS_BORDER
-                  ? 'cross border transfer'
+                  ? "cross border transfer"
                   : transfer.retirementType === RetireType.LEGAL_ACTION
-                  ? 'legal action'
-                  : 'other',
-                transfer.retirementType === RetireType.CROSS_BORDER && transfer.omgePercentage
-                  ? formatString('view:t1RetInitOmgeDesc', [
+                  ? "legal action"
+                  : "other",
+                transfer.retirementType === RetireType.CROSS_BORDER &&
+                transfer.omgePercentage
+                  ? formatString("view:t1RetInitOmgeDesc", [
                       addCommSep(
                         transfer.creditAmount
-                          ? ((transfer.omgePercentage * transfer.creditAmount) / 100).toFixed(2)
+                          ? (
+                              (transfer.omgePercentage *
+                                transfer.creditAmount) /
+                              100
+                            ).toFixed(2)
                           : undefined
                       ),
                     ])
-                  : '',
+                  : "",
                 transfer.requester[0]?.name,
               ])}
               remark={transfer.comment}
@@ -535,13 +608,21 @@ const ProgrammeView = () => {
         transfer.status === CreditTransferStage.NotRecognised
       ) {
         const dx: any = {
-          status: 'process',
-          title: t(transfer.isRetirement ? 'view:tlRetRejectTitle' : 'view:tlRejectTitle'),
-          subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(dateTimeFormat),
+          status: "process",
+          title: t(
+            transfer.isRetirement
+              ? "view:tlRetRejectTitle"
+              : "view:tlRejectTitle"
+          ),
+          subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(
+            dateTimeFormat
+          ),
           description: (
             <TimelineBody
               text={formatString(
-                transfer.isRetirement ? 'view:tlTxRetRejectDesc' : 'view:tlTxRejectDesc',
+                transfer.isRetirement
+                  ? "view:tlTxRetRejectDesc"
+                  : "view:tlTxRejectDesc",
                 [
                   addCommSep(transfer.creditAmount),
                   creditUnit,
@@ -549,17 +630,21 @@ const ProgrammeView = () => {
                   transfer.isRetirement && transfer.toCompanyMeta?.countryName
                     ? transfer.toCompanyMeta?.countryName
                     : transfer.receiver[0]?.name,
-                  transfer.isRetirement ? transfer.receiver[0]?.name : transfer.sender[0]?.name,
+                  transfer.isRetirement
+                    ? transfer.receiver[0]?.name
+                    : transfer.sender[0]?.name,
                 ]
               )}
-              remark={transfer.txRef?.split('#')[0]}
+              remark={transfer.txRef?.split("#")[0]}
               via={transfer.userName}
               t={t}
             />
           ),
           icon: (
             <span
-              className={`step-icon ${transfer.isRetirement ? 'retire-step' : 'transfer-step'}`}
+              className={`step-icon ${
+                transfer.isRetirement ? "retire-step" : "transfer-step"
+              }`}
             >
               <Icon.XOctagon />
             </span>
@@ -567,22 +652,31 @@ const ProgrammeView = () => {
         };
         addElement(dx, Number(transfer.txTime!), hist);
       } else if (transfer.status === CreditTransferStage.Cancelled) {
-        const systemCancel = transfer.txRef && transfer.txRef.indexOf('#SUSPEND_AUTO_CANCEL#') >= 0;
+        const systemCancel =
+          transfer.txRef &&
+          transfer.txRef.indexOf("#SUSPEND_AUTO_CANCEL#") >= 0;
         const lowCreditSystemCancel =
-          transfer.txRef && transfer.txRef.indexOf('#LOW_CREDIT_AUTO_CANCEL#') >= 0;
+          transfer.txRef &&
+          transfer.txRef.indexOf("#LOW_CREDIT_AUTO_CANCEL#") >= 0;
 
         const dx: any = {
-          status: 'process',
-          title: t(transfer.isRetirement ? 'view:tlRetCancelTitle' : 'view:tlTxCancelTitle'),
-          subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(dateTimeFormat),
+          status: "process",
+          title: t(
+            transfer.isRetirement
+              ? "view:tlRetCancelTitle"
+              : "view:tlTxCancelTitle"
+          ),
+          subTitle: DateTime.fromMillis(Number(transfer.txTime!)).toFormat(
+            dateTimeFormat
+          ),
           description: (
             <TimelineBody
               text={formatString(
                 systemCancel
-                  ? 'view:tlTxCancelSystemDesc'
+                  ? "view:tlTxCancelSystemDesc"
                   : lowCreditSystemCancel
-                  ? 'view:tlTxLowCreditCancelSystemDesc'
-                  : 'view:tlTxCancelDesc',
+                  ? "view:tlTxLowCreditCancelSystemDesc"
+                  : "view:tlTxCancelDesc",
                 [
                   addCommSep(transfer.creditAmount),
                   creditUnit,
@@ -591,21 +685,23 @@ const ProgrammeView = () => {
                     ? transfer.toCompanyMeta.countryName
                     : transfer.receiver[0]?.name,
                   systemCancel
-                    ? transfer.txRef?.split('#')[4]
+                    ? transfer.txRef?.split("#")[4]
                     : lowCreditSystemCancel
-                    ? ''
+                    ? ""
                     : transfer.requester[0]?.name,
-                  transfer.txRef?.split('#')[5],
+                  transfer.txRef?.split("#")[5],
                 ]
               )}
-              remark={transfer.txRef?.split('#')[0]}
+              remark={transfer.txRef?.split("#")[0]}
               via={transfer.userName}
               t={t}
             />
           ),
           icon: (
             <span
-              className={`step-icon ${transfer.isRetirement ? 'retire-step' : 'transfer-step'}`}
+              className={`step-icon ${
+                transfer.isRetirement ? "retire-step" : "transfer-step"
+              }`}
             >
               <Icon.ExclamationOctagon />
             </span>
@@ -619,10 +715,10 @@ const ProgrammeView = () => {
 
   function updatePendingTimeLineForNdc(currentHistory: any) {
     const monitoringElIndex = currentHistory.findIndex(
-      (item: any) => item.title === t('view:monitoringEl')
+      (item: any) => item.title === t("view:monitoringEl")
     );
     const verificationElIndex = currentHistory.findIndex(
-      (item: any) => item.title === t('view:verificationEl')
+      (item: any) => item.title === t("view:verificationEl")
     );
 
     if (
@@ -631,9 +727,9 @@ const ProgrammeView = () => {
     ) {
       if (monitoringElIndex === -1) {
         const monitoringEl = {
-          status: 'process',
-          title: t('view:monitoringEl'),
-          subTitle: t('view:tlPending'),
+          status: "process",
+          title: t("view:monitoringEl"),
+          subTitle: t("view:tlPending"),
           icon: (
             <span className="step-icon upcom-issue-step">
               <Icon.Binoculars />
@@ -643,8 +739,8 @@ const ProgrammeView = () => {
 
         if (
           currentHistory.length > 0 &&
-          currentHistory[0].title === t('view:tlIssue') &&
-          currentHistory[0].subTitle === t('view:tlPending')
+          currentHistory[0].title === t("view:tlIssue") &&
+          currentHistory[0].subTitle === t("view:tlPending")
         ) {
           currentHistory.splice(1, 0, monitoringEl);
         } else {
@@ -663,9 +759,9 @@ const ProgrammeView = () => {
     ) {
       if (verificationElIndex === -1) {
         const verificationEl = {
-          status: 'process',
-          title: t('view:verificationEl'),
-          subTitle: t('view:tlPending'),
+          status: "process",
+          title: t("view:verificationEl"),
+          subTitle: t("view:tlPending"),
           icon: (
             <span className="step-icon upcom-issue-step">
               <Icon.Flag />
@@ -675,8 +771,8 @@ const ProgrammeView = () => {
 
         if (
           currentHistory.length > 0 &&
-          currentHistory[0].title === t('view:tlIssue') &&
-          currentHistory[0].subTitle === t('view:tlPending')
+          currentHistory[0].title === t("view:tlIssue") &&
+          currentHistory[0].subTitle === t("view:tlPending")
         ) {
           currentHistory.splice(1, 0, verificationEl);
         } else {
@@ -715,7 +811,10 @@ const ProgrammeView = () => {
         API_PATHS.TRANSFER_BY_PROJECT_ID(programmeId)
       );
 
-      const [response, transfers] = await Promise.all([historyPromise, transferPromise]);
+      const [response, transfers] = await Promise.all([
+        historyPromise,
+        transferPromise,
+      ]);
       const txDetails: any = {};
       const txList = await getTxActivityLog(transfers.data, txDetails);
       let txListKeys = Object.keys(txList).sort();
@@ -723,12 +822,14 @@ const ProgrammeView = () => {
       const activityList: any[] = [];
       for (const activity of response.data) {
         let programmecreateindex: any;
-        const createIndex = activityList.findIndex((item) => item.title === t('view:tlCreate'));
+        const createIndex = activityList.findIndex(
+          (item) => item.title === t("view:tlCreate")
+        );
         const upcomCreditIndex = activityList.findIndex(
-          (item) => item.subTitle === t('view:tlPending')
+          (item) => item.subTitle === t("view:tlPending")
         );
         const upcomAuthorisationIndex = activityList.findIndex(
-          (item) => item.title === 'Authorisation'
+          (item) => item.title === "Authorisation"
         );
         if (createIndex !== -1) {
           programmecreateindex = createIndex;
@@ -738,7 +839,8 @@ const ProgrammeView = () => {
         let creditEl = undefined;
         let upcomingAuthorisation: any;
         const day = Math.floor(
-          DateTime.now().diff(DateTime.fromMillis(activity.data.txTime), 'days').days
+          DateTime.now().diff(DateTime.fromMillis(activity.data.txTime), "days")
+            .days
         );
         if (activity.data.txType === TxType.CREATE) {
           if (day === 1) {
@@ -747,10 +849,17 @@ const ProgrammeView = () => {
             upcomingAuthorisation = `Awaiting Action : ${day} Days`;
           }
           el = {
-            status: 'process',
-            title: t('view:tlCreate'),
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
-            description: <TimelineBody text={formatString('view:tlCreateDesc', [])} t={t} />,
+            status: "process",
+            title: t("view:tlCreate"),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(
+              dateTimeFormat
+            ),
+            description: (
+              <TimelineBody
+                text={formatString("view:tlCreateDesc", [])}
+                t={t}
+              />
+            ),
             icon: (
               <span className="step-icon created-step">
                 <Icon.CaretRight />
@@ -758,8 +867,8 @@ const ProgrammeView = () => {
             ),
           };
           newEl = {
-            status: 'process',
-            title: t('view:tlAuthorisation'),
+            status: "process",
+            title: t("view:tlAuthorisation"),
             subTitle: upcomingAuthorisation,
             icon: (
               <span className="step-icon upcom-auth-step">
@@ -769,15 +878,19 @@ const ProgrammeView = () => {
           };
         } else if (activity.data.txType === TxType.AUTH) {
           el = {
-            status: 'process',
-            title: t('view:tlAuth'),
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            status: "process",
+            title: t("view:tlAuth"),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(
+              dateTimeFormat
+            ),
             description: (
               <TimelineBody
-                text={formatString('view:tlAuthDesc', [
+                text={formatString("view:tlAuthDesc", [
                   addCommSep(activity.data.creditEst),
                   creditUnit,
-                  DateTime.fromMillis(activity.data.endTime * 1000).toFormat(dateFormat),
+                  DateTime.fromMillis(activity.data.endTime * 1000).toFormat(
+                    dateFormat
+                  ),
                   activity.data.serialNo,
                   getTxRefValues(activity.data.txRef, 1),
                 ])}
@@ -797,13 +910,15 @@ const ProgrammeView = () => {
           }
         } else if (activity.data.txType === TxType.ISSUE) {
           el = {
-            status: 'process',
-            title: t('view:tlIssue'),
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            status: "process",
+            title: t("view:tlIssue"),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(
+              dateTimeFormat
+            ),
             description: (
               <TimelineBody
                 text={formatString(
-                  'view:tlIssueDesc',
+                  "view:tlIssueDesc",
                   getTxRefValues(activity.data.txRef, 4)
                     ? [
                         addNdcDesc({
@@ -814,7 +929,9 @@ const ProgrammeView = () => {
                         getTxRefValues(activity.data.txRef, 1),
                       ]
                     : [
-                        `${addCommSep(activity.data.creditChange)} ${creditUnit} credits`,
+                        `${addCommSep(
+                          activity.data.creditChange
+                        )} ${creditUnit} credits`,
                         getTxRefValues(activity.data.txRef, 1),
                       ]
                 )}
@@ -831,12 +948,16 @@ const ProgrammeView = () => {
           };
         } else if (activity.data.txType === TxType.REJECT) {
           el = {
-            status: 'process',
-            title: t('view:tlReject'),
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            status: "process",
+            title: t("view:tlReject"),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(
+              dateTimeFormat
+            ),
             description: (
               <TimelineBody
-                text={formatString('view:tlRejectDesc', [getTxRefValues(activity.data.txRef, 1)])}
+                text={formatString("view:tlRejectDesc", [
+                  getTxRefValues(activity.data.txRef, 1),
+                ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
                 t={t}
@@ -856,12 +977,14 @@ const ProgrammeView = () => {
           }
         } else if (activity.data.txType === TxType.TRANSFER) {
           el = {
-            status: 'process',
-            title: t('view:tlTransfer'),
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            status: "process",
+            title: t("view:tlTransfer"),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(
+              dateTimeFormat
+            ),
             description: (
               <TimelineBody
-                text={formatString('view:tlTransferDesc', [
+                text={formatString("view:tlTransferDesc", [
                   addCommSep(activity.data.creditChange),
                   creditUnit,
                   getTxRefValues(activity.data.txRef, 6),
@@ -882,17 +1005,21 @@ const ProgrammeView = () => {
         } else if (activity.data.txType === TxType.REVOKE) {
           const type = getTxRefValues(activity.data.txRef, 4);
           let revokeComp = undefined;
-          if (type === 'SUSPEND_REVOKE') {
+          if (type === "SUSPEND_REVOKE") {
             revokeComp = getTxRefValues(activity.data.txRef, 5);
           }
           el = {
-            status: 'process',
-            title: t('view:tlRevoke'),
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            status: "process",
+            title: t("view:tlRevoke"),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(
+              dateTimeFormat
+            ),
             description: (
               <TimelineBody
-                text={formatString('view:tlRevokeDesc', [
-                  revokeComp !== undefined ? `due to the deactivation of ${revokeComp}` : '',
+                text={formatString("view:tlRevokeDesc", [
+                  revokeComp !== undefined
+                    ? `due to the deactivation of ${revokeComp}`
+                    : "",
                   getTxRefValues(activity.data.txRef, 1),
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
@@ -908,12 +1035,16 @@ const ProgrammeView = () => {
           };
         } else if (activity.data.txType === TxType.CERTIFY) {
           el = {
-            status: 'process',
-            title: t('view:tlCertify'),
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            status: "process",
+            title: t("view:tlCertify"),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(
+              dateTimeFormat
+            ),
             description: (
               <TimelineBody
-                text={formatString('view:tlCertifyDesc', [getTxRefValues(activity.data.txRef, 1)])}
+                text={formatString("view:tlCertifyDesc", [
+                  getTxRefValues(activity.data.txRef, 1),
+                ])}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
                 t={t}
@@ -927,19 +1058,23 @@ const ProgrammeView = () => {
           };
           const cid = getTxRefValues(activity.data.txRef, 2);
           if (cid) {
-            certifiedTime[cid] = DateTime.fromMillis(activity.data.txTime).toFormat('dd LLLL yyyy');
+            certifiedTime[cid] = DateTime.fromMillis(
+              activity.data.txTime
+            ).toFormat("dd LLLL yyyy");
           }
         } else if (activity.data.txType === TxType.RETIRE) {
           const reqID = getTxRefValues(activity.data.txRef, 7);
           const tx = reqID ? txDetails[reqID!] : undefined;
           const crossCountry = tx ? tx.toCompanyMeta?.countryName : undefined;
           el = {
-            status: 'process',
-            title: t('view:tlRetire'),
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            status: "process",
+            title: t("view:tlRetire"),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(
+              dateTimeFormat
+            ),
             description: (
               <TimelineBody
-                text={formatString('view:tlRetireDesc', [
+                text={formatString("view:tlRetireDesc", [
                   addCommSep(
                     tx?.retirementType === RetireType.CROSS_BORDER
                       ? activity.data.creditChange -
@@ -958,11 +1093,11 @@ const ProgrammeView = () => {
                   ),
                   creditUnit,
                   getTxRefValues(activity.data.txRef, 6),
-                  `${crossCountry ? 'to ' + crossCountry : ''} `,
+                  `${crossCountry ? "to " + crossCountry : ""} `,
                   getRetirementTypeString(tx?.retirementType)?.toLowerCase(),
                   tx?.retirementType === RetireType.CROSS_BORDER &&
                   getTxRefValues(activity.data.txRef, 10)
-                    ? formatString('view:t1RetInitOmgeDesc', [
+                    ? formatString("view:t1RetInitOmgeDesc", [
                         addCommSep(
                           (
                             (Number(getTxRefValues(activity.data.txRef, 10)) *
@@ -971,7 +1106,7 @@ const ProgrammeView = () => {
                           ).toFixed(2)
                         ),
                       ])
-                    : '',
+                    : "",
                   getTxRefValues(activity.data.txRef, 1),
                 ])}
                 remark={getTxRefValues(activity.data.txRef, 9)}
@@ -988,23 +1123,25 @@ const ProgrammeView = () => {
         } else if (activity.data.txType === TxType.FREEZE) {
           let text;
           if (getTxRefValues(activity.data.txRef, 1)) {
-            text = formatString('view:tlFrozenDesc', [
+            text = formatString("view:tlFrozenDesc", [
               addCommSep(activity.data.creditChange),
               creditUnit,
               getTxRefValues(activity.data.txRef, 4),
               getTxRefValues(activity.data.txRef, 1),
             ]);
           } else {
-            text = formatString('view:tlFrozenDescWithoutUser', [
+            text = formatString("view:tlFrozenDescWithoutUser", [
               addCommSep(activity.data.creditChange),
               creditUnit,
               getTxRefValues(activity.data.txRef, 4),
             ]);
           }
           el = {
-            status: 'process',
-            title: t('view:tlFrozen'),
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            status: "process",
+            title: t("view:tlFrozen"),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(
+              dateTimeFormat
+            ),
             description: (
               <TimelineBody
                 text={text}
@@ -1021,12 +1158,14 @@ const ProgrammeView = () => {
           };
         } else if (activity.data.txType === TxType.UNFREEZE) {
           el = {
-            status: 'process',
-            title: t('view:tlUnFrozen'),
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            status: "process",
+            title: t("view:tlUnFrozen"),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(
+              dateTimeFormat
+            ),
             description: (
               <TimelineBody
-                text={formatString('view:tlUnFrozenDesc', [
+                text={formatString("view:tlUnFrozenDesc", [
                   addCommSep(activity.data.creditChange),
                   creditUnit,
                   getTxRefValues(activity.data.txRef, 4),
@@ -1045,14 +1184,16 @@ const ProgrammeView = () => {
           };
         } else if (activity.data.txType === TxType.OWNERSHIP_UPDATE) {
           el = {
-            status: 'process',
-            title: t('view:tlOwnership'),
-            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
+            status: "process",
+            title: t("view:tlOwnership"),
+            subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(
+              dateTimeFormat
+            ),
             description: (
               <TimelineBody
-                text={formatString('view:tlOwnershipDesc', [
+                text={formatString("view:tlOwnershipDesc", [
                   getTxRefValues(activity.data.txRef, 1),
-                  getTxRefValues(activity.data.txRef, 4) + '%',
+                  getTxRefValues(activity.data.txRef, 4) + "%",
                 ])}
                 t={t}
               />
@@ -1069,9 +1210,9 @@ const ProgrammeView = () => {
           activity.data.txType !== TxType.REJECT
         ) {
           creditEl = {
-            status: 'process',
-            title: t('view:tlIssue'),
-            subTitle: t('view:tlPending'),
+            status: "process",
+            title: t("view:tlIssue"),
+            subTitle: t("view:tlPending"),
             icon: (
               <span className="step-icon upcom-issue-step">
                 <Icon.Award />
@@ -1118,12 +1259,12 @@ const ProgrammeView = () => {
       setCertTimes(certifiedTime);
       genCerts(state.record, certifiedTime);
     } catch (error: any) {
-      console.log('Error in getting programme', error);
+      console.log("Error in getting programme", error);
       message.open({
-        type: 'error',
+        type: "error",
         content: error.message,
         duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
       setLoadingHistory(false);
     }
@@ -1133,7 +1274,7 @@ const ProgrammeView = () => {
   const updateProgrammeData = (response: any) => {
     setData(response.data);
     state.record = response.data;
-    navigate('.', { state: { record: response.data } });
+    navigate(".", { state: { record: response.data } });
     genCerts(response.data, certTimes);
     genPieData(response.data);
   };
@@ -1148,8 +1289,8 @@ const ProgrammeView = () => {
         size: 100,
         filterAnd: [
           {
-            key: 'programmeId',
-            operation: '=',
+            key: "programmeId",
+            operation: "=",
             value: programmeId,
           },
         ],
@@ -1158,12 +1299,18 @@ const ProgrammeView = () => {
         const objectsWithoutNullActionId = response?.data.filter(
           (obj: any) => obj.actionId !== null
         );
-        const objectsWithNullActionId = response?.data.filter((obj: any) => obj.actionId === null);
+        const objectsWithNullActionId = response?.data.filter(
+          (obj: any) => obj.actionId === null
+        );
         const hasAcceptedMethReport = objectsWithNullActionId?.some(
           (item: any) =>
-            item?.type === DocType.METHODOLOGY_DOCUMENT && item?.status === DocumentStatus.ACCEPTED
+            item?.type === DocType.METHODOLOGY_DOCUMENT &&
+            item?.status === DocumentStatus.ACCEPTED
         );
-        if (hasAcceptedMethReport && data?.currentStage === ProgrammeStageUnified.Authorised) {
+        if (
+          hasAcceptedMethReport &&
+          data?.currentStage === ProgrammeStageUnified.Authorised
+        ) {
           setUploadMonitoringReport(true);
         }
         setNdcActionDocumentData(objectsWithoutNullActionId);
@@ -1171,14 +1318,18 @@ const ProgrammeView = () => {
         setNdcActionDocumentDataLoaded(true);
       }
     } catch (err: any) {
-      console.log('Error in getting documents - ', err);
+      console.log("Error in getting documents - ", err);
     } finally {
       setLoadingHistory(false);
       setLoadingNDC(false);
     }
   };
 
-  const getSuccessMsg = (response: any, initMsg: string, successMsg: string) => {
+  const getSuccessMsg = (
+    response: any,
+    initMsg: string,
+    successMsg: string
+  ) => {
     return response.data instanceof Array ? initMsg : successMsg;
   };
 
@@ -1188,7 +1339,7 @@ const ProgrammeView = () => {
       response.data.certifier = data.certifier;
       setData(response.data);
       state.record = response.data;
-      navigate('.', { state: { record: response.data } });
+      navigate(".", { state: { record: response.data } });
       genCerts(response.data, certTimes);
       genPieData(response.data);
     }
@@ -1214,10 +1365,13 @@ const ProgrammeView = () => {
         error = undefined;
         successCB(response);
         message.open({
-          type: 'success',
-          content: typeof successMsg !== 'function' ? successMsg : successMsg(response),
+          type: "success",
+          content:
+            typeof successMsg !== "function"
+              ? successMsg
+              : successMsg(response),
           duration: 3,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
       } else {
         error = response.message;
@@ -1243,21 +1397,21 @@ const ProgrammeView = () => {
       };
     }
     try {
-      if (action !== 'Transfer') {
+      if (action !== "Transfer") {
         setConfirmLoading(true);
         const response: any = await put(
           `national/programme/${
-            action === 'Reject'
-              ? 'reject'
-              : action === 'Authorise'
-              ? 'authorize'
-              : action === 'Certify'
-              ? 'certify'
-              : action === 'Issue'
-              ? 'issue'
-              : action === 'Revoke'
-              ? 'revoke'
-              : 'retire'
+            action === "Reject"
+              ? "reject"
+              : action === "Authorise"
+              ? "authorize"
+              : action === "Certify"
+              ? "certify"
+              : action === "Issue"
+              ? "issue"
+              : action === "Revoke"
+              ? "revoke"
+              : "retire"
           }`,
           body
         );
@@ -1267,17 +1421,17 @@ const ProgrammeView = () => {
           }
 
           if (
-            action === 'Authorise' ||
-            action === 'Certify' ||
-            action === 'Revoke' ||
-            action === 'Issue'
+            action === "Authorise" ||
+            action === "Certify" ||
+            action === "Revoke" ||
+            action === "Issue"
           ) {
             setData(response.data);
             state.record = response.data;
-            navigate('.', { state: { record: response.data } });
+            navigate(".", { state: { record: response.data } });
             genCerts(response.data, certTimes);
             genPieData(response.data);
-          } else if (action === 'Reject') {
+          } else if (action === "Reject") {
             data!.currentStage = ProgrammeStageUnified.Rejected;
             setData(data);
           }
@@ -1286,28 +1440,28 @@ const ProgrammeView = () => {
           setComment(undefined);
           error = undefined;
           message.open({
-            type: 'success',
+            type: "success",
             content:
-              action === 'Reject'
-                ? t('view:successReject')
-                : action === 'Authorise'
-                ? t('view:successAuth')
-                : action === 'Issue'
-                ? 'Successfully issued'
-                : action === 'Certify'
-                ? 'The programme has been certified successfully '
-                : action === 'Revoke'
-                ? t('view:successRevokeCertifcate')
-                : t('view:successRetire'),
+              action === "Reject"
+                ? t("view:successReject")
+                : action === "Authorise"
+                ? t("view:successAuth")
+                : action === "Issue"
+                ? "Successfully issued"
+                : action === "Certify"
+                ? "The programme has been certified successfully "
+                : action === "Revoke"
+                ? t("view:successRevokeCertifcate")
+                : t("view:successRetire"),
             duration: 3,
-            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+            style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
         } else {
           message.open({
-            type: 'error',
+            type: "error",
             content: response.message,
             duration: 3,
-            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+            style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
           error = response.message;
         }
@@ -1319,10 +1473,10 @@ const ProgrammeView = () => {
       }
     } catch (e: any) {
       message.open({
-        type: 'error',
+        type: "error",
         content: e.message,
         duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
       setConfirmLoading(false);
       error = e.message;
@@ -1339,9 +1493,9 @@ const ProgrammeView = () => {
       if (
         data?.article6trade === true ||
         data?.article6trade === undefined ||
-        (data?.article6trade === false && k !== 'carbonPriceUSDPerTon')
+        (data?.article6trade === false && k !== "carbonPriceUSDPerTon")
       ) {
-        const text = t('view:' + k);
+        const text = t("view:" + k);
         if (v instanceof UnitField) {
           info[text + ` (${v.unit})`] = v.value;
         } else {
@@ -1361,8 +1515,8 @@ const ProgrammeView = () => {
         size: 10,
         filterAnd: [
           {
-            key: 'id',
-            operation: '=',
+            key: "id",
+            operation: "=",
             value: userId,
           },
         ],
@@ -1378,12 +1532,12 @@ const ProgrammeView = () => {
       }
       setLoadingAll(false);
     } catch (error: any) {
-      console.log('Error in getting users', error);
+      console.log("Error in getting users", error);
       message.open({
-        type: 'error',
+        type: "error",
         content: error.message,
         duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
       setLoadingAll(false);
     }
@@ -1448,7 +1602,10 @@ const ProgrammeView = () => {
     }
   };
 
-  const getNdcActionHistory = async (programmeId: string, ndcActionDocs: any) => {
+  const getNdcActionHistory = async (
+    programmeId: string,
+    ndcActionDocs: any
+  ) => {
     setLoadingHistory(true);
     setLoadingNDC(true);
     try {
@@ -1457,27 +1614,31 @@ const ProgrammeView = () => {
         size: 100,
         filterAnd: [
           {
-            key: 'programmeId',
-            operation: '=',
+            key: "programmeId",
+            operation: "=",
             value: programmeId,
           },
         ],
       });
-      const groupedByActionId = response.data.reduce((result: any, obj: any) => {
-        const actionId = obj.id;
-        if (!result[actionId]) {
-          result[actionId] = [];
-        }
-        result[actionId].push(obj);
-        return result;
-      }, {});
+      const groupedByActionId = response.data.reduce(
+        (result: any, obj: any) => {
+          const actionId = obj.id;
+          if (!result[actionId]) {
+            result[actionId] = [];
+          }
+          result[actionId].push(obj);
+          return result;
+        },
+        {}
+      );
 
       ndcActionDocumentData?.map((ndcData: any) => {
         if (Object.keys(groupedByActionId)?.includes(ndcData?.actionId)) {
           if (ndcData?.type === DocType.MONITORING_REPORT) {
             groupedByActionId[ndcData?.actionId][0].monitoringReport = ndcData;
           } else if (ndcData?.type === DocType.VERIFICATION_REPORT) {
-            groupedByActionId[ndcData?.actionId][0].verificationReport = ndcData;
+            groupedByActionId[ndcData?.actionId][0].verificationReport =
+              ndcData;
           }
         }
       });
@@ -1501,9 +1662,9 @@ const ProgrammeView = () => {
       }
 
       const mappedElements = Object.keys(groupedByActionId).map((actionId) => ({
-        status: 'process',
+        status: "process",
         title: actionId,
-        subTitle: '',
+        subTitle: "",
         description: (
           <NdcActionBody
             data={groupedByActionId[actionId]}
@@ -1527,12 +1688,12 @@ const ProgrammeView = () => {
       }));
       setNdcActionHistoryData(mappedElements);
     } catch (error: any) {
-      console.log('Error in getting programme', error);
+      console.log("Error in getting programme", error);
       message.open({
-        type: 'error',
+        type: "error",
         content: error.message,
         duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       setLoadingHistory(false);
@@ -1562,7 +1723,9 @@ const ProgrammeView = () => {
   data.companyId.forEach((obj: any, index: number) => {
     percentages.push({
       company: companies[obj],
-      percentage: data.proponentPercentage ? data.proponentPercentage[index] : 100,
+      percentage: data.proponentPercentage
+        ? data.proponentPercentage[index]
+        : 100,
     });
   });
   percentages.sort((a: any, b: any) => b.percentage - a.percentage);
@@ -1572,21 +1735,31 @@ const ProgrammeView = () => {
       <div className="">
         <div className="company-info">
           {isBase64(ele.company.logo) ? (
-            <img alt="company logo" src={'data:image/jpeg;base64,' + ele.company.logo} />
+            <img
+              alt="company logo"
+              src={"data:image/jpeg;base64," + ele.company.logo}
+            />
           ) : ele.company.logo ? (
             <img alt="company logo" src={ele.company.logo} />
           ) : ele.company.name ? (
-            <div className="programme-logo">{ele.company.name.charAt(0).toUpperCase()}</div>
+            <div className="programme-logo">
+              {ele.company.name.charAt(0).toUpperCase()}
+            </div>
           ) : (
-            <div className="programme-logo">{'A'}</div>
+            <div className="programme-logo">{"A"}</div>
           )}
           <div className="text-center programme-name">{ele.company.name}</div>
           <div className="progress-bar">
             <div>
-              <div className="float-left">{t('view:ownership')}</div>
+              <div className="float-left">{t("view:ownership")}</div>
               <div className="float-right">{ele.percentage}%</div>
             </div>
-            <Progress percent={ele.percentage} strokeWidth={7} status="active" showInfo={false} />
+            <Progress
+              percent={ele.percentage}
+              strokeWidth={7}
+              status="active"
+              showInfo={false}
+            />
           </div>
           <OrganisationStatus
             organisationStatus={parseInt(ele.company.state)}
@@ -1599,12 +1772,14 @@ const ProgrammeView = () => {
   // genCerts(data);
   const actionBtns = [];
 
-  if (userInfoState?.userRole !== 'ViewOnly') {
+  if (userInfoState?.userRole !== "ViewOnly") {
     if (userInfoState && data.currentStage !== ProgrammeStageUnified.Rejected) {
       if (
         userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
         (userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
-          data.companyId.map((e) => Number(e)).includes(userInfoState?.companyId)) ||
+          data.companyId
+            .map((e) => Number(e))
+            .includes(userInfoState?.companyId)) ||
         ministryLevelPermission
       ) {
         actionBtns.push(
@@ -1614,16 +1789,16 @@ const ProgrammeView = () => {
               navigate(ROUTES.ADD_INVESTMENT, { state: { record: data } });
             }}
           >
-            {t('view:addInvestment')}
+            {t("view:addInvestment")}
           </Button>
         );
         actionBtns.push(
           <Tooltip
-            title={'Cannot submit until methodology document is approved.'}
+            title={"Cannot submit until methodology document is approved."}
             color={TooltipColor}
             key={TooltipColor}
           >
-            <Button disabled>{t('view:addAction')}</Button>
+            <Button disabled>{t("view:addAction")}</Button>
           </Tooltip>
         );
         if (
@@ -1633,7 +1808,7 @@ const ProgrammeView = () => {
           actionBtns.pop();
           actionBtns.push(
             <Button type="primary" onClick={onClickedAddAction}>
-              {t('view:addAction')}
+              {t("view:addAction")}
             </Button>
           );
         }
@@ -1641,26 +1816,29 @@ const ProgrammeView = () => {
     }
 
     if (
-      data.currentStage.toString() === 'Approved' &&
+      data.currentStage.toString() === "Approved" &&
       (data?.article6trade === true || data?.article6trade === undefined)
     ) {
-      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT || ministryLevelPermission) {
+      if (
+        userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+        ministryLevelPermission
+      ) {
         actionBtns.push(
           <Button
             danger
             onClick={() => {
               setActionInfo({
-                action: 'Reject',
-                text: t('view:popupText'),
-                type: 'danger',
-                title: `${t('view:rejectTitle')} - ${data.title}?`,
+                action: "Reject",
+                text: t("view:popupText"),
+                type: "danger",
+                title: `${t("view:rejectTitle")} - ${data.title}?`,
                 remark: true,
                 icon: <Icon.ClipboardX />,
               });
               showModal();
             }}
           >
-            {t('view:reject')}
+            {t("view:reject")}
           </Button>
         );
         actionBtns.push(
@@ -1668,27 +1846,27 @@ const ProgrammeView = () => {
             type="primary"
             onClick={() => {
               setActionInfo({
-                action: 'Authorise',
-                text: t('view:popupText'),
-                title: `${t('view:authTitle')} - ${data.title}?`,
-                type: 'primary',
+                action: "Authorise",
+                text: t("view:popupText"),
+                title: `${t("view:authTitle")} - ${data.title}?`,
+                type: "primary",
                 remark: false,
                 icon: <Icon.ClipboardCheck />,
                 contentComp: (
                   <ProgrammeIssueForm
                     enableIssue={false}
                     programme={data}
-                    subText={t('view:popupText')}
+                    subText={t("view:popupText")}
                     onCancel={() => {
                       setOpenModal(false);
                       setComment(undefined);
                     }}
-                    actionBtnText={t('view:authorise')}
+                    actionBtnText={t("view:authorise")}
                     onFinish={(body: any) =>
                       onPopupAction(
                         body,
-                        'authorize',
-                        t('view:successAuth'),
+                        "authorize",
+                        t("view:successAuth"),
                         put,
                         updateProgrammeData
                       )
@@ -1700,7 +1878,7 @@ const ProgrammeView = () => {
               showModal();
             }}
           >
-            {t('view:authorise')}
+            {t("view:authorise")}
           </Button>
         );
       }
@@ -1708,7 +1886,10 @@ const ProgrammeView = () => {
       data.currentStage.toString() === ProgrammeStageUnified.Authorised &&
       Number(data.creditEst) > Number(data.creditIssued)
     ) {
-      if (userInfoState?.companyRole === CompanyRole.GOVERNMENT || ministryLevelPermission) {
+      if (
+        userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+        ministryLevelPermission
+      ) {
         if (
           Number(data.creditEst) > Number(data.creditIssued) &&
           getValidNdcActions(data).length > 0
@@ -1718,27 +1899,27 @@ const ProgrammeView = () => {
               type="primary"
               onClick={() => {
                 setActionInfo({
-                  action: 'Issue',
-                  text: t('view:popupText'),
-                  title: `${t('view:issueTitle')} - ${data.title}?`,
-                  type: 'primary',
+                  action: "Issue",
+                  text: t("view:popupText"),
+                  title: `${t("view:issueTitle")} - ${data.title}?`,
+                  type: "primary",
                   remark: false,
                   icon: <Icon.Award />,
                   contentComp: (
                     <ProgrammeIssueForm
                       enableIssue={true}
                       programme={data}
-                      subText={t('view:popupText')}
+                      subText={t("view:popupText")}
                       onCancel={() => {
                         setOpenModal(false);
                         setComment(undefined);
                       }}
-                      actionBtnText={t('view:issue')}
+                      actionBtnText={t("view:issue")}
                       onFinish={(body: any) =>
                         onPopupAction(
                           body,
-                          'issue',
-                          t('view:successIssue'),
+                          "issue",
+                          t("view:successIssue"),
                           put,
                           updateProgrammeData
                         )
@@ -1751,7 +1932,7 @@ const ProgrammeView = () => {
                 showModal();
               }}
             >
-              {t('view:issue')}
+              {t("view:issue")}
             </Button>
           );
         }
@@ -1798,7 +1979,9 @@ const ProgrammeView = () => {
       userInfoState.companyState !== CompanyState.SUSPENDED.valueOf() &&
       data.certifier &&
       userInfoState?.companyRole === CompanyRole.CERTIFIER &&
-      !data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId) &&
+      !data.certifier
+        .map((e) => e.companyId)
+        .includes(userInfoState?.companyId) &&
       data.currentStage.toString() !== ProgrammeStageUnified.Rejected
     ) {
       actionBtns.push(
@@ -1806,17 +1989,17 @@ const ProgrammeView = () => {
           type="primary"
           onClick={() => {
             setActionInfo({
-              action: 'Certify',
+              action: "Certify",
               text: ``,
-              title: `${t('view:certifyTitle')} - ${data.title}?`,
-              type: 'success',
+              title: `${t("view:certifyTitle")} - ${data.title}?`,
+              type: "success",
               remark: false,
               icon: <ShieldCheck />,
             });
             showModal();
           }}
         >
-          {t('view:certify')}
+          {t("view:certify")}
         </Button>
       );
     }
@@ -1826,7 +2009,9 @@ const ProgrammeView = () => {
       data.certifier &&
       data.certifier.length > 0 &&
       ((userInfoState?.companyRole === CompanyRole.CERTIFIER &&
-        data.certifier.map((e) => e.companyId).includes(userInfoState?.companyId)) ||
+        data.certifier
+          .map((e) => e.companyId)
+          .includes(userInfoState?.companyId)) ||
         userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
         ministryLevelPermission)
     ) {
@@ -1835,26 +2020,26 @@ const ProgrammeView = () => {
           danger
           onClick={() => {
             setActionInfo({
-              action: 'Revoke',
-              title: `${t('view:revokeTitle')} - ${data.title}?`,
+              action: "Revoke",
+              title: `${t("view:revokeTitle")} - ${data.title}?`,
               text: ``,
-              type: 'danger',
+              type: "danger",
               remark: true,
               icon: <Icon.ShieldExclamation />,
               contentComp: (
                 <ProgrammeRevokeForm
                   programme={data}
-                  subText={t('view:popupText')}
+                  subText={t("view:popupText")}
                   onCancel={() => {
                     setOpenModal(false);
                     setComment(undefined);
                   }}
-                  actionBtnText={t('view:revoke')}
+                  actionBtnText={t("view:revoke")}
                   onFinish={(body: any) =>
                     onPopupAction(
                       body,
-                      'revoke',
-                      t('view:successRevokeCertifcate'),
+                      "revoke",
+                      t("view:successRevokeCertifcate"),
                       put,
                       updateProgrammeData
                     )
@@ -1870,7 +2055,7 @@ const ProgrammeView = () => {
             showModal();
           }}
         >
-          {t('view:revoke')}
+          {t("view:revoke")}
         </Button>
       );
     }
@@ -1878,35 +2063,43 @@ const ProgrammeView = () => {
 
   // }
   const generalInfo: any = {};
-  Object.entries(getGeneralFields(data, CarbonSystemType.UNIFIED)).forEach(([k, v]) => {
-    if (
-      data?.article6trade === true ||
-      data?.article6trade === undefined ||
-      (data?.article6trade === false && k !== 'serialNo')
-    ) {
-      const text = t('view:' + k);
-      if (k === 'currentStatus') {
-        generalInfo[text] = (
-          <Tag color={getStageTagType(v as ProgrammeStageUnified)}>
-            {getStageEnumVal(v as string)}
-          </Tag>
-        );
-      } else if (k === 'sector') {
-        generalInfo[text] = (
-          <Tag color={v === 'Agriculture' ? 'success' : 'processing'}>{v as string}</Tag>
-        );
-      } else if (k === 'applicationType') {
-        generalInfo[text] = (
-          <span>
-            <RoleIcon icon={<ExperimentOutlined />} bg={DevBGColor} color={DevColor} />
-            <span>{v as string}</span>
-          </span>
-        );
-      } else {
-        generalInfo[text] = v;
+  Object.entries(getGeneralFields(data, CarbonSystemType.UNIFIED)).forEach(
+    ([k, v]) => {
+      if (
+        data?.article6trade === true ||
+        data?.article6trade === undefined ||
+        (data?.article6trade === false && k !== "serialNo")
+      ) {
+        const text = t("view:" + k);
+        if (k === "currentStatus") {
+          generalInfo[text] = (
+            <Tag color={getStageTagType(v as ProgrammeStageUnified)}>
+              {getStageEnumVal(v as string)}
+            </Tag>
+          );
+        } else if (k === "sector") {
+          generalInfo[text] = (
+            <Tag color={v === "Agriculture" ? "success" : "processing"}>
+              {v as string}
+            </Tag>
+          );
+        } else if (k === "applicationType") {
+          generalInfo[text] = (
+            <span>
+              <RoleIcon
+                icon={<ExperimentOutlined />}
+                bg={DevBGColor}
+                color={DevColor}
+              />
+              <span>{v as string}</span>
+            </span>
+          );
+        } else {
+          generalInfo[text] = v;
+        }
       }
     }
-  });
+  );
 
   return loadingAll ? (
     <Loading />
@@ -1914,11 +2107,11 @@ const ProgrammeView = () => {
     <div className="content-container programme-view">
       <div className="title-bar">
         <div>
-          <div className="body-title">{t('view:details')}</div>
-          <div className="body-sub-title">{t('view:desc')}</div>
+          <div className="body-title">{t("view:details")}</div>
+          <div className="body-sub-title">{t("view:desc")}</div>
         </div>
         <div className="flex-display action-btns">
-          {userInfoState?.userRole !== 'ViewOnly' &&
+          {userInfoState?.userRole !== "ViewOnly" &&
             userInfoState?.companyState !== 0 &&
             actionBtns}
         </div>
@@ -1936,53 +2129,66 @@ const ProgrammeView = () => {
                       </span>
                     }
                   </span>
-                  <span className="title-text">{t('view:programmeOwner')}</span>
+                  <span className="title-text">{t("view:programmeOwner")}</span>
                 </div>
                 <div className="centered-card">{elements}</div>
               </div>
             </Card>
-            {getStageEnumVal(data.currentStage) === ProgrammeStageUnified.Authorised ? (
+            {getStageEnumVal(data.currentStage) ===
+            ProgrammeStageUnified.Authorised ? (
               <Card className="card-container">
                 <div className="info-view">
                   <div className="title">
                     <span className="title-icon">{<BlockOutlined />}</span>
-                    <span className="title-text">{t('view:credits')}</span>
+                    <span className="title-text">{t("view:credits")}</span>
                   </div>
                   <div className="map-content">
                     <Chart
-                      id={'creditChart'}
+                      id={"creditChart"}
                       options={{
-                        labels: ['Authorised', 'Issued', 'Transferred', 'Retired', 'Frozen'],
+                        labels: [
+                          "Authorised",
+                          "Issued",
+                          "Transferred",
+                          "Retired",
+                          "Frozen",
+                        ],
                         legend: {
-                          position: 'bottom',
+                          position: "bottom",
                         },
-                        colors: ['#6ACDFF', '#D2FDBB', '#CDCDCD', '#FF8183', '#B7A4FE'],
+                        colors: [
+                          "#6ACDFF",
+                          "#D2FDBB",
+                          "#CDCDCD",
+                          "#FF8183",
+                          "#B7A4FE",
+                        ],
                         tooltip: {
                           fillSeriesColor: false,
                         },
                         states: {
                           normal: {
                             filter: {
-                              type: 'none',
+                              type: "none",
                               value: 0,
                             },
                           },
                           hover: {
                             filter: {
-                              type: 'none',
+                              type: "none",
                               value: 0,
                             },
                           },
                           active: {
                             allowMultipleDataPointsSelection: true,
                             filter: {
-                              type: 'darken',
+                              type: "darken",
                               value: 0.7,
                             },
                           },
                         },
                         stroke: {
-                          colors: ['#00'],
+                          colors: ["#00"],
                         },
                         plotOptions: {
                           pie: {
@@ -1993,8 +2199,8 @@ const ProgrammeView = () => {
                                 total: {
                                   showAlways: true,
                                   show: true,
-                                  label: 'Total',
-                                  formatter: () => '' + data.creditEst,
+                                  label: "Total",
+                                  formatter: () => "" + data.creditEst,
                                 },
                               },
                             },
@@ -2008,10 +2214,10 @@ const ProgrammeView = () => {
                             breakpoint: 480,
                             options: {
                               chart: {
-                                width: '15vw',
+                                width: "15vw",
                               },
                               legend: {
-                                position: 'bottom',
+                                position: "bottom",
                               },
                             },
                           },
@@ -2022,10 +2228,11 @@ const ProgrammeView = () => {
                       width="100%"
                       fontFamily="inter"
                     />
-                    {userInfoState?.userRole !== 'ViewOnly' &&
-                      userInfoState?.companyRole !== 'Certifier' && (
+                    {userInfoState?.userRole !== "ViewOnly" &&
+                      userInfoState?.companyRole !== "Certifier" && (
                         <div className="flex-display action-btns">
-                          {data.currentStage.toString() === ProgrammeStageUnified.Authorised &&
+                          {data.currentStage.toString() ===
+                            ProgrammeStageUnified.Authorised &&
                             data.creditBalance -
                               (data.creditFrozen
                                 ? data.creditFrozen.reduce(
@@ -2036,7 +2243,8 @@ const ProgrammeView = () => {
                               0 &&
                             !isTransferFrozen && (
                               <div>
-                                {(((userInfoState?.companyRole === CompanyRole.GOVERNMENT ||
+                                {(((userInfoState?.companyRole ===
+                                  CompanyRole.GOVERNMENT ||
                                   ministryLevelPermission) &&
                                   !isAllOwnersDeactivated) ||
                                   (data.companyId
@@ -2049,10 +2257,10 @@ const ProgrammeView = () => {
                                       danger
                                       onClick={() => {
                                         setActionInfo({
-                                          action: 'Retire',
-                                          text: t('view:popupText'),
-                                          title: t('view:retireTitle'),
-                                          type: 'primary',
+                                          action: "Retire",
+                                          text: t("view:popupText"),
+                                          title: t("view:retireTitle"),
+                                          type: "primary",
                                           remark: true,
                                           icon: <Icon.Save />,
                                           contentComp: (
@@ -2060,24 +2268,29 @@ const ProgrammeView = () => {
                                               hideType={
                                                 userInfoState?.companyRole !==
                                                   CompanyRole.GOVERNMENT &&
-                                                userInfoState?.companyRole !== CompanyRole.MINISTRY
+                                                userInfoState?.companyRole !==
+                                                  CompanyRole.MINISTRY
                                               }
-                                              myCompanyId={userInfoState?.companyId}
+                                              myCompanyId={
+                                                userInfoState?.companyId
+                                              }
                                               programme={data}
                                               onCancel={() => {
                                                 setOpenModal(false);
                                                 setComment(undefined);
                                               }}
-                                              actionBtnText={t('view:retire')}
+                                              actionBtnText={t("view:retire")}
                                               onFinish={(body: any) =>
                                                 onPopupAction(
                                                   body,
-                                                  'retire',
+                                                  "retire",
                                                   (response: any) =>
                                                     getSuccessMsg(
                                                       response,
-                                                      t('view:successRetireInit'),
-                                                      t('view:successRetire')
+                                                      t(
+                                                        "view:successRetireInit"
+                                                      ),
+                                                      t("view:successRetire")
                                                     ),
                                                   put,
                                                   updateCreditInfo
@@ -2090,53 +2303,59 @@ const ProgrammeView = () => {
                                         showModal();
                                       }}
                                     >
-                                      {t('view:retire')}
+                                      {t("view:retire")}
                                     </Button>
                                     <Button
                                       type="primary"
                                       onClick={() => {
                                         setActionInfo({
-                                          action: 'Send',
-                                          text: '',
-                                          title: t('view:sendCreditTitle'),
-                                          type: 'primary',
+                                          action: "Send",
+                                          text: "",
+                                          title: t("view:sendCreditTitle"),
+                                          type: "primary",
                                           remark: true,
                                           icon: <Icon.BoxArrowRight />,
                                           contentComp: (
                                             <ProgrammeTransferForm
-                                              companyRole={userInfoState!.companyRole}
-                                              receiverLabelText={t('view:to')}
-                                              userCompanyId={userInfoState?.companyId}
+                                              companyRole={
+                                                userInfoState!.companyRole
+                                              }
+                                              receiverLabelText={t("view:to")}
+                                              userCompanyId={
+                                                userInfoState?.companyId
+                                              }
                                               programme={data}
-                                              subText={t('view:popupText')}
+                                              subText={t("view:popupText")}
                                               onCancel={() => {
                                                 setOpenModal(false);
                                                 setComment(undefined);
                                               }}
-                                              actionBtnText={t('view:send')}
+                                              actionBtnText={t("view:send")}
                                               onFinish={(body: any) =>
                                                 onPopupAction(
                                                   body,
-                                                  'transferRequest',
+                                                  "transferRequest",
                                                   (response: any) =>
                                                     getSuccessMsg(
                                                       response,
-                                                      t('view:successSendInit'),
-                                                      t('view:successSend')
+                                                      t("view:successSendInit"),
+                                                      t("view:successSend")
                                                     ),
                                                   post,
                                                   updateCreditInfo
                                                 )
                                               }
                                               translator={i18n}
-                                              ministryLevelPermission={ministryLevelPermission}
+                                              ministryLevelPermission={
+                                                ministryLevelPermission
+                                              }
                                             />
                                           ),
                                         });
                                         showModal();
                                       }}
                                     >
-                                      {t('view:send')}
+                                      {t("view:send")}
                                     </Button>
                                   </span>
                                 )}
@@ -2144,41 +2363,47 @@ const ProgrammeView = () => {
                                   userInfoState!.companyState !==
                                     CompanyState.SUSPENDED.valueOf() &&
                                   !isTransferFrozen &&
-                                  userInfoState?.companyRole !== CompanyRole.MINISTRY) ||
-                                  (userInfoState?.companyRole === CompanyRole.MINISTRY &&
+                                  userInfoState?.companyRole !==
+                                    CompanyRole.MINISTRY) ||
+                                  (userInfoState?.companyRole ===
+                                    CompanyRole.MINISTRY &&
                                     ministryLevelPermission)) && (
                                   <Button
                                     type="primary"
                                     onClick={() => {
                                       setActionInfo({
-                                        action: 'Request',
-                                        text: '',
-                                        title: t('view:transferTitle'),
-                                        type: 'primary',
+                                        action: "Request",
+                                        text: "",
+                                        title: t("view:transferTitle"),
+                                        type: "primary",
                                         remark: true,
                                         icon: <Icon.BoxArrowInRight />,
                                         contentComp: (
                                           <ProgrammeTransferForm
-                                            companyRole={userInfoState!.companyRole}
-                                            userCompanyId={userInfoState?.companyId}
-                                            receiverLabelText={t('view:by')}
+                                            companyRole={
+                                              userInfoState!.companyRole
+                                            }
+                                            userCompanyId={
+                                              userInfoState?.companyId
+                                            }
+                                            receiverLabelText={t("view:by")}
                                             disableToCompany={true}
                                             toCompanyDefault={{
                                               label: userInfoState?.companyName,
                                               value: userInfoState?.companyId,
                                             }}
                                             programme={data}
-                                            subText={t('view:popupText')}
+                                            subText={t("view:popupText")}
                                             onCancel={() => {
                                               setOpenModal(false);
                                               setComment(undefined);
                                             }}
-                                            actionBtnText={t('view:request')}
+                                            actionBtnText={t("view:request")}
                                             onFinish={(body: any) =>
                                               onPopupAction(
                                                 body,
-                                                'transferRequest',
-                                                t('view:successRequest'),
+                                                "transferRequest",
+                                                t("view:successRequest"),
                                                 post,
                                                 updateCreditInfo
                                               )
@@ -2190,7 +2415,7 @@ const ProgrammeView = () => {
                                       showModal();
                                     }}
                                   >
-                                    {t('view:transfer')}
+                                    {t("view:transfer")}
                                   </Button>
                                 )}
                               </div>
@@ -2203,24 +2428,25 @@ const ProgrammeView = () => {
             ) : (
               <div></div>
             )}
-            {(emissionsReductionExpected !== 0 || emissionsReductionAchieved !== 0) && (
+            {(emissionsReductionExpected !== 0 ||
+              emissionsReductionAchieved !== 0) && (
               <Card className="card-container">
                 <div className="info-view">
                   <div className="title">
                     <span className="title-icon">{<BlockOutlined />}</span>
                     <span className="title-text">
-                      {formatString('view:emissionsReductions', [])}
+                      {formatString("view:emissionsReductions", [])}
                     </span>
                   </div>
                   <div className="map-content">
                     <Chart
-                      id={'creditChart'}
+                      id={"creditChart"}
                       options={{
-                        labels: ['Achieved', 'Pending'],
+                        labels: ["Achieved", "Pending"],
                         legend: {
-                          position: 'bottom',
+                          position: "bottom",
                         },
-                        colors: ['#b3b3ff', '#e0e0eb'],
+                        colors: ["#b3b3ff", "#e0e0eb"],
                         tooltip: {
                           fillSeriesColor: false,
                           enabled: true,
@@ -2233,26 +2459,26 @@ const ProgrammeView = () => {
                         states: {
                           normal: {
                             filter: {
-                              type: 'none',
+                              type: "none",
                               value: 0,
                             },
                           },
                           hover: {
                             filter: {
-                              type: 'none',
+                              type: "none",
                               value: 0,
                             },
                           },
                           active: {
                             allowMultipleDataPointsSelection: true,
                             filter: {
-                              type: 'darken',
+                              type: "darken",
                               value: 0.7,
                             },
                           },
                         },
                         stroke: {
-                          colors: ['#00'],
+                          colors: ["#00"],
                         },
                         plotOptions: {
                           pie: {
@@ -2263,8 +2489,10 @@ const ProgrammeView = () => {
                                 total: {
                                   showAlways: true,
                                   show: true,
-                                  label: 'Expected',
-                                  formatter: () => '' + addCommSep(data?.emissionReductionExpected),
+                                  label: "Expected",
+                                  formatter: () =>
+                                    "" +
+                                    addCommSep(data?.emissionReductionExpected),
                                 },
                               },
                             },
@@ -2278,10 +2506,10 @@ const ProgrammeView = () => {
                             breakpoint: 480,
                             options: {
                               chart: {
-                                width: '15vw',
+                                width: "15vw",
                               },
                               legend: {
-                                position: 'bottom',
+                                position: "bottom",
                               },
                             },
                           },
@@ -2290,7 +2518,10 @@ const ProgrammeView = () => {
                       series={[
                         emissionsReductionAchieved,
                         Number(
-                          (emissionsReductionExpected - emissionsReductionAchieved).toFixed(2)
+                          (
+                            emissionsReductionExpected -
+                            emissionsReductionAchieved
+                          ).toFixed(2)
                         ),
                       ]}
                       type="donut"
@@ -2307,8 +2538,14 @@ const ProgrammeView = () => {
                   <div className="info-view only-head">
                     <div className="title">
                       <span className="title-icon">{<Icon.Grid />}</span>
-                      <span className="title-text">{t('view:programmeMaterial')}</span>
-                      <div>{getFileContent(data.programmeProperties.programmeMaterials)}</div>
+                      <span className="title-text">
+                        {t("view:programmeMaterial")}
+                      </span>
+                      <div>
+                        {getFileContent(
+                          data.programmeProperties.programmeMaterials
+                        )}
+                      </div>
                     </div>
                   </div>
                 </Card>
@@ -2329,7 +2566,7 @@ const ProgrammeView = () => {
               <div>
                 <InfoView
                   data={mapArrayToi18n(getFinancialFields(data))}
-                  title={t('view:financial')}
+                  title={t("view:financial")}
                   icon={
                     <span className="b-icon">
                       <Icon.Cash />
@@ -2342,7 +2579,7 @@ const ProgrammeView = () => {
               <div>
                 <ProgrammeDocuments
                   data={documentsData}
-                  title={t('view:programmeDocs')}
+                  title={t("view:programmeDocs")}
                   icon={<QrcodeOutlined />}
                   programmeId={data?.programmeId}
                   programmeOwnerId={programmeOwnerId}
@@ -2363,7 +2600,11 @@ const ProgrammeView = () => {
           <Col md={24} lg={14}>
             <Card className="card-container">
               <div>
-                <InfoView data={generalInfo} title={t('view:general')} icon={<BulbOutlined />} />
+                <InfoView
+                  data={generalInfo}
+                  title={t("view:general")}
+                  icon={<BulbOutlined />}
+                />
               </div>
             </Card>
             {data.projectLocation &&
@@ -2373,7 +2614,9 @@ const ProgrammeView = () => {
                 <div className="info-view">
                   <div className="title">
                     <span className="title-icon">{<Icon.PinMap />}</span>
-                    <span className="title-text">{t('view:projectLocation')}</span>
+                    <span className="title-text">
+                      {t("view:projectLocation")}
+                    </span>
                   </div>
                   <div className="map-content">
                     <MapComponent
@@ -2391,14 +2634,16 @@ const ProgrammeView = () => {
                 </div>
               </Card>
             ) : (
-              ''
+              ""
             )}
             {certs.length > 0 ? (
               <Card className="card-container">
                 <div className="info-view">
                   <div className="title">
                     <span className="title-icon">{<SafetyOutlined />}</span>
-                    <span className="title-text">{t('view:certification')}</span>
+                    <span className="title-text">
+                      {t("view:certification")}
+                    </span>
                   </div>
                   <div className="cert-content">{certs}</div>
                 </div>
@@ -2410,14 +2655,20 @@ const ProgrammeView = () => {
               <Card className="card-container">
                 <div className="info-view">
                   <div className="title">
-                    <span className="title-icon">{<ClockCircleOutlined />}</span>
-                    <span className="title-text">{t('view:investment')}</span>
+                    <span className="title-icon">
+                      {<ClockCircleOutlined />}
+                    </span>
+                    <span className="title-text">{t("view:investment")}</span>
                   </div>
                   <div className="content">
                     {loadingInvestment ? (
                       <Skeleton />
                     ) : (
-                      <Steps current={0} direction="vertical" items={investmentHistory} />
+                      <Steps
+                        current={0}
+                        direction="vertical"
+                        items={investmentHistory}
+                      />
                     )}
                   </div>
                 </div>
@@ -2428,13 +2679,17 @@ const ProgrammeView = () => {
                 <div className="info-view">
                   <div className="title">
                     <span className="title-icon">{<ExperimentOutlined />}</span>
-                    <span className="title-text">{t('view:ndcActions')}</span>
+                    <span className="title-text">{t("view:ndcActions")}</span>
                   </div>
                   <div className="content">
                     {loadingNDC ? (
                       <Skeleton />
                     ) : (
-                      <Steps current={0} direction="vertical" items={ndcActionHistoryData} />
+                      <Steps
+                        current={0}
+                        direction="vertical"
+                        items={ndcActionHistoryData}
+                      />
                     )}
                   </div>
                 </div>
@@ -2444,7 +2699,7 @@ const ProgrammeView = () => {
               <div className="info-view">
                 <div className="title">
                   <span className="title-icon">{<ClockCircleOutlined />}</span>
-                  <span className="title-text">{t('view:timeline')}</span>
+                  <span className="title-text">{t("view:timeline")}</span>
                 </div>
                 <div className="content">
                   {loadingHistory ? (
@@ -2470,7 +2725,7 @@ const ProgrammeView = () => {
             <div>{actionInfo.title}</div>
           </div>
         }
-        className={'popup-' + actionInfo.type}
+        className={"popup-" + actionInfo.type}
         open={openModal}
         width={Math.min(430, window.innerWidth)}
         centered={true}
@@ -2489,7 +2744,7 @@ const ProgrammeView = () => {
             <Form layout="vertical">
               <Form.Item
                 className="mg-bottom-0"
-                label={t('view:remarks')}
+                label={t("view:remarks")}
                 name="remarks"
                 required={actionInfo.remark}
               >
@@ -2508,10 +2763,12 @@ const ProgrammeView = () => {
                     setComment(undefined);
                   }}
                 >
-                  {t('view:cancel')}
+                  {t("view:cancel")}
                 </Button>
                 <Button
-                  disabled={actionInfo.remark && (!comment || comment.trim() === '')}
+                  disabled={
+                    actionInfo.remark && (!comment || comment.trim() === "")
+                  }
                   type="primary"
                   loading={confirmLoading}
                   onClick={() => onAction(actionInfo.action)}

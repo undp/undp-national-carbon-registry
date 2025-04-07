@@ -1,4 +1,4 @@
-@import '../../../Styles/variables.scss';
+@use '../../../Styles/variables.scss';
 
 .ndc-action-body {
   display: flex;
@@ -27,7 +27,7 @@
 
       .name {
         font-weight: 600;
-        color: $common-filter-color;
+        color: variables.$common-filter-color;
       }
 
       .icon {
