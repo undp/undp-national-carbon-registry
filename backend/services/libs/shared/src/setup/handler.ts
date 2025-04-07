@@ -226,7 +226,8 @@ export const handler: Handler = async (event) => {
     await userService.create(
       user,
       -1,
-      CompanyRole.DESIGNATED_NATIONAL_AUTHORITY
+      CompanyRole.DESIGNATED_NATIONAL_AUTHORITY,
+      true
     );
   } catch (e) {
     console.log(`User ${event["rootEmail"]} failed to create`, e);
