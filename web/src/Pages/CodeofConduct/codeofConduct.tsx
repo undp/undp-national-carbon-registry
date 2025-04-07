@@ -44,7 +44,7 @@ const CodeOfConduct = () => {
                 <div className="title-sub">{"REGISTRY"}</div>
               </div>
               <div className="country-name">
-                {import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX"}
+                {import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX"}
               </div>
             </div>
           </div>
@@ -313,7 +313,7 @@ const CodeOfConduct = () => {
                   <div className="title-sub">{'REGISTRY'}</div>
                 </div>
                 <div className="footer-country-name">
-                  {import.meta.env.REACT_APP_COUNTRY_NAME || 'CountryX'}
+                  {import.meta.env.VITE_APP_COUNTRY_NAME || 'CountryX'}
                 </div>
               </div>
             </div>
@@ -328,7 +328,7 @@ const CodeOfConduct = () => {
         <Row className="footer-raw">
           <Col md={4.8} lg={12}>
             <div className="footertext-bottom">
-              {import.meta.env.REACT_APP_COUNTRY_NAME || 'CountryX'}
+              {import.meta.env.VITE_APP_COUNTRY_NAME || 'CountryX'}
               <CcCircle className="cc" color="#FFFF" size="10px" />
             </div>
           </Col>

@@ -26,7 +26,7 @@ const { Meta } = Card;
 
 const SLCFSignatureComponent = (props: any) => {
   const { t, maximumImageSize } = props;
-  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
+  const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [loading, setLoading] = useState<boolean>(false);

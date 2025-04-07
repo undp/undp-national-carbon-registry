@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Button,
   Col,
@@ -11,94 +11,99 @@ import {
   Steps,
   Upload,
   message,
-} from 'antd';
-import { InfoCircleOutlined, MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import './ProgrammeCreationComponent.scss';
-import moment from 'moment';
-import TextArea from 'antd/lib/input/TextArea';
-import { isValidateFileType } from '../../Utils/DocumentValidator';
-import { DocType } from '../../Definitions/Enums/document.type';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
-import { RcFile } from 'antd/lib/upload';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import GetMultipleLocationsMapComponent from '../Maps/GetMultipleLocationsMapComponent';
-import { Loading } from '../Loading/loading';
+} from "antd";
+import {
+  InfoCircleOutlined,
+  MinusOutlined,
+  PlusOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
+import "./ProgrammeCreationComponent.scss";
+import moment from "moment";
+import TextArea from "antd/lib/input/TextArea";
+import { isValidateFileType } from "../../Utils/DocumentValidator";
+import { DocType } from "../../Definitions/Enums/document.type";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { getBase64 } from "../../Definitions/Definitions/programme.definitions";
+import { RcFile } from "antd/lib/upload";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import GetMultipleLocationsMapComponent from "../Maps/GetMultipleLocationsMapComponent";
+import { Loading } from "../Loading/loading";
 import PhoneInput, {
   formatPhoneNumber,
   formatPhoneNumberIntl,
   isPossiblePhoneNumber,
-} from 'react-phone-number-input';
-import InfDocumentInformation from './infDocumentInfo';
-import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
-import { API_PATHS } from '../../Config/apiConfig';
-import { ROUTES } from '../../Config/uiRoutingConfig';
-import { SectoralScope } from '../../Definitions/Enums/sectoralScope.enum';
-import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
-import ConfirmSubmitSVG from '../../Assets/DialogIcons/ConfirmSubmit.svg';
-import { DocumentEnum } from '../../Definitions/Enums/document.enum';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { mapBase64ToFields } from '../../Utils/mapBase64ToFields';
-import validator from 'validator';
+} from "react-phone-number-input";
+import InfDocumentInformation from "./infDocumentInfo";
+import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
+import { API_PATHS } from "../../Config/apiConfig";
+import { ROUTES } from "../../Config/uiRoutingConfig";
+import { SectoralScope } from "../../Definitions/Enums/sectoralScope.enum";
+import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
+import ConfirmSubmitSVG from "../../Assets/DialogIcons/ConfirmSubmit.svg";
+import { DocumentEnum } from "../../Definitions/Enums/document.enum";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
+import { mapBase64ToFields } from "../../Utils/mapBase64ToFields";
+import validator from "validator";
 
-type SizeType = Parameters<typeof Form>[0]['size'];
+type SizeType = Parameters<typeof Form>[0]["size"];
 
-const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
-  ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
+const maximumImageSize = import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE
+  ? parseInt(import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE)
   : 5000000;
 
 export const PROJECT_GEOGRAPHY: { [key: string]: string } = {
-  SINGLE: 'Single Location',
-  MULTIPLE: 'Scattered in multiple locations',
+  SINGLE: "Single Location",
+  MULTIPLE: "Scattered in multiple locations",
 };
 
 const PROJECT_CATEGORIES: { [key: string]: string } = {
-  RENEWABLE_ENERGY: 'Renewable Energy',
-  AFFORESTATION: 'Afforestation',
-  REFORESTATION: 'Reforestation',
-  OTHER: 'Other',
+  RENEWABLE_ENERGY: "Renewable Energy",
+  AFFORESTATION: "Afforestation",
+  REFORESTATION: "Reforestation",
+  OTHER: "Other",
 };
 
 const PROJECT_STATUS: { [key: string]: string } = {
-  PROPOSAL_STAGE: 'Proposal Stage',
-  PROCUREMENT_STAGE: 'Procurement',
-  CONSTRUCTION_STAGE: 'Construction',
-  INSTALLATION_STAGE: 'Installation',
+  PROPOSAL_STAGE: "Proposal Stage",
+  PROCUREMENT_STAGE: "Procurement",
+  CONSTRUCTION_STAGE: "Construction",
+  INSTALLATION_STAGE: "Installation",
 };
 
 export const PURPOSE_CREDIT_DEVELOPMENT: { [key: string]: string } = {
-  TRACK_1: 'Track 1',
-  TRACK_2: 'Track 2',
+  TRACK_1: "Track 1",
+  TRACK_2: "Track 2",
 };
 
 const INF_SECTOR: { [key: string]: string } = {
-  ENERGY: 'Energy',
-  HEALTH: 'Health',
-  EDUCATION: 'Education',
-  TRANSPORT: 'Transport',
-  MANUFACTURING: 'Manufacturing',
-  HOSPITALITY: 'Hospitality',
-  FORESTRY: 'Forestry',
-  WASTE: 'Waste',
+  ENERGY: "Energy",
+  HEALTH: "Health",
+  EDUCATION: "Education",
+  TRANSPORT: "Transport",
+  MANUFACTURING: "Manufacturing",
+  HOSPITALITY: "Hospitality",
+  FORESTRY: "Forestry",
+  WASTE: "Waste",
 };
 
 export const INF_SECTORAL_SCOPE: { [key: string]: string } = {
-  ENERGY_INDUSTRIES: 'Energy Industries (Renewable)',
-  ENERGY_DISTRIBUTION: 'Energy Distribution',
-  ENERGY_DEMAND: 'Energy Demand',
-  MANUFACTURING_INDUSTRIES: 'Manufacturing Industries',
-  CHEMICAL_INDUSTRIES: 'Chemical Industries',
-  CONSTRUCTION: 'Construction',
-  TRANSPORT: 'Transport',
-  MINING_MINERAL_PRODUCTION: 'Mining/Mineral Production',
-  METAL_PRODUCTION: 'Metal Production',
-  FUGITIVE_EMISSIONS_FUELS: 'Fugitive Emissions from fuels',
+  ENERGY_INDUSTRIES: "Energy Industries (Renewable)",
+  ENERGY_DISTRIBUTION: "Energy Distribution",
+  ENERGY_DEMAND: "Energy Demand",
+  MANUFACTURING_INDUSTRIES: "Manufacturing Industries",
+  CHEMICAL_INDUSTRIES: "Chemical Industries",
+  CONSTRUCTION: "Construction",
+  TRANSPORT: "Transport",
+  MINING_MINERAL_PRODUCTION: "Mining/Mineral Production",
+  METAL_PRODUCTION: "Metal Production",
+  FUGITIVE_EMISSIONS_FUELS: "Fugitive Emissions from fuels",
   FUGITIVE_EMISSIONS_PRODUCTION:
-    'Fugitive Emissions from Production and Consumption of Halocarbons and Sulphur Hexafluoride',
-  SOLVENT_USE: 'Solvent Use',
-  WASTE_HANDLING_AND_DISPOSAL: 'Waste Handling and Disposal',
-  AFFORESTATION_AND_REFORESTATION: 'Afforestation and Reforestation',
-  AGRICULTURE: 'Agriculture',
+    "Fugitive Emissions from Production and Consumption of Halocarbons and Sulphur Hexafluoride",
+  SOLVENT_USE: "Solvent Use",
+  WASTE_HANDLING_AND_DISPOSAL: "Waste Handling and Disposal",
+  AFFORESTATION_AND_REFORESTATION: "Afforestation and Reforestation",
+  AGRICULTURE: "Agriculture",
 };
 
 export const ProgrammeCreationComponent = (props: any) => {
@@ -117,7 +122,8 @@ export const ProgrammeCreationComponent = (props: any) => {
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [isMultipleLocations, setIsMultipleLocations] = useState<boolean>(false);
+  const [isMultipleLocations, setIsMultipleLocations] =
+    useState<boolean>(false);
 
   const [provinces, setProvinces] = useState<string[]>([]);
   const [districts, setDistricts] = useState<string[]>([]);
@@ -138,7 +144,9 @@ export const ProgrammeCreationComponent = (props: any) => {
   const getProvinces = async () => {
     try {
       const { data } = await post(API_PATHS.PROVINCES);
-      const tempProvinces = data.map((provinceData: any) => provinceData.provinceName);
+      const tempProvinces = data.map(
+        (provinceData: any) => provinceData.provinceName
+      );
       setProvinces(tempProvinces);
     } catch (error) {
       console.log(error);
@@ -150,13 +158,15 @@ export const ProgrammeCreationComponent = (props: any) => {
       const { data } = await post(API_PATHS.DISTRICTS, {
         filterAnd: [
           {
-            key: 'provinceName',
-            operation: '=',
+            key: "provinceName",
+            operation: "=",
             value: provinceName,
           },
         ],
       });
-      const tempDistricts = data.map((districtData: any) => districtData.districtName);
+      const tempDistricts = data.map(
+        (districtData: any) => districtData.districtName
+      );
       setDistricts(tempDistricts);
     } catch (error) {
       console.log(error);
@@ -168,8 +178,8 @@ export const ProgrammeCreationComponent = (props: any) => {
       const { data } = await post(API_PATHS.CITIES, {
         filterAnd: [
           {
-            key: 'districtName',
-            operation: '=',
+            key: "districtName",
+            operation: "=",
             value: division,
           },
         ],
@@ -187,8 +197,8 @@ export const ProgrammeCreationComponent = (props: any) => {
       const { data } = await post(API_PATHS.POSTALCODE, {
         filterAnd: [
           {
-            key: 'cityName',
-            operation: '=',
+            key: "cityName",
+            operation: "=",
             value: city,
           },
         ],
@@ -212,12 +222,12 @@ export const ProgrammeCreationComponent = (props: any) => {
         setCountries(alpha2Names);
       }
     } catch (error: any) {
-      console.log('Error in getCountryList', error);
+      console.log("Error in getCountryList", error);
       message.open({
-        type: 'error',
+        type: "error",
         content: `${error.message}`,
         duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       setIsCountryListLoading(false);
@@ -234,12 +244,12 @@ export const ProgrammeCreationComponent = (props: any) => {
         setIndependentCertifiers(response.data);
       }
     } catch (error: any) {
-      console.log('Error in getCountryList', error);
+      console.log("Error in getCountryList", error);
       message.open({
-        type: 'error',
+        type: "error",
         content: `${error.message}`,
         duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       setOrganizationsLoading(false);
@@ -262,7 +272,7 @@ export const ProgrammeCreationComponent = (props: any) => {
         });
       }
     } catch (error) {
-      console.log('Error in getOrganizationDetails', error);
+      console.log("Error in getOrganizationDetails", error);
     } finally {
       setLoading(false);
     }
@@ -297,7 +307,7 @@ export const ProgrammeCreationComponent = (props: any) => {
   };
 
   const onGeographyOfProjectSelect = (value: string) => {
-    if (value === 'MULTIPLE') {
+    if (value === "MULTIPLE") {
       setIsMultipleLocations(true);
     } else {
       setIsMultipleLocations(false);
@@ -328,10 +338,10 @@ export const ProgrammeCreationComponent = (props: any) => {
             documentType: DocumentEnum.INF,
           });
 
-          if (res?.statusText === 'SUCCESS') {
+          if (res?.statusText === "SUCCESS") {
             const data = res?.data?.data;
 
-            console.log('-----------view data-----------', data);
+            console.log("-----------view data-----------", data);
             const viewData = {
               ...data,
               briefProjectDescription: data.projectDescription,
@@ -343,7 +353,7 @@ export const ProgrammeCreationComponent = (props: any) => {
           }
         }
       } catch (error) {
-        console.log('----------error-----------');
+        console.log("----------error-----------");
       } finally {
         setLoading(false);
       }
@@ -353,7 +363,7 @@ export const ProgrammeCreationComponent = (props: any) => {
 
   const submitForm = async (values: any) => {
     const base64Docs: string[] = [];
-    console.log('---------optional docs----------', values?.optionalDocuments);
+    console.log("---------optional docs----------", values?.optionalDocuments);
 
     if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
       const docs = values.optionalDocuments;
@@ -366,9 +376,9 @@ export const ProgrammeCreationComponent = (props: any) => {
     const body: any = {
       title: values?.title,
       sectoralScope: values?.sectoralScope,
-      province: values?.province || 'test',
-      district: values?.district || 'test',
-      city: values?.city || 'test',
+      province: values?.province || "test",
+      district: values?.district || "test",
+      city: values?.city || "test",
       postalCode: values?.postalCode,
       street: values?.street,
       geographicalLocationCoordinates: values?.projectLocation,
@@ -379,7 +389,7 @@ export const ProgrammeCreationComponent = (props: any) => {
       speciesPlanted: values?.speciesPlanted,
       projectDescription: values?.briefProjectDescription,
       projectStatus: values?.projectStatus,
-      startDate: moment(values?.startTime).startOf('day').unix(),
+      startDate: moment(values?.startTime).startOf("day").unix(),
       additionalDocuments: base64Docs,
       contactName: values?.contactName,
       projectParticipant: values?.projectParticipant,
@@ -395,7 +405,7 @@ export const ProgrammeCreationComponent = (props: any) => {
     try {
       const tempValues = {
         ...{
-          name: 'INF',
+          name: "INF",
           documentType: DocumentEnum.INF,
         },
         data: {
@@ -403,12 +413,12 @@ export const ProgrammeCreationComponent = (props: any) => {
         },
       };
       const res = await post(API_PATHS.ADD_DOCUMENT, tempValues);
-      if (res?.statusText === 'SUCCESS') {
+      if (res?.statusText === "SUCCESS") {
         message.open({
-          type: 'success',
-          content: t('addProgramme:programmeCreationSuccess'),
+          type: "success",
+          content: t("addProgramme:programmeCreationSuccess"),
           duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
         navigate(ROUTES.VIEW_PROGRAMMES);
       }
@@ -416,21 +426,21 @@ export const ProgrammeCreationComponent = (props: any) => {
       if (error && error.errors && error.errors.length > 0) {
         error.errors.forEach((err: any) => {
           Object.keys(err).forEach((field) => {
-            console.log(`Error in ${field}: ${err[field].join(', ')}`);
+            console.log(`Error in ${field}: ${err[field].join(", ")}`);
             message.open({
-              type: 'error',
-              content: err[field].join(', '),
+              type: "error",
+              content: err[field].join(", "),
               duration: 4,
-              style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+              style: { textAlign: "right", marginRight: 15, marginTop: 10 },
             });
           });
         });
       } else {
         message.open({
-          type: 'error',
+          type: "error",
           content: error?.message,
           duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
       }
     } finally {
@@ -445,7 +455,9 @@ export const ProgrammeCreationComponent = (props: any) => {
   return (
     <div className="add-programme-main-container">
       <div className="title-container">
-        <div className="main">{t('addProgramme:initalNotificationFormTitle')}</div>
+        <div className="main">
+          {t("addProgramme:initalNotificationFormTitle")}
+        </div>
       </div>
       <div className="adding-section">
         <div className="form-section">
@@ -457,7 +469,9 @@ export const ProgrammeCreationComponent = (props: any) => {
               {
                 title: (
                   <div className="step-title-container">
-                    <div className="title">{t('addProgramme:projectDetails')}</div>
+                    <div className="title">
+                      {t("addProgramme:projectDetails")}
+                    </div>
                   </div>
                 ),
                 description: current === 0 && (
@@ -466,10 +480,10 @@ export const ProgrammeCreationComponent = (props: any) => {
                       <ConfirmDialog
                         showDialog={showDialog}
                         Icon={ConfirmSubmitSVG}
-                        message={t('addProgramme:confirmModalMessage')}
-                        subMessage={t('addProgramme:confirmModalSubMessage')}
-                        okText={t('common:yes')}
-                        cancelText={t('common:no')}
+                        message={t("addProgramme:confirmModalMessage")}
+                        subMessage={t("addProgramme:confirmModalSubMessage")}
+                        okText={t("common:yes")}
+                        cancelText={t("common:no")}
                         okAction={() => {
                           closeDialog();
                           submitForm(formValues);
@@ -494,23 +508,25 @@ export const ProgrammeCreationComponent = (props: any) => {
                           <Col xl={12} md={24}>
                             <div className="details-part-one">
                               <Form.Item
-                                label={t('addProgramme:title')}
+                                label={t("addProgramme:title")}
                                 name="title"
                                 rules={[
                                   {
                                     required: true,
-                                    message: '',
+                                    message: "",
                                   },
                                   {
                                     validator: async (rule, value) => {
                                       if (
-                                        String(value).trim() === '' ||
+                                        String(value).trim() === "" ||
                                         String(value).trim() === undefined ||
                                         value === null ||
                                         value === undefined
                                       ) {
                                         throw new Error(
-                                          `${t('addProgramme:title')} ${t('isRequired')}`
+                                          `${t("addProgramme:title")} ${t(
+                                            "isRequired"
+                                          )}`
                                         );
                                       }
                                     },
@@ -555,23 +571,25 @@ export const ProgrammeCreationComponent = (props: any) => {
                               </Form.Item> */}
 
                               <Form.Item
-                                label={t('addProgramme:sectoralScope')}
+                                label={t("addProgramme:sectoralScope")}
                                 name="sectoralScope"
                                 rules={[
                                   {
                                     required: true,
-                                    message: '',
+                                    message: "",
                                   },
                                   {
                                     validator: async (rule, value) => {
                                       if (
-                                        String(value).trim() === '' ||
+                                        String(value).trim() === "" ||
                                         String(value).trim() === undefined ||
                                         value === null ||
                                         value === undefined
                                       ) {
                                         throw new Error(
-                                          `${t('addProgramme:sectoralScope')} ${t('isRequired')}`
+                                          `${t(
+                                            "addProgramme:sectoralScope"
+                                          )} ${t("isRequired")}`
                                         );
                                       }
                                     },
@@ -580,14 +598,18 @@ export const ProgrammeCreationComponent = (props: any) => {
                               >
                                 <Select
                                   size="large"
-                                  placeholder={t('addProgramme:sectoralScopePlaceholder')}
+                                  placeholder={t(
+                                    "addProgramme:sectoralScopePlaceholder"
+                                  )}
                                   disabled={disableFields}
                                 >
-                                  {Object.keys(INF_SECTORAL_SCOPE).map((key) => (
-                                    <Select.Option value={key}>
-                                      {INF_SECTORAL_SCOPE[key]}
-                                    </Select.Option>
-                                  ))}
+                                  {Object.keys(INF_SECTORAL_SCOPE).map(
+                                    (key) => (
+                                      <Select.Option value={key}>
+                                        {INF_SECTORAL_SCOPE[key]}
+                                      </Select.Option>
+                                    )
+                                  )}
                                 </Select>
                               </Form.Item>
 
@@ -787,46 +809,62 @@ export const ProgrammeCreationComponent = (props: any) => {
                               )} */}
 
                               <Form.Item
-                                label={t('addProgramme:province')}
+                                label={t("addProgramme:province")}
                                 name="province"
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('addProgramme:province')} ${t('isRequired')}`,
+                                    message: `${t("addProgramme:province")} ${t(
+                                      "isRequired"
+                                    )}`,
                                   },
                                 ]}
                               >
                                 <Select
                                   size="large"
                                   onChange={onProvinceSelect}
-                                  placeholder={t('addProgramme:provincePlaceholder')}
+                                  placeholder={t(
+                                    "addProgramme:provincePlaceholder"
+                                  )}
                                   disabled={disableFields}
                                 >
-                                  {provinces.map((province: string, index: number) => (
-                                    <Select.Option value={province}>{province}</Select.Option>
-                                  ))}
+                                  {provinces.map(
+                                    (province: string, index: number) => (
+                                      <Select.Option value={province}>
+                                        {province}
+                                      </Select.Option>
+                                    )
+                                  )}
                                 </Select>
                               </Form.Item>
 
                               <Form.Item
-                                label={t('addProgramme:district')}
+                                label={t("addProgramme:district")}
                                 name="district"
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('addProgramme:district')} ${t('isRequired')}`,
+                                    message: `${t("addProgramme:district")} ${t(
+                                      "isRequired"
+                                    )}`,
                                   },
                                 ]}
                               >
                                 <Select
                                   size="large"
-                                  placeholder={t('addProgramme:districtPlaceholder')}
+                                  placeholder={t(
+                                    "addProgramme:districtPlaceholder"
+                                  )}
                                   onSelect={onDistrictSelect}
                                   disabled={disableFields}
                                 >
-                                  {districts?.map((district: string, index: number) => (
-                                    <Select.Option key={district}>{district}</Select.Option>
-                                  ))}
+                                  {districts?.map(
+                                    (district: string, index: number) => (
+                                      <Select.Option key={district}>
+                                        {district}
+                                      </Select.Option>
+                                    )
+                                  )}
                                 </Select>
                               </Form.Item>
                               {/* <Form.Item
@@ -850,116 +888,142 @@ export const ProgrammeCreationComponent = (props: any) => {
                                 </Select>
                               </Form.Item> */}
                               <Form.Item
-                                label={t('addProgramme:city')}
+                                label={t("addProgramme:city")}
                                 name="city"
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('addProgramme:city')} ${t('isRequired')}`,
+                                    message: `${t("addProgramme:city")} ${t(
+                                      "isRequired"
+                                    )}`,
                                   },
                                 ]}
                               >
                                 <Select
                                   size="large"
-                                  placeholder={t('addProgramme:cityPlaceholder')}
+                                  placeholder={t(
+                                    "addProgramme:cityPlaceholder"
+                                  )}
                                   onSelect={onCitySelect}
                                   disabled={disableFields}
                                 >
                                   {cities.map((city: string) => (
-                                    <Select.Option value={city}>{city}</Select.Option>
+                                    <Select.Option value={city}>
+                                      {city}
+                                    </Select.Option>
                                   ))}
                                 </Select>
                               </Form.Item>
                               <Form.Item
-                                label={t('addProgramme:postalCode')}
+                                label={t("addProgramme:postalCode")}
                                 name="postalCode"
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('addProgramme:postalCode')} ${t('isRequired')}`,
+                                    message: `${t(
+                                      "addProgramme:postalCode"
+                                    )} ${t("isRequired")}`,
                                   },
                                 ]}
                               >
                                 <Select
                                   size="large"
-                                  placeholder={t('addProgramme:postalCodePlaceholder')}
+                                  placeholder={t(
+                                    "addProgramme:postalCodePlaceholder"
+                                  )}
                                   disabled={disableFields}
                                 >
                                   {postalCodes.map((postalCode: string) => (
-                                    <Select.Option value={postalCode}>{postalCode}</Select.Option>
+                                    <Select.Option value={postalCode}>
+                                      {postalCode}
+                                    </Select.Option>
                                   ))}
                                 </Select>
                               </Form.Item>
                               <Form.Item
-                                label={t('addProgramme:street')}
+                                label={t("addProgramme:street")}
                                 name="street"
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('addProgramme:street')} ${t('isRequired')}`,
+                                    message: `${t("addProgramme:street")} ${t(
+                                      "isRequired"
+                                    )}`,
                                   },
                                   {
                                     whitespace: true,
-                                    message: `${t('addProgramme:street')} ${t('isRequired')}`,
+                                    message: `${t("addProgramme:street")} ${t(
+                                      "isRequired"
+                                    )}`,
                                   },
                                 ]}
                               >
                                 <Input size="large" disabled={disableFields} />
                               </Form.Item>
                               <Form.Item
-                                label={t('addProgramme:projectGeography')}
+                                label={t("addProgramme:projectGeography")}
                                 name="projectGeography"
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('addProgramme:projectGeography')} ${t(
-                                      'isRequired'
-                                    )}`,
+                                    message: `${t(
+                                      "addProgramme:projectGeography"
+                                    )} ${t("isRequired")}`,
                                   },
                                 ]}
                               >
                                 <Select
                                   size="large"
-                                  placeholder={t('addProgramme:projectGeographyPlaceholder')}
+                                  placeholder={t(
+                                    "addProgramme:projectGeographyPlaceholder"
+                                  )}
                                   onChange={onGeographyOfProjectSelect}
                                   disabled={disableFields}
                                 >
-                                  {Object.keys(PROJECT_GEOGRAPHY).map((geography: string) => (
-                                    <Select.Option value={geography}>
-                                      {PROJECT_GEOGRAPHY[geography]}
-                                    </Select.Option>
-                                  ))}
+                                  {Object.keys(PROJECT_GEOGRAPHY).map(
+                                    (geography: string) => (
+                                      <Select.Option value={geography}>
+                                        {PROJECT_GEOGRAPHY[geography]}
+                                      </Select.Option>
+                                    )
+                                  )}
                                 </Select>
                               </Form.Item>
 
                               <Form.Item
-                                label={t('addProgramme:projectStatus')}
+                                label={t("addProgramme:projectStatus")}
                                 name="projectStatus"
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('addProgramme:projectStatus')} ${t(
-                                      'isRequired'
-                                    )}`,
+                                    message: `${t(
+                                      "addProgramme:projectStatus"
+                                    )} ${t("isRequired")}`,
                                   },
                                 ]}
                               >
                                 <Select
                                   size="large"
-                                  placeholder={t('addProgramme:projectStatusPlaceholder')}
+                                  placeholder={t(
+                                    "addProgramme:projectStatusPlaceholder"
+                                  )}
                                   disabled={disableFields}
                                 >
-                                  {Object.keys(PROJECT_STATUS).map((status: string) => (
-                                    <Select.Option value={status}>
-                                      {PROJECT_STATUS[status]}
-                                    </Select.Option>
-                                  ))}
+                                  {Object.keys(PROJECT_STATUS).map(
+                                    (status: string) => (
+                                      <Select.Option value={status}>
+                                        {PROJECT_STATUS[status]}
+                                      </Select.Option>
+                                    )
+                                  )}
                                 </Select>
                               </Form.Item>
 
                               <Form.Item
-                                label={t('addProgramme:projectStatusDescription')}
-                                name={'projectStatusDescription'}
+                                label={t(
+                                  "addProgramme:projectStatusDescription"
+                                )}
+                                name={"projectStatusDescription"}
                               >
                                 <TextArea rows={4} disabled={disableFields} />
                               </Form.Item>
@@ -969,46 +1033,51 @@ export const ProgrammeCreationComponent = (props: any) => {
                           <Col xl={12} md={24}>
                             <div className="details-part-two">
                               <Form.Item
-                                label={t('addProgramme:projectLocation')}
+                                label={t("addProgramme:projectLocation")}
                                 name="projectLocation"
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('addProgramme:projectLocation')} ${t(
-                                      'isRequired'
-                                    )}`,
+                                    message: `${t(
+                                      "addProgramme:projectLocation"
+                                    )} ${t("isRequired")}`,
                                   },
                                 ]}
                               >
                                 <GetMultipleLocationsMapComponent
                                   form={form}
-                                  formItemName={'projectLocation'}
-                                  disableMultipleLocations={!isMultipleLocations}
+                                  formItemName={"projectLocation"}
+                                  disableMultipleLocations={
+                                    !isMultipleLocations
+                                  }
                                   disabled={disableFields}
                                   existingCoordinate={
-                                    form.getFieldValue('projectLocation') || undefined
+                                    form.getFieldValue("projectLocation") ||
+                                    undefined
                                   }
                                 />
                               </Form.Item>
 
                               <Form.Item
-                                label={t('addProgramme:startTime')}
+                                label={t("addProgramme:startTime")}
                                 name="startTime"
                                 rules={[
                                   {
                                     required: true,
-                                    message: '',
+                                    message: "",
                                   },
                                   {
                                     validator: async (rule, value) => {
                                       if (
-                                        String(value).trim() === '' ||
+                                        String(value).trim() === "" ||
                                         String(value).trim() === undefined ||
                                         value === null ||
                                         value === undefined
                                       ) {
                                         throw new Error(
-                                          `${t('addProgramme:startTime')} ${t('isRequired')}`
+                                          `${t("addProgramme:startTime")} ${t(
+                                            "isRequired"
+                                          )}`
                                         );
                                       }
                                     },
@@ -1019,20 +1088,20 @@ export const ProgrammeCreationComponent = (props: any) => {
                                   size="large"
                                   disabled={disableFields}
                                   disabledDate={(currentDate: any) =>
-                                    currentDate < moment().startOf('day')
+                                    currentDate < moment().startOf("day")
                                   }
                                 />
                               </Form.Item>
 
                               <Form.Item
-                                label={t('addProgramme:independentCertifiers')}
+                                label={t("addProgramme:independentCertifiers")}
                                 name="independentCertifiers"
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('addProgramme:independentCertifiers')} ${t(
-                                      'isRequired'
-                                    )}`,
+                                    message: `${t(
+                                      "addProgramme:independentCertifiers"
+                                    )} ${t("isRequired")}`,
                                   },
                                 ]}
                               >
@@ -1045,26 +1114,28 @@ export const ProgrammeCreationComponent = (props: any) => {
                                   allowClear
                                 >
                                   {independentCertifiers.map((ic: any) => (
-                                    <Select.Option value={ic.refId}>{ic.name}</Select.Option>
+                                    <Select.Option value={ic.refId}>
+                                      {ic.name}
+                                    </Select.Option>
                                   ))}
                                 </Select>
                               </Form.Item>
 
                               <Form.Item
-                                label={t('addProgramme:estimatedProjectCost')}
+                                label={t("addProgramme:estimatedProjectCost")}
                                 name="estimatedProjectCost"
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('addProgramme:independentCertifiers')} ${t(
-                                      'isRequired'
-                                    )}`,
+                                    message: `${t(
+                                      "addProgramme:independentCertifiers"
+                                    )} ${t("isRequired")}`,
                                   },
                                   {
                                     whitespace: true,
-                                    message: `${t('addProgramme:independentCertifiers')} ${t(
-                                      'isRequired'
-                                    )}`,
+                                    message: `${t(
+                                      "addProgramme:independentCertifiers"
+                                    )} ${t("isRequired")}`,
                                   },
                                   {
                                     validator(rule, value) {
@@ -1075,7 +1146,9 @@ export const ProgrammeCreationComponent = (props: any) => {
                                       // eslint-disable-next-line no-restricted-globals
                                       if (isNaN(value)) {
                                         return Promise.reject(
-                                          new Error(t('addProgramme:shouldBeAnNumber'))
+                                          new Error(
+                                            t("addProgramme:shouldBeAnNumber")
+                                          )
                                         );
                                       }
 
@@ -1084,7 +1157,10 @@ export const ProgrammeCreationComponent = (props: any) => {
                                   },
                                 ]}
                               >
-                                <Input size={'large'} disabled={disableFields} />
+                                <Input
+                                  size={"large"}
+                                  disabled={disableFields}
+                                />
                               </Form.Item>
                               {/* {projectCategory === 'RENEWABLE_ENERGY' && (
                                 <Form.Item
@@ -1112,34 +1188,36 @@ export const ProgrammeCreationComponent = (props: any) => {
                               )} */}
 
                               <Form.Item
-                                label={t('addProgramme:briefProjectDescription')}
+                                label={t(
+                                  "addProgramme:briefProjectDescription"
+                                )}
                                 name="briefProjectDescription"
                                 rules={[
                                   {
                                     required: true,
-                                    message: `${t('addProgramme:briefProjectDescription')} ${t(
-                                      'isRequired'
-                                    )}`,
+                                    message: `${t(
+                                      "addProgramme:briefProjectDescription"
+                                    )} ${t("isRequired")}`,
                                   },
                                   {
                                     whitespace: true,
-                                    message: `${t('addProgramme:briefProjectDescription')} ${t(
-                                      'isRequired'
-                                    )}`,
+                                    message: `${t(
+                                      "addProgramme:briefProjectDescription"
+                                    )} ${t("isRequired")}`,
                                   },
                                 ]}
                               >
                                 <TextArea
                                   rows={4}
                                   placeholder={`${t(
-                                    'addProgramme:briefProjectDescriptionPlaceholder'
+                                    "addProgramme:briefProjectDescriptionPlaceholder"
                                   )}`}
                                   disabled={disableFields}
                                 />
                               </Form.Item>
 
                               <Form.Item
-                                label={t('addProgramme:documentUpload')}
+                                label={t("addProgramme:documentUpload")}
                                 name="optionalDocuments"
                                 valuePropName="fileList"
                                 getValueFromEvent={normFile}
@@ -1154,10 +1232,18 @@ export const ProgrammeCreationComponent = (props: any) => {
                                             DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
                                           )
                                         ) {
-                                          throw new Error(`${t('addProgramme:invalidFileFormat')}`);
-                                        } else if (file[0]?.size > maximumImageSize) {
+                                          throw new Error(
+                                            `${t(
+                                              "addProgramme:invalidFileFormat"
+                                            )}`
+                                          );
+                                        } else if (
+                                          file[0]?.size > maximumImageSize
+                                        ) {
                                           // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                          throw new Error(`${t('common:maxSizeVal')}`);
+                                          throw new Error(
+                                            `${t("common:maxSizeVal")}`
+                                          );
                                         }
                                       }
                                     },
@@ -1183,7 +1269,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                     icon={<UploadOutlined />}
                                     disabled={disableFields}
                                   >
-                                    {t('addProgramme:upload')}
+                                    {t("addProgramme:upload")}
                                   </Button>
                                 </Upload>
                               </Form.Item>
@@ -1191,51 +1277,62 @@ export const ProgrammeCreationComponent = (props: any) => {
                           </Col>
                         </Row>
                         <div className="title contact-person-title mg-bottom-2 mg-top-2">
-                          {t('addProgramme:contactPersonTitle')}
+                          {t("addProgramme:contactPersonTitle")}
                         </div>
                         <Row className="row" gutter={[40, 16]}>
                           <Col xl={12} md={24}>
                             <Form.Item
-                              label={t('addProgramme:projectParticipant')}
-                              name={'projectParticipant'}
+                              label={t("addProgramme:projectParticipant")}
+                              name={"projectParticipant"}
                               rules={[
                                 {
                                   required: true,
-                                  message: `${t('addProgramme:projectParticipant')} ${t(
-                                    'isRequired'
-                                  )}`,
+                                  message: `${t(
+                                    "addProgramme:projectParticipant"
+                                  )} ${t("isRequired")}`,
                                 },
                                 {
                                   whitespace: true,
-                                  message: `${t('addProgramme:projectParticipant')} ${t(
-                                    'isRequired'
-                                  )}`,
+                                  message: `${t(
+                                    "addProgramme:projectParticipant"
+                                  )} ${t("isRequired")}`,
                                 },
                               ]}
                             >
                               <Input size="large" disabled={disableFields} />
                             </Form.Item>
                             <Form.Item
-                              label={t('addProgramme:email')}
+                              label={t("addProgramme:email")}
                               name="contactEmail"
                               rules={[
                                 {
                                   required: true,
-                                  message: `${t('addProgramme:email')} ${t('isRequired')}`,
+                                  message: `${t("addProgramme:email")} ${t(
+                                    "isRequired"
+                                  )}`,
                                 },
                                 {
                                   whitespace: true,
-                                  message: `${t('addProgramme:email')} ${t('isRequired')}`,
+                                  message: `${t("addProgramme:email")} ${t(
+                                    "isRequired"
+                                  )}`,
                                 },
                                 {
                                   validator: async (rule, value) => {
                                     const val = value.trim();
                                     const reg =
                                       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                                    const matches = val.match(reg) ? val.match(reg) : [];
-                                    if (val.length > 0 && matches.length === 0) {
+                                    const matches = val.match(reg)
+                                      ? val.match(reg)
+                                      : [];
+                                    if (
+                                      val.length > 0 &&
+                                      matches.length === 0
+                                    ) {
                                       throw new Error(
-                                        `${t('addProgramme:email')} ${t('isInvalid')}`
+                                        `${t("addProgramme:email")} ${t(
+                                          "isInvalid"
+                                        )}`
                                       );
                                     }
                                   },
@@ -1247,16 +1344,20 @@ export const ProgrammeCreationComponent = (props: any) => {
                           </Col>
                           <Col xl={12} md={24}>
                             <Form.Item
-                              label={t('addProgramme:address')}
-                              name={'contactAddress'}
+                              label={t("addProgramme:address")}
+                              name={"contactAddress"}
                               rules={[
                                 {
                                   required: true,
-                                  message: `${t('addProgramme:address')} ${t('isRequired')}`,
+                                  message: `${t("addProgramme:address")} ${t(
+                                    "isRequired"
+                                  )}`,
                                 },
                                 {
                                   whitespace: true,
-                                  message: `${t('addProgramme:address')} ${t('isRequired')}`,
+                                  message: `${t("addProgramme:address")} ${t(
+                                    "isRequired"
+                                  )}`,
                                 },
                               ]}
                             >
@@ -1270,29 +1371,41 @@ export const ProgrammeCreationComponent = (props: any) => {
                               {countries.length > 0 && (
                                 <Form.Item
                                   name="contactPhoneNo"
-                                  label={t('addProgramme:phoneNo')}
+                                  label={t("addProgramme:phoneNo")}
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('addProgramme:phoneNo')} ${t('isRequired')}`,
+                                      message: `${t(
+                                        "addProgramme:phoneNo"
+                                      )} ${t("isRequired")}`,
                                     },
                                     {
-                                      validator: async (rule: any, value: any) => {
-                                        const phoneNo = formatPhoneNumber(String(value));
-                                        if (String(value).trim() !== '') {
+                                      validator: async (
+                                        rule: any,
+                                        value: any
+                                      ) => {
+                                        const phoneNo = formatPhoneNumber(
+                                          String(value)
+                                        );
+                                        if (String(value).trim() !== "") {
                                           if (
-                                            (String(value).trim() !== '' &&
-                                              String(value).trim() !== undefined &&
+                                            (String(value).trim() !== "" &&
+                                              String(value).trim() !==
+                                                undefined &&
                                               value !== null &&
                                               value !== undefined &&
                                               phoneNo !== null &&
-                                              phoneNo !== '' &&
+                                              phoneNo !== "" &&
                                               phoneNo !== undefined &&
-                                              !isPossiblePhoneNumber(String(value))) ||
+                                              !isPossiblePhoneNumber(
+                                                String(value)
+                                              )) ||
                                             value?.length > 17
                                           ) {
                                             throw new Error(
-                                              `${t('addProgramme:phoneNo')} ${t('isInvalid')}`
+                                              `${t("addProgramme:phoneNo")} ${t(
+                                                "isInvalid"
+                                              )}`
                                             );
                                           }
                                         }
@@ -1301,7 +1414,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                   ]}
                                 >
                                   <PhoneInput
-                                    placeholder={t('addProgramme:phoneNo')}
+                                    placeholder={t("addProgramme:phoneNo")}
                                     international
                                     defaultCountry="LK"
                                     countryCallingCodeEditable={false}
@@ -1318,29 +1431,41 @@ export const ProgrammeCreationComponent = (props: any) => {
                               {countries.length > 0 && (
                                 <Form.Item
                                   name="contactFax"
-                                  label={t('addProgramme:fax')}
+                                  label={t("addProgramme:fax")}
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('addProgramme:fax')} ${t('isRequired')}`,
+                                      message: `${t("addProgramme:fax")} ${t(
+                                        "isRequired"
+                                      )}`,
                                     },
                                     {
-                                      validator: async (rule: any, value: any) => {
-                                        const phoneNo = formatPhoneNumber(String(value));
-                                        if (String(value).trim() !== '') {
+                                      validator: async (
+                                        rule: any,
+                                        value: any
+                                      ) => {
+                                        const phoneNo = formatPhoneNumber(
+                                          String(value)
+                                        );
+                                        if (String(value).trim() !== "") {
                                           if (
-                                            (String(value).trim() !== '' &&
-                                              String(value).trim() !== undefined &&
+                                            (String(value).trim() !== "" &&
+                                              String(value).trim() !==
+                                                undefined &&
                                               value !== null &&
                                               value !== undefined &&
                                               phoneNo !== null &&
-                                              phoneNo !== '' &&
+                                              phoneNo !== "" &&
                                               phoneNo !== undefined &&
-                                              !isPossiblePhoneNumber(String(value))) ||
+                                              !isPossiblePhoneNumber(
+                                                String(value)
+                                              )) ||
                                             value?.length > 17
                                           ) {
                                             throw new Error(
-                                              `${t('addProgramme:fax')} ${t('isInvalid')}`
+                                              `${t("addProgramme:fax")} ${t(
+                                                "isInvalid"
+                                              )}`
                                             );
                                           }
                                         }
@@ -1349,7 +1474,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                   ]}
                                 >
                                   <PhoneInput
-                                    placeholder={t('addProgramme:phoneNo')}
+                                    placeholder={t("addProgramme:phoneNo")}
                                     international
                                     defaultCountry="LK"
                                     countryCallingCodeEditable={false}
@@ -1366,22 +1491,31 @@ export const ProgrammeCreationComponent = (props: any) => {
                         <Row className="row" gutter={[40, 16]}>
                           <Col xl={12} md={24}>
                             <Form.Item
-                              label={t('addProgramme:website')}
-                              name={'contactWebsite'}
+                              label={t("addProgramme:website")}
+                              name={"contactWebsite"}
                               rules={[
                                 {
                                   required: true,
-                                  message: `${t('addProgramme:website')} ${t('isRequired')}`,
+                                  message: `${t("addProgramme:website")} ${t(
+                                    "isRequired"
+                                  )}`,
                                 },
                                 {
                                   whitespace: true,
-                                  message: `${t('addProgramme:website')} ${t('isRequired')}`,
+                                  message: `${t("addProgramme:website")} ${t(
+                                    "isRequired"
+                                  )}`,
                                 },
                                 {
                                   validator: async (rule, value) => {
-                                    if (value.trim().length > 0 && !validator.isURL(value))
+                                    if (
+                                      value.trim().length > 0 &&
+                                      !validator.isURL(value)
+                                    )
                                       throw new Error(
-                                        `${t('addProgramme:website')} ${t('isInvalid')}`
+                                        `${t("addProgramme:website")} ${t(
+                                          "isInvalid"
+                                        )}`
                                       );
                                   },
                                 },
@@ -1392,20 +1526,20 @@ export const ProgrammeCreationComponent = (props: any) => {
                           </Col>
                           <Col xl={12} md={24}>
                             <Form.Item
-                              label={t('addProgramme:contactPersonName')}
-                              name={'contactName'}
+                              label={t("addProgramme:contactPersonName")}
+                              name={"contactName"}
                               rules={[
                                 {
                                   required: true,
-                                  message: `${t('addProgramme:contactPersonName')} ${t(
-                                    'isRequired'
-                                  )}`,
+                                  message: `${t(
+                                    "addProgramme:contactPersonName"
+                                  )} ${t("isRequired")}`,
                                 },
                                 {
                                   whitespace: true,
-                                  message: `${t('addProgramme:contactPersonName')} ${t(
-                                    'isRequired'
-                                  )}`,
+                                  message: `${t(
+                                    "addProgramme:contactPersonName"
+                                  )} ${t("isRequired")}`,
                                 },
                               ]}
                             >
@@ -1417,14 +1551,17 @@ export const ProgrammeCreationComponent = (props: any) => {
 
                         {state?.mode === FormMode.VIEW ? (
                           <div className="steps-actions">
-                            <Button danger onClick={navigateToProjectDetailsPageOnView}>
-                              {t('addProgramme:back')}
+                            <Button
+                              danger
+                              onClick={navigateToProjectDetailsPageOnView}
+                            >
+                              {t("addProgramme:back")}
                             </Button>
                           </div>
                         ) : (
                           <div className="steps-actions">
                             <Button type="primary" htmlType="submit">
-                              {t('addProgramme:submit')}
+                              {t("addProgramme:submit")}
                             </Button>
                           </div>
                         )}

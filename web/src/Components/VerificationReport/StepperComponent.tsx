@@ -70,8 +70,8 @@ const StepperComponent = (props: VerificationStepProps) => {
   const [slcfActionModalVisible, setSlcfActioModalVisible] =
     useState<boolean>(false);
 
-  // const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || 'CountryX';
-  // const registryName = import.meta.env.REACT_APP_REGISTRY_NAME || 'RegistryX';
+  // const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || 'CountryX';
+  // const registryName = import.meta.env.VITE_APP_REGISTRY_NAME || 'RegistryX';
   const [basicInformationForm] = useForm();
   const [ghgProjectDescriptionForm] = useForm();
   const [executiveSummaryForm] = useForm();

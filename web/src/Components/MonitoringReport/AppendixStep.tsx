@@ -35,8 +35,8 @@ export const AnnexureStep = (props: CustomStepsProps) => {
 
   const { state } = useLocation();
 
-  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
