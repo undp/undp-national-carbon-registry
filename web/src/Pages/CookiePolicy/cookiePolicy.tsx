@@ -47,7 +47,7 @@ const CookiePolicy = () => {
                 <div className="title-sub">{"REGISTRY"}</div>
               </div>
               <div className="country-name">
-                {import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX"}
+                {import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX"}
               </div>
             </div>
           </div>
@@ -62,7 +62,7 @@ const CookiePolicy = () => {
               <Col span={20}>
                 <div className="cookie-body">
                   This Cookie Policy explains how{" "}
-                  {import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX"} (
+                  {import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX"} (
                   <b>"Company"</b>, "<b>we</b>", "<b>us</b>", and "<b>our</b>")
                   uses cookies and similar technologies to recognize you when
                   you visit our websites at{" "}
@@ -94,7 +94,7 @@ const CookiePolicy = () => {
                   or to work more efficiently, as well as to provide reporting
                   information.
                   <br /> Cookies set by the website owner (in this case,{" "}
-                  {import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX"}) are
+                  {import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX"}) are
                   called "first party cookies". Cookies set by parties other
                   than the website owner are called "third party cookies". Third
                   party cookies enable third party features or functionality to
@@ -811,7 +811,7 @@ const CookiePolicy = () => {
                   <br />
                   <br />
                   <br />
-                  {import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX"}
+                  {import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX"}
                   <br />1 United Nations Plaza
                   <br />
                   New York, New York

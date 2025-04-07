@@ -1,4 +1,4 @@
-import { UploadOutlined } from '@ant-design/icons';
+import { UploadOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -12,15 +12,18 @@ import {
   Skeleton,
   Upload,
   message,
-} from 'antd';
-import React, { useEffect, useState } from 'react';
-import PhoneInput, { formatPhoneNumberIntl } from 'react-phone-number-input';
-import { RcFile } from 'antd/lib/upload';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
-import { RadioButtonStatus, titleList } from '../../Definitions/Enums/commonEnums';
-import { isValidateFileType } from '../../Utils/DocumentValidator';
-import { API_PATHS } from '../../Config/apiConfig';
+} from "antd";
+import React, { useEffect, useState } from "react";
+import PhoneInput, { formatPhoneNumberIntl } from "react-phone-number-input";
+import { RcFile } from "antd/lib/upload";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { getBase64 } from "../../Definitions/Definitions/programme.definitions";
+import {
+  RadioButtonStatus,
+  titleList,
+} from "../../Definitions/Enums/commonEnums";
+import { isValidateFileType } from "../../Utils/DocumentValidator";
+import { API_PATHS } from "../../Config/apiConfig";
 
 const Assessment = (props: any) => {
   const { onFormSubmit, assessmentViewData, viewOnly, translator } = props;
@@ -29,17 +32,20 @@ const Assessment = (props: any) => {
   const [form2] = Form.useForm();
   const [form3] = Form.useForm();
   const [form4] = Form.useForm();
-  const [cobenefitsAssessmentDetails, setCobenefitsAssessmentDetails] = useState();
+  const [cobenefitsAssessmentDetails, setCobenefitsAssessmentDetails] =
+    useState();
   const [isVerifyingOrgVisible, setIsVerifyingOrgVisible] = useState(false);
-  const [isVerifyingDetailsVisible, setIsVerifyingDetailsVisible] = useState(false);
-  const [isPersonListedDetailsVisible, setIsPersonListedDetailsVisible] = useState(false);
+  const [isVerifyingDetailsVisible, setIsVerifyingDetailsVisible] =
+    useState(false);
+  const [isPersonListedDetailsVisible, setIsPersonListedDetailsVisible] =
+    useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [countries, setCountries] = useState<[]>([]);
   const { get } = useConnection();
   const [isCountryListLoading, setIsCountryListLoading] = useState(false);
 
-  const maximumFileSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumFileSize = import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   const getCountryList = async () => {
@@ -53,12 +59,12 @@ const Assessment = (props: any) => {
         setCountries(alpha2Names);
       }
     } catch (error: any) {
-      console.log('Error in getCountryList', error);
+      console.log("Error in getCountryList", error);
       message.open({
-        type: 'error',
+        type: "error",
         content: `${error.message}`,
         duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       setIsCountryListLoading(false);
@@ -85,15 +91,15 @@ const Assessment = (props: any) => {
   const validateForms = async () => {
     setIsFormValid(true);
     if (isVerifyingOrgVisible) {
-      const verifyingOrgName = form1.getFieldValue('verifyingOrgName');
-      if (verifyingOrgName === undefined || verifyingOrgName === '') {
+      const verifyingOrgName = form1.getFieldValue("verifyingOrgName");
+      if (verifyingOrgName === undefined || verifyingOrgName === "") {
         setIsFormValid(false);
       }
     }
 
     if (isPersonListedDetailsVisible) {
-      const personListedDetails = form3.getFieldValue('personListedDetails');
-      if (personListedDetails === undefined || personListedDetails === '') {
+      const personListedDetails = form3.getFieldValue("personListedDetails");
+      if (personListedDetails === undefined || personListedDetails === "") {
         setIsFormValid(false);
       }
     }
@@ -107,8 +113,10 @@ const Assessment = (props: any) => {
     const changedValues: any = {};
     if (info.changedFields && info.changedFields.length > 0) {
       info.changedFields.map(async (changedField: any) => {
-        if (changedField.name[0] === 'document') {
-          const base64Value = await getBase64(changedField.value[0].originFileObj as RcFile);
+        if (changedField.name[0] === "document") {
+          const base64Value = await getBase64(
+            changedField.value[0].originFileObj as RcFile
+          );
           const values = base64Value;
 
           setCobenefitsAssessmentDetails((pre: any) => ({
@@ -157,7 +165,9 @@ const Assessment = (props: any) => {
 
   const onAssesmentDocument = async (e: any) => {
     if (e?.fileList.length > 0 && e?.fileList[0]?.name) {
-      const base64Value = await getBase64(e.fileList[0].originFileObj as RcFile);
+      const base64Value = await getBase64(
+        e.fileList[0].originFileObj as RcFile
+      );
       const values = base64Value;
 
       setCobenefitsAssessmentDetails((pre: any) => ({
@@ -185,7 +195,9 @@ const Assessment = (props: any) => {
 
   return (
     <div className="assesment-tab-item">
-      {viewOnly && !assessmentViewData && <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />}
+      {viewOnly && !assessmentViewData && (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      )}
       {((viewOnly && assessmentViewData) || !viewOnly) && (
         <Form.Provider onFormChange={onFormChanged}>
           <Row>
@@ -203,26 +215,38 @@ const Assessment = (props: any) => {
               {!viewOnly && (
                 <div className="radio-content">
                   <Form.Item
-                    label={t('coBenifits:assessmentIsThirdPartyVerified', {
-                      ns: 'coBenifits',
+                    label={t("coBenifits:assessmentIsThirdPartyVerified", {
+                      ns: "coBenifits",
                     })}
                     className="form-item"
                     name="IsThirdPartyVerified"
                   >
-                    <Radio.Group size="middle" onChange={onIsThirdPartyVerifiedChanged}>
+                    <Radio.Group
+                      size="middle"
+                      onChange={onIsThirdPartyVerifiedChanged}
+                    >
                       <div className="radio-container">
-                        <Radio.Button className="radio" value={RadioButtonStatus.YES}>
-                          {t('coBenifits:yes')}
+                        <Radio.Button
+                          className="radio"
+                          value={RadioButtonStatus.YES}
+                        >
+                          {t("coBenifits:yes")}
                         </Radio.Button>
                       </div>
                       <div className="radio-container">
-                        <Radio.Button className="radio" value={RadioButtonStatus.NO}>
-                          {t('coBenifits:no')}
+                        <Radio.Button
+                          className="radio"
+                          value={RadioButtonStatus.NO}
+                        >
+                          {t("coBenifits:no")}
                         </Radio.Button>
                       </div>
                       <div className="radio-container">
-                        <Radio.Button className="radio" value={RadioButtonStatus.NA}>
-                          {t('coBenifits:n/a')}
+                        <Radio.Button
+                          className="radio"
+                          value={RadioButtonStatus.NA}
+                        >
+                          {t("coBenifits:n/a")}
                         </Radio.Button>
                       </div>
                     </Radio.Group>
@@ -231,12 +255,12 @@ const Assessment = (props: any) => {
                     <Form.Item
                       labelCol={{ span: 24 }}
                       wrapperCol={{ span: 24 }}
-                      label={t('coBenifits:verifyingOrgNamelbl')}
+                      label={t("coBenifits:verifyingOrgNamelbl")}
                       name="verifyingOrgName"
                       rules={[
                         {
                           required: true,
-                          message: '',
+                          message: "",
                         },
                       ]}
                     >
@@ -244,31 +268,43 @@ const Assessment = (props: any) => {
                     </Form.Item>
                   )}
                   <Form.Item
-                    label={t('coBenifits:assesmentIsWillingToVerified')}
+                    label={t("coBenifits:assesmentIsWillingToVerified")}
                     className="form-item"
                     name="IsWillingToVerified"
                   >
-                    <Radio.Group size="middle" onChange={onIsWillingToVerifiedChanged}>
+                    <Radio.Group
+                      size="middle"
+                      onChange={onIsWillingToVerifiedChanged}
+                    >
                       <div className="radio-container">
-                        <Radio.Button className="radio" value={RadioButtonStatus.YES}>
-                          {t('coBenifits:yes')}
+                        <Radio.Button
+                          className="radio"
+                          value={RadioButtonStatus.YES}
+                        >
+                          {t("coBenifits:yes")}
                         </Radio.Button>
                       </div>
                       <div className="radio-container">
-                        <Radio.Button className="radio" value={RadioButtonStatus.NO}>
-                          {t('coBenifits:no')}
+                        <Radio.Button
+                          className="radio"
+                          value={RadioButtonStatus.NO}
+                        >
+                          {t("coBenifits:no")}
                         </Radio.Button>
                       </div>
                       <div className="radio-container">
-                        <Radio.Button className="radio" value={RadioButtonStatus.NA}>
-                          {t('coBenifits:n/a')}
+                        <Radio.Button
+                          className="radio"
+                          value={RadioButtonStatus.NA}
+                        >
+                          {t("coBenifits:n/a")}
                         </Radio.Button>
                       </div>
                     </Radio.Group>
                   </Form.Item>
                   {isVerifyingDetailsVisible === true && (
                     <Form.Item
-                      label={t('coBenifits:verifyingDetailslbl')}
+                      label={t("coBenifits:verifyingDetailslbl")}
                       name="verifyingDetails"
                       labelCol={{ span: 24 }}
                       wrapperCol={{ span: 24 }}
@@ -280,9 +316,11 @@ const Assessment = (props: any) => {
               )}
               {viewOnly && (
                 <div className="radio-content view-section">
-                  {assessmentViewData.hasOwnProperty('IsThirdPartyVerified') && (
+                  {assessmentViewData.hasOwnProperty(
+                    "IsThirdPartyVerified"
+                  ) && (
                     <Form.Item
-                      label={t('coBenifits:assessmentIsThirdPartyVerified')}
+                      label={t("coBenifits:assessmentIsThirdPartyVerified")}
                       className="form-item"
                       name="IsThirdPartyVerified"
                     >
@@ -295,11 +333,12 @@ const Assessment = (props: any) => {
                       </Radio.Group>
                     </Form.Item>
                   )}
-                  {assessmentViewData.IsThirdPartyVerified === RadioButtonStatus.YES && (
+                  {assessmentViewData.IsThirdPartyVerified ===
+                    RadioButtonStatus.YES && (
                     <Form.Item
                       labelCol={{ span: 24 }}
                       wrapperCol={{ span: 24 }}
-                      label={t('coBenifits:verifyingOrgNamelbl')}
+                      label={t("coBenifits:verifyingOrgNamelbl")}
                       name="verifyingOrgName"
                     >
                       <Input
@@ -308,14 +347,14 @@ const Assessment = (props: any) => {
                         defaultValue={
                           assessmentViewData.verifyingOrgName
                             ? assessmentViewData.verifyingOrgName
-                            : '-'
+                            : "-"
                         }
                       />
                     </Form.Item>
                   )}
-                  {assessmentViewData.hasOwnProperty('IsWillingToVerified') && (
+                  {assessmentViewData.hasOwnProperty("IsWillingToVerified") && (
                     <Form.Item
-                      label={t('coBenifits:assesmentIsWillingToVerified')}
+                      label={t("coBenifits:assesmentIsWillingToVerified")}
                       className="form-item"
                       name="IsWillingToVerified"
                     >
@@ -328,9 +367,10 @@ const Assessment = (props: any) => {
                       </Radio.Group>
                     </Form.Item>
                   )}
-                  {assessmentViewData.IsWillingToVerified === RadioButtonStatus.YES && (
+                  {assessmentViewData.IsWillingToVerified ===
+                    RadioButtonStatus.YES && (
                     <Form.Item
-                      label={t('coBenifits:verifyingDetailslbl')}
+                      label={t("coBenifits:verifyingDetailslbl")}
                       name="verifyingDetails"
                       labelCol={{ span: 24 }}
                       wrapperCol={{ span: 24 }}
@@ -340,7 +380,7 @@ const Assessment = (props: any) => {
                         defaultValue={
                           assessmentViewData.verifyingDetails
                             ? assessmentViewData.verifyingDetails
-                            : '-'
+                            : "-"
                         }
                         style={{ width: 303 }}
                       />
@@ -364,47 +404,39 @@ const Assessment = (props: any) => {
               className="view-section"
             >
               <Row className="mg-bottom-1">
-                <label className="co-sub-title-text">{t('coBenifits:contactInformation')}</label>
+                <label className="co-sub-title-text">
+                  {t("coBenifits:contactInformation")}
+                </label>
               </Row>
               <Row justify="start" gutter={16}>
                 <Col flex="139px">
                   <>
                     {!viewOnly && (
-                      <Form.Item label={t('coBenifits:assessmentTitle')} name="title">
+                      <Form.Item
+                        label={t("coBenifits:assessmentTitle")}
+                        name="title"
+                      >
                         <Select
                           size="large"
                           style={{
-                            width: '139px',
-                            borderRadius: '4px',
+                            width: "139px",
+                            borderRadius: "4px",
                           }}
                           options={titleList}
                         ></Select>
                       </Form.Item>
                     )}
                     {viewOnly && (
-                      <Form.Item label={t('coBenifits:assessmentTitle')} name="title">
-                        <Input
-                          disabled
-                          defaultValue={assessmentViewData.title ? assessmentViewData.title : '-'}
-                          style={{ width: 303 }}
-                        />
-                      </Form.Item>
-                    )}
-                  </>
-                </Col>
-                <Col flex="303px">
-                  <>
-                    {!viewOnly && (
-                      <Form.Item label={t('coBenifits:assessmentFirstName')} name="firstName">
-                        <Input style={{ width: 303 }} />
-                      </Form.Item>
-                    )}
-                    {viewOnly && (
-                      <Form.Item label={t('coBenifits:assessmentFirstName')} name="firstName">
+                      <Form.Item
+                        label={t("coBenifits:assessmentTitle")}
+                        name="title"
+                      >
                         <Input
                           disabled
                           defaultValue={
-                            assessmentViewData.firstName ? assessmentViewData.firstName : '-'
+                            assessmentViewData.title
+                              ? assessmentViewData.title
+                              : "-"
                           }
                           style={{ width: 303 }}
                         />
@@ -415,16 +447,52 @@ const Assessment = (props: any) => {
                 <Col flex="303px">
                   <>
                     {!viewOnly && (
-                      <Form.Item label={t('coBenifits:assessmentLastName')} name="lastName">
+                      <Form.Item
+                        label={t("coBenifits:assessmentFirstName")}
+                        name="firstName"
+                      >
                         <Input style={{ width: 303 }} />
                       </Form.Item>
                     )}
                     {viewOnly && (
-                      <Form.Item label={t('coBenifits:assessmentLastName')} name="lastName">
+                      <Form.Item
+                        label={t("coBenifits:assessmentFirstName")}
+                        name="firstName"
+                      >
                         <Input
                           disabled
                           defaultValue={
-                            assessmentViewData.lastName ? assessmentViewData.lastName : '-'
+                            assessmentViewData.firstName
+                              ? assessmentViewData.firstName
+                              : "-"
+                          }
+                          style={{ width: 303 }}
+                        />
+                      </Form.Item>
+                    )}
+                  </>
+                </Col>
+                <Col flex="303px">
+                  <>
+                    {!viewOnly && (
+                      <Form.Item
+                        label={t("coBenifits:assessmentLastName")}
+                        name="lastName"
+                      >
+                        <Input style={{ width: 303 }} />
+                      </Form.Item>
+                    )}
+                    {viewOnly && (
+                      <Form.Item
+                        label={t("coBenifits:assessmentLastName")}
+                        name="lastName"
+                      >
+                        <Input
+                          disabled
+                          defaultValue={
+                            assessmentViewData.lastName
+                              ? assessmentViewData.lastName
+                              : "-"
                           }
                           style={{ width: 303 }}
                         />
@@ -437,16 +505,24 @@ const Assessment = (props: any) => {
                 <Col flex="462px">
                   <>
                     {!viewOnly && (
-                      <Form.Item label={t('coBenifits:assessmentOrganisation')} name="organisation">
+                      <Form.Item
+                        label={t("coBenifits:assessmentOrganisation")}
+                        name="organisation"
+                      >
                         <Input style={{ width: 462 }} />
                       </Form.Item>
                     )}
                     {viewOnly && (
-                      <Form.Item label={t('coBenifits:assessmentOrganisation')} name="organisation">
+                      <Form.Item
+                        label={t("coBenifits:assessmentOrganisation")}
+                        name="organisation"
+                      >
                         <Input
                           disabled
                           defaultValue={
-                            assessmentViewData.organisation ? assessmentViewData.organisation : '-'
+                            assessmentViewData.organisation
+                              ? assessmentViewData.organisation
+                              : "-"
                           }
                           style={{ width: 462 }}
                         />
@@ -458,7 +534,10 @@ const Assessment = (props: any) => {
                   <>
                     <Skeleton loading={isCountryListLoading} active>
                       {!viewOnly && countries.length > 0 && (
-                        <Form.Item label={t('coBenifits:assessmentTelephone')} name="telephone">
+                        <Form.Item
+                          label={t("coBenifits:assessmentTelephone")}
+                          name="telephone"
+                        >
                           <PhoneInput
                             style={{ width: 303 }}
                             international
@@ -471,11 +550,16 @@ const Assessment = (props: any) => {
                       )}
                     </Skeleton>
                     {viewOnly && (
-                      <Form.Item label={t('coBenifits:assessmentTelephone')} name="telephone">
+                      <Form.Item
+                        label={t("coBenifits:assessmentTelephone")}
+                        name="telephone"
+                      >
                         <Input
                           disabled
                           defaultValue={
-                            assessmentViewData.telephone ? assessmentViewData.telephone : '-'
+                            assessmentViewData.telephone
+                              ? assessmentViewData.telephone
+                              : "-"
                           }
                           style={{ width: 303 }}
                         />
@@ -489,7 +573,7 @@ const Assessment = (props: any) => {
                   <>
                     {!viewOnly && (
                       <Form.Item
-                        label={t('coBenifits:assessmentEmail')}
+                        label={t("coBenifits:assessmentEmail")}
                         name="email"
                         rules={[
                           {
@@ -498,10 +582,14 @@ const Assessment = (props: any) => {
                                 const val = value.trim();
                                 const reg =
                                   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                                const matches = val.match(reg) ? val.match(reg) : [];
+                                const matches = val.match(reg)
+                                  ? val.match(reg)
+                                  : [];
                                 if (matches.length === 0) {
                                   throw new Error(
-                                    `${t('addUser:email')} ${t('addUser:isInvalid')}`
+                                    `${t("addUser:email")} ${t(
+                                      "addUser:isInvalid"
+                                    )}`
                                   );
                                 }
                               }
@@ -513,10 +601,17 @@ const Assessment = (props: any) => {
                       </Form.Item>
                     )}
                     {viewOnly && (
-                      <Form.Item label={t('coBenifits:assessmentEmail')} name="email">
+                      <Form.Item
+                        label={t("coBenifits:assessmentEmail")}
+                        name="email"
+                      >
                         <Input
                           disabled
-                          defaultValue={assessmentViewData.email ? assessmentViewData.email : '-'}
+                          defaultValue={
+                            assessmentViewData.email
+                              ? assessmentViewData.email
+                              : "-"
+                          }
                           style={{ width: 303 }}
                         />
                       </Form.Item>
@@ -527,7 +622,7 @@ const Assessment = (props: any) => {
                   <>
                     {!viewOnly && (
                       <Form.Item
-                        label={t('coBenifits:assessmentAffiliationCDM')}
+                        label={t("coBenifits:assessmentAffiliationCDM")}
                         name="affiliationCDM"
                       >
                         <Input style={{ width: 462 }} />
@@ -535,7 +630,7 @@ const Assessment = (props: any) => {
                     )}
                     {viewOnly && (
                       <Form.Item
-                        label={t('coBenifits:assessmentAffiliationCDM')}
+                        label={t("coBenifits:assessmentAffiliationCDM")}
                         name="affiliationCDM"
                       >
                         <Input
@@ -543,7 +638,7 @@ const Assessment = (props: any) => {
                           defaultValue={
                             assessmentViewData.affiliationCDM
                               ? assessmentViewData.affiliationCDM
-                              : '-'
+                              : "-"
                           }
                           style={{ width: 462 }}
                         />
@@ -571,24 +666,36 @@ const Assessment = (props: any) => {
                 {!viewOnly && (
                   <div className="radio-content">
                     <Form.Item
-                      label={t('coBenifits:assesmentIsThePersonListed')}
+                      label={t("coBenifits:assesmentIsThePersonListed")}
                       className="form-item"
                       name="isThePersonListed"
                     >
-                      <Radio.Group size="middle" onChange={onIsThePersonListedChanged}>
+                      <Radio.Group
+                        size="middle"
+                        onChange={onIsThePersonListedChanged}
+                      >
                         <div className="radio-container">
-                          <Radio.Button className="radio" value={RadioButtonStatus.YES}>
-                            {t('coBenifits:yes')}
+                          <Radio.Button
+                            className="radio"
+                            value={RadioButtonStatus.YES}
+                          >
+                            {t("coBenifits:yes")}
                           </Radio.Button>
                         </div>
                         <div className="radio-container">
-                          <Radio.Button className="radio" value={RadioButtonStatus.NO}>
-                            {t('coBenifits:no')}
+                          <Radio.Button
+                            className="radio"
+                            value={RadioButtonStatus.NO}
+                          >
+                            {t("coBenifits:no")}
                           </Radio.Button>
                         </div>
                         <div className="radio-container">
-                          <Radio.Button className="radio" value={RadioButtonStatus.NA}>
-                            {t('coBenifits:n/a')}
+                          <Radio.Button
+                            className="radio"
+                            value={RadioButtonStatus.NA}
+                          >
+                            {t("coBenifits:n/a")}
                           </Radio.Button>
                         </div>
                       </Radio.Group>
@@ -597,12 +704,12 @@ const Assessment = (props: any) => {
                       <Form.Item
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
-                        label={t('coBenifits:specify')}
+                        label={t("coBenifits:specify")}
                         name="personListedDetails"
                         rules={[
                           {
                             required: true,
-                            message: '',
+                            message: "",
                           },
                         ]}
                       >
@@ -613,9 +720,9 @@ const Assessment = (props: any) => {
                 )}
                 {viewOnly && (
                   <div className="radio-content view-section">
-                    {assessmentViewData.hasOwnProperty('isThePersonListed') && (
+                    {assessmentViewData.hasOwnProperty("isThePersonListed") && (
                       <Form.Item
-                        label={t('coBenifits:assesmentIsThePersonListed')}
+                        label={t("coBenifits:assesmentIsThePersonListed")}
                         className="form-item"
                         name="isThePersonListed"
                       >
@@ -628,11 +735,12 @@ const Assessment = (props: any) => {
                         </Radio.Group>
                       </Form.Item>
                     )}
-                    {assessmentViewData.isThePersonListed === RadioButtonStatus.NO && (
+                    {assessmentViewData.isThePersonListed ===
+                      RadioButtonStatus.NO && (
                       <Form.Item
                         labelCol={{ span: 24 }}
                         wrapperCol={{ span: 24 }}
-                        label={t('coBenifits:specify')}
+                        label={t("coBenifits:specify")}
                         name="personListedDetails"
                       >
                         <Input
@@ -640,7 +748,7 @@ const Assessment = (props: any) => {
                           defaultValue={
                             assessmentViewData.personListedDetails
                               ? assessmentViewData.personListedDetails
-                              : '-'
+                              : "-"
                           }
                           style={{ width: 303 }}
                         />
@@ -653,24 +761,39 @@ const Assessment = (props: any) => {
           </Row>
 
           <Row>
-            <Form layout="vertical" name="form4" form={form4} className="view-section">
+            <Form
+              layout="vertical"
+              name="form4"
+              form={form4}
+              className="view-section"
+            >
               <Row className="mg-bottom-1">
-                <label className="co-sub-title-text">{t('coBenifits:feasibilityReport')}</label>
+                <label className="co-sub-title-text">
+                  {t("coBenifits:feasibilityReport")}
+                </label>
               </Row>
               <Row justify="start" gutter={16}>
                 <Col flex="303px">
                   <>
                     {!viewOnly && (
-                      <Form.Item label={t('coBenifits:assessmentStudyName')} name="studyName">
+                      <Form.Item
+                        label={t("coBenifits:assessmentStudyName")}
+                        name="studyName"
+                      >
                         <Input style={{ width: 303 }} />
                       </Form.Item>
                     )}
                     {viewOnly && (
-                      <Form.Item label={t('coBenifits:assessmentStudyName')} name="studyName">
+                      <Form.Item
+                        label={t("coBenifits:assessmentStudyName")}
+                        name="studyName"
+                      >
                         <Input
                           disabled
                           defaultValue={
-                            assessmentViewData.studyName ? assessmentViewData.studyName : '-'
+                            assessmentViewData.studyName
+                              ? assessmentViewData.studyName
+                              : "-"
                           }
                           style={{ width: 303 }}
                         />
@@ -681,15 +804,25 @@ const Assessment = (props: any) => {
                 <Col flex="303px">
                   <>
                     {!viewOnly && (
-                      <Form.Item label={t('coBenifits:assessmentFunder')} name="funder">
+                      <Form.Item
+                        label={t("coBenifits:assessmentFunder")}
+                        name="funder"
+                      >
                         <Input style={{ width: 303 }} />
                       </Form.Item>
                     )}
                     {viewOnly && (
-                      <Form.Item label={t('coBenifits:assessmentFunder')} name="funder">
+                      <Form.Item
+                        label={t("coBenifits:assessmentFunder")}
+                        name="funder"
+                      >
                         <Input
                           disabled
-                          defaultValue={assessmentViewData.funder ? assessmentViewData.funder : '-'}
+                          defaultValue={
+                            assessmentViewData.funder
+                              ? assessmentViewData.funder
+                              : "-"
+                          }
                           style={{ width: 303 }}
                         />
                       </Form.Item>
@@ -700,7 +833,7 @@ const Assessment = (props: any) => {
               <Row>
                 {!viewOnly && (
                   <Form.Item
-                    label={t('coBenifits:assessmentDocuments')}
+                    label={t("coBenifits:assessmentDocuments")}
                     name="document"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
@@ -710,9 +843,11 @@ const Assessment = (props: any) => {
                         validator: async (rule, file) => {
                           if (file?.length > 0) {
                             if (!isValidateFileType(file[0]?.type)) {
-                              throw new Error(`${t('coBenifits:invalidFileFormat')}`);
+                              throw new Error(
+                                `${t("coBenifits:invalidFileFormat")}`
+                              );
                             } else if (file[0]?.size > maximumFileSize) {
-                              throw new Error(`${t('common:maxSizeVal')}`);
+                              throw new Error(`${t("common:maxSizeVal")}`);
                             }
                           }
                         },
@@ -731,14 +866,21 @@ const Assessment = (props: any) => {
                       maxCount={1}
                       onChange={onAssesmentDocument}
                     >
-                      <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                      <Button
+                        className="upload-doc"
+                        size="large"
+                        icon={<UploadOutlined />}
+                      >
                         Upload
                       </Button>
                     </Upload>
                   </Form.Item>
                 )}
                 {viewOnly && assessmentViewData.document && (
-                  <Form.Item label={t('coBenifits:assessmentDocuments')} name="assessmentDocuments">
+                  <Form.Item
+                    label={t("coBenifits:assessmentDocuments")}
+                    name="assessmentDocuments"
+                  >
                     <a
                       href={assessmentViewData.document}
                       target="_blank"
