@@ -20,12 +20,11 @@ import { DocumentTypeEnum } from "../enum/document.type.enum";
       ) FILTER (WHERE d."id" IS NOT NULL) AS "documents"
     FROM "activity_entity" a
     LEFT JOIN LATERAL (
-      SELECT d1.*
+      SELECT DISTINCT ON (d1."type") d1.*
       FROM "document_entity" d1
       WHERE d1."activityId" = a."id"
       AND d1."type" IN ('MONITORING', 'VERIFICATION')
-      ORDER BY d1."version" DESC
-      LIMIT 1
+      ORDER BY d1."type", d1."version" DESC
     ) d ON true
     GROUP BY a."refId",a."projectRefId", a."updatedTime", a."state"
   `,
