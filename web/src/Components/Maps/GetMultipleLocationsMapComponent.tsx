@@ -1,11 +1,11 @@
 // This component capture conditionally multiple polygons and set them to specified field in ant d form instance
-import { FormInstance } from 'antd';
-import React, { useEffect, useMemo, useState } from 'react';
-import { MapSourceData } from '../../Definitions/Definitions/mapComponent.definitions';
-import { MapComponent } from './mapComponent';
-import './mapboxComponent.scss';
-import { DeleteOutlined } from '@ant-design/icons';
-import { deepCopy } from '../../Utils/deepCopy';
+import { FormInstance } from "antd";
+import React, { useEffect, useMemo, useState } from "react";
+import { MapSourceData } from "../../Definitions/Definitions/mapComponent.definitions";
+import { MapComponent } from "./mapComponent";
+import "./mapboxComponent.scss";
+import { DeleteOutlined } from "@ant-design/icons";
+import { deepCopy } from "../../Utils/deepCopy";
 
 interface IMultipleLocationsMapComponetProps {
   form: FormInstance;
@@ -17,7 +17,9 @@ interface IMultipleLocationsMapComponetProps {
   disableMultipleLocations?: boolean;
 }
 
-const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetProps) => {
+const GetMultipleLocationsMapComponent = (
+  props: IMultipleLocationsMapComponetProps
+) => {
   const {
     form,
     listName,
@@ -28,17 +30,27 @@ const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetPr
     disableMultipleLocations,
   } = props;
 
-  const mapType = import.meta.env.REACT_APP_MAP_TYPE ? import.meta.env.REACT_APP_MAP_TYPE : 'None';
-  const accessToken = import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    ? import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    : '';
+  const mapType = import.meta.env.VITE_APP_MAP_TYPE
+    ? import.meta.env.VITE_APP_MAP_TYPE
+    : "None";
+  const accessToken = import.meta.env.VITE_APP_MAPBOXGL_ACCESS_TOKEN
+    ? import.meta.env.VITE_APP_MAPBOXGL_ACCESS_TOKEN
+    : "";
 
-  const [projectLocations, setProjectLocations] = useState<any[][]>(existingCoordinate || []);
+  console.log("---------------map accessToken-----------------", accessToken);
 
-  const [projectLocationMapSource, setProjectLocationMapSource] = useState<any>();
+  const [projectLocations, setProjectLocations] = useState<any[][]>(
+    existingCoordinate || []
+  );
+
+  const [projectLocationMapSource, setProjectLocationMapSource] =
+    useState<any>();
   const [projectLocationMapLayer, setProjectLocationMapLayer] = useState<any>();
-  const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();
-  const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<number[]>([]);
+  const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] =
+    useState<any>();
+  const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<
+    number[]
+  >([]);
 
   const [zoomLevel, setZoomLevel] = useState(5);
 
@@ -74,11 +86,11 @@ const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetPr
       const mapSource: MapSourceData = {
         key: `projectLocation-${index}`,
         data: {
-          type: 'geojson',
+          type: "geojson",
           data: {
-            type: 'Feature',
+            type: "Feature",
             geometry: {
-              type: 'Polygon',
+              type: "Polygon",
               coordinates: location,
             },
             properties: null,
@@ -89,22 +101,22 @@ const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetPr
       tempMapSource.push(mapSource);
       tempLocationLayer.push({
         id: `projectLocationLayer-${index}`,
-        type: 'fill',
+        type: "fill",
         source: `projectLocation-${index}`,
         layout: {},
         paint: {
-          'fill-color': '#0080ff',
-          'fill-opacity': 0.5,
+          "fill-color": "#0080ff",
+          "fill-opacity": 0.5,
         },
       });
       tempOutlineLayer.push({
         id: `projectLocationOutline-${index}`,
-        type: 'line',
+        type: "line",
         source: `projectLocation-${index}`,
         layout: {},
         paint: {
-          'line-color': '#000',
-          'line-width': 1,
+          "line-color": "#000",
+          "line-width": 1,
         },
       });
     });
@@ -158,7 +170,9 @@ const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetPr
 
   const deleteLocation = (index: number) => {
     setProjectLocations((prev) => {
-      const tempPrev = prev.filter((item: any, itemIndex: number) => itemIndex !== index);
+      const tempPrev = prev.filter(
+        (item: any, itemIndex: number) => itemIndex !== index
+      );
       return tempPrev;
     });
   };
@@ -194,9 +208,9 @@ const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetPr
         <div className="multiple-location-info-container">
           {projectLocations?.map((location: number[][][], i: number) => (
             <div className="multiple-location-details" key={i}>
-              Location {i + 1}:{' '}
+              Location {i + 1}:{" "}
               <div className="coordinates">
-                {'{ '}
+                {"{ "}
                 {location.map((coords: number[][], j: number) => {
                   return (
                     <>
@@ -210,7 +224,7 @@ const GetMultipleLocationsMapComponent = (props: IMultipleLocationsMapComponetPr
                     </>
                   );
                 })}
-                {' }'}
+                {" }"}
               </div>
               {!disabled && (
                 <DeleteOutlined

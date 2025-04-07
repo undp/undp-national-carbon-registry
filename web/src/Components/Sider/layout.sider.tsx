@@ -156,7 +156,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
                 </div>
               </div>
               <div className="country-name">
-                {import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX"}
+                {import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX"}
               </div>
             </div>
           )}
@@ -165,7 +165,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
               <img
                 alt="country flag"
                 src={
-                  import.meta.env.REACT_APP_COUNTRY_FLAG_URL ||
+                  import.meta.env.VITE_APP_COUNTRY_FLAG_URL ||
                   "https://carbon-common-dev.s3.amazonaws.com/flag.png"
                 }
               />

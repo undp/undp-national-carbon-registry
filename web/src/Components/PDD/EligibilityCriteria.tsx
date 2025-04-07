@@ -7,7 +7,7 @@ import TextArea from "antd/lib/input/TextArea";
 const EligibilityCriteria = (props: CustomStepsProps) => {
   const { next, prev, form, current, handleValuesUpdate, disableFields } =
     props;
-  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
+  const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
 
   const onFinish = (values: any) => {
     const tempValues = {

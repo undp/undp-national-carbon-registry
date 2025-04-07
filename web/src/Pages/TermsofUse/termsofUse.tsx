@@ -44,7 +44,7 @@ const TermsOfUse = () => {
                 <div className="title-sub">{"REGISTRY"}</div>
               </div>
               <div className="country-name">
-                {import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX"}
+                {import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX"}
               </div>
             </div>
           </div>

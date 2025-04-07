@@ -141,8 +141,8 @@ const ProgrammeView = () => {
   const [documentsData, setDocumentsData] = useState<any[]>([]);
   const [uploadMonitoringReport, setUploadMonitoringReport] =
     useState<boolean>(false);
-  const mapType = import.meta.env.REACT_APP_MAP_TYPE
-    ? import.meta.env.REACT_APP_MAP_TYPE
+  const mapType = import.meta.env.VITE_APP_MAP_TYPE
+    ? import.meta.env.VITE_APP_MAP_TYPE
     : "None";
   const [isAllOwnersDeactivated, setIsAllOwnersDeactivated] = useState(true);
   const { isTransferFrozen, setTransferFrozen } = useSettingsContext();
@@ -175,8 +175,8 @@ const ProgrammeView = () => {
     number[]
   >([]);
 
-  const accessToken = import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    ? import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+  const accessToken = import.meta.env.VITE_APP_MAPBOXGL_ACCESS_TOKEN
+    ? import.meta.env.VITE_APP_MAPBOXGL_ACCESS_TOKEN
     : "";
 
   const showModal = () => {
