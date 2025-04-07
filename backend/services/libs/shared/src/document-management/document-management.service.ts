@@ -1057,7 +1057,7 @@ export class DocumentManagementService {
     }
     if (
       user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
-      user.role !== Role.Admin
+      (user.role !== Role.Admin && user.role !== Role.Root)
     ) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
@@ -1259,7 +1259,7 @@ export class DocumentManagementService {
     ) {
       if (
         user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
-        user.role !== Role.Admin
+        (user.role !== Role.Admin && user.role !== Role.Root)
       ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
@@ -1385,7 +1385,7 @@ export class DocumentManagementService {
 
       if (
         user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
-        user.role !== Role.Admin
+        (user.role !== Role.Admin && user.role !== Role.Root)
       ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
@@ -1636,8 +1636,8 @@ export class DocumentManagementService {
       requestData.action === DocumentStatus.DNA_REJECTED
     ) {
       if (
-        user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY //||
-        //user.role !== Role.Admin || user.role !== Role.Root
+        user.companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+        (user.role !== Role.Admin && user.role !== Role.Root)
       ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(

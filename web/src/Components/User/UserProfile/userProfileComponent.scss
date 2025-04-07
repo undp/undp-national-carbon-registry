@@ -1,5 +1,5 @@
-@import "../../../Styles/colors.userProfile.scss";
-@import "../../../Styles/variables.scss";
+@use "../../../Styles/colors.userProfile.scss";
+@use "../../../Styles/variables.scss";
 
 .user-profile {
   padding: 0px 50px;
@@ -34,11 +34,11 @@
     font-size: 16px;
     line-height: 24px;
     font-weight: 600;
-    color: $company-name-cl;
+    color: colors.$company-name-cl;
   }
 
   .btn-danger {
-    color: $danger-btn !important;
-    border-color: $danger-btn-border !important;
+    color: variables.$danger-btn !important;
+    border-color: variables.$danger-btn-border !important;
   }
 }

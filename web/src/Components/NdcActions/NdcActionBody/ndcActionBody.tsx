@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable prefer-const */
 /* eslint-disable eqeqeq */
-import React, { FC, useEffect, useRef, useState } from 'react';
-import './ndcActionBody.scss';
+import React, { FC, useEffect, useRef, useState } from "react";
+import "./ndcActionBody.scss";
 import {
   CheckCircleOutlined,
   DislikeOutlined,
@@ -11,21 +11,24 @@ import {
   FileAddOutlined,
   LikeOutlined,
   BookOutlined,
-} from '@ant-design/icons';
-import { RcFile } from 'antd/lib/upload';
-import { Skeleton, Tooltip, message } from 'antd';
-import moment from 'moment';
+} from "@ant-design/icons";
+import { RcFile } from "antd/lib/upload";
+import { Skeleton, Tooltip, message } from "antd";
+import moment from "moment";
 // import { CompanyRole, DocType, DocumentStatus, Role } from '../../../Definitions';
-import { RejectDocumentationConfirmationModel } from '../../Models/rejectDocumenConfirmationModel';
-import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
-import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
-import { isValidateFileType } from '../../../Utils/DocumentValidator';
-import { DocType } from '../../../Definitions/Enums/document.type';
-import { DocumentStatus } from '../../../Definitions/Enums/document.status';
-import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
-import { Role } from '../../../Definitions/Enums/role.enum';
-import { linkDocVisible, uploadDocUserPermission } from '../../../Utils/documentsPermission';
-import { API_PATHS } from '../../../Config/apiConfig';
+import { RejectDocumentationConfirmationModel } from "../../Models/rejectDocumenConfirmationModel";
+import { useUserContext } from "../../../Context/UserInformationContext/userInformationContext";
+import { useConnection } from "../../../Context/ConnectionContext/connectionContext";
+import { isValidateFileType } from "../../../Utils/DocumentValidator";
+import { DocType } from "../../../Definitions/Enums/document.type";
+import { DocumentStatus } from "../../../Definitions/Enums/document.status";
+import { CompanyRole } from "../../../Definitions/Enums/company.role.enum";
+import { Role } from "../../../Definitions/Enums/role.enum";
+import {
+  linkDocVisible,
+  uploadDocUserPermission,
+} from "../../../Utils/documentsPermission";
+import { API_PATHS } from "../../../Config/apiConfig";
 // import { isValidateFileType } from '../../../Utils/DocumentValidator';
 // import { linkDocVisible, uploadDocUserPermission } from '../../../Utils/documentsPermission';
 // import { useConnection, useUserContext } from '../../../Context';
@@ -43,7 +46,9 @@ export interface NdcActionBodyProps {
   programme?: any;
 }
 
-export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps) => {
+export const NdcActionBody: FC<NdcActionBodyProps> = (
+  props: NdcActionBodyProps
+) => {
   const {
     data,
     programmeId,
@@ -62,15 +67,18 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
   const { post } = useConnection();
   const [loading, setLoading] = useState<boolean>(false);
   const [monitoringReportData, setMonitoringReportData] = useState<any>();
-  const [monitoringReportversion, setMonitoringReportversion] = useState<any>('');
+  const [monitoringReportversion, setMonitoringReportversion] =
+    useState<any>("");
   const [verificationReportData, setVerificationReportData] = useState<any>();
-  const [verificationReportVersion, setVerificationReportversion] = useState<any>('');
+  const [verificationReportVersion, setVerificationReportversion] =
+    useState<any>("");
   const [ndcActionId, setNdcActionId] = useState<any>();
-  const [openRejectDocConfirmationModal, setOpenRejectDocConfirmationModal] = useState(false);
+  const [openRejectDocConfirmationModal, setOpenRejectDocConfirmationModal] =
+    useState(false);
   const [actionInfo, setActionInfo] = useState<any>({});
   const [rejectDocData, setRejectDocData] = useState<any>({});
-  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   const getBase64 = (file: RcFile): Promise<string> =>
@@ -92,10 +100,10 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
   const onUploadDocument = async (file: any, type: any) => {
     if (file.size > maximumImageSize) {
       message.open({
-        type: 'error',
-        content: `${t('common:maxSizeVal')}`,
+        type: "error",
+        content: `${t("common:maxSizeVal")}`,
         duration: 4,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
       return;
     }
@@ -112,10 +120,10 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
         });
         if (response?.data) {
           message.open({
-            type: 'success',
-            content: `${t('programme:isUploaded')}`,
+            type: "success",
+            content: `${t("programme:isUploaded")}`,
             duration: 4,
-            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+            style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
           if (
             type == DocType.VERIFICATION_REPORT &&
@@ -133,7 +141,7 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                   documentDetails.url
                     ? (document = documentDetails.url)
                     : (document = documentDetails);
-                  if (document.includes('VERIFICATION_REPORT')) {
+                  if (document.includes("VERIFICATION_REPORT")) {
                     docAdded = true;
                     break;
                   }
@@ -151,18 +159,18 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
         }
       } else {
         message.open({
-          type: 'error',
-          content: `${t('programme:invalidFileFormat')}`,
+          type: "error",
+          content: `${t("programme:invalidFileFormat")}`,
           duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
       }
     } catch (error: any) {
       message.open({
-        type: 'error',
-        content: `${t('programme:notUploaded')}`,
+        type: "error",
+        content: `${t("programme:notUploaded")}`,
         duration: 4,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       getProgrammeDocs();
@@ -172,7 +180,12 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
     }
   };
 
-  const docAction = async (id: any, status: DocumentStatus, actionId: any, type: any) => {
+  const docAction = async (
+    id: any,
+    status: DocumentStatus,
+    actionId: any,
+    type: any
+  ) => {
     setLoading(true);
     try {
       await post(API_PATHS.PROJECT_DOC_ACTION, {
@@ -181,22 +194,25 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
         actionId: actionId,
       });
       message.open({
-        type: 'success',
+        type: "success",
         content:
           status === DocumentStatus.ACCEPTED
-            ? `${t('programme:docApproved')}`
-            : `${t('programme:docRejected')}`,
+            ? `${t("programme:docApproved")}`
+            : `${t("programme:docRejected")}`,
         duration: 4,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
-      if (type == DocType.VERIFICATION_REPORT && status == DocumentStatus.ACCEPTED) {
+      if (
+        type == DocType.VERIFICATION_REPORT &&
+        status == DocumentStatus.ACCEPTED
+      ) {
         let programmeRes = await post(API_PATHS.ALL_PROJECTS, {
           page: 1,
           size: 2,
           filterAnd: [
             {
-              key: 'programmeId',
-              operation: '=',
+              key: "programmeId",
+              operation: "=",
               value: programmeId,
             },
           ],
@@ -209,8 +225,8 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
             size: 100,
             filterAnd: [
               {
-                key: 'id',
-                operation: '=',
+                key: "id",
+                operation: "=",
                 value: id,
               },
             ],
@@ -231,10 +247,10 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
       }
     } catch (error: any) {
       message.open({
-        type: 'error',
+        type: "error",
         content: error?.message,
         duration: 4,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       getProgrammeDocs();
@@ -262,18 +278,20 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
       if (item?.monitoringReport) {
         setMonitoringReportData(item?.monitoringReport);
         const versionfull =
-          item?.monitoringReport.url.split('_')[item?.monitoringReport.url.split('_').length - 1];
-        const version = versionfull ? versionfull.split('.')[0] : 'V1';
-        setMonitoringReportversion(version.startsWith('V') ? version : 'V1');
+          item?.monitoringReport.url.split("_")[
+            item?.monitoringReport.url.split("_").length - 1
+          ];
+        const version = versionfull ? versionfull.split(".")[0] : "V1";
+        setMonitoringReportversion(version.startsWith("V") ? version : "V1");
       }
       if (item?.verificationReport) {
         setVerificationReportData(item?.verificationReport);
         const versionfull =
-          item?.verificationReport.url.split('_')[
-            item?.verificationReport.url.split('_').length - 1
+          item?.verificationReport.url.split("_")[
+            item?.verificationReport.url.split("_").length - 1
           ];
-        const version = versionfull ? versionfull.split('.')[0] : 'V1';
-        setVerificationReportversion(version.startsWith('V') ? version : 'V1');
+        const version = versionfull ? versionfull.split(".")[0] : "V1";
+        setVerificationReportversion(version.startsWith("V") ? version : "V1");
       }
     });
   }, [data]);
@@ -286,12 +304,18 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
     userInfoState?.companyRole === CompanyRole.GOVERNMENT &&
     userInfoState?.userRole !== Role.ViewOnly;
 
-  const monitoringReportPending = monitoringReportData?.status === DocumentStatus.PENDING;
-  const monitoringReportAccepted = monitoringReportData?.status === DocumentStatus.ACCEPTED;
-  const monitoringReportRejected = monitoringReportData?.status === DocumentStatus.REJECTED;
-  const verifcationReportPending = verificationReportData?.status === DocumentStatus.PENDING;
-  const verificationReportAccepted = verificationReportData?.status === DocumentStatus.ACCEPTED;
-  const verifcationReportRejected = verificationReportData?.status === DocumentStatus.REJECTED;
+  const monitoringReportPending =
+    monitoringReportData?.status === DocumentStatus.PENDING;
+  const monitoringReportAccepted =
+    monitoringReportData?.status === DocumentStatus.ACCEPTED;
+  const monitoringReportRejected =
+    monitoringReportData?.status === DocumentStatus.REJECTED;
+  const verifcationReportPending =
+    verificationReportData?.status === DocumentStatus.PENDING;
+  const verificationReportAccepted =
+    verificationReportData?.status === DocumentStatus.ACCEPTED;
+  const verifcationReportRejected =
+    verificationReportData?.status === DocumentStatus.REJECTED;
 
   return loading ? (
     <Skeleton />
@@ -301,13 +325,15 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
         <div className="report-details">
           <div className="report-type">
             <div className="name-time-container">
-              <div className={canUploadMonitorReport ? 'name' : 'empty'}>
-                {t('programme:monitoringReport')}
+              <div className={canUploadMonitorReport ? "name" : "empty"}>
+                {t("programme:monitoringReport")}
               </div>
               {monitoringReportData?.txTime && (
                 <div className="time">
-                  {moment(parseInt(monitoringReportData?.txTime)).format('DD MMMM YYYY @ HH:mm')}
-                  {' ~ ' + monitoringReportversion}
+                  {moment(parseInt(monitoringReportData?.txTime)).format(
+                    "DD MMMM YYYY @ HH:mm"
+                  )}
+                  {" ~ " + monitoringReportversion}
                 </div>
               )}
             </div>
@@ -326,7 +352,7 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                           )
                         }
                         className="common-progress-icon"
-                        style={{ color: '#976ED7', paddingTop: '3px' }}
+                        style={{ color: "#976ED7", paddingTop: "3px" }}
                       />
                       <DislikeOutlined
                         onClick={() => {
@@ -336,23 +362,23 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                             type: monitoringReportData?.type,
                           });
                           setActionInfo({
-                            action: 'Reject',
-                            headerText: `${t('programme:rejectDocHeader')}`,
-                            text: `${t('programme:rejectDocBody')}`,
-                            type: 'reject',
+                            action: "Reject",
+                            headerText: `${t("programme:rejectDocHeader")}`,
+                            text: `${t("programme:rejectDocBody")}`,
+                            type: "reject",
                             icon: <DislikeOutlined />,
                           });
                           setOpenRejectDocConfirmationModal(true);
                         }}
                         className="common-progress-icon margin-left-1"
-                        style={{ color: '#FD6F70', paddingTop: '3px' }}
+                        style={{ color: "#FD6F70", paddingTop: "3px" }}
                       />
                     </>
                   )
                 ) : monitoringReportAccepted ? (
                   <CheckCircleOutlined
                     className="common-progress-icon"
-                    style={{ color: '#5DC380', paddingTop: '3px' }}
+                    style={{ color: "#5DC380", paddingTop: "3px" }}
                   />
                 ) : (
                   monitoringReportRejected && (
@@ -360,12 +386,12 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                       arrowPointAtCenter
                       placement="top"
                       trigger="hover"
-                      title={t('programme:rejectTip')}
+                      title={t("programme:rejectTip")}
                       overlayClassName="custom-tooltip"
                     >
                       <ExclamationCircleOutlined
                         className="common-progress-icon"
-                        style={{ color: '#FD6F70', paddingTop: '3px' }}
+                        style={{ color: "#FD6F70", paddingTop: "3px" }}
                       />
                     </Tooltip>
                   )
@@ -378,15 +404,16 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                     trigger="hover"
                     title={
                       userInfoState?.userRole === Role.ViewOnly
-                        ? t('programme:notAuthToUploadDoc')
+                        ? t("programme:notAuthToUploadDoc")
                         : uploadDocUserPermission(
                             userInfoState,
                             DocType.MONITORING_REPORT,
                             programmeOwnerId,
                             ministryLevelPermission
                           )
-                        ? !canUploadMonitorReport && t('programme:programmeNotAuth')
-                        : t('programme:orgNotAuth')
+                        ? !canUploadMonitorReport &&
+                          t("programme:programmeNotAuth")
+                        : t("programme:orgNotAuth")
                     }
                     overlayClassName="custom-tooltip"
                   >
@@ -401,14 +428,14 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                           ministryLevelPermission
                         )
                           ? {
-                              color: '#3F3A47',
-                              cursor: 'pointer',
-                              margin: '0px 0px 1.5px 0px',
+                              color: "#3F3A47",
+                              cursor: "pointer",
+                              margin: "0px 0px 1.5px 0px",
                             }
                           : {
-                              color: '#cacaca',
-                              cursor: 'default',
-                              margin: '0px 0px 1.5px 0px',
+                              color: "#cacaca",
+                              cursor: "default",
+                              margin: "0px 0px 1.5px 0px",
                             }
                       }
                       onClick={() => {
@@ -429,7 +456,7 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                   <input
                     type="file"
                     ref={fileInputMonitoringRef}
-                    style={{ display: 'none' }}
+                    style={{ display: "none" }}
                     accept=".xls, .xlsx, .ppt, .pptx, .csv, .doc, .docx, .pdf, .png, .jpg"
                     onChange={(e: any) => {
                       const selectedFile = e.target.files[0];
@@ -454,7 +481,7 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                   >
                     <BookOutlined
                       className="common-progress-icon margin-right-1"
-                      style={{ color: '#3F3A47', paddingTop: '3px' }}
+                      style={{ color: "#3F3A47", paddingTop: "3px" }}
                     />
                   </a>
                 )}
@@ -467,15 +494,16 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                     trigger="hover"
                     title={
                       userInfoState?.userRole === Role.ViewOnly
-                        ? t('programme:notAuthToUploadDoc')
+                        ? t("programme:notAuthToUploadDoc")
                         : uploadDocUserPermission(
                             userInfoState,
                             DocType.MONITORING_REPORT,
                             programmeOwnerId,
                             ministryLevelPermission
                           )
-                        ? !canUploadMonitorReport && t('programme:programmeNotAuth')
-                        : t('programme:orgNotAuth')
+                        ? !canUploadMonitorReport &&
+                          t("programme:programmeNotAuth")
+                        : t("programme:orgNotAuth")
                     }
                     overlayClassName="custom-tooltip"
                   >
@@ -490,14 +518,14 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                           ministryLevelPermission
                         )
                           ? {
-                              color: '#3F3A47',
-                              cursor: 'pointer',
-                              margin: '0px 0px 1.5px 0px',
+                              color: "#3F3A47",
+                              cursor: "pointer",
+                              margin: "0px 0px 1.5px 0px",
                             }
                           : {
-                              color: '#cacaca',
-                              cursor: 'default',
-                              margin: '0px 0px 1.5px 0px',
+                              color: "#cacaca",
+                              cursor: "default",
+                              margin: "0px 0px 1.5px 0px",
                             }
                       }
                       onClick={() => {
@@ -518,7 +546,7 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                   <input
                     type="file"
                     ref={fileInputMonitoringRef}
-                    style={{ display: 'none' }}
+                    style={{ display: "none" }}
                     accept=".xls, .xlsx, .ppt, .pptx, .csv, .doc, .docx, .pdf, .png, .jpg"
                     onChange={(e: any) => {
                       const selectedFile = e.target.files[0];
@@ -535,21 +563,28 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
           <div className="report-type">
             <div className="name-time-container">
               <div
-                className={canUploadMonitorReport && monitoringReportAccepted ? 'name' : 'empty'}
+                className={
+                  canUploadMonitorReport && monitoringReportAccepted
+                    ? "name"
+                    : "empty"
+                }
               >
-                {t('programme:verificationReport')}
+                {t("programme:verificationReport")}
               </div>
               {verificationReportData?.txTime && (
                 <div className="time">
-                  {moment(parseInt(verificationReportData?.txTime)).format('DD MMMM YYYY @ HH:mm')}
-                  {' ~ ' + verificationReportVersion}
+                  {moment(parseInt(verificationReportData?.txTime)).format(
+                    "DD MMMM YYYY @ HH:mm"
+                  )}
+                  {" ~ " + verificationReportVersion}
                 </div>
               )}
             </div>
             <div className="icon">
               {verificationReportData?.url ? (
                 verifcationReportPending ? (
-                  (verficationCompanyRolePermission || ministryLevelPermission) && (
+                  (verficationCompanyRolePermission ||
+                    ministryLevelPermission) && (
                     <>
                       <LikeOutlined
                         onClick={() =>
@@ -561,7 +596,7 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                           )
                         }
                         className="common-progress-icon"
-                        style={{ color: '#976ED7', paddingTop: '3px' }}
+                        style={{ color: "#976ED7", paddingTop: "3px" }}
                       />
                       <DislikeOutlined
                         onClick={() => {
@@ -571,23 +606,23 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                             type: verificationReportData?.type,
                           });
                           setActionInfo({
-                            action: 'Reject',
-                            headerText: `${t('programme:rejectDocHeader')}`,
-                            text: `${t('programme:rejectDocBody')}`,
-                            type: 'reject',
+                            action: "Reject",
+                            headerText: `${t("programme:rejectDocHeader")}`,
+                            text: `${t("programme:rejectDocBody")}`,
+                            type: "reject",
                             icon: <DislikeOutlined />,
                           });
                           setOpenRejectDocConfirmationModal(true);
                         }}
                         className="common-progress-icon margin-left-1"
-                        style={{ color: '#FD6F70', paddingTop: '3px' }}
+                        style={{ color: "#FD6F70", paddingTop: "3px" }}
                       />
                     </>
                   )
                 ) : verificationReportAccepted ? (
                   <CheckCircleOutlined
                     className="common-progress-icon"
-                    style={{ color: '#5DC380', paddingTop: '3px' }}
+                    style={{ color: "#5DC380", paddingTop: "3px" }}
                   />
                 ) : (
                   verifcationReportRejected && (
@@ -595,12 +630,12 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                       arrowPointAtCenter
                       placement="top"
                       trigger="hover"
-                      title={t('programme:rejectTip')}
+                      title={t("programme:rejectTip")}
                       overlayClassName="custom-tooltip"
                     >
                       <ExclamationCircleOutlined
                         className="common-progress-icon"
-                        style={{ color: '#FD6F70', paddingTop: '3px' }}
+                        style={{ color: "#FD6F70", paddingTop: "3px" }}
                       />
                     </Tooltip>
                   )
@@ -613,15 +648,16 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                     trigger="hover"
                     title={
                       userInfoState?.userRole === Role.ViewOnly
-                        ? t('programme:notAuthToUploadDoc')
+                        ? t("programme:notAuthToUploadDoc")
                         : uploadDocUserPermission(
                             userInfoState,
                             DocType.VERIFICATION_REPORT,
                             programmeOwnerId,
                             ministryLevelPermission
                           )
-                        ? !monitoringReportAccepted && t('programme:monitoringRepNotApproved')
-                        : t('programme:notAuthToUploadDoc')
+                        ? !monitoringReportAccepted &&
+                          t("programme:monitoringRepNotApproved")
+                        : t("programme:notAuthToUploadDoc")
                     }
                     overlayClassName="custom-tooltip"
                   >
@@ -636,14 +672,14 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                           ministryLevelPermission
                         )
                           ? {
-                              color: '#3F3A47',
-                              cursor: 'pointer',
-                              margin: '0px 0px 1.5px 0px',
+                              color: "#3F3A47",
+                              cursor: "pointer",
+                              margin: "0px 0px 1.5px 0px",
                             }
                           : {
-                              color: '#cacaca',
-                              cursor: 'default',
-                              margin: '0px 0px 1.5px 0px',
+                              color: "#cacaca",
+                              cursor: "default",
+                              margin: "0px 0px 1.5px 0px",
                             }
                       }
                       onClick={() => {
@@ -665,12 +701,15 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                     <input
                       type="file"
                       ref={fileInputVerificationRef}
-                      style={{ display: 'none' }}
+                      style={{ display: "none" }}
                       accept=".xls, .xlsx, .ppt, .pptx, .csv, .doc, .docx, .pdf, .png, .jpg"
                       onChange={(e: any) => {
                         const selectedFile = e.target.files[0];
                         e.target.value = null;
-                        onUploadDocument(selectedFile, DocType.VERIFICATION_REPORT);
+                        onUploadDocument(
+                          selectedFile,
+                          DocType.VERIFICATION_REPORT
+                        );
                       }}
                     />
                   )}
@@ -691,7 +730,7 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                   >
                     <BookOutlined
                       className="common-progress-icon margin-right-1"
-                      style={{ color: '#3F3A47', paddingTop: '3px' }}
+                      style={{ color: "#3F3A47", paddingTop: "3px" }}
                     />
                   </a>
                 )}
@@ -704,15 +743,16 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                     trigger="hover"
                     title={
                       userInfoState?.userRole === Role.ViewOnly
-                        ? t('programme:notAuthToUploadDoc')
+                        ? t("programme:notAuthToUploadDoc")
                         : uploadDocUserPermission(
                             userInfoState,
                             DocType.VERIFICATION_REPORT,
                             programmeOwnerId,
                             ministryLevelPermission
                           )
-                        ? !monitoringReportAccepted && t('programme:monitoringRepNotApproved')
-                        : t('programme:notAuthToUploadDoc')
+                        ? !monitoringReportAccepted &&
+                          t("programme:monitoringRepNotApproved")
+                        : t("programme:notAuthToUploadDoc")
                     }
                     overlayClassName="custom-tooltip"
                   >
@@ -727,14 +767,14 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                           ministryLevelPermission
                         )
                           ? {
-                              color: '#3F3A47',
-                              cursor: 'pointer',
-                              margin: '0px 0px 1.5px 0px',
+                              color: "#3F3A47",
+                              cursor: "pointer",
+                              margin: "0px 0px 1.5px 0px",
                             }
                           : {
-                              color: '#cacaca',
-                              cursor: 'default',
-                              margin: '0px 0px 1.5px 0px',
+                              color: "#cacaca",
+                              cursor: "default",
+                              margin: "0px 0px 1.5px 0px",
                             }
                       }
                       onClick={() => {
@@ -755,12 +795,15 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
                   <input
                     type="file"
                     ref={fileInputVerificationRef}
-                    style={{ display: 'none' }}
+                    style={{ display: "none" }}
                     accept=".xls, .xlsx, .ppt, .pptx, .csv, .doc, .docx, .pdf, .png, .jpg"
                     onChange={(e: any) => {
                       const selectedFile = e.target.files[0];
                       e.target.value = null;
-                      onUploadDocument(selectedFile, DocType.VERIFICATION_REPORT);
+                      onUploadDocument(
+                        selectedFile,
+                        DocType.VERIFICATION_REPORT
+                      );
                     }}
                   />
                 </>
@@ -774,7 +817,7 @@ export const NdcActionBody: FC<NdcActionBodyProps> = (props: NdcActionBodyProps)
         onActionConfirmed={handleOk}
         onActionCanceled={handleCancel}
         openModal={openRejectDocConfirmationModal}
-        errorMsg={''}
+        errorMsg={""}
         loading={loading}
         translator={translator}
       />

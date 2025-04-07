@@ -1,4 +1,4 @@
-@import '../../Styles/variables.scss';
+@use '../../Styles/variables.scss';
 
 .info-view {
   .title-icon {
@@ -6,7 +6,7 @@
   }
 
   .title-text {
-    color: $title-text-color;
+    color: variables.$title-text-color;
     font-weight: 600;
   }
 
@@ -15,7 +15,7 @@
   }
 
   .field-key {
-    color: $body-text-color;
+    color: variables.$body-text-color;
     font-weight: 500;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -31,7 +31,7 @@
     }
 
     .label-uploaded {
-      color: $common-filter-color;
+      color: variables.$common-filter-color;
       width: 70%;
     }
 
@@ -40,7 +40,7 @@
   }
 
   .field-value {
-    color: $body-text-color;
+    color: variables.$body-text-color;
     text-overflow: ellipsis;
     overflow: hidden;
 

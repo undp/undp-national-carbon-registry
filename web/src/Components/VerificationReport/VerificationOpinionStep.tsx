@@ -1,19 +1,28 @@
-import { useState } from 'react';
-import { Button, Col, DatePicker, Form, Input, Row, Upload } from 'antd';
-import { useLocation } from 'react-router-dom';
-import moment from 'moment';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import TextArea from 'antd/lib/input/TextArea';
-import { UploadOutlined } from '@ant-design/icons';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import i18n from '../Internationalization/i18n';
-import { VerificationStepProps } from './StepProps';
+import { useState } from "react";
+import { Button, Col, DatePicker, Form, Input, Row, Upload } from "antd";
+import { useLocation } from "react-router-dom";
+import moment from "moment";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import TextArea from "antd/lib/input/TextArea";
+import { UploadOutlined } from "@ant-design/icons";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
+import i18n from "../Internationalization/i18n";
+import { VerificationStepProps } from "./StepProps";
 
 export const VerificationOpinionStep = (props: VerificationStepProps) => {
-  const { t, current, form, formMode, next, countries, prev, handleValuesUpdate, disableFields } =
-    props;
-  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const {
+    t,
+    current,
+    form,
+    formMode,
+    next,
+    countries,
+    prev,
+    handleValuesUpdate,
+    disableFields,
+  } = props;
+  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
@@ -53,14 +62,14 @@ export const VerificationOpinionStep = (props: VerificationStepProps) => {
                 <Col xl={24} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={`${t('verificationReport:verificationOpinion')}`}
+                      label={`${t("verificationReport:verificationOpinion")}`}
                       name="verificationOpinion"
                       rules={[
                         {
                           required: true,
-                          message: `${t('verificationReport:verificationOpinion')} ${t(
-                            'isRequired'
-                          )}`,
+                          message: `${t(
+                            "verificationReport:verificationOpinion"
+                          )} ${t("isRequired")}`,
                         },
                       ]}
                     >
@@ -70,22 +79,22 @@ export const VerificationOpinionStep = (props: VerificationStepProps) => {
                 </Col>
               </Row>
 
-              <Row justify={'end'} className="step-actions-end">
+              <Row justify={"end"} className="step-actions-end">
                 <Button danger onClick={prev} disabled={false}>
-                  {t('verificationReport:back')}
+                  {t("verificationReport:back")}
                 </Button>
                 {disableFields ? (
                   <Button type="primary" onClick={next}>
-                    {t('verificationReport:next')}
+                    {t("verificationReport:next")}
                   </Button>
                 ) : (
                   <Button
                     type="primary"
-                    size={'large'}
-                    htmlType={'submit'}
+                    size={"large"}
+                    htmlType={"submit"}
                     // onClick={next}
                   >
-                    {t('verificationReport:next')}
+                    {t("verificationReport:next")}
                   </Button>
                 )}
               </Row>

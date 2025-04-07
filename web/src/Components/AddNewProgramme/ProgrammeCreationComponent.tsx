@@ -35,7 +35,7 @@ import { API_PATHS } from '../../Config/apiConfig';
 import { ROUTES } from '../../Config/uiRoutingConfig';
 import { SectoralScope } from '../../Definitions/Enums/sectoralScope.enum';
 import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
-import { ReactComponent as ConfirmSubmitSVG } from '../../Assets/DialogIcons/ConfirmSubmit.svg';
+import ConfirmSubmitSVG from '../../Assets/DialogIcons/ConfirmSubmit.svg';
 import { DocumentEnum } from '../../Definitions/Enums/document.enum';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
 import { mapBase64ToFields } from '../../Utils/mapBase64ToFields';
@@ -43,8 +43,8 @@ import validator from 'validator';
 
 type SizeType = Parameters<typeof Form>[0]['size'];
 
-const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-  ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+  ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
   : 5000000;
 
 export const PROJECT_GEOGRAPHY: { [key: string]: string } = {
