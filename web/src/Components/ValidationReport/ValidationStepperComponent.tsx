@@ -340,7 +340,7 @@ const StepperComponent = (props: any) => {
         try {
           res = await post(API_PATHS.QUERY_DOCUMENT, {
             refId: state?.documentRefId,
-            DocumentType: DocumentEnum.VALIDATION,
+            documentType: DocumentEnum.VALIDATION,
           });
 
           if (res?.statusText === "SUCCESS") {
