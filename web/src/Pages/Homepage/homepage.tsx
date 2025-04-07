@@ -1,34 +1,39 @@
-import { Button, Col, Collapse, CollapseProps, Row } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Trans, useTranslation } from 'react-i18next';
-import i18next from 'i18next';
-import sliderLogo from '../../Assets/Images/logo-slider.png';
-import undpLogo from '../../Assets/Images/undp1.webp';
-import EBRD from '../../Assets/Images/EBRD.webp';
-import EBRDff from '../../Assets/Images/EBRD.png';
-import UNFCCC from '../../Assets/Images/UNFCCC.webp';
-import UNFCCCff from '../../Assets/Images/UNFCCC.png';
-import IETA from '../../Assets/Images/IETA.webp';
-import IETAff from '../../Assets/Images/IETA.png';
-import ESA from '../../Assets/Images/ESA.webp';
-import ESAff from '../../Assets/Images/ESA.png';
-import WBANK from '../../Assets/Images/WBANK.webp';
-import WBANKff from '../../Assets/Images/WBANK.png';
-import forestfall from '../../Assets/Images/forestnew.png';
-import resources from '../../Assets/Images/resources.webp';
-import resourcesfall from '../../Assets/Images/resources.png';
-import LayoutFooter from '../../Components/Footer/layout.footer';
+import { Button, Col, Collapse, CollapseProps, Row } from "antd";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Trans, useTranslation } from "react-i18next";
+import i18next from "i18next";
+import sliderLogo from "../../Assets/Images/logo-slider.png";
+import undpLogo from "../../Assets/Images/undp1.webp";
+import EBRD from "../../Assets/Images/EBRD.webp";
+import EBRDff from "../../Assets/Images/EBRD.png";
+import UNFCCC from "../../Assets/Images/UNFCCC.webp";
+import UNFCCCff from "../../Assets/Images/UNFCCC.png";
+import IETA from "../../Assets/Images/IETA.webp";
+import IETAff from "../../Assets/Images/IETA.png";
+import ESA from "../../Assets/Images/ESA.webp";
+import ESAff from "../../Assets/Images/ESA.png";
+import WBANK from "../../Assets/Images/WBANK.webp";
+import WBANKff from "../../Assets/Images/WBANK.png";
+import forestfall from "../../Assets/Images/forestnew.png";
+import resources from "../../Assets/Images/resources.webp";
+import resourcesfall from "../../Assets/Images/resources.png";
+import LayoutFooter from "../../Components/Footer/layout.footer";
 // import { ImgWithFallback } from '@undp/carbon-library';
-import './homepage.scss';
-import { GlobeAmericas, ShieldCheck, CartCheck, Briefcase } from 'react-bootstrap-icons';
-import { ImgWithFallback } from '../../Components/ImgwithFallback/imgWithFallback';
-import CollapsePanel from 'antd/lib/collapse/CollapsePanel';
-import { ROUTES } from '../../Config/uiRoutingConfig';
+import "./homepage.scss";
+import {
+  GlobeAmericas,
+  ShieldCheck,
+  CartCheck,
+  Briefcase,
+} from "react-bootstrap-icons";
+import { ImgWithFallback } from "../../Components/ImgwithFallback/imgWithFallback";
+import CollapsePanel from "antd/lib/collapse/CollapsePanel";
+import { ROUTES } from "../../Config/uiRoutingConfig";
 
 const Homepage = () => {
-  const { i18n, t } = useTranslation(['common', 'homepage']);
-  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+  const { i18n, t } = useTranslation(["common", "homepage"]);
+  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
   const navigate = useNavigate();
   const [Visible, setVisible] = useState(true);
 
@@ -45,20 +50,20 @@ const Homepage = () => {
   };
 
   const handleClickScroll = () => {
-    const element = document.getElementById('scrollhome');
+    const element = document.getElementById("scrollhome");
     if (element) {
       // 👇 Will scroll smoothly to the top of the next section
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   useEffect(() => {
-    if (localStorage.getItem('i18nextLng')!.length > 2) {
-      i18next.changeLanguage('en');
+    if (localStorage.getItem("i18nextLng")!.length > 2) {
+      i18next.changeLanguage("en");
     }
-    window.addEventListener('scroll', controlDownArrow);
+    window.addEventListener("scroll", controlDownArrow);
     return () => {
-      window.removeEventListener('scroll', controlDownArrow);
+      window.removeEventListener("scroll", controlDownArrow);
     };
   }, []);
   return (
@@ -73,12 +78,14 @@ const Homepage = () => {
                     <img src={sliderLogo} alt="slider-logo" />
                   </div>
                   <div>
-                    <div style={{ display: 'flex' }}>
-                      <div className="title">{'CARBON MARKET DIGITAL PLATFORM'}</div>
+                    <div style={{ display: "flex" }}>
+                      <div className="title">
+                        {"CARBON MARKET DIGITAL PLATFORM"}
+                      </div>
                       {/* <div className="title-sub">{'REGISTRY'}</div> */}
                     </div>
                     <div className="country-name">
-                      {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}
+                      {import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX"}
                     </div>
                   </div>
                 </div>
@@ -86,7 +93,10 @@ const Homepage = () => {
               <Col md={6} lg={3} xs={7} flex="auto">
                 <div className="homepage-button-container">
                   <div className="button">
-                    <Button type="primary" onClick={() => navigate(ROUTES.LOGIN)}>
+                    <Button
+                      type="primary"
+                      onClick={() => navigate(ROUTES.LOGIN)}
+                    >
                       SIGN IN
                     </Button>
                   </div>
@@ -103,12 +113,12 @@ const Homepage = () => {
                     }}
                   />
                 </span>
-                <div className="subhome">{t('homepage:subHeading')}</div>
+                <div className="subhome">{t("homepage:subHeading")}</div>
               </div>
             </Row>
             <Row>
               {Visible && (
-                <nav className={'arrows'}>
+                <nav className={"arrows"}>
                   <svg onClick={handleClickScroll}>
                     <path className="a1" d="M0 0 L30 32 L60 0"></path>
                     <path className="a2" d="M0 20 L30 52 L60 20"></path>

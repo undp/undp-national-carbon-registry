@@ -1,4 +1,4 @@
-@import '../../Styles/variables.scss';
+@use '../../Styles/variables.scss';
 
 .info-view {
   .title-icon {
@@ -6,7 +6,7 @@
   }
 
   .title-text {
-    color: $title-text-color;
+    color: variables.$title-text-color;
     font-weight: 600;
   }
 
@@ -15,14 +15,14 @@
   }
 
   .field-key {
-    color: $body-text-color;
+    color: variables.$body-text-color;
     font-weight: 500;
     text-overflow: ellipsis;
     overflow: hidden;
   }
 
   .field-value {
-    color: $body-text-color;
+    color: variables.$body-text-color;
     text-overflow: ellipsis;
     overflow: hidden;
 
@@ -111,12 +111,6 @@
     color: #1abc9c;
     background: #edfaf7;
     border-color: #1abc9c;
-  }
-
-  .ant-tag-magenta {
-    color: #C0392B;
-    background: #faf0ee;
-    border-color: #C0392B;
   }
 
   .ant-tag-geekblue {

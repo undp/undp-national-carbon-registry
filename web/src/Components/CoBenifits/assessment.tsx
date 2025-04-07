@@ -38,8 +38,8 @@ const Assessment = (props: any) => {
   const { get } = useConnection();
   const [isCountryListLoading, setIsCountryListLoading] = useState(false);
 
-  const maximumFileSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumFileSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   const getCountryList = async () => {

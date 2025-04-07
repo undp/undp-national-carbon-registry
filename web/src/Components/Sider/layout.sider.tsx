@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { Menu, Layout, MenuProps } from 'antd';
-import sliderLogo from '../../Assets/Images/logo-slider.png';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import './layout.sider.scss';
-import * as Icon from 'react-bootstrap-icons';
+import { useEffect, useState } from "react";
+import { Menu, Layout, MenuProps } from "antd";
+import sliderLogo from "../../Assets/Images/logo-slider.png";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import "./layout.sider.scss";
+import * as Icon from "react-bootstrap-icons";
 import {
   AppstoreOutlined,
   DashboardOutlined,
@@ -13,13 +13,13 @@ import {
   UnorderedListOutlined,
   UserOutlined,
   SwapOutlined,
-} from '@ant-design/icons';
-import { useTranslation } from 'react-i18next';
-import { LayoutSiderProps } from '../../Definitions/Definitions/layout.sider.definitions';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
-import { Role } from '../../Definitions/Enums/role.enum';
-import { ROUTES } from '../../Config/uiRoutingConfig';
+} from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
+import { LayoutSiderProps } from "../../Definitions/Definitions/layout.sider.definitions";
+import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
+import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
+import { Role } from "../../Definitions/Enums/role.enum";
+import { ROUTES } from "../../Config/uiRoutingConfig";
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -52,14 +52,22 @@ const LayoutSider = (props: LayoutSiderProps) => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [selectKey, setSelectKey] = useState<any>(selectedKey);
-  const { i18n, t } = useTranslation(['nav']);
+  const { i18n, t } = useTranslation(["nav"]);
 
-  const currentPage = location.pathname.replace(/^\/|\/$/g, '');
+  const currentPage = location.pathname.replace(/^\/|\/$/g, "");
 
   const items: MenuItem[] = [
-    getItem(t('nav:dashboard'), 'dashboard', <DashboardOutlined />),
-    getItem(t('nav:slcfprogrammes'), 'programmeManagement/viewAllProjects', <AppstoreOutlined />),
-    getItem(t('nav:projectList'), 'programmeManagement/viewAll', <UnorderedListOutlined />),
+    getItem(t("nav:dashboard"), "dashboard", <DashboardOutlined />),
+    getItem(
+      t("nav:slcfprogrammes"),
+      "programmeManagement/viewAllProjects",
+      <AppstoreOutlined />
+    ),
+    getItem(
+      t("nav:projectList"),
+      "programmeManagement/viewAll",
+      <UnorderedListOutlined />
+    ),
     // getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
     // getItem(t('nav:cdmTransitionProjects'), 'cdmManagement/viewAll', <UnorderedListOutlined />),
     // getItem(t('nav:verra'), 'verraManagement/viewAll', <AppstoreOutlined />),
@@ -67,8 +75,8 @@ const LayoutSider = (props: LayoutSiderProps) => {
     // getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),
     // getItem(t('nav:investments'), 'investmentManagement/viewAll', <Icon.Cash />),
     // getItem(t('nav:transfers'), 'creditTransfers/viewAll', <Icon.ArrowLeftRight />),
-    getItem(t('nav:companies'), 'companyManagement/viewAll', <ShopOutlined />),
-    getItem(t('nav:users'), 'userManagement/viewAll', <UserOutlined />),
+    getItem(t("nav:companies"), "companyManagement/viewAll", <ShopOutlined />),
+    getItem(t("nav:users"), "userManagement/viewAll", <UserOutlined />),
   ];
 
   if (
@@ -78,10 +86,14 @@ const LayoutSider = (props: LayoutSiderProps) => {
     items.splice(
       3,
       0,
-      getItem(t('nav:credits'), 'credits', <AppstoreOutlined />, [
-        getItem(t('nav:creditBalance'), 'credits/balance', <Icon.Wallet2 />),
-        getItem(t('nav:transfers'), 'credits/transfers', <SwapOutlined />),
-        getItem(t('nav:retirements'), 'credits/retirements', <Icon.ClockHistory />),
+      getItem(t("nav:credits"), "credits", <AppstoreOutlined />, [
+        getItem(t("nav:creditBalance"), "credits/balance", <Icon.Wallet2 />),
+        getItem(t("nav:transfers"), "credits/transfers", <SwapOutlined />),
+        getItem(
+          t("nav:retirements"),
+          "credits/retirements",
+          <Icon.ClockHistory />
+        ),
       ])
     );
   }
@@ -117,14 +129,14 @@ const LayoutSider = (props: LayoutSiderProps) => {
   //   items.push(getItem(t('nav:settings'), 'settings', <SettingOutlined />));
   // }
 
-  const onClick: MenuProps['onClick'] = (e: { key: string }) => {
-    navigate('/' + e.key);
+  const onClick: MenuProps["onClick"] = (e: { key: string }) => {
+    navigate("/" + e.key);
   };
   return (
     <Sider
       width={240}
       className="layout-sider-container"
-      breakpoint={collapsed ? undefined : 'lg'}
+      breakpoint={collapsed ? undefined : "lg"}
       collapsed={collapsed}
     >
       <div className="layout-sider-div-container">
@@ -138,10 +150,14 @@ const LayoutSider = (props: LayoutSiderProps) => {
           {!collapsed && (
             <div>
               <div>
-                <div className="title">{collapsed ? '' : 'CARBON MARKET'}</div>
-                <div className="title-sub">{collapsed ? '' : 'DIGITAL PLATFORM'}</div>
+                <div className="title">{collapsed ? "" : "CARBON MARKET"}</div>
+                <div className="title-sub">
+                  {collapsed ? "" : "DIGITAL PLATFORM"}
+                </div>
               </div>
-              <div className="country-name">{process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}</div>
+              <div className="country-name">
+                {import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX"}
+              </div>
             </div>
           )}
           {collapsed && (
@@ -149,8 +165,8 @@ const LayoutSider = (props: LayoutSiderProps) => {
               <img
                 alt="country flag"
                 src={
-                  process.env.REACT_APP_COUNTRY_FLAG_URL ||
-                  'https://carbon-common-dev.s3.amazonaws.com/flag.png'
+                  import.meta.env.REACT_APP_COUNTRY_FLAG_URL ||
+                  "https://carbon-common-dev.s3.amazonaws.com/flag.png"
                 }
               />
             </div>
@@ -160,14 +176,22 @@ const LayoutSider = (props: LayoutSiderProps) => {
           <Menu
             theme="light"
             selectedKeys={[
-              selectedKey ? selectedKey : !selectedKey && selectKey ? selectKey : 'dashboard',
+              selectedKey
+                ? selectedKey
+                : !selectedKey && selectKey
+                ? selectKey
+                : "dashboard",
             ]}
             mode="inline"
             onClick={onClick}
           >
             {items.map((item) =>
               item?.children ? (
-                <Menu.SubMenu key={item.key} icon={item.icon} title={item.label}>
+                <Menu.SubMenu
+                  key={item.key}
+                  icon={item.icon}
+                  title={item.label}
+                >
                   {item.children.map((child) => (
                     <Menu.Item key={child?.key} icon={child?.icon}>
                       <Link to={`/${child?.key}`}>{child?.label}</Link>
@@ -179,21 +203,21 @@ const LayoutSider = (props: LayoutSiderProps) => {
                   key={item?.key}
                   icon={item?.icon}
                   className={
-                    item?.key === 'ndcManagement/viewAll' ||
-                    item?.key === 'investmentManagement/viewAll' ||
-                    item?.key === 'retirementManagement/viewAll' ||
-                    item?.key === 'programmeManagement/viewAll' ||
-                    item?.key === 'creditTransfers/viewAll'
-                      ? 'custom-padding-left'
-                      : item?.key === 'cdmManagement/viewAll'
-                      ? 'custom-padding-left wrap-content-overflow'
-                      : ''
+                    item?.key === "ndcManagement/viewAll" ||
+                    item?.key === "investmentManagement/viewAll" ||
+                    item?.key === "retirementManagement/viewAll" ||
+                    item?.key === "programmeManagement/viewAll" ||
+                    item?.key === "creditTransfers/viewAll"
+                      ? "custom-padding-left"
+                      : item?.key === "cdmManagement/viewAll"
+                      ? "custom-padding-left wrap-content-overflow"
+                      : ""
                   }
                   disabled={
                     // item?.key === 'programmeManagement/viewAll' ||
-                    item?.key === 'cdmManagement/viewAll' ||
-                    item?.key === 'goldStandardManagement/viewAll' ||
-                    item?.key === 'verraManagement/viewAll'
+                    item?.key === "cdmManagement/viewAll" ||
+                    item?.key === "goldStandardManagement/viewAll" ||
+                    item?.key === "verraManagement/viewAll"
                   }
                 >
                   <Link to={`/${item?.key}`}>{item?.label}</Link>

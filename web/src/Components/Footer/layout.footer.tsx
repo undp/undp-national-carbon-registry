@@ -6,7 +6,7 @@ import { CcCircle } from 'react-bootstrap-icons';
 
 const LayoutFooter = () => {
   const { i18n, t } = useTranslation(['common', 'homepage']);
-  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || 'CountryX';
 
   return (
     <div className="homepage-footer-container">
@@ -35,7 +35,7 @@ const LayoutFooter = () => {
       <Row>
         <Col md={10} lg={10}>
           <div className="footertext-bottom">
-            {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}
+            {import.meta.env.REACT_APP_COUNTRY_NAME || 'CountryX'}
             <CcCircle className="cc" color="#FFFF" size="10px" />
           </div>
         </Col>

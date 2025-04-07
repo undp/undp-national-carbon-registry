@@ -250,18 +250,14 @@ const NetEmissionReduction = (props: any) => {
                                   form.getFieldValue('estimatedNetEmissionReductions')[name]
                                     .startDate
                                 ).startOf('month');
-                                const selectedDate = moment(value).startOf('month');
+                                const selectedDate = moment(value).endOf('month');
+                                const duration = moment.duration(selectedDate.diff(startDate));
 
-                                if (selectedDate.year() !== startDate.year()) {
-                                  throw new Error('End date also should be in the same year!');
+                                const isOneYear = Math.round(duration.asMonths()) === 12;
+
+                                if (!isOneYear) {
+                                  throw new Error('Duration should be a year');
                                 }
-                                // const duration = moment.duration(selectedDate.diff(startDate));
-
-                                // const isOneYear = Math.round(duration.asMonths()) === 12;
-
-                                // if (!isOneYear) {
-                                //   throw new Error('Duration should be a year');
-                                // }
                               },
                             },
                           ]}

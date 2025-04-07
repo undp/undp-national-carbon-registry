@@ -15,12 +15,12 @@ import {
   Tooltip,
   Upload,
   message,
-} from 'antd';
-import React, { useEffect, useState } from 'react';
-import { UploadOutlined } from '@ant-design/icons';
-import './ndcActionDetails.scss';
-import '../../../Styles/common.table.scss';
-import { RcFile } from 'rc-upload/lib/interface';
+} from "antd";
+import React, { useEffect, useState } from "react";
+import { UploadOutlined } from "@ant-design/icons";
+import "./ndcActionDetails.scss";
+import "../../../Styles/common.table.scss";
+import { RcFile } from "rc-upload/lib/interface";
 import {
   AgricultureCreationRequest,
   SolarCreationRequest,
@@ -29,7 +29,7 @@ import {
   StovesHousesNamibiaCreationRequest,
   SolarWaterPumpingOffGridCreationRequest,
   SolarWaterPumpingOnGridCreationRequest,
-} from '@undp/carbon-credit-calculator';
+} from "@undp/carbon-credit-calculator";
 // import {
 //   MitigationTypes,
 //   NdcActionTypes,
@@ -46,8 +46,11 @@ import {
 //   MitigationSubTypes,
 //   methodologyOptions,
 // } from '../Definitions';
-import { InfoCircle } from 'react-bootstrap-icons';
-import { ndcActionTypeList, NdcActionTypes } from '../../../Definitions/Enums/ndcActionTypes.enum';
+import { InfoCircle } from "react-bootstrap-icons";
+import {
+  ndcActionTypeList,
+  NdcActionTypes,
+} from "../../../Definitions/Enums/ndcActionTypes.enum";
 import {
   methodologyOptions,
   MitigationSubTypes,
@@ -55,14 +58,17 @@ import {
   mitigationTypeList,
   MitigationTypes,
   sectorMitigationTypesListMapped,
-} from '../../../Definitions/Enums/mitigation.types.enum';
-import { addCommSepRound, getBase64 } from '../../../Definitions/Definitions/programme.definitions';
-import { Sector } from '../../../Definitions/Enums/sector.enum';
-import { energyGenerationUnitList } from '../../../Definitions/Enums/energyGenerationUnits.enum';
-import { consumerGroupList } from '../../../Definitions/Enums/consumerGroups.enum';
-import { landAreaUnitList } from '../../../Definitions/Enums/landAreaUnits.enum';
-import { enablementTypesAndValues } from '../../../Definitions/Enums/enablementTypes.enum';
-import { isValidateFileType } from '../../../Utils/DocumentValidator';
+} from "../../../Definitions/Enums/mitigation.types.enum";
+import {
+  addCommSepRound,
+  getBase64,
+} from "../../../Definitions/Definitions/programme.definitions";
+import { Sector } from "../../../Definitions/Enums/sector.enum";
+import { energyGenerationUnitList } from "../../../Definitions/Enums/energyGenerationUnits.enum";
+import { consumerGroupList } from "../../../Definitions/Enums/consumerGroups.enum";
+import { landAreaUnitList } from "../../../Definitions/Enums/landAreaUnits.enum";
+import { enablementTypesAndValues } from "../../../Definitions/Enums/enablementTypes.enum";
+import { isValidateFileType } from "../../../Utils/DocumentValidator";
 // import { enablementTypesAndValues } from '../../../Definitions/Enums/enablementTypes.enum';
 // import { isValidateFileType } from '../../../Utils/DocumentValidator';
 
@@ -84,28 +90,34 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
     programmeDetails,
     onClickedBackBtn,
   } = props;
-  translator.setDefaultNamespace('ndcAction');
+  translator.setDefaultNamespace("ndcAction");
   const t = translator.t;
   const [ndcActionType, setNdcActionType] = useState();
   const [methodology, setMethodology] = useState();
   const [mitigationType, setmitigationType] = useState();
-  const [mitigationSubType, setMitigationSubType] = useState('');
-  const [sector, setSector] = useState<any>('');
+  const [mitigationSubType, setMitigationSubType] = useState("");
+  const [sector, setSector] = useState<any>("");
   const [ndcActionTypeListFiltered, setNdcActionTypeListFiltered] =
     useState<any[]>(ndcActionTypeList);
-  const [checkedOptionsGhgReduced, setCheckedOptionsGhgReduced] = useState<any[]>([]);
-  const [checkedOptionsGhgAvoided, setCheckedOptionsGhgAvoided] = useState<any[]>([]);
-  const [inputNumberValueGhgAvoidedGas, setInputNumberValueGhgAvoidedGas] = useState<any>();
-  const [inputNumberValueGhgReducedGas, setInputNumberValueGhgReducedGas] = useState<any>();
+  const [checkedOptionsGhgReduced, setCheckedOptionsGhgReduced] = useState<
+    any[]
+  >([]);
+  const [checkedOptionsGhgAvoided, setCheckedOptionsGhgAvoided] = useState<
+    any[]
+  >([]);
+  const [inputNumberValueGhgAvoidedGas, setInputNumberValueGhgAvoidedGas] =
+    useState<any>();
+  const [inputNumberValueGhgReducedGas, setInputNumberValueGhgReducedGas] =
+    useState<any>();
   const [includedInNAP, setIncludedInNAP] = useState<any>();
   const [form] = Form.useForm();
 
-  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   //changing value to N2O. Previously it was N20(N-Two-Zero)
-  const ghgEmissionsGas = ['CO2', 'CH4', 'N2O', 'HFCs', 'PFCs', 'SF6'];
+  const ghgEmissionsGas = ["CO2", "CH4", "N2O", "HFCs", "PFCs", "SF6"];
 
   useEffect(() => {
     if (programmeDetails) {
@@ -130,27 +142,36 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
         setIncludedInNAP(ndcActionDetails?.includedInNAP);
       }
       if (ndcActionDetails?.inputNumberValueGhgAvoidedGas) {
-        setInputNumberValueGhgAvoidedGas(ndcActionDetails?.inputNumberValueGhgAvoidedGas);
+        setInputNumberValueGhgAvoidedGas(
+          ndcActionDetails?.inputNumberValueGhgAvoidedGas
+        );
       }
       if (ndcActionDetails?.inputNumberValueGhgReducedGas) {
-        setInputNumberValueGhgReducedGas(ndcActionDetails?.inputNumberValueGhgReducedGas);
+        setInputNumberValueGhgReducedGas(
+          ndcActionDetails?.inputNumberValueGhgReducedGas
+        );
       }
       form.setFieldsValue({
         ndcActionType: ndcActionDetails?.action,
         mitigationType: ndcActionDetails?.typeOfMitigation,
         mitigationSubType: ndcActionDetails?.subTypeOfMitigation,
         energyGeneration: ndcActionDetails?.solarProperties?.energyGeneration,
-        energyGenerationUnit: ndcActionDetails?.solarProperties?.energyGenerationUnit,
+        energyGenerationUnit:
+          ndcActionDetails?.solarProperties?.energyGenerationUnit,
         consumerGroup: ndcActionDetails?.solarProperties?.consumerGroup,
         eligibleLandArea: ndcActionDetails?.agricultureProperties?.landArea,
         landAreaUnit: ndcActionDetails?.agricultureProperties?.landAreaUnit,
-        implementingAgency: ndcActionDetails?.adaptationProperties?.implementingAgency,
-        nationalPlanObjectives: ndcActionDetails?.adaptationProperties?.nationalPlanObjectives,
-        nationalPlanCoverage: ndcActionDetails?.adaptationProperties?.nationalPlanCoverage,
+        implementingAgency:
+          ndcActionDetails?.adaptationProperties?.implementingAgency,
+        nationalPlanObjectives:
+          ndcActionDetails?.adaptationProperties?.nationalPlanObjectives,
+        nationalPlanCoverage:
+          ndcActionDetails?.adaptationProperties?.nationalPlanCoverage,
         EnablementTitle: ndcActionDetails?.enablementProperties?.title,
         EnablementType: ndcActionDetails?.enablementProperties?.type,
         EnablementReport: ndcActionDetails?.enablementReportData,
-        userEstimatedCredits: ndcActionDetails?.ndcFinancing?.userEstimatedCredits,
+        userEstimatedCredits:
+          ndcActionDetails?.ndcFinancing?.userEstimatedCredits,
         methodologyEstimatedCredits: 0,
       });
     } else {
@@ -165,55 +186,55 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
   }, []);
 
   const implementingAgencyList = [
-    'Ministry of Agriculture, Water and Forestry (MAWF)',
-    'Ministry of Defence (MoD)',
-    'Ministry of Education, Arts and Culture (MoE)',
-    'Ministry of Environment, Forestry and Tourism (MEFT)',
-    'Ministry of Finance (MoF)',
-    'Ministry of Fisheries and Marine Resources (MFMR)',
-    'Ministry of Health and Social Services (MHSS)',
-    'Ministry of Higher Education, Training and Innovation (MHETI)',
-    'Ministry of Home Affairs, Immigration, Safety and Security (MHAISS)',
-    'Ministry of Industrialisation and Trade (MIT)',
-    'Ministry of International Relations and Cooperation (MIRCo)',
-    'Ministry of Information and Communication Technology (MICT)',
-    'Ministry of Justice (MoJ)',
-    'Ministry of Labour, Industrial Relations and Employment Creation (MOL)',
-    'Ministry of Mines and Energy (MME)',
-    'Ministry of Public Enterprises (MPE)',
-    'Ministry of Sport, Youth and National Service (MSYNS)',
-    'Ministry of Works and Transport (MoW)',
-    'Ministry of Urban and Rural Development (MURD)',
+    "Ministry of Agriculture, Water and Forestry (MAWF)",
+    "Ministry of Defence (MoD)",
+    "Ministry of Education, Arts and Culture (MoE)",
+    "Ministry of Environment, Forestry and Tourism (MEFT)",
+    "Ministry of Finance (MoF)",
+    "Ministry of Fisheries and Marine Resources (MFMR)",
+    "Ministry of Health and Social Services (MHSS)",
+    "Ministry of Higher Education, Training and Innovation (MHETI)",
+    "Ministry of Home Affairs, Immigration, Safety and Security (MHAISS)",
+    "Ministry of Industrialisation and Trade (MIT)",
+    "Ministry of International Relations and Cooperation (MIRCo)",
+    "Ministry of Information and Communication Technology (MICT)",
+    "Ministry of Justice (MoJ)",
+    "Ministry of Labour, Industrial Relations and Employment Creation (MOL)",
+    "Ministry of Mines and Energy (MME)",
+    "Ministry of Public Enterprises (MPE)",
+    "Ministry of Sport, Youth and National Service (MSYNS)",
+    "Ministry of Works and Transport (MoW)",
+    "Ministry of Urban and Rural Development (MURD)",
   ];
 
   const nationalPlanObjectives = [
-    ' Enhance value addition in key growth opportunities',
-    'Strengthen the private sector to create jobs',
-    'Consolidate and increase the stock and quality of productive infrastructure',
-    'Enhance the productivity and social wellbeing of the population',
-    'Strengthen the role of the state in guiding and facilitating development',
+    " Enhance value addition in key growth opportunities",
+    "Strengthen the private sector to create jobs",
+    "Consolidate and increase the stock and quality of productive infrastructure",
+    "Enhance the productivity and social wellbeing of the population",
+    "Strengthen the role of the state in guiding and facilitating development",
   ];
 
   const nationalPlanCoverageList = [
-    'Agro-Industrialization',
-    'Mineral-based Industrialization',
-    'Petroleum Development',
-    'Tourism Development',
-    'Water, Climate Change and ENR Management',
-    'Private Sector Development',
-    'Manufacturing',
-    'Digital Transformation ',
-    'Integrated Transport Infrastructure and Services',
-    'Sustainable Energy Development',
-    'Sustainable Urban and Housing Development',
-    'Human Capital Development',
-    'Community Mobilization and Mindset Change',
-    'Innovation, Technology Development and Transfer',
-    'Regional Development',
-    'Governance and Security',
-    'Public Sector Transformation',
-    'Development Plan Implementation',
-    'Climate Hazard ',
+    "Agro-Industrialization",
+    "Mineral-based Industrialization",
+    "Petroleum Development",
+    "Tourism Development",
+    "Water, Climate Change and ENR Management",
+    "Private Sector Development",
+    "Manufacturing",
+    "Digital Transformation ",
+    "Integrated Transport Infrastructure and Services",
+    "Sustainable Energy Development",
+    "Sustainable Urban and Housing Development",
+    "Human Capital Development",
+    "Community Mobilization and Mindset Change",
+    "Innovation, Technology Development and Transfer",
+    "Regional Development",
+    "Governance and Security",
+    "Public Sector Transformation",
+    "Development Plan Implementation",
+    "Climate Hazard ",
   ];
 
   const calculateMethodologyEstimatedCredits = () => {
@@ -229,34 +250,47 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
             creditRequest = new AgricultureCreationRequest();
             creditRequest.landArea = formValues.eligibleLandArea;
             creditRequest.landAreaUnit = formValues.landAreaUnit;
-            creditRequest.duration = programmeDetails.endTime - programmeDetails.startTime;
-            creditRequest.durationUnit = 's';
-          } else if (formValues.mitigationSubType === MitigationSubTypes.SOIL_ENRICHMENT_BIOCHAR) {
+            creditRequest.duration =
+              programmeDetails.endTime - programmeDetails.startTime;
+            creditRequest.durationUnit = "s";
+          } else if (
+            formValues.mitigationSubType ===
+            MitigationSubTypes.SOIL_ENRICHMENT_BIOCHAR
+          ) {
             creditRequest = new SoilEnrichmentCreationRequest();
             creditRequest.weight = formValues.tonnesOnDryBasis;
           }
         } else if (formValues.mitigationType === MitigationTypes.SOLAR) {
-          if (formValues.mitigationSubType === MitigationSubTypes.SOLAR_PHOTOVOLTAICS_PV) {
+          if (
+            formValues.mitigationSubType ===
+            MitigationSubTypes.SOLAR_PHOTOVOLTAICS_PV
+          ) {
             creditRequest = new SolarCreationRequest();
             creditRequest.buildingType = formValues.consumerGroup;
             creditRequest.energyGeneration = formValues.energyGeneration;
-            creditRequest.energyGenerationUnit = formValues.energyGenerationUnit;
+            creditRequest.energyGenerationUnit =
+              formValues.energyGenerationUnit;
           } else if (
-            formValues.mitigationSubType === MitigationSubTypes.SOLAR_WATER_PUMPING_OFF_GRID
+            formValues.mitigationSubType ===
+            MitigationSubTypes.SOLAR_WATER_PUMPING_OFF_GRID
           ) {
             creditRequest = new SolarWaterPumpingOffGridCreationRequest();
             creditRequest.energyGeneration = formValues.energyGeneration;
-            creditRequest.energyGenerationUnit = formValues.energyGenerationUnit;
+            creditRequest.energyGenerationUnit =
+              formValues.energyGenerationUnit;
           } else if (
-            formValues.mitigationSubType === MitigationSubTypes.SOLAR_WATER_PUMPING_ON_GRID
+            formValues.mitigationSubType ===
+            MitigationSubTypes.SOLAR_WATER_PUMPING_ON_GRID
           ) {
             creditRequest = new SolarWaterPumpingOnGridCreationRequest();
             creditRequest.energyGeneration = formValues.energyGeneration;
-            creditRequest.energyGenerationUnit = formValues.energyGenerationUnit;
+            creditRequest.energyGenerationUnit =
+              formValues.energyGenerationUnit;
           }
         } else if (
           formValues.mitigationType === MitigationTypes.EE_HOUSEHOLDS &&
-          formValues.mitigationSubType === MitigationSubTypes.STOVES_HOUSES_IN_NAMIBIA
+          formValues.mitigationSubType ===
+            MitigationSubTypes.STOVES_HOUSES_IN_NAMIBIA
         ) {
           creditRequest = new StovesHousesNamibiaCreationRequest();
           creditRequest.numberOfDays = formValues.numberOfDays;
@@ -288,15 +322,15 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
   const handleMitigationTypeChange = (selectedMitigationType: any) => {
     setmitigationType(selectedMitigationType);
     form.setFieldsValue({
-      mitigationSubType: '',
-      tonnesOnDryBasis: '',
-      numberOfPeople: '',
-      numberOfDays: '',
-      landAreaUnit: '',
-      eligibleLandArea: '',
-      consumerGroup: '',
-      energyGenerationUnit: '',
-      energyGeneration: '',
+      mitigationSubType: "",
+      tonnesOnDryBasis: "",
+      numberOfPeople: "",
+      numberOfDays: "",
+      landAreaUnit: "",
+      eligibleLandArea: "",
+      consumerGroup: "",
+      energyGenerationUnit: "",
+      energyGeneration: "",
       methodologyEstimatedCredits: 0,
     });
     calculateMethodologyEstimatedCredits();
@@ -305,14 +339,14 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
   const handleMitigationSubTypeChange = (selectedSubMitigationType: any) => {
     setMitigationSubType(selectedSubMitigationType);
     form.setFieldsValue({
-      tonnesOnDryBasis: '',
-      numberOfPeople: '',
-      numberOfDays: '',
-      landAreaUnit: '',
-      eligibleLandArea: '',
-      consumerGroup: '',
-      energyGenerationUnit: '',
-      energyGeneration: '',
+      tonnesOnDryBasis: "",
+      numberOfPeople: "",
+      numberOfDays: "",
+      landAreaUnit: "",
+      eligibleLandArea: "",
+      consumerGroup: "",
+      energyGenerationUnit: "",
+      energyGeneration: "",
       methodologyEstimatedCredits: 0,
     });
   };
@@ -330,24 +364,30 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
     ) {
       ndcActionDetailObj.methodology = ndcActionFormvalues.methodology;
       ndcActionDetailObj.typeOfMitigation = ndcActionFormvalues.mitigationType;
-      ndcActionDetailObj.subTypeOfMitigation = ndcActionFormvalues.mitigationSubType;
+      ndcActionDetailObj.subTypeOfMitigation =
+        ndcActionFormvalues.mitigationSubType;
       if (
         ndcActionFormvalues.mitigationType === MitigationTypes.AGRICULTURE &&
         ndcActionFormvalues.mitigationSubType === MitigationSubTypes.RICE_CROPS
       ) {
         ndcActionDetailObj.agricultureProperties = {
-          landArea: ndcActionFormvalues.eligibleLandArea ? ndcActionFormvalues.eligibleLandArea : 0,
+          landArea: ndcActionFormvalues.eligibleLandArea
+            ? ndcActionFormvalues.eligibleLandArea
+            : 0,
           landAreaUnit: ndcActionFormvalues.landAreaUnit,
         };
         ndcActionDetailObj.creditCalculationProperties = {
           typeOfMitigation: ndcActionFormvalues.mitigationType,
           subTypeOfMitigation: ndcActionFormvalues.mitigationSubType,
-          landArea: ndcActionFormvalues.eligibleLandArea ? ndcActionFormvalues.eligibleLandArea : 0,
+          landArea: ndcActionFormvalues.eligibleLandArea
+            ? ndcActionFormvalues.eligibleLandArea
+            : 0,
           landAreaUnit: ndcActionFormvalues.landAreaUnit,
         };
       } else if (
         ndcActionFormvalues.mitigationType === MitigationTypes.SOLAR &&
-        ndcActionFormvalues.mitigationSubType === MitigationSubTypes.SOLAR_PHOTOVOLTAICS_PV
+        ndcActionFormvalues.mitigationSubType ===
+          MitigationSubTypes.SOLAR_PHOTOVOLTAICS_PV
       ) {
         ndcActionDetailObj.solarProperties = {
           energyGeneration: ndcActionFormvalues.energyGeneration
@@ -367,7 +407,8 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
         };
       } else if (
         ndcActionFormvalues.mitigationType === MitigationTypes.SOLAR &&
-        ndcActionFormvalues.mitigationSubType === MitigationSubTypes.SOLAR_WATER_PUMPING_OFF_GRID
+        ndcActionFormvalues.mitigationSubType ===
+          MitigationSubTypes.SOLAR_WATER_PUMPING_OFF_GRID
       ) {
         ndcActionDetailObj.creditCalculationProperties = {
           typeOfMitigation: ndcActionFormvalues.mitigationType,
@@ -379,7 +420,8 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
         };
       } else if (
         ndcActionFormvalues.mitigationType === MitigationTypes.SOLAR &&
-        ndcActionFormvalues.mitigationSubType === MitigationSubTypes.SOLAR_WATER_PUMPING_ON_GRID
+        ndcActionFormvalues.mitigationSubType ===
+          MitigationSubTypes.SOLAR_WATER_PUMPING_ON_GRID
       ) {
         ndcActionDetailObj.creditCalculationProperties = {
           typeOfMitigation: ndcActionFormvalues.mitigationType,
@@ -391,7 +433,8 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
         };
       } else if (
         ndcActionFormvalues.mitigationType === MitigationTypes.EE_HOUSEHOLDS &&
-        ndcActionFormvalues.mitigationSubType === MitigationSubTypes.STOVES_HOUSES_IN_NAMIBIA
+        ndcActionFormvalues.mitigationSubType ===
+          MitigationSubTypes.STOVES_HOUSES_IN_NAMIBIA
       ) {
         ndcActionDetailObj.creditCalculationProperties = {
           typeOfMitigation: ndcActionFormvalues.mitigationType,
@@ -401,7 +444,8 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
         };
       } else if (
         ndcActionFormvalues.mitigationType === MitigationTypes.AGRICULTURE &&
-        ndcActionFormvalues.mitigationSubType === MitigationSubTypes.SOIL_ENRICHMENT_BIOCHAR
+        ndcActionFormvalues.mitigationSubType ===
+          MitigationSubTypes.SOIL_ENRICHMENT_BIOCHAR
       ) {
         ndcActionDetailObj.creditCalculationProperties = {
           typeOfMitigation: ndcActionFormvalues.mitigationType,
@@ -410,12 +454,14 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
         };
       }
 
-      if (ndcActionFormvalues.userEstimatedCredits > programmeDetails.creditEst) {
+      if (
+        ndcActionFormvalues.userEstimatedCredits > programmeDetails.creditEst
+      ) {
         message.open({
-          type: 'error',
-          content: t('userEstimatedCreditsInvalid'),
+          type: "error",
+          content: t("userEstimatedCreditsInvalid"),
           duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
         return;
       }
@@ -433,11 +479,19 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
       if (includedInNAP === true || includedInNAP === false) {
         ndcActionDetailObj.adaptationProperties.includedInNAP = includedInNAP;
       }
-      if (inputNumberValueGhgAvoidedGas !== null || inputNumberValueGhgAvoidedGas !== undefined) {
-        ndcActionDetailObj.adaptationProperties.ghgEmissionsAvoided = inputNumberValueGhgAvoidedGas;
+      if (
+        inputNumberValueGhgAvoidedGas !== null ||
+        inputNumberValueGhgAvoidedGas !== undefined
+      ) {
+        ndcActionDetailObj.adaptationProperties.ghgEmissionsAvoided =
+          inputNumberValueGhgAvoidedGas;
       }
-      if (inputNumberValueGhgReducedGas !== null || inputNumberValueGhgReducedGas !== undefined) {
-        ndcActionDetailObj.adaptationProperties.ghgEmissionsReduced = inputNumberValueGhgReducedGas;
+      if (
+        inputNumberValueGhgReducedGas !== null ||
+        inputNumberValueGhgReducedGas !== undefined
+      ) {
+        ndcActionDetailObj.adaptationProperties.ghgEmissionsReduced =
+          inputNumberValueGhgReducedGas;
       }
     }
 
@@ -446,23 +500,33 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
         title: ndcActionFormvalues.EnablementTitle,
       };
 
-      if (ndcActionFormvalues.EnablementType && ndcActionFormvalues.EnablementType.length > 0) {
-        ndcActionDetailObj.enablementProperties.type = ndcActionFormvalues.EnablementType;
+      if (
+        ndcActionFormvalues.EnablementType &&
+        ndcActionFormvalues.EnablementType.length > 0
+      ) {
+        ndcActionDetailObj.enablementProperties.type =
+          ndcActionFormvalues.EnablementType;
       }
-      if (ndcActionFormvalues.EnablementReport && ndcActionFormvalues.EnablementReport.length > 0) {
+      if (
+        ndcActionFormvalues.EnablementReport &&
+        ndcActionFormvalues.EnablementReport.length > 0
+      ) {
         const enablementReport = await getBase64(
           ndcActionFormvalues.EnablementReport[0]?.originFileObj as RcFile
         );
         ndcActionDetailObj.enablementProperties.report = enablementReport;
       }
-      ndcActionDetailObj.enablementReportData = ndcActionFormvalues.EnablementReport;
+      ndcActionDetailObj.enablementReportData =
+        ndcActionFormvalues.EnablementReport;
     }
 
     ndcActionDetailObj.ndcFinancing = {
       userEstimatedCredits: ndcActionFormvalues.userEstimatedCredits
         ? ndcActionFormvalues.userEstimatedCredits
         : 0,
-      systemEstimatedCredits: Number(ndcActionFormvalues.methodologyEstimatedCredits),
+      systemEstimatedCredits: Number(
+        ndcActionFormvalues.methodologyEstimatedCredits
+      ),
     };
     onFormSubmit(ndcActionDetailObj);
   };
@@ -483,9 +547,9 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
   };
 
   const onInCludedNAPChange = (event: any) => {
-    if (event?.target?.value === 'inNAP') {
+    if (event?.target?.value === "inNAP") {
       setIncludedInNAP(true);
-    } else if (event?.target?.value === 'notInNAP') {
+    } else if (event?.target?.value === "notInNAP") {
       setIncludedInNAP(false);
     }
   };
@@ -502,12 +566,14 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
         <Row justify="start" align="middle">
           <Col>
             <Form.Item
-              label={t('ndcAction:ndcAction')}
+              label={t("ndcAction:ndcAction")}
               name="ndcActionType"
               rules={[
                 {
                   required: true,
-                  message: `${t('ndcAction:ndcAction')} ${t('ndcAction:isRequired')}`,
+                  message: `${t("ndcAction:ndcAction")} ${t(
+                    "ndcAction:isRequired"
+                  )}`,
                 },
               ]}
             >
@@ -515,10 +581,10 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                 size="large"
                 onChange={handleNdcActionChange}
                 style={{
-                  width: '249px',
-                  borderRadius: '4px',
+                  width: "249px",
+                  borderRadius: "4px",
                 }}
-                dropdownStyle={{ color: 'red' }}
+                dropdownStyle={{ color: "red" }}
                 options={ndcActionTypeListFiltered}
                 disabled
                 defaultValue={NdcActionTypes.Mitigation.valueOf()}
@@ -529,7 +595,7 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
 
         {ndcActionType === NdcActionTypes.CrossCutting && (
           <Row>
-            <label className="label-heading">{t('ndcAction:mitigation')}</label>
+            <label className="label-heading">{t("ndcAction:mitigation")}</label>
           </Row>
         )}
 
@@ -539,12 +605,14 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
             <Row justify="start" align="middle">
               <Col>
                 <Form.Item
-                  label={t('ndcAction:mitigationType')}
+                  label={t("ndcAction:mitigationType")}
                   name="mitigationType"
                   rules={[
                     {
                       required: true,
-                      message: `${t('ndcAction:mitigationType')} ${t('ndcAction:isRequired')}`,
+                      message: `${t("ndcAction:mitigationType")} ${t(
+                        "ndcAction:isRequired"
+                      )}`,
                     },
                   ]}
                 >
@@ -552,8 +620,8 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                     size="large"
                     onChange={handleMitigationTypeChange}
                     style={{
-                      width: '249px',
-                      borderRadius: '4px',
+                      width: "249px",
+                      borderRadius: "4px",
                     }}
                     options={
                       programmeDetails?.sector === Sector.Health ||
@@ -569,15 +637,15 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                 ndcActionType === NdcActionTypes.CrossCutting) &&
                 mitigationType &&
                 mitigationSubTypesListMapped[mitigationType] && (
-                  <Col style={{ marginLeft: '38px' }}>
+                  <Col style={{ marginLeft: "38px" }}>
                     <Form.Item
-                      label={t('ndcAction:mitigationSubType')}
+                      label={t("ndcAction:mitigationSubType")}
                       name="mitigationSubType"
                       rules={[
                         {
                           required: true,
-                          message: `${t('ndcAction:mitigationSubType')} ${t(
-                            'ndcAction:isRequired'
+                          message: `${t("ndcAction:mitigationSubType")} ${t(
+                            "ndcAction:isRequired"
                           )}`,
                         },
                       ]}
@@ -586,8 +654,8 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                         size="large"
                         onChange={handleMitigationSubTypeChange}
                         style={{
-                          width: '249px',
-                          borderRadius: '4px',
+                          width: "249px",
+                          borderRadius: "4px",
                         }}
                         options={mitigationSubTypesListMapped[mitigationType]}
                         value={mitigationSubType}
@@ -599,12 +667,14 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
             <Row justify="start" align="middle">
               <Col span={20}>
                 <Form.Item
-                  label={t('ndcAction:methodology')}
+                  label={t("ndcAction:methodology")}
                   name="methodology"
                   rules={[
                     {
                       required: true,
-                      message: `${t('ndcAction:methodology')} ${t('ndcAction:isRequired')}`,
+                      message: `${t("ndcAction:methodology")} ${t(
+                        "ndcAction:isRequired"
+                      )}`,
                     },
                   ]}
                 >
@@ -612,7 +682,7 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                     size="large"
                     onChange={handleMethodologyChange}
                     style={{
-                      borderRadius: '4px',
+                      borderRadius: "4px",
                     }}
                     value={methodology}
                   >
@@ -632,13 +702,15 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
           ndcActionType === NdcActionTypes.CrossCutting) &&
           mitigationType === MitigationTypes.SOLAR &&
           (mitigationSubType === MitigationSubTypes.SOLAR_PHOTOVOLTAICS_PV ||
-            mitigationSubType === MitigationSubTypes.SOLAR_WATER_PUMPING_OFF_GRID ||
-            mitigationSubType === MitigationSubTypes.SOLAR_WATER_PUMPING_ON_GRID) && (
+            mitigationSubType ===
+              MitigationSubTypes.SOLAR_WATER_PUMPING_OFF_GRID ||
+            mitigationSubType ===
+              MitigationSubTypes.SOLAR_WATER_PUMPING_ON_GRID) && (
             <>
               <Row justify="start" align="middle">
                 <Col>
                   <Form.Item
-                    label={t('ndcAction:energyGeneration')}
+                    label={t("ndcAction:energyGeneration")}
                     rules={[
                       {
                         required: true,
@@ -647,17 +719,23 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
                             throw new Error(
-                              `${t('ndcAction:energyGeneration')} ${t('ndcAction:isRequired')}`
+                              `${t("ndcAction:energyGeneration")} ${t(
+                                "ndcAction:isRequired"
+                              )}`
                             );
                           }
                           if (value < 0) {
-                            throw new Error(`${t('ndcAction:allowOnlyNumericValueAndDecimal')}`);
+                            throw new Error(
+                              `${t(
+                                "ndcAction:allowOnlyNumericValueAndDecimal"
+                              )}`
+                            );
                           }
                         },
                       },
@@ -675,15 +753,15 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                     />
                   </Form.Item>
                 </Col>
-                <Col style={{ marginLeft: '38px' }}>
+                <Col style={{ marginLeft: "38px" }}>
                   <Form.Item
-                    label={t('ndcAction:energyGenerationUnit')}
+                    label={t("ndcAction:energyGenerationUnit")}
                     name="energyGenerationUnit"
                     rules={[
                       {
                         required: true,
-                        message: `${t('ndcAction:energyGenerationUnit')} ${t(
-                          'ndcAction:isRequired'
+                        message: `${t("ndcAction:energyGenerationUnit")} ${t(
+                          "ndcAction:isRequired"
                         )}`,
                       },
                     ]}
@@ -697,14 +775,17 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                   </Form.Item>
                 </Col>
               </Row>
-              {mitigationSubType === MitigationSubTypes.SOLAR_PHOTOVOLTAICS_PV && (
+              {mitigationSubType ===
+                MitigationSubTypes.SOLAR_PHOTOVOLTAICS_PV && (
                 <Form.Item
-                  label={t('ndcAction:consumerGroup')}
+                  label={t("ndcAction:consumerGroup")}
                   name="consumerGroup"
                   rules={[
                     {
                       required: true,
-                      message: `${t('ndcAction:consumerGroup')} ${t('ndcAction:isRequired')}`,
+                      message: `${t("ndcAction:consumerGroup")} ${t(
+                        "ndcAction:isRequired"
+                      )}`,
                     },
                   ]}
                 >
@@ -726,7 +807,7 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
             <Row justify="start" align="middle">
               <Col>
                 <Form.Item
-                  label={t('ndcAction:eligibleLandArea')}
+                  label={t("ndcAction:eligibleLandArea")}
                   name="eligibleLandArea"
                   rules={[
                     {
@@ -736,17 +817,21 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
                           throw new Error(
-                            `${t('ndcAction:eligibleLandArea')} ${t('ndcAction:isRequired')}`
+                            `${t("ndcAction:eligibleLandArea")} ${t(
+                              "ndcAction:isRequired"
+                            )}`
                           );
                         }
                         if (value < 0) {
-                          throw new Error(`${t('ndcAction:allowOnlyNumericValueAndDecimal')}`);
+                          throw new Error(
+                            `${t("ndcAction:allowOnlyNumericValueAndDecimal")}`
+                          );
                         }
                       },
                     },
@@ -763,14 +848,16 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                   />
                 </Form.Item>
               </Col>
-              <Col style={{ marginLeft: '38px' }}>
+              <Col style={{ marginLeft: "38px" }}>
                 <Form.Item
-                  label={t('ndcAction:landAreaUnit')}
+                  label={t("ndcAction:landAreaUnit")}
                   name="landAreaUnit"
                   rules={[
                     {
                       required: true,
-                      message: `${t('ndcAction:landAreaUnit')} ${t('ndcAction:isRequired')}`,
+                      message: `${t("ndcAction:landAreaUnit")} ${t(
+                        "ndcAction:isRequired"
+                      )}`,
                     },
                   ]}
                 >
@@ -792,7 +879,7 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
             <Row justify="start" align="middle">
               <Col>
                 <Form.Item
-                  label={t('ndcAction:tonnesOnDryBasis')}
+                  label={t("ndcAction:tonnesOnDryBasis")}
                   name="tonnesOnDryBasis"
                   rules={[
                     {
@@ -802,17 +889,21 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
                           throw new Error(
-                            `${t('ndcAction:tonnesOnDryBasis')} ${t('ndcAction:isRequired')}`
+                            `${t("ndcAction:tonnesOnDryBasis")} ${t(
+                              "ndcAction:isRequired"
+                            )}`
                           );
                         }
                         if (value < 1) {
-                          throw new Error(`${t('ndcAction:allowOnlyNumericValueAndDecimal')}`);
+                          throw new Error(
+                            `${t("ndcAction:allowOnlyNumericValueAndDecimal")}`
+                          );
                         }
                       },
                     },
@@ -840,7 +931,7 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
               <Row justify="start" align="middle">
                 <Col>
                   <Form.Item
-                    label={t('ndcAction:numberOfDays')}
+                    label={t("ndcAction:numberOfDays")}
                     rules={[
                       {
                         required: true,
@@ -849,20 +940,26 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
                             throw new Error(
-                              `${t('ndcAction:numberOfDays')} ${t('ndcAction:isRequired')}`
+                              `${t("ndcAction:numberOfDays")} ${t(
+                                "ndcAction:isRequired"
+                              )}`
                             );
                           }
                           if (value < 0) {
-                            throw new Error(`${t('ndcAction:allowOnlyNumericValue')}`);
+                            throw new Error(
+                              `${t("ndcAction:allowOnlyNumericValue")}`
+                            );
                           }
                           if (!Number.isInteger(value)) {
-                            throw new Error(`${t('ndcAction:allowOnlyIntegerValue')}`);
+                            throw new Error(
+                              `${t("ndcAction:allowOnlyIntegerValue")}`
+                            );
                           }
                         },
                       },
@@ -880,9 +977,9 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                     />
                   </Form.Item>
                 </Col>
-                <Col style={{ marginLeft: '38px' }}>
+                <Col style={{ marginLeft: "38px" }}>
                   <Form.Item
-                    label={t('ndcAction:numberOfPeople')}
+                    label={t("ndcAction:numberOfPeople")}
                     rules={[
                       {
                         required: true,
@@ -891,20 +988,26 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                       {
                         validator: async (rule, value) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
                             throw new Error(
-                              `${t('ndcAction:numberOfPeople')} ${t('ndcAction:isRequired')}`
+                              `${t("ndcAction:numberOfPeople")} ${t(
+                                "ndcAction:isRequired"
+                              )}`
                             );
                           }
                           if (value < 0) {
-                            throw new Error(`${t('ndcAction:allowOnlyNumericValue')}`);
+                            throw new Error(
+                              `${t("ndcAction:allowOnlyNumericValue")}`
+                            );
                           }
                           if (!Number.isInteger(value)) {
-                            throw new Error(`${t('ndcAction:allowOnlyIntegerValue')}`);
+                            throw new Error(
+                              `${t("ndcAction:allowOnlyIntegerValue")}`
+                            );
                           }
                         },
                       },
@@ -932,19 +1035,22 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
             <Col>
               <Form.Item
                 name="userEstimatedCredits"
-                label={t('ndcAction:userEstimatedCredits')}
-                style={{ display: 'inline-block', width: 'calc(100% - 15px)' }}
+                label={t("ndcAction:userEstimatedCredits")}
+                style={{ display: "inline-block", width: "calc(100% - 15px)" }}
               >
                 <InputNumber style={{ width: 442, paddingRight: 12 }} />
               </Form.Item>
             </Col>
-            <Col style={{ marginLeft: '38px' }}>
+            <Col style={{ marginLeft: "38px" }}>
               <Form.Item
                 name="methodologyEstimatedCredits"
-                label={t('ndcAction:methodologyEstimatedCredits')}
-                style={{ display: 'inline-block', width: '100%' }}
+                label={t("ndcAction:methodologyEstimatedCredits")}
+                style={{ display: "inline-block", width: "100%" }}
               >
-                <InputNumber disabled style={{ width: 442, paddingRight: 12 }} />
+                <InputNumber
+                  disabled
+                  style={{ width: 442, paddingRight: 12 }}
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -952,7 +1058,7 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
 
         {ndcActionType === NdcActionTypes.CrossCutting && (
           <Row>
-            <label className="label-heading">{t('ndcAction:adaptation')}</label>
+            <label className="label-heading">{t("ndcAction:adaptation")}</label>
           </Row>
         )}
 
@@ -961,7 +1067,10 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
           <>
             <Row justify="start" align="middle">
               <Col>
-                <Form.Item label={t('ndcAction:implementingAgency')} name="implementingAgency">
+                <Form.Item
+                  label={t("ndcAction:implementingAgency")}
+                  name="implementingAgency"
+                >
                   <Select
                     style={{ width: 442 }}
                     size="large"
@@ -972,17 +1081,17 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                   />
                 </Form.Item>
               </Col>
-              <Col style={{ marginLeft: '38px' }} className="included-nap-col">
+              <Col style={{ marginLeft: "38px" }} className="included-nap-col">
                 <Row className="in-nap-row">
                   <Col span={9}>
                     <div className="included-label">
-                      <div>{t('ndcAction:inNAP')}</div>
+                      <div>{t("ndcAction:inNAP")}</div>
                       <div className="info-container">
                         <Tooltip
                           arrowPointAtCenter
                           placement="topLeft"
                           trigger="hover"
-                          title={t('ndcAction:inNAPToolTip')}
+                          title={t("ndcAction:inNAPToolTip")}
                           overlayClassName="custom-tooltip"
                         >
                           <InfoCircle color="#000000" size={17} />
@@ -991,14 +1100,18 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                     </div>
                   </Col>
                   <Col span={8} className="included-val">
-                    <Radio.Group size="middle" onChange={onInCludedNAPChange} value={includedInNAP}>
+                    <Radio.Group
+                      size="middle"
+                      onChange={onInCludedNAPChange}
+                      value={includedInNAP}
+                    >
                       <div className="yes-no-radio-container">
                         <Radio.Button
                           className="yes-no-radio"
                           value={true}
                           onClick={() => onClickIncludedInNAPScope(true)}
                         >
-                          {t('ndcAction:yes')}
+                          {t("ndcAction:yes")}
                         </Radio.Button>
                       </div>
                       <div className="yes-no-radio-container">
@@ -1007,7 +1120,7 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                           value={false}
                           onClick={() => onClickIncludedInNAPScope(false)}
                         >
-                          {t('ndcAction:no')}
+                          {t("ndcAction:no")}
                         </Radio.Button>
                       </div>
                     </Radio.Group>
@@ -1018,7 +1131,7 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
             <Row justify="start" align="middle">
               <Col>
                 <Form.Item
-                  label={t('ndcAction:nationalPlanObjectives')}
+                  label={t("ndcAction:nationalPlanObjectives")}
                   name="nationalPlanObjectives"
                 >
                   <Select
@@ -1031,8 +1144,11 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                   />
                 </Form.Item>
               </Col>
-              <Col style={{ marginLeft: '38px' }}>
-                <Form.Item label={t('ndcAction:nationalPlanCoverage')} name="nationalPlanCoverage">
+              <Col style={{ marginLeft: "38px" }}>
+                <Form.Item
+                  label={t("ndcAction:nationalPlanCoverage")}
+                  name="nationalPlanCoverage"
+                >
                   <Select
                     style={{ width: 442 }}
                     size="large"
@@ -1047,17 +1163,19 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
             <Row justify="start" align="middle">
               <Col>
                 <Form.Item
-                  label={t('ndcAction:ghgEmiReduced')}
+                  label={t("ndcAction:ghgEmiReduced")}
                   name="ghgEmissionsReduced"
                   style={{ width: 442 }}
                   rules={[
                     {
                       required: true,
-                      validateTrigger: 'onBlur',
+                      validateTrigger: "onBlur",
                       validator: (rule, value) => {
                         if (!value || value.length === 0) {
                           return Promise.reject(
-                            `${t('ndcAction:ghgEmiReduced')} ${t('ndcAction:isRequired')}`
+                            `${t("ndcAction:ghgEmiReduced")} ${t(
+                              "ndcAction:isRequired"
+                            )}`
                           );
                         }
                         let isMissingValue = false;
@@ -1071,7 +1189,9 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                         });
                         if (isMissingValue) {
                           return Promise.reject(
-                            `${t('ndcAction:value')} ${t('ndcAction:isRequired')}`
+                            `${t("ndcAction:value")} ${t(
+                              "ndcAction:isRequired"
+                            )}`
                           );
                         }
                         return Promise.resolve();
@@ -1087,15 +1207,26 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                           checked={checkedOptionsGhgReduced.includes(option)}
                           onChange={(e: any) => {
                             if (e?.target?.checked) {
-                              setCheckedOptionsGhgReduced([...checkedOptionsGhgReduced, option]);
+                              setCheckedOptionsGhgReduced([
+                                ...checkedOptionsGhgReduced,
+                                option,
+                              ]);
                             } else if (!e?.target?.checked) {
-                              const reducedGasAndVal: any = inputNumberValueGhgReducedGas;
-                              if (reducedGasAndVal && reducedGasAndVal[option]) {
+                              const reducedGasAndVal: any =
+                                inputNumberValueGhgReducedGas;
+                              if (
+                                reducedGasAndVal &&
+                                reducedGasAndVal[option]
+                              ) {
                                 delete reducedGasAndVal[option];
                               }
-                              setInputNumberValueGhgReducedGas(reducedGasAndVal);
+                              setInputNumberValueGhgReducedGas(
+                                reducedGasAndVal
+                              );
                               setCheckedOptionsGhgReduced([
-                                ...checkedOptionsGhgReduced.filter((value) => value !== option),
+                                ...checkedOptionsGhgReduced.filter(
+                                  (value) => value !== option
+                                ),
                               ]);
                             }
                           }}
@@ -1104,7 +1235,8 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                         </Checkbox>
                         <InputNumber
                           value={
-                            inputNumberValueGhgReducedGas && inputNumberValueGhgReducedGas[option]
+                            inputNumberValueGhgReducedGas &&
+                            inputNumberValueGhgReducedGas[option]
                               ? inputNumberValueGhgReducedGas[option]
                               : null
                           }
@@ -1123,19 +1255,21 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                   </Checkbox.Group>
                 </Form.Item>
               </Col>
-              <Col style={{ marginLeft: '38px' }}>
+              <Col style={{ marginLeft: "38px" }}>
                 <Form.Item
-                  label={t('ndcAction:ghgEmiAvoided')}
+                  label={t("ndcAction:ghgEmiAvoided")}
                   name="ghgEmissionsAvoided"
                   style={{ width: 442 }}
                   rules={[
                     {
                       required: true,
-                      validateTrigger: 'onBlur',
+                      validateTrigger: "onBlur",
                       validator: (rule, value) => {
                         if (!value || value.length === 0) {
                           return Promise.reject(
-                            `${t('ndcAction:ghgEmiAvoided')} ${t('ndcAction:isRequired')}`
+                            `${t("ndcAction:ghgEmiAvoided")} ${t(
+                              "ndcAction:isRequired"
+                            )}`
                           );
                         }
                         let isMissingValue = false;
@@ -1149,7 +1283,9 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                         });
                         if (isMissingValue) {
                           return Promise.reject(
-                            `${t('ndcAction:value')} ${t('ndcAction:isRequired')}`
+                            `${t("ndcAction:value")} ${t(
+                              "ndcAction:isRequired"
+                            )}`
                           );
                         }
                         return Promise.resolve();
@@ -1165,15 +1301,26 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                           checked={checkedOptionsGhgAvoided.includes(option)}
                           onChange={(e: any) => {
                             if (e?.target?.checked) {
-                              setCheckedOptionsGhgAvoided([...checkedOptionsGhgAvoided, option]);
+                              setCheckedOptionsGhgAvoided([
+                                ...checkedOptionsGhgAvoided,
+                                option,
+                              ]);
                             } else if (!e?.target?.checked) {
-                              const avaoidedGasAndVal: any = inputNumberValueGhgAvoidedGas;
-                              if (avaoidedGasAndVal && avaoidedGasAndVal[option]) {
+                              const avaoidedGasAndVal: any =
+                                inputNumberValueGhgAvoidedGas;
+                              if (
+                                avaoidedGasAndVal &&
+                                avaoidedGasAndVal[option]
+                              ) {
                                 delete avaoidedGasAndVal[option];
                               }
-                              setInputNumberValueGhgAvoidedGas(avaoidedGasAndVal);
+                              setInputNumberValueGhgAvoidedGas(
+                                avaoidedGasAndVal
+                              );
                               setCheckedOptionsGhgAvoided([
-                                ...checkedOptionsGhgAvoided.filter((value) => value !== option),
+                                ...checkedOptionsGhgAvoided.filter(
+                                  (value) => value !== option
+                                ),
                               ]);
                             }
                           }}
@@ -1182,7 +1329,8 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                         </Checkbox>
                         <InputNumber
                           value={
-                            inputNumberValueGhgAvoidedGas && inputNumberValueGhgAvoidedGas[option]
+                            inputNumberValueGhgAvoidedGas &&
+                            inputNumberValueGhgAvoidedGas[option]
                               ? inputNumberValueGhgAvoidedGas[option]
                               : null
                           }
@@ -1207,11 +1355,11 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
 
         {ndcActionType === NdcActionTypes.Enablement && (
           <>
-            <Form.Item label={t('ndcAction:title')} name="EnablementTitle">
+            <Form.Item label={t("ndcAction:title")} name="EnablementTitle">
               <Input style={{ width: 442 }} />
             </Form.Item>
             <Form.Item
-              label={t('ndcAction:type')}
+              label={t("ndcAction:type")}
               name="EnablementType"
               className="enablement-type-item"
             >
@@ -1219,7 +1367,10 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                 <Row className="grp-row">
                   {enablementTypesAndValues?.map((type: any) => (
                     <Col lg={type.col} md={type.col + 1}>
-                      <Checkbox value={type.type} style={{ lineHeight: '32px' }}>
+                      <Checkbox
+                        value={type.type}
+                        style={{ lineHeight: "32px" }}
+                      >
                         {type.type}
                       </Checkbox>
                     </Col>
@@ -1229,7 +1380,7 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
             </Form.Item>
             <Row justify="space-between" align="middle">
               <Form.Item
-                label={t('ndcAction:report')}
+                label={t("ndcAction:report")}
                 name="EnablementReport"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
@@ -1239,9 +1390,11 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                     validator: async (rule, file) => {
                       if (file && file.length > 0) {
                         if (!isValidateFileType(file[0]?.type)) {
-                          throw new Error(`${t('ndcAction:invalidFileFormat')}`);
+                          throw new Error(
+                            `${t("ndcAction:invalidFileFormat")}`
+                          );
                         } else if (file[0]?.size > maximumImageSize) {
-                          throw new Error(`${t('common:maxSizeVal')}`);
+                          throw new Error(`${t("common:maxSizeVal")}`);
                         }
                       }
                     },
@@ -1259,7 +1412,11 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
                   multiple={false}
                   maxCount={1}
                 >
-                  <Button className="upload-doc" size="large" icon={<UploadOutlined />}>
+                  <Button
+                    className="upload-doc"
+                    size="large"
+                    icon={<UploadOutlined />}
+                  >
                     Upload
                   </Button>
                 </Upload>
@@ -1270,9 +1427,11 @@ const NdcActionDetails = (props: NdcActionDetailsProps) => {
 
         <div className="steps-actions">
           <Row>
-            {isBackBtnVisible && <Button onClick={onClickedBackBtn}>{t('ndcAction:back')}</Button>}
+            {isBackBtnVisible && (
+              <Button onClick={onClickedBackBtn}>{t("ndcAction:back")}</Button>
+            )}
             <Button className="mg-left-1" type="primary" htmlType="submit">
-              {t('ndcAction:next')}
+              {t("ndcAction:next")}
             </Button>
           </Row>
         </div>

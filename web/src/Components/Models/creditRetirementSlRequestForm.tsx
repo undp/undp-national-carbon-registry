@@ -50,7 +50,7 @@ export const CreditRetirementSlRequestForm: FC<CreditRetirementSlRequestFormProp
     translator,
   } = props;
 
-  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || 'CountryX';
 
   const t = translator.t;
   const [popupError, setPopupError] = useState<string | undefined>(undefined);

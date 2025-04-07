@@ -1,5 +1,5 @@
-@import '../../Assets/Fonts/fonts.scss';
-@import '../../Styles/variables.scss';
+@use '../../Assets/Fonts/fonts.scss';
+@use '../../Styles/variables.scss';
 
 .slcf-signs-container {
   padding: 50px;
@@ -25,9 +25,9 @@
       .ant-btn-primary[disabled]:hover,
       .ant-btn-primary[disabled]:focus,
       .ant-btn-primary[disabled]:active {
-        color: $dark-text-color;
+        color: variables.$dark-text-color;
         border-color: none;
-        background-color: $line-colors !important;
+        background-color: variables.$line-colors !important;
         text-shadow: none;
         box-shadow: none;
       }

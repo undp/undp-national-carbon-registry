@@ -7,30 +7,35 @@ export const basicInformationMapDataToFields = (vals: any) => {
     return;
   }
 
-  const firstLocation =
-    vals?.locationsOfProjectActivity && vals?.locationsOfProjectActivity?.length > 0
-      ? vals?.locationsOfProjectActivity.shift()
-      : undefined;
+  // const firstLocation =
+  //   vals?.locationsOfProjectActivity && vals?.locationsOfProjectActivity?.length > 0
+  //     ? vals?.locationsOfProjectActivity.shift()
+  //     : undefined;
 
   const tempVals = {
     ...vals,
-    ...firstLocation,
-    // locationOfProjectActivity: firstLocation?.locationOfProjectActivity,
-    // province: firstLocation?.province,
-    // siteNo: firstLocation?.siteNo,
-    // district: firstLocation?.district,
-    // // dsDivision: firstLocation?.dsDivision,
-    // city: firstLocation?.city,
-    // community: firstLocation?.community,
-    // location: firstLocation?.location,
-    optionalImages: mapBase64ToFields(firstLocation?.additionalDocuments),
+    locationOfProjectActivity: vals?.locationOfProjectActivity,
+    province: vals?.province,
+    siteNo: vals?.siteNo,
+    district: vals?.district,
+    dsDivision: vals?.dsDivision,
+    city: vals?.city,
+    community: vals?.community,
+    location: vals?.location,
+    optionalImages: mapBase64ToFields(vals?.additionalDocuments),
     extraLocations: (function () {
       const locations = vals?.locationsOfProjectActivity;
       let tempExtraLocations: any[] = [];
       if (locations !== 0 && locations.length > 0) {
         tempExtraLocations = locations.map((location: any) => {
           const tempObj = {
-            ...location,
+            locationOfProjectActivity: location?.locationOfProjectActivity,
+            province: location?.province,
+            district: location?.district,
+            dsDivision: location?.dsDivision,
+            city: location?.city,
+            community: location?.community,
+            location: location?.location,
             optionalImages: mapBase64ToFields(location?.additionalDocuments),
           };
           return tempObj;

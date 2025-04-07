@@ -131,6 +131,18 @@ const StepperComponent = (props: CustomStepsProps) => {
       console.log('Error fetching programme data:', error);
     }
 
+    // try {
+    //   const orgDetailsResponse = await get(API_PATHS.USER_PROFILE_DETAILS);
+    //   console.log('---------org details------------', orgDetailsResponse);
+    //   if (orgDetailsResponse?.statusText === 'SUCCESS') {
+    //     orgData = orgDetailsResponse?.data?.Organisation;
+    //   } else {
+    //     console.log('Error: Org API fetch failed');
+    //   }
+    // } catch (error) {
+    //   console.log('Error fetching Org details', error);
+    // }
+
     try {
       // Fetch PDD Data
       const pddResponse = await post(API_PATHS.QUERY_DOCUMENT, {
@@ -177,26 +189,25 @@ const StepperComponent = (props: CustomStepsProps) => {
       projectActivityForm.setFieldsValue({
         projectParticipants: pddData?.data?.projectActivity?.projectParticipants,
         pa_creditingPeriodType: pddData?.data?.startDateCreditingPeriod?.creditingPeriodType,
-        locationOfProjectActivity:
-          pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]
-            ?.locationOfProjectActivity,
-        siteNo: pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.siteNo,
-        province: pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.province,
-        district: pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.district,
-        city: pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.city,
-        community: pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.community,
-        geographicalLocationCoordinates:
-          pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]
-            ?.geographicalLocationCoordinates,
-        optionalImages: mapBase64ToFields(
-          pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.additionalDocuments
-        ),
-        extraLocations: pddData?.data?.projectActivity?.locationsOfProjectActivity
-          ?.slice(1)
-          ?.map((location: any) => ({
+        // locationOfProjectActivity:
+        //   data?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.locationOfProjectActivity,
+        // siteNo: data?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.siteNo,
+        // province: data?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.province,
+        // district: data?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.district,
+        // city: data?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.city,
+        // community: data?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.community,
+        // geographicalLocationCoordinates:
+        //   data?.data?.projectActivity?.locationsOfProjectActivity?.[0]
+        //     ?.geographicalLocationCoordinates,
+        // optionalImages: mapBase64ToFields(
+        //   data?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.additionalDocuments
+        // ),
+        extraLocations: pddData?.data?.projectActivity?.locationsOfProjectActivity?.map(
+          (location: any) => ({
             ...location,
-            optionalImages: mapBase64ToFields(location?.additionalDocuments),
-          })),
+            uploadImages: mapBase64ToFields(location?.additionalDocuments),
+          })
+        ),
       });
     }
     setLoading(false);
