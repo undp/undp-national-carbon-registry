@@ -1,4 +1,4 @@
-@import "../../../Styles/variables.scss";
+@use "../../../Styles/variables.scss";
 
 .programme-management {
   .programme-title-bar {
@@ -53,7 +53,7 @@
     margin-bottom: 0px;
 
     input {
-      font-family: $primary-font-family;
+      font-family: variables.$primary-font-family;
       font-size: 0.8rem;
     }
   }

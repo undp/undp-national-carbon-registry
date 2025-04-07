@@ -4,7 +4,6 @@ export interface CreditRetirementInterface {
   creditAmount: number;
   createdDate: string;
   retirementType: string;
-  countryName?: string;
   status: string;
   projectId: number;
   projectName: string;

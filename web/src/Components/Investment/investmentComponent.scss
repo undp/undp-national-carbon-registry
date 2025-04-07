@@ -1,4 +1,4 @@
-@import "../../Styles/variables.scss";
+@use "../../Styles/variables.scss";
 
 .steps-actions {
   display: flex;
@@ -56,8 +56,8 @@
     width: 48%;
     text-align: center;
     .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
-      color: $dark-text-color !important;
-      border-color: $primary-purple;
+      color: variables.$dark-text-color !important;
+      border-color: variables.$primary-purple;
       box-shadow: none;
       max-width: 200px;
     }
@@ -71,7 +71,7 @@
   }
 
   .ant-radio-button-wrapper {
-    border: 1px solid $common-form-input-border;
+    border: 1px solid variables.$common-form-input-border;
     color: rgba(#8c8c8c, 0.7) !important;
     width: 100% !important;
   }
@@ -79,7 +79,7 @@
     width: 100%;
     text-transform: uppercase;
     .ant-radio-button-checked {
-      background: $primary-purple;
+      background: variables.$primary-purple;
       color: #ffffff;
     }
   }

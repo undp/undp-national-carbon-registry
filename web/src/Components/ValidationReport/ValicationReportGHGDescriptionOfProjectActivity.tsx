@@ -1,4 +1,4 @@
-import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { MinusOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -12,23 +12,34 @@ import {
   Row,
   Select,
   Upload,
-} from 'antd';
-import moment from 'moment';
-import { useEffect, useState } from 'react';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { fileUploadValueExtract } from '../../Utils/utilityHelper';
-import { requiredValidationRule } from '../../Utils/validationHelper';
-import { CustomStepsProps } from '../PDD/StepProps';
-import GetLocationMapComponent from '../Maps/GetLocationMapComponent';
-import { ProcessSteps } from './ValidationStepperComponent';
-import { API_PATHS } from '../../Config/apiConfig';
+} from "antd";
+import moment from "moment";
+import { useEffect, useState } from "react";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
+import { fileUploadValueExtract } from "../../Utils/utilityHelper";
+import { requiredValidationRule } from "../../Utils/validationHelper";
+import { CustomStepsProps } from "../PDD/StepProps";
+import GetLocationMapComponent from "../Maps/GetLocationMapComponent";
+import { ProcessSteps } from "./ValidationStepperComponent";
+import { API_PATHS } from "../../Config/apiConfig";
 
-const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps) => {
-  const { next, prev, form, current, t, countries, handleValuesUpdate, formMode } = props;
+const ValicationReportGHGDescriptionOfProjectActivity = (
+  props: CustomStepsProps
+) => {
+  const {
+    next,
+    prev,
+    form,
+    current,
+    t,
+    countries,
+    handleValuesUpdate,
+    formMode,
+  } = props;
 
-  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   const normFile = (e: any) => {
@@ -44,13 +55,17 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
 
   const [provinces, setProvinces] = useState<string[]>([]);
   const [districts, setDistricts] = useState<{ [key: number]: string[] }>({});
-  const [dsDivisions, setDsDivisions] = useState<{ [key: number]: string[] }>({});
+  const [dsDivisions, setDsDivisions] = useState<{ [key: number]: string[] }>(
+    {}
+  );
   const [cities, setCities] = useState<{ [key: number]: string[] }>({});
 
   const getProvinces = async () => {
     try {
       const { data } = await post(API_PATHS.PROVINCES);
-      const tempProvinces = data.map((provinceData: any) => provinceData.provinceName);
+      const tempProvinces = data.map(
+        (provinceData: any) => provinceData.provinceName
+      );
       setProvinces(tempProvinces);
     } catch (error) {
       console.log(error);
@@ -62,13 +77,15 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
       const { data } = await post(API_PATHS.DISTRICTS, {
         filterAnd: [
           {
-            key: 'provinceName',
-            operation: '=',
+            key: "provinceName",
+            operation: "=",
             value: provinceName,
           },
         ],
       });
-      const tempDistricts = data.map((districtData: any) => districtData.districtName);
+      const tempDistricts = data.map(
+        (districtData: any) => districtData.districtName
+      );
       setDistricts((prev1) => ({ ...prev1, [index]: tempDistricts }));
     } catch (error) {
       console.log(error);
@@ -80,14 +97,16 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
       const { data } = await post(API_PATHS.DIVISIONS, {
         filterAnd: [
           {
-            key: 'districtName',
-            operation: '=',
+            key: "districtName",
+            operation: "=",
             value: districtName,
           },
         ],
       });
 
-      const tempDivisions = data.map((divisionData: any) => divisionData.divisionName);
+      const tempDivisions = data.map(
+        (divisionData: any) => divisionData.divisionName
+      );
       setDsDivisions((prev2) => ({ ...prev2, [index]: tempDivisions }));
     } catch (error) {
       console.log(error);
@@ -99,8 +118,8 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
       const { data } = await post(API_PATHS.CITIES, {
         filterAnd: [
           {
-            key: 'divisionName',
-            operation: '=',
+            key: "divisionName",
+            operation: "=",
             value: division,
           },
         ],
@@ -117,7 +136,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
     getProvinces();
     // getCities();
     // form.setFieldValue('totalCreditingYears', 1)
-    form.setFieldValue('totalEstimatedGHGERs', 0);
+    form.setFieldValue("totalEstimatedGHGERs", 0);
   }, []);
 
   const onProvinceSelect = async (value: any, index: number) => {
@@ -134,106 +153,113 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
 
   const projectScopeList = [
     {
-      id: 'isProjectScopeEnergyIndustries',
-      label: t('validationReport:energyIndustry'),
+      id: "isProjectScopeEnergyIndustries",
+      label: t("validationReport:energyIndustry"),
     },
     {
-      id: 'isProjectScopeEnergyDistribution',
-      label: t('validationReport:entergyDistribution'),
+      id: "isProjectScopeEnergyDistribution",
+      label: t("validationReport:entergyDistribution"),
     },
     {
-      id: 'isProjectScopeEnergyDemand',
-      label: t('validationReport:energyDemand'),
+      id: "isProjectScopeEnergyDemand",
+      label: t("validationReport:energyDemand"),
     },
     {
-      id: 'isProjectScopeManufacturingIndustries',
-      label: t('validationReport:manufacturingIndustry'),
+      id: "isProjectScopeManufacturingIndustries",
+      label: t("validationReport:manufacturingIndustry"),
     },
     {
-      id: 'isProjectScopeChemicalIndustries',
-      label: t('validationReport:chemicalIndustries'),
+      id: "isProjectScopeChemicalIndustries",
+      label: t("validationReport:chemicalIndustries"),
     },
     {
-      id: 'isProjectScopeChemicalIndustry',
-      label: t('validationReport:chemicalIndustry'),
+      id: "isProjectScopeChemicalIndustry",
+      label: t("validationReport:chemicalIndustry"),
     },
     {
-      id: 'isProjectScopeConstruction',
-      label: t('validationReport:construction'),
+      id: "isProjectScopeConstruction",
+      label: t("validationReport:construction"),
     },
     {
-      id: 'isProjectScopeTransport',
-      label: t('validationReport:transport'),
+      id: "isProjectScopeTransport",
+      label: t("validationReport:transport"),
     },
     {
-      id: 'isProjectScopeMining',
-      label: t('validationReport:miningMineralProduction'),
+      id: "isProjectScopeMining",
+      label: t("validationReport:miningMineralProduction"),
     },
     {
-      id: 'isProjectScopeFugitiveEmissionsFromFuel',
-      label: t('validationReport:fugitiveEmissionsFromProduction'),
+      id: "isProjectScopeFugitiveEmissionsFromFuel",
+      label: t("validationReport:fugitiveEmissionsFromProduction"),
     },
     {
-      id: 'isProjectScopeFugitiveEmissionsFromHalocarbons',
-      label: t('validationReport:fugitiveEmissionsHexafluoride'),
+      id: "isProjectScopeFugitiveEmissionsFromHalocarbons",
+      label: t("validationReport:fugitiveEmissionsHexafluoride"),
     },
     {
-      id: 'isProjectScopeSolventsUse',
-      label: t('validationReport:solventsUse'),
+      id: "isProjectScopeSolventsUse",
+      label: t("validationReport:solventsUse"),
     },
     {
-      id: 'isProjectScopeWasteHandling',
-      label: t('validationReport:wasteHandlingDisposal'),
+      id: "isProjectScopeWasteHandling",
+      label: t("validationReport:wasteHandlingDisposal"),
     },
     {
-      id: 'isProjectScopeAfforestation',
-      label: t('validationReport:afforestationandReforestation'),
+      id: "isProjectScopeAfforestation",
+      label: t("validationReport:afforestationandReforestation"),
     },
     {
-      id: 'isProjectScopeAgriculture',
-      label: t('validationReport:agriculture'),
+      id: "isProjectScopeAgriculture",
+      label: t("validationReport:agriculture"),
     },
   ];
 
   const calculateAvgAnnualERs = () => {
-    const totalEstimatedGHGERs = form.getFieldValue('totalEstimatedGHGERs') || 0;
-    const totalCreditingYears = form.getFieldValue('totalCreditingYears') || 0;
-    if (Number(totalCreditingYears) === 0 || Number(totalEstimatedGHGERs) === 0) {
+    const totalEstimatedGHGERs =
+      form.getFieldValue("totalEstimatedGHGERs") || 0;
+    const totalCreditingYears = form.getFieldValue("totalCreditingYears") || 0;
+    if (
+      Number(totalCreditingYears) === 0 ||
+      Number(totalEstimatedGHGERs) === 0
+    ) {
       return;
     } else {
       const avg = Number(totalEstimatedGHGERs) / Number(totalCreditingYears);
-      form.setFieldValue('avgAnnualERs', avg);
+      form.setFieldValue("avgAnnualERs", avg);
     }
   };
 
   const onEmissionsYearChange = (value: any, fieldCounts: number) => {
-    let totalCreditingYears = form.getFieldValue('totalCreditingYears') || 0;
+    let totalCreditingYears = form.getFieldValue("totalCreditingYears") || 0;
     if (value && totalCreditingYears < fieldCounts) {
       totalCreditingYears += 1;
     } else if (value === null && totalCreditingYears !== 0) {
       totalCreditingYears -= 1;
     }
-    form.setFieldValue('totalCreditingYears', totalCreditingYears);
+    form.setFieldValue("totalCreditingYears", totalCreditingYears);
     calculateAvgAnnualERs();
   };
 
   const onEmissionsValueChange = (value?: any) => {
-    const val1 = form.getFieldValue('estimatedAnnualGHGEmissionsValue') || 0;
-    const listVals = form.getFieldValue('extraGHGEmmissions');
+    const val1 = form.getFieldValue("estimatedAnnualGHGEmissionsValue") || 0;
+    const listVals = form.getFieldValue("extraGHGEmmissions");
     let tempTotal = Number(val1);
-    console.log('-------em vals change------', val1, listVals);
+    console.log("-------em vals change------", val1, listVals);
     if (listVals !== undefined && listVals[0] !== undefined) {
       listVals.forEach((item: any) => {
         tempTotal += Number(item?.estimatedAnnualGHGEmissionsValue);
       });
     }
-    form.setFieldValue('totalEstimatedGHGERs', String(tempTotal));
+    form.setFieldValue("totalEstimatedGHGERs", String(tempTotal));
     calculateAvgAnnualERs();
   };
 
   const getExistingCordinate = (locationIndex: number) => {
-    const locationList = form.getFieldValue('locationsOfProjectActivity');
-    if (locationList[locationIndex] && locationList[locationIndex].geographicalLocationCoordinates)
+    const locationList = form.getFieldValue("locationsOfProjectActivity");
+    if (
+      locationList[locationIndex] &&
+      locationList[locationIndex].geographicalLocationCoordinates
+    )
       return locationList[locationIndex].geographicalLocationCoordinates;
 
     return null;
@@ -256,7 +282,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
       let files: any[] = [];
 
       if (activity?.additionalDocuments?.length > 0) {
-        files = await fileUploadValueExtract(activity, 'additionalDocuments');
+        files = await fileUploadValueExtract(activity, "additionalDocuments");
       }
 
       locationList.push({
@@ -266,7 +292,9 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
         dsDivision: activity.dsDivision,
         city: activity.city,
         community: activity.community,
-        geographicalLocationCoordinates: [[activity.geographicalLocationCoordinates]],
+        geographicalLocationCoordinates: [
+          [activity.geographicalLocationCoordinates],
+        ],
         additionalDocuments: files,
         technicalProjectDescription: technicalProjDesc,
       });
@@ -277,7 +305,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
 
   const onFinish = async (values: any) => {
     const projectScopeUNFCC: any = {};
-    const formProjectScopeValues = form.getFieldValue('projectScopeUNFCC');
+    const formProjectScopeValues = form.getFieldValue("projectScopeUNFCC");
 
     projectScopeList.forEach((scopeList) => {
       projectScopeUNFCC[scopeList.id] = formProjectScopeValues?.some(
@@ -293,10 +321,17 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
       technicalAreas: values?.technicalAreas,
       creditingPeriod: values?.creditingPeriod,
       locationsOfProjectActivity: await getLocationDetails(values),
-      startDateCreditingPeriod: moment(values?.startDateCreditingPeriod).valueOf(),
+      startDateCreditingPeriod: moment(
+        values?.startDateCreditingPeriod
+      ).valueOf(),
     };
-    console.log(ProcessSteps.VR_GHG_PROJECT_DESCRIPTION, ghgDescriptionFormValues);
-    handleValuesUpdate({ [ProcessSteps.VR_GHG_PROJECT_DESCRIPTION]: ghgDescriptionFormValues });
+    console.log(
+      ProcessSteps.VR_GHG_PROJECT_DESCRIPTION,
+      ghgDescriptionFormValues
+    );
+    handleValuesUpdate({
+      [ProcessSteps.VR_GHG_PROJECT_DESCRIPTION]: ghgDescriptionFormValues,
+    });
   };
   return (
     <>
@@ -324,19 +359,21 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
               disabled={FormMode.VIEW === formMode}
             >
               <h4 className="form-section-title">{`2.1 ${t(
-                'validationReport:projectCharacteristics'
+                "validationReport:projectCharacteristics"
               )}`}</h4>
               <div className="form-section">
                 <Row gutter={[96, 8]}>
                   <Col md={12} lg={12}>
                     <Form.Item
                       className="full-width-form-item"
-                      label={`${t('validationReport:projectTitle')}`}
+                      label={`${t("validationReport:projectTitle")}`}
                       name="projectTitle"
                       rules={[
                         {
                           required: true,
-                          message: `${t('validationReport:projectTitle')} ${t('isRequired')}`,
+                          message: `${t("validationReport:projectTitle")} ${t(
+                            "isRequired"
+                          )}`,
                         },
                       ]}
                     >
@@ -346,19 +383,27 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                   <Col md={12} lg={12}>
                     <Form.Item
                       className="full-width-form-item"
-                      label={`${t('validationReport:projectSize')}`}
+                      label={`${t("validationReport:projectSize")}`}
                       name="projectSize"
                       rules={[
                         {
                           required: true,
-                          message: `${t('validationReport:projectSize')} ${t('isRequired')}`,
+                          message: `${t("validationReport:projectSize")} ${t(
+                            "isRequired"
+                          )}`,
                         },
                       ]}
                     >
-                      <Radio.Group style={{ justifyContent: 'flex-start' }}>
-                        <Radio value={'LARGE'}>{t('validationReport:largeScale')}</Radio>
-                        <Radio value={'SMALL'}>{t('validationReport:smallScale')}</Radio>
-                        <Radio value={'MICRO'}>{t('validationReport:microScale')}</Radio>
+                      <Radio.Group style={{ justifyContent: "flex-start" }}>
+                        <Radio value={"LARGE"}>
+                          {t("validationReport:largeScale")}
+                        </Radio>
+                        <Radio value={"SMALL"}>
+                          {t("validationReport:smallScale")}
+                        </Radio>
+                        <Radio value={"MICRO"}>
+                          {t("validationReport:microScale")}
+                        </Radio>
                       </Radio.Group>
                     </Form.Item>
                   </Col>
@@ -367,8 +412,8 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                 <Row gutter={[8, 16]}>
                   <Col span={24}>
                     <div className="custom-required">
-                      {t('validationReport:projectScopeUNFCC')} {'  '}
-                      {t('validationReport:projectScopeUNFCCt2')}
+                      {t("validationReport:projectScopeUNFCC")} {"  "}
+                      {t("validationReport:projectScopeUNFCCt2")}
                     </div>
                   </Col>
                   <Col span={24}>
@@ -377,29 +422,33 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                       rules={[
                         {
                           required: true,
-                          message: `${t('validationReport:projectScopeUNFCC')} ${t('isRequired')}`,
+                          message: `${t(
+                            "validationReport:projectScopeUNFCC"
+                          )} ${t("isRequired")}`,
                         },
                       ]}
                     >
                       <Checkbox.Group className="full-width-form-item">
-                        {projectScopeList.map((scopeListItem: any, index: number) => {
-                          return (
-                            <Col span={24}>
-                              <div className=" full-width-form-item">
-                                <Checkbox
-                                  key={scopeListItem.id}
-                                  value={scopeListItem.id}
-                                ></Checkbox>
+                        {projectScopeList.map(
+                          (scopeListItem: any, index: number) => {
+                            return (
+                              <Col span={24}>
+                                <div className=" full-width-form-item">
+                                  <Checkbox
+                                    key={scopeListItem.id}
+                                    value={scopeListItem.id}
+                                  ></Checkbox>
 
-                                <span style={{ marginLeft: 5 }}>{`${index + 1}. ${
-                                  scopeListItem.label
-                                }`}</span>
-                              </div>
+                                  <span style={{ marginLeft: 5 }}>{`${
+                                    index + 1
+                                  }. ${scopeListItem.label}`}</span>
+                                </div>
 
-                              <Divider style={{ margin: 10 }} />
-                            </Col>
-                          );
-                        })}
+                                <Divider style={{ margin: 10 }} />
+                              </Col>
+                            );
+                          }
+                        )}
                       </Checkbox.Group>
                     </Form.Item>
                   </Col>
@@ -408,12 +457,14 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                 <div className="form-grid">
                   <Form.Item
                     className="full-width-form-item"
-                    label={`${t('validationReport:appliedMethodology')}`}
+                    label={`${t("validationReport:appliedMethodology")}`}
                     name="appliedMethodology"
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationReport:appliedMethodology')} ${t('isRequired')}`,
+                        message: `${t(
+                          "validationReport:appliedMethodology"
+                        )} ${t("isRequired")}`,
                       },
                     ]}
                   >
@@ -421,39 +472,49 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                   </Form.Item>
                   <Form.Item
                     className="full-width-form-item"
-                    label={`${t('validationReport:technicalAreas')}`}
+                    label={`${t("validationReport:technicalAreas")}`}
                     name="technicalAreas"
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationReport:technicalAreas')} ${t('isRequired')}`,
+                        message: `${t("validationReport:technicalAreas")} ${t(
+                          "isRequired"
+                        )}`,
                       },
                     ]}
                   >
                     <Input size="large" />
                   </Form.Item>
                   <Form.Item
-                    label={`${t('validationReport:totalCreditingYears')}`}
+                    label={`${t("validationReport:totalCreditingYears")}`}
                     name="creditingPeriod"
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationReport:creditingPeriod')} ${t('isRequired')}`,
+                        message: `${t("validationReport:creditingPeriod")} ${t(
+                          "isRequired"
+                        )}`,
                       },
                     ]}
                   >
-                    <InputNumber className="full-width-form-item" size="large" disabled />
+                    <InputNumber
+                      className="full-width-form-item"
+                      size="large"
+                      disabled
+                    />
                   </Form.Item>
                   <Form.Item
                     className="full-width-form-item"
-                    label={`${t('validationReport:startDateofCreditingPeriod')}`}
+                    label={`${t(
+                      "validationReport:startDateofCreditingPeriod"
+                    )}`}
                     name="startDateCreditingPeriod"
                     rules={[
                       {
                         required: true,
-                        message: `${t('validationReport:startDateofCreditingPeriod')} ${t(
-                          'isRequired'
-                        )}`,
+                        message: `${t(
+                          "validationReport:startDateofCreditingPeriod"
+                        )} ${t("isRequired")}`,
                       },
                     ]}
                   >
@@ -464,427 +525,523 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
 
               <>
                 <h4 className="form-section-title">{`2.2 ${t(
-                  'validationReport:projectLocation'
-                )} / 2.3 ${t('validationReport:technicalProjectDescription')}`}</h4>
+                  "validationReport:projectLocation"
+                )} / 2.3 ${t(
+                  "validationReport:technicalProjectDescription"
+                )}`}</h4>
 
                 <Form.List name="locationsOfProjectActivity">
                   {(fields, { add, remove }) => (
                     <>
-                      {fields.map(({ key, name, ...restField }, locationIndex: number) => (
-                        <>
-                          <div className="form-list-actions">
-                            {/* <h4 className="list-item-title">Location {name + 1}</h4> */}
-                            {fields.length > 1 && (
-                              <Form.Item>
-                                <Button
-                                  // type="dashed"
-                                  onClick={() => {
-                                    remove(name);
-                                    if (districts[name]) {
-                                      delete districts[name];
-                                    }
-                                    if (dsDivisions[name]) {
-                                      delete dsDivisions[name];
-                                    }
-                                    if (cities[name]) {
-                                      delete cities[name];
-                                    }
-                                  }}
-                                  size="large"
-                                  className="addMinusBtn"
-                                  // block
-                                  icon={<MinusOutlined />}
-                                  disabled
-                                >
-                                  {/* Remove Entity */}
-                                </Button>
-                              </Form.Item>
-                            )}
-                          </div>
-                          <div className="form-section">
-                            <Row
-                              justify={'space-between'}
-                              gutter={[40, 16]}
-                              style={{ borderRadius: '8px' }}
-                            >
-                              <Col xl={12} md={24}>
-                                <Form.Item
-                                  label={t('validationReport:locationOfProjectActivity')}
-                                  name={[name, 'locationOfProjectActivity']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: `${t(
-                                        'validationReport:locationOfProjectActivity'
-                                      )} ${t('isRequired')}`,
-                                    },
-                                  ]}
-                                >
-                                  <Input size="large" disabled />
-                                </Form.Item>
-
-                                <Form.Item
-                                  label={t('validationReport:province')}
-                                  name={[name, 'province']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: `${t('validationReport:province')} ${t(
-                                        'isRequired'
-                                      )}`,
-                                    },
-                                  ]}
-                                >
-                                  <Select
-                                    size="large"
-                                    onChange={(value) => onProvinceSelect(value, name)}
-                                    placeholder={t('validationReport:provincePlaceholder')}
-                                    disabled
-                                  >
-                                    {provinces.map((province: string, index: number) => (
-                                      <Select.Option value={province}>{province}</Select.Option>
-                                    ))}
-                                  </Select>
-                                </Form.Item>
-
-                                <Form.Item
-                                  label={t('validationReport:district')}
-                                  name={[name, 'district']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: `${t('validationReport:district')} ${t(
-                                        'isRequired'
-                                      )}`,
-                                    },
-                                  ]}
-                                >
-                                  <Select
-                                    size="large"
-                                    placeholder={t('validationReport:districtPlaceholder')}
-                                    onSelect={(value) => onDistrictSelect(value, name)}
-                                    disabled
-                                  >
-                                    {districts[name]?.map((district: string, index: number) => (
-                                      <Select.Option key={district}>{district}</Select.Option>
-                                    ))}
-                                  </Select>
-                                </Form.Item>
-                                <Form.Item
-                                  label={t('validationReport:dsDivision')}
-                                  name={[name, 'dsDivision']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: `${t('validationReport:dsDivision')} ${t(
-                                        'isRequired'
-                                      )}`,
-                                    },
-                                  ]}
-                                >
-                                  <Select
-                                    size="large"
-                                    placeholder={t('validationReport:dsDivisionPlaceholder')}
-                                    onSelect={(value) => onDivisionSelect(value, name)}
-                                    disabled
-                                  >
-                                    {dsDivisions[name]?.map((division: string) => (
-                                      <Select.Option value={division}>{division}</Select.Option>
-                                    ))}
-                                  </Select>
-                                </Form.Item>
-                                <Form.Item
-                                  label={t('validationReport:city')}
-                                  name={[name, 'city']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: `${t('validationReport:city')} ${t('isRequired')}`,
-                                    },
-                                  ]}
-                                >
-                                  <Select
-                                    size="large"
-                                    placeholder={t('validationReport:cityPlaceholder')}
-                                    disabled
-                                  >
-                                    {cities[name]?.map((city: string) => (
-                                      <Select.Option value={city}>{city}</Select.Option>
-                                    ))}
-                                  </Select>
-                                </Form.Item>
-                                <Form.Item
-                                  label={t('validationReport:community')}
-                                  name={[name, 'community']}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: `${t('validationReport:community')} ${t(
-                                        'isRequired'
-                                      )}`,
-                                    },
-                                  ]}
-                                >
-                                  <Input size="large" disabled />
-                                </Form.Item>
-                              </Col>
-
-                              <Col xl={12} md={24}>
-                                <Form.Item label={t('validationReport:setLocation')}>
-                                  <GetLocationMapComponent
-                                    form={form}
-                                    formItemName={[name, 'geographicalLocationCoordinates']}
-                                    listName="locationsOfProjectActivity"
-                                    existingCordinate={getExistingCordinate(locationIndex)}
-                                    disabled
-                                    isShowCordinate
-                                  />
-                                </Form.Item>
-                              </Col>
-
-                              <Col xl={24} md={24}>
-                                <Form.Item
-                                  label={t('validationReport:uploadImages')}
-                                  name={[name, 'additionalDocuments']}
-                                  valuePropName="fileList"
-                                  getValueFromEvent={normFile}
-                                  required={false}
-                                  rules={[
-                                    {
-                                      validator: async (rule, file) => {
-                                        if (file?.length > 0) {
-                                          if (file[0]?.size > maximumImageSize) {
-                                            // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                            throw new Error(`${t('common:maxSizeVal')}`);
-                                          }
-                                        }
-                                      },
-                                    },
-                                  ]}
-                                >
-                                  <Upload
-                                    accept=".doc, .docx, .pdf, .png, .jpg"
-                                    beforeUpload={(file: any) => {
-                                      return false;
+                      {fields.map(
+                        (
+                          { key, name, ...restField },
+                          locationIndex: number
+                        ) => (
+                          <>
+                            <div className="form-list-actions">
+                              {/* <h4 className="list-item-title">Location {name + 1}</h4> */}
+                              {fields.length > 1 && (
+                                <Form.Item>
+                                  <Button
+                                    // type="dashed"
+                                    onClick={() => {
+                                      remove(name);
+                                      if (districts[name]) {
+                                        delete districts[name];
+                                      }
+                                      if (dsDivisions[name]) {
+                                        delete dsDivisions[name];
+                                      }
+                                      if (cities[name]) {
+                                        delete cities[name];
+                                      }
                                     }}
-                                    className="design-upload-section"
-                                    name="design"
-                                    action="/upload.do"
-                                    listType="picture"
-                                    multiple={false}
-                                    // maxCount={1}
+                                    size="large"
+                                    className="addMinusBtn"
+                                    // block
+                                    icon={<MinusOutlined />}
+                                    disabled
                                   >
-                                    <Button
-                                      className="upload-doc"
+                                    {/* Remove Entity */}
+                                  </Button>
+                                </Form.Item>
+                              )}
+                            </div>
+                            <div className="form-section">
+                              <Row
+                                justify={"space-between"}
+                                gutter={[40, 16]}
+                                style={{ borderRadius: "8px" }}
+                              >
+                                <Col xl={12} md={24}>
+                                  <Form.Item
+                                    label={t(
+                                      "validationReport:locationOfProjectActivity"
+                                    )}
+                                    name={[name, "locationOfProjectActivity"]}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: `${t(
+                                          "validationReport:locationOfProjectActivity"
+                                        )} ${t("isRequired")}`,
+                                      },
+                                    ]}
+                                  >
+                                    <Input size="large" disabled />
+                                  </Form.Item>
+
+                                  <Form.Item
+                                    label={t("validationReport:province")}
+                                    name={[name, "province"]}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: `${t(
+                                          "validationReport:province"
+                                        )} ${t("isRequired")}`,
+                                      },
+                                    ]}
+                                  >
+                                    <Select
                                       size="large"
-                                      icon={<UploadOutlined />}
+                                      onChange={(value) =>
+                                        onProvinceSelect(value, name)
+                                      }
+                                      placeholder={t(
+                                        "validationReport:provincePlaceholder"
+                                      )}
                                       disabled
                                     >
-                                      {t('validationReport:upload')}
-                                    </Button>
-                                  </Upload>
-                                </Form.Item>
-                              </Col>
-                            </Row>
+                                      {provinces.map(
+                                        (province: string, index: number) => (
+                                          <Select.Option value={province}>
+                                            {province}
+                                          </Select.Option>
+                                        )
+                                      )}
+                                    </Select>
+                                  </Form.Item>
 
-                            <h4
-                              className="form-section-title custom-required"
-                              style={{ marginBottom: 4 }}
-                            >{`${t('validationReport:technicalInformation')}`}</h4>
-                            <Form.List name={[name, 'technicalProjectDescriptionItems']}>
-                              {(
-                                technicalProjectDescriptionItemList,
-                                { add: addItem, remove: removeItem }
-                              ) => (
-                                <Row gutter={[8, 16]}>
-                                  <Col span={24}>
-                                    {technicalProjectDescriptionItemList.map(
-                                      ({
-                                        key: itemKey,
-                                        name: itemName,
-                                        fieldKey,
-                                        ...projectItemRest
-                                      }) => (
-                                        <Row className="technical-project-description">
-                                          <Col span={6}>
-                                            <Row>
-                                              <Col span={23}>
-                                                <p style={{ marginBottom: 2 }}>
-                                                  {t('validationReport:item')}
-                                                </p>
-                                                <Form.Item
-                                                  {...projectItemRest}
-                                                  name={[itemName, 'item']}
-                                                  key={itemKey}
-                                                  rules={[
-                                                    {
-                                                      required: true,
-                                                      message: `${t('validationReport:required')}`,
-                                                    },
-                                                  ]}
-                                                >
-                                                  <Input
-                                                    className="full-width-form-item"
-                                                    size="large"
-                                                  />
-                                                </Form.Item>
-                                              </Col>
-                                            </Row>
-                                          </Col>
-                                          <Col span={18}>
-                                            <Row gutter={[16, 8]}>
-                                              <Col span={10}>
-                                                <p style={{ height: 10 }}>
-                                                  {t('validationReport:parameter')}
-                                                </p>
-                                              </Col>
-                                              <Col span={10}>
-                                                <p style={{ height: 10 }}>
-                                                  {t('validationReport:value')}
-                                                </p>
-                                              </Col>
-                                              <Col span={4}></Col>
-                                            </Row>
-                                            <Form.List name={[itemName, 'parameterValue']}>
-                                              {(
-                                                parameterValueList,
-                                                {
-                                                  add: addItemParameterValue,
-                                                  remove: removeItemParameterValue,
-                                                }
-                                              ) => (
-                                                <>
-                                                  {parameterValueList.map(
-                                                    (
-                                                      {
-                                                        key: parameterValueListKey,
-                                                        name: parameterValueName,
-                                                        fieldKey: parameterFieldKey,
-                                                        ...parameterValueListRestField
-                                                      },
-                                                      projectValueIndex: number
-                                                    ) => (
-                                                      <>
-                                                        <Row gutter={[16, 8]}>
-                                                          <Col span={10}>
-                                                            <Form.Item
-                                                              {...parameterValueListRestField}
-                                                              name={[
-                                                                parameterValueName,
-                                                                'parameter',
-                                                              ]}
-                                                              key={parameterValueListKey}
-                                                              rules={[requiredValidationRule(t)]}
-                                                            >
-                                                              <Input
-                                                                className="full-width-form-item"
-                                                                size="large"
-                                                              />
-                                                            </Form.Item>
-                                                          </Col>
-                                                          <Col span={10}>
-                                                            <Form.Item
-                                                              {...parameterValueListRestField}
-                                                              name={[parameterValueName, 'value']}
-                                                              key={parameterValueListKey}
-                                                              rules={[requiredValidationRule(t)]}
-                                                            >
-                                                              <Input
-                                                                className="full-width-form-item"
-                                                                size="large"
-                                                              />
-                                                            </Form.Item>
-                                                          </Col>
-                                                          <Col span={4}>
-                                                            <div>
-                                                              {parameterValueList.length > 1 && (
-                                                                <Button
-                                                                  onClick={() => {
-                                                                    // reduceTotalCreditingYears()
-                                                                    removeItemParameterValue(
-                                                                      parameterValueName
-                                                                    );
-                                                                  }}
-                                                                  style={{ marginRight: 4 }}
-                                                                  size="middle"
-                                                                  className="addMinusBtn"
-                                                                  // block
-                                                                  icon={<MinusOutlined />}
-                                                                ></Button>
-                                                              )}
-                                                              {projectValueIndex ===
-                                                                parameterValueList.length - 1 && (
-                                                                <Button
-                                                                  onClick={() => {
-                                                                    addItemParameterValue();
-                                                                  }}
-                                                                  size="middle"
-                                                                  className="addMinusBtn"
-                                                                  icon={<PlusOutlined />}
-                                                                ></Button>
-                                                              )}
-                                                            </div>
-                                                          </Col>
-                                                        </Row>
-                                                      </>
-                                                    )
-                                                  )}
-                                                </>
-                                              )}
-                                            </Form.List>
-                                          </Col>
+                                  <Form.Item
+                                    label={t("validationReport:district")}
+                                    name={[name, "district"]}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: `${t(
+                                          "validationReport:district"
+                                        )} ${t("isRequired")}`,
+                                      },
+                                    ]}
+                                  >
+                                    <Select
+                                      size="large"
+                                      placeholder={t(
+                                        "validationReport:districtPlaceholder"
+                                      )}
+                                      onSelect={(value) =>
+                                        onDistrictSelect(value, name)
+                                      }
+                                      disabled
+                                    >
+                                      {districts[name]?.map(
+                                        (district: string, index: number) => (
+                                          <Select.Option key={district}>
+                                            {district}
+                                          </Select.Option>
+                                        )
+                                      )}
+                                    </Select>
+                                  </Form.Item>
+                                  <Form.Item
+                                    label={t("validationReport:dsDivision")}
+                                    name={[name, "dsDivision"]}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: `${t(
+                                          "validationReport:dsDivision"
+                                        )} ${t("isRequired")}`,
+                                      },
+                                    ]}
+                                  >
+                                    <Select
+                                      size="large"
+                                      placeholder={t(
+                                        "validationReport:dsDivisionPlaceholder"
+                                      )}
+                                      onSelect={(value) =>
+                                        onDivisionSelect(value, name)
+                                      }
+                                      disabled
+                                    >
+                                      {dsDivisions[name]?.map(
+                                        (division: string) => (
+                                          <Select.Option value={division}>
+                                            {division}
+                                          </Select.Option>
+                                        )
+                                      )}
+                                    </Select>
+                                  </Form.Item>
+                                  <Form.Item
+                                    label={t("validationReport:city")}
+                                    name={[name, "city"]}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: `${t(
+                                          "validationReport:city"
+                                        )} ${t("isRequired")}`,
+                                      },
+                                    ]}
+                                  >
+                                    <Select
+                                      size="large"
+                                      placeholder={t(
+                                        "validationReport:cityPlaceholder"
+                                      )}
+                                      disabled
+                                    >
+                                      {cities[name]?.map((city: string) => (
+                                        <Select.Option value={city}>
+                                          {city}
+                                        </Select.Option>
+                                      ))}
+                                    </Select>
+                                  </Form.Item>
+                                  <Form.Item
+                                    label={t("validationReport:community")}
+                                    name={[name, "community"]}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: `${t(
+                                          "validationReport:community"
+                                        )} ${t("isRequired")}`,
+                                      },
+                                    ]}
+                                  >
+                                    <Input size="large" disabled />
+                                  </Form.Item>
+                                </Col>
 
-                                          <Col
-                                            span={24}
-                                            style={{
-                                              display: 'flex',
-                                              justifyContent: 'flex-start',
-                                            }}
-                                          >
-                                            {technicalProjectDescriptionItemList.length > 1 && (
-                                              <Button
-                                                // type="dashed"
-                                                onClick={() => {
-                                                  // reduceTotalCreditingYears()
-                                                  removeItem(itemName);
-                                                }}
-                                                size="middle"
-                                                className="addMinusBtn"
-                                                // block
-                                                icon={<MinusOutlined />}
-                                              ></Button>
-                                            )}
-                                          </Col>
-                                        </Row>
-                                      )
-                                    )}
-                                    <Form.Item style={{ marginTop: 10 }}>
+                                <Col xl={12} md={24}>
+                                  <Form.Item
+                                    label={t("validationReport:setLocation")}
+                                  >
+                                    <GetLocationMapComponent
+                                      form={form}
+                                      formItemName={[
+                                        name,
+                                        "geographicalLocationCoordinates",
+                                      ]}
+                                      listName="locationsOfProjectActivity"
+                                      existingCordinate={getExistingCordinate(
+                                        locationIndex
+                                      )}
+                                      disabled
+                                      isShowCordinate
+                                    />
+                                  </Form.Item>
+                                </Col>
+
+                                <Col xl={24} md={24}>
+                                  <Form.Item
+                                    label={t("validationReport:uploadImages")}
+                                    name={[name, "additionalDocuments"]}
+                                    valuePropName="fileList"
+                                    getValueFromEvent={normFile}
+                                    required={false}
+                                    rules={[
+                                      {
+                                        validator: async (rule, file) => {
+                                          if (file?.length > 0) {
+                                            if (
+                                              file[0]?.size > maximumImageSize
+                                            ) {
+                                              // default size format of files would be in bytes -> 1MB = 1000000bytes
+                                              throw new Error(
+                                                `${t("common:maxSizeVal")}`
+                                              );
+                                            }
+                                          }
+                                        },
+                                      },
+                                    ]}
+                                  >
+                                    <Upload
+                                      accept=".doc, .docx, .pdf, .png, .jpg"
+                                      beforeUpload={(file: any) => {
+                                        return false;
+                                      }}
+                                      className="design-upload-section"
+                                      name="design"
+                                      action="/upload.do"
+                                      listType="picture"
+                                      multiple={false}
+                                      // maxCount={1}
+                                    >
                                       <Button
-                                        onClick={() => {
-                                          addItem({
-                                            item: '',
-                                            parameterValue: [
-                                              {
-                                                parameter: '',
-                                                value: '',
-                                              },
-                                            ],
-                                          });
-                                        }}
-                                        size="middle"
-                                        className="addMinusBtn"
-                                        icon={<PlusOutlined />}
+                                        className="upload-doc"
+                                        size="large"
+                                        icon={<UploadOutlined />}
+                                        disabled
                                       >
-                                        {t('validationReport:addItem')}
+                                        {t("validationReport:upload")}
                                       </Button>
-                                    </Form.Item>
-                                  </Col>
-                                </Row>
-                              )}
-                            </Form.List>
-                          </div>
-                        </>
-                      ))}
+                                    </Upload>
+                                  </Form.Item>
+                                </Col>
+                              </Row>
+
+                              <h4
+                                className="form-section-title custom-required"
+                                style={{ marginBottom: 4 }}
+                              >{`${t(
+                                "validationReport:technicalInformation"
+                              )}`}</h4>
+                              <Form.List
+                                name={[
+                                  name,
+                                  "technicalProjectDescriptionItems",
+                                ]}
+                              >
+                                {(
+                                  technicalProjectDescriptionItemList,
+                                  { add: addItem, remove: removeItem }
+                                ) => (
+                                  <Row gutter={[8, 16]}>
+                                    <Col span={24}>
+                                      {technicalProjectDescriptionItemList.map(
+                                        ({
+                                          key: itemKey,
+                                          name: itemName,
+                                          fieldKey,
+                                          ...projectItemRest
+                                        }) => (
+                                          <Row className="technical-project-description">
+                                            <Col span={6}>
+                                              <Row>
+                                                <Col span={23}>
+                                                  <p
+                                                    style={{ marginBottom: 2 }}
+                                                  >
+                                                    {t("validationReport:item")}
+                                                  </p>
+                                                  <Form.Item
+                                                    {...projectItemRest}
+                                                    name={[itemName, "item"]}
+                                                    key={itemKey}
+                                                    rules={[
+                                                      {
+                                                        required: true,
+                                                        message: `${t(
+                                                          "validationReport:required"
+                                                        )}`,
+                                                      },
+                                                    ]}
+                                                  >
+                                                    <Input
+                                                      className="full-width-form-item"
+                                                      size="large"
+                                                    />
+                                                  </Form.Item>
+                                                </Col>
+                                              </Row>
+                                            </Col>
+                                            <Col span={18}>
+                                              <Row gutter={[16, 8]}>
+                                                <Col span={10}>
+                                                  <p style={{ height: 10 }}>
+                                                    {t(
+                                                      "validationReport:parameter"
+                                                    )}
+                                                  </p>
+                                                </Col>
+                                                <Col span={10}>
+                                                  <p style={{ height: 10 }}>
+                                                    {t(
+                                                      "validationReport:value"
+                                                    )}
+                                                  </p>
+                                                </Col>
+                                                <Col span={4}></Col>
+                                              </Row>
+                                              <Form.List
+                                                name={[
+                                                  itemName,
+                                                  "parameterValue",
+                                                ]}
+                                              >
+                                                {(
+                                                  parameterValueList,
+                                                  {
+                                                    add: addItemParameterValue,
+                                                    remove:
+                                                      removeItemParameterValue,
+                                                  }
+                                                ) => (
+                                                  <>
+                                                    {parameterValueList.map(
+                                                      (
+                                                        {
+                                                          key: parameterValueListKey,
+                                                          name: parameterValueName,
+                                                          fieldKey:
+                                                            parameterFieldKey,
+                                                          ...parameterValueListRestField
+                                                        },
+                                                        projectValueIndex: number
+                                                      ) => (
+                                                        <>
+                                                          <Row gutter={[16, 8]}>
+                                                            <Col span={10}>
+                                                              <Form.Item
+                                                                {...parameterValueListRestField}
+                                                                name={[
+                                                                  parameterValueName,
+                                                                  "parameter",
+                                                                ]}
+                                                                key={
+                                                                  parameterValueListKey
+                                                                }
+                                                                rules={[
+                                                                  requiredValidationRule(
+                                                                    t
+                                                                  ),
+                                                                ]}
+                                                              >
+                                                                <Input
+                                                                  className="full-width-form-item"
+                                                                  size="large"
+                                                                />
+                                                              </Form.Item>
+                                                            </Col>
+                                                            <Col span={10}>
+                                                              <Form.Item
+                                                                {...parameterValueListRestField}
+                                                                name={[
+                                                                  parameterValueName,
+                                                                  "value",
+                                                                ]}
+                                                                key={
+                                                                  parameterValueListKey
+                                                                }
+                                                                rules={[
+                                                                  requiredValidationRule(
+                                                                    t
+                                                                  ),
+                                                                ]}
+                                                              >
+                                                                <Input
+                                                                  className="full-width-form-item"
+                                                                  size="large"
+                                                                />
+                                                              </Form.Item>
+                                                            </Col>
+                                                            <Col span={4}>
+                                                              <div>
+                                                                {parameterValueList.length >
+                                                                  1 && (
+                                                                  <Button
+                                                                    onClick={() => {
+                                                                      // reduceTotalCreditingYears()
+                                                                      removeItemParameterValue(
+                                                                        parameterValueName
+                                                                      );
+                                                                    }}
+                                                                    style={{
+                                                                      marginRight: 4,
+                                                                    }}
+                                                                    size="middle"
+                                                                    className="addMinusBtn"
+                                                                    // block
+                                                                    icon={
+                                                                      <MinusOutlined />
+                                                                    }
+                                                                  ></Button>
+                                                                )}
+                                                                {projectValueIndex ===
+                                                                  parameterValueList.length -
+                                                                    1 && (
+                                                                  <Button
+                                                                    onClick={() => {
+                                                                      addItemParameterValue();
+                                                                    }}
+                                                                    size="middle"
+                                                                    className="addMinusBtn"
+                                                                    icon={
+                                                                      <PlusOutlined />
+                                                                    }
+                                                                  ></Button>
+                                                                )}
+                                                              </div>
+                                                            </Col>
+                                                          </Row>
+                                                        </>
+                                                      )
+                                                    )}
+                                                  </>
+                                                )}
+                                              </Form.List>
+                                            </Col>
+
+                                            <Col
+                                              span={24}
+                                              style={{
+                                                display: "flex",
+                                                justifyContent: "flex-start",
+                                              }}
+                                            >
+                                              {technicalProjectDescriptionItemList.length >
+                                                1 && (
+                                                <Button
+                                                  // type="dashed"
+                                                  onClick={() => {
+                                                    // reduceTotalCreditingYears()
+                                                    removeItem(itemName);
+                                                  }}
+                                                  size="middle"
+                                                  className="addMinusBtn"
+                                                  // block
+                                                  icon={<MinusOutlined />}
+                                                ></Button>
+                                              )}
+                                            </Col>
+                                          </Row>
+                                        )
+                                      )}
+                                      <Form.Item style={{ marginTop: 10 }}>
+                                        <Button
+                                          onClick={() => {
+                                            addItem({
+                                              item: "",
+                                              parameterValue: [
+                                                {
+                                                  parameter: "",
+                                                  value: "",
+                                                },
+                                              ],
+                                            });
+                                          }}
+                                          size="middle"
+                                          className="addMinusBtn"
+                                          icon={<PlusOutlined />}
+                                        >
+                                          {t("validationReport:addItem")}
+                                        </Button>
+                                      </Form.Item>
+                                    </Col>
+                                  </Row>
+                                )}
+                              </Form.List>
+                            </div>
+                          </>
+                        )
+                      )}
                       <div className="form-list-actions">
                         <Form.Item>
                           <Button
@@ -893,11 +1050,11 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                               add({
                                 technicalProjectDescriptionItems: [
                                   {
-                                    item: '',
+                                    item: "",
                                     parameterValue: [
                                       {
-                                        parameter: '',
-                                        value: '',
+                                        parameter: "",
+                                        value: "",
                                       },
                                     ],
                                   },
@@ -910,7 +1067,7 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                             icon={<PlusOutlined />}
                             disabled
                           >
-                            {t('validationReport:addLocation')}
+                            {t("validationReport:addLocation")}
                           </Button>
                         </Form.Item>
                       </div>
@@ -919,12 +1076,17 @@ const ValicationReportGHGDescriptionOfProjectActivity = (props: CustomStepsProps
                 </Form.List>
               </>
 
-              <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev} disabled={false}>
-                  {t('validationReport:prev')}
+              <Row justify={"end"} className="step-actions-end">
+                <Button danger size={"large"} onClick={prev} disabled={false}>
+                  {t("validationReport:prev")}
                 </Button>
-                <Button type="primary" size={'large'} disabled={false} htmlType="submit">
-                  {t('validationReport:next')}
+                <Button
+                  type="primary"
+                  size={"large"}
+                  disabled={false}
+                  htmlType="submit"
+                >
+                  {t("validationReport:next")}
                 </Button>
               </Row>
             </Form>

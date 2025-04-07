@@ -1,6 +1,6 @@
-@import '../../Styles/colors.addProgramme.scss';
-@import '../../Styles/colors.role.scss';
-@import '../../Styles/variables.scss';
+@use '../../Styles/colors.addProgramme.scss';
+@use '../../Styles/colors.role.scss' as colors2;
+@use '../../Styles/variables.scss';
 
 .cma-form-container {
   display: flex;
@@ -16,12 +16,12 @@
     .main {
       font-size: 1.25rem;
       font-weight: 500;
-      color: $primary-color;
+      color: variables.$primary-color;
     }
 
     .sub {
       font-size: 0.8rem;
-      color: $title-sub;
+      color: colors.$title-sub;
     }
 
     .version-selector {
@@ -42,7 +42,7 @@
   .forms-container {
     display: flex;
     flex-direction: column;
-    background-color: $common-form-white;
+    background-color: colors.$common-form-white;
     margin: 1rem 0 1rem 0;
     border-radius: 10px;
     padding: 2.5rem 1.5rem 2.5rem 1.5rem;
@@ -63,7 +63,7 @@
       margin-left: 0.3rem;
     }
     .ant-input-group-addon {
-      border: 1px solid $common-form-input-border;
+      border: 1px solid variables.$common-form-input-border;
     }
   }
 
@@ -472,7 +472,7 @@
   }
 
   .ant-upload-list-item-name {
-    color: $primary-color;
+    color: variables.$primary-color;
   }
 
   .step-actions {
@@ -506,13 +506,13 @@
     font-size: 2.2rem;
     font-weight: 800;
     margin-right: 0.4rem;
-    color: $steps-count;
+    color: colors.$steps-count;
   }
 
   .title {
     font-size: 1rem;
     font-weight: 600;
-    color: $steps-title;
+    color: colors.$steps-title;
   }
 }
 

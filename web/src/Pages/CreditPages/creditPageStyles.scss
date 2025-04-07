@@ -1,4 +1,4 @@
-@import '../../Styles/variables.scss';
+@use '../../Styles/variables.scss';
 
 .body-title {
   margin-bottom: 30px;
@@ -57,8 +57,8 @@
 }
 
 .checkbox-accept .ant-checkbox-checked .ant-checkbox-inner {
-  background-color: $primary-color;
-  border-color: $primary-color;
+  background-color: variables.$primary-color;
+  border-color: variables.$primary-color;
   border: none;
 }
 
@@ -128,7 +128,7 @@
     margin-bottom: 0px;
 
     input {
-      font-family: $primary-font-family;
+      font-family: variables.$primary-font-family;
       font-size: 0.8rem;
     }
 

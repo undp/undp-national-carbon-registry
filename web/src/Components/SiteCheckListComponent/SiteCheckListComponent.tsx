@@ -9,40 +9,40 @@ import {
   TimePicker,
   Upload,
   Spin,
-} from 'antd';
-import { useForm } from 'antd/lib/form/Form';
-import Input from 'antd/lib/input/Input';
-import { i18n } from 'i18next';
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import './SiteCheckListComponent.scss';
-import moment from 'moment';
+} from "antd";
+import { useForm } from "antd/lib/form/Form";
+import Input from "antd/lib/input/Input";
+import { i18n } from "i18next";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import "./SiteCheckListComponent.scss";
+import moment from "moment";
 import PhoneInput, {
   formatPhoneNumber,
   isPossiblePhoneNumber,
   formatPhoneNumberIntl,
   Country,
-} from 'react-phone-number-input';
+} from "react-phone-number-input";
 
-import TextArea from 'antd/lib/input/TextArea';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { isValidateFileType } from '../../Utils/DocumentValidator';
-import { DocType } from '../../Definitions/Enums/document.type';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
-import { RcFile } from 'antd/lib/upload';
-import { PURPOSE_CREDIT_DEVELOPMENT } from '../AddNewProgramme/ProgrammeCreationComponent';
-import GetMultipleLocationsMapComponent from '../Maps/GetMultipleLocationsMapComponent';
-import { Loading } from '../Loading/loading';
-import { API_PATHS } from '../../Config/apiConfig';
-import { ROUTES } from '../../Config/uiRoutingConfig';
+import TextArea from "antd/lib/input/TextArea";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { MinusOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { isValidateFileType } from "../../Utils/DocumentValidator";
+import { DocType } from "../../Definitions/Enums/document.type";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { getBase64 } from "../../Definitions/Definitions/programme.definitions";
+import { RcFile } from "antd/lib/upload";
+import { PURPOSE_CREDIT_DEVELOPMENT } from "../AddNewProgramme/ProgrammeCreationComponent";
+import GetMultipleLocationsMapComponent from "../Maps/GetMultipleLocationsMapComponent";
+import { Loading } from "../Loading/loading";
+import { API_PATHS } from "../../Config/apiConfig";
+import { ROUTES } from "../../Config/uiRoutingConfig";
 
 const SiteCheckListComponent = (props: { translator: i18n }) => {
   const [form] = useForm();
   const { translator } = props;
 
-  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
 
   const [contactNoInput] = useState<any>();
 
@@ -78,14 +78,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
 
       form.setFieldsValue(tempValues);
     } catch (error) {
-      console.log('--------error---------', error);
+      console.log("--------error---------", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   const normFile = (e: any) => {
@@ -125,7 +125,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
         ? vals?.stakeholderInterviews.shift()
         : undefined;
 
-    const fileUrlParts = vals?.validatorSignature.split('/');
+    const fileUrlParts = vals?.validatorSignature.split("/");
     const fileName = fileUrlParts[fileUrlParts.length - 1];
 
     const tempVals = {
@@ -140,7 +140,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
       projectCapacity: vals?.projectCapacity,
       plantFactorPercentage: vals?.plantFactorPercentage
         ? String(vals?.plantFactorPercentage)
-        : '0',
+        : "0",
       projectEmission: vals?.projectEmission,
       leakageEmission: vals?.leakageEmission,
       eligibility1YesNo: vals?.eligibility1YesNo,
@@ -155,23 +155,33 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
       eligibility5Comment: vals?.eligibility5Comment,
       eligibility6YesNo: vals?.eligibility6YesNo,
       eligibility6Comment: vals?.eligibility6Comment,
-      doc1FeasibilityStudiesAvailability: vals?.doc1FeasibilityStudiesAvailability,
+      doc1FeasibilityStudiesAvailability:
+        vals?.doc1FeasibilityStudiesAvailability,
       doc1FeasibilityStudiesComment: vals?.doc1FeasibilityStudiesComment,
-      doc2PowerPurchasingAgreementAvailability: vals?.doc2PowerPurchasingAgreementAvailability,
-      doc2PowerPurchasingAgreementComment: vals?.doc2PowerPurchasingAgreementComment,
-      doc3TestingCertificateAvailability: vals?.doc3TestingCertificateAvailability,
+      doc2PowerPurchasingAgreementAvailability:
+        vals?.doc2PowerPurchasingAgreementAvailability,
+      doc2PowerPurchasingAgreementComment:
+        vals?.doc2PowerPurchasingAgreementComment,
+      doc3TestingCertificateAvailability:
+        vals?.doc3TestingCertificateAvailability,
       doc3TestingCertificateComment: vals?.doc3TestingCertificateComment,
-      doc4CalibrationReportsAvailability: vals?.doc4CalibrationReportsAvailability,
+      doc4CalibrationReportsAvailability:
+        vals?.doc4CalibrationReportsAvailability,
       doc4CalibrationReportsComment: vals?.doc4CalibrationReportsComment,
       doc5DataManagementAvailability: vals?.doc5DataManagementAvailability,
       doc5DataManagementComment: vals?.doc5DataManagementComment,
-      doc6MonthlyElectricityRecordsAvailability: vals?.doc6MonthlyElectricityRecordsAvailability,
-      doc6MonthlyElectricityRecordsComment: vals?.doc6MonthlyElectricityRecordsComment,
-      doc7MonthlyElectricityInvoicesAvailability: vals?.doc7MonthlyElectricityInvoicesAvailability,
-      doc7MonthlyElectricityInvoicesComment: vals?.doc7MonthlyElectricityInvoicesComment,
+      doc6MonthlyElectricityRecordsAvailability:
+        vals?.doc6MonthlyElectricityRecordsAvailability,
+      doc6MonthlyElectricityRecordsComment:
+        vals?.doc6MonthlyElectricityRecordsComment,
+      doc7MonthlyElectricityInvoicesAvailability:
+        vals?.doc7MonthlyElectricityInvoicesAvailability,
+      doc7MonthlyElectricityInvoicesComment:
+        vals?.doc7MonthlyElectricityInvoicesComment,
       doc8TrainingRecordsAvailability: vals?.doc8TrainingRecordsAvailability,
       doc8TrainingRecordsComment: vals?.doc8TrainingRecordsComment,
-      doc9InternalAuditReportsAvailability: vals?.doc9InternalAuditReportsAvailability,
+      doc9InternalAuditReportsAvailability:
+        vals?.doc9InternalAuditReportsAvailability,
       doc9InternalAuditReportsComment: vals?.doc9InternalAuditReportsComment,
       stakeholderName: firstStakeholder?.stakeholderName,
       contactDetails: firstStakeholder?.stakeholderContactNo,
@@ -201,9 +211,9 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
       validatorDesignation: vals?.validatorDesignation,
       validatorSignature: [
         {
-          uid: 'validation_signature',
+          uid: "validation_signature",
           name: fileName,
-          status: 'done',
+          status: "done",
           url: vals?.validatorSignature,
         },
       ],
@@ -220,15 +230,15 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
         try {
           const res = await post(API_PATHS.LAST_DOC_VERSION, {
             programmeId: id,
-            docType: 'siteVisitChecklist',
+            docType: "siteVisitChecklist",
           });
 
-          if (res?.statusText === 'SUCCESS') {
+          if (res?.statusText === "SUCCESS") {
             const content = JSON.parse(res?.data.content);
             viewDataMapToFields(content);
           }
         } catch (error) {
-          console.log('-----error----');
+          console.log("-----error----");
         } finally {
           setLoading(false);
         }
@@ -250,19 +260,23 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
   };
 
   const onFinish = async (values: any) => {
-    console.log('-------values--------', values?.projectTrack);
+    console.log("-------values--------", values?.projectTrack);
 
-    const validatorSignatureBase64 = await convertFileToBase64(values?.validatorSignature[0]);
+    const validatorSignatureBase64 = await convertFileToBase64(
+      values?.validatorSignature[0]
+    );
 
     const tempValues = {
       projectName: values?.projectName,
       organizationName: values?.organizationName,
       location: values?.location,
-      date: moment(values?.date).startOf('day').unix(),
+      date: moment(values?.date).startOf("day").unix(),
       time: moment(values?.time).unix(),
-      projectStartDate: moment(values?.projectStartDate).startOf('day').unix(),
-      projectCommissionDate: moment(values?.projectCommissionDate).startOf('day').unix(),
-      projectTrack: form.getFieldValue('projectTrack'),
+      projectStartDate: moment(values?.projectStartDate).startOf("day").unix(),
+      projectCommissionDate: moment(values?.projectCommissionDate)
+        .startOf("day")
+        .unix(),
+      projectTrack: form.getFieldValue("projectTrack"),
       projectCapacity: values?.projectCapacity,
       plantFactorPercentage: Number(values?.plantFactorPercentage),
       projectEmission: values?.projectEmission,
@@ -279,24 +293,33 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
       eligibility5Comment: values?.eligibility5Comment,
       eligibility6YesNo: values?.eligibility6YesNo,
       eligibility6Comment: values?.eligibility6Comment,
-      doc1FeasibilityStudiesAvailability: values?.doc1FeasibilityStudiesAvailability,
+      doc1FeasibilityStudiesAvailability:
+        values?.doc1FeasibilityStudiesAvailability,
       doc1FeasibilityStudiesComment: values?.doc1FeasibilityStudiesComment,
-      doc2PowerPurchasingAgreementAvailability: values?.doc2PowerPurchasingAgreementAvailability,
-      doc2PowerPurchasingAgreementComment: values?.doc2PowerPurchasingAgreementComment,
-      doc3TestingCertificateAvailability: values?.doc3TestingCertificateAvailability,
+      doc2PowerPurchasingAgreementAvailability:
+        values?.doc2PowerPurchasingAgreementAvailability,
+      doc2PowerPurchasingAgreementComment:
+        values?.doc2PowerPurchasingAgreementComment,
+      doc3TestingCertificateAvailability:
+        values?.doc3TestingCertificateAvailability,
       doc3TestingCertificateComment: values?.doc3TestingCertificateComment,
-      doc4CalibrationReportsAvailability: values?.doc4CalibrationReportsAvailability,
+      doc4CalibrationReportsAvailability:
+        values?.doc4CalibrationReportsAvailability,
       doc4CalibrationReportsComment: values?.doc4CalibrationReportsComment,
       doc5DataManagementAvailability: values?.doc5DataManagementAvailability,
       doc5DataManagementComment: values?.doc5DataManagementComment,
-      doc6MonthlyElectricityRecordsAvailability: values?.doc6MonthlyElectricityRecordsAvailability,
-      doc6MonthlyElectricityRecordsComment: values?.doc6MonthlyElectricityRecordsComment,
+      doc6MonthlyElectricityRecordsAvailability:
+        values?.doc6MonthlyElectricityRecordsAvailability,
+      doc6MonthlyElectricityRecordsComment:
+        values?.doc6MonthlyElectricityRecordsComment,
       doc7MonthlyElectricityInvoicesAvailability:
         values?.doc7MonthlyElectricityInvoicesAvailability,
-      doc7MonthlyElectricityInvoicesComment: values?.doc7MonthlyElectricityInvoicesComment,
+      doc7MonthlyElectricityInvoicesComment:
+        values?.doc7MonthlyElectricityInvoicesComment,
       doc8TrainingRecordsAvailability: values?.doc8TrainingRecordsAvailability,
       doc8TrainingRecordsComment: values?.doc8TrainingRecordsComment,
-      doc9InternalAuditReportsAvailability: values?.doc9InternalAuditReportsAvailability,
+      doc9InternalAuditReportsAvailability:
+        values?.doc9InternalAuditReportsAvailability,
       doc9InternalAuditReportsComment: values?.doc9InternalAuditReportsComment,
       stakeholderInterviews: (function () {
         const tempStakeholderObjs: any = [];
@@ -329,7 +352,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
         return tempStakeholderObjs;
       })(),
       validatorName: values?.validatorName,
-      validationDate: moment(values?.validationDate).startOf('day').unix(),
+      validationDate: moment(values?.validationDate).startOf("day").unix(),
       validatorDesignation: values?.validatorDesignation,
       validatorSignature: validatorSignatureBase64,
     };
@@ -342,22 +365,22 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
         content: tempValues,
       });
 
-      if (res?.statusText === 'SUCCESS') {
+      if (res?.statusText === "SUCCESS") {
         message.open({
-          type: 'success',
-          content: 'CMA Approve success',
+          type: "success",
+          content: "CMA Approve success",
           duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
         navigateToDetailsPage();
       }
     } catch (error) {
       console.log(error);
       message.open({
-        type: 'error',
-        content: 'Something went wrong!',
+        type: "error",
+        content: "Something went wrong!",
         duration: 4,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       setLoading(false);
@@ -397,12 +420,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   {
                     validator: async (rule: any, value: any) => {
                       if (
-                        String(value).trim() === '' ||
+                        String(value).trim() === "" ||
                         String(value).trim() === undefined ||
                         value === null ||
                         value === undefined
                       ) {
-                        throw new Error(`Project Name ${t('isRequired')}`);
+                        throw new Error(`Project Name ${t("isRequired")}`);
                       }
                     },
                   },
@@ -422,12 +445,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   {
                     validator: async (rule: any, value: any) => {
                       if (
-                        String(value).trim() === '' ||
+                        String(value).trim() === "" ||
                         String(value).trim() === undefined ||
                         value === null ||
                         value === undefined
                       ) {
-                        throw new Error(`Organization Name ${t('isRequired')}`);
+                        throw new Error(`Organization Name ${t("isRequired")}`);
                       }
                     },
                   },
@@ -447,21 +470,21 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   {
                     validator: async (rule: any, value: any) => {
                       if (
-                        String(value).trim() === '' ||
+                        String(value).trim() === "" ||
                         String(value).trim() === undefined ||
                         value === null ||
                         value === undefined
                       ) {
-                        throw new Error(`Location ${t('isRequired')}`);
+                        throw new Error(`Location ${t("isRequired")}`);
                       }
                     },
                   },
                 ]}
               >
                 <GetMultipleLocationsMapComponent
-                  existingCoordinate={form.getFieldValue('location')}
+                  existingCoordinate={form.getFieldValue("location")}
                   form={form}
-                  formItemName={'location'}
+                  formItemName={"location"}
                   disabled={true}
                 />
               </Form.Item>
@@ -477,12 +500,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   {
                     validator: async (rule: any, value: any) => {
                       if (
-                        String(value).trim() === '' ||
+                        String(value).trim() === "" ||
                         String(value).trim() === undefined ||
                         value === null ||
                         value === undefined
                       ) {
-                        throw new Error(`Date ${t('isRequired')}`);
+                        throw new Error(`Date ${t("isRequired")}`);
                       }
                     },
                   },
@@ -502,25 +525,31 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   {
                     validator: async (rule: any, value: any) => {
                       if (
-                        String(value).trim() === '' ||
+                        String(value).trim() === "" ||
                         String(value).trim() === undefined ||
                         value === null ||
                         value === undefined
                       ) {
-                        throw new Error(`Time ${t('isRequired')}`);
+                        throw new Error(`Time ${t("isRequired")}`);
                       }
                     },
                   },
                 ]}
               >
-                <TimePicker size="large" placeholder="Select Time" disabled={disableFields} />
+                <TimePicker
+                  size="large"
+                  placeholder="Select Time"
+                  disabled={disableFields}
+                />
               </Form.Item>
             </Col>
           </Row>
 
           {/* Project Details Start */}
           <>
-            <h4 className="section-title mg-top-1 mg-bottom-1">Project Details</h4>
+            <h4 className="section-title mg-top-1 mg-bottom-1">
+              Project Details
+            </h4>
 
             <Row gutter={40}>
               <Col md={12} xl={12}>
@@ -535,12 +564,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`Project Start Date ${t('isRequired')}`);
+                          throw new Error(
+                            `Project Start Date ${t("isRequired")}`
+                          );
                         }
                       },
                     },
@@ -553,25 +584,36 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   <div>
                     <p
                       className="custom-required"
-                      style={{ marginBottom: '8px', color: 'rgba(58, 53, 65, 0.5' }}
+                      style={{
+                        marginBottom: "8px",
+                        color: "rgba(58, 53, 65, 0.5",
+                      }}
                     >
                       Project Track
                     </p>
                     <Input
                       size="large"
                       disabled
-                      value={PURPOSE_CREDIT_DEVELOPMENT[form.getFieldValue('projectTrack')]}
+                      value={
+                        PURPOSE_CREDIT_DEVELOPMENT[
+                          form.getFieldValue("projectTrack")
+                        ]
+                      }
                     />
                   </div>
 
                   <div
-                    style={{ fontSize: '12px', marginLeft: '8px', color: 'rgba(58, 53, 65, 0.5' }}
+                    style={{
+                      fontSize: "12px",
+                      marginLeft: "8px",
+                      color: "rgba(58, 53, 65, 0.5",
+                    }}
                     className="mg-top-2"
                   >
-                    {form.getFieldValue('projectTrack') === 'TRACK_2' && (
+                    {form.getFieldValue("projectTrack") === "TRACK_2" && (
                       <>
-                        *Issued carbon credits from project will only be used for internal
-                        offsetting of emissions.
+                        *Issued carbon credits from project will only be used
+                        for internal offsetting of emissions.
                       </>
                     )}
                   </div>
@@ -589,12 +631,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`Project Factor ${t('isRequired')}`);
+                          throw new Error(`Project Factor ${t("isRequired")}`);
                         }
 
                         if (isNaN(value)) {
@@ -627,12 +669,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                         }
 
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`Project Capacity ${t('isRequired')}`);
+                          throw new Error(
+                            `Project Capacity ${t("isRequired")}`
+                          );
                         }
 
                         // eslint-disable-next-line no-restricted-globals
@@ -659,12 +703,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                         if (!value) {
                         }
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`Project Emission ${t('isRequired')}`);
+                          throw new Error(
+                            `Project Emission ${t("isRequired")}`
+                          );
                         }
 
                         // // eslint-disable-next-line no-restricted-globals
@@ -689,12 +735,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`Leakage Emission ${t('isRequired')}`);
+                          throw new Error(
+                            `Leakage Emission ${t("isRequired")}`
+                          );
                         }
                       },
                     },
@@ -711,7 +759,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
           <>
             <h4 className="section-title mg-top-1">Eligibility</h4>
             <div className="checklist-table-form">
-              <Row className="header" gutter={24} justify={'space-between'} align={'top'}>
+              <Row
+                className="header"
+                gutter={24}
+                justify={"space-between"}
+                align={"top"}
+              >
                 <Col md={10} xl={10}>
                   Eligibility Criteria
                 </Col>
@@ -723,14 +776,20 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 </Col>
               </Row>
 
-              <Row className="data-row" gutter={24} justify={'space-between'} align={'top'}>
+              <Row
+                className="data-row"
+                gutter={24}
+                justify={"space-between"}
+                align={"top"}
+              >
                 <Col md={10} xl={10} className="col-1">
                   <div className="text-row">
                     <div>1.</div>
                     <div>
-                      The project activity shall be a new project, which will reduce/absorb GHG
-                      emissions or the project activity shall be a project, which was implemented on
-                      or after 2010 in order to offset GHG emission within the organization.
+                      The project activity shall be a new project, which will
+                      reduce/absorb GHG emissions or the project activity shall
+                      be a project, which was implemented on or after 2010 in
+                      order to offset GHG emission within the organization.
                     </div>
                   </div>
                 </Col>
@@ -745,18 +804,24 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule: any, value: any) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                            throw new Error(
+                              `${t("siteVisitCheckList:required")}`
+                            );
                           }
                         },
                       },
                     ]}
                   >
-                    <Select size="large" placeholder="Select" disabled={disableFields}>
+                    <Select
+                      size="large"
+                      placeholder="Select"
+                      disabled={disableFields}
+                    >
                       <Select.Option value={true}>Yes</Select.Option>
                       <Select.Option value={false}>No</Select.Option>
                     </Select>
@@ -773,12 +838,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule: any, value: any) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                            throw new Error(
+                              `${t("siteVisitCheckList:required")}`
+                            );
                           }
                         },
                       },
@@ -789,11 +856,18 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 </Col>
               </Row>
 
-              <Row className="data-row" gutter={24} justify={'space-between'} align={'top'}>
+              <Row
+                className="data-row"
+                gutter={24}
+                justify={"space-between"}
+                align={"top"}
+              >
                 <Col md={10} xl={10} className="col-1">
                   <div className="text-row">
                     <div>2.</div>
-                    <div>The project activity shall be located in {countryName}.</div>
+                    <div>
+                      The project activity shall be located in {countryName}.
+                    </div>
                   </div>
                 </Col>
                 <Col md={4} xl={4}>
@@ -807,18 +881,24 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule: any, value: any) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                            throw new Error(
+                              `${t("siteVisitCheckList:required")}`
+                            );
                           }
                         },
                       },
                     ]}
                   >
-                    <Select size="large" placeholder="Select" disabled={disableFields}>
+                    <Select
+                      size="large"
+                      placeholder="Select"
+                      disabled={disableFields}
+                    >
                       <Select.Option value={true}>Yes</Select.Option>
                       <Select.Option value={false}>No</Select.Option>
                     </Select>
@@ -835,12 +915,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule: any, value: any) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                            throw new Error(
+                              `${t("siteVisitCheckList:required")}`
+                            );
                           }
                         },
                       },
@@ -851,14 +933,20 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 </Col>
               </Row>
 
-              <Row className="data-row" gutter={24} justify={'space-between'} align={'top'}>
+              <Row
+                className="data-row"
+                gutter={24}
+                justify={"space-between"}
+                align={"top"}
+              >
                 <Col md={10} xl={10} className="col-1">
                   <div className="text-row">
                     <div>3.</div>
                     <div>
-                      The project activity shall not happen in the absence of benefits received from
-                      trading {countryName} Certified Emission Reduction units (SCERs). (This is not
-                      applicable Track II)
+                      The project activity shall not happen in the absence of
+                      benefits received from trading {countryName} Certified
+                      Emission Reduction units (SCERs). (This is not applicable
+                      Track II)
                     </div>
                   </div>
                 </Col>
@@ -873,18 +961,24 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule: any, value: any) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                            throw new Error(
+                              `${t("siteVisitCheckList:required")}`
+                            );
                           }
                         },
                       },
                     ]}
                   >
-                    <Select size="large" placeholder="Select" disabled={disableFields}>
+                    <Select
+                      size="large"
+                      placeholder="Select"
+                      disabled={disableFields}
+                    >
                       <Select.Option value={true}>Yes</Select.Option>
                       <Select.Option value={false}>No</Select.Option>
                     </Select>
@@ -901,12 +995,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule: any, value: any) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                            throw new Error(
+                              `${t("siteVisitCheckList:required")}`
+                            );
                           }
                         },
                       },
@@ -917,13 +1013,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 </Col>
               </Row>
 
-              <Row className="data-row" gutter={24} justify={'space-between'} align={'top'}>
+              <Row
+                className="data-row"
+                gutter={24}
+                justify={"space-between"}
+                align={"top"}
+              >
                 <Col md={10} xl={10} className="col-1">
                   <div className="text-row">
                     <div>4.</div>
                     <div>
-                      The project shall be implemented voluntarily by the project owner but not
-                      implemented based on legislation or regulations in the country
+                      The project shall be implemented voluntarily by the
+                      project owner but not implemented based on legislation or
+                      regulations in the country
                     </div>
                   </div>
                 </Col>
@@ -938,18 +1040,24 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule: any, value: any) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                            throw new Error(
+                              `${t("siteVisitCheckList:required")}`
+                            );
                           }
                         },
                       },
                     ]}
                   >
-                    <Select size="large" placeholder="Select" disabled={disableFields}>
+                    <Select
+                      size="large"
+                      placeholder="Select"
+                      disabled={disableFields}
+                    >
                       <Select.Option value={true}>Yes</Select.Option>
                       <Select.Option value={false}>No</Select.Option>
                     </Select>
@@ -966,12 +1074,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule: any, value: any) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                            throw new Error(
+                              `${t("siteVisitCheckList:required")}`
+                            );
                           }
                         },
                       },
@@ -982,13 +1092,18 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 </Col>
               </Row>
 
-              <Row className="data-row" gutter={24} justify={'space-between'} align={'top'}>
+              <Row
+                className="data-row"
+                gutter={24}
+                justify={"space-between"}
+                align={"top"}
+              >
                 <Col md={10} xl={10} className="col-1">
                   <div className="text-row">
                     <div>5.</div>
                     <div>
-                      The project activity satisfies environmental standard and regulations of the
-                      country
+                      The project activity satisfies environmental standard and
+                      regulations of the country
                     </div>
                   </div>
                 </Col>
@@ -1003,18 +1118,24 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule: any, value: any) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                            throw new Error(
+                              `${t("siteVisitCheckList:required")}`
+                            );
                           }
                         },
                       },
                     ]}
                   >
-                    <Select size="large" placeholder="Select" disabled={disableFields}>
+                    <Select
+                      size="large"
+                      placeholder="Select"
+                      disabled={disableFields}
+                    >
                       <Select.Option value={true}>Yes</Select.Option>
                       <Select.Option value={false}>No</Select.Option>
                     </Select>
@@ -1031,12 +1152,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule: any, value: any) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                            throw new Error(
+                              `${t("siteVisitCheckList:required")}`
+                            );
                           }
                         },
                       },
@@ -1047,15 +1170,21 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 </Col>
               </Row>
 
-              <Row className="data-row" gutter={24} justify={'space-between'} align={'top'}>
+              <Row
+                className="data-row"
+                gutter={24}
+                justify={"space-between"}
+                align={"top"}
+              >
                 <Col md={10} xl={10} className="col-1">
                   <div className="text-row">
                     <div>6.</div>
                     <div>
-                      The project shall not have been registered under any other national or
-                      international scheme. However, if a registered project under other scheme is
-                      willing to register with SLCCS, then, such project shall be deregistered from
-                      the other scheme in order to be eligible
+                      The project shall not have been registered under any other
+                      national or international scheme. However, if a registered
+                      project under other scheme is willing to register with
+                      SLCCS, then, such project shall be deregistered from the
+                      other scheme in order to be eligible
                     </div>
                   </div>
                 </Col>
@@ -1065,11 +1194,15 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     rules={[
                       {
                         required: true,
-                        message: `${t('siteVisitCheckList:required')}`,
+                        message: `${t("siteVisitCheckList:required")}`,
                       },
                     ]}
                   >
-                    <Select size="large" placeholder="Select" disabled={disableFields}>
+                    <Select
+                      size="large"
+                      placeholder="Select"
+                      disabled={disableFields}
+                    >
                       <Select.Option value={true}>Yes</Select.Option>
                       <Select.Option value={false}>No</Select.Option>
                     </Select>
@@ -1086,12 +1219,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule: any, value: any) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`${t('siteVisitCheckList:required')}`);
+                            throw new Error(
+                              `${t("siteVisitCheckList:required")}`
+                            );
                           }
                         },
                       },
@@ -1108,7 +1243,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
           {/* Document Review Start */}
           <h4 className="section-title mg-top-2">Document Review</h4>
           <div className="checklist-table-form ">
-            <Row className="header" gutter={24} justify={'space-between'} align={'top'}>
+            <Row
+              className="header"
+              gutter={24}
+              justify={"space-between"}
+              align={"top"}
+            >
               <Col md={10} xl={10}>
                 Document Name
               </Col>
@@ -1120,13 +1260,18 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
               </Col>
             </Row>
 
-            <Row className="data-row" gutter={24} justify={'space-between'} align={'top'}>
+            <Row
+              className="data-row"
+              gutter={24}
+              justify={"space-between"}
+              align={"top"}
+            >
               <Col md={10} xl={10} className="col-1">
                 <div className="text-row">
                   <div>1.</div>
                   <div>
-                    Feasibility studies or preliminary assessments undertaken for the project
-                    activities.
+                    Feasibility studies or preliminary assessments undertaken
+                    for the project activities.
                   </div>
                 </div>
               </Col>
@@ -1141,18 +1286,24 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
                   ]}
                 >
-                  <Select size="large" placeholder="Select" disabled={disableFields}>
+                  <Select
+                    size="large"
+                    placeholder="Select"
+                    disabled={disableFields}
+                  >
                     <Select.Option value={true}>Yes</Select.Option>
                     <Select.Option value={false}>No</Select.Option>
                   </Select>
@@ -1169,12 +1320,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
@@ -1185,7 +1338,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
               </Col>
             </Row>
 
-            <Row className="data-row" gutter={24} justify={'space-between'} align={'top'}>
+            <Row
+              className="data-row"
+              gutter={24}
+              justify={"space-between"}
+              align={"top"}
+            >
               <Col md={10} xl={10} className="col-1">
                 <div className="text-row">
                   <div>2.</div>
@@ -1203,18 +1361,24 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
                   ]}
                 >
-                  <Select size="large" placeholder="Select" disabled={disableFields}>
+                  <Select
+                    size="large"
+                    placeholder="Select"
+                    disabled={disableFields}
+                  >
                     <Select.Option value={true}>Yes</Select.Option>
                     <Select.Option value={false}>No</Select.Option>
                   </Select>
@@ -1231,12 +1395,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
@@ -1247,7 +1413,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
               </Col>
             </Row>
 
-            <Row className="data-row" gutter={24} justify={'space-between'} align={'top'}>
+            <Row
+              className="data-row"
+              gutter={24}
+              justify={"space-between"}
+              align={"top"}
+            >
               <Col md={10} xl={10} className="col-1">
                 <div className="text-row">
                   <div>3.</div>
@@ -1265,18 +1436,24 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
                   ]}
                 >
-                  <Select size="large" placeholder="Select" disabled={disableFields}>
+                  <Select
+                    size="large"
+                    placeholder="Select"
+                    disabled={disableFields}
+                  >
                     <Select.Option value={true}>Yes</Select.Option>
                     <Select.Option value={false}>No</Select.Option>
                   </Select>
@@ -1293,12 +1470,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
@@ -1309,7 +1488,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
               </Col>
             </Row>
 
-            <Row className="data-row" gutter={24} justify={'space-between'} align={'top'}>
+            <Row
+              className="data-row"
+              gutter={24}
+              justify={"space-between"}
+              align={"top"}
+            >
               <Col md={10} xl={10} className="col-1">
                 <div className="text-row">
                   <div>4.</div>
@@ -1327,18 +1511,24 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
                   ]}
                 >
-                  <Select size="large" placeholder="Select" disabled={disableFields}>
+                  <Select
+                    size="large"
+                    placeholder="Select"
+                    disabled={disableFields}
+                  >
                     <Select.Option value={true}>Yes</Select.Option>
                     <Select.Option value={false}>No</Select.Option>
                   </Select>
@@ -1355,12 +1545,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
@@ -1371,7 +1563,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
               </Col>
             </Row>
 
-            <Row className="data-row" gutter={24} justify={'space-between'} align={'top'}>
+            <Row
+              className="data-row"
+              gutter={24}
+              justify={"space-between"}
+              align={"top"}
+            >
               <Col md={10} xl={10} className="col-1">
                 <div className="text-row">
                   <div>5.</div>
@@ -1389,18 +1586,24 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
                   ]}
                 >
-                  <Select size="large" placeholder="Select" disabled={disableFields}>
+                  <Select
+                    size="large"
+                    placeholder="Select"
+                    disabled={disableFields}
+                  >
                     <Select.Option value={true}>Yes</Select.Option>
                     <Select.Option value={false}>No</Select.Option>
                   </Select>
@@ -1417,12 +1620,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
@@ -1433,11 +1638,18 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
               </Col>
             </Row>
 
-            <Row className="data-row" gutter={24} justify={'space-between'} align={'top'}>
+            <Row
+              className="data-row"
+              gutter={24}
+              justify={"space-between"}
+              align={"top"}
+            >
               <Col md={10} xl={10} className="col-1">
                 <div className="text-row">
                   <div>6.</div>
-                  <div>Monthly electricity generation records (Spreadsheets).</div>
+                  <div>
+                    Monthly electricity generation records (Spreadsheets).
+                  </div>
                 </div>
               </Col>
               <Col md={4} xl={4}>
@@ -1451,18 +1663,24 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
                   ]}
                 >
-                  <Select size="large" placeholder="Select" disabled={disableFields}>
+                  <Select
+                    size="large"
+                    placeholder="Select"
+                    disabled={disableFields}
+                  >
                     <Select.Option value={true}>Yes</Select.Option>
                     <Select.Option value={false}>No</Select.Option>
                   </Select>
@@ -1479,12 +1697,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
@@ -1495,7 +1715,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
               </Col>
             </Row>
 
-            <Row className="data-row" gutter={24} justify={'space-between'} align={'top'}>
+            <Row
+              className="data-row"
+              gutter={24}
+              justify={"space-between"}
+              align={"top"}
+            >
               <Col md={10} xl={10} className="col-1">
                 <div className="text-row">
                   <div>7.</div>
@@ -1513,18 +1738,24 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
                   ]}
                 >
-                  <Select size="large" placeholder="Select" disabled={disableFields}>
+                  <Select
+                    size="large"
+                    placeholder="Select"
+                    disabled={disableFields}
+                  >
                     <Select.Option value={true}>Yes</Select.Option>
                     <Select.Option value={false}>No</Select.Option>
                   </Select>
@@ -1541,12 +1772,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
@@ -1557,11 +1790,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
               </Col>
             </Row>
 
-            <Row className="data-row" gutter={24} justify={'space-between'} align={'top'}>
+            <Row
+              className="data-row"
+              gutter={24}
+              justify={"space-between"}
+              align={"top"}
+            >
               <Col md={10} xl={10} className="col-1">
                 <div className="text-row">
                   <div>8.</div>
-                  <div>Training records of personnel engaging in the monitoring activities.</div>
+                  <div>
+                    Training records of personnel engaging in the monitoring
+                    activities.
+                  </div>
                 </div>
               </Col>
               <Col md={4} xl={4}>
@@ -1575,18 +1816,24 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
                   ]}
                 >
-                  <Select size="large" placeholder="Select" disabled={disableFields}>
+                  <Select
+                    size="large"
+                    placeholder="Select"
+                    disabled={disableFields}
+                  >
                     <Select.Option value={true}>Yes</Select.Option>
                     <Select.Option value={false}>No</Select.Option>
                   </Select>
@@ -1603,12 +1850,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
@@ -1619,7 +1868,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
               </Col>
             </Row>
 
-            <Row className="data-row" gutter={24} justify={'space-between'} align={'top'}>
+            <Row
+              className="data-row"
+              gutter={24}
+              justify={"space-between"}
+              align={"top"}
+            >
               <Col md={10} xl={10} className="col-1">
                 <div className="text-row">
                   <div>9.</div>
@@ -1637,18 +1891,24 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
                   ]}
                 >
-                  <Select size="large" placeholder="Select" disabled={disableFields}>
+                  <Select
+                    size="large"
+                    placeholder="Select"
+                    disabled={disableFields}
+                  >
                     <Select.Option value={true}>Yes</Select.Option>
                     <Select.Option value={false}>No</Select.Option>
                   </Select>
@@ -1665,12 +1925,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                     {
                       validator: async (rule: any, value: any) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
-                          throw new Error(`${t('siteVisitCheckList:required')}`);
+                          throw new Error(
+                            `${t("siteVisitCheckList:required")}`
+                          );
                         }
                       },
                     },
@@ -1685,7 +1947,9 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
 
           {/* Interview of the StakeHolders start*/}
           <>
-            <h4 className="section-title mg-top-1">Interview of the Stakeholders</h4>
+            <h4 className="section-title mg-top-1">
+              Interview of the Stakeholders
+            </h4>
             <div className="mg-top-1 mg-bottom-1">Stakeholder 1</div>
             <div className="stakeholders-section">
               <Row gutter={40}>
@@ -1701,12 +1965,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule: any, value: any) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`Stakeholder Name ${t('isRequired')}`);
+                            throw new Error(
+                              `Stakeholder Name ${t("isRequired")}`
+                            );
                           }
                         },
                       },
@@ -1726,20 +1992,30 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule: any, value: any) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`Contact Details ${t('isRequired')}`);
+                            throw new Error(
+                              `Contact Details ${t("isRequired")}`
+                            );
                           } else {
                             const phoneNo = formatPhoneNumber(String(value));
-                            if (String(value).trim() !== '') {
-                              if (phoneNo === null || phoneNo === '' || phoneNo === undefined) {
-                                throw new Error(`Contact Details ${t('isRequired')}`);
+                            if (String(value).trim() !== "") {
+                              if (
+                                phoneNo === null ||
+                                phoneNo === "" ||
+                                phoneNo === undefined
+                              ) {
+                                throw new Error(
+                                  `Contact Details ${t("isRequired")}`
+                                );
                               } else {
                                 if (!isPossiblePhoneNumber(String(value))) {
-                                  throw new Error(`Contact Details ${t('isInvalid')}`);
+                                  throw new Error(
+                                    `Contact Details ${t("isInvalid")}`
+                                  );
                                 }
                               }
                             }
@@ -1773,12 +2049,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule: any, value: any) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`Designation ${t('isRequired')}`);
+                            throw new Error(`Designation ${t("isRequired")}`);
                           }
                         },
                       },
@@ -1798,12 +2074,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                       {
                         validator: async (rule: any, value: any) => {
                           if (
-                            String(value).trim() === '' ||
+                            String(value).trim() === "" ||
                             String(value).trim() === undefined ||
                             value === null ||
                             value === undefined
                           ) {
-                            throw new Error(`Subject Covered ${t('isRequired')}`);
+                            throw new Error(
+                              `Subject Covered ${t("isRequired")}`
+                            );
                           }
                         },
                       },
@@ -1836,7 +2114,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                           <Col md={12} xl={12}>
                             <Form.Item
                               label="Stakeholder Name"
-                              name={[name, 'stakeholderName']}
+                              name={[name, "stakeholderName"]}
                               rules={[
                                 {
                                   required: true,
@@ -1845,12 +2123,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                                 {
                                   validator: async (rule: any, value: any) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`Stakeholder Name ${t('isRequired')}`);
+                                      throw new Error(
+                                        `Stakeholder Name ${t("isRequired")}`
+                                      );
                                     }
                                   },
                                 },
@@ -1861,7 +2141,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
 
                             <Form.Item
                               label="Contact Details"
-                              name={[name, 'contactDetails']}
+                              name={[name, "contactDetails"]}
                               rules={[
                                 {
                                   required: true,
@@ -1870,24 +2150,38 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                                 {
                                   validator: async (rule: any, value: any) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`Contact Details ${t('isRequired')}`);
+                                      throw new Error(
+                                        `Contact Details ${t("isRequired")}`
+                                      );
                                     } else {
-                                      const phoneNo = formatPhoneNumber(String(value));
-                                      if (String(value).trim() !== '') {
+                                      const phoneNo = formatPhoneNumber(
+                                        String(value)
+                                      );
+                                      if (String(value).trim() !== "") {
                                         if (
                                           phoneNo === null ||
-                                          phoneNo === '' ||
+                                          phoneNo === "" ||
                                           phoneNo === undefined
                                         ) {
-                                          throw new Error(`Contact Details ${t('isRequired')}`);
+                                          throw new Error(
+                                            `Contact Details ${t("isRequired")}`
+                                          );
                                         } else {
-                                          if (!isPossiblePhoneNumber(String(value))) {
-                                            throw new Error(`Contact Details ${t('isInvalid')}`);
+                                          if (
+                                            !isPossiblePhoneNumber(
+                                              String(value)
+                                            )
+                                          ) {
+                                            throw new Error(
+                                              `Contact Details ${t(
+                                                "isInvalid"
+                                              )}`
+                                            );
                                           }
                                         }
                                       }
@@ -1912,7 +2206,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                           <Col md={12} xl={12}>
                             <Form.Item
                               label="Designation"
-                              name={[name, 'designation']}
+                              name={[name, "designation"]}
                               rules={[
                                 {
                                   required: true,
@@ -1921,12 +2215,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                                 {
                                   validator: async (rule: any, value: any) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`Designation ${t('isRequired')}`);
+                                      throw new Error(
+                                        `Designation ${t("isRequired")}`
+                                      );
                                     }
                                   },
                                 },
@@ -1937,7 +2233,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
 
                             <Form.Item
                               label="Subject Covered"
-                              name={[name, 'subjectCovered']}
+                              name={[name, "subjectCovered"]}
                               rules={[
                                 {
                                   required: true,
@@ -1946,12 +2242,14 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                                 {
                                   validator: async (rule: any, value: any) => {
                                     if (
-                                      String(value).trim() === '' ||
+                                      String(value).trim() === "" ||
                                       String(value).trim() === undefined ||
                                       value === null ||
                                       value === undefined
                                     ) {
-                                      throw new Error(`Subject Covered ${t('isRequired')}`);
+                                      throw new Error(
+                                        `Subject Covered ${t("isRequired")}`
+                                      );
                                     }
                                   },
                                 },
@@ -1993,12 +2291,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   {
                     validator: async (rule: any, value: any) => {
                       if (
-                        String(value).trim() === '' ||
+                        String(value).trim() === "" ||
                         String(value).trim() === undefined ||
                         value === null ||
                         value === undefined
                       ) {
-                        throw new Error(`Validator Name ${t('isRequired')}`);
+                        throw new Error(`Validator Name ${t("isRequired")}`);
                       }
                     },
                   },
@@ -2018,18 +2316,22 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   {
                     validator: async (rule: any, value: any) => {
                       if (
-                        String(value).trim() === '' ||
+                        String(value).trim() === "" ||
                         String(value).trim() === undefined ||
                         value === null ||
                         value === undefined
                       ) {
-                        throw new Error(`Date ${t('isRequired')}`);
+                        throw new Error(`Date ${t("isRequired")}`);
                       }
                     },
                   },
                 ]}
               >
-                <DatePicker picker="date" size="large" disabled={disableFields} />
+                <DatePicker
+                  picker="date"
+                  size="large"
+                  disabled={disableFields}
+                />
               </Form.Item>
             </Col>
 
@@ -2045,12 +2347,12 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   {
                     validator: async (rule: any, value: any) => {
                       if (
-                        String(value).trim() === '' ||
+                        String(value).trim() === "" ||
                         String(value).trim() === undefined ||
                         value === null ||
                         value === undefined
                       ) {
-                        throw new Error(`Designation ${t('isRequired')}`);
+                        throw new Error(`Designation ${t("isRequired")}`);
                       }
                     },
                   },
@@ -2068,7 +2370,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                 rules={[
                   {
                     required: true,
-                    message: `${t('siteVisitCheckList:required')}`,
+                    message: `${t("siteVisitCheckList:required")}`,
                   },
                   {
                     validator: async (rule, file) => {
@@ -2079,10 +2381,10 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                             DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
                           )
                         ) {
-                          throw new Error(`${t('common:invalidFileFormat')}`);
+                          throw new Error(`${t("common:invalidFileFormat")}`);
                         } else if (file[0]?.size > maximumImageSize) {
                           // default size format of files would be in bytes -> 1MB = 1000000bytes
-                          throw new Error(`${t('common:maxSizeVal')}`);
+                          throw new Error(`${t("common:maxSizeVal")}`);
                         }
                       }
                     },
@@ -2102,7 +2404,7 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
                   maxCount={1}
                   disabled={disableFields}
                   // defaultFileList={form.getFieldValue('ClientWitnessSignature') || []}
-                  fileList={form.getFieldValue('ClientWitnessSignature') || []}
+                  fileList={form.getFieldValue("ClientWitnessSignature") || []}
                 >
                   <Button
                     className="upload-doc"
@@ -2117,19 +2419,19 @@ const SiteCheckListComponent = (props: { translator: i18n }) => {
             </Col>
           </Row>
 
-          <Row justify={'end'} className="step-actions-end">
+          <Row justify={"end"} className="step-actions-end">
             {isView ? (
               <>
-                <Button danger size={'large'} onClick={navigateToDetailsPage}>
+                <Button danger size={"large"} onClick={navigateToDetailsPage}>
                   Back
                 </Button>
               </>
             ) : (
               <>
-                <Button danger size={'large'} onClick={navigateToDetailsPage}>
+                <Button danger size={"large"} onClick={navigateToDetailsPage}>
                   Cancel
                 </Button>
-                <Button type="primary" size={'large'} htmlType="submit">
+                <Button type="primary" size={"large"} htmlType="submit">
                   submit
                 </Button>
               </>

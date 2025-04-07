@@ -1,26 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { ValidationStepsProps } from './StepProps';
-import { Row, Button, Form, Col, DatePicker, Input, Radio, Upload, Select } from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
-import moment from 'moment';
+import React, { useEffect, useState } from "react";
+import { ValidationStepsProps } from "./StepProps";
+import {
+  Row,
+  Button,
+  Form,
+  Col,
+  DatePicker,
+  Input,
+  Radio,
+  Upload,
+  Select,
+} from "antd";
+import TextArea from "antd/lib/input/TextArea";
+import moment from "moment";
 import PhoneInput, {
   formatPhoneNumber,
   isPossiblePhoneNumber,
   formatPhoneNumberIntl,
   Country,
-} from 'react-phone-number-input';
-import validator from 'validator';
-import { ProcessSteps } from './ValidationStepperComponent';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { fileUploadValueExtract } from '../../Utils/utilityHelper';
-import LabelWithTooltip from '../LabelWithTooltip/LabelWithTooltip';
-import GetLocationMapComponent from '../Maps/GetLocationMapComponent';
-import { API_PATHS } from '../../Config/apiConfig';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
-import { RcFile } from 'antd/lib/upload';
-import { useLocation } from 'react-router-dom';
+} from "react-phone-number-input";
+import validator from "validator";
+import { ProcessSteps } from "./ValidationStepperComponent";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
+import { MinusOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { fileUploadValueExtract } from "../../Utils/utilityHelper";
+import LabelWithTooltip from "../LabelWithTooltip/LabelWithTooltip";
+import GetLocationMapComponent from "../Maps/GetLocationMapComponent";
+import { API_PATHS } from "../../Config/apiConfig";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { getBase64 } from "../../Definitions/Definitions/programme.definitions";
+import { RcFile } from "antd/lib/upload";
+import { useLocation } from "react-router-dom";
 
 // import { Form } from 'react-router-dom';
 
@@ -41,8 +51,8 @@ const BasicInformation = (props: ValidationStepsProps) => {
 
   const { post } = useConnection();
 
-  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   const [contactNoInput] = useState<any>();
@@ -55,7 +65,9 @@ const BasicInformation = (props: ValidationStepsProps) => {
   const getProvinces = async () => {
     try {
       const { data } = await post(API_PATHS.PROVINCES);
-      const tempProvinces = data.map((provinceData: any) => provinceData.provinceName);
+      const tempProvinces = data.map(
+        (provinceData: any) => provinceData.provinceName
+      );
       setProvinces(tempProvinces);
     } catch (error) {
       console.log(error);
@@ -67,13 +79,15 @@ const BasicInformation = (props: ValidationStepsProps) => {
       const { data } = await post(API_PATHS.DISTRICTS, {
         filterAnd: [
           {
-            key: 'provinceName',
-            operation: '=',
+            key: "provinceName",
+            operation: "=",
             value: provinceName,
           },
         ],
       });
-      const tempDistricts = data.map((districtData: any) => districtData.districtName);
+      const tempDistricts = data.map(
+        (districtData: any) => districtData.districtName
+      );
       setDistricts((prev1) => ({ ...prev1, [index]: tempDistricts }));
     } catch (error) {
       console.log(error);
@@ -85,8 +99,8 @@ const BasicInformation = (props: ValidationStepsProps) => {
       const { data } = await post(API_PATHS.CITIES, {
         filterAnd: [
           {
-            key: 'districtName',
-            operation: '=',
+            key: "districtName",
+            operation: "=",
             value: division,
           },
         ],
@@ -120,53 +134,20 @@ const BasicInformation = (props: ValidationStepsProps) => {
   };
 
   const onFinish = async (values: any) => {
-    const approverSignature = (await fileUploadValueExtract(values, 'approverSignature'))[0];
+    const approverSignature = (
+      await fileUploadValueExtract(values, "approverSignature")
+    )[0];
     const projectDetailsFormValues = {
-      // ...values,
-      titleOfTheProjectActivity: values?.titleOfTheProjectActivity,
-      projectDeveloper: values?.projectDeveloper,
-      projectScale: values?.projectScale,
-      appliedMethodologies: values?.appliedMethodologies,
-      conditionalSectoralScopes: values?.conditionalSectoralScopes,
-      titleOfSpecificCase: values?.titleOfSpecificCase,
-      hostParty: values?.hostParty,
-      completionDate: moment(values?.completionDate).startOf('day').unix(),
+      ...values,
+      completionDate: moment(values?.completionDate).startOf("day").unix(),
       pddUploadedGlobalStakeholderConsultation: moment(
         values?.pddUploadedGlobalStakeholderConsultation
       )
-        .startOf('day')
+        .startOf("day")
         .unix(),
       approverSignature: approverSignature,
       locationsOfProjectActivity: await (async function () {
         const tempList: any[] = [];
-        const firstObj = {
-          locationOfProjectActivity: values?.locationOfProjectActivity,
-          siteNo: values?.siteNo,
-          province: values?.province,
-          district: values?.district,
-          // dsDivision: values?.dsDivision,
-          city: values?.city,
-          community: values?.community,
-          geographicalLocationCoordinates: values?.geographicalLocationCoordinates,
-          additionalDocuments: await (async function () {
-            const base64Docs: string[] = [];
-
-            if (values?.optionalImages && values?.optionalImages.length > 0) {
-              const docs = values.optionalImages;
-              for (let i = 0; i < docs.length; i++) {
-                if (docs[i]?.originFileObj === undefined) {
-                  base64Docs.push(docs[i]?.url);
-                } else {
-                  const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-                  base64Docs.push(temp); // No need for Promise.resolve
-                }
-              }
-            }
-
-            return base64Docs;
-          })(),
-        };
-        tempList.push(firstObj);
         if (values?.extraLocations) {
           values?.extraLocations.forEach(async (item: any) => {
             const tempObj = {
@@ -177,7 +158,8 @@ const BasicInformation = (props: ValidationStepsProps) => {
               // dsDivision: item?.dsDivision,
               city: item?.city,
               community: item?.community,
-              geographicalLocationCoordinates: item?.geographicalLocationCoordinates,
+              geographicalLocationCoordinates:
+                item?.geographicalLocationCoordinates,
               additionalDocuments: await (async function () {
                 const base64Docs: string[] = [];
 
@@ -187,7 +169,9 @@ const BasicInformation = (props: ValidationStepsProps) => {
                     if (docs[i]?.originFileObj === undefined) {
                       base64Docs.push(docs[i]?.url);
                     } else {
-                      const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+                      const temp = await getBase64(
+                        docs[i]?.originFileObj as RcFile
+                      );
                       base64Docs.push(temp); // No need for Promise.resolve
                     }
                   }
@@ -212,12 +196,15 @@ const BasicInformation = (props: ValidationStepsProps) => {
       mandatarySectoralScopes: values?.mandatarySectoralScopes,
       annualAverageGHGReduction: values?.annualAverageGHGReduction,
       approverName: values?.approverName,
-      creditingPeriod: values?.creditingPeriod,
-      creditingPeriodStart: moment(values?.creditingPeriodStart).startOf('day').unix(),
-      creditingPeriodEnd: moment(values?.creditingPeriodEnd).startOf('day').unix(),
+      creditingPeriodStart: moment(values?.creditingPeriodStart)
+        .startOf("day")
+        .unix(),
+      creditingPeriodEnd: moment(values?.creditingPeriodEnd)
+        .startOf("day")
+        .unix(),
     };
 
-    console.log('----------basicInformation validation-------------', projectDetailsFormValues);
+    console.log("basicInformation", projectDetailsFormValues);
 
     handleValuesUpdate({
       // [ProcessSteps.VR_PROJECT_DETAILS]: projectDetailsFormValues
@@ -247,18 +234,20 @@ const BasicInformation = (props: ValidationStepsProps) => {
             >
               <>
                 <div className="mg-top-1">
-                  <Row justify={'space-between'} gutter={[40, 16]}>
+                  <Row justify={"space-between"} gutter={[40, 16]}>
                     <Col xl={12} md={24}>
                       <div className="step-form-right-col">
                         <Form.Item
-                          label={t('validationReport:titleOfTheProjectActivity')}
+                          label={t(
+                            "validationReport:titleOfTheProjectActivity"
+                          )}
                           name="titleOfTheProjectActivity"
                           rules={[
                             {
                               required: false,
-                              message: `${t('validationReport:titleOfTheProjectActivity')} ${t(
-                                'isRequired'
-                              )}`,
+                              message: `${t(
+                                "validationReport:titleOfTheProjectActivity"
+                              )} ${t("isRequired")}`,
                             },
                           ]}
                         >
@@ -266,14 +255,16 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         </Form.Item>
 
                         <Form.Item
-                          label={t('validationReport:versionNumberValidationReport')}
+                          label={t(
+                            "validationReport:versionNumberValidationReport"
+                          )}
                           name="versionNumberValidationReport"
                           rules={[
                             {
                               required: false,
-                              message: `${t('validationReport:versionNumberValidationReport')} ${t(
-                                'isRequired'
-                              )}`,
+                              message: `${t(
+                                "validationReport:versionNumberValidationReport"
+                              )} ${t("isRequired")}`,
                             },
                           ]}
                         >
@@ -281,14 +272,14 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         </Form.Item>
 
                         <Form.Item
-                          label={t('validationReport:versionNumberPDD')}
+                          label={t("validationReport:versionNumberPDD")}
                           name="versionNumberPDD"
                           rules={[
                             {
                               required: false,
-                              message: `${t('validationReport:versionNumberPDD')} ${t(
-                                'isRequired'
-                              )}`,
+                              message: `${t(
+                                "validationReport:versionNumberPDD"
+                              )} ${t("isRequired")}`,
                             },
                           ]}
                         >
@@ -296,14 +287,14 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         </Form.Item>
 
                         <Form.Item
-                          label={t('validationReport:projectParticipants')}
+                          label={t("validationReport:projectParticipants")}
                           name="projectDeveloper"
                           rules={[
                             {
                               required: false,
-                              message: `${t('validationReport:projectParticipants')} ${t(
-                                'isRequired'
-                              )}`,
+                              message: `${t(
+                                "validationReport:projectParticipants"
+                              )} ${t("isRequired")}`,
                             },
                           ]}
                         >
@@ -311,12 +302,14 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         </Form.Item>
 
                         <Form.Item
-                          label={t('validationReport:projectScale')}
+                          label={t("validationReport:projectScale")}
                           name="projectScale"
                           rules={[
                             {
                               required: true,
-                              message: `${t('validationReport:projectScale')} ${t('isRequired')}`,
+                              message: `${t(
+                                "validationReport:projectScale"
+                              )} ${t("isRequired")}`,
                             },
                           ]}
                         >
@@ -324,20 +317,24 @@ const BasicInformation = (props: ValidationStepsProps) => {
                             className="project-scale-radio-btns"
                             disabled={disableFields}
                           >
-                            <Radio value="Small Scale">{t('validationReport:smallScale')}</Radio>
-                            <Radio value="Large Scale">{t('validationReport:largeScale')}</Radio>
+                            <Radio value="Small Scale">
+                              {t("validationReport:smallScale")}
+                            </Radio>
+                            <Radio value="Large Scale">
+                              {t("validationReport:largeScale")}
+                            </Radio>
                           </Radio.Group>
                         </Form.Item>
 
                         <Form.Item
-                          label={t('validationReport:appliedMethodologies')}
+                          label={t("validationReport:appliedMethodologies")}
                           name="appliedMethodologies"
                           rules={[
                             {
                               required: true,
-                              message: `${t('validationReport:appliedMethodologies')} ${t(
-                                'isRequired'
-                              )}`,
+                              message: `${t(
+                                "validationReport:appliedMethodologies"
+                              )} ${t("isRequired")}`,
                             },
                           ]}
                         >
@@ -345,7 +342,9 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         </Form.Item>
 
                         <Form.Item
-                          label={t('validationReport:conditionalSectoralScopes')}
+                          label={t(
+                            "validationReport:conditionalSectoralScopes"
+                          )}
                           name="conditionalSectoralScopes"
                         >
                           <Input size="large" disabled={disableFields} />
@@ -355,14 +354,14 @@ const BasicInformation = (props: ValidationStepsProps) => {
 
                     <Col xl={12} md={24}>
                       <Form.Item
-                        label={t('validationReport:titleOfSpecificCase')}
+                        label={t("validationReport:titleOfSpecificCase")}
                         name="titleOfSpecificCase"
                         rules={[
                           {
                             required: true,
-                            message: `${t('validationReport:titleOfSpecificCase')} ${t(
-                              'isRequired'
-                            )}`,
+                            message: `${t(
+                              "validationReport:titleOfSpecificCase"
+                            )} ${t("isRequired")}`,
                           },
                         ]}
                       >
@@ -370,48 +369,58 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       </Form.Item>
 
                       <Form.Item
-                        label={t('validationReport:completionDate')}
+                        label={t("validationReport:completionDate")}
                         name="completionDate"
                         rules={[
                           {
                             required: true,
-                            message: `${t('validationReport:completionDate')} ${t('isRequired')}`,
+                            message: `${t(
+                              "validationReport:completionDate"
+                            )} ${t("isRequired")}`,
                           },
                         ]}
                       >
                         <DatePicker
                           disabled={disableFields}
                           size="large"
-                          disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                          disabledDate={(currentDate: any) =>
+                            currentDate < moment().startOf("day")
+                          }
                         />
                       </Form.Item>
 
                       <Form.Item
-                        label={t('validationReport:pddUploadedGlobalStakeholderConsultation')}
+                        label={t(
+                          "validationReport:pddUploadedGlobalStakeholderConsultation"
+                        )}
                         name="pddUploadedGlobalStakeholderConsultation"
                         rules={[
                           {
                             required: true,
                             message: `${t(
-                              'validationReport:pddUploadedGlobalStakeholderConsultation'
-                            )} ${t('isRequired')}`,
+                              "validationReport:pddUploadedGlobalStakeholderConsultation"
+                            )} ${t("isRequired")}`,
                           },
                         ]}
                       >
                         <DatePicker
                           size="large"
                           disabled={disableFields}
-                          disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                          disabledDate={(currentDate: any) =>
+                            currentDate < moment().startOf("day")
+                          }
                         />
                       </Form.Item>
 
                       <Form.Item
-                        label={t('validationReport:hostParty')}
+                        label={t("validationReport:hostParty")}
                         name="hostParty"
                         rules={[
                           {
                             required: false,
-                            message: `${t('validationReport:hostParty')} ${t('isRequired')}`,
+                            message: `${t("validationReport:hostParty")} ${t(
+                              "isRequired"
+                            )}`,
                           },
                         ]}
                       >
@@ -419,14 +428,14 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       </Form.Item>
 
                       <Form.Item
-                        label={t('validationReport:mandatarySectoralScopes')}
+                        label={t("validationReport:mandatarySectoralScopes")}
                         name="mandatarySectoralScopes"
                         rules={[
                           {
                             required: false,
-                            message: `${t('validationReport:mandatarySectoralScopes')} ${t(
-                              'isRequired'
-                            )}`,
+                            message: `${t(
+                              "validationReport:mandatarySectoralScopes"
+                            )} ${t("isRequired")}`,
                           },
                         ]}
                       >
@@ -436,14 +445,14 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       <Form.Item
                         label={
                           <span>
-                            {t('validationReport:annualAverageGHGReduction')}
+                            {t("validationReport:annualAverageGHGReduction")}
                             <span
                               style={{
-                                color: '#FF4D4F',
+                                color: "#FF4D4F",
                                 marginLeft: 2,
-                                fontSize: '16px',
-                                position: 'relative',
-                                top: '3px',
+                                fontSize: "16px",
+                                position: "relative",
+                                top: "3px",
                               }}
                             >
                               *
@@ -455,9 +464,9 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('validationReport:annualAverageGHGReduction')} ${t(
-                              'isRequired'
-                            )}`,
+                            message: `${t(
+                              "validationReport:annualAverageGHGReduction"
+                            )} ${t("isRequired")}`,
                           },
                         ]}
                       >
@@ -465,12 +474,14 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       </Form.Item>
 
                       <Form.Item
-                        label={t('validationReport:unfccRefNo')}
+                        label={t("validationReport:unfccRefNo")}
                         name="unfccRefNo"
                         rules={[
                           {
                             required: true,
-                            message: `${t('validationReport:unfccRefNo')} ${t('isRequired')}`,
+                            message: `${t("validationReport:unfccRefNo")} ${t(
+                              "isRequired"
+                            )}`,
                           },
                         ]}
                       >
@@ -483,15 +494,17 @@ const BasicInformation = (props: ValidationStepsProps) => {
 
               {/* Crediting Period  start */}
               <>
-                <Row gutter={[40, 16]} justify={'space-between'}>
+                <Row gutter={[40, 16]} justify={"space-between"}>
                   <Col md={24} xl={12}>
                     <Form.Item
-                      label={t('validationReport:creditingPeriod')}
+                      label={t("validationReport:creditingPeriod")}
                       name="creditingPeriod"
                       rules={[
                         {
                           required: false,
-                          message: `${t('validationReport:creditingPeriod')} ${t('isRequired')}`,
+                          message: `${t(
+                            "validationReport:creditingPeriod"
+                          )} ${t("isRequired")}`,
                         },
                       ]}
                     >
@@ -501,7 +514,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
 
                   <Col md={24} xl={12}>
                     <LabelWithTooltip
-                      label={t('validationReport:startDateofCreditingPeriod')}
+                      label={t("validationReport:startDateofCreditingPeriod")}
                       required={false}
                     />
                     <div className="crediting-period-duration">
@@ -511,7 +524,9 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         rules={[
                           {
                             required: false,
-                            message: `${t('validationReport:creditingPeriod')} ${t('isRequired')}`,
+                            message: `${t(
+                              "validationReport:creditingPeriod"
+                            )} ${t("isRequired")}`,
                           },
                         ]}
                       >
@@ -524,7 +539,9 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         rules={[
                           {
                             required: false,
-                            message: `${t('validationReport:creditingPeriod')} ${t('isRequired')}`,
+                            message: `${t(
+                              "validationReport:creditingPeriod"
+                            )} ${t("isRequired")}`,
                           },
                         ]}
                       >
@@ -538,23 +555,23 @@ const BasicInformation = (props: ValidationStepsProps) => {
 
               <>
                 <h4 className="form-section-heading">{`${t(
-                  'validationReport:projectActivityLocations'
+                  "validationReport:projectActivityLocations"
                 )}`}</h4>
 
                 <h4 className="list-item-title">Location 1</h4>
                 <div className="form-section">
-                  {/* <h4 className="form-section-title">{`${t(
-                    'validationReport:locationOfProjectActivity'
-                  )}`}</h4> */}
+                  <h4 className="form-section-title">{`${t(
+                    "validationReport:locationOfProjectActivity"
+                  )}`}</h4>
 
                   <Row
                     // justify={'space-between'}
                     gutter={[40, 16]}
-                    style={{ borderRadius: '8px' }}
+                    style={{ borderRadius: "8px" }}
                   >
                     <Col xl={12} md={24}>
                       <Form.Item
-                        label={t('validationReport:locationOfProjectActivity')}
+                        label={t("validationReport:locationOfProjectActivity")}
                         name="locationOfProjectActivity"
                         rules={[
                           {
@@ -564,14 +581,43 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:locationOfProjectActivity')} ${t(
-                                    'isRequired'
+                                  `${t(
+                                    "validationReport:locationOfProjectActivity"
+                                  )} ${t("isRequired")}`
+                                );
+                              }
+                            },
+                          },
+                        ]}
+                      >
+                        <Input size="large" disabled />
+                      </Form.Item>
+
+                      <Form.Item
+                        label={t("validationReport:siteNo")}
+                        name="siteNo"
+                        rules={[
+                          {
+                            required: false,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === "" ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t("validationReport:siteNo")} ${t(
+                                    "isRequired"
                                   )}`
                                 );
                               }
@@ -583,34 +629,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       </Form.Item>
 
                       <Form.Item
-                        label={t('validationReport:siteNo')}
-                        name="siteNo"
-                        rules={[
-                          {
-                            required: false,
-                            message: ``,
-                          },
-                          {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === '' ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t('validationReport:siteNo')} ${t('isRequired')}`
-                                );
-                              }
-                            },
-                          },
-                        ]}
-                      >
-                        <Input size="large" disabled />
-                      </Form.Item>
-
-                      <Form.Item
-                        label={t('validationReport:province')}
+                        label={t("validationReport:province")}
                         name="province"
                         rules={[
                           {
@@ -620,13 +639,15 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:province')} ${t('isRequired')}`
+                                  `${t("validationReport:province")} ${t(
+                                    "isRequired"
+                                  )}`
                                 );
                               }
                             },
@@ -641,7 +662,10 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           // disabled={disableFields}
                         >
                           {provinces.map((province: string, index: number) => (
-                            <Select.Option value={province} key={province + index}>
+                            <Select.Option
+                              value={province}
+                              key={province + index}
+                            >
                               {province}
                             </Select.Option>
                           ))}
@@ -649,7 +673,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       </Form.Item>
 
                       <Form.Item
-                        label={t('validationReport:district')}
+                        label={t("validationReport:district")}
                         name="district"
                         rules={[
                           {
@@ -659,13 +683,15 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:district')} ${t('isRequired')}`
+                                  `${t("validationReport:district")} ${t(
+                                    "isRequired"
+                                  )}`
                                 );
                               }
                             },
@@ -679,11 +705,16 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           onSelect={(value) => onDistrictSelect(value, 0)}
                           // disabled={disableFields}
                         >
-                          {districts[0]?.map((district: string, index: number) => (
-                            <Select.Option key={district + index} value={district}>
-                              {district}
-                            </Select.Option>
-                          ))}
+                          {districts[0]?.map(
+                            (district: string, index: number) => (
+                              <Select.Option
+                                key={district + index}
+                                value={district}
+                              >
+                                {district}
+                              </Select.Option>
+                            )
+                          )}
                         </Select>
                       </Form.Item>
                       {/* <Form.Item
@@ -722,7 +753,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         </Select>
                       </Form.Item> */}
                       <Form.Item
-                        label={t('validationReport:city')}
+                        label={t("validationReport:city")}
                         name="city"
                         rules={[
                           {
@@ -732,12 +763,16 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('validationReport:city')} ${t('isRequired')}`);
+                                throw new Error(
+                                  `${t("validationReport:city")} ${t(
+                                    "isRequired"
+                                  )}`
+                                );
                               }
                             },
                           },
@@ -756,7 +791,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                         </Select>
                       </Form.Item>
                       <Form.Item
-                        label={t('validationReport:community')}
+                        label={t("validationReport:community")}
                         name="community"
                         rules={[
                           {
@@ -766,13 +801,15 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:community')} ${t('isRequired')}`
+                                  `${t("validationReport:community")} ${t(
+                                    "isRequired"
+                                  )}`
                                 );
                               }
                             },
@@ -785,7 +822,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
 
                     <Col xl={12} md={24}>
                       <Form.Item
-                        label={t('validationReport:setLocation')}
+                        label={t("validationReport:setLocation")}
                         name="geographicalLocationCoordinates"
                         rules={[
                           {
@@ -795,13 +832,15 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:location')} ${t('isRequired')}`
+                                  `${t("validationReport:location")} ${t(
+                                    "isRequired"
+                                  )}`
                                 );
                               }
                             },
@@ -810,8 +849,10 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       >
                         <GetLocationMapComponent
                           form={form}
-                          formItemName={'geographicalLocationCoordinates'}
-                          existingCordinate={form.getFieldValue('geographicalLocationCoordinates')}
+                          formItemName={"geographicalLocationCoordinates"}
+                          existingCordinate={form.getFieldValue(
+                            "geographicalLocationCoordinates"
+                          )}
                           disabled
                         />
                       </Form.Item>
@@ -819,7 +860,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
 
                     <Col xl={24} md={24}>
                       <Form.Item
-                        label={t('validationReport:uploadImages')}
+                        label={t("validationReport:uploadImages")}
                         name="optionalImages"
                         valuePropName="fileList"
                         getValueFromEvent={normFile}
@@ -830,7 +871,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                               if (file?.length > 0) {
                                 if (file[0]?.size > maximumImageSize) {
                                   // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                  throw new Error(`${t('common:maxSizeVal')}`);
+                                  throw new Error(`${t("common:maxSizeVal")}`);
                                 }
                               }
                             },
@@ -856,7 +897,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                             icon={<UploadOutlined />}
                             disabled={true}
                           >
-                            {t('validationReport:upload')}
+                            {t("validationReport:upload")}
                           </Button>
                         </Upload>
                       </Form.Item>
@@ -870,7 +911,9 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       {fields.map(({ key, name, ...restField }) => (
                         <>
                           <div className="form-list-actions">
-                            <h4 className="list-item-title">Location {name + 2}</h4>
+                            <h4 className="list-item-title">
+                              Location {name + 2}
+                            </h4>
                             <Form.Item>
                               <Button
                                 // type="dashed"
@@ -897,18 +940,22 @@ const BasicInformation = (props: ValidationStepsProps) => {
                             </Form.Item>
                           </div>
                           <div className="form-section">
-                            {/* <h4 className="form-section-title">
-                              {`${t('validationReport:locationOfProjectActivity')}`}
-                            </h4> */}
+                            <h4 className="form-section-title">
+                              {`${t(
+                                "validationReport:locationOfProjectActivity"
+                              )}`}
+                            </h4>
                             <Row
-                              justify={'space-between'}
+                              justify={"space-between"}
                               gutter={[40, 16]}
-                              style={{ borderRadius: '8px' }}
+                              style={{ borderRadius: "8px" }}
                             >
                               <Col xl={12} md={24}>
                                 <Form.Item
-                                  label={t('validationReport:locationOfProjectActivity')}
-                                  name={[name, 'locationOfProjectActivity']}
+                                  label={t(
+                                    "validationReport:locationOfProjectActivity"
+                                  )}
+                                  name={[name, "locationOfProjectActivity"]}
                                   rules={[
                                     {
                                       required: true,
@@ -917,15 +964,15 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     {
                                       validator: async (rule, value) => {
                                         if (
-                                          String(value).trim() === '' ||
+                                          String(value).trim() === "" ||
                                           String(value).trim() === undefined ||
                                           value === null ||
                                           value === undefined
                                         ) {
                                           throw new Error(
-                                            `${t('validationReport:locationOfProjectActivity')} ${t(
-                                              'isRequired'
-                                            )}`
+                                            `${t(
+                                              "validationReport:locationOfProjectActivity"
+                                            )} ${t("isRequired")}`
                                           );
                                         }
                                       },
@@ -936,8 +983,8 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                 </Form.Item>
 
                                 <Form.Item
-                                  label={t('validationReport:siteNo')}
-                                  name={[name, 'siteNo']}
+                                  label={t("validationReport:siteNo")}
+                                  name={[name, "siteNo"]}
                                   rules={[
                                     {
                                       required: true,
@@ -946,13 +993,15 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     {
                                       validator: async (rule, value) => {
                                         if (
-                                          String(value).trim() === '' ||
+                                          String(value).trim() === "" ||
                                           String(value).trim() === undefined ||
                                           value === null ||
                                           value === undefined
                                         ) {
                                           throw new Error(
-                                            `${t('validationReport:siteNo')} ${t('isRequired')}`
+                                            `${t(
+                                              "validationReport:siteNo"
+                                            )} ${t("isRequired")}`
                                           );
                                         }
                                       },
@@ -963,8 +1012,8 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                 </Form.Item>
 
                                 <Form.Item
-                                  label={t('validationReport:province')}
-                                  name={[name, 'province']}
+                                  label={t("validationReport:province")}
+                                  name={[name, "province"]}
                                   rules={[
                                     {
                                       required: true,
@@ -973,13 +1022,15 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     {
                                       validator: async (rule, value) => {
                                         if (
-                                          String(value).trim() === '' ||
+                                          String(value).trim() === "" ||
                                           String(value).trim() === undefined ||
                                           value === null ||
                                           value === undefined
                                         ) {
                                           throw new Error(
-                                            `${t('validationReport:province')} ${t('isRequired')}`
+                                            `${t(
+                                              "validationReport:province"
+                                            )} ${t("isRequired")}`
                                           );
                                         }
                                       },
@@ -988,21 +1039,28 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                 >
                                   <Select
                                     size="large"
-                                    onChange={(value) => onProvinceSelect(value, name + 1)}
+                                    onChange={(value) =>
+                                      onProvinceSelect(value, name + 1)
+                                    }
                                     // placeholder={t('validationReport:provincePlaceholder')}
                                     disabled
                                   >
-                                    {provinces.map((province: string, index: number) => (
-                                      <Select.Option value={province} key={name + province + index}>
-                                        {province}
-                                      </Select.Option>
-                                    ))}
+                                    {provinces.map(
+                                      (province: string, index: number) => (
+                                        <Select.Option
+                                          value={province}
+                                          key={name + province + index}
+                                        >
+                                          {province}
+                                        </Select.Option>
+                                      )
+                                    )}
                                   </Select>
                                 </Form.Item>
 
                                 <Form.Item
-                                  label={t('validationReport:district')}
-                                  name={[name, 'district']}
+                                  label={t("validationReport:district")}
+                                  name={[name, "district"]}
                                   rules={[
                                     {
                                       required: true,
@@ -1011,13 +1069,15 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     {
                                       validator: async (rule, value) => {
                                         if (
-                                          String(value).trim() === '' ||
+                                          String(value).trim() === "" ||
                                           String(value).trim() === undefined ||
                                           value === null ||
                                           value === undefined
                                         ) {
                                           throw new Error(
-                                            `${t('validationReport:district')} ${t('isRequired')}`
+                                            `${t(
+                                              "validationReport:district"
+                                            )} ${t("isRequired")}`
                                           );
                                         }
                                       },
@@ -1027,14 +1087,21 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                   <Select
                                     size="large"
                                     // placeholder={t('validationReport:districtPlaceholder')}
-                                    onSelect={(value) => onDistrictSelect(value, name + 1)}
+                                    onSelect={(value) =>
+                                      onDistrictSelect(value, name + 1)
+                                    }
                                     disabled
                                   >
-                                    {districts[name + 1]?.map((district: string, index: number) => (
-                                      <Select.Option key={name + district + index} value={district}>
-                                        {district}
-                                      </Select.Option>
-                                    ))}
+                                    {districts[name + 1]?.map(
+                                      (district: string, index: number) => (
+                                        <Select.Option
+                                          key={name + district + index}
+                                          value={district}
+                                        >
+                                          {district}
+                                        </Select.Option>
+                                      )
+                                    )}
                                   </Select>
                                 </Form.Item>
                                 {/* <Form.Item
@@ -1080,8 +1147,8 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                   </Select>
                                 </Form.Item> */}
                                 <Form.Item
-                                  label={t('validationReport:city')}
-                                  name={[name, 'city']}
+                                  label={t("validationReport:city")}
+                                  name={[name, "city"]}
                                   rules={[
                                     {
                                       required: true,
@@ -1090,13 +1157,15 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     {
                                       validator: async (rule, value) => {
                                         if (
-                                          String(value).trim() === '' ||
+                                          String(value).trim() === "" ||
                                           String(value).trim() === undefined ||
                                           value === null ||
                                           value === undefined
                                         ) {
                                           throw new Error(
-                                            `${t('validationReport:city')} ${t('isRequired')}`
+                                            `${t("validationReport:city")} ${t(
+                                              "isRequired"
+                                            )}`
                                           );
                                         }
                                       },
@@ -1108,16 +1177,21 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     // placeholder={t('validationReport:cityPlaceholder')}
                                     disabled
                                   >
-                                    {cities[name + 1]?.map((city: string, index: number) => (
-                                      <Select.Option value={city} key={name + city + index}>
-                                        {city}
-                                      </Select.Option>
-                                    ))}
+                                    {cities[name + 1]?.map(
+                                      (city: string, index: number) => (
+                                        <Select.Option
+                                          value={city}
+                                          key={name + city + index}
+                                        >
+                                          {city}
+                                        </Select.Option>
+                                      )
+                                    )}
                                   </Select>
                                 </Form.Item>
                                 <Form.Item
-                                  label={t('validationReport:community')}
-                                  name={[name, 'community']}
+                                  label={t("validationReport:community")}
+                                  name={[name, "community"]}
                                   rules={[
                                     {
                                       required: true,
@@ -1126,13 +1200,15 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     {
                                       validator: async (rule, value) => {
                                         if (
-                                          String(value).trim() === '' ||
+                                          String(value).trim() === "" ||
                                           String(value).trim() === undefined ||
                                           value === null ||
                                           value === undefined
                                         ) {
                                           throw new Error(
-                                            `${t('validationReport:community')} ${t('isRequired')}`
+                                            `${t(
+                                              "validationReport:community"
+                                            )} ${t("isRequired")}`
                                           );
                                         }
                                       },
@@ -1145,8 +1221,11 @@ const BasicInformation = (props: ValidationStepsProps) => {
 
                               <Col xl={12} md={24}>
                                 <Form.Item
-                                  label={t('validationReport:setLocation')}
-                                  name={[name, 'geographicalLocationCoordinates']}
+                                  label={t("validationReport:setLocation")}
+                                  name={[
+                                    name,
+                                    "geographicalLocationCoordinates",
+                                  ]}
                                   rules={[
                                     {
                                       required: true,
@@ -1155,13 +1234,15 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     {
                                       validator: async (rule, value) => {
                                         if (
-                                          String(value).trim() === '' ||
+                                          String(value).trim() === "" ||
                                           String(value).trim() === undefined ||
                                           value === null ||
                                           value === undefined
                                         ) {
                                           throw new Error(
-                                            `${t('validationReport:location')} ${t('isRequired')}`
+                                            `${t(
+                                              "validationReport:location"
+                                            )} ${t("isRequired")}`
                                           );
                                         }
                                       },
@@ -1170,12 +1251,16 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                 >
                                   <GetLocationMapComponent
                                     form={form}
-                                    formItemName={[name, 'geographicalLocationCoordinates']}
+                                    formItemName={[
+                                      name,
+                                      "geographicalLocationCoordinates",
+                                    ]}
                                     listName="extraLocations"
-                                    disabled={true}
+                                    disabled
                                     existingCordinate={
-                                      form?.getFieldValue('extraLocations')[name]
-                                        ?.geographicalLocationCoordinates
+                                      form?.getFieldValue("extraLocations")[
+                                        name
+                                      ]?.geographicalLocationCoordinates
                                     }
                                   />
                                 </Form.Item>
@@ -1183,8 +1268,8 @@ const BasicInformation = (props: ValidationStepsProps) => {
 
                               <Col xl={24} md={24}>
                                 <Form.Item
-                                  label={t('validationReport:uploadImages')}
-                                  name={[name, 'optionalImages']}
+                                  label={t("validationReport:uploadImages")}
+                                  name={[name, "optionalImages"]}
                                   valuePropName="fileList"
                                   getValueFromEvent={normFile}
                                   required={false}
@@ -1192,9 +1277,13 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     {
                                       validator: async (rule, file) => {
                                         if (file?.length > 0) {
-                                          if (file[0]?.size > maximumImageSize) {
+                                          if (
+                                            file[0]?.size > maximumImageSize
+                                          ) {
                                             // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                            throw new Error(`${t('common:maxSizeVal')}`);
+                                            throw new Error(
+                                              `${t("common:maxSizeVal")}`
+                                            );
                                           }
                                         }
                                       },
@@ -1211,14 +1300,13 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     action="/upload.do"
                                     listType="picture"
                                     multiple={false}
-                                    disabled={true}
+                                    disabled
                                     // maxCount={1}
                                   >
                                     <Button
                                       className="upload-doc"
                                       size="large"
                                       icon={<UploadOutlined />}
-                                      disabled={true}
                                       // disabled={disableFields}
                                     >
                                       Upload
@@ -1253,17 +1341,27 @@ const BasicInformation = (props: ValidationStepsProps) => {
                 </Form.List>
               </>
 
-              <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} disabled={false} onClick={prev}>
-                  {t('validationReport:cancel')}
+              <Row justify={"end"} className="step-actions-end">
+                <Button danger size={"large"} disabled={false} onClick={prev}>
+                  {t("validationReport:cancel")}
                 </Button>
                 {disableFields ? (
-                  <Button type="primary" size={'large'} disabled={false} onClick={next}>
-                    {t('validationReport:next')}
+                  <Button
+                    type="primary"
+                    size={"large"}
+                    disabled={false}
+                    onClick={next}
+                  >
+                    {t("validationReport:next")}
                   </Button>
                 ) : (
-                  <Button type="primary" size={'large'} disabled={false} htmlType="submit">
-                    {t('validationReport:next')}
+                  <Button
+                    type="primary"
+                    size={"large"}
+                    disabled={false}
+                    htmlType="submit"
+                  >
+                    {t("validationReport:next")}
                   </Button>
                 )}
               </Row>

@@ -1,21 +1,29 @@
-import { Button, Col, Form, Row, Input } from 'antd';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import TextArea from 'antd/lib/input/TextArea';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
-import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
-import { DocumentStatus } from '../../Definitions/Enums/document.status';
-import i18n from '../Internationalization/i18n';
-import { VerificationStepProps } from './StepProps';
+import { Button, Col, Form, Row, Input } from "antd";
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import TextArea from "antd/lib/input/TextArea";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
+import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
+import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
+import { DocumentStatus } from "../../Definitions/Enums/document.status";
+import i18n from "../Internationalization/i18n";
+import { VerificationStepProps } from "./StepProps";
 
 export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
-  const { current, form, formMode, prev, handleValuesUpdate, next, disableFields } = props;
+  const {
+    current,
+    form,
+    formMode,
+    prev,
+    handleValuesUpdate,
+    next,
+    disableFields,
+  } = props;
   const { userInfoState } = useUserContext();
   const t = i18n.t;
-  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   const normFile = (e: any) => {
@@ -27,12 +35,12 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
 
   useEffect(() => {
     if (formMode === FormMode.CREATE) {
-      form.setFieldValue('materialityTable', [{ riskLevel: '' }]);
+      form.setFieldValue("materialityTable", [{ riskLevel: "" }]);
     }
   }, []);
 
   const onFinish = (values: any) => {
-    console.log('--------values-----------', values);
+    console.log("--------values-----------", values);
     const body = { ...values };
     handleValuesUpdate({
       applicationOfMateriality: body,
@@ -65,7 +73,7 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
                     {/* materiality table starts */}
                     <>
                       <h3 className="form-section-heading">
-                        {t('verificationReport:am_considerationOfMateriality')}
+                        {t("verificationReport:am_considerationOfMateriality")}
                       </h3>
                       <div className="materialityTable">
                         <Row className="header">
@@ -73,7 +81,8 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
                             No
                           </Col>
                           <Col xl={4} className="col other-cols">
-                            Risk that could lead to material errors, omissions or misstatements
+                            Risk that could lead to material errors, omissions
+                            or misstatements
                           </Col>
                           <Col xl={12} className="assesment-col">
                             <Row>
@@ -82,16 +91,23 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
                               </Col>
                             </Row>
                             <Row>
-                              <Col xl={8} className="assesment-col-subCols-first">
+                              <Col
+                                xl={8}
+                                className="assesment-col-subCols-first"
+                              >
                                 Risk Level
                               </Col>
-                              <Col xl={16} className="assesment-col-subCols-last">
+                              <Col
+                                xl={16}
+                                className="assesment-col-subCols-last"
+                              >
                                 Justification
                               </Col>
                             </Row>
                           </Col>
                           <Col xl={4} className="col other-cols">
-                            Response to the risk in the verification plan and/or sampling plan
+                            Response to the risk in the verification plan and/or
+                            sampling plan
                           </Col>
                           <Col xl={2}></Col>
                         </Row>
@@ -103,12 +119,12 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
                                 {fields.map(({ key, name, ...restFields }) => (
                                   <>
                                     <Col xl={1} className="col-1 col">
-                                      {name + 1 < 10 && '0'}
+                                      {name + 1 < 10 && "0"}
                                       {name + 1}
                                     </Col>
                                     <Col xl={4} className="other-cols col">
                                       <Form.Item
-                                        name={[name, 'riskThatCouldLead']}
+                                        name={[name, "riskThatCouldLead"]}
                                         rules={[
                                           {
                                             required: true,
@@ -117,13 +133,16 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
                                           {
                                             validator: async (rule, value) => {
                                               if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
+                                                String(value).trim() === "" ||
+                                                String(value).trim() ===
+                                                  undefined ||
                                                 value === null ||
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('verificationReport:required')}`
+                                                  `${t(
+                                                    "verificationReport:required"
+                                                  )}`
                                                 );
                                               }
                                             },
@@ -136,7 +155,7 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
 
                                     <Col xl={4} className="other-cols col">
                                       <Form.Item
-                                        name={[name, 'riskLevel']}
+                                        name={[name, "riskLevel"]}
                                         rules={[
                                           {
                                             required: true,
@@ -145,13 +164,16 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
                                           {
                                             validator: async (rule, value) => {
                                               if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
+                                                String(value).trim() === "" ||
+                                                String(value).trim() ===
+                                                  undefined ||
                                                 value === null ||
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('verificationReport:required')}`
+                                                  `${t(
+                                                    "verificationReport:required"
+                                                  )}`
                                                 );
                                               }
                                             },
@@ -163,7 +185,7 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
                                     </Col>
                                     <Col xl={8} className="other-cols col">
                                       <Form.Item
-                                        name={[name, 'justification ']}
+                                        name={[name, "justification "]}
                                         rules={[
                                           {
                                             required: true,
@@ -172,13 +194,16 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
                                           {
                                             validator: async (rule, value) => {
                                               if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
+                                                String(value).trim() === "" ||
+                                                String(value).trim() ===
+                                                  undefined ||
                                                 value === null ||
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('verificationReport:required')}`
+                                                  `${t(
+                                                    "verificationReport:required"
+                                                  )}`
                                                 );
                                               }
                                             },
@@ -191,7 +216,7 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
 
                                     <Col xl={4} className="other-cols col">
                                       <Form.Item
-                                        name={[name, 'response']}
+                                        name={[name, "response"]}
                                         rules={[
                                           {
                                             required: true,
@@ -200,13 +225,16 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
                                           {
                                             validator: async (rule, value) => {
                                               if (
-                                                String(value).trim() === '' ||
-                                                String(value).trim() === undefined ||
+                                                String(value).trim() === "" ||
+                                                String(value).trim() ===
+                                                  undefined ||
                                                 value === null ||
                                                 value === undefined
                                               ) {
                                                 throw new Error(
-                                                  `${t('verificationReport:required')}`
+                                                  `${t(
+                                                    "verificationReport:required"
+                                                  )}`
                                                 );
                                               }
                                             },
@@ -256,14 +284,16 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
                     {/* materiality table ends */}
 
                     <Form.Item
-                      label={t('verificationReport:am_considerationOfMaterialityTextBox')}
+                      label={t(
+                        "verificationReport:am_considerationOfMaterialityTextBox"
+                      )}
                       name="am_considerationOfMaterialityTextBox"
                       rules={[
                         {
                           required: true,
                           message: `${t(
-                            'verificationReport:am_considerationOfMaterialityTextBox'
-                          )} ${t('isRequired')}`,
+                            "verificationReport:am_considerationOfMaterialityTextBox"
+                          )} ${t("isRequired")}`,
                         },
                       ]}
                     >
@@ -272,22 +302,22 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
                   </div>
                 </Col>
               </Row>
-              <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev} disabled={false}>
-                  {t('verificationReport:back')}
+              <Row justify={"end"} className="step-actions-end">
+                <Button danger size={"large"} onClick={prev} disabled={false}>
+                  {t("verificationReport:back")}
                 </Button>
                 {disableFields ? (
                   <Button type="primary" onClick={next}>
-                    {t('monitoringReport:next')}
+                    {t("monitoringReport:next")}
                   </Button>
                 ) : (
                   <Button
                     type="primary"
-                    size={'large'}
-                    htmlType={'submit'}
+                    size={"large"}
+                    htmlType={"submit"}
                     // onClick={next}
                   >
-                    {t('monitoringReport:next')}
+                    {t("monitoringReport:next")}
                   </Button>
                 )}
               </Row>

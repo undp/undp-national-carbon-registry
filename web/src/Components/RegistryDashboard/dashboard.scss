@@ -1,12 +1,12 @@
-@import "../../Styles/variables.scss";
+@use "../../Styles/variables.scss";
 
 .mapboxgl-popup-content {
-  background-color: $white !important;
-  color: $card-title !important;
+  background-color: variables.$white !important;
+  color: variables.$card-title !important;
 }
 
 .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
-  border-top-color: $white !important;
+  border-top-color: variables.$white !important;
 }
 
 .mapboxgl-popup-close-button,
@@ -69,7 +69,7 @@
   height: 50px;
   font-size: 1.15rem;
   margin-top: 1rem;
-  color: $card-title;
+  color: variables.$card-title;
 }
 
 .dashboard-main-container {
@@ -127,13 +127,13 @@
         color: rgba(58, 53, 65, 0.5);
       }
       .ant-radio-button-checked {
-        background-color: $primary-blue !important;
+        background-color: variables.$primary-blue !important;
       }
 
       .ant-radio-button-wrapper-checked:not(
           .ant-radio-button-wrapper-disabled
         )::before {
-        background-color: $primary-blue !important;
+        background-color: variables.$primary-blue !important;
       }
 
       .overall {
@@ -188,7 +188,7 @@
         .stastics-and-pie-card {
           display: flex;
           flex-direction: column;
-          background-color: $white;
+          background-color: variables.$white;
           border-radius: 10px;
           padding: 0 1rem 0.7rem 1rem;
           width: 100%;
@@ -212,7 +212,7 @@
               font-weight: 600;
               width: 90%;
               font-size: 1.15rem;
-              color: $card-title;
+              color: variables.$card-title;
             }
 
             .info-container {
@@ -246,7 +246,7 @@
                 font-size: 0.875rem;
                 line-height: 1.375rem;
                 padding-left: 0.125rem;
-                color: $card-title;
+                color: variables.$card-title;
                 margin-bottom: 0.5rem;
               }
 
@@ -258,7 +258,7 @@
                 line-height: 22px;
                 padding-left: 0.125rem;
                 padding: 0;
-                color: $primary-blue;
+                color: variables.$primary-blue;
               }
             }
 
@@ -342,7 +342,7 @@
                     font-style: normal;
                     font-weight: 400;
                     font-size: 0.875rem;
-                    color: $card-labels;
+                    color: variables.$card-labels;
                   }
 
                   .value {
@@ -352,7 +352,7 @@
                     height: 30px;
                     font-size: 1.5rem;
                     margin-top: -8px;
-                    color: $card-title;
+                    color: variables.$card-title;
                   }
                 }
               }
@@ -381,7 +381,7 @@
               font-size: 0.75rem;
               border-radius: 3.125rem;
               padding: 0.05rem 0.8rem 0.05rem 0.8rem;
-              color: $primary-blue;
+              color: variables.$primary-blue;
               background-color: rgba($color: #b9e2f4, $alpha: 0.4);
             }
           }
@@ -402,7 +402,7 @@
               height: 50px;
               font-size: 1.15rem;
               margin-top: 1rem;
-              color: $card-title;
+              color: variables.$card-title;
 
               .unit {
                 display: flex;

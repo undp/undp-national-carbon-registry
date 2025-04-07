@@ -1,4 +1,4 @@
-@import '../../../Styles/variables.scss';
+@use '../../../Styles/variables.scss';
 
 .ndc-details-view {
     .card-container {
@@ -30,7 +30,7 @@
   }
 
   .title-text {
-    color: $title-text-color;
+    color: variables.$title-text-color;
     font-weight: 600;
   }
 
