@@ -1,28 +1,37 @@
-import { Row, Button, Form, Upload, Col, Input, DatePicker, message } from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
-import { CustomStepsProps } from '../PDD/StepProps';
-import { RcFile } from 'antd/lib/upload';
+import {
+  Row,
+  Button,
+  Form,
+  Upload,
+  Col,
+  Input,
+  DatePicker,
+  message,
+} from "antd";
+import TextArea from "antd/lib/input/TextArea";
+import { CustomStepsProps } from "../PDD/StepProps";
+import { RcFile } from "antd/lib/upload";
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   MinusOutlined,
   PlusOutlined,
   UploadOutlined,
-} from '@ant-design/icons';
-import { ProcessSteps } from './ValidationStepperComponent';
-import { fileUploadValueExtract } from '../../Utils/utilityHelper';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import moment from 'moment';
-import { useEffect, useState } from 'react';
-import { ReactComponent as ConfirmSubmitSVG } from '../../Assets/DialogIcons/ConfirmSubmit.svg';
-import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
-import { SlcfFormActionModel } from '../Models/SlcfFormActionModel';
-import { useLocation } from 'react-router-dom';
-import { DocumentEnum } from '../../Definitions/Enums/document.enum';
-import { API_PATHS } from '../../Config/apiConfig';
-import { DocumentStateEnum } from '../../Definitions/Definitions/documentState.enum';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { ValidationStepsProps } from './StepProps';
+} from "@ant-design/icons";
+import { ProcessSteps } from "./ValidationStepperComponent";
+import { fileUploadValueExtract } from "../../Utils/utilityHelper";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
+import moment from "moment";
+import { useEffect, useState } from "react";
+import ConfirmSubmitSVG from "../../Assets/DialogIcons/ConfirmSubmit.svg";
+import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
+import { SlcfFormActionModel } from "../Models/SlcfFormActionModel";
+import { useLocation } from "react-router-dom";
+import { DocumentEnum } from "../../Definitions/Enums/document.enum";
+import { API_PATHS } from "../../Config/apiConfig";
+import { DocumentStateEnum } from "../../Definitions/Definitions/documentState.enum";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { ValidationStepsProps } from "./StepProps";
 
 const ValidationReportAppendix = (props: ValidationStepsProps) => {
   const {
@@ -46,12 +55,12 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
 
   useEffect(() => {
     if (formMode === FormMode.CREATE) {
-      form.setFieldValue('documentsReviewed', [{ author: '' }]);
+      form.setFieldValue("documentsReviewed", [{ author: "" }]);
     }
   }, []);
 
-  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   const normFile = (e: any) => {
@@ -65,25 +74,39 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
     const tempVals: any = {
       ...values,
       documentsReviewed: values?.documentsReviewed,
-      appendix1Documents: await fileUploadValueExtract(values, 'appendix1Documents'),
-      cl_date: moment(values?.cl_date).startOf('day').unix(),
-      cl_projectParticipantResponseDate: moment(values?.cl_projectParticipantResponseDate)
-        .startOf('day')
+      appendix1Documents: (
+        await fileUploadValueExtract(values, "appendix1Documents")
+      )[0],
+      cl_date: moment(values?.cl_date).startOf("day").unix(),
+      cl_projectParticipantResponseDate: moment(
+        values?.cl_projectParticipantResponseDate
+      )
+        .startOf("day")
         .unix(),
-      cl_doeAssesmentDate: moment(values?.cl_doeAssesmentDate).startOf('day').unix(),
-      car_date: moment(values?.car_date).startOf('day').unix(),
-      car_projectParticipantResponseDate: moment(values?.car_projectParticipantResponseDate)
-        .startOf('day')
+      cl_doeAssesmentDate: moment(values?.cl_doeAssesmentDate)
+        .startOf("day")
         .unix(),
-      car_doeAssesmentDate: moment(values?.car_doeAssesmentDate).startOf('day').unix(),
-      far_date: moment(values?.far_date).startOf('day').unix(),
-      far_projectParticipantResponseDate: moment(values?.far_projectParticipantResponseDate)
-        .startOf('day')
+      car_date: moment(values?.car_date).startOf("day").unix(),
+      car_projectParticipantResponseDate: moment(
+        values?.car_projectParticipantResponseDate
+      )
+        .startOf("day")
         .unix(),
-      far_doeAssesmentDate: moment(values?.far_doeAssesmentDate).startOf('day').unix(),
+      car_doeAssesmentDate: moment(values?.car_doeAssesmentDate)
+        .startOf("day")
+        .unix(),
+      far_date: moment(values?.far_date).startOf("day").unix(),
+      far_projectParticipantResponseDate: moment(
+        values?.far_projectParticipantResponseDate
+      )
+        .startOf("day")
+        .unix(),
+      far_doeAssesmentDate: moment(values?.far_doeAssesmentDate)
+        .startOf("day")
+        .unix(),
     };
 
-    //console.log('---------validation onFinish-------------', tempVals);
+    console.log("---------temVals-------------", tempVals);
     handleValuesUpdate(tempVals);
   };
 
@@ -112,16 +135,16 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
         const res = await post(API_PATHS.VERIFY_DOCUMENT, {
           refId: documentId,
           documentType: DocumentEnum.VALIDATION,
-          remarks: 'approved',
+          remarks: "approved",
           action: DocumentStateEnum.DNA_APPROVED,
         });
 
-        if (res?.statusText === 'SUCCESS') {
+        if (res?.statusText === "SUCCESS") {
           message.open({
-            type: 'success',
-            content: 'Validation report was approved successfully',
+            type: "success",
+            content: "Validation report was approved successfully",
             duration: 4,
-            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+            style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
 
           if (next) {
@@ -130,10 +153,10 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
         }
       } catch (error) {
         message.open({
-          type: 'error',
-          content: t('common:somethingWentWrong'),
+          type: "error",
+          content: t("common:somethingWentWrong"),
           duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
       } finally {
         if (handleLoading) {
@@ -156,12 +179,12 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
           action: DocumentStateEnum.DNA_REJECTED,
         });
 
-        if (res?.statusText === 'SUCCESS') {
+        if (res?.statusText === "SUCCESS") {
           message.open({
-            type: 'success',
-            content: 'Validation report rejected',
+            type: "success",
+            content: "Validation report rejected",
             duration: 4,
-            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+            style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
 
           if (next) {
@@ -170,10 +193,10 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
         }
       } catch (error) {
         message.open({
-          type: 'error',
-          content: t('common:somethingWentWrong'),
+          type: "error",
+          content: t("common:somethingWentWrong"),
           duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
       } finally {
         if (handleLoading) {
@@ -191,10 +214,10 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
             {state?.mode === FormMode.VERIFY && (
               <>
                 <SlcfFormActionModel
-                  actionBtnText={t('validationReport:approve')}
+                  actionBtnText={t("validationReport:approve")}
                   onCancel={closeVerifyDialogBox}
                   icon={<CheckCircleOutlined />}
-                  title={t('validationReport:approveMessage')}
+                  title={t("validationReport:approveMessage")}
                   onFinish={() => {
                     approveValidationReport();
                   }}
@@ -206,10 +229,10 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                 />
 
                 <SlcfFormActionModel
-                  actionBtnText={t('validationReport:reject')}
+                  actionBtnText={t("validationReport:reject")}
                   onCancel={closeDeclineDialogBox}
                   icon={<CloseCircleOutlined />}
-                  title={t('validationReport:declineMessage')}
+                  title={t("validationReport:declineMessage")}
                   onFinish={(remarks: string) => {
                     rejectValidationReport(remarks);
                   }}
@@ -222,18 +245,19 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
               </>
             )}
 
-            {(state?.mode === FormMode.CREATE || state?.mode === FormMode.EDIT) && (
+            {(state?.mode === FormMode.CREATE ||
+              state?.mode === FormMode.EDIT) && (
               <SlcfFormActionModel
                 icon={<ConfirmSubmitSVG />}
-                title={t('validationReport:confirmModalMessage')}
+                title={t("validationReport:confirmModalMessage")}
                 onCancel={closeDialog}
-                actionBtnText={t('common:yes')}
+                actionBtnText={t("common:yes")}
                 onFinish={() => {
                   closeDialog();
                   onFinish(formValues);
                 }}
                 openModal={showDialog}
-                type={'primary'}
+                type={"primary"}
                 remarkRequired={false}
                 t={t}
               />
@@ -284,7 +308,8 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
               {/* appendix 1 start */}
               <>
                 <h4 className="appendix-title">
-                  <i>{t('validationReport:appendix')} 1</i>: {t('validationReport:appendix1Title')}
+                  <i>{t("validationReport:appendix")} 1</i>:{" "}
+                  {t("validationReport:appendix1Title")}
                 </h4>
                 <Form.Item
                   // label={`${t('PDD:additionalComments')}`}
@@ -297,13 +322,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                     {
                       validator: async (rule, value) => {
                         if (
-                          String(value).trim() === '' ||
+                          String(value).trim() === "" ||
                           String(value).trim() === undefined ||
                           value === null ||
                           value === undefined
                         ) {
                           throw new Error(
-                            `${t('validationReport:additionalComments')} ${t('isRequired')}`
+                            `${t("validationReport:additionalComments")} ${t(
+                              "isRequired"
+                            )}`
                           );
                         }
                       },
@@ -314,7 +341,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                 </Form.Item>
 
                 <Form.Item
-                  label={t('validationReport:uploadDocs')}
+                  label={t("validationReport:uploadDocs")}
                   name="appendix1Documents"
                   valuePropName="fileList"
                   getValueFromEvent={normFile}
@@ -326,7 +353,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                         if (file?.length > 0) {
                           if (file[0]?.size > maximumImageSize) {
                             // default size format of files would be in bytes -> 1MB = 1000000bytes
-                            throw new Error(`${t('common:maxSizeVal')}`);
+                            throw new Error(`${t("common:maxSizeVal")}`);
                           }
                         }
                       },
@@ -352,7 +379,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                       icon={<UploadOutlined />}
                       disabled={disableFields}
                     >
-                      {t('validationReport:upload')}
+                      {t("validationReport:upload")}
                     </Button>
                   </Upload>
                 </Form.Item>
@@ -362,7 +389,8 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
               {/* appendix 2 start */}
               <>
                 <h4 className="appendix-title">
-                  <i>{t('validationReport:appendix')} 2 </i>: {t('validationReport:appendix2Title')}
+                  <i>{t("validationReport:appendix")} 2 </i>:{" "}
+                  {t("validationReport:appendix2Title")}
                 </h4>
 
                 {/* //////////// need to add table */}
@@ -395,12 +423,12 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {fields.map(({ key, name, ...restFields }) => (
                             <>
                               <Col xl={1} className="col-1 col" key={key}>
-                                {name + 1 < 10 && '0'}
+                                {name + 1 < 10 && "0"}
                                 {name + 1}
                               </Col>
                               <Col xl={5} className="col-2 col">
                                 <Form.Item
-                                  name={[name, 'author']}
+                                  name={[name, "author"]}
                                   rules={[
                                     {
                                       required: true,
@@ -409,12 +437,14 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                                     {
                                       validator: async (rule, value) => {
                                         if (
-                                          String(value).trim() === '' ||
+                                          String(value).trim() === "" ||
                                           String(value).trim() === undefined ||
                                           value === null ||
                                           value === undefined
                                         ) {
-                                          throw new Error(`${t('validationReport:required')}`);
+                                          throw new Error(
+                                            `${t("validationReport:required")}`
+                                          );
                                         }
                                       },
                                     },
@@ -425,7 +455,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                               </Col>
                               <Col xl={5} className="col-3 col">
                                 <Form.Item
-                                  name={[name, 'title']}
+                                  name={[name, "title"]}
                                   rules={[
                                     {
                                       required: true,
@@ -434,12 +464,14 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                                     {
                                       validator: async (rule, value) => {
                                         if (
-                                          String(value).trim() === '' ||
+                                          String(value).trim() === "" ||
                                           String(value).trim() === undefined ||
                                           value === null ||
                                           value === undefined
                                         ) {
-                                          throw new Error(`${t('validationReport:required')}`);
+                                          throw new Error(
+                                            `${t("validationReport:required")}`
+                                          );
                                         }
                                       },
                                     },
@@ -450,7 +482,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                               </Col>
                               <Col xl={5} className="col-4 col">
                                 <Form.Item
-                                  name={[name, 'referencesToDocument']}
+                                  name={[name, "referencesToDocument"]}
                                   rules={[
                                     {
                                       required: true,
@@ -459,12 +491,14 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                                     {
                                       validator: async (rule, value) => {
                                         if (
-                                          String(value).trim() === '' ||
+                                          String(value).trim() === "" ||
                                           String(value).trim() === undefined ||
                                           value === null ||
                                           value === undefined
                                         ) {
-                                          throw new Error(`${t('validationReport:required')}`);
+                                          throw new Error(
+                                            `${t("validationReport:required")}`
+                                          );
                                         }
                                       },
                                     },
@@ -475,7 +509,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                               </Col>
                               <Col xl={5} className="col-5 col">
                                 <Form.Item
-                                  name={[name, 'provider']}
+                                  name={[name, "provider"]}
                                   rules={[
                                     {
                                       required: true,
@@ -484,12 +518,14 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                                     {
                                       validator: async (rule, value) => {
                                         if (
-                                          String(value).trim() === '' ||
+                                          String(value).trim() === "" ||
                                           String(value).trim() === undefined ||
                                           value === null ||
                                           value === undefined
                                         ) {
-                                          throw new Error(`${t('validationReport:required')}`);
+                                          throw new Error(
+                                            `${t("validationReport:required")}`
+                                          );
                                         }
                                       },
                                     },
@@ -540,16 +576,19 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
               {/* appendix 3 start */}
               <>
                 <h4 className="appendix-title">
-                  <i>{t('validationReport:appendix')} 3 </i>: {t('validationReport:appendix3Title')}
+                  <i>{t("validationReport:appendix")} 3 </i>:{" "}
+                  {t("validationReport:appendix3Title")}
                 </h4>
 
                 {/* table 1 start */}
-                <h4 className="appendix-title">{t('validationReport:appendixTable1Title')}</h4>
+                <h4 className="appendix-title">
+                  {t("validationReport:appendixTable1Title")}
+                </h4>
                 <div className="appendix-table-section">
                   <Row gutter={[40, 16]}>
                     <Col md={24} xl={12}>
                       <Form.Item
-                        label={`${t('validationReport:cl_id')}`}
+                        label={`${t("validationReport:cl_id")}`}
                         name="cl_id"
                         rules={[
                           {
@@ -559,13 +598,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:cl_id')} ${t('isRequired')}`
+                                  `${t("validationReport:cl_id")} ${t(
+                                    "isRequired"
+                                  )}`
                                 );
                               }
                             },
@@ -576,7 +617,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                       </Form.Item>
 
                       <Form.Item
-                        label={`${t('validationReport:date')}`}
+                        label={`${t("validationReport:date")}`}
                         name="cl_date"
                         rules={[
                           {
@@ -586,12 +627,16 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('validationReport:date')} ${t('isRequired')}`);
+                                throw new Error(
+                                  `${t("validationReport:date")} ${t(
+                                    "isRequired"
+                                  )}`
+                                );
                               }
                             },
                           },
@@ -600,13 +645,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                         <DatePicker
                           size="large"
                           disabled={disableFields}
-                          disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                          disabledDate={(currentDate: any) =>
+                            currentDate < moment().startOf("day")
+                          }
                         />
                       </Form.Item>
                     </Col>
                     <Col md={24} xl={12}>
                       <Form.Item
-                        label={`${t('validationReport:section')}`}
+                        label={`${t("validationReport:section")}`}
                         name="cl_section"
                         rules={[
                           {
@@ -616,13 +663,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:section')} ${t('isRequired')}`
+                                  `${t("validationReport:section")} ${t(
+                                    "isRequired"
+                                  )}`
                                 );
                               }
                             },
@@ -635,7 +684,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
 
                     <Col md={24} xl={24}>
                       <Form.Item
-                        label={`${t('validationReport:description')}`}
+                        label={`${t("validationReport:description")}`}
                         name="cl_description"
                         rules={[
                           {
@@ -645,13 +694,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:description')} ${t('isRequired')}`
+                                  `${t("validationReport:description")} ${t(
+                                    "isRequired"
+                                  )}`
                                 );
                               }
                             },
@@ -664,7 +715,9 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
 
                     <Col md={24} xl={12}>
                       <Form.Item
-                        label={`${t('validationReport:projectParticipantResponse')}`}
+                        label={`${t(
+                          "validationReport:projectParticipantResponse"
+                        )}`}
                         name="cl_projectParticipantResponse"
                         rules={[
                           {
@@ -674,15 +727,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:projectParticipantResponse')} ${t(
-                                    'isRequired'
-                                  )}`
+                                  `${t(
+                                    "validationReport:projectParticipantResponse"
+                                  )} ${t("isRequired")}`
                                 );
                               }
                             },
@@ -694,7 +747,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                     </Col>
                     <Col md={24} xl={12}>
                       <Form.Item
-                        label={`${t('validationReport:date')}`}
+                        label={`${t("validationReport:date")}`}
                         name="cl_projectParticipantResponseDate"
                         rules={[
                           {
@@ -704,12 +757,16 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('validationReport:date')} ${t('isRequired')}`);
+                                throw new Error(
+                                  `${t("validationReport:date")} ${t(
+                                    "isRequired"
+                                  )}`
+                                );
                               }
                             },
                           },
@@ -718,14 +775,18 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                         <DatePicker
                           size="large"
                           disabled={disableFields}
-                          disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                          disabledDate={(currentDate: any) =>
+                            currentDate < moment().startOf("day")
+                          }
                         />
                       </Form.Item>
                     </Col>
 
                     <Col md={24} xl={24}>
                       <Form.Item
-                        label={`${t('validationReport:documentationProvidedByProjectParticipant')}`}
+                        label={`${t(
+                          "validationReport:documentationProvidedByProjectParticipant"
+                        )}`}
                         name="cl_documentationProvidedByProjectParticipant"
                         rules={[
                           {
@@ -735,15 +796,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
                                   `${t(
-                                    'validationReport:documentationProvidedByProjectParticipant'
-                                  )} ${t('isRequired')}`
+                                    "validationReport:documentationProvidedByProjectParticipant"
+                                  )} ${t("isRequired")}`
                                 );
                               }
                             },
@@ -756,7 +817,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
 
                     <Col md={24} xl={12}>
                       <Form.Item
-                        label={`${t('validationReport:doeAssesment')}`}
+                        label={`${t("validationReport:doeAssesment")}`}
                         name="cl_doeAssesment"
                         rules={[
                           {
@@ -766,13 +827,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:doeAssesment')} ${t('isRequired')}`
+                                  `${t("validationReport:doeAssesment")} ${t(
+                                    "isRequired"
+                                  )}`
                                 );
                               }
                             },
@@ -785,7 +848,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
 
                     <Col md={24} xl={12}>
                       <Form.Item
-                        label={`${t('validationReport:date')}`}
+                        label={`${t("validationReport:date")}`}
                         name="cl_doeAssesmentDate"
                         rules={[
                           {
@@ -795,12 +858,16 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('validationReport:date')} ${t('isRequired')}`);
+                                throw new Error(
+                                  `${t("validationReport:date")} ${t(
+                                    "isRequired"
+                                  )}`
+                                );
                               }
                             },
                           },
@@ -809,7 +876,9 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                         <DatePicker
                           size="large"
                           disabled={disableFields}
-                          disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                          disabledDate={(currentDate: any) =>
+                            currentDate < moment().startOf("day")
+                          }
                         />
                       </Form.Item>
                     </Col>
@@ -818,12 +887,14 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                 {/* table 1 end */}
 
                 {/* table 2 start */}
-                <h4 className="appendix-title">{t('validationReport:appendixTable2Title')}</h4>
+                <h4 className="appendix-title">
+                  {t("validationReport:appendixTable2Title")}
+                </h4>
                 <div className="appendix-table-section">
                   <Row gutter={[40, 16]}>
                     <Col md={24} xl={12}>
                       <Form.Item
-                        label={`${t('validationReport:car_id')}`}
+                        label={`${t("validationReport:car_id")}`}
                         name="car_id"
                         rules={[
                           {
@@ -833,13 +904,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:car_id')} ${t('isRequired')}`
+                                  `${t("validationReport:car_id")} ${t(
+                                    "isRequired"
+                                  )}`
                                 );
                               }
                             },
@@ -850,7 +923,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                       </Form.Item>
 
                       <Form.Item
-                        label={`${t('validationReport:date')}`}
+                        label={`${t("validationReport:date")}`}
                         name="car_date"
                         rules={[
                           {
@@ -860,12 +933,16 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('validationReport:date')} ${t('isRequired')}`);
+                                throw new Error(
+                                  `${t("validationReport:date")} ${t(
+                                    "isRequired"
+                                  )}`
+                                );
                               }
                             },
                           },
@@ -874,13 +951,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                         <DatePicker
                           size="large"
                           disabled={disableFields}
-                          disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                          disabledDate={(currentDate: any) =>
+                            currentDate < moment().startOf("day")
+                          }
                         />
                       </Form.Item>
                     </Col>
                     <Col md={24} xl={12}>
                       <Form.Item
-                        label={`${t('validationReport:section')}`}
+                        label={`${t("validationReport:section")}`}
                         name="car_section"
                         rules={[
                           {
@@ -890,13 +969,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:section')} ${t('isRequired')}`
+                                  `${t("validationReport:section")} ${t(
+                                    "isRequired"
+                                  )}`
                                 );
                               }
                             },
@@ -909,7 +990,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
 
                     <Col md={24} xl={24}>
                       <Form.Item
-                        label={`${t('validationReport:description')}`}
+                        label={`${t("validationReport:description")}`}
                         name="car_description"
                         rules={[
                           {
@@ -919,13 +1000,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:description')} ${t('isRequired')}`
+                                  `${t("validationReport:description")} ${t(
+                                    "isRequired"
+                                  )}`
                                 );
                               }
                             },
@@ -938,7 +1021,9 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
 
                     <Col md={24} xl={12}>
                       <Form.Item
-                        label={`${t('validationReport:projectParticipantResponse')}`}
+                        label={`${t(
+                          "validationReport:projectParticipantResponse"
+                        )}`}
                         name="car_projectParticipantResponse"
                         rules={[
                           {
@@ -948,15 +1033,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:projectParticipantResponse')} ${t(
-                                    'isRequired'
-                                  )}`
+                                  `${t(
+                                    "validationReport:projectParticipantResponse"
+                                  )} ${t("isRequired")}`
                                 );
                               }
                             },
@@ -968,7 +1053,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                     </Col>
                     <Col md={24} xl={12}>
                       <Form.Item
-                        label={`${t('validationReport:date')}`}
+                        label={`${t("validationReport:date")}`}
                         name="car_projectParticipantResponseDate"
                         rules={[
                           {
@@ -978,12 +1063,16 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('validationReport:date')} ${t('isRequired')}`);
+                                throw new Error(
+                                  `${t("validationReport:date")} ${t(
+                                    "isRequired"
+                                  )}`
+                                );
                               }
                             },
                           },
@@ -992,14 +1081,18 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                         <DatePicker
                           size="large"
                           disabled={disableFields}
-                          disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                          disabledDate={(currentDate: any) =>
+                            currentDate < moment().startOf("day")
+                          }
                         />
                       </Form.Item>
                     </Col>
 
                     <Col md={24} xl={24}>
                       <Form.Item
-                        label={`${t('validationReport:documentationProvidedByProjectParticipant')}`}
+                        label={`${t(
+                          "validationReport:documentationProvidedByProjectParticipant"
+                        )}`}
                         name="car_documentationByProjectParticipant"
                         rules={[
                           {
@@ -1009,15 +1102,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
                                   `${t(
-                                    'validationReport:documentationProvidedByProjectParticipant'
-                                  )} ${t('isRequired')}`
+                                    "validationReport:documentationProvidedByProjectParticipant"
+                                  )} ${t("isRequired")}`
                                 );
                               }
                             },
@@ -1030,7 +1123,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
 
                     <Col md={24} xl={12}>
                       <Form.Item
-                        label={`${t('validationReport:doeAssesment')}`}
+                        label={`${t("validationReport:doeAssesment")}`}
                         name="car_doeAssesment"
                         rules={[
                           {
@@ -1040,196 +1133,14 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:doeAssesment')} ${t('isRequired')}`
-                                );
-                              }
-                            },
-                          },
-                        ]}
-                      >
-                        <TextArea rows={4} disabled={disableFields} />
-                      </Form.Item>
-                    </Col>
-
-                    <Col md={24} xl={12}>
-                      <Form.Item
-                        label={`${t('validationReport:date')}`}
-                        name="car_doeAssesmentDate"
-                        rules={[
-                          {
-                            required: true,
-                            message: ``,
-                          },
-                          {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === '' ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(`${t('validationReport:date')} ${t('isRequired')}`);
-                              }
-                            },
-                          },
-                        ]}
-                      >
-                        <DatePicker
-                          size="large"
-                          disabled={disableFields}
-                          disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
-                        />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </div>
-                {/* table 2 end */}
-
-                {/* table 3 start */}
-                <h4 className="appendix-title">{t('validationReport:appendixTable3Title')}</h4>
-                <div className="appendix-table-section">
-                  <Row gutter={[40, 16]}>
-                    <Col md={24} xl={12}>
-                      <Form.Item
-                        label={`${t('validationReport:far_id')}`}
-                        name="far_id"
-                        rules={[
-                          {
-                            required: true,
-                            message: ``,
-                          },
-                          {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === '' ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t('validationReport:far_id')} ${t('isRequired')}`
-                                );
-                              }
-                            },
-                          },
-                        ]}
-                      >
-                        <Input disabled={disableFields} />
-                      </Form.Item>
-
-                      <Form.Item
-                        label={`${t('validationReport:date')}`}
-                        name="far_date"
-                        rules={[
-                          {
-                            required: true,
-                            message: ``,
-                          },
-                          {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === '' ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(`${t('validationReport:date')} ${t('isRequired')}`);
-                              }
-                            },
-                          },
-                        ]}
-                      >
-                        <DatePicker
-                          size="large"
-                          disabled={disableFields}
-                          disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col md={24} xl={12}>
-                      <Form.Item
-                        label={`${t('validationReport:section')}`}
-                        name="far_section"
-                        rules={[
-                          {
-                            required: true,
-                            message: ``,
-                          },
-                          {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === '' ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t('validationReport:section')} ${t('isRequired')}`
-                                );
-                              }
-                            },
-                          },
-                        ]}
-                      >
-                        <Input disabled={disableFields} />
-                      </Form.Item>
-                    </Col>
-
-                    <Col md={24} xl={24}>
-                      <Form.Item
-                        label={`${t('validationReport:description')}`}
-                        name="far_description"
-                        rules={[
-                          {
-                            required: true,
-                            message: ``,
-                          },
-                          {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === '' ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t('validationReport:description')} ${t('isRequired')}`
-                                );
-                              }
-                            },
-                          },
-                        ]}
-                      >
-                        <TextArea rows={4} disabled={disableFields} />
-                      </Form.Item>
-                    </Col>
-
-                    <Col md={24} xl={12}>
-                      <Form.Item
-                        label={`${t('validationReport:projectParticipantResponse')}`}
-                        name="far_projectParticipantResponse"
-                        rules={[
-                          {
-                            required: true,
-                            message: ``,
-                          },
-                          {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === '' ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t('validationReport:projectParticipantResponse')} ${t(
-                                    'isRequired'
+                                  `${t("validationReport:doeAssesment")} ${t(
+                                    "isRequired"
                                   )}`
                                 );
                               }
@@ -1240,9 +1151,215 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                         <TextArea rows={4} disabled={disableFields} />
                       </Form.Item>
                     </Col>
+
                     <Col md={24} xl={12}>
                       <Form.Item
-                        label={`${t('validationReport:date')}`}
+                        label={`${t("validationReport:date")}`}
+                        name="car_doeAssesmentDate"
+                        rules={[
+                          {
+                            required: true,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === "" ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t("validationReport:date")} ${t(
+                                    "isRequired"
+                                  )}`
+                                );
+                              }
+                            },
+                          },
+                        ]}
+                      >
+                        <DatePicker
+                          size="large"
+                          disabled={disableFields}
+                          disabledDate={(currentDate: any) =>
+                            currentDate < moment().startOf("day")
+                          }
+                        />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                </div>
+                {/* table 2 end */}
+
+                {/* table 3 start */}
+                <h4 className="appendix-title">
+                  {t("validationReport:appendixTable3Title")}
+                </h4>
+                <div className="appendix-table-section">
+                  <Row gutter={[40, 16]}>
+                    <Col md={24} xl={12}>
+                      <Form.Item
+                        label={`${t("validationReport:far_id")}`}
+                        name="far_id"
+                        rules={[
+                          {
+                            required: true,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === "" ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t("validationReport:far_id")} ${t(
+                                    "isRequired"
+                                  )}`
+                                );
+                              }
+                            },
+                          },
+                        ]}
+                      >
+                        <Input disabled={disableFields} />
+                      </Form.Item>
+
+                      <Form.Item
+                        label={`${t("validationReport:date")}`}
+                        name="far_date"
+                        rules={[
+                          {
+                            required: true,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === "" ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t("validationReport:date")} ${t(
+                                    "isRequired"
+                                  )}`
+                                );
+                              }
+                            },
+                          },
+                        ]}
+                      >
+                        <DatePicker
+                          size="large"
+                          disabled={disableFields}
+                          disabledDate={(currentDate: any) =>
+                            currentDate < moment().startOf("day")
+                          }
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col md={24} xl={12}>
+                      <Form.Item
+                        label={`${t("validationReport:section")}`}
+                        name="far_section"
+                        rules={[
+                          {
+                            required: true,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === "" ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t("validationReport:section")} ${t(
+                                    "isRequired"
+                                  )}`
+                                );
+                              }
+                            },
+                          },
+                        ]}
+                      >
+                        <Input disabled={disableFields} />
+                      </Form.Item>
+                    </Col>
+
+                    <Col md={24} xl={24}>
+                      <Form.Item
+                        label={`${t("validationReport:description")}`}
+                        name="far_description"
+                        rules={[
+                          {
+                            required: true,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === "" ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t("validationReport:description")} ${t(
+                                    "isRequired"
+                                  )}`
+                                );
+                              }
+                            },
+                          },
+                        ]}
+                      >
+                        <TextArea rows={4} disabled={disableFields} />
+                      </Form.Item>
+                    </Col>
+
+                    <Col md={24} xl={12}>
+                      <Form.Item
+                        label={`${t(
+                          "validationReport:projectParticipantResponse"
+                        )}`}
+                        name="far_projectParticipantResponse"
+                        rules={[
+                          {
+                            required: true,
+                            message: ``,
+                          },
+                          {
+                            validator: async (rule, value) => {
+                              if (
+                                String(value).trim() === "" ||
+                                String(value).trim() === undefined ||
+                                value === null ||
+                                value === undefined
+                              ) {
+                                throw new Error(
+                                  `${t(
+                                    "validationReport:projectParticipantResponse"
+                                  )} ${t("isRequired")}`
+                                );
+                              }
+                            },
+                          },
+                        ]}
+                      >
+                        <TextArea rows={4} disabled={disableFields} />
+                      </Form.Item>
+                    </Col>
+                    <Col md={24} xl={12}>
+                      <Form.Item
+                        label={`${t("validationReport:date")}`}
                         name="far_projectParticipantResponseDate"
                         rules={[
                           {
@@ -1252,12 +1369,16 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('validationReport:date')} ${t('isRequired')}`);
+                                throw new Error(
+                                  `${t("validationReport:date")} ${t(
+                                    "isRequired"
+                                  )}`
+                                );
                               }
                             },
                           },
@@ -1266,14 +1387,18 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                         <DatePicker
                           size="large"
                           disabled={disableFields}
-                          disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                          disabledDate={(currentDate: any) =>
+                            currentDate < moment().startOf("day")
+                          }
                         />
                       </Form.Item>
                     </Col>
 
                     <Col md={24} xl={24}>
                       <Form.Item
-                        label={`${t('validationReport:documentationProvidedByProjectParticipant')}`}
+                        label={`${t(
+                          "validationReport:documentationProvidedByProjectParticipant"
+                        )}`}
                         name="far_documentationByProjectParticipant"
                         rules={[
                           {
@@ -1283,15 +1408,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
                                   `${t(
-                                    'validationReport:documentationProvidedByProjectParticipant'
-                                  )} ${t('isRequired')}`
+                                    "validationReport:documentationProvidedByProjectParticipant"
+                                  )} ${t("isRequired")}`
                                 );
                               }
                             },
@@ -1304,7 +1429,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
 
                     <Col md={24} xl={12}>
                       <Form.Item
-                        label={`${t('validationReport:doeAssesment')}`}
+                        label={`${t("validationReport:doeAssesment")}`}
                         name="far_doeAssesment"
                         rules={[
                           {
@@ -1314,13 +1439,15 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t('validationReport:doeAssesment')} ${t('isRequired')}`
+                                  `${t("validationReport:doeAssesment")} ${t(
+                                    "isRequired"
+                                  )}`
                                 );
                               }
                             },
@@ -1333,7 +1460,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
 
                     <Col md={24} xl={12}>
                       <Form.Item
-                        label={`${t('validationReport:date')}`}
+                        label={`${t("validationReport:date")}`}
                         name="far_doeAssesmentDate"
                         rules={[
                           {
@@ -1343,12 +1470,16 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           {
                             validator: async (rule, value) => {
                               if (
-                                String(value).trim() === '' ||
+                                String(value).trim() === "" ||
                                 String(value).trim() === undefined ||
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t('validationReport:date')} ${t('isRequired')}`);
+                                throw new Error(
+                                  `${t("validationReport:date")} ${t(
+                                    "isRequired"
+                                  )}`
+                                );
                               }
                             },
                           },
@@ -1357,7 +1488,9 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                         <DatePicker
                           size="large"
                           disabled={disableFields}
-                          disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                          disabledDate={(currentDate: any) =>
+                            currentDate < moment().startOf("day")
+                          }
                         />
                       </Form.Item>
                     </Col>
@@ -1367,7 +1500,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
               </>
               {/* appendix 3 end */}
 
-              <Row justify={'end'} className="step-actions-end mg-top-2">
+              <Row justify={"end"} className="step-actions-end mg-top-2">
                 {/* <Button danger size={'large'} onClick={prev} disabled={false}>
                   {t('validationReport:prev')}
                 </Button>
@@ -1382,46 +1515,62 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                   </Button>
                 )} */}
 
-                {(state?.mode === FormMode.CREATE || state?.mode === FormMode.EDIT) && (
+                {(state?.mode === FormMode.CREATE ||
+                  state?.mode === FormMode.EDIT) && (
                   <>
-                    <Button danger size={'large'} onClick={prev} disabled={false}>
-                      {t('validationReport:prev')}
+                    <Button
+                      danger
+                      size={"large"}
+                      onClick={prev}
+                      disabled={false}
+                    >
+                      {t("validationReport:prev")}
                     </Button>
                     <Button type="primary" htmlType="submit" disabled={false}>
-                      {t('validationReport:submit')}
+                      {t("validationReport:submit")}
                     </Button>
                   </>
                 )}
                 {state?.mode === FormMode.VIEW && (
                   <>
-                    <Button danger size={'large'} onClick={prev} disabled={false}>
-                      {t('validationReport:prev')}
+                    <Button
+                      danger
+                      size={"large"}
+                      onClick={prev}
+                      disabled={false}
+                    >
+                      {t("validationReport:prev")}
                     </Button>
                     <Button type="primary" onClick={next} disabled={false}>
-                      {t('validationReport:backtoProjectDetails')}
+                      {t("validationReport:backtoProjectDetails")}
                     </Button>
                   </>
                 )}
                 {state?.mode === FormMode.VERIFY && (
                   <>
-                    <Button size={'large'} onClick={prev} disabled={false} type={'default'}>
-                      {t('validationReport:prev')}
+                    <Button
+                      size={"large"}
+                      onClick={prev}
+                      disabled={false}
+                      type={"default"}
+                    >
+                      {t("validationReport:prev")}
                     </Button>
                     <Button
                       danger
-                      size={'large'}
+                      size={"large"}
                       onClick={() => setShowDeclineDialog(true)}
                       disabled={false}
                     >
-                      {t('validationReport:reject')}
+                      {t("validationReport:reject")}
                     </Button>
                     <Button
-                      size={'large'}
+                      size={"large"}
                       onClick={() => setShowVerifyDialog(true)}
                       type="primary"
                       disabled={false}
                     >
-                      {t('validationReport:approve')}
+                      {t("validationReport:approve")}
                     </Button>
                   </>
                 )}

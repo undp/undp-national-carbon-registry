@@ -1,13 +1,13 @@
-import React from 'react';
-import { Steps } from 'antd';
-import { FileOutlined } from '@ant-design/icons';
+import React from "react";
+import { Steps } from "antd";
+import { FileOutlined } from "@ant-design/icons";
 
-import * as Icon from 'react-bootstrap-icons';
+import * as Icon from "react-bootstrap-icons";
 
-import './programmeHistoryStepComponent.scss';
-import { DateTime } from 'luxon';
-import { dateTimeFormat } from '../../../Definitions/Definitions/common.definitions';
-import { ProjectActivityStage } from '../../../Definitions/Enums/programmeStage.enum';
+import "./programmeHistoryStepComponent.scss";
+import { DateTime } from "luxon";
+import { dateTimeFormat } from "../../../Definitions/Definitions/common.definitions";
+import { ProjectActivityStage } from "../../../Definitions/Enums/programmeStage.enum";
 
 interface ProgrammeLog {
   id: number;
@@ -57,124 +57,164 @@ interface ProgrammeHistoryStepsProps {
 
 const formatString = (langTag: string, vargs: any[], t: any) => {
   const str = t(langTag);
-  const parts = str.split('{}');
+  const parts = str.split("{}");
   let insertAt = 1;
   for (const arg of vargs) {
     parts.splice(insertAt, 0, arg);
     insertAt += 2;
   }
-  return parts.join('');
+  return parts.join("");
 };
 
 const getLogDescription = (log: any, t: any) => {
-  const countryName = process.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
   switch (log.logType) {
     case ProjectActivityStage.PENDING:
-      return formatString('slcfProgrammeTimeline:programmeCreatedDescription', [log.name], t);
+      return formatString(
+        "slcfProgrammeTimeline:programmeCreatedDescription",
+        [log.name],
+        t
+      );
       break;
     case ProjectActivityStage.APPROVED:
-      return formatString('slcfProgrammeTimeline:infApprovedDescription', [log.name], t);
+      return formatString(
+        "slcfProgrammeTimeline:infApprovedDescription",
+        [log.name],
+        t
+      );
       break;
     case ProjectActivityStage.REJECTED:
-      return formatString('slcfProgrammeTimeline:infRejectedDescription', [log.name], t);
+      return formatString(
+        "slcfProgrammeTimeline:infRejectedDescription",
+        [log.name],
+        t
+      );
       break;
     case ProjectActivityStage.NO_OBJECTION_LETTER_GENERATED:
-      return formatString('slcfProgrammeTimeline:noObjectionLetterGeneratedDescription', [], t);
+      return formatString(
+        "slcfProgrammeTimeline:noObjectionLetterGeneratedDescription",
+        [],
+        t
+      );
     case ProjectActivityStage.PDD_SUBMITTED:
-      return formatString('slcfProgrammeTimeline:pddSubmittedDescription', [log.name], t);
+      return formatString(
+        "slcfProgrammeTimeline:pddSubmittedDescription",
+        [log.name],
+        t
+      );
     case ProjectActivityStage.PDD_REJECTED_BY_CERTIFIER:
-      return formatString('slcfProgrammeTimeline:pddRejectedDescription', [log.name], t);
+      return formatString(
+        "slcfProgrammeTimeline:pddRejectedDescription",
+        [log.name],
+        t
+      );
     case ProjectActivityStage.PDD_APPROVED_BY_CERTIFIER:
-      return formatString('slcfProgrammeTimeline:pddApprovedDescription', [log.name], t);
+      return formatString(
+        "slcfProgrammeTimeline:pddApprovedDescription",
+        [log.name],
+        t
+      );
     case ProjectActivityStage.PDD_REJECTED_BY_DNA:
-      return formatString('slcfProgrammeTimeline:pddRejectedDescription', [log.name], t);
+      return formatString(
+        "slcfProgrammeTimeline:pddRejectedDescription",
+        [log.name],
+        t
+      );
     case ProjectActivityStage.PDD_APPROVED_BY_DNA:
-      return formatString('slcfProgrammeTimeline:pddApprovedDescription', [log.name], t);
+      return formatString(
+        "slcfProgrammeTimeline:pddApprovedDescription",
+        [log.name],
+        t
+      );
     case ProjectActivityStage.VALIDATION_REPORT_SUBMITTED:
       return formatString(
-        'slcfProgrammeTimeline:validationReportCreatedDescription',
+        "slcfProgrammeTimeline:validationReportCreatedDescription",
         [log.name],
         t
       );
     case ProjectActivityStage.VALIDATION_REPORT_REJECTED:
       return formatString(
-        'slcfProgrammeTimeline:validationReportRejectedDescription',
+        "slcfProgrammeTimeline:validationReportRejectedDescription",
         [log.name],
         t
       );
     case ProjectActivityStage.AUTHORISED:
-      return formatString('slcfProgrammeTimeline:authorisedDescription', [], t);
+      return formatString("slcfProgrammeTimeline:authorisedDescription", [], t);
     case ProjectActivityStage.CREDITS_AUTHORISED:
       return formatString(
-        'slcfProgrammeTimeline:creditsAuthorisedDescription',
+        "slcfProgrammeTimeline:creditsAuthorisedDescription",
         [log.data.amount],
         t
       );
     case ProjectActivityStage.MONITORING_REPORT_SUBMITTED:
       return formatString(
-        'slcfProgrammeTimeline:monitoringReportCreatedDescription',
+        "slcfProgrammeTimeline:monitoringReportCreatedDescription",
         [log.name],
         t
       );
     case ProjectActivityStage.MONITORING_REPORT_REJECTED:
       return formatString(
-        'slcfProgrammeTimeline:monitoringReportRejectedDescription',
+        "slcfProgrammeTimeline:monitoringReportRejectedDescription",
         [log.name],
         t
       );
     case ProjectActivityStage.MONITORING_REPORT_APPROVED:
       return formatString(
-        'slcfProgrammeTimeline:monitoringReportApprovedDescription',
+        "slcfProgrammeTimeline:monitoringReportApprovedDescription",
         [log.name],
         t
       );
     case ProjectActivityStage.VERIFICATION_REPORT_SUBMITTED:
       return formatString(
-        'slcfProgrammeTimeline:verificationReportCreatedDescription',
+        "slcfProgrammeTimeline:verificationReportCreatedDescription",
         [log.name],
         t
       );
     case ProjectActivityStage.VERIFICATION_REPORT_REJECTED:
       return formatString(
-        'slcfProgrammeTimeline:verificationReportRejectedDescription',
+        "slcfProgrammeTimeline:verificationReportRejectedDescription",
         [log.name],
         t
       );
     case ProjectActivityStage.VERIFICATION_REPORT_APPROVED:
       return formatString(
-        'slcfProgrammeTimeline:verificationReportApprovedDescription',
+        "slcfProgrammeTimeline:verificationReportApprovedDescription",
         [log.name],
         t
       );
     case ProjectActivityStage.CREDITS_ISSUED:
-      return formatString('slcfProgrammeTimeline:creditIssuedDescription', [log.data.amount], t);
+      return formatString(
+        "slcfProgrammeTimeline:creditIssuedDescription",
+        [log.data.amount],
+        t
+      );
     case ProjectActivityStage.CREDIT_TRANSFERED:
       return formatString(
-        'slcfProgrammeTimeline:creditTransferedDescription',
+        "slcfProgrammeTimeline:creditTransferedDescription",
         [log.data.amount, log.toCompanyName, log.fromCompanyName],
         t
       );
     case ProjectActivityStage.RETIRE_REQUESTED:
       return formatString(
-        'slcfProgrammeTimeline:retireRequestedDescription',
+        "slcfProgrammeTimeline:retireRequestedDescription",
         [log.data.amount, log.fromCompanyName, log.data.retirementType],
         t
       );
     case ProjectActivityStage.RETIRE_CANCELLED:
       return formatString(
-        'slcfProgrammeTimeline:retirementCancelledDescription',
+        "slcfProgrammeTimeline:retirementCancelledDescription",
         [log.data.amount, log.fromCompanyName, log.data.retirementType],
         t
       );
     case ProjectActivityStage.RETIRE_APPROVED:
       return formatString(
-        'slcfProgrammeTimeline:retirementApprovedDescription',
+        "slcfProgrammeTimeline:retirementApprovedDescription",
         [log.data.amount, log.fromCompanyName, log.data.retirementType],
         t
       );
     case ProjectActivityStage.RETIRE_REJECTED:
       return formatString(
-        'slcfProgrammeTimeline:retirementRejectedDescription',
+        "slcfProgrammeTimeline:retirementRejectedDescription",
         [log.data.amount, log.fromCompanyName, log.data.retirementType],
         t
       );
@@ -367,79 +407,79 @@ const getLogDescription = (log: any, t: any) => {
 const getLogTitle = (logType: any) => {
   switch (logType) {
     case ProjectActivityStage.PENDING:
-      return 'slcfProgrammeTimeline:programmeCreatedTitle';
+      return "slcfProgrammeTimeline:programmeCreatedTitle";
       break;
     case ProjectActivityStage.APPROVED:
-      return 'slcfProgrammeTimeline:infApprovedTitle';
+      return "slcfProgrammeTimeline:infApprovedTitle";
       break;
     case ProjectActivityStage.REJECTED:
-      return 'slcfProgrammeTimeline:infRejectedTitle';
+      return "slcfProgrammeTimeline:infRejectedTitle";
       break;
     case ProjectActivityStage.NO_OBJECTION_LETTER_GENERATED:
-      return 'slcfProgrammeTimeline:noObjectionLetterGeneratedTitle';
+      return "slcfProgrammeTimeline:noObjectionLetterGeneratedTitle";
       break;
     case ProjectActivityStage.PDD_SUBMITTED:
-      return 'slcfProgrammeTimeline:pddSubmttedTitle';
+      return "slcfProgrammeTimeline:pddSubmttedTitle";
       break;
     case ProjectActivityStage.PDD_APPROVED_BY_CERTIFIER:
-      return 'slcfProgrammeTimeline:pddApprovedICTitle';
+      return "slcfProgrammeTimeline:pddApprovedICTitle";
       break;
     case ProjectActivityStage.PDD_REJECTED_BY_CERTIFIER:
-      return 'slcfProgrammeTimeline:pddRejectedICTitle';
+      return "slcfProgrammeTimeline:pddRejectedICTitle";
       break;
     case ProjectActivityStage.PDD_APPROVED_BY_DNA:
-      return 'slcfProgrammeTimeline:pddApprovedDNATitle';
+      return "slcfProgrammeTimeline:pddApprovedDNATitle";
       break;
     case ProjectActivityStage.PDD_REJECTED_BY_DNA:
-      return 'slcfProgrammeTimeline:pddRejectedDNATitle';
+      return "slcfProgrammeTimeline:pddRejectedDNATitle";
       break;
     case ProjectActivityStage.VALIDATION_REPORT_SUBMITTED:
-      return 'slcfProgrammeTimeline:validationReportCreatedTitle';
+      return "slcfProgrammeTimeline:validationReportCreatedTitle";
       break;
     case ProjectActivityStage.VALIDATION_REPORT_REJECTED:
-      return 'slcfProgrammeTimeline:validationReportRejectedTitle';
+      return "slcfProgrammeTimeline:validationReportRejectedTitle";
       break;
     case ProjectActivityStage.AUTHORISED:
-      return 'slcfProgrammeTimeline:authorisedTitle';
+      return "slcfProgrammeTimeline:authorisedTitle";
       break;
     case ProjectActivityStage.CREDITS_AUTHORISED:
-      return 'slcfProgrammeTimeline:creditsAuthorisedTitle';
+      return "slcfProgrammeTimeline:creditsAuthorisedTitle";
       break;
     case ProjectActivityStage.MONITORING_REPORT_SUBMITTED:
-      return 'slcfProgrammeTimeline:monitoringReportCreatedTitle';
+      return "slcfProgrammeTimeline:monitoringReportCreatedTitle";
       break;
     case ProjectActivityStage.MONITORING_REPORT_APPROVED:
-      return 'slcfProgrammeTimeline:monitoringReportApprovedTitle';
+      return "slcfProgrammeTimeline:monitoringReportApprovedTitle";
       break;
     case ProjectActivityStage.MONITORING_REPORT_REJECTED:
-      return 'slcfProgrammeTimeline:monitoringReportRejectedTitle';
+      return "slcfProgrammeTimeline:monitoringReportRejectedTitle";
       break;
     case ProjectActivityStage.VERIFICATION_REPORT_SUBMITTED:
-      return 'slcfProgrammeTimeline:verificationReportCreatedTitle';
+      return "slcfProgrammeTimeline:verificationReportCreatedTitle";
       break;
     case ProjectActivityStage.VERIFICATION_REPORT_REJECTED:
-      return 'slcfProgrammeTimeline:verificationReportRejectedTitle';
+      return "slcfProgrammeTimeline:verificationReportRejectedTitle";
       break;
     case ProjectActivityStage.VERIFICATION_REPORT_APPROVED:
-      return 'slcfProgrammeTimeline:verificationReportApprovedTitle';
+      return "slcfProgrammeTimeline:verificationReportApprovedTitle";
       break;
     case ProjectActivityStage.CREDITS_ISSUED:
-      return 'slcfProgrammeTimeline:creditIssuedTitle';
+      return "slcfProgrammeTimeline:creditIssuedTitle";
       break;
     case ProjectActivityStage.CREDIT_TRANSFERED:
-      return 'slcfProgrammeTimeline:creditTransferedTitle';
+      return "slcfProgrammeTimeline:creditTransferedTitle";
       break;
     case ProjectActivityStage.RETIRE_APPROVED:
-      return 'slcfProgrammeTimeline:retirementApprovedTitle';
+      return "slcfProgrammeTimeline:retirementApprovedTitle";
       break;
     case ProjectActivityStage.RETIRE_REJECTED:
-      return 'slcfProgrammeTimeline:retirementRejectedTitle';
+      return "slcfProgrammeTimeline:retirementRejectedTitle";
       break;
     case ProjectActivityStage.RETIRE_CANCELLED:
-      return 'slcfProgrammeTimeline:retirementCancelledTitle';
+      return "slcfProgrammeTimeline:retirementCancelledTitle";
       break;
     case ProjectActivityStage.RETIRE_REQUESTED:
-      return 'slcfProgrammeTimeline:retireRequestedTitle';
+      return "slcfProgrammeTimeline:retireRequestedTitle";
       break;
     default:
       break;
@@ -454,14 +494,19 @@ const ProgrammeHistoryStepsComponent: React.FC<ProgrammeHistoryStepsProps> = ({
 
   const items = historyData.map((log) => ({
     title: t(getLogTitle(log.logType)),
-    subTitle: DateTime.fromMillis(Number(log.createdTime)).toFormat(dateTimeFormat),
+    subTitle: DateTime.fromMillis(Number(log.createdTime)).toFormat(
+      dateTimeFormat
+    ),
     description: (
       <div>
         <div>{getLogDescription(log, t)}</div>
-        {log.data?.ref && <div>{`${t('slcfProgrammeTimeline:ref')} : ${log.data?.ref}`}</div>}
+        {log.data?.ref && (
+          <div>{`${t("slcfProgrammeTimeline:ref")} : ${log.data?.ref}`}</div>
+        )}
         {log.data && log.data.remarks && (
           <p className="remarks">
-            <span>{`${t('slcfProgrammeTimeline:remarks')}`}</span>: {log.data.remarks}
+            <span>{`${t("slcfProgrammeTimeline:remarks")}`}</span>:{" "}
+            {log.data.remarks}
           </p>
         )}
       </div>

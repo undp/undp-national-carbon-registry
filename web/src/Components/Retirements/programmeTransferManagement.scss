@@ -1,4 +1,4 @@
-@import '../../Styles/variables.scss';
+@use '../../Styles/variables.scss';
 
 .credit-transfer-management {
   .certify-list {
@@ -16,7 +16,7 @@
     margin-bottom: 0px;
 
     input {
-      font-family: $primary-font-family;
+      font-family: variables.$primary-font-family;
       font-size: 0.8rem;
     }
   }
@@ -89,7 +89,7 @@
       line-height: 1.3rem;
       padding: 0 1rem 0 1rem;
       text-align: center;
-      color: $common-filter-color !important;
+      color: variables.$common-filter-color !important;
     }
 
     .sub-content-credit-transfer {

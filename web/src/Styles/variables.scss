@@ -1,5 +1,7 @@
-$primary-font-family: 'Inter';
-$secondary-font-family: 'Sohne-Breit';
+@use "../Assets/Fonts/fonts.scss";
+
+$primary-font-family: "Inter";
+$secondary-font-family: "Sohne-Breit";
 $common-form-input-border: #d9d9d9;
 $note-light-text: rgba(58, 53, 65, 0.5);
 $primary-purple: #9155fd;
@@ -7,7 +9,7 @@ $primary-color: #16b1ff;
 $primary-color-light-bg: rgba(222, 205, 254, 0.4);
 $common-input-color: #8c8c8c;
 
-$nav-color: #282828; 
+$nav-color: #282828;
 $text-color: #3a3541;
 $dark-text-color: #ffffff;
 $common-filter-color: rgba(58, 53, 65, 0.8);
@@ -21,8 +23,8 @@ $outside-background-color: #ffffff;
 $gradient-background-start: #6acdff;
 $gradient-background-end: rgba(#16b1ff, 0.94);
 
-$confirm-modal-message-color: #3A3541CC;
-$confirm-modal-submessage-color: '#3A354180';
+$confirm-modal-message-color: #3a3541cc;
+$confirm-modal-submessage-color: "#3A354180";
 
 $sep-line-color: #f0f0f0;
 
@@ -38,8 +40,9 @@ $lg-size: 992px;
 
 $logo-text-color: #262626;
 
-$dev-bg-color: rgba(254, 241, 173, 0.5);
+$dev-bg-color: rgba(254, 241, 173, 0.55);
 $dev-color: #ffa070;
+
 $white: #ffffff;
 $primary-blue: #16b1ff;
 $card-title: rgba(58, 53, 65, 0.8);
@@ -50,8 +53,7 @@ $danger-btn-border: #ff8183;
 
 $box-shadow-v1: rgba(0, 0, 0, 0.25);
 
-$form-sections-bg-color: #FBFBFB;
-
+$form-sections-bg-color: #fbfbfb;
 
 // @screen-xs: 480px;
 // @screen-xs-min: @screen-xs;

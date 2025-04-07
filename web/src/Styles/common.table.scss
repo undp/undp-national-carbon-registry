@@ -1,4 +1,4 @@
-@import './variables.scss';
+@use 'variables.scss';
 
 .common-table-class {
   .ant-table {
@@ -6,7 +6,7 @@
     .ant-table-thead {
       justify-content: center;
       .ant-table-cell {
-        color: $title-text-color;
+        color: variables.$title-text-color;
         font-weight: 600;
         font-size: 0.8rem;
         text-align: center;
@@ -15,7 +15,7 @@
     .ant-table-tbody {
       font-size: 0.8rem;
       text-align: center;
-      color: $title-text-color;
+      color: variables.$title-text-color;
     }
 
     .ant-table-cell {
@@ -36,8 +36,8 @@
 }
 
 .ant-select-item-option-content {
-  font-family: $primary-font-family;
-  color: $title-text-color;
+  font-family: variables.$primary-font-family;
+  color: variables.$title-text-color;
 }
 
 .ant-pagination-prev, .ant-pagination-next, .ant-pagination-jump-prev, .ant-pagination-jump-next, .ant-pagination-item {
@@ -45,18 +45,18 @@
   border-radius: 4px;
   line-height: 26px;
   font-size: 0.8rem;
-  font-family: $primary-font-family;
+  font-family: variables.$primary-font-family;
 }
 
 
 .ant-pagination-item-active:focus-visible {
-  border-color: $primary-color;
+  border-color: variables.$primary-color;
 }
 
 .ant-pagination-options-quick-jumper {
   font-size: 0.8rem;
-  font-family: $primary-font-family;
-  color: $title-text-color;
+  font-family: variables.$primary-font-family;
+  color: variables.$title-text-color;
 
   height: 30px;
   line-height: 30px;
@@ -65,7 +65,7 @@
     height: 28px;
     border-radius: 4px;
     line-height: 26px;
-    color: $title-text-color;
+    color: variables.$title-text-color;
   }
 }
 
@@ -75,18 +75,18 @@
     border-radius: 4px;
     line-height: 26px;
     font-size: 0.8rem;
-    font-family: $primary-font-family;
-    color: $title-text-color;
+    font-family: variables.$primary-font-family;
+    color: variables.$title-text-color;
   }
 
   .ant-select-selection-item {
     height: 28px;
-    color: $title-text-color;
+    color: variables.$title-text-color;
     line-height: 26px !important;
   }
   .ant-select-dropdown {
-    font-family: $primary-font-family;
-    color: $title-text-color;
+    font-family: variables.$primary-font-family;
+    color: variables.$title-text-color;
     font-size: 0.8rem;
   }
 }

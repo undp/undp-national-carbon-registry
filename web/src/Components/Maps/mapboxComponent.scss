@@ -1,13 +1,13 @@
-@import '../../Styles/colors.dashboard.scss';
+@use '../../Styles/colors.dashboard.scss';
 
 .map-box-container {
   .mapboxgl-popup-content {
-    background-color: $white !important;
-    color: $card-title !important;
+    background-color: colors.$white !important;
+    color: colors.$card-title !important;
   }
 
   .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
-    border-top-color: $white !important;
+    border-top-color: colors.$white !important;
   }
 
   .mapboxgl-popup-close-button,

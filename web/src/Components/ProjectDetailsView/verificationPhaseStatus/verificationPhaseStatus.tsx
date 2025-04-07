@@ -1,5 +1,5 @@
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { ReactComponent as UploadingSVG } from '../../../Assets/Images/uploading.svg';
+import UploadingSVG from '../../../Assets/Images/uploading.svg';
 import { ActivityStateEnum } from '../../../Definitions/Enums/programmeStage.enum';
 import { Iactivity } from '../projectForms/VerificationPhaseForms';
 import './verificationPhaseStatus.scss';

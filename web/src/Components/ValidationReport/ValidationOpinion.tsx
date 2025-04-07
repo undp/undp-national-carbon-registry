@@ -1,19 +1,28 @@
-import { ValidationStepsProps } from './StepProps';
-import { Row, Button, Form, Input, Col, Upload, DatePicker } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
-import TextArea from 'antd/lib/input/TextArea';
-import { ProcessSteps } from './ValidationStepperComponent';
-import moment from 'moment';
-import { fileUploadValueExtract } from '../../Utils/utilityHelper';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { ValidationStepsProps } from "./StepProps";
+import { Row, Button, Form, Input, Col, Upload, DatePicker } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import TextArea from "antd/lib/input/TextArea";
+import { ProcessSteps } from "./ValidationStepperComponent";
+import moment from "moment";
+import { fileUploadValueExtract } from "../../Utils/utilityHelper";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const ValidationOpinion = (props: ValidationStepsProps) => {
-  const { prev, next, form, current, t, countries, handleValuesUpdate, disableFields } = props;
+  const {
+    prev,
+    next,
+    form,
+    current,
+    t,
+    countries,
+    handleValuesUpdate,
+    disableFields,
+  } = props;
 
-  const maximumImageSize = process.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(process.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   const normFile = (e: any) => {
@@ -24,8 +33,12 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
   };
 
   const onFinish = async (values: any) => {
-    const sig1 = (await fileUploadValueExtract(values, 'validator1Signature'))[0];
-    const sig2 = (await fileUploadValueExtract(values, 'validator2Signature'))[0];
+    const sig1 = (
+      await fileUploadValueExtract(values, "validator1Signature")
+    )[0];
+    const sig2 = (
+      await fileUploadValueExtract(values, "validator2Signature")
+    )[0];
 
     const validationOpinionFormValues: any = {
       opinion: values?.opinion,
@@ -64,29 +77,41 @@ const ValidationOpinion = (props: ValidationStepsProps) => {
             >
               <Form.Item
                 className="full-width-form-item"
-                label={`${t('validationReport:validationOpinion')}`}
+                label={`${t("validationReport:validationOpinion")}`}
                 name="opinion"
                 rules={[
                   {
                     required: true,
-                    message: `${t('validationReport:validationOpinion')} ${t('isRequired')}`,
+                    message: `${t("validationReport:validationOpinion")} ${t(
+                      "isRequired"
+                    )}`,
                   },
                 ]}
               >
                 <TextArea disabled={disableFields} rows={4} />
               </Form.Item>
 
-              <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev} disabled={false}>
-                  {t('validationReport:prev')}
+              <Row justify={"end"} className="step-actions-end">
+                <Button danger size={"large"} onClick={prev} disabled={false}>
+                  {t("validationReport:prev")}
                 </Button>
                 {disableFields ? (
-                  <Button type="primary" size={'large'} disabled={false} onClick={next}>
-                    {t('validationReport:next')}
+                  <Button
+                    type="primary"
+                    size={"large"}
+                    disabled={false}
+                    onClick={next}
+                  >
+                    {t("validationReport:next")}
                   </Button>
                 ) : (
-                  <Button type="primary" size={'large'} disabled={false} htmlType="submit">
-                    {t('validationReport:next')}
+                  <Button
+                    type="primary"
+                    size={"large"}
+                    disabled={false}
+                    htmlType="submit"
+                  >
+                    {t("validationReport:next")}
                   </Button>
                 )}
               </Row>
