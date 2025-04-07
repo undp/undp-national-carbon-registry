@@ -56,12 +56,13 @@ export const API_PATHS = {
   REGIONS: 'national/organisation/regions',
   ORGANIZATION_BY_TYPE: 'national/organisation/byType',
   ORGANIZATION_DETAILS: 'national/organisation/query',
-  UPDATE_ORGANIZATION: 'organisation/update',
+  UPDATE_ORGANIZATION: 'national/organisation/update',
   ORGANIZATION_NAMES: 'national/organisation/queryNames',
   DOWNLOAD_ORGANIZATION_DATA: 'national/organisation/download',
   ORGANIZATION_PROFILE_DETAILS: (companyId: string) =>
     `national/organisation/profile?id=${companyId}`,
-  ORG_CHANGE_STATUS: 'national/organisation/changeStatus',
+  ORG_SUSPEND: (companyId: string) => `national/organisation/suspend?id=${companyId}`,
+  ORG_REACTIVATE: (companyId: string) => `national/organisation/activate?id=${companyId}`,
   ORG_APPROVE: (companyId: string) => `national/organisation/approve?id=${companyId}`,
   ORG_REJECT: (companyId: string) => `national/organisation/reject?id=${companyId}`,
   //CARBON_NEUTRAL
