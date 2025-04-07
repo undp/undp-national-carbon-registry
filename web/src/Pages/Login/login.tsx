@@ -35,8 +35,8 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
   const ability = useContext(AbilityContext);
   const { state } = useLocation();
   const enableRegistration =
-    import.meta.env.REACT_APP_ENABLE_REGISTRATION || "true";
-  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
+    import.meta.env.VITE_APP_ENABLE_REGISTRATION || "true";
+  const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
 
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);

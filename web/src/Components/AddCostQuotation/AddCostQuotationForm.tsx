@@ -1,21 +1,31 @@
-import { useEffect, useState } from 'react';
-import { Button, Col, Form, Input, Row, message, Typography, DatePicker, Upload } from 'antd';
-import { MinusOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import './AddCostQuotationForm.scss';
-import moment from 'moment';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { getBase64 } from '../../Definitions/Definitions/programme.definitions';
-import { RcFile } from 'antd/lib/upload';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import TextArea from 'antd/lib/input/TextArea';
-import { isValidateFileType } from '../../Utils/DocumentValidator';
-import { DocType } from '../../Definitions/Enums/document.type';
-import { API_PATHS } from '../../Config/apiConfig';
-import { ROUTES } from '../../Config/uiRoutingConfig';
+import { useEffect, useState } from "react";
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  Row,
+  message,
+  Typography,
+  DatePicker,
+  Upload,
+} from "antd";
+import { MinusOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import "./AddCostQuotationForm.scss";
+import moment from "moment";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { getBase64 } from "../../Definitions/Definitions/programme.definitions";
+import { RcFile } from "antd/lib/upload";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import TextArea from "antd/lib/input/TextArea";
+import { isValidateFileType } from "../../Utils/DocumentValidator";
+import { DocType } from "../../Definitions/Enums/document.type";
+import { API_PATHS } from "../../Config/apiConfig";
+import { ROUTES } from "../../Config/uiRoutingConfig";
 const { Text } = Typography;
 
 export const AddCostQuotationForm = (props: any) => {
-  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || 'CountryX';
+  const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
 
   const { translator, programmeId } = props;
   const navigate = useNavigate();
@@ -37,10 +47,12 @@ export const AddCostQuotationForm = (props: any) => {
   const t = translator.t;
 
   const calculateTotalCost = () => {
-    let tempTotal = Number(form.getFieldValue('totalCost') || 0);
-    const additionalServices = form.getFieldValue('additionalServices');
-    const costValidation = Number(form.getFieldValue('costValidation') || 0);
-    const costVerification = Number(form.getFieldValue('costVerification') || 0);
+    let tempTotal = Number(form.getFieldValue("totalCost") || 0);
+    const additionalServices = form.getFieldValue("additionalServices");
+    const costValidation = Number(form.getFieldValue("costValidation") || 0);
+    const costVerification = Number(
+      form.getFieldValue("costVerification") || 0
+    );
     tempTotal = costValidation + costVerification;
     if (additionalServices && additionalServices.length > 0) {
       additionalServices.forEach((item: any) => {
@@ -49,7 +61,7 @@ export const AddCostQuotationForm = (props: any) => {
         }
       });
     }
-    form.setFieldValue('totalCost', String(tempTotal.toFixed(2)));
+    form.setFieldValue("totalCost", String(tempTotal.toFixed(2)));
   };
 
   const normFile = (e: any) => {
@@ -59,31 +71,34 @@ export const AddCostQuotationForm = (props: any) => {
     return e?.fileList;
   };
 
-  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   const viewDataMapToFields = (vals: any) => {
-    const fileUrlParts = vals?.signature[0].split('/');
+    const fileUrlParts = vals?.signature[0].split("/");
     const fileName = fileUrlParts[fileUrlParts.length - 1];
     const tempInialVals = {
       quotationNo: vals?.quotationNo,
       address: vals?.address,
-      dateOfIssue: vals?.dateOfIssue ? moment.unix(vals?.dateOfIssue) : undefined,
+      dateOfIssue: vals?.dateOfIssue
+        ? moment.unix(vals?.dateOfIssue)
+        : undefined,
       costValidation: Number(vals?.costValidation),
       costVerification: Number(vals?.costVerification),
       totalCost: Number(vals?.totalCost),
       signature: [
         {
-          uid: 'cost_quotation',
+          uid: "cost_quotation",
           name: fileName,
-          status: 'done',
+          status: "done",
           url: vals?.signature[0],
         },
       ],
       additionalServices: (function () {
         const servicesObjs: any[] = [];
-        const tempServices: { cost: number; service: string }[] = vals?.additionalServices;
+        const tempServices: { cost: number; service: string }[] =
+          vals?.additionalServices;
         if (tempServices !== undefined && tempServices.length > 0) {
           tempServices.forEach((service) => {
             const tempServiceObj = {
@@ -106,22 +121,22 @@ export const AddCostQuotationForm = (props: any) => {
     const getViewData = async () => {
       if (isView) {
         try {
-          const res = await post('national/programmeSl/getDocLastVersion', {
+          const res = await post("national/programmeSl/getDocLastVersion", {
             programmeId: id,
-            docType: 'costQuotation',
+            docType: "costQuotation",
           });
 
-          if (res?.statusText === 'SUCCESS') {
+          if (res?.statusText === "SUCCESS") {
             const content = JSON.parse(res?.data.content);
             viewDataMapToFields(content);
           }
         } catch (error) {
-          console.log('error', error);
+          console.log("error", error);
           message.open({
-            type: 'error',
-            content: `${t('costQuotation:somethingWentWrong')}`,
+            type: "error",
+            content: `${t("costQuotation:somethingWentWrong")}`,
             duration: 4,
-            style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+            style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
         }
       }
@@ -135,7 +150,7 @@ export const AddCostQuotationForm = (props: any) => {
   }, []);
 
   const handleInputNumberKeyDown = (event: any) => {
-    if (event.key === 'e' || event.key === 'E') {
+    if (event.key === "e" || event.key === "E") {
       event.preventDefault();
     }
   };
@@ -163,7 +178,7 @@ export const AddCostQuotationForm = (props: any) => {
       content: {
         quotationNo: values?.quotationNo,
         address: values?.address,
-        dateOfIssue: moment(values?.startTime).startOf('day').unix(),
+        dateOfIssue: moment(values?.startTime).startOf("day").unix(),
         costValidation: Number(values?.costValidation),
         costVerification: Number(values?.costVerification),
         additionalServices: values?.additionalServices,
@@ -176,19 +191,21 @@ export const AddCostQuotationForm = (props: any) => {
       const res = await post(API_PATHS.CREATE_COST_COTATION, body);
       if (res?.response?.data?.statusCode === 200) {
         message.open({
-          type: 'success',
-          content: `${t('costQuotation:costQuotationFormSubmittedSuccessfully')}`,
+          type: "success",
+          content: `${t(
+            "costQuotation:costQuotationFormSubmittedSuccessfully"
+          )}`,
           duration: 4,
-          style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
         navigateToDetailsPage();
       }
     } catch (error: any) {
       message.open({
-        type: 'error',
-        content: `${t('costQuotation:somethingWentWrong')}`,
+        type: "error",
+        content: `${t("costQuotation:somethingWentWrong")}`,
         duration: 4,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     }
   };
@@ -196,7 +213,7 @@ export const AddCostQuotationForm = (props: any) => {
   return (
     <div className="add-programme-main-container">
       <div className="title-container">
-        <div className="main">{t('costQuotation:costQuotation')}</div>
+        <div className="main">{t("costQuotation:costQuotation")}</div>
       </div>
       <div className="adding-section">
         <div className="form-section">
@@ -212,26 +229,28 @@ export const AddCostQuotationForm = (props: any) => {
                 form={form}
                 onFinish={submitForm}
               >
-                <Row className="row" gutter={40} justify={'space-between'}>
+                <Row className="row" gutter={40} justify={"space-between"}>
                   <Col xl={12} md={24}>
                     <Form.Item
-                      label={t('costQuotation:dateOfIssue')}
+                      label={t("costQuotation:dateOfIssue")}
                       name="dateOfIssue"
                       rules={[
                         {
                           required: true,
-                          message: '',
+                          message: "",
                         },
                         {
                           validator: async (rule, value) => {
                             if (
-                              String(value).trim() === '' ||
+                              String(value).trim() === "" ||
                               String(value).trim() === undefined ||
                               value === null ||
                               value === undefined
                             ) {
                               throw new Error(
-                                `${t('costQuotation:dateOfIssue')} ${t('isRequired')}`
+                                `${t("costQuotation:dateOfIssue")} ${t(
+                                  "isRequired"
+                                )}`
                               );
                             }
                           },
@@ -240,28 +259,34 @@ export const AddCostQuotationForm = (props: any) => {
                     >
                       <DatePicker
                         size="large"
-                        disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}
+                        disabledDate={(currentDate: any) =>
+                          currentDate < moment().startOf("day")
+                        }
                         disabled={disableFields}
                       />
                     </Form.Item>
                     <Form.Item
-                      label={t('costQuotation:address')}
+                      label={t("costQuotation:address")}
                       name="address"
                       rules={[
                         {
                           required: true,
-                          message: `${t('costQuotation:address')} ${t('isRequired')}`,
+                          message: `${t("costQuotation:address")} ${t(
+                            "isRequired"
+                          )}`,
                         },
                         {
                           validator: async (rule, value) => {
                             if (
-                              String(value).trim() === '' ||
+                              String(value).trim() === "" ||
                               String(value).trim() === undefined ||
                               value === null ||
                               value === undefined
                             ) {
                               throw new Error(
-                                `${t('costQuotation:quotationNo')} ${t('isRequired')}`
+                                `${t("costQuotation:quotationNo")} ${t(
+                                  "isRequired"
+                                )}`
                               );
                             }
                           },
@@ -270,31 +295,35 @@ export const AddCostQuotationForm = (props: any) => {
                     >
                       <TextArea
                         rows={4}
-                        placeholder={`${t('costQuotation:address')}`}
+                        placeholder={`${t("costQuotation:address")}`}
                         disabled={disableFields}
                       />
                     </Form.Item>
                   </Col>
                   <Col xl={12} md={24}>
                     <Form.Item
-                      label={t('costQuotation:quotationNo')}
+                      label={t("costQuotation:quotationNo")}
                       name="quotationNo"
-                      initialValue={`SLCF/PD/${new Date().getFullYear() % 100}/${id}`}
+                      initialValue={`SLCF/PD/${
+                        new Date().getFullYear() % 100
+                      }/${id}`}
                       rules={[
                         {
                           required: true,
-                          message: '',
+                          message: "",
                         },
                         {
                           validator: async (rule, value) => {
                             if (
-                              String(value).trim() === '' ||
+                              String(value).trim() === "" ||
                               String(value).trim() === undefined ||
                               value === null ||
                               value === undefined
                             ) {
                               throw new Error(
-                                `${t('costQuotation:quotationNo')} ${t('isRequired')}`
+                                `${t("costQuotation:quotationNo")} ${t(
+                                  "isRequired"
+                                )}`
                               );
                             }
                           },
@@ -307,30 +336,34 @@ export const AddCostQuotationForm = (props: any) => {
                 </Row>
                 {/* Cost Quotation table start */}
                 <div className="costQuotationTable">
-                  <Row className="header" justify={'space-between'}>
+                  <Row className="header" justify={"space-between"}>
                     <Col md={2} xl={2}>
-                      <Text strong>{t('costQuotation:serviceNo')}</Text>
+                      <Text strong>{t("costQuotation:serviceNo")}</Text>
                     </Col>
                     <Col md={10}>
-                      <Text strong>{t('costQuotation:serviceCategory')}</Text>
+                      <Text strong>{t("costQuotation:serviceCategory")}</Text>
                     </Col>
                     <Col md={4} xl={4}>
-                      <Text strong>{t('costQuotation:serviceCost')}</Text>
+                      <Text strong>{t("costQuotation:serviceCost")}</Text>
                     </Col>
                     <Col md={2} xl={2}>
-                      {' '}
+                      {" "}
                     </Col>
                   </Row>
-                  <Row align={'middle'} justify={'space-between'} className="data-rows">
+                  <Row
+                    align={"middle"}
+                    justify={"space-between"}
+                    className="data-rows"
+                  >
                     <Col md={2} xl={2}>
-                      {t('costQuotation:one')}
+                      {t("costQuotation:one")}
                     </Col>
                     <Col md={10}>
                       <Form.Item name="serviceValidation">
                         <Input
                           size="large"
-                          defaultValue={t('costQuotation:serviceValidation')}
-                          placeholder={t('costQuotation:serviceValidation')}
+                          defaultValue={t("costQuotation:serviceValidation")}
+                          placeholder={t("costQuotation:serviceValidation")}
                           disabled
                         />
                       </Form.Item>
@@ -341,20 +374,22 @@ export const AddCostQuotationForm = (props: any) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('costQuotation:cost')} ${t('costQuotation:isRequired')}`,
+                            message: `${t("costQuotation:cost")} ${t(
+                              "costQuotation:isRequired"
+                            )}`,
                           },
                           {
                             validator: async (rule, value) => {
                               if (value < 0) {
                                 throw new Error(
-                                  `${t('costQuotation:cost')} ${t(
-                                    'costQuotation:cannotHaveNegativeNumbers'
+                                  `${t("costQuotation:cost")} ${t(
+                                    "costQuotation:cannotHaveNegativeNumbers"
                                   )}`
                                 );
                               } else if (value > 999999999999999) {
                                 throw new Error(
-                                  `${t('costQuotation:cost')} ${t(
-                                    'costQuotation:shouldBeLessThanMaxValue'
+                                  `${t("costQuotation:cost")} ${t(
+                                    "costQuotation:shouldBeLessThanMaxValue"
                                   )}`
                                 );
                               }
@@ -374,20 +409,24 @@ export const AddCostQuotationForm = (props: any) => {
                       </Form.Item>
                     </Col>
                     <Col md={2} xl={2}>
-                      {' '}
+                      {" "}
                     </Col>
                   </Row>
 
-                  <Row align={'middle'} justify={'space-between'} className="data-rows">
+                  <Row
+                    align={"middle"}
+                    justify={"space-between"}
+                    className="data-rows"
+                  >
                     <Col md={2} xl={2}>
-                      {t('costQuotation:two')}
+                      {t("costQuotation:two")}
                     </Col>
                     <Col md={10}>
                       <Form.Item name="serviceVerification">
                         <Input
                           size="large"
-                          defaultValue={t('costQuotation:serviceVerification')}
-                          placeholder={t('costQuotation:serviceVerification')}
+                          defaultValue={t("costQuotation:serviceVerification")}
+                          placeholder={t("costQuotation:serviceVerification")}
                           disabled
                         />
                       </Form.Item>
@@ -398,20 +437,22 @@ export const AddCostQuotationForm = (props: any) => {
                         rules={[
                           {
                             required: true,
-                            message: `${t('costQuotation:cost')} ${t('costQuotation:isRequired')}`,
+                            message: `${t("costQuotation:cost")} ${t(
+                              "costQuotation:isRequired"
+                            )}`,
                           },
                           {
                             validator: async (rule, value) => {
                               if (value < 0) {
                                 throw new Error(
-                                  `${t('costQuotation:cost')} ${t(
-                                    'costQuotation:cannotHaveNegativeNumbers'
+                                  `${t("costQuotation:cost")} ${t(
+                                    "costQuotation:cannotHaveNegativeNumbers"
                                   )}`
                                 );
                               } else if (value > 999999999999999) {
                                 throw new Error(
-                                  `${t('costQuotation:cost')} ${t(
-                                    'costQuotation:shouldBeLessThanMaxValue'
+                                  `${t("costQuotation:cost")} ${t(
+                                    "costQuotation:shouldBeLessThanMaxValue"
                                   )}`
                                 );
                               }
@@ -431,7 +472,7 @@ export const AddCostQuotationForm = (props: any) => {
                       </Form.Item>
                     </Col>
                     <Col md={2} xl={2}>
-                      {' '}
+                      {" "}
                     </Col>
                   </Row>
                   <Form.List name="additionalServices">
@@ -439,30 +480,34 @@ export const AddCostQuotationForm = (props: any) => {
                       <>
                         {fields.map(({ key, name, ...restField }) => (
                           <>
-                            <Row align={'middle'} justify={'space-between'} className="data-rows">
+                            <Row
+                              align={"middle"}
+                              justify={"space-between"}
+                              className="data-rows"
+                            >
                               <Col md={2} xl={2}>
                                 {name + 3}
                               </Col>
                               <Col md={10}>
                                 <Form.Item
-                                  name={[name, 'service']}
+                                  name={[name, "service"]}
                                   rules={[
                                     {
                                       required: true,
-                                      message: '',
+                                      message: "",
                                     },
                                     {
                                       validator: async (rule, value) => {
                                         if (
-                                          String(value).trim() === '' ||
+                                          String(value).trim() === "" ||
                                           String(value).trim() === undefined ||
                                           value === null ||
                                           value === undefined
                                         ) {
                                           throw new Error(
-                                            `${t('costQuotation:serviceCategory')} ${t(
-                                              'costQuotation:isRequired'
-                                            )}`
+                                            `${t(
+                                              "costQuotation:serviceCategory"
+                                            )} ${t("costQuotation:isRequired")}`
                                           );
                                         }
                                       },
@@ -478,26 +523,26 @@ export const AddCostQuotationForm = (props: any) => {
                               </Col>
                               <Col md={4} xl={4}>
                                 <Form.Item
-                                  name={[name, 'cost']}
+                                  name={[name, "cost"]}
                                   rules={[
                                     {
                                       required: true,
-                                      message: `${t('costQuotation:cost')} ${t(
-                                        'costQuotation:isRequired'
+                                      message: `${t("costQuotation:cost")} ${t(
+                                        "costQuotation:isRequired"
                                       )}`,
                                     },
                                     {
                                       validator: async (rule, value) => {
                                         if (value < 0) {
                                           throw new Error(
-                                            `${t('costQuotation:cost')} ${t(
-                                              'costQuotation:cannotHaveNegativeNumbers'
+                                            `${t("costQuotation:cost")} ${t(
+                                              "costQuotation:cannotHaveNegativeNumbers"
                                             )}`
                                           );
                                         } else if (value > 999999999999999) {
                                           throw new Error(
-                                            `${t('costQuotation:cost')} ${t(
-                                              'costQuotation:shouldBeLessThanMaxValue'
+                                            `${t("costQuotation:cost")} ${t(
+                                              "costQuotation:shouldBeLessThanMaxValue"
                                             )}`
                                           );
                                         }
@@ -537,7 +582,11 @@ export const AddCostQuotationForm = (props: any) => {
                             </Row>
                           </>
                         ))}
-                        <Row align={'middle'} justify={'space-between'} className="data-rows">
+                        <Row
+                          align={"middle"}
+                          justify={"space-between"}
+                          className="data-rows"
+                        >
                           <Col md={2} xl={2}>
                             <div className="form-list-actions">
                               <Form.Item>
@@ -555,33 +604,39 @@ export const AddCostQuotationForm = (props: any) => {
                             </div>
                           </Col>
                           <Col md={10} xl={10}>
-                            {' '}
+                            {" "}
                           </Col>
                           <Col md={4} xl={4}>
-                            {' '}
+                            {" "}
                           </Col>
                           <Col md={2} xl={2}>
-                            {' '}
+                            {" "}
                           </Col>
                         </Row>
                       </>
                     )}
                   </Form.List>
 
-                  <Row align={'middle'} justify={'space-between'} className="data-rows">
+                  <Row
+                    align={"middle"}
+                    justify={"space-between"}
+                    className="data-rows"
+                  >
                     <Col md={2} xl={2}>
-                      {' '}
+                      {" "}
                     </Col>
                     <Col md={10} xl={10}>
-                      <p>{t('costQuotation:total')}</p>
+                      <p>{t("costQuotation:total")}</p>
                     </Col>
                     <Col md={4} xl={4}>
                       <Form.Item
-                        name={'totalCost'}
+                        name={"totalCost"}
                         rules={[
                           {
                             required: true,
-                            message: `${t('costQuotation:total')} ${t('costQuotation:isRequired')}`,
+                            message: `${t("costQuotation:total")} ${t(
+                              "costQuotation:isRequired"
+                            )}`,
                           },
                         ]}
                       >
@@ -589,43 +644,43 @@ export const AddCostQuotationForm = (props: any) => {
                       </Form.Item>
                     </Col>
                     <Col md={2} xl={2}>
-                      {' '}
+                      {" "}
                     </Col>
                   </Row>
                   <br />
                   <div>
-                    <p>{t('costQuotation:vatIsNotApplicable')}</p>
+                    <p>{t("costQuotation:vatIsNotApplicable")}</p>
 
                     <p>
-                      <strong>{t('costQuotation:conditions')}</strong>
+                      <strong>{t("costQuotation:conditions")}</strong>
                     </p>
                     <ol type="a">
                       <li>
-                        {t('costQuotation:paymentUpfront')}
+                        {t("costQuotation:paymentUpfront")}
                         <br />
-                        {t('costQuotation:downPayment')}
+                        {t("costQuotation:downPayment")}
                       </li>
-                      <li>{t('costQuotation:transport')}</li>
-                      <li>{t('costQuotation:quotationValidation')}</li>
+                      <li>{t("costQuotation:transport")}</li>
+                      <li>{t("costQuotation:quotationValidation")}</li>
                     </ol>
                   </div>
                 </div>
                 {/* Cost Quotation table end */}
 
                 <div className="cost-quotation-signature">
-                  <Text>{t('costQuotation:approvedBy')}</Text>
+                  <Text>{t("costQuotation:approvedBy")}</Text>
                   <Row className="sign-row">
                     <Col md={24} xl={12}>
                       <Form.Item
-                        label={t('costQuotation:signature')}
+                        label={t("costQuotation:signature")}
                         name="signature"
                         valuePropName="fileList"
                         getValueFromEvent={normFile}
                         rules={[
                           {
                             required: true,
-                            message: `${t('costQuotation:signature')} ${t(
-                              'costQuotation:isRequired'
+                            message: `${t("costQuotation:signature")} ${t(
+                              "costQuotation:isRequired"
                             )}`,
                           },
                           {
@@ -637,10 +692,12 @@ export const AddCostQuotationForm = (props: any) => {
                                     DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
                                   )
                                 ) {
-                                  throw new Error(`${t('common:invalidFileFormat')}`);
+                                  throw new Error(
+                                    `${t("common:invalidFileFormat")}`
+                                  );
                                 } else if (file[0]?.size > maximumImageSize) {
                                   // default size format of files would be in bytes -> 1MB = 1000000bytes
-                                  throw new Error(`${t('common:maxSizeVal')}`);
+                                  throw new Error(`${t("common:maxSizeVal")}`);
                                 }
                               }
                             },
@@ -648,7 +705,7 @@ export const AddCostQuotationForm = (props: any) => {
                         ]}
                       >
                         <Upload
-                          accept={'.png, .jpg'}
+                          accept={".png, .jpg"}
                           beforeUpload={(file: any) => {
                             return false;
                           }}
@@ -658,7 +715,7 @@ export const AddCostQuotationForm = (props: any) => {
                           listType="picture"
                           multiple={false}
                           disabled={disableFields}
-                          fileList={form.getFieldValue('signature') || []}
+                          fileList={form.getFieldValue("signature") || []}
                           maxCount={1}
                         >
                           <Button
@@ -667,32 +724,44 @@ export const AddCostQuotationForm = (props: any) => {
                             icon={<UploadOutlined />}
                             disabled={disableFields}
                           >
-                            {t('common:upload')}
+                            {t("common:upload")}
                           </Button>
                         </Upload>
                       </Form.Item>
                     </Col>
                   </Row>
-                  <Text>{t('costQuotation:ceo')}</Text>
+                  <Text>{t("costQuotation:ceo")}</Text>
                   <br />
-                  <Text>{t('costQuotation:ClimateFund', { countryName: countryName })}</Text>
+                  <Text>
+                    {t("costQuotation:ClimateFund", {
+                      countryName: countryName,
+                    })}
+                  </Text>
                 </div>
                 <br />
                 <br />
-                <Row justify={'end'} className="step-actions-end">
+                <Row justify={"end"} className="step-actions-end">
                   {isView ? (
                     <>
-                      <Button danger size={'large'} onClick={navigateToDetailsPage}>
-                        {t('costQuotation:back')}
+                      <Button
+                        danger
+                        size={"large"}
+                        onClick={navigateToDetailsPage}
+                      >
+                        {t("costQuotation:back")}
                       </Button>
                     </>
                   ) : (
                     <>
-                      <Button danger size={'large'} onClick={navigateToDetailsPage}>
-                        {t('costQuotation:cancel')}
+                      <Button
+                        danger
+                        size={"large"}
+                        onClick={navigateToDetailsPage}
+                      >
+                        {t("costQuotation:cancel")}
                       </Button>
-                      <Button type="primary" size={'large'} htmlType="submit">
-                        {t('costQuotation:submit')}
+                      <Button type="primary" size={"large"} htmlType="submit">
+                        {t("costQuotation:submit")}
                       </Button>
                     </>
                   )}

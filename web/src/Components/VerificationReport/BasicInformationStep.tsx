@@ -43,12 +43,12 @@ export const BasicInformationStep = (props: VerificationStepProps) => {
   const { get, post } = useConnection();
   const [contactNoInput] = useState<any>();
   const [countryList, setCountryList] = useState<[]>([]);
-  const accessToken = import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    ? import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+  const accessToken = import.meta.env.VITE_APP_MAPBOXGL_ACCESS_TOKEN
+    ? import.meta.env.VITE_APP_MAPBOXGL_ACCESS_TOKEN
     : "pk.eyJ1IjoicGFsaW5kYSIsImEiOiJjbGMyNTdqcWEwZHBoM3FxdHhlYTN4ZmF6In0.KBvFaMTjzzvoRCr1Z1dN_g";
 
-  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   //get validation report details
