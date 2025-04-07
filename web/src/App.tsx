@@ -58,10 +58,10 @@ import { CreditTransfersPage } from "./Pages/CreditPages/creditTransfersPage";
 import { CreditRetirementsPage } from "./Pages/CreditPages/creditRetirementsPage";
 
 const App = () => {
-  const { t } = useTranslation(['common']);
+  const { t } = useTranslation(["common"]);
   const ability = defineAbility();
   const enableRegistration =
-    import.meta.env.REACT_APP_ENABLE_REGISTRATION || "true";
+    import.meta.env.VITE_APP_ENABLE_REGISTRATION || "true";
 
   if (
     localStorage.getItem("companyId") &&
@@ -81,14 +81,14 @@ const App = () => {
     <AbilityContext.Provider value={ability}>
       <ConnectionContextProvider
         serverURL={
-          import.meta.env.REACT_APP_BACKEND
-            ? import.meta.env.REACT_APP_BACKEND
+          import.meta.env.VITE_APP_BACKEND
+            ? import.meta.env.VITE_APP_BACKEND
             : "http://localhost:3000"
         }
         t={t}
         statServerUrl={
-          import.meta.env.REACT_APP_STAT_URL
-            ? import.meta.env.REACT_APP_STAT_URL
+          import.meta.env.VITE_APP_STAT_URL
+            ? import.meta.env.VITE_APP_STAT_URL
             : "http://localhost:3100"
         }
       >

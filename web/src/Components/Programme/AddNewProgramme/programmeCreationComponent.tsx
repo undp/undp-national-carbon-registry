@@ -37,8 +37,8 @@
 
 // type SizeType = Parameters<typeof Form>[0]['size'];
 
-// const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
-//   ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
+// const maximumImageSize = import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE
+//   ? parseInt(import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE)
 //   : 5000000;
 
 // const sectoralScopes: any = {
@@ -108,9 +108,9 @@
 //   const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();
 //   const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<number[]>([]);
 
-//   const mapType = import.meta.env.REACT_APP_MAP_TYPE ? import.meta.env.REACT_APP_MAP_TYPE : 'None';
-//   const accessToken = import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-//     ? import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+//   const mapType = import.meta.env.VITE_APP_MAP_TYPE ? import.meta.env.VITE_APP_MAP_TYPE : 'None';
+//   const accessToken = import.meta.env.VITE_APP_MAPBOXGL_ACCESS_TOKEN
+//     ? import.meta.env.VITE_APP_MAPBOXGL_ACCESS_TOKEN
 //     : '';
 //   // const initialOrganisationOwnershipValues: any[] = [
 //   //   {

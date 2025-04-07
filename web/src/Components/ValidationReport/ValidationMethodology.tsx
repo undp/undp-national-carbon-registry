@@ -22,7 +22,7 @@ import LabelWithTooltip from "../LabelWithTooltip/LabelWithTooltip";
 import { useLocation } from "react-router-dom";
 
 const ValidationMethodology = (props: ValidationStepsProps) => {
-  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
+  const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
 
   const {
     prev,

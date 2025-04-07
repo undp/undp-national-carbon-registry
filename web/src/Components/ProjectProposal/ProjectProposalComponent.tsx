@@ -36,7 +36,7 @@ const ProjectProposalComponent = (props: { translator: i18n }) => {
 
   const t = translator.t;
 
-  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
+  const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
 
   const { state } = useLocation();
   const [isView, setIsView] = useState<boolean>(!!state?.isView);

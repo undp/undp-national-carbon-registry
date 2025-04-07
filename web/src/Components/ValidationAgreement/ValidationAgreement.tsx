@@ -33,8 +33,8 @@ const ValidationAgreement = (props: { translator: i18n }) => {
   const { translator } = props;
   const t = translator.t;
 
-  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
-  const registryName = import.meta.env.REACT_APP_REGISTRY_NAME || "RegistryX";
+  const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
+  const registryName = import.meta.env.VITE_APP_REGISTRY_NAME || "RegistryX";
 
   const { state } = useLocation();
   const [isView, setIsView] = useState<boolean>(!!state?.isView);
@@ -129,8 +129,8 @@ const ValidationAgreement = (props: { translator: i18n }) => {
     form.setFieldsValue(tempInitialValues);
   };
 
-  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE)
     : 5000000;
 
   const setMigratedData = async () => {

@@ -12,11 +12,11 @@ interface MapComponentProps {
 const LocationMapComponent = (props: MapComponentProps) => {
   const { form, formItemName, listName } = props;
 
-  const mapType = import.meta.env.REACT_APP_MAP_TYPE
-    ? import.meta.env.REACT_APP_MAP_TYPE
+  const mapType = import.meta.env.VITE_APP_MAP_TYPE
+    ? import.meta.env.VITE_APP_MAP_TYPE
     : "None";
-  const accessToken = import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
-    ? import.meta.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
+  const accessToken = import.meta.env.VITE_APP_MAPBOXGL_ACCESS_TOKEN
+    ? import.meta.env.VITE_APP_MAPBOXGL_ACCESS_TOKEN
     : "";
 
   const getCenter = (list: any[]) => {

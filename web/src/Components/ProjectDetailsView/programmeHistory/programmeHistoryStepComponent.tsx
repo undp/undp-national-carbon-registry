@@ -67,7 +67,7 @@ const formatString = (langTag: string, vargs: any[], t: any) => {
 };
 
 const getLogDescription = (log: any, t: any) => {
-  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
+  const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
   switch (log.logType) {
     case ProjectActivityStage.PENDING:
       return formatString(

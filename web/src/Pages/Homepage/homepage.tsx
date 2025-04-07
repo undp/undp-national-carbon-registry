@@ -33,7 +33,7 @@ import { ROUTES } from "../../Config/uiRoutingConfig";
 
 const Homepage = () => {
   const { i18n, t } = useTranslation(["common", "homepage"]);
-  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
+  const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
   const navigate = useNavigate();
   const [Visible, setVisible] = useState(true);
 
@@ -85,7 +85,7 @@ const Homepage = () => {
                       {/* <div className="title-sub">{'REGISTRY'}</div> */}
                     </div>
                     <div className="country-name">
-                      {import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX"}
+                      {import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX"}
                     </div>
                   </div>
                 </div>

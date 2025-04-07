@@ -11,8 +11,8 @@ const RegisterNewCompany = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(["addCompany"]);
 
-  const maximumImageSize = import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE
-    ? parseInt(import.meta.env.REACT_APP_MAXIMUM_FILE_SIZE)
+  const maximumImageSize = import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE
+    ? parseInt(import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE)
     : 1048576;
 
   const onNavigateToHome = () => {
@@ -39,7 +39,7 @@ const RegisterNewCompany = () => {
                   {/* <div className="title-sub">{'REGISTRY'}</div> */}
                 </div>
                 <div className="country-name">
-                  {import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX"}
+                  {import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX"}
                 </div>
               </div>
             </div>

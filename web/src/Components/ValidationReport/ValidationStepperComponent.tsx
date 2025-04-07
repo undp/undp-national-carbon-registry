@@ -62,8 +62,8 @@ const StepperComponent = (props: any) => {
   const { state } = useLocation();
   console.log("----------state-------------", state);
   const isEdit = true;
-  const countryName = import.meta.env.REACT_APP_COUNTRY_NAME || "CountryX";
-  const registryName = import.meta.env.REACT_APP_COUNTRY_NAME || "RegistryX";
+  const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
+  const registryName = import.meta.env.VITE_APP_COUNTRY_NAME || "RegistryX";
 
   const [documentId, setDocumentId] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
