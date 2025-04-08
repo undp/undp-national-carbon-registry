@@ -1,22 +1,24 @@
-import moment from 'moment';
-import { mapBase64ToFields } from '../../Utils/mapBase64ToFields';
+import moment from "moment";
+import { mapBase64ToFields } from "../../Utils/mapBase64ToFields";
 
 export const basicInformationMapDataToFields = (vals: any) => {
-  console.log('--------bi------------', vals);
+  console.log("--------bi------------", vals);
   if (vals === undefined) return;
 
   const tempVals = {
     ...vals,
-    bi_completionDate: vals?.bi_completionDate ? moment.unix(vals?.bi_completionDate) : undefined,
+    bi_completionDate: vals?.bi_completionDate
+      ? moment.unix(vals?.bi_completionDate)
+      : undefined,
     b_signature: mapBase64ToFields(vals.b_signature),
   };
 
-  console.log('-----------ret bi----------', tempVals);
+  console.log("-----------ret bi----------", tempVals);
   return tempVals;
 };
 
 export const projectActivityMapDataToFields = (vals: any) => {
-  console.log('--------vals---------', vals);
+  console.log("--------vals---------", vals);
   if (vals === undefined) return;
 
   const tempVals = {
@@ -71,7 +73,7 @@ export const dataAndParametersMapDataToFields = (vals: any) => {
 };
 
 export const calcEmissionReductionMapDataToFields = (vals: any) => {
-  console.log('--------cal---------', vals);
+  console.log("--------cal---------", vals);
   if (vals === undefined) return;
 
   const ghgEmissionReductions = vals?.netGHGEmissionReductions;
@@ -83,16 +85,22 @@ export const calcEmissionReductionMapDataToFields = (vals: any) => {
 
   const tempVals = {
     ...vals,
-    ce_documentUpload: mapBase64ToFields([vals?.ce_documentUpload]),
+    ce_documentUpload: mapBase64ToFields(vals?.ce_documentUpload),
     emissionsPeriodStart: firstYearlyReductions?.startDate
       ? moment.unix(firstYearlyReductions?.startDate)
       : undefined,
     emissionsPeriodEnd: firstYearlyReductions?.endDate
       ? moment.unix(firstYearlyReductions?.endDate)
       : undefined,
-    baselineEmissionReductions: String(firstYearlyReductions?.baselineEmissionReductions),
-    projectEmissionReductions: String(firstYearlyReductions?.projectEmissionReductions),
-    leakageEmissionReductions: String(firstYearlyReductions?.leakageEmissionReductions),
+    baselineEmissionReductions: String(
+      firstYearlyReductions?.baselineEmissionReductions
+    ),
+    projectEmissionReductions: String(
+      firstYearlyReductions?.projectEmissionReductions
+    ),
+    leakageEmissionReductions: String(
+      firstYearlyReductions?.leakageEmissionReductions
+    ),
     netEmissionReductions: String(firstYearlyReductions?.netEmissionReductions),
     extraEmissionReductions: (function () {
       let tempExtraReductions: any = [];
@@ -103,25 +111,51 @@ export const calcEmissionReductionMapDataToFields = (vals: any) => {
             emissionsPeriodStart: reductions?.startDate
               ? moment.unix(reductions?.startDate)
               : undefined,
-            emissionsPeriodEnd: reductions?.endDate ? moment.unix(reductions?.endDate) : undefined,
-            baselineEmissionReductions: String(reductions?.baselineEmissionReductions),
-            projectEmissionReductions: String(reductions?.projectEmissionReductions),
-            leakageEmissionReductions: String(reductions?.leakageEmissionReductions),
+            emissionsPeriodEnd: reductions?.endDate
+              ? moment.unix(reductions?.endDate)
+              : undefined,
+            baselineEmissionReductions: String(
+              reductions?.baselineEmissionReductions
+            ),
+            projectEmissionReductions: String(
+              reductions?.projectEmissionReductions
+            ),
+            leakageEmissionReductions: String(
+              reductions?.leakageEmissionReductions
+            ),
             netEmissionReductions: String(reductions?.netEmissionReductions),
           };
         });
       }
       return tempExtraReductions;
     })(),
-    totalBaselineEmissionReductions: String(ghgEmissionReductions?.totalBaselineEmissionReductions),
-    totalProjectEmissionReductions: String(ghgEmissionReductions?.totalProjectEmissionReductions),
-    totalLeakageEmissionReductions: String(ghgEmissionReductions?.totalLeakageEmissionReductions),
-    totalNetEmissionReductions: String(ghgEmissionReductions?.totalNetEmissionReductions),
-    totalCreditingYears: String(ghgEmissionReductions?.totalNumberOfCreditingYears),
-    avgBaselineEmissionReductions: String(ghgEmissionReductions?.avgBaselineEmissionReductions),
-    avgProjectEmissionReductions: String(ghgEmissionReductions?.avgProjectEmissionReductions),
-    avgLeakageEmissionReductions: String(ghgEmissionReductions?.avgLeakageEmissionReductions),
-    avgNetEmissionReductions: String(ghgEmissionReductions?.avgNetEmissionReductions),
+    totalBaselineEmissionReductions: String(
+      ghgEmissionReductions?.totalBaselineEmissionReductions
+    ),
+    totalProjectEmissionReductions: String(
+      ghgEmissionReductions?.totalProjectEmissionReductions
+    ),
+    totalLeakageEmissionReductions: String(
+      ghgEmissionReductions?.totalLeakageEmissionReductions
+    ),
+    totalNetEmissionReductions: String(
+      ghgEmissionReductions?.totalNetEmissionReductions
+    ),
+    totalCreditingYears: String(
+      ghgEmissionReductions?.totalNumberOfCreditingYears
+    ),
+    avgBaselineEmissionReductions: String(
+      ghgEmissionReductions?.avgBaselineEmissionReductions
+    ),
+    avgProjectEmissionReductions: String(
+      ghgEmissionReductions?.avgProjectEmissionReductions
+    ),
+    avgLeakageEmissionReductions: String(
+      ghgEmissionReductions?.avgLeakageEmissionReductions
+    ),
+    avgNetEmissionReductions: String(
+      ghgEmissionReductions?.avgNetEmissionReductions
+    ),
   };
 
   return tempVals;

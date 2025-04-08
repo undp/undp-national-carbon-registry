@@ -95,9 +95,10 @@ export const AppendixStep = (props: VerificationStepProps) => {
   const onFinish = async (values: any) => {
     const appendixFormValues: any = {
       ...values,
-      appendix1Documents: (
-        await fileUploadValueExtract(values, "appendix1Documents")
-      )[0],
+      appendix1Documents: await fileUploadValueExtract(
+        values,
+        "appendix1Documents"
+      ),
       farIdDate: moment(values?.farIdDate).startOf("day").unix(),
       responseDate: moment(values?.responseDate).startOf("day").unix(),
       doeDate: moment(values?.doeDate).startOf("day").unix(),
