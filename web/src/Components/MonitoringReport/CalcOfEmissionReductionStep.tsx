@@ -659,23 +659,21 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                                         }
 
                                         const startDate = moment(
-                                          form.getFieldValue(
-                                            "emissionsPeriodStart"
-                                          )
-                                        ).startOf("month");
-                                        const selectedDate =
-                                          moment(value).endOf("month");
-                                        const duration = moment.duration(
-                                          selectedDate.diff(startDate)
-                                        );
+                                          form.getFieldValue('emissionsPeriodStart')
+                                        ).startOf('month');
+                                        const selectedDate = moment(value).endOf('month');
+                                        // const duration = moment.duration(
+                                        //   selectedDate.diff(startDate)
+                                        // );
 
-                                        const isOneYear =
-                                          Math.round(duration.asMonths()) ===
-                                          12;
+                                        // const isOneYear = Math.round(duration.asMonths()) === 12;
 
-                                        if (!isOneYear) {
+                                        // if (!isOneYear) {
+                                        //   throw new Error('Duration should be a year');
+                                        // }
+                                        if (selectedDate.year() !== startDate.year()) {
                                           throw new Error(
-                                            "Duration should be a year"
+                                            'End date also should be in the same year!'
                                           );
                                         }
                                       },

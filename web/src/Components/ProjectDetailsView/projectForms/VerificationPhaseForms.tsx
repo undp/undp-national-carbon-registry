@@ -1,18 +1,25 @@
-import { Button, Col, Row, Steps, Tag } from 'antd';
-import './projectForms.scss';
-import * as Icon from 'react-bootstrap-icons';
-import { ActivityStateEnum } from '../../../Definitions/Enums/programmeStage.enum';
-import moment from 'moment';
-import { FormMode } from '../../../Definitions/Enums/formMode.enum';
-import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
-import { useEffect, useState } from 'react';
-import { activityPermissions } from '../../../Utils/documentsPermissionSl';
-import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
-import { DocType, DocumentTypeEnum } from '../../../Definitions/Enums/document.type';
-import { DocumentEnum } from '../../../Definitions/Enums/document.enum';
-import { useNavigate, useParams } from 'react-router-dom';
-import { ROUTES } from '../../../Config/uiRoutingConfig';
-import { CloseCircleFilled, CloseCircleOutlined, CloseOutlined } from '@ant-design/icons';
+import { Button, Col, Row, Steps, Tag } from "antd";
+import "./projectForms.scss";
+import * as Icon from "react-bootstrap-icons";
+import { ActivityStateEnum } from "../../../Definitions/Enums/programmeStage.enum";
+import moment from "moment";
+import { FormMode } from "../../../Definitions/Enums/formMode.enum";
+import { CompanyRole } from "../../../Definitions/Enums/company.role.enum";
+import { useEffect, useState } from "react";
+import { activityPermissions } from "../../../Utils/documentsPermissionSl";
+import { useUserContext } from "../../../Context/UserInformationContext/userInformationContext";
+import {
+  DocType,
+  DocumentTypeEnum,
+} from "../../../Definitions/Enums/document.type";
+import { DocumentEnum } from "../../../Definitions/Enums/document.enum";
+import { useNavigate, useParams } from "react-router-dom";
+import { ROUTES } from "../../../Config/uiRoutingConfig";
+import {
+  CloseCircleFilled,
+  CloseCircleOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 
 export interface Iactivity {
   stage: string;
@@ -38,21 +45,23 @@ const VerificationPhaseForms = (props: IVerificationPhaseForms) => {
 
   const navigate = useNavigate();
 
-  const [monitoringReportPermissions, setMonitoringReportPermissions] = useState<
-    IPermissionsState[]
-  >([]);
+  const [monitoringReportPermissions, setMonitoringReportPermissions] =
+    useState<IPermissionsState[]>([]);
 
-  const [verificationReportPermissions, setVerificationReportPermissions] = useState<
-    IPermissionsState[]
-  >([]);
+  const [verificationReportPermissions, setVerificationReportPermissions] =
+    useState<IPermissionsState[]>([]);
 
   const [items, setItems] = useState<any[]>([]);
 
   const navigateToMonitoringReport = (permissionsState: IPermissionsState) => {
-    navigate(ROUTES.MONITORING_REPORT_CREATE(id as string), { state: permissionsState });
+    navigate(ROUTES.MONITORING_REPORT_CREATE(id as string), {
+      state: permissionsState,
+    });
   };
 
-  const navigateToVerificationReport = (permissionsState: IPermissionsState) => {
+  const navigateToVerificationReport = (
+    permissionsState: IPermissionsState
+  ) => {
     navigate(ROUTES.VERIFICATION_REPORT(id as string), {
       state: permissionsState,
     });
@@ -68,7 +77,7 @@ const VerificationPhaseForms = (props: IVerificationPhaseForms) => {
           userInfoState,
           DocType.MONITORING_REPORT,
           activity,
-          documents
+          { ...documents, ...activity.documents }
         );
 
         // monitoringPermissions.push(tempMonitoringReportPermissions as IPermissionsState);
@@ -77,7 +86,7 @@ const VerificationPhaseForms = (props: IVerificationPhaseForms) => {
           userInfoState,
           DocType.VERIFICATION_REPORT,
           activity,
-          documents
+          { ...documents, ...activity.documents }
         );
 
         // verificationPermissions.push(tempVerificationReportPermissions as IPermissionsState);
@@ -94,18 +103,25 @@ const VerificationPhaseForms = (props: IVerificationPhaseForms) => {
                     <Button
                       className="document-action-btn"
                       onClick={() => {
-                        console.log('----------clidke 111');
-                        navigateToMonitoringReport(tempMonitoringReportPermissions);
+                        console.log("----------clidke 111");
+                        navigateToMonitoringReport(
+                          tempMonitoringReportPermissions
+                        );
                       }}
-                      disabled={tempMonitoringReportPermissions?.mode === FormMode?.DISABLED}
+                      disabled={
+                        tempMonitoringReportPermissions?.mode ===
+                        FormMode?.DISABLED
+                      }
                     >
                       {tempMonitoringReportPermissions?.mode === FormMode.CREATE
-                        ? 'CREATE'
-                        : tempMonitoringReportPermissions?.mode === FormMode.VERIFY
-                        ? 'VERIFY'
-                        : tempMonitoringReportPermissions?.mode === FormMode.EDIT
-                        ? 'EDIT'
-                        : 'VIEW'}
+                        ? "CREATE"
+                        : tempMonitoringReportPermissions?.mode ===
+                          FormMode.VERIFY
+                        ? "VERIFY"
+                        : tempMonitoringReportPermissions?.mode ===
+                          FormMode.EDIT
+                        ? "EDIT"
+                        : "VIEW"}
                     </Button>
                   </Col>
                 </Row>
@@ -114,16 +130,20 @@ const VerificationPhaseForms = (props: IVerificationPhaseForms) => {
             icon: (
               <span
                 className={
-                  activity.stage === ActivityStateEnum.MONITORING_REPORT_UPLOADED
-                    ? 'step-icon-submitted'
-                    : activity.stage === ActivityStateEnum.MONITORING_REPORT_REJECTED
-                    ? 'step-icon-rejected'
-                    : 'step-icon-completed'
+                  activity.stage ===
+                  ActivityStateEnum.MONITORING_REPORT_UPLOADED
+                    ? "step-icon-submitted"
+                    : activity.stage ===
+                      ActivityStateEnum.MONITORING_REPORT_REJECTED
+                    ? "step-icon-rejected"
+                    : "step-icon-completed"
                 }
               >
-                {activity.stage === ActivityStateEnum.MONITORING_REPORT_UPLOADED ? (
+                {activity.stage ===
+                ActivityStateEnum.MONITORING_REPORT_UPLOADED ? (
                   <Icon.FileText />
-                ) : activity.stage === ActivityStateEnum.MONITORING_REPORT_REJECTED ? (
+                ) : activity.stage ===
+                  ActivityStateEnum.MONITORING_REPORT_REJECTED ? (
                   <CloseOutlined />
                 ) : (
                   <Icon.Check />
@@ -142,17 +162,25 @@ const VerificationPhaseForms = (props: IVerificationPhaseForms) => {
                     <Button
                       className="document-action-btn"
                       onClick={() => {
-                        navigateToVerificationReport(tempVerificationReportPermissions);
+                        navigateToVerificationReport(
+                          tempVerificationReportPermissions
+                        );
                       }}
-                      disabled={tempVerificationReportPermissions?.mode === FormMode?.DISABLED}
+                      disabled={
+                        tempVerificationReportPermissions?.mode ===
+                        FormMode?.DISABLED
+                      }
                     >
-                      {tempVerificationReportPermissions?.mode === FormMode.CREATE
-                        ? 'CREATE'
-                        : tempVerificationReportPermissions?.mode === FormMode.VERIFY
-                        ? 'VERIFY'
-                        : tempVerificationReportPermissions?.mode === FormMode.EDIT
-                        ? 'EDIT'
-                        : 'VIEW'}
+                      {tempVerificationReportPermissions?.mode ===
+                      FormMode.CREATE
+                        ? "CREATE"
+                        : tempVerificationReportPermissions?.mode ===
+                          FormMode.VERIFY
+                        ? "VERIFY"
+                        : tempVerificationReportPermissions?.mode ===
+                          FormMode.EDIT
+                        ? "EDIT"
+                        : "VIEW"}
                     </Button>
                   </Col>
                 </Row>
@@ -161,20 +189,26 @@ const VerificationPhaseForms = (props: IVerificationPhaseForms) => {
             icon: (
               <span
                 className={
-                  activity.stage === ActivityStateEnum.VERIFICATION_REPORT_UPLOADED
-                    ? 'step-icon-submitted'
-                    : activity.stage === ActivityStateEnum.VERIFICATION_REPORT_REJECTED
-                    ? 'step-icon-rejected'
-                    : activity.stage === ActivityStateEnum.VERIFICATION_REPORT_VERIFIED
-                    ? 'step-icon-completed'
-                    : 'step-icon-pending'
+                  activity.stage ===
+                  ActivityStateEnum.VERIFICATION_REPORT_UPLOADED
+                    ? "step-icon-submitted"
+                    : activity.stage ===
+                      ActivityStateEnum.VERIFICATION_REPORT_REJECTED
+                    ? "step-icon-rejected"
+                    : activity.stage ===
+                      ActivityStateEnum.VERIFICATION_REPORT_VERIFIED
+                    ? "step-icon-completed"
+                    : "step-icon-pending"
                 }
               >
-                {activity.stage === ActivityStateEnum.VERIFICATION_REPORT_UPLOADED ? (
+                {activity.stage ===
+                ActivityStateEnum.VERIFICATION_REPORT_UPLOADED ? (
                   <Icon.FileText />
-                ) : activity.stage === ActivityStateEnum.VERIFICATION_REPORT_REJECTED ? (
+                ) : activity.stage ===
+                  ActivityStateEnum.VERIFICATION_REPORT_REJECTED ? (
                   <CloseOutlined />
-                ) : activity.stage === ActivityStateEnum.VERIFICATION_REPORT_VERIFIED ? (
+                ) : activity.stage ===
+                  ActivityStateEnum.VERIFICATION_REPORT_VERIFIED ? (
                   <Icon.Check />
                 ) : (
                   <Icon.Hourglass />
@@ -213,11 +247,12 @@ const VerificationPhaseForms = (props: IVerificationPhaseForms) => {
               <span className="stage-last-updated">
                 {moment
                   .unix(Number(activity?.activityLastUpdatedDate) / 1000)
-                  .format('DD MMMM YYYY @ HH:mm')}
+                  .format("DD MMMM YYYY @ HH:mm")}
               </span>
             </Col>
             <Col md={6} className="tag-col">
-              {activity.stage === ActivityStateEnum.VERIFICATION_REPORT_VERIFIED ? (
+              {activity.stage ===
+              ActivityStateEnum.VERIFICATION_REPORT_VERIFIED ? (
                 <Tag color="blue">Credit Issued</Tag>
               ) : (
                 <Tag color="gold">Pending</Tag>
@@ -228,11 +263,15 @@ const VerificationPhaseForms = (props: IVerificationPhaseForms) => {
               <Steps
                 direction="vertical"
                 current={
-                  activity.stage === ActivityStateEnum.MONITORING_REPORT_REJECTED ||
-                  activity.stage === ActivityStateEnum.MONITORING_REPORT_UPLOADED ||
-                  activity.stage === ActivityStateEnum.MONITORING_REPORT_VERIFIED
+                  activity.stage ===
+                    ActivityStateEnum.MONITORING_REPORT_REJECTED ||
+                  activity.stage ===
+                    ActivityStateEnum.MONITORING_REPORT_UPLOADED ||
+                  activity.stage ===
+                    ActivityStateEnum.MONITORING_REPORT_VERIFIED
                     ? 0
-                    : activity.stage === ActivityStateEnum.VERIFICATION_REPORT_VERIFIED
+                    : activity.stage ===
+                      ActivityStateEnum.VERIFICATION_REPORT_VERIFIED
                     ? 2
                     : 1
                 }

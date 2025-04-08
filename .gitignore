@@ -13,4 +13,4 @@ web/src/Assets/.DS_Store
 web/public/locales/*
 .yalc
 yalc.lock
-/backend/services/public
+backend/services/*.pdf
