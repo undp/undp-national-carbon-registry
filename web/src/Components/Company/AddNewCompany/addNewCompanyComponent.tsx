@@ -70,7 +70,7 @@ export const AddNewCompanyComponent = (props: any) => {
   const [contactNoInput] = useState<any>();
   const [current, setCurrent] = useState<number>(0);
   const [isUpdate, setIsUpdate] = useState(false);
-  const { post } = useConnection();
+  const { post, put } = useConnection();
   const { setUserInfo, userInfoState } = useUserContext();
   const { state } = useLocation();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -285,6 +285,7 @@ export const AddNewCompanyComponent = (props: any) => {
       if (companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
         requestData.company.name = 'Ministry of ' + requestData.company.ministry;
       }
+      console.log('--------------requestData---------------', requestData);
       if (isGuest) {
         const response = await post(API_PATHS.REGISTER_USER, requestData);
         if (response.status === 200 || response.status === 201) {
@@ -298,7 +299,7 @@ export const AddNewCompanyComponent = (props: any) => {
           setLoading(false);
         }
       } else {
-        const response = await post('user/add', requestData);
+        const response = await post(API_PATHS.ADD_USER, requestData);
         if (response.status === 200 || response.status === 201) {
           if (isUpdate) {
             setUserInfo({
@@ -406,7 +407,9 @@ export const AddNewCompanyComponent = (props: any) => {
         }
       }
 
-      const response = await post(API_PATHS.UPDATE_ORGANIZATION, values);
+      console.log('--------------values---------------', values);
+      const response = await put(API_PATHS.UPDATE_ORGANIZATION, values);
+      console.log('-------------------ORg update response-------------------', response);
       if (response.status === 200 || response.status === 201) {
         setUserInfo({
           companyLogo: response.data.logo,
@@ -452,18 +455,6 @@ export const AddNewCompanyComponent = (props: any) => {
     return (
       <div className="company-details-form-container">
         <div className="company-details-form">
-          <label
-            style={{
-              display: 'inline-block',
-              color: 'rgba(58, 53, 65, 0.5)',
-              borderRadius: '4px',
-              fontSize: '14px',
-              fontWeight: 500,
-              marginBottom: '10px',
-            }}
-          >
-            {t('addCompany:hederaAccountRequired')}
-          </label>
           <Form
             name="company-details"
             className="company-details-form"
@@ -472,48 +463,6 @@ export const AddNewCompanyComponent = (props: any) => {
             form={formOne}
             onFinish={isUpdate ? onUpdateCompany : onFinishStepOne}
           >
-            <Row className="row" gutter={[16, 16]}>
-              <Col xl={12} md={24}>
-                <div className="details-part-one">
-                  <Form.Item
-                    label={t('addCompany:hederaAccount')}
-                    name="hederaAccount"
-                    initialValue={
-                      state?.record?.hederaAccount ? state?.record?.hederaAccount : null
-                    }
-                    rules={[
-                      {
-                        required: false,
-                        message: '',
-                      },
-                    ]}
-                  >
-                    <Input disabled={isUpdate} size="large" />
-                  </Form.Item>
-                </div>
-              </Col>
-              <Col xl={12} md={24}>
-                <div className="details-part-two">
-                  <Form.Item
-                    label={t('addCompany:hederaKey')}
-                    name="hederaKey"
-                    initialValue={
-                      state?.record?.hederaAccount
-                        ? '##################################################'
-                        : null
-                    }
-                    rules={[
-                      {
-                        required: false,
-                        message: '',
-                      },
-                    ]}
-                  >
-                    <Input disabled={isUpdate} size="large" />
-                  </Form.Item>
-                </div>
-              </Col>
-            </Row>
             <Row className="row" gutter={[16, 16]}>
               <Col xl={12} md={24}>
                 <div className="details-part-one">
@@ -1270,18 +1219,6 @@ export const AddNewCompanyComponent = (props: any) => {
   const CompanyAdminDetailsForm = () => {
     return (
       <>
-        <label
-          style={{
-            display: 'inline-block',
-            color: 'rgba(58, 53, 65, 0.5)',
-            borderRadius: '4px',
-            fontSize: '14px',
-            fontWeight: 500,
-            marginBottom: '10px',
-          }}
-        >
-          {t('addCompany:hederaAccountRequired')}
-        </label>
         <div className="company-details-form-container">
           <Form
             name="company-admin-details"
@@ -1291,64 +1228,6 @@ export const AddNewCompanyComponent = (props: any) => {
             form={formTwo}
             onFinish={onFinishStepTwo}
           >
-            <Row className="row" gutter={[16, 16]}>
-              <Col xl={12} md={24}>
-                <div className="details-part-one">
-                  <Form.Item
-                    label={t('addCompany:hederaAccount')}
-                    name="hederaAccount"
-                    rules={[
-                      {
-                        required: false,
-                        message: '',
-                      },
-                      // {
-                      //   validator: async (rule, value) => {
-                      //     if (
-                      //       String(value).trim() === '' ||
-                      //       String(value).trim() === undefined ||
-                      //       value === null ||
-                      //       value === undefined
-                      //     ) {
-                      //       throw new Error(`${t('addCompany:hederaAccount')} ${t('isRequired')}`);
-                      //     }
-                      //   },
-                      // },
-                    ]}
-                  >
-                    <Input size="large" />
-                  </Form.Item>
-                </div>
-              </Col>
-              <Col xl={12} md={24}>
-                <div className="details-part-two">
-                  <Form.Item
-                    label={t('addCompany:hederaKey')}
-                    name="hederaKey"
-                    rules={[
-                      {
-                        required: false,
-                        message: '',
-                      },
-                      // {
-                      //   validator: async (rule, value) => {
-                      //     if (
-                      //       String(value).trim() === '' ||
-                      //       String(value).trim() === undefined ||
-                      //       value === null ||
-                      //       value === undefined
-                      //     ) {
-                      //       throw new Error(`${t('addCompany:hederaKey')} ${t('isRequired')}`);
-                      //     }
-                      //   },
-                      // },
-                    ]}
-                  >
-                    <Input size="large" />
-                  </Form.Item>
-                </div>
-              </Col>
-            </Row>
             <Row className="row" gutter={[16, 16]}>
               <Col xl={12} md={24}>
                 <div className="details-part-one">
