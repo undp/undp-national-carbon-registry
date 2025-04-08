@@ -219,8 +219,8 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
           const firstReduction = {
             startDate: moment(values?.emissionsPeriodStart)
               .startOf("month")
-              .unix(),
-            endDate: moment(values?.emissionsPeriodEnd).endOf("month").unix(),
+              .valueOf(),
+            endDate: moment(values?.emissionsPeriodEnd).endOf("month").valueOf(),
             baselineEmissionReductions: Number(
               values?.baselineEmissionReductions
             ),
@@ -240,8 +240,8 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
               const tempObj = {
                 startDate: moment(item?.emissionsPeriodStart)
                   .startOf("month")
-                  .unix(),
-                endDate: moment(item?.emissionsPeriodEnd).endOf("month").unix(),
+                  .valueOf(),
+                endDate: moment(item?.emissionsPeriodEnd).endOf("month").valueOf(),
                 baselineEmissionReductions: Number(
                   item?.baselineEmissionReductions
                 ),
