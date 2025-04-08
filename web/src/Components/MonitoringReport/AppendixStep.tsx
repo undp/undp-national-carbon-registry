@@ -48,7 +48,7 @@ export const AnnexureStep = (props: CustomStepsProps) => {
   const onFinish = async (values: any) => {
     const appendixFormValues: any = {
       appendix: values?.a_appendix,
-      a_uploadDoc: (await fileUploadValueExtract(values, "a_uploadDoc"))[0],
+      a_uploadDoc: await fileUploadValueExtract(values, "a_uploadDoc"),
     };
     handleValuesUpdate(appendixFormValues);
   };

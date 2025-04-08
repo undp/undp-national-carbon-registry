@@ -203,9 +203,10 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
     const tempValues: any = {
       calcEmissionReductions: {
         ce_baselineEmission: values?.ce_baselineEmission,
-        ce_documentUpload: (
-          await fileUploadValueExtract(values, "ce_documentUpload")
-        )[0],
+        ce_documentUpload: await fileUploadValueExtract(
+          values,
+          "ce_documentUpload"
+        ),
         ce_projectEmissions: values?.ce_projectEmissions,
         ce_leakage: values?.ce_leakage,
 
