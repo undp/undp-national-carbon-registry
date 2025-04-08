@@ -935,7 +935,7 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
                             className="addMinusBtn"
                             // block
                             icon={<PlusOutlined />}
-                            disabled={false}
+                            disabled={true}
                           >
                             {/* Add Entity */}
                           </Button>
