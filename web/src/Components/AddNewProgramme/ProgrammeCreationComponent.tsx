@@ -45,6 +45,7 @@ import { DocumentEnum } from "../../Definitions/Enums/document.enum";
 import { FormMode } from "../../Definitions/Enums/formMode.enum";
 import { mapBase64ToFields } from "../../Utils/mapBase64ToFields";
 import validator from "validator";
+import { toMoment } from "../../Utils/convertTime";
 
 type SizeType = Parameters<typeof Form>[0]["size"];
 
@@ -330,35 +331,53 @@ export const ProgrammeCreationComponent = (props: any) => {
   useEffect(() => {
     const getViewData = async () => {
       setLoading(true);
+      let documentData: any;
+      let projectData: any;
       try {
-        if (state?.mode === FormMode.VIEW && state?.documentId) {
-          setDisableFields(true);
-          const res = await post(API_PATHS.QUERY_DOCUMENT, {
-            refId: state?.documentId,
-            documentType: DocumentEnum.INF,
-          });
+        const res = await post(API_PATHS.QUERY_DOCUMENT, {
+          refId: state?.documentId,
+          documentType: DocumentEnum.INF,
+        });
 
-          if (res?.statusText === "SUCCESS") {
-            const data = res?.data?.data;
-
-            console.log("-----------view data-----------", data);
-            const viewData = {
-              ...data,
-              briefProjectDescription: data.projectDescription,
-              optionalDocuments: mapBase64ToFields(data?.additionalDocuments),
-              projectLocation: data.geographicalLocationCoordinates,
-              startTime: moment.unix(data?.startDate),
-            };
-            form.setFieldsValue(viewData);
-          }
+        if (res?.statusText === "SUCCESS") {
+          documentData = res?.data?.data;
         }
       } catch (error) {
         console.log("----------error-----------");
       } finally {
         setLoading(false);
       }
+
+      try {
+        const res = await post(API_PATHS.PROGRAMME_BY_ID, {
+          programmeId: id,
+        });
+
+        if (res?.statusText === "SUCCESS") {
+          projectData = res?.data;
+          console.log("----------projectData----------", projectData.independentCertifiers, projectData.independentCertifiers.join(","));
+        }
+      } catch (error) {}
+
+      if (documentData && projectData) {
+        const viewData = {
+          ...documentData,
+          briefProjectDescription: documentData.projectDescription,
+          optionalDocuments: mapBase64ToFields(
+            documentData?.additionalDocuments
+          ),
+          projectLocation: documentData.geographicalLocationCoordinates,
+          startTime: toMoment(documentData?.startDate),
+          independentCertifiers: projectData?.independentCertifiers?.join(","),
+        };
+        form.setFieldsValue(viewData);
+      }
     };
-    getViewData();
+
+    if (state?.mode === FormMode.VIEW && state?.documentId) {
+      setDisableFields(true);
+      getViewData();
+    }
   }, []);
 
   const submitForm = async (values: any) => {
