@@ -9,7 +9,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "sls:install": "cd ../../backend/services && yarn install --frozen-lockfile",
-    "sls:installProd": "cd ../../backend/services && yarn install --production --frozen-lockfile",
+    "sls:installProd": "yarn install --production --frozen-lockfile",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
