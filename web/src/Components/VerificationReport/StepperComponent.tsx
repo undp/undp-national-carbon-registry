@@ -46,6 +46,7 @@ import {
 } from "./viewDataMap";
 import { Loading } from "../Loading/loading";
 import { INF_SECTORAL_SCOPE } from "../AddNewProgramme/ProgrammeCreationComponent";
+import { toMoment } from "../../Utils/convertTime";
 
 const StepperComponent = (props: VerificationStepProps) => {
   const { translator, t } = props;
@@ -222,9 +223,9 @@ const StepperComponent = (props: VerificationStepProps) => {
           return {
             ...item,
             startDate: item?.startDate
-              ? moment.unix(item?.startDate)
+              ? toMoment(item?.startDate)
               : undefined,
-            endDate: item?.endDate ? moment.unix(item?.endDate) : undefined,
+            endDate: item?.endDate ? toMoment(item?.endDate) : undefined,
           };
         }),
         totalBaselineEmissionReductions: Number(
