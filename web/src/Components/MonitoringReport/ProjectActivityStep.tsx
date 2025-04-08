@@ -661,7 +661,7 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
 
                 <div className="data-body">
                   <Form.List name="projectParticipants">
-                    {(fields, { add, remove }) => (
+                    {(fields) => (
                       <>
                         {fields.map(({ key, name, ...restFields }) => (
                           <div className="row" key={key}>
