@@ -204,8 +204,7 @@ export class AnalyticsService {
         SELECT
           (SELECT COUNT(DISTINCT "refId") 
            FROM audit_entity 
-           WHERE "logType" = 'PENDING' 
-           AND "refId" NOT IN (SELECT "refId" FROM audit_entity WHERE "logType" != 'PENDING')) 
+           WHERE "logType" = 'PENDING') 
            AS total_pending_projects,
           (SELECT MAX("createdTime") 
            FROM audit_entity 
