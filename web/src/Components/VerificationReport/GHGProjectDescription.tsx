@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Col, DatePicker, Form, Input, Row, Select, Upload } from 'antd';
 import moment from 'moment';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation } from 'react-router-dom';
 import TextArea from 'antd/lib/input/TextArea';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
@@ -31,8 +29,8 @@ export const GHGProjectDescriptionStep = (props: VerificationStepProps) => {
         estimatedNetEmissionReductions: values?.estimatedNetEmissionReductions.map((item: any) => {
           const temp = {
             ...item,
-            startDate: item?.startDate ? moment(item?.startDate).startOf('day').unix() : undefined,
-            endDate: item?.endDate ? moment(item?.endDate).startOf('day').unix() : undefined,
+            startDate: item?.startDate ? moment(item?.startDate).startOf('day').valueOf() : undefined,
+            endDate: item?.endDate ? moment(item?.endDate).startOf('day').valueOf() : undefined,
           };
           return temp;
         }),
