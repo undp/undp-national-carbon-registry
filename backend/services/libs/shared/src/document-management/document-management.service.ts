@@ -43,6 +43,8 @@ import { NoObjectionLetterGenerateService } from "../util/document-generators/no
 import { DocumentsViewEntity } from "../view-entities/documents.view.entity";
 import { Role } from "../casl/role.enum";
 import { BasicResponseDto } from "../dto/basic.response.dto";
+import { PositiveIntegerValidationDto } from "../dto/positive.integer.validation.dto";
+import { ActivityVintageCreditsArrayDto } from "../dto/activty.vintage.credits.array.dto";
 
 @Injectable()
 export class DocumentManagementService {
@@ -1440,10 +1442,28 @@ export class DocumentManagementService {
             projectCompany.name,
             []
           );
-
+        const errors = await validate(
+          plainToClass(PositiveIntegerValidationDto, {
+            positiveInteger: document.content.ghgProjectDescription
+              ?.totalNetEmissionReductions
+              ? Number(
+                  document.content.ghgProjectDescription
+                    ?.totalNetEmissionReductions
+                )
+              : null,
+          })
+        );
+        if (errors.length > 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.invalidUserEstimatedCredits",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
         const creditEst = Number(
-          document.content.ghgProjectDescription?.totalNetEmissionReductions ??
-            0
+          document.content.ghgProjectDescription?.totalNetEmissionReductions
         );
         const updateProjectProposalStage = {
           programmeId: project.refId,
@@ -1728,20 +1748,39 @@ export class DocumentManagementService {
           );
         }
         const creditVerified: ActivityVintageCreditsDto[] = [];
-        document.content.ghgProjectDescription?.estimatedNetEmissionReductions.map(
+        document.content.ghgProjectDescription?.estimatedNetEmissionReductions?.map(
           (data: {
             startDate: string;
             endDate: string;
             netEmissionReductions: string;
           }) => {
-            creditVerified.push({
-              vintage: new Date(parseInt(data.endDate))
-                .getFullYear()
-                .toString(),
-              creditAmount: Number(data.netEmissionReductions),
-            });
+            const creditBlockToVerify = plainToClass(
+              ActivityVintageCreditsDto,
+              {
+                vintage: new Date(parseInt(data.endDate))
+                  .getFullYear()
+                  .toString(),
+                creditAmount: Number(data.netEmissionReductions),
+              }
+            );
+            creditVerified.push(creditBlockToVerify);
           }
         );
+        const errors = await validate(
+          plainToClass(ActivityVintageCreditsArrayDto, {
+            vintageCreditArray: creditVerified,
+          })
+        );
+        console.log(creditVerified, errors);
+        if (creditVerified.length <= 0 || errors.length > 0) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.invlaidCreditVerifed",
+              []
+            ),
+            HttpStatus.BAD_REQUEST
+          );
+        }
         await this.programmeLedgerService.issueCredits(
           activity,
           creditVerified,
