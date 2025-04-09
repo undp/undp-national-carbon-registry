@@ -81,7 +81,7 @@ jobs:
           echo "docker-compose file Change...."
           git diff HEAD~ -- HEAD -z ./docker-compose*
       - name: Cache modules
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         id: yarn-cache
         with:
           path: node_modules
