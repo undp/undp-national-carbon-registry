@@ -50,7 +50,27 @@
   .form-section-title {
     margin-bottom: 20px;
     color: rgba(58, 53, 65, 0.5);
-    font-weight: 400;
+    font-weight: bolder;
+  }
+
+  .design-upload-section {
+    max-height: 120px;
+    display: block;
+    align-items: start;
+    width: 100%;
+    overflow-y: auto;
+
+    .icon-color {
+      color: $primary-color !important;
+    }
+  }
+
+  .form-section-heading {
+    margin-bottom: 20px;
+    margin-top: 30px;
+    color: #3a3541cc !important;
+    font-weight: 600;
+    font-size: 16px;
   }
 
   .form-section {

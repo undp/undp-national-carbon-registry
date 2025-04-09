@@ -163,7 +163,6 @@
     position: relative;
     left: 4px;
   }
-
   .projectParticipantsTable {
     margin: 20px 0px;
 
@@ -402,6 +401,17 @@
     padding: 25px 30px;
     border-radius: 8px;
     margin-bottom: 20px;
+  }
+  .design-upload-section {
+    max-height: 120px;
+    display: block;
+    align-items: start;
+    width: 100%;
+    overflow-y: auto;
+
+    .icon-color {
+      color: $primary-color !important;
+    }
   }
 
   .form-item-flex-row {
