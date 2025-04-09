@@ -66,6 +66,7 @@ jobs:
 
   deploy_frontend:
     name: Carbon Registry ZIM Frontend Deploy
+    needs: changes
     if: needs.changes.outputs.frontend-changes == 'true' || needs.changes.outputs.workflows-changes == 'true' || needs.changes.outputs.all-changes == 'true'
     runs-on: ubuntu-latest
     concurrency:
@@ -149,6 +150,7 @@ jobs:
 
   deploy_backend:
     name: Carbon Registry ZIM Backend Deploy
+    needs: changes
     if: needs.changes.outputs.backend-changes == 'true' || needs.changes.outputs.workflows-changes == 'true' || needs.changes.outputs.all-changes == 'true'
     runs-on: ubuntu-latest
     concurrency:
