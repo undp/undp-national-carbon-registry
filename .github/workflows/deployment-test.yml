@@ -9,25 +9,68 @@ on:
       - .github/workflows/deployment*
       - docker-compose*
 
-# AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-# AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-# AWS_DEFAULT_REGION: us-east-1
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
+  changes:
+    name: Deploy Pre Check
+    runs-on: ubuntu-latest
+    outputs:
+      backend-changes: ${{ steps.changes.outputs.backend-changes }}
+      all-changes: ${{ steps.changes.outputs.all-changes }}
+      workflows-changes: ${{ steps.changes.outputs.workflows-changes }}
+      frontend-changes: ${{ steps.changes.outputs.frontend-changes }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.branch_name }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Determine changed services
+        id: changes
+        run: |
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+
+          if echo "$CHANGED_FILES" | grep -q "docker-"; then
+            echo "All changes detected."
+            echo "all-changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "No All changes detected."
+            echo "all-changes=false" >> $GITHUB_OUTPUT
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q ".github/workflows/"; then
+            echo "Workflow changes detected."
+            echo "workflows-changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "No Workflow changes detected."
+            echo "workflows-changes=false" >> $GITHUB_OUTPUT
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "web/"; then
+            echo "Frontend changes detected."
+            echo "frontend-changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "No Frontend changes detected."
+            echo "frontend-changes=false" >> $GITHUB_OUTPUT
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "backend/"; then
+            echo "Backend changes detected."
+            echo "backend-changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "No Backend changes detected."
+            echo "backend-changes=false" >> $GITHUB_OUTPUT
+          fi
+
   deploy_frontend:
     name: Carbon Registry ZIM Frontend Deploy
+    if: needs.changes.outputs.frontend-changes == 'true' || needs.changes.outputs.workflows-changes == 'true' || needs.changes.outputs.all-changes == 'true'
     runs-on: ubuntu-latest
-    env:
-      # REACT_APP_BACKEND: https://ck5kt5uaw1.execute-api.us-east-1.amazonaws.com/dev
-      REACT_APP_COUNTRY_NAME: 'CountryX'
-      COUNTRY_FLAG_URL: 'https://carbon-common-dev.s3.amazonaws.com/flag.png'
-      COUNTRY_CODE: 'ZW'
-      REACT_APP_MAPBOXGL_ACCESS_TOKEN: ${{ secrets.MAPBOXGL_ACCESS_TOKEN }}
-      REACT_APP_MAP_TYPE : "Mapbox"
-      REACT_APP_GOVERNMENT_MINISTRY: "Ministry Of Environment"
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-'frontend'
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v3
         with:
@@ -55,14 +98,14 @@ jobs:
           node-version: ${{ matrix.node-version }}
       # - name: Install dependencies
       #   working-directory: ./web
-      #   run: CI=false yarn install 
+      #   run: CI=false yarn install
       # - name: Build
       #   working-directory: ./web
       #   run: CI=false yarn build
       # - name: Deploy
       #   run: aws s3 sync ./web/build s3://carbon-www-dev
       # - name: Deploy Test
-      #   run: aws s3 sync ./web/build s3://www-test-carbon 
+      #   run: aws s3 sync ./web/build s3://www-test-carbon
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
@@ -73,8 +116,8 @@ jobs:
       #     ECR_REPOSITORY: carbon-web
       #     IMAGE_TAG: unified
       #   run: |
-      #     # Build a docker container and push it to ECR 
-      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg REACT_APP_BACKEND=http://3.232.219.197:3000 --build-arg REACT_APP_STAT_URL=http://3.232.219.197:3100 --build-arg REACT_APP_COUNTRY_NAME="CountryX" --build-arg COUNTRY_FLAG_URL="https://carbon-common-dev.s3.amazonaws.com/flag.png" --build-arg COUNTRY_CODE="NG" --build-arg REACT_APP_MAP_TYPE="Mapbox" --build-arg REACT_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }} 
+      #     # Build a docker container and push it to ECR
+      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg REACT_APP_BACKEND=http://3.232.219.197:3000 --build-arg REACT_APP_STAT_URL=http://3.232.219.197:3100 --build-arg REACT_APP_COUNTRY_NAME="CountryX" --build-arg COUNTRY_FLAG_URL="https://carbon-common-dev.s3.amazonaws.com/flag.png" --build-arg COUNTRY_CODE="NG" --build-arg REACT_APP_MAP_TYPE="Mapbox" --build-arg REACT_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }}
       #     echo "Pushing image to ECR...."
       #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       #     echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
@@ -83,10 +126,10 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: carbon-registry-zim-web
-          IMAGE_TAG: ${{ github.head_ref || github.ref_name }} 
+          IMAGE_TAG: ${{ github.head_ref || github.ref_name }}
         run: |
           # Build a docker container and push it to ECR 
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg REACT_APP_BACKEND=http://localhost:3000 --build-arg REACT_APP_STAT_URL=http://localhost:3100 --build-arg REACT_APP_COUNTRY_NAME="CountryX" --build-arg REACT_APP_COUNTRY_FLAG_URL="https://carbonsl-demo-file-uploads.s3.us-east-1.amazonaws.com/sri-lanka-flag.svg" --build-arg COUNTRY_CODE="LK" --build-arg REACT_APP_MAP_TYPE="Mapbox" --build-arg REACT_APP_GOVERNMENT_MINISTRY="Ministry Of Environment" --build-arg REACT_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }}
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg REACT_APP_BACKEND=http://localhost:3000 --build-arg REACT_APP_STAT_URL=http://localhost:3100 --build-arg COUNTRY_NAME="United Nations" --build-arg REACT_APP_REGISTRY_NAME="UNDP Demo Carbon Registry" --build-arg COUNTRY_CODE="NG" --build-arg REACT_APP_MAP_TYPE="Mapbox" --build-arg REACT_APP_GOVERNMENT_MINISTRY:"Ministry Of Environment" --build-arg REACT_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }} --build-arg REACT_APP_MAXIMUM_FILE_SIZE=1048576 --build-arg COUNTRY_FLAG_URL="https://carbon-common-dev.s3.amazonaws.com/flag.png" 
           echo "Pushing image to ECR..."
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
@@ -105,10 +148,11 @@ jobs:
             carbon-zim/zim_frontend_deploy.sh '
 
   deploy_backend:
-    name: Carbon Registry ZIM Backend Deploy 
+    name: Carbon Registry ZIM Backend Deploy
+    if: needs.changes.outputs.backend-changes == 'true' || needs.changes.outputs.workflows-changes == 'true' || needs.changes.outputs.all-changes == 'true'
     runs-on: ubuntu-latest
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-'dev'
+      group: ${{ github.workflow }}-${{ github.ref }}-'backend'
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v3
@@ -137,7 +181,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: carbon-registry-zim-services
-          IMAGE_TAG: ${{ github.head_ref || github.ref_name }} 
+          IMAGE_TAG: ${{ github.head_ref || github.ref_name }}
         run: |
           # Build a docker container and push it to ECR 
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/services/Dockerfile .
