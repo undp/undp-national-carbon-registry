@@ -341,8 +341,9 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                   <TextArea rows={4} disabled={disableFields} />
                 </Form.Item>
 
+                <div className="custom-label-validation">{t('validationReport:uploadDocs')}</div>
                 <Form.Item
-                  label={t("validationReport:uploadDocs")}
+                  // label={t('validationReport:uploadDocs')}
                   name="appendix1Documents"
                   valuePropName="fileList"
                   getValueFromEvent={normFile}
@@ -366,7 +367,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                     beforeUpload={(file: any) => {
                       return false;
                     }}
-                    className="design-upload-section"
+                    className="design-upload-section-validation"
                     name="design"
                     action="/upload.do"
                     listType="picture"

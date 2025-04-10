@@ -52,16 +52,23 @@
     color: rgba(58, 53, 65, 0.5);
     font-weight: bolder;
   }
-
-  .design-upload-section {
-    max-height: 120px;
+  .custom-label-monitoring {
+    color: rgba(58, 53, 65, 0.5);
+    margin-bottom: 10px;
+  }
+  .design-upload-section-monitoring {
     display: block;
     align-items: start;
-    width: 100%;
-    overflow-y: auto;
+    width: 50%;
 
     .icon-color {
       color: $primary-color !important;
+    }
+
+    .ant-upload-list {
+      max-height: 120px;
+      overflow-y: auto;
+      margin-top: 10px;
     }
   }
 

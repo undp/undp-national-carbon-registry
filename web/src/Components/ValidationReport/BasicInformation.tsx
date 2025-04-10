@@ -859,8 +859,13 @@ const BasicInformation = (props: ValidationStepsProps) => {
                     </Col>
 
                     <Col xl={24} md={24}>
+                      <div className="custom-label-pdd">{t('validationReport:uploadImages')}</div>
                       <Form.Item
+<<<<<<< HEAD
                         label={t("validationReport:uploadImages")}
+=======
+                        //label={t('validationReport:uploadImages')}
+>>>>>>> 5a392a3e (FE UNDP: fixed additional file uploaded list width and  file picker opening for the form label. Also updated scroll bar.)
                         name="optionalImages"
                         valuePropName="fileList"
                         getValueFromEvent={normFile}
@@ -883,7 +888,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                           beforeUpload={(file: any) => {
                             return false;
                           }}
-                          className="design-upload-section"
+                          className="design-upload-section-validation"
                           name="design"
                           action="/upload.do"
                           listType="picture"
@@ -1267,9 +1272,12 @@ const BasicInformation = (props: ValidationStepsProps) => {
                               </Col>
 
                               <Col xl={24} md={24}>
+                                <div className="custom-label-validation">
+                                  {t('validationReport:uploadImages')}
+                                </div>
                                 <Form.Item
-                                  label={t("validationReport:uploadImages")}
-                                  name={[name, "optionalImages"]}
+                                  //label={t('validationReport:uploadImages')}
+                                  name={[name, 'optionalImages']}
                                   valuePropName="fileList"
                                   getValueFromEvent={normFile}
                                   required={false}

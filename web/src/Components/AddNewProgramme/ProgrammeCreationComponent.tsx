@@ -1235,8 +1235,9 @@ export const ProgrammeCreationComponent = (props: any) => {
                                 />
                               </Form.Item>
 
+                              <div className="custom-label">{t('addProgramme:documentUpload')}</div>
                               <Form.Item
-                                label={t("addProgramme:documentUpload")}
+                                // label={t('addProgramme:documentUpload')}
                                 name="optionalDocuments"
                                 valuePropName="fileList"
                                 getValueFromEvent={normFile}
@@ -1268,7 +1269,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                   beforeUpload={(file: any) => {
                                     return false;
                                   }}
-                                  className="design-upload-section"
+                                  className="design-upload-section-inf"
                                   name="design"
                                   action="/upload.do"
                                   listType="picture"
