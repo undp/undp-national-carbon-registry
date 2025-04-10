@@ -516,8 +516,11 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
                   </Col>
 
                   <Col xl={24} md={24}>
+                    <div className="custom-label-monitoring">
+                      {t('monitoringReport:pa_uploadImages')}
+                    </div>
                     <Form.Item
-                      label={t("monitoringReport:pa_uploadImages")}
+                      //label={t('monitoringReport:pa_uploadImages')}
                       name="optionalImages"
                       valuePropName="fileList"
                       getValueFromEvent={normFile}
@@ -540,7 +543,7 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
                         beforeUpload={(file: any) => {
                           return false;
                         }}
-                        className="design-upload-section"
+                        className="design-upload-section-monitoring"
                         name="design"
                         action="/upload.do"
                         listType="picture"
@@ -875,9 +878,18 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
                             </Col>
 
                             <Col xl={24} md={24}>
+                              <div className="custom-label-monitoring">
+                                {t('monitoringReport:pa_uploadImages')}
+                              </div>
+
                               <Form.Item
+<<<<<<< HEAD
                                 label={t("monitoringReport:pa_uploadImages")}
                                 name={[name, "uploadImages"]}
+=======
+                                //label={t('monitoringReport:pa_uploadImages')}
+                                name={[name, 'uploadImages']}
+>>>>>>> 5a392a3e (FE UNDP: fixed additional file uploaded list width and  file picker opening for the form label. Also updated scroll bar.)
                                 valuePropName="fileList"
                                 getValueFromEvent={normFile}
                                 required={false}
@@ -901,7 +913,7 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
                                   beforeUpload={(file: any) => {
                                     return false;
                                   }}
-                                  className="design-upload-section"
+                                  className="design-upload-section-monitoring"
                                   name="design"
                                   action="/upload.do"
                                   listType="picture"

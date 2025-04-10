@@ -306,8 +306,11 @@ export const AppendixStep = (props: VerificationStepProps) => {
                         <TextArea rows={6} disabled={disableFields} />
                       </Form.Item>
 
+                      <div className="custom-upload-verification">
+                        {t('verificationReport:appendix1Documents')}
+                      </div>
                       <Form.Item
-                        label={t("verificationReport:appendix1Documents")}
+                        //label={t('verificationReport:appendix1Documents')}
                         name="appendix1Documents"
                         valuePropName="fileList"
                         getValueFromEvent={normFile}
@@ -331,7 +334,7 @@ export const AppendixStep = (props: VerificationStepProps) => {
                           beforeUpload={(file: any) => {
                             return false;
                           }}
-                          className="design-upload-section"
+                          className="design-upload-section-verification"
                           name="design"
                           action="/upload.do"
                           listType="picture"

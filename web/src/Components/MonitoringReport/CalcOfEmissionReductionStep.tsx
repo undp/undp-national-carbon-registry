@@ -398,8 +398,11 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                       <TextArea rows={4} disabled={true} />
                     </Form.Item> */}
 
+                    <div className="custom-label-monitoring">
+                      {t('monitoringReport:ce_documentUpload')}
+                    </div>
                     <Form.Item
-                      label={t("monitoringReport:ce_documentUpload")}
+                      //label={t('monitoringReport:ce_documentUpload')}
                       name="ce_documentUpload"
                       valuePropName="fileList"
                       getValueFromEvent={normFile}
@@ -422,7 +425,7 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                         beforeUpload={(file: any) => {
                           return false;
                         }}
-                        className="design-upload-section"
+                        className="design-upload-section-monitoring"
                         name="design"
                         action="/upload.do"
                         listType="picture"

@@ -680,8 +680,10 @@ const Step08 = (props: CustomStepsProps) => {
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
+
+              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
               <Form.Item
-                label={t("PDD:uploadDocsAppendix")}
+                //label={t('PDD:uploadDocsAppendix')}
                 name="appendix2Documents"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
@@ -705,7 +707,7 @@ const Step08 = (props: CustomStepsProps) => {
                   beforeUpload={(file: any) => {
                     return false;
                   }}
-                  className="design-upload-section"
+                  className="design-upload-section-pdd"
                   name="design"
                   action="/upload.do"
                   listType="picture"
@@ -756,8 +758,9 @@ const Step08 = (props: CustomStepsProps) => {
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
+              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
               <Form.Item
-                label={t("PDD:uploadDocsAppendix")}
+                //label={t('PDD:uploadDocsAppendix')}
                 name="appendix3Documents"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
@@ -781,7 +784,7 @@ const Step08 = (props: CustomStepsProps) => {
                   beforeUpload={(file: any) => {
                     return false;
                   }}
-                  className="design-upload-section"
+                  className="design-upload-section-pdd"
                   name="design"
                   action="/upload.do"
                   listType="picture"
@@ -833,8 +836,9 @@ const Step08 = (props: CustomStepsProps) => {
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
+              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
               <Form.Item
-                label={t("PDD:uploadDocsAppendix")}
+                //label={t('PDD:uploadDocsAppendix')}
                 name="appendix4Documents"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
@@ -858,7 +862,7 @@ const Step08 = (props: CustomStepsProps) => {
                   beforeUpload={(file: any) => {
                     return false;
                   }}
-                  className="design-upload-section"
+                  className="design-upload-section-pdd"
                   name="design"
                   action="/upload.do"
                   listType="picture"
@@ -910,9 +914,9 @@ const Step08 = (props: CustomStepsProps) => {
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
-
+              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
               <Form.Item
-                label={t("PDD:uploadDocsAppendix")}
+                //label={t('PDD:uploadDocsAppendix')}
                 name="appendix5Documents"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
@@ -936,7 +940,7 @@ const Step08 = (props: CustomStepsProps) => {
                   beforeUpload={(file: any) => {
                     return false;
                   }}
-                  className="design-upload-section"
+                  className="design-upload-section-pdd"
                   name="design"
                   action="/upload.do"
                   listType="picture"
@@ -989,8 +993,9 @@ const Step08 = (props: CustomStepsProps) => {
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
+              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
               <Form.Item
-                label={t("PDD:uploadDocsAppendix")}
+                //label={t('PDD:uploadDocsAppendix')}
                 name="appendix6Documents"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
@@ -1014,7 +1019,7 @@ const Step08 = (props: CustomStepsProps) => {
                   beforeUpload={(file: any) => {
                     return false;
                   }}
-                  className="design-upload-section"
+                  className="design-upload-section-pdd"
                   name="design"
                   action="/upload.do"
                   listType="picture"
@@ -1067,8 +1072,9 @@ const Step08 = (props: CustomStepsProps) => {
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
+              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
               <Form.Item
-                label={t("PDD:uploadDocsAppendix")}
+                //label={t('PDD:uploadDocsAppendix')}
                 name="appendix7Documents"
                 valuePropName="fileList"
                 getValueFromEvent={normFile}
@@ -1092,7 +1098,7 @@ const Step08 = (props: CustomStepsProps) => {
                   beforeUpload={(file: any) => {
                     return false;
                   }}
-                  className="design-upload-section"
+                  className="design-upload-section-pdd"
                   name="design"
                   action="/upload.do"
                   listType="picture"
