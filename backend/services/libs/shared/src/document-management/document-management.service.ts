@@ -247,6 +247,26 @@ export class DocumentManagementService {
               HttpStatus.BAD_REQUEST
             );
           }
+          const errors = await validate(
+            plainToClass(PositiveIntegerValidationDto, {
+              positiveInteger: newDoc.content.applicationOfMethodology
+                ?.netGHGEmissionReductions?.totalNetEmissionReductions
+                ? Number(
+                    newDoc.content.applicationOfMethodology
+                      .netGHGEmissionReductions.totalNetEmissionReductions
+                  )
+                : null,
+            })
+          );
+          if (errors.length > 0) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.invalidUserEstimatedCredits",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
           updateProjectProposalStage = {
             programmeId: addDocumentDto.projectRefId,
             txType: TxType.CREATE_PDD,
@@ -308,6 +328,26 @@ export class DocumentManagementService {
                 []
               ),
               HttpStatus.UNAUTHORIZED
+            );
+          }
+          const errors = await validate(
+            plainToClass(PositiveIntegerValidationDto, {
+              positiveInteger: newDoc.content.ghgProjectDescription
+                ?.totalNetEmissionReductions
+                ? Number(
+                    newDoc.content.ghgProjectDescription
+                      .totalNetEmissionReductions
+                  )
+                : null,
+            })
+          );
+          if (errors.length > 0) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.invalidUserEstimatedCredits",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
             );
           }
 
@@ -401,6 +441,70 @@ export class DocumentManagementService {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
                 "project.lastActivityNotInValidStateToUploadMonitoringReport",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          if (
+            !newDoc.content.calcEmissionReductions?.netGHGEmissionReductions
+              ?.yearlyGHGEmissionReductions ||
+            newDoc.content.calcEmissionReductions?.netGHGEmissionReductions
+              ?.yearlyGHGEmissionReductions.length <= 0
+          ) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.invlaidCreditQuantityToIssue",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          const creditVerified: ActivityVintageCreditsDto[] = [];
+          let amountToVerify = 0;
+          newDoc.content.calcEmissionReductions?.netGHGEmissionReductions?.yearlyGHGEmissionReductions.map(
+            (data: {
+              startDate: string;
+              endDate: string;
+              netEmissionReductions: string;
+            }) => {
+              const creditBlockToVerify = plainToClass(
+                ActivityVintageCreditsDto,
+                {
+                  vintage: new Date(parseInt(data.endDate))
+                    .getFullYear()
+                    .toString(),
+                  creditAmount: Number(data.netEmissionReductions),
+                }
+              );
+              creditVerified.push(creditBlockToVerify);
+              amountToVerify += creditBlockToVerify.creditAmount;
+            }
+          );
+          const errors = await validate(
+            plainToClass(ActivityVintageCreditsArrayDto, {
+              vintageCreditArray: creditVerified,
+            })
+          );
+          if (creditVerified.length <= 0 || errors.length > 0) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.invlaidCreditVerifed",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          const totalEstimatedCredits = project.creditEst
+            ? Number(project.creditEst)
+            : 0;
+          const alreadyIssuedCredits = project.creditIssued
+            ? Number(project.creditIssued)
+            : 0;
+          if (amountToVerify > totalEstimatedCredits - alreadyIssuedCredits) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.greaterThanRemainingEstimatedCredits",
                 []
               ),
               HttpStatus.BAD_REQUEST
@@ -538,7 +642,70 @@ export class DocumentManagementService {
               HttpStatus.BAD_REQUEST
             );
           }
-
+          if (
+            !newDoc.content.ghgProjectDescription
+              ?.estimatedNetEmissionReductions ||
+            newDoc.content.ghgProjectDescription?.estimatedNetEmissionReductions
+              .length <= 0
+          ) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.invlaidCreditQuantityToIssue",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          const creditVerified: ActivityVintageCreditsDto[] = [];
+          let amountToVerify = 0;
+          newDoc.content.ghgProjectDescription?.estimatedNetEmissionReductions?.map(
+            (data: {
+              startDate: string;
+              endDate: string;
+              netEmissionReductions: string;
+            }) => {
+              const creditBlockToVerify = plainToClass(
+                ActivityVintageCreditsDto,
+                {
+                  vintage: new Date(parseInt(data.endDate))
+                    .getFullYear()
+                    .toString(),
+                  creditAmount: Number(data.netEmissionReductions),
+                }
+              );
+              creditVerified.push(creditBlockToVerify);
+              amountToVerify += creditBlockToVerify.creditAmount;
+            }
+          );
+          const errors = await validate(
+            plainToClass(ActivityVintageCreditsArrayDto, {
+              vintageCreditArray: creditVerified,
+            })
+          );
+          if (creditVerified.length <= 0 || errors.length > 0) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.invlaidCreditVerifed",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
+          const totalEstimatedCredits = project.creditEst
+            ? Number(project.creditEst)
+            : 0;
+          const alreadyIssuedCredits = project.creditIssued
+            ? Number(project.creditIssued)
+            : 0;
+          if (amountToVerify > totalEstimatedCredits - alreadyIssuedCredits) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.greaterThanRemainingEstimatedCredits",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
+          }
           await this.createVerificationReport(newDoc.content, projectRefId);
 
           await this.entityManager
@@ -1771,7 +1938,6 @@ export class DocumentManagementService {
             vintageCreditArray: creditVerified,
           })
         );
-        console.log(creditVerified, errors);
         if (creditVerified.length <= 0 || errors.length > 0) {
           throw new HttpException(
             this.helperService.formatReqMessagesString(
