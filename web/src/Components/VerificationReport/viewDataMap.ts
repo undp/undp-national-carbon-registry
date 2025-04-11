@@ -1,34 +1,38 @@
-import moment from 'moment';
-import { mapBase64ToFields } from '../../Utils/mapBase64ToFields';
-import { INF_SECTORAL_SCOPE } from '../AddNewProgramme/ProgrammeCreationComponent';
+import moment from "moment";
+import { mapBase64ToFields } from "../../Utils/mapBase64ToFields";
+import { INF_SECTORAL_SCOPE } from "../AddNewProgramme/ProgrammeCreationComponent";
 
 export const basicInformationMapDataToView = (vals: any) => {
   if (vals === undefined) return;
 
   const tempVals = {
     ...vals,
-    b_completionDate: vals?.b_completionDate ? moment.unix(vals?.b_completionDate) : undefined,
+    b_completionDate: vals?.b_completionDate
+      ? moment.unix(vals?.b_completionDate)
+      : undefined,
     b_signature: mapBase64ToFields([vals?.b_signature]),
     b_sectoralScope: INF_SECTORAL_SCOPE[vals?.b_sectoralScope],
   };
 
-  console.log('--------------vals after------------', tempVals);
+  console.log("--------------vals after------------", tempVals);
   return tempVals;
 };
 
 export const ghgProjectDescriptionMapDataToFields = (vals: any) => {
-  console.log('----------ghg project description----------', vals);
+  console.log("----------ghg project description----------", vals);
   if (vals === undefined) return;
 
   const tempVals = {
     ...vals,
-    estimatedNetEmissionReductions: vals?.estimatedNetEmissionReductions.map((item: any) => {
-      return {
-        ...item,
-        startDate: item?.startDate ? moment.unix(item?.startDate) : undefined,
-        endDate: item?.endDate ? moment.unix(item?.endDate) : undefined,
-      };
-    }),
+    estimatedNetEmissionReductions: vals?.estimatedNetEmissionReductions.map(
+      (item: any) => {
+        return {
+          ...item,
+          startDate: item?.startDate ? moment.unix(item?.startDate) : undefined,
+          endDate: item?.endDate ? moment.unix(item?.endDate) : undefined,
+        };
+      }
+    ),
   };
 
   return tempVals;
@@ -139,14 +143,16 @@ export const certificaitonMapDataToFields = (vals: any) => {
 };
 
 export const appendixMapDataToFields = (vals: any) => {
-  console.log('--------verification report---------', vals);
+  console.log("--------verification report---------", vals);
   if (vals === undefined) return;
 
   const tempVals = {
     ...vals,
-    appendix1Document: mapBase64ToFields(vals?.appendix1Document),
+    appendix1Documents: mapBase64ToFields(vals?.appendix1Documents),
     farIdDate: vals?.farIdDate ? moment.unix(vals?.farIdDate) : undefined,
-    responseDate: vals?.responseDate ? moment.unix(vals?.responseDate) : undefined,
+    responseDate: vals?.responseDate
+      ? moment.unix(vals?.responseDate)
+      : undefined,
     doeDate: vals?.doeDate ? moment.unix(vals?.doeDate) : undefined,
   };
 
