@@ -337,7 +337,7 @@ export const ProgrammeManagementComponent = (props: any) => {
       filter.push({
         key: 'title',
         operation: 'ilike',
-        value: `${search}%`,
+        value: `%${search}%`,
       });
     }
 
