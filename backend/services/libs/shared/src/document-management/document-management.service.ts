@@ -495,6 +495,19 @@ export class DocumentManagementService {
               HttpStatus.BAD_REQUEST
             );
           }
+          for (const creditBlockToVerify of creditVerified) {
+            if (
+              Number(creditBlockToVerify.vintage) > new Date().getFullYear()
+            ) {
+              throw new HttpException(
+                this.helperService.formatReqMessagesString(
+                  "project.greaterThanCurrentVintage",
+                  []
+                ),
+                HttpStatus.BAD_REQUEST
+              );
+            }
+          }
           const totalEstimatedCredits = project.creditEst
             ? Number(project.creditEst)
             : 0;
@@ -690,6 +703,19 @@ export class DocumentManagementService {
               ),
               HttpStatus.BAD_REQUEST
             );
+          }
+          for (const creditBlockToVerify of creditVerified) {
+            if (
+              Number(creditBlockToVerify.vintage) > new Date().getFullYear()
+            ) {
+              throw new HttpException(
+                this.helperService.formatReqMessagesString(
+                  "project.greaterThanCurrentVintage",
+                  []
+                ),
+                HttpStatus.BAD_REQUEST
+              );
+            }
           }
           const totalEstimatedCredits = project.creditEst
             ? Number(project.creditEst)
