@@ -203,9 +203,10 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
     const tempValues: any = {
       calcEmissionReductions: {
         ce_baselineEmission: values?.ce_baselineEmission,
-        ce_documentUpload: (
-          await fileUploadValueExtract(values, "ce_documentUpload")
-        )[0],
+        ce_documentUpload: await fileUploadValueExtract(
+          values,
+          "ce_documentUpload"
+        ),
         ce_projectEmissions: values?.ce_projectEmissions,
         ce_leakage: values?.ce_leakage,
 
@@ -219,8 +220,8 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
           const firstReduction = {
             startDate: moment(values?.emissionsPeriodStart)
               .startOf("month")
-              .unix(),
-            endDate: moment(values?.emissionsPeriodEnd).endOf("month").unix(),
+              .valueOf(),
+            endDate: moment(values?.emissionsPeriodEnd).endOf("month").valueOf(),
             baselineEmissionReductions: Number(
               values?.baselineEmissionReductions
             ),
@@ -240,8 +241,8 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
               const tempObj = {
                 startDate: moment(item?.emissionsPeriodStart)
                   .startOf("month")
-                  .unix(),
-                endDate: moment(item?.emissionsPeriodEnd).endOf("month").unix(),
+                  .valueOf(),
+                endDate: moment(item?.emissionsPeriodEnd).endOf("month").valueOf(),
                 baselineEmissionReductions: Number(
                   item?.baselineEmissionReductions
                 ),
@@ -658,23 +659,21 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                                         }
 
                                         const startDate = moment(
-                                          form.getFieldValue(
-                                            "emissionsPeriodStart"
-                                          )
-                                        ).startOf("month");
-                                        const selectedDate =
-                                          moment(value).endOf("month");
-                                        const duration = moment.duration(
-                                          selectedDate.diff(startDate)
-                                        );
+                                          form.getFieldValue('emissionsPeriodStart')
+                                        ).startOf('month');
+                                        const selectedDate = moment(value).endOf('month');
+                                        // const duration = moment.duration(
+                                        //   selectedDate.diff(startDate)
+                                        // );
 
-                                        const isOneYear =
-                                          Math.round(duration.asMonths()) ===
-                                          12;
+                                        // const isOneYear = Math.round(duration.asMonths()) === 12;
 
-                                        if (!isOneYear) {
+                                        // if (!isOneYear) {
+                                        //   throw new Error('Duration should be a year');
+                                        // }
+                                        if (selectedDate.year() !== startDate.year()) {
                                           throw new Error(
-                                            "Duration should be a year"
+                                            'End date also should be in the same year!'
                                           );
                                         }
                                       },

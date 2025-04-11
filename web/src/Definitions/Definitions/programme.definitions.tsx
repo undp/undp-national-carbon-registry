@@ -108,7 +108,7 @@ export const getProjectProposalStage = (stage: ProjectProposalStage) => {
     case ProjectProposalStage.PDD_APPROVED_BY_DNA:
       return 'cyan';
     case ProjectProposalStage.PDD_REJECTED_BY_DNA:
-      return 'error';
+      return 'magenta';
     case ProjectProposalStage.VALIDATION_REPORT_SUBMITTED:
       return 'default';
     case ProjectProposalStage.VALIDATION_REPORT_REJECTED:
@@ -411,7 +411,7 @@ const safeNumber = (value: any) => {
 export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystemType) => {
   let res: Record<string, any> = {
     title: programme.title,
-    tokenId: programme.tokenId,
+    // tokenId: programme.tokenId,
     registrationSerialNo: programme.serialNo,
     projectProposalStage: programme.projectProposalStage,
     // projectStatus: programme.projectStatus,
