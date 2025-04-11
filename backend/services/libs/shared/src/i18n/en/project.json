@@ -42,5 +42,6 @@
   "verificationApproved": "Verfication Report is approved successfully",
   "verificationRejected": "Verfication Report is rejected",
   "greaterThanRemainingEstimatedCredits": "Activity credits are greater than remaining estimated credits",
-  "invlaidCreditVerifed": "Credit amounts to verify are invalid"
+  "invlaidCreditVerifed": "Credit amounts to verify are invalid",
+  "greaterThanCurrentVintage": "Activity vintage is greater than current vintage"
 }
