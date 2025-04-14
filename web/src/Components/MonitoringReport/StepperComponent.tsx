@@ -43,7 +43,7 @@ import { INF_SECTORAL_SCOPE } from "../AddNewProgramme/ProgrammeCreationComponen
 const StepperComponent = (props: CustomStepsProps) => {
   const navigate = useNavigate();
   const { translator, t } = props;
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(5);
   const [reportId, setReportId] = useState(0);
   const [status, setStatus] = useState(null);
   const { get, post } = useConnection();
@@ -235,12 +235,12 @@ const StepperComponent = (props: CustomStepsProps) => {
             ?.additionalDocuments
         ),
         extraLocations:
-          pddData?.data?.projectActivity?.locationsOfProjectActivity?.slice(1)?.map(
-            (location: any) => ({
+          pddData?.data?.projectActivity?.locationsOfProjectActivity
+            ?.slice(1)
+            ?.map((location: any) => ({
               ...location,
               uploadImages: mapBase64ToFields(location?.additionalDocuments),
-            })
-          ),
+            })),
       });
     }
     setLoading(false);
