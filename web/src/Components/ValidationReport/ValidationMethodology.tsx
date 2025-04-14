@@ -618,7 +618,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                 className="step-actions-end mg-top-2 mg-bottom-2"
               >
                 <Button danger size={"large"} disabled={false} onClick={prev}>
-                  {t("validationReport:cancel")}
+                  {t("validationReport:prev")}
                 </Button>
                 {disableFields ? (
                   <Button
