@@ -39,7 +39,7 @@
     width: 50%;
 
     .icon-color {
-      color: $primary-color !important;
+      color: variables.$primary-color !important;
     }
 
     .ant-upload-list {

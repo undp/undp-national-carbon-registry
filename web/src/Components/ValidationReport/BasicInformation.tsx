@@ -861,11 +861,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                     <Col xl={24} md={24}>
                       <div className="custom-label-pdd">{t('validationReport:uploadImages')}</div>
                       <Form.Item
-<<<<<<< HEAD
-                        label={t("validationReport:uploadImages")}
-=======
                         //label={t('validationReport:uploadImages')}
->>>>>>> 5a392a3e (FE UNDP: fixed additional file uploaded list width and  file picker opening for the form label. Also updated scroll bar.)
                         name="optionalImages"
                         valuePropName="fileList"
                         getValueFromEvent={normFile}
