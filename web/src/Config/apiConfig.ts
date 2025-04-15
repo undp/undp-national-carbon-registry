@@ -71,6 +71,10 @@ export const API_PATHS = {
     `national/organisation/approve?id=${companyId}`,
   ORG_REJECT: (companyId: string) =>
     `national/organisation/reject?id=${companyId}`,
+  ORG_SUSPEND: (companyId: string) =>
+    `national/organisation/suspend?id=${companyId}`, // suspend 
+  ORG_REACTIVATE: (companyId: string) =>
+    `national/organisation/reactive?id=${companyId}`,  // reactive
   //CARBON_NEUTRAL
   ISSURE_CARBON_NEUTRAL_CERTIFICATE:
     "national/programmeSl/issueCarbonNeutralCertificate",
