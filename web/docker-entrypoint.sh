@@ -50,13 +50,13 @@ echo "VITE_APP_BACKEND value: $VITE_APP_BACKEND"
 echo "VITE_APP_STAT_URL value: $VITE_APP_STAT_URL"
 
 if [ -n "$VITE_APP_BACKEND" ]; then
-  sed -i "s|http://localhost:3000|$VITE_APP_BACKEND|g" /usr/share/nginx/html/*.js
+  sed -i "s|http://localhost:3000|$VITE_APP_BACKEND|g" /usr/share/nginx/html/assets/*.js
 else
   echo "VITE_APP_BACKEND environment variable not found."
 fi
 
 if [ -n "$VITE_APP_STAT_URL" ]; then
-  sed -i "s|http://localhost:3100|$VITE_APP_STAT_URL|g" /usr/share/nginx/html/*.js
+  sed -i "s|http://localhost:3100|$VITE_APP_STAT_URL|g" /usr/share/nginx/html/assets.*.js
 else
   echo "VITE_APP_STAT_URL environment variable not found."
 fi
