@@ -1235,8 +1235,9 @@ export const ProgrammeCreationComponent = (props: any) => {
                                 />
                               </Form.Item>
 
+                              <div className="custom-label">{t('addProgramme:documentUpload')}</div>
                               <Form.Item
-                                label={t("addProgramme:documentUpload")}
+                                // label={t('addProgramme:documentUpload')}
                                 name="optionalDocuments"
                                 valuePropName="fileList"
                                 getValueFromEvent={normFile}
@@ -1244,21 +1245,15 @@ export const ProgrammeCreationComponent = (props: any) => {
                                 rules={[
                                   {
                                     validator: async (rule, file) => {
-                                      if (file?.length > 0) {
+                                      for (let i = 0; i < file?.length; i++) {
                                         if (
                                           !isValidateFileType(
-                                            file[0]?.type,
+                                            file[i]?.type,
                                             DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
                                           )
                                         ) {
-                                          throw new Error(
-                                            `${t(
-                                              "addProgramme:invalidFileFormat"
-                                            )}`
-                                          );
-                                        } else if (
-                                          file[0]?.size > maximumImageSize
-                                        ) {
+                                          throw new Error(`${t('addProgramme:invalidFileFormat')}`);
+                                        } else if (file[i]?.size > maximumImageSize) {
                                           // default size format of files would be in bytes -> 1MB = 1000000bytes
                                           throw new Error(
                                             `${t("common:maxSizeVal")}`
@@ -1274,7 +1269,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                   beforeUpload={(file: any) => {
                                     return false;
                                   }}
-                                  className="design-upload-section"
+                                  className="design-upload-section-inf"
                                   name="design"
                                   action="/upload.do"
                                   listType="picture"

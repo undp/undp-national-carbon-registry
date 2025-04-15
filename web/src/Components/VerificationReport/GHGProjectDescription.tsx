@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Col, DatePicker, Form, Input, Row, Select, Upload } from 'antd';
 import moment from 'moment';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useLocation } from 'react-router-dom';
 import TextArea from 'antd/lib/input/TextArea';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
@@ -12,7 +10,7 @@ import LabelWithTooltip from '../LabelWithTooltip/LabelWithTooltip';
 import NetEmissionReduction from '../Common/NetEmissonReduction';
 
 export const GHGProjectDescriptionStep = (props: VerificationStepProps) => {
-  const { t, current, form, formMode, next, countries, prev, handleValuesUpdate, disableFields } =
+  const { t, current, form, formMode, next, countries, prev, handleValuesUpdate, disableFields, maxNetGHGReduction } =
     props;
 
   useEffect(() => {
@@ -31,8 +29,8 @@ export const GHGProjectDescriptionStep = (props: VerificationStepProps) => {
         estimatedNetEmissionReductions: values?.estimatedNetEmissionReductions.map((item: any) => {
           const temp = {
             ...item,
-            startDate: item?.startDate ? moment(item?.startDate).startOf('day').unix() : undefined,
-            endDate: item?.endDate ? moment(item?.endDate).startOf('day').unix() : undefined,
+            startDate: item?.startDate ? moment(item?.startDate).startOf('day').valueOf() : undefined,
+            endDate: item?.endDate ? moment(item?.endDate).startOf('day').valueOf() : undefined,
           };
           return temp;
         }),
@@ -112,6 +110,7 @@ export const GHGProjectDescriptionStep = (props: VerificationStepProps) => {
                   t={t}
                   projectCategory={null}
                   disabled={disableFields}
+                  maxNetGHGReduction={maxNetGHGReduction}
                 ></NetEmissionReduction>
               </>
 

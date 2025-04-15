@@ -40,6 +40,25 @@
   }
 }
 
+.custom-upload-verification {
+  color: rgba(58, 53, 65, 0.5);
+  margin-bottom: 10px;
+}
+.design-upload-section-verification {
+  display: block;
+  align-items: start;
+  width: 50%;
+
+  .icon-color {
+    color: variables.$primary-color !important;
+  }
+
+  .ant-upload-list {
+    max-height: 120px;
+    overflow-y: auto;
+    margin-top: 10px;
+  }
+}
 .monitoring-form-container {
   display: flex;
   flex-direction: column;

@@ -57,6 +57,8 @@ const StepperComponent = (props: CustomStepsProps) => {
   const [documentStatus, setDocumentStatus] = useState("");
   const [documentId, setDocumentId] = useState<string>();
 
+  const [maxNetGHGReduction, setMaxNetGHGReduction] = useState<number>();
+
   const [basicInformationForm] = useForm();
   const [projectActivityForm] = useForm();
   const [implementationStatusForm] = useForm();
@@ -187,8 +189,17 @@ const StepperComponent = (props: CustomStepsProps) => {
     } catch (error) {
       console.log("Error fetching data from validation report", error);
     }
-
+    
     if (programmeData && pddData && validationData) {
+      const tempNetGHGEmisisionReduction =
+        validationData?.ghgProjectDescription?.totalNetEmissionReductions;
+
+      console.log(
+        "-----------tempNetGHG---------",
+        tempNetGHGEmisisionReduction
+      );
+      setMaxNetGHGReduction(Number(tempNetGHGEmisisionReduction));
+
       const docVersions =
         state?.documents?.[DocumentEnum.MONITORING as any]?.version;
       const latestVersion = docVersions ? docVersions + 1 : 1;
@@ -235,12 +246,12 @@ const StepperComponent = (props: CustomStepsProps) => {
             ?.additionalDocuments
         ),
         extraLocations:
-          pddData?.data?.projectActivity?.locationsOfProjectActivity?.slice(1)?.map(
-            (location: any) => ({
+          pddData?.data?.projectActivity?.locationsOfProjectActivity
+            ?.slice(1)
+            ?.map((location: any) => ({
               ...location,
               uploadImages: mapBase64ToFields(location?.additionalDocuments),
-            })
-          ),
+            })),
       });
     }
     setLoading(false);
@@ -538,6 +549,7 @@ const StepperComponent = (props: CustomStepsProps) => {
           prev={prev}
           // projectCategory={projectCategory}
           handleValuesUpdate={handleValuesUpdate}
+          maxNetGHGReduction={maxNetGHGReduction}
         />
       ),
     },

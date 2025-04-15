@@ -163,7 +163,6 @@
     position: relative;
     left: 4px;
   }
-
   .projectParticipantsTable {
     margin: 20px 0px;
 
@@ -403,6 +402,21 @@
     border-radius: 8px;
     margin-bottom: 20px;
   }
+  .design-upload-section-pdd {
+    display: block;
+    align-items: start;
+    width: 50%;
+
+    .icon-color {
+      color: variables.$primary-color !important;
+    }
+
+    .ant-upload-list {
+      margin-top: 10px;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+  }
 
   .form-item-flex-row {
     display: flex;
@@ -459,6 +473,11 @@
       > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
       margin-bottom: 10px;
     }
+  }
+
+  .custom-label-pdd {
+    color: rgba(58, 53, 65, 0.5);
+    margin-bottom: 10px;
   }
 
   .ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input,
