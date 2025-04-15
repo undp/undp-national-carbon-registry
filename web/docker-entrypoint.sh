@@ -44,21 +44,21 @@ if [ "$1" = "nginx" -o "$1" = "nginx-debug" ]; then
     fi
 fi
 
-REACT_APP_BACKEND=$(env | grep REACT_APP_BACKEND= | cut -d'=' -f2-)
-REACT_APP_STAT_URL=$(env | grep REACT_APP_STAT_URL= | cut -d'=' -f2-)
-echo "REACT_APP_BACKEND value: $REACT_APP_BACKEND"
-echo "REACT_APP_STAT_URL value: $REACT_APP_STAT_URL"
+VITE_APP_BACKEND=$(env | grep VITE_APP_BACKEND= | cut -d'=' -f2-)
+VITE_APP_STAT_URL=$(env | grep VITE_APP_STAT_URL= | cut -d'=' -f2-)
+echo "VITE_APP_BACKEND value: $VITE_APP_BACKEND"
+echo "VITE_APP_STAT_URL value: $VITE_APP_STAT_URL"
 
-if [ -n "$REACT_APP_BACKEND" ]; then
-  sed -i "s|http://localhost:3000|$REACT_APP_BACKEND|g" /usr/share/nginx/html/static/js/*.js
+if [ -n "$VITE_APP_BACKEND" ]; then
+  sed -i "s|http://localhost:3000|$VITE_APP_BACKEND|g" /usr/share/nginx/html/assets/*.js
 else
-  echo "REACT_APP_BACKEND environment variable not found."
+  echo "VITE_APP_BACKEND environment variable not found."
 fi
 
-if [ -n "$REACT_APP_STAT_URL" ]; then
-  sed -i "s|http://localhost:3100|$REACT_APP_STAT_URL|g" /usr/share/nginx/html/static/js/*.js
+if [ -n "$VITE_APP_STAT_URL" ]; then
+  sed -i "s|http://localhost:3100|$VITE_APP_STAT_URL|g" /usr/share/nginx/html/assets/*.js
 else
-  echo "REACT_APP_STAT_URL environment variable not found."
+  echo "VITE_APP_STAT_URL environment variable not found."
 fi
 
 echo "Enviroment Variable Injection Complete."

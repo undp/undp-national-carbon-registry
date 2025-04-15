@@ -1,0 +1,8 @@
+{
+  "reset-pwd-title": "Réinitialisation du Mot de Passe",
+  "submit": "Envoyer",
+  "newPwd": "Nouveau Mot de Passe",
+  "confirmNewPwd": "Confirmer le Nouveau Mot de Passe",
+  "passwordNotMatch": "Les mots de passe ne correspondent pas !",
+  "passwordResetNotWorked": "Le lien de réinitialisation de mot de passe a expiré ou a déjà été utilisé"
+}
