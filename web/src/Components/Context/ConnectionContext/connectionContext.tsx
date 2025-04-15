@@ -1,12 +1,15 @@
-import React, { createContext, FC, useCallback, useContext, useEffect, useState } from 'react';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import jwt_decode from 'jwt-decode';
-import {
-  ConnectionProps,
-  ConnectionContextProviderProps,
-  Methods,
-} from '../../Definitions/Definitions/connectionContext.definitions';
-import { API_PATHS } from '../../Config/apiConfig';
+import React, {
+  createContext,
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import jwt_decode from "jwt-decode";
+import { ConnectionContextProviderProps, ConnectionProps, Methods } from "../../../Definitions/Definitions/connectionContext.definitions";
+import { API_PATHS } from "../../../Config/apiConfig";
 
 const ConnectionContext = createContext<{
   connection?: ConnectionProps;
@@ -21,7 +24,7 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
 
   useEffect(() => {
     const timer = setInterval(async () => {
-      const newToken: any = await localStorage.getItem('token');
+      const newToken: any = await localStorage.getItem("token");
       if (token !== newToken) {
         setToken(newToken);
       }
@@ -35,16 +38,22 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
   }, [token]);
 
   const send = useCallback(
-    (method: Methods, path: string, data?: any, config?: AxiosRequestConfig, extraUrl?: string) => {
+    (
+      method: Methods,
+      path: string,
+      data?: any,
+      config?: AxiosRequestConfig,
+      extraUrl?: string
+    ) => {
       return new Promise((resolve, reject) => {
         const url = `${extraUrl ? extraUrl : serverURL}/${path}`;
         let headers: any;
         if (token) {
           headers = { authorization: `Bearer ${token.toString()}` };
         } else {
-          if (localStorage.getItem('token')) {
+          if (localStorage.getItem("token")) {
             headers = {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
+              authorization: `Bearer ${localStorage.getItem("token")}`,
             };
           } else {
             headers = {
@@ -66,14 +75,14 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
                   status: response.status,
                   data: response.data.data ?? response.data,
                   response: response,
-                  statusText: 'SUCCESS',
+                  statusText: "SUCCESS",
                   message: response.data.message,
                 });
               } else if (response.status === 422) {
                 reject({
                   status: response.status,
                   data: response.data?.data,
-                  statusText: 'ERROR',
+                  statusText: "ERROR",
                   response: response,
                   message: response.data.message,
                   errors: response.data?.errors,
@@ -82,8 +91,8 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
             } else {
               reject({
                 status: 500,
-                statusText: 'UNKNOWN',
-                message: t('common:systemError'),
+                statusText: "UNKNOWN",
+                message: t("common:systemError"),
               });
             }
           })
@@ -91,8 +100,9 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
             if (e.response) {
               if (e.response.status) {
                 if (
-                  e.response.data.message === 'jwt expired' ||
-                  e.response.data.message === t('common:organisationDeactivated')
+                  e.response.data.message === "jwt expired" ||
+                  e.response.data.message ===
+                    t("common:organisationDeactivated")
                 ) {
                   setToken(undefined);
                   setRefreshToken(undefined);
@@ -103,21 +113,21 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
 
                 reject({
                   status: e.response.status,
-                  statusText: 'ERROR',
+                  statusText: "ERROR",
                   errors: e.response.data?.errors,
                   message: e.response.data.message,
                 });
               } else {
                 reject({
-                  statusText: 'ERROR',
-                  message: t('common:systemError'),
+                  statusText: "ERROR",
+                  message: t("common:systemError"),
                 });
               }
             } else {
-              console.log('------------e----------------', e);
+              console.log("------------e----------------", e);
               reject({
-                statusText: 'ERROR',
-                message: t('common:networkError'),
+                statusText: "ERROR",
+                message: t("common:networkError"),
               });
             }
           });
@@ -126,52 +136,57 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
     [token, serverURL]
   );
   const post = useCallback(
-    (path: string, data?: any, config?: AxiosRequestConfig, extraUrl?: string) => {
-      return send('post', path, data, config, extraUrl);
+    (
+      path: string,
+      data?: any,
+      config?: AxiosRequestConfig,
+      extraUrl?: string
+    ) => {
+      return send("post", path, data, config, extraUrl);
     },
     [send]
   );
   const put = useCallback(
     (path: string, data?: any, config?: AxiosRequestConfig) => {
-      return send('put', path, data, config);
+      return send("put", path, data, config);
     },
     [send]
   );
   const get = useCallback(
     (path: string, config?: AxiosRequestConfig, extraUrl?: string) => {
-      return send('get', path, undefined, config, extraUrl);
+      return send("get", path, undefined, config, extraUrl);
     },
     [send]
   );
   const patch = useCallback(
     (path: string, data?: any, config?: AxiosRequestConfig) => {
-      return send('patch', path, data, config);
+      return send("patch", path, data, config);
     },
     [send]
   );
   const del = useCallback(
     (path: string, config?: AxiosRequestConfig) => {
-      return send('delete', path, config);
+      return send("delete", path, config);
     },
     [send]
   );
 
   const updateToken = useCallback(async (newToken?: string) => {
     if (newToken) {
-      localStorage.setItem('token', newToken);
+      localStorage.setItem("token", newToken);
       setToken(newToken);
     } else {
-      localStorage.setItem('token', '');
+      localStorage.setItem("token", "");
       setToken(undefined);
     }
   }, []);
 
   const updateRefreshToken = useCallback(async (newRefreshToken?: string) => {
     if (newRefreshToken) {
-      localStorage.setItem('refresh_token', newRefreshToken);
+      localStorage.setItem("refresh_token", newRefreshToken);
       setRefreshToken(newRefreshToken);
     } else {
-      localStorage.setItem('refresh_token', '');
+      localStorage.setItem("refresh_token", "");
       setRefreshToken(undefined);
     }
   }, []);
@@ -184,12 +199,12 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
   };
 
   const clearLocalStorageData = () => {
-    localStorage.setItem('token', '');
-    localStorage.setItem('refresh_token', '');
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('companyId');
-    localStorage.removeItem('companyRole');
+    localStorage.setItem("token", "");
+    localStorage.setItem("refresh_token", "");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("companyId");
+    localStorage.removeItem("companyRole");
   };
 
   const removeToken = async (tkn?: string) => {
@@ -204,7 +219,7 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
         if (diff > 0) {
           setTimeout(async () => {
             // eslint-disable-next-line eqeqeq
-            if (refreshToken && refreshToken != '') {
+            if (refreshToken && refreshToken != "") {
               const response = await refreshAccessToken();
               if (response) {
                 if (response.status === 200 || response.status === 201) {
@@ -233,7 +248,7 @@ export const ConnectionContextProvider: FC<ConnectionContextProviderProps> = (
           setRefreshToken(undefined);
           clearLocalStorageData();
         }
-        console.log(diff, 'Remaining Token expire time');
+        console.log(diff, "Remaining Token expire time");
       }
     }
   };

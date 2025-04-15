@@ -1,10 +1,7 @@
 import React, { useContext, useState, createContext, useCallback, useEffect } from 'react';
 import jwt_decode from 'jwt-decode';
-import {
-  UserContextProps,
-  UserProps,
-} from '../../Definitions/Definitions/userInformationContext.definitions';
 import { useConnection } from '../ConnectionContext/connectionContext';
+import { UserContextProps, UserProps } from '../../../Definitions/Definitions/userInformationContext.definitions';
 
 export const UserContext = createContext<UserContextProps>({
   setUserInfo: () => {},

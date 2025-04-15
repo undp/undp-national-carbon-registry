@@ -206,7 +206,10 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
   };
 
   const onFinish = async (values: any) => {
-    console.log('--------------projectParticipants-----------', values?.projectParticipants);
+    console.log(
+      "--------------projectParticipants-----------",
+      values?.projectParticipants
+    );
     const tempValues: any = {
       introduction: values?.introduction,
       // sectoralScope: values?.sectoralScope,
@@ -735,7 +738,9 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                     </Col>
 
                     <Col xl={24} md={24}>
-                      <div className="custom-label-pdd">{t('PDD:uploadImages')}</div>
+                      <div className="custom-label-pdd">
+                        {t("PDD:uploadImages")}
+                      </div>
                       <Form.Item
                         //label={t('PDD:uploadImages')}
                         name="optionalImages"
@@ -1143,11 +1148,11 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
                               <Col xl={24} md={24}>
                                 <div className="custom-label-pdd">
-                                  {t('addProgramme:documentUpload')}
+                                  {t("addProgramme:documentUpload")}
                                 </div>
                                 <Form.Item
                                   //label={t('PDD:uploadImages')}
-                                  name={[name, 'optionalImages']}
+                                  name={[name, "optionalImages"]}
                                   valuePropName="fileList"
                                   getValueFromEvent={normFile}
                                   required={false}
@@ -1573,14 +1578,14 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
               </h4>
               <div className="projectParticipantsTable">
                 <div className="header">
-                  <div className="col-1">{t('PDD:partiesInvolved')}</div>
-                  <div className="col-2">{t('PDD:projectParticipant')}</div>
+                  <div className="col-1">{t("PDD:partiesInvolved")}</div>
+                  <div className="col-2">{t("PDD:projectParticipant")}</div>
                   <div className="col-3"></div>
                 </div>
 
                 <div className="data-body">
                   <Form.List name="projectParticipants">
-                    {(fields) => (
+                    {(fields, { add, remove }) => (
                       <>
                         {fields.map(({ key, name, ...restFields }) => (
                           <div className="row" key={key}>
@@ -1708,7 +1713,10 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                 <Form.Item>
                                   <Button
                                     onClick={() => {
-                                      console.log('------remove key---------', key);
+                                      console.log(
+                                        "------remove key---------",
+                                        key
+                                      );
                                       remove(name);
                                     }}
                                     icon={<MinusOutlined />}
