@@ -1,6 +1,6 @@
-@use '../../Styles/colors.addProgramme.scss';
-@use '../../Styles/colors.role.scss' as colors2;
-@use '../../Styles/variables.scss';
+@use "../../Styles/colors.addProgramme.scss";
+@use "../../Styles/colors.role.scss" as colors2;
+@use "../../Styles/variables.scss";
 
 .to-lable {
   text-align: center;
@@ -62,7 +62,7 @@
     width: 50%;
 
     .icon-color {
-      color: $primary-color !important;
+      color: variables.$primary-color !important;
     }
 
     .ant-upload-list {
@@ -106,13 +106,19 @@
   }
   .custom-label {
     .ant-form-item-label
-      > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+      > label.ant-form-item-required:not(
+        .ant-form-item-required-mark-optional
+      )::before {
       margin-bottom: 10px;
     }
   }
 
-  .ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input,
-  .ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input:hover {
+  .ant-input-status-error:not(.ant-input-disabled):not(
+      .ant-input-borderless
+    ).ant-input,
+  .ant-input-status-error:not(.ant-input-disabled):not(
+      .ant-input-borderless
+    ).ant-input:hover {
     border-color: #ff4d4f !important;
   }
 

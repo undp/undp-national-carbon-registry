@@ -883,13 +883,8 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
                               </div>
 
                               <Form.Item
-<<<<<<< HEAD
-                                label={t("monitoringReport:pa_uploadImages")}
-                                name={[name, "uploadImages"]}
-=======
                                 //label={t('monitoringReport:pa_uploadImages')}
                                 name={[name, 'uploadImages']}
->>>>>>> 5a392a3e (FE UNDP: fixed additional file uploaded list width and  file picker opening for the form label. Also updated scroll bar.)
                                 valuePropName="fileList"
                                 getValueFromEvent={normFile}
                                 required={false}
