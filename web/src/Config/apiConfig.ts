@@ -9,7 +9,7 @@ export const API_PATHS = {
   USER_PROFILE: "national/user/profile",
   USER_DETAILS: "national/user/query",
   ADD_USER: "national/user/add",
-  REGISTER_USER: "user/register",
+  REGISTER_USER: "national/user/register",
   UPDATE_USER: "national/user/update",
   DELETE_USER: (userId: string) => `national/user/delete?userId=${userId}`,
   RESET_PASSWORD_USER: "national/user/resetPassword",
