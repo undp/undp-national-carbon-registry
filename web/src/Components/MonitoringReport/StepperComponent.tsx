@@ -43,7 +43,7 @@ import { INF_SECTORAL_SCOPE } from "../AddNewProgramme/ProgrammeCreationComponen
 const StepperComponent = (props: CustomStepsProps) => {
   const navigate = useNavigate();
   const { translator, t } = props;
-  const [current, setCurrent] = useState(5);
+  const [current, setCurrent] = useState(0);
   const [reportId, setReportId] = useState(0);
   const [status, setStatus] = useState(null);
   const { get, post } = useConnection();
@@ -56,6 +56,8 @@ const StepperComponent = (props: CustomStepsProps) => {
   const [selectedVersion, setSelectedVersion] = useState<number>();
   const [documentStatus, setDocumentStatus] = useState("");
   const [documentId, setDocumentId] = useState<string>();
+
+  const [maxNetGHGReduction, setMaxNetGHGReduction] = useState<number>();
 
   const [basicInformationForm] = useForm();
   const [projectActivityForm] = useForm();
@@ -187,8 +189,17 @@ const StepperComponent = (props: CustomStepsProps) => {
     } catch (error) {
       console.log("Error fetching data from validation report", error);
     }
-
+    
     if (programmeData && pddData && validationData) {
+      const tempNetGHGEmisisionReduction =
+        validationData?.ghgProjectDescription?.totalNetEmissionReductions;
+
+      console.log(
+        "-----------tempNetGHG---------",
+        tempNetGHGEmisisionReduction
+      );
+      setMaxNetGHGReduction(Number(tempNetGHGEmisisionReduction));
+
       const docVersions =
         state?.documents?.[DocumentEnum.MONITORING as any]?.version;
       const latestVersion = docVersions ? docVersions + 1 : 1;
@@ -538,6 +549,7 @@ const StepperComponent = (props: CustomStepsProps) => {
           prev={prev}
           // projectCategory={projectCategory}
           handleValuesUpdate={handleValuesUpdate}
+          maxNetGHGReduction={maxNetGHGReduction}
         />
       ),
     },

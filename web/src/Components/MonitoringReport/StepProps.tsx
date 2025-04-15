@@ -17,6 +17,7 @@ export interface CustomStepsProps {
   formMode?: FormMode;
   handleLoading?: (val: boolean) => void;
   documentId?: string; 
+  maxNetGHGReduction?: number;
   // countries?: string[];
   // projectCategory?: string;
   // existingFormValues?: any;
