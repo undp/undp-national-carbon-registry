@@ -52,7 +52,7 @@ export enum ProcessSteps {
 const StepperComponent = (props: any) => {
   const { t, selectedVersion, handleDocumentStatus } = props;
 
-  const [current, setCurrent] = useState(1);
+  const [current, setCurrent] = useState(0);
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -288,7 +288,7 @@ const StepperComponent = (props: any) => {
               endDate: moment.unix(emissionData.endDate),
             })
           ),
-        totalNumberOfCreditingYears: totalNumberOfCreditingYears,
+        totalNumberOfCreditingYears: netGHGEmissionReductions?.totalNumberOfCredingYears,
         baselineEmissionReductions: 0,
         baselineEmissions:
           pddData?.data?.projectActivity?.locationsOfProjectActivity?.map(

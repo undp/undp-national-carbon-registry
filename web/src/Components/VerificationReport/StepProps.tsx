@@ -19,6 +19,7 @@ export interface VerificationStepProps {
   formMode?: FormMode;
   handleLoading?: (val: boolean) => void;
   documentId?: string;
+  maxNetGHGReduction?: number;
   // selectedVersion: number | undefined;
   // handleDocumentStatus: (value: string) => void;
 }

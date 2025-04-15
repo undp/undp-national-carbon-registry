@@ -34,6 +34,7 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
     prev,
     handleValuesUpdate,
     disableFields,
+    maxNetGHGReduction,
   } = props;
   const maximumImageSize = import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE
     ? parseInt(import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE)
@@ -66,7 +67,7 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
         projectEmissionReductionsVal -
         leakageEmissionReductionsVal;
 
-      if (netGHGEmissions < 0) {
+      if (netGHGEmissions <= 0) {
         form.setFields([
           {
             name: "netEmissionReductions",
@@ -103,7 +104,7 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
 
         listVals[index].netEmissionReductions = netGHGEmissions;
 
-        if (netGHGEmissions < 0) {
+        if (netGHGEmissions <= 0) {
           form.setFields([
             {
               name: ["extraEmissionReductions", index, "netEmissionReductions"],
@@ -140,6 +141,27 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
       form.getFieldValue("totalCreditingYears") || 0
     );
     form.setFieldValue(categoryToAdd, String(tempTotal));
+
+    console.log("---------maxNetGHGReduction---------", maxNetGHGReduction, tempTotal);
+
+    console.log("-----maxNetGHGReduction---------",maxNetGHGReduction);
+    
+    if (maxNetGHGReduction && tempTotal >= maxNetGHGReduction) {
+      form.setFields([
+        {
+          name: 'totalNetEmissionReductions',
+          errors: [`Total Net Emission Reduction cannot exceed ${maxNetGHGReduction}`]
+        }
+      ])
+    } else {
+      form.setFields([
+        {
+          name: 'totalNetEmissionReductions',
+          errors: [``]
+        }
+      ])
+    }
+
     const avgTempTotal =
       creditingYears > 0
         ? formatNumberWithDecimalPlaces(tempTotal / creditingYears)

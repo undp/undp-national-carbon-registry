@@ -15,7 +15,7 @@ const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
 };
 
 const NetEmissionReduction = (props: any) => {
-  const { form, t, existingEmission, projectCategory, disabled } = props;
+  const { form, t, existingEmission, projectCategory, disabled, maxNetGHGReduction } = props;
 
   console.log("--------disabled-----------", disabled);
 
@@ -78,7 +78,7 @@ const NetEmissionReduction = (props: any) => {
 
         listVals[index].netEmissionReductions = netGHGEmissions;
 
-        if (netGHGEmissions < 0) {
+        if (netGHGEmissions <= 0) {
           form.setFields([
             {
               name: [
@@ -121,6 +121,24 @@ const NetEmissionReduction = (props: any) => {
         }
       });
     }
+
+    console.log("----------netGHG reduction", maxNetGHGReduction)
+    if (maxNetGHGReduction && tempTotal >= maxNetGHGReduction) {
+      form.setFields([
+        {
+          name: 'totalNetEmissionReductions',
+          errors: [`Total Net Emission Reduction cannot exceed ${maxNetGHGReduction}`]
+        }
+      ])
+    } else {
+      form.setFields([
+        {
+          name: 'totalNetEmissionReductions',
+          errors: [``]
+        }
+      ])
+    }
+
 
     const creditingYears = Number(
       form.getFieldValue("totalNumberOfCreditingYears") || 0
@@ -383,7 +401,8 @@ const NetEmissionReduction = (props: any) => {
                           },
                         ]}
                       >
-                        <InputNumber
+                        <Input
+                          type="number"
                           size="large"
                           className="full-width-form-item"
                           onChange={(value) => {
@@ -424,7 +443,8 @@ const NetEmissionReduction = (props: any) => {
                           },
                         ]}
                       >
-                        <InputNumber
+                        <Input
+                          type="number"
                           size="large"
                           className="full-width-form-item"
                           onChange={(value) => {
@@ -465,7 +485,8 @@ const NetEmissionReduction = (props: any) => {
                           },
                         ]}
                       >
-                        <InputNumber
+                        <Input
+                          type="number"
                           size="large"
                           className="full-width-form-item"
                           onChange={(value) => {
@@ -511,7 +532,8 @@ const NetEmissionReduction = (props: any) => {
                           },
                         ]}
                       >
-                        <InputNumber
+                        <Input
+                          type="number"
                           size="large"
                           disabled
                           className="full-width-form-item"
@@ -545,7 +567,8 @@ const NetEmissionReduction = (props: any) => {
                             },
                           ]}
                         >
-                          <InputNumber
+                          <Input
+                            type="number"
                             className="full-width-form-item"
                             size="large"
                             onChange={(value) => {
@@ -574,7 +597,7 @@ const NetEmissionReduction = (props: any) => {
                             onClick={() => {
                               // reduceTotalCreditingYears()
                               remove(name);
-                              onPeriodChange(null, fields.length - 1);
+                              onPeriodChange();
                               calculateTotalEmissions(
                                 null,
                                 "projectEmissionReductions",
