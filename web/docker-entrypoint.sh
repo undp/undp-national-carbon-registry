@@ -56,7 +56,7 @@ else
 fi
 
 if [ -n "$VITE_APP_STAT_URL" ]; then
-  sed -i "s|http://localhost:3100|$VITE_APP_STAT_URL|g" /usr/share/nginx/html/assets.*.js
+  sed -i "s|http://localhost:3100|$VITE_APP_STAT_URL|g" /usr/share/nginx/html/assets/*.js
 else
   echo "VITE_APP_STAT_URL environment variable not found."
 fi
