@@ -232,8 +232,11 @@ export const AnnexureStep = (props: CustomStepsProps) => {
                       <TextArea rows={8} disabled={disableFields} />
                     </Form.Item>
 
+                    <div className="custom-label-monitoring">
+                      {t('monitoringReport:a_uploadDoc')}
+                    </div>
                     <Form.Item
-                      label={t("monitoringReport:a_uploadDoc")}
+                      //label={t('monitoringReport:a_uploadDoc')}
                       name="a_uploadDoc"
                       valuePropName="fileList"
                       getValueFromEvent={normFile}
@@ -256,7 +259,7 @@ export const AnnexureStep = (props: CustomStepsProps) => {
                         beforeUpload={(file: any) => {
                           return false;
                         }}
-                        className="design-upload-section"
+                        className="design-upload-section-monitoring"
                         name="design"
                         action="/upload.do"
                         listType="picture"

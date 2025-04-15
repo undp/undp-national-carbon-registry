@@ -211,6 +211,7 @@ const StepperComponent = (props: any) => {
       const docVersions =
         state?.documents?.[DocumentEnum.VALIDATION as any]?.version;
       const latestVersion = docVersions ? docVersions + 1 : 1;
+
       form1.setFieldsValue({
         titleOfTheProjectActivity: programmeData?.title,
         mandatarySectoralScopes:
@@ -236,12 +237,8 @@ const StepperComponent = (props: any) => {
                 ?.projectCreditingPeriodEndDate
             )
           : null,
-        locationOfProjectActivity:
-          pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]
-            ?.locationOfProjectActivity,
-        siteNo:
-          pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]
-            ?.siteNo,
+        locationOfProjectActivity: pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.locationOfProjectActivity,
+        siteNo: pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.siteNo,
         province:
           pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]
             ?.province,
@@ -269,15 +266,29 @@ const StepperComponent = (props: any) => {
             })),
       });
 
+      const netGHGEmissionReductions =
+        pddData?.data?.applicationOfMethodology?.netGHGEmissionReductions;
+      let totalNumberOfCreditingYears = 0;
+
+      netGHGEmissionReductions?.yearlyGHGEmissionReductions.forEach(
+        (emissionData: any) => {
+          const startDate = moment.unix(emissionData.startDate);
+          const endDate = moment.unix(emissionData.endDate);
+
+          const duration = moment.duration(endDate.diff(startDate));
+
+          totalNumberOfCreditingYears += Math.floor(duration.asMonths()) / 12;
+        }
+      );
       form2.setFieldsValue({
         estimatedNetEmissionReductions:
-          pddData?.data?.applicationOfMethodology?.netGHGEmissionReductions?.yearlyGHGEmissionReductions?.map(
+          netGHGEmissionReductions.yearlyGHGEmissionReductions?.map(
             (emissionData: any) => ({
               startDate: moment.unix(emissionData.startDate),
               endDate: moment.unix(emissionData.endDate),
             })
           ),
-        totalNumberOfCreditingYears: 1,
+        totalNumberOfCreditingYears: netGHGEmissionReductions?.totalNumberOfCredingYears,
         baselineEmissionReductions: 0,
         baselineEmissions:
           pddData?.data?.projectActivity?.locationsOfProjectActivity?.map(

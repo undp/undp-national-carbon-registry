@@ -1,6 +1,6 @@
-@use '../../Styles/colors.addProgramme.scss';
-@use '../../Styles/colors.role.scss' as colors2;
-@use '../../Styles/variables.scss';
+@use "../../Styles/colors.addProgramme.scss";
+@use "../../Styles/colors.role.scss" as colors2;
+@use "../../Styles/variables.scss";
 
 .to-lable {
   text-align: center;
@@ -50,7 +50,34 @@
   .form-section-title {
     margin-bottom: 20px;
     color: rgba(58, 53, 65, 0.5);
-    font-weight: 400;
+    font-weight: bolder;
+  }
+  .custom-label-monitoring {
+    color: rgba(58, 53, 65, 0.5);
+    margin-bottom: 10px;
+  }
+  .design-upload-section-monitoring {
+    display: block;
+    align-items: start;
+    width: 50%;
+
+    .icon-color {
+      color: variables.$primary-color !important;
+    }
+
+    .ant-upload-list {
+      max-height: 120px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+  }
+
+  .form-section-heading {
+    margin-bottom: 20px;
+    margin-top: 30px;
+    color: #3a3541cc !important;
+    font-weight: 600;
+    font-size: 16px;
   }
 
   .form-section {
@@ -79,13 +106,19 @@
   }
   .custom-label {
     .ant-form-item-label
-      > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+      > label.ant-form-item-required:not(
+        .ant-form-item-required-mark-optional
+      )::before {
       margin-bottom: 10px;
     }
   }
 
-  .ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input,
-  .ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input:hover {
+  .ant-input-status-error:not(.ant-input-disabled):not(
+      .ant-input-borderless
+    ).ant-input,
+  .ant-input-status-error:not(.ant-input-disabled):not(
+      .ant-input-borderless
+    ).ant-input:hover {
     border-color: #ff4d4f !important;
   }
 
