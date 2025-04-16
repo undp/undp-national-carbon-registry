@@ -78,33 +78,50 @@ export const PURPOSE_CREDIT_DEVELOPMENT: { [key: string]: string } = {
 };
 
 const INF_SECTOR: { [key: string]: string } = {
-  ENERGY: "Energy",
-  HEALTH: "Health",
-  EDUCATION: "Education",
-  TRANSPORT: "Transport",
-  MANUFACTURING: "Manufacturing",
-  HOSPITALITY: "Hospitality",
-  FORESTRY: "Forestry",
-  WASTE: "Waste",
+  ENERGY: 'Energy',
+  AGRICULTURE: 'Agriculture',
+  HEALTH: 'Health',
+  EDUCATION: 'Education',
+  TRANSPORT: 'Transport',
+  MANUFACTURING: 'Manufacturing',
+  HOSPITALITY: 'Hospitality',
+  FORESTRY: 'Forestry',
+  WASTE: 'Waste',
+  OTHER: 'Other',
 };
 
 export const INF_SECTORAL_SCOPE: { [key: string]: string } = {
-  ENERGY_INDUSTRIES: "Energy Industries (Renewable)",
-  ENERGY_DISTRIBUTION: "Energy Distribution",
-  ENERGY_DEMAND: "Energy Demand",
-  MANUFACTURING_INDUSTRIES: "Manufacturing Industries",
-  CHEMICAL_INDUSTRIES: "Chemical Industries",
-  CONSTRUCTION: "Construction",
-  TRANSPORT: "Transport",
-  MINING_MINERAL_PRODUCTION: "Mining/Mineral Production",
-  METAL_PRODUCTION: "Metal Production",
-  FUGITIVE_EMISSIONS_FUELS: "Fugitive Emissions from fuels",
+  ENERGY_INDUSTRIES: 'Energy Industries (Renewable – / Non-Renewable Sources) ',
+  ENERGY_DISTRIBUTION: 'Energy Distribution',
+  ENERGY_DEMAND: 'Energy Demand',
+  AGRICULTURE: 'Agriculture',
+  AFFORESTATION_AND_REFORESTATION: 'Afforestation and Reforestation',
+  MANUFACTURING_INDUSTRIES: 'Manufacturing Industries',
+  CHEMICAL_INDUSTRIES: 'Chemical Industries',
+  METAL_PRODUCTION: 'Metal Production',
+  TRANSPORT: 'Transport',
+  WASTE_FROM_FUELS: 'Fugitive Emissions from Fuels (Solid, Oil and Gas) ',
+  WASTE_HANDLING_AND_DISPOSAL: 'Waste Handling and Disposal',
+  CONSTRUCTION: 'Construction',
+  MINING_MINERAL_PRODUCTION: 'Mining/Mineral Production',
   FUGITIVE_EMISSIONS_PRODUCTION:
-    "Fugitive Emissions from Production and Consumption of Halocarbons and Sulphur Hexafluoride",
-  SOLVENT_USE: "Solvent Use",
-  WASTE_HANDLING_AND_DISPOSAL: "Waste Handling and Disposal",
-  AFFORESTATION_AND_REFORESTATION: "Afforestation and Reforestation",
-  AGRICULTURE: "Agriculture",
+    'Fugitive Emissions from Production and Consumption of Halocarbons and Sulphur Hexafluoride',
+  SOLVENT_USE: 'Solvent Use',
+};
+
+const SECTOR_TO_SCOPES_MAP: { [key: string]: string[] } = {
+  ENERGY: ['ENERGY_INDUSTRIES', 'ENERGY_DISTRIBUTION', 'ENERGY_DEMAND'],
+  AGRICULTURE: ['AGRICULTURE'],
+  FORESTRY: ['AFFORESTATION_AND_REFORESTATION'],
+  MANUFACTURING: ['MANUFACTURING_INDUSTRIES', 'CHEMICAL_INDUSTRIES', 'METAL_PRODUCTION'],
+  TRANSPORT: ['TRANSPORT'],
+  WASTE: ['WASTE_HANDLING_AND_DISPOSAL', 'WASTE_FROM_FUELS'],
+  OTHER: [
+    'CONSTRUCTION',
+    'MINING_MINERAL_PRODUCTION',
+    'FUGITIVE_EMISSIONS_PRODUCTION',
+    'SOLVENT_USE',
+  ],
 };
 
 export const ProgrammeCreationComponent = (props: any) => {
@@ -134,7 +151,7 @@ export const ProgrammeCreationComponent = (props: any) => {
   const [countries, setCountries] = useState<[]>([]);
   const [isCountryListLoading, setIsCountryListLoading] = useState(false);
   const [organizationsLoading, setOrganizationsLoading] = useState(false);
-
+  const [selectedSector, setSelectedSector] = useState<string>();
   const [formValues, setFormValues] = useState<any>(undefined);
   const [showDialog, setShowDialog] = useState<boolean>(false);
 
@@ -326,6 +343,11 @@ export const ProgrammeCreationComponent = (props: any) => {
     return e?.fileList;
   };
 
+  const hasValidScopes =
+    selectedSector &&
+    Array.isArray(SECTOR_TO_SCOPES_MAP[selectedSector]) &&
+    SECTOR_TO_SCOPES_MAP[selectedSector].length > 0;
+
   const t = translator.t;
 
   useEffect(() => {
@@ -394,6 +416,7 @@ export const ProgrammeCreationComponent = (props: any) => {
 
     const body: any = {
       title: values?.title,
+      sector: values?.sector,
       sectoralScope: values?.sectoralScope,
       province: values?.province || "test",
       district: values?.district || "test",
@@ -431,6 +454,7 @@ export const ProgrammeCreationComponent = (props: any) => {
           ...body,
         },
       };
+      console.log('-------------temp vals INF-----------', tempValues);
       const res = await post(API_PATHS.ADD_DOCUMENT, tempValues);
       if (res?.statusText === "SUCCESS") {
         message.open({
@@ -555,7 +579,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                 <Input size="large" disabled={disableFields} />
                               </Form.Item>
 
-                              {/* <Form.Item
+                              <Form.Item
                                 label={t('addProgramme:sector')}
                                 name="sector"
                                 rules={[
@@ -582,12 +606,22 @@ export const ProgrammeCreationComponent = (props: any) => {
                                 <Select
                                   size="large"
                                   placeholder={t('addProgramme:sectorPlaceholder')}
+                                  disabled={disableFields}
+                                  onChange={(value) => {
+                                    setSelectedSector(value);
+                                    const hasScopes = SECTOR_TO_SCOPES_MAP[value]?.length > 0;
+                                    form.setFieldsValue({
+                                      sectoralScope: hasScopes ? undefined : 'N/A',
+                                    });
+                                  }}
                                 >
                                   {Object.keys(INF_SECTOR).map((key) => (
-                                    <Select.Option value={key}>{INF_SECTOR[key]}</Select.Option>
+                                    <Select.Option key={key} value={key}>
+                                      {INF_SECTOR[key]}
+                                    </Select.Option>
                                   ))}
                                 </Select>
-                              </Form.Item> */}
+                              </Form.Item>
 
                               <Form.Item
                                 label={t("addProgramme:sectoralScope")}
@@ -617,14 +651,12 @@ export const ProgrammeCreationComponent = (props: any) => {
                               >
                                 <Select
                                   size="large"
-                                  placeholder={t(
-                                    "addProgramme:sectoralScopePlaceholder"
-                                  )}
-                                  disabled={disableFields}
+                                  placeholder={t('addProgramme:sectoralScopePlaceholder')}
+                                  disabled={disableFields || !hasValidScopes}
                                 >
-                                  {Object.keys(INF_SECTORAL_SCOPE).map(
+                                  {(hasValidScopes ? SECTOR_TO_SCOPES_MAP[selectedSector] : []).map(
                                     (key) => (
-                                      <Select.Option value={key}>
+                                      <Select.Option key={key} value={key}>
                                         {INF_SECTORAL_SCOPE[key]}
                                       </Select.Option>
                                     )
