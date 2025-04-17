@@ -146,5 +146,16 @@
   "SOLVENT_USE": "Solvent Use",
   "WASTE_HANDLING_AND_DISPOSAL": "Waste Handling and Disposal",
   "AFFORESTATION_AND_REFORESTATION": "Afforestation and Reforestation",
-  "AGRICULTURE": "Agriculture"
+  "AGRICULTURE": "Agriculture",
+  "ENERGY": "Energy",
+  "HEALTH": "Health",
+  "EDUCATION": "Education",
+  "MANUFACTURING": "Manufacturing",
+  "HOSPITALITY": "Hospitality",
+  "FORESTRY": "Forestry",
+  "WASTE": "Waste",
+  "OTHER": "Other",
+  "authorizationId": "AUTHORIZATION ID",
+  "projectCreatedDate": "PROJECT CREATED DATE & TIME",
+  "na": "N/A"
 }

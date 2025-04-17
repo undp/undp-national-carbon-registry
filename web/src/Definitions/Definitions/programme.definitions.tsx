@@ -279,6 +279,7 @@ export interface Programme {
 export interface ProgrammeSl {
   programmeId: string;
   tokenId: string;
+  authorizationId: string;
   externalId: string;
   serialNo: string;
   title: string;
@@ -413,9 +414,11 @@ export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystem
     title: programme.title,
     // tokenId: programme.tokenId,
     registrationSerialNo: programme.serialNo,
+    authorizationId: programme.authorizationId,
     projectProposalStage: programme.projectProposalStage,
     // projectStatus: programme.projectStatus,
     // projectCategory: getProjectCategory[programme.projectCategory],
+    sector: programme.sector,
     sectoralScope: programme.sectoralScope,
     projectGeography: programme.projectGeography,
     startDate: DateTime.fromSeconds(Number(programme.startDate)),
