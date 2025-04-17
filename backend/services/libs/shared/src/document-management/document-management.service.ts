@@ -45,6 +45,7 @@ import { Role } from "../casl/role.enum";
 import { BasicResponseDto } from "../dto/basic.response.dto";
 import { PositiveIntegerValidationDto } from "../dto/positive.integer.validation.dto";
 import { ActivityVintageCreditsArrayDto } from "../dto/activty.vintage.credits.array.dto";
+import { SECTOR_TO_SCOPES_MAP } from "../constants/inf.sector.sectoralScope.mapping.const";
 
 @Injectable()
 export class DocumentManagementService {
@@ -150,7 +151,20 @@ export class DocumentManagementService {
           );
           const errors = await validate(projectCreateDto);
           if (errors.length > 0) {
-            throw new HttpException(errors, HttpStatus.BAD_REQUEST);
+            throw new HttpException(errors.toString(), HttpStatus.BAD_REQUEST);
+          }
+          if (
+            !SECTOR_TO_SCOPES_MAP[projectCreateDto.sector].includes(
+              projectCreateDto.sectoralScope
+            )
+          ) {
+            throw new HttpException(
+              this.helperService.formatReqMessagesString(
+                "project.invalidSectoralScopeForSector",
+                []
+              ),
+              HttpStatus.BAD_REQUEST
+            );
           }
 
           for (const certifierId of projectCreateDto.independentCertifiers) {
@@ -630,7 +644,6 @@ export class DocumentManagementService {
           pddData.appendix[docField.field] &&
           pddData.appendix[docField.field].length > 0
         ) {
-          console.log(pddData.appendix[docField.field]);
           const docUrls = await this.uploadDocuments(
             docField.type,
             projectRefId,
@@ -1771,7 +1784,6 @@ export class DocumentManagementService {
             vintageCreditArray: creditVerified,
           })
         );
-        console.log(creditVerified, errors);
         if (creditVerified.length <= 0 || errors.length > 0) {
           throw new HttpException(
             this.helperService.formatReqMessagesString(

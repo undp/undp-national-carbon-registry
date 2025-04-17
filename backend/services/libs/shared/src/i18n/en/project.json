@@ -40,5 +40,6 @@
   "monitoringRejected": "Monitoring Report certification was declined.",
   "verificationSubmitted": "Verification Report is submitted successfully",
   "verificationApproved": "Verfication Report is approved successfully",
-  "verificationRejected": "Verfication Report is rejected "
+  "verificationRejected": "Verfication Report is rejected ",
+  "invalidSectoralScopeForSector": "Invalid sectoral scope for the sector"
 }
