@@ -1,4 +1,4 @@
-## 📄 Description – Côte d'Ivoire National Carbon Credit Registry Côte d'Ivoire Template of National Carbon Credit Registry
+## 📄 Description – Côte d'Ivoire National Carbon Credit Registry Template
 
 This repository contains the **template source code** for the **National Carbon Credit Registry** developed for the Republic of Côte d’Ivoire. It is based on the **🧩 open-source reference implementation by UNDP**, recognized as a **Digital Public Good (DPG)**.
 
@@ -58,7 +58,7 @@ Optional components include:
 
 **📐 Architecture diagram:**
 
-> ![](D:\COTE IVOIRE CARBONE REGISTRY\ReadMe\Carbon Registry Architecture-System Architecture.drawio.png)
+> ![System Architecture Diagram](https://github.com/undp/undp-carbon-registry/blob/C%C3%B4te-d-Ivoire/registry_website/Carbon%20Registry%20Architecture-System%20Architecture.drawio.svg?raw=true)
 
 ------
 
@@ -66,22 +66,9 @@ Optional components include:
 
 - **Node.js** (v16 or higher)
 - **PostgreSQL** (v12 or higher)
-- **Docker & Docker Compose** *(optional but recommended for development/testing)*
+- **Mongo DB** 
+- **Docker & Docker Compose**
 - **Git** (for cloning the repository)
-
-------
-
-## 📦 Installation
-
-### 🏗️ Architecture Overview
-
-This project is based on the **official open-source template of the UNDP National Carbon Credit Registry**, adapted for the **Côte d’Ivoire implementation**.
-
-It follows a **modular architecture** with clearly separated components:
-
-- A **central backend** managing credits, projects, and validation workflows
-- A **web frontend interface** for all stakeholders (Developers, Certifiers, Carbon Market Bureau)
-- Additional services such as **electronic signature**, **geospatial overlap detection**, and **shared logic libraries**
 
 ------
 
@@ -631,7 +618,7 @@ Before deploying the National Carbon Registry template, ensure your system meets
 
 ------
 
-## 👥 4. Authors and Acknowledgments
+## 👥 Authors and Acknowledgments
 
 ### 🧑‍💻 Main Contributors
 
@@ -672,6 +659,7 @@ This project was developed and customized as part of the **Côte d’Ivoire Nati
 - **Dominique Mieguim Ngninpogni**
   *Digital Specialist, Climate & Environment*
   **UNDP**
+  
   **Skyvision Africa Team**
   Custom integration, backend development, system deployment
   🌐 [https://skyvisionafrica.com](https://skyvisionafrica.com/)
