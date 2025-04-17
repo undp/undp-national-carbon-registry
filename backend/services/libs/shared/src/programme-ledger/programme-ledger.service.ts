@@ -412,6 +412,12 @@ export class ProgrammeLedgerService {
             uPayload["letterOfAuthorizationUrl"] =
               data?.letterOfAuthorizationUrl;
             uPayload["creditEst"] = data?.creditEst;
+            uPayload["projectAuthorizationTime"] = project.txTime;
+            uPayload["authorizationId"] =
+              this.serialNumberManagementService.getAuthorizationId(
+                refId,
+                project.txTime
+              );
             expectedCurrentProposalStages = [
               ProjectProposalStage.VALIDATION_REPORT_SUBMITTED,
             ];

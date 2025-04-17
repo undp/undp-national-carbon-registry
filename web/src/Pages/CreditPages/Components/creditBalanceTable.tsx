@@ -279,13 +279,13 @@ export const CreditBalanceTableComponent = (props: any) => {
               return (
                 <Tag
                   color={getIssuedReceivedTagColor(
-                    record?.eventType === CreditEventTypeEnum.ISSUED
+                    capitalize(record?.eventType) === CreditEventTypeEnum.ISSUED
                       ? IssuedOrReceivedOptions.ISSUED
                       : IssuedOrReceivedOptions.RECEIVED
                   )}
                 >
                   {t(
-                    record?.eventType === CreditEventTypeEnum.ISSUED
+                    capitalize(record?.eventType) === CreditEventTypeEnum.ISSUED
                       ? IssuedOrReceivedOptions.ISSUED
                       : IssuedOrReceivedOptions.RECEIVED
                   )}

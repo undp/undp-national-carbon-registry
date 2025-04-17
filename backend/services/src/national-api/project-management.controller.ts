@@ -19,8 +19,6 @@ import {
   Query,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { plainToInstance } from "class-transformer";
-import { validate } from "class-validator";
 
 @ApiTags("ProjectManagement")
 @ApiBearerAuth()
