@@ -568,8 +568,6 @@ pm2 start app.js --name sign-plateform
 
 Your **Signature & Document Platform** is now active and ready to process carbon project validations.
 
-Parfait, voici une section prête à intégrer dans ton `README.md` qui explique clairement le rôle des dossiers `carbon_service_lib` et `carbon-library-main`, leur lien avec `carbon-registry-main`, et leur origine dans l’architecture du registre carbone du PNUD.
-
 ------
 
 ## 🧩 Custom Shared Libraries
