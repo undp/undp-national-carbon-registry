@@ -9,6 +9,7 @@ import { ActivityEntity } from "../entities/activity.entity";
       p."refId", 
       p."title", 
       p."serialNumber" as "serialNo",
+      p."authorizationId",
       p."projectProposalStage", 
       p."creditEst",
       p."creditBalance",
@@ -37,6 +38,9 @@ export class ProjectDetailsViewEntity {
 
   @ViewColumn()
   serialNo: string;
+
+  @ViewColumn()
+  authorizationId: string;
 
   @ViewColumn()
   projectProposalStage: string;
