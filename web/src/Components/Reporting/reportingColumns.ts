@@ -3,13 +3,13 @@ export const getActionsReportColumns = (t: any) => [
     title: t("reporting:recordId"),
     dataIndex: "recordId",
     key: "recordId",
-    // width: 200,
+    width: 800, 
   },
   {
     title: t("reporting:cooperativeApproach"),
     dataIndex: "cooperativeApproach",
     key: "cooperativeApproach",
-    // width: 200,
+    width: 200,
   },
   {
     title: t("reporting:itmo"),

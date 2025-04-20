@@ -1,7 +1,8 @@
-@use '../../Styles/variables.scss';
-@use '../../Styles/colors.addProgramme.scss' as colors;
+@use "../../Styles/variables.scss";
+@use "../../Styles/colors.addProgramme.scss" as colors;
+@use "sass:color";
 
-.reporting-form-container {
+.reporting-container {
   display: flex;
   flex-direction: column;
   border-radius: 5px;
@@ -25,7 +26,89 @@
 
     .report-type-selector {
       width: 100%;
+
+      .ant-select-selector {
+        padding: 10px;
+
+        .ant-select-selection-item {
+          background-color: color.scale(
+            $color: variables.$primary-color,
+            $lightness: 85%
+          );
+
+          color: color.scale($color: variables.$primary-color, $lightness: 10%);
+          padding: 0px 16px;
+          border-radius: 6px;
+          border-width: 0px;
+          margin: 0px 6px;
+
+          .anticon {
+            color: color.scale(variables.$primary-color, $lightness: 10%);
+          }
+        }
+      }
     }
-    
+  }
+}
+
+.report-card {
+  background-color: white;
+  border-width: 0px;
+  border-radius: 10px;
+  margin: 15px 0;
+  padding: 10px 20px;
+
+  .title {
+    color: #3a3541cc;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .header-row {
+    margin: 16px 0px;
+  }
+  .export-btns {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    .btn {
+      padding: 0px 40px;
+      .icon {
+        margin-left: 10px;
+      }
+    }
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .table {
+    margin-top: 32px;
+    font-size: 14px;
+    font-weight: 600;
+
+    .ant-table-fixed {
+      table-layout: fixed;
+    }
+
+    .ant-table-tbody > tr > td {
+      word-wrap: break-word;
+      word-break: break-all;
+    }
+  }
+}
+
+.no-reports {
+  background-color: white;
+  border-width: 0px;
+  border-radius: 10px;
+  margin: 15px 0;
+  padding: 60px 20px;
+
+  .description {
+    color: #3a3541cc;
   }
 }
