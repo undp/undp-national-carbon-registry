@@ -401,11 +401,6 @@ const NetEmissionReduction = (props: any) => {
                                 return Promise.resolve();
                               }
 
-                              console.log(
-                                "-------value--------",
-                                value,
-                                Number(value) % 1 !== 0
-                              );
                               // eslint-disable-next-line no-restricted-globals
                               // if (Number(value) % 1 !== 0) {
                               //   return Promise.reject(
