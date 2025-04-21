@@ -28,6 +28,7 @@ import { SerialNumberManagementModule } from "./serial-number-management/serial-
 import { CreditBlocksManagementModule } from "./credit-blocks-management/credit-blocks-management.module";
 import { AnalyticsModule } from "./analytics/analytics.module";
 import { CreditTransactionsManagementModule } from "./credit-transactions-management/credit-transactions-management.module";
+import { AefReportManagementModule } from "./aef-report-management/aef-report-management.module";
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { CreditTransactionsManagementModule } from "./credit-transactions-manage
     CreditBlocksManagementModule,
     AnalyticsModule,
     CreditTransactionsManagementModule,
+    AefReportManagementModule,
   ],
   providers: [SharedService],
   exports: [
@@ -91,6 +93,7 @@ import { CreditTransactionsManagementModule } from "./credit-transactions-manage
     CreditBlocksManagementModule,
     AnalyticsModule,
     CreditTransactionsManagementModule,
+    AefReportManagementModule,
   ],
 })
 export class SharedModule {}

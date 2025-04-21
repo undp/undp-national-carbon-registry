@@ -136,4 +136,22 @@ export default () => ({
     firstTransferringPartyId: process.env.FIRST_TRANSFERRING_PARTY_ID || "XX",
     seperator: process.env.SERIAL_NUMBER_SEPERATOR || "-",
   },
+  AEF: {
+    artical6RecordId: process.env.NOT_APPLICABLE_LABEL || "NA",
+    cooperativeApproach: process.env.COOPERATIVE_APPROACH || "Article 6.2",
+    firstUniqueIdentifier: process.env.NOT_APPLICABLE_LABEL || "NA",
+    lastUniqueIdentifier: process.env.NOT_APPLICABLE_LABEL || "NA",
+    metric: process.env.EMISSION_METRIC || "tCO2",
+    quantityInMetric: process.env.NOT_APPLICABLE_LABEL || "NA",
+    conversionFactor: process.env.NOT_APPLICABLE_LABEL || "NA",
+    firstTransferingParty: process.env.systemCountryCode || "NG",
+    purposeForAuthorization: process.env.ACTION_TYPE_LABEL_LABEL || "NDC",
+    OIMP: process.env.NOT_APPLICABLE_LABEL || "NA",
+    firstTransferDefinition:
+      process.env.FIRST_TRANSFER_DEFINITION || "Authorization",
+    transferingParty: process.env.systemCountryCode || "NG",
+    defaultAquiringParty: process.env.systemCountryCode || "NG",
+    purposeForCancellation: process.env.ACTION_TYPE_LABEL_LABEL || "NDC",
+    actionBy: process.env.NOT_APPLICABLE_LABEL || "NA",
+  },
 });
