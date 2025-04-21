@@ -56,6 +56,7 @@ import ProgrammeManagement from "./Pages/ProgrammeManagement/programmeManagement
 import { CreditBalancePage } from "./Pages/CreditPages/creditBalancePage";
 import { CreditTransfersPage } from "./Pages/CreditPages/creditTransfersPage";
 import { CreditRetirementsPage } from "./Pages/CreditPages/creditRetirementsPage";
+import Reports from "./Pages/Reports/Reports";
 
 const App = () => {
   const { t } = useTranslation(["common"]);
@@ -273,6 +274,14 @@ const App = () => {
                     }
                   >
                     <Route path="view" element={<UserProfile />} />
+                  </Route>
+                  <Route
+                    path="/reports"
+                    element={
+                      <CustomLayout selectedKey="reports" />
+                    }
+                  >
+                    <Route path="" element={<Reports />} />
                   </Route>
                   <Route
                     path="/companyProfile"

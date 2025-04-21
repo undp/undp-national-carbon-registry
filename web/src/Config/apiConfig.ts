@@ -61,7 +61,7 @@ export const API_PATHS = {
   REGIONS: "national/organisation/regions",
   ORGANIZATION_BY_TYPE: "national/organisation/byType",
   ORGANIZATION_DETAILS: "national/organisation/query",
-  UPDATE_ORGANIZATION: "organisation/update",
+  UPDATE_ORGANIZATION: "national/organisation/update",
   ORGANIZATION_NAMES: "national/organisation/queryNames",
   DOWNLOAD_ORGANIZATION_DATA: "national/organisation/download",
   ORGANIZATION_PROFILE_DETAILS: (companyId: string) =>
@@ -72,9 +72,9 @@ export const API_PATHS = {
   ORG_REJECT: (companyId: string) =>
     `national/organisation/reject?id=${companyId}`,
   ORG_SUSPEND: (companyId: string) =>
-    `national/organisation/suspend?id=${companyId}`, // suspend 
+    `national/organisation/suspend?id=${companyId}`, // suspend
   ORG_REACTIVATE: (companyId: string) =>
-    `national/organisation/reactive?id=${companyId}`,  // reactive
+    `national/organisation/activate?id=${companyId}`, // reactive
   //CARBON_NEUTRAL
   ISSURE_CARBON_NEUTRAL_CERTIFICATE:
     "national/programmeSl/issueCarbonNeutralCertificate",
