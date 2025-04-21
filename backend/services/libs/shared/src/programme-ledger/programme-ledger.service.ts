@@ -338,6 +338,7 @@ export class ProgrammeLedgerService {
         const prvTxTime = project.txTime;
         project.txTime = new Date().getTime();
         project.txType = txType;
+        project.txRef = txRef;
         let updateMap = {};
         let updateWhereMap = {};
         let insertMap = {};
@@ -346,7 +347,7 @@ export class ProgrammeLedgerService {
         let uPayload = {
           txTime: project.txTime,
           txType: project.txType,
-          txRef: txRef,
+          txRef: project.txRef,
           updateTime: project.txTime,
         };
         let expectedCurrentProposalStages = [project.projectProposalStage];

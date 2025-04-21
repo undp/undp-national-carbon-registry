@@ -40,6 +40,9 @@
   "monitoringRejected": "Monitoring Report certification was declined.",
   "verificationSubmitted": "Verification Report is submitted successfully",
   "verificationApproved": "Verfication Report is approved successfully",
-  "verificationRejected": "Verfication Report is rejected ",
+  "verificationRejected": "Verfication Report is rejected",
+  "greaterThanRemainingEstimatedCredits": "Activity credits are greater than remaining estimated credits",
+  "invlaidCreditVerifed": "Credit amounts to verify are invalid",
+  "greaterThanCurrentVintage": "Activity vintage is greater than current vintage",
   "invalidSectoralScopeForSector": "Invalid sectoral scope for the sector"
 }
