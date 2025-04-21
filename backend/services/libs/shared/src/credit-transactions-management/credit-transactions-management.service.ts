@@ -29,6 +29,7 @@ import { ProjectAuditLogType } from "../enum/project.audit.log.type.enum";
 import { DataResponseDto } from "../dto/data.response.dto";
 import { DataResponseMessageDto } from "../dto/data.response.message";
 import { BasicResponseDto } from "../dto/basic.response.dto";
+import { AefReportManagementService } from "../aef-report-management/aef-report-management.service";
 
 @Injectable()
 export class CreditTransactionsManagementService {
@@ -47,7 +48,8 @@ export class CreditTransactionsManagementService {
     @InjectRepository(CreditBlockTransfersViewEntity)
     private creditBlockTransfersViewEntityRepository: Repository<CreditBlockTransfersViewEntity>,
     @InjectRepository(CreditBlockRetirementsViewEntity)
-    private creditBlockRetirementsViewEntityRepository: Repository<CreditBlockRetirementsViewEntity>
+    private creditBlockRetirementsViewEntityRepository: Repository<CreditBlockRetirementsViewEntity>,
+    private readonly aefReportManagementService: AefReportManagementService
   ) {}
 
   public async transferCredits(
@@ -440,6 +442,7 @@ export class CreditTransactionsManagementService {
         updatedTranferRecord
       );
     }
+    await this.aefReportManagementService.handleAefRecord(creditBlock, em);
   }
 
   public async queryCreditBalances(
