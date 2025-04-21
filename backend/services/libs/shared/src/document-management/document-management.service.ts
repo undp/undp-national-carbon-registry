@@ -273,7 +273,7 @@ export class DocumentManagementService {
           };
           await this.createPDD(newDoc.content, projectRefId);
           const doc = await this.documentRepository.save(newDoc); //not a good method to handle this, ledger table can be used to gerantee the consistency
-          const response = await this.updateProposalStage(
+          const updatedProgramme = await this.updateProposalStage(
             updateProjectProposalStage,
             user,
             this.getDocumentTxRef(
@@ -291,7 +291,7 @@ export class DocumentManagementService {
             null,
             project.refId
           );
-          break;
+          return new DataResponseDto(HttpStatus.OK, updatedProgramme);
         }
         case DocumentTypeEnum.VALIDATION: {
           if (
@@ -360,7 +360,7 @@ export class DocumentManagementService {
 
           const documentResponse = await this.documentRepository.save(newDoc); //not a good method to handle this, ledger table can be used to gerantee the consistency
 
-          await this.updateProposalStage(
+          const updatedProgramme = await this.updateProposalStage(
             updateProjectProposalStage,
             user,
             this.getDocumentTxRef(
@@ -393,8 +393,7 @@ export class DocumentManagementService {
             },
             addDocumentDto.projectRefId
           );
-
-          break;
+          return new DataResponseDto(HttpStatus.OK, updatedProgramme);
         }
         case DocumentTypeEnum.MONITORING: {
           if (user.companyId != project.companyId) {
@@ -524,7 +523,7 @@ export class DocumentManagementService {
             );
           }
           await this.createMonitoringReport(newDoc.content, projectRefId);
-
+          let savedDoc: DocumentEntity;
           await this.entityManager
             .transaction(async (em) => {
               let documentVersion;
@@ -564,7 +563,7 @@ export class DocumentManagementService {
               }
               newDoc.version = documentVersion;
               newDoc.activityId = activityId;
-              const doc = await this.documentRepository.save(newDoc);
+              savedDoc = await this.documentRepository.save(newDoc);
               await this.logProjectStage(
                 project.refId,
                 ProjectAuditLogType.MONITORING_REPORT_SUBMITTED,
@@ -583,7 +582,7 @@ export class DocumentManagementService {
             null,
             project.refId
           );
-          break;
+          return new DataResponseDto(HttpStatus.OK, savedDoc);
         }
         case DocumentTypeEnum.VERIFICATION: {
           if (
@@ -733,7 +732,7 @@ export class DocumentManagementService {
             );
           }
           await this.createVerificationReport(newDoc.content, projectRefId);
-
+          let savedDoc: DocumentEntity;
           await this.entityManager
             .transaction(async (em) => {
               let documentVersion;
@@ -754,7 +753,7 @@ export class DocumentManagementService {
 
               newDoc.version = documentVersion;
               newDoc.activityId = activityId;
-              const doc = await this.documentRepository.save(newDoc);
+              savedDoc = await this.documentRepository.save(newDoc);
               await this.logProjectStage(
                 project.refId,
                 ProjectAuditLogType.VERIFICATION_REPORT_SUBMITTED,
@@ -782,6 +781,7 @@ export class DocumentManagementService {
             { icOrganisationName: ICCompany.name },
             project.refId
           );
+          return new DataResponseDto(HttpStatus.OK, savedDoc);
         }
       }
     } catch (error) {
