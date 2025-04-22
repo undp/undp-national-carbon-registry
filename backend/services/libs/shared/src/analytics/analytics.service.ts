@@ -67,10 +67,7 @@ export class AnalyticsService {
       .createQueryBuilder("project")
       .select("COUNT(project.refId)", "totalProjects")
       .addSelect("COALESCE(SUM(project.creditIssued), 0)", "totalCreditsIssued")
-      .addSelect(
-        "COALESCE(SUM(project.creditRetired), 0)",
-        "totalCreditsRetired"
-      )
+      .addSelect("COALESCE(SUM(project.creditRetired), 0)", "totalCreditsRetired")
       .getRawOne();
 
     return {
@@ -129,14 +126,10 @@ export class AnalyticsService {
     if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       projectQueryOptions.where.companyId = user.companyId;
     } else if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
-      projectQueryOptions.where.independentCertifiers = ArrayContains([
-        user.companyId,
-      ]);
+      projectQueryOptions.where.independentCertifiers = ArrayContains([user.companyId]);
     }
 
-    const projectResults = await this.projectRepository.find(
-      projectQueryOptions
-    );
+    const projectResults = await this.projectRepository.find(projectQueryOptions);
 
     const activityResults = await this.activityRepo.find({
       where: {
@@ -144,9 +137,7 @@ export class AnalyticsService {
       },
     });
 
-    const projectIds = [
-      ...new Set(activityResults.map((activity) => activity.projectRefId)),
-    ];
+    const projectIds = [...new Set(activityResults.map((activity) => activity.projectRefId))];
 
     const projectsFromActivitiesQuery: any = {
       where: {
@@ -157,14 +148,10 @@ export class AnalyticsService {
     if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
       projectsFromActivitiesQuery.where.companyId = user.companyId;
     } else if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
-      projectsFromActivitiesQuery.where.independentCertifiers = ArrayContains([
-        user.companyId,
-      ]);
+      projectsFromActivitiesQuery.where.independentCertifiers = ArrayContains([user.companyId]);
     }
 
-    const projectsFromActivities = await this.projectRepository.find(
-      projectsFromActivitiesQuery
-    );
+    const projectsFromActivities = await this.projectRepository.find(projectsFromActivitiesQuery);
 
     const activityMap = new Map();
     activityResults.forEach((activity: ActivityEntity) => {
@@ -224,10 +211,7 @@ export class AnalyticsService {
     return result;
   }
 
-  async getProjectStatusSummary(
-    filters: ProjectDataRequestDTO,
-    user: User
-  ): Promise<any> {
+  async getProjectStatusSummary(filters: ProjectDataRequestDTO, user: User): Promise<any> {
     const pendingStatuses = [
       ProjectAuditLogType.PENDING,
       ProjectAuditLogType.APPROVED,
@@ -438,6 +422,73 @@ export class AnalyticsService {
         'latest."projectId" = audit.refId AND latest."latestTime" = audit.createdTime'
       )
       .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
+      .select("project.sector", "sector")
+      .addSelect("COUNT(DISTINCT project.refId)", "count")
+      .groupBy("project.sector");
+
+    if (filters?.startDate) {
+      qb.andWhere("audit.createdTime >= :startDate", {
+        startDate: filters.startDate,
+      });
+    }
+
+    if (filters?.endDate) {
+      qb.andWhere("audit.createdTime <= :endDate", {
+        endDate: filters.endDate,
+      });
+    }
+
+    if (filters?.sector) {
+      qb.andWhere("project.sector = :sector", {
+        sector: filters.sector,
+      });
+    }
+
+    if (filters?.isMine) {
+      if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
+        qb.andWhere("project.companyId = :orgId", {
+          orgId: user.companyId,
+        });
+      } else if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
+        qb.andWhere(":orgId = ANY(project.independentCertifiers)", {
+          orgId: user.companyId,
+        });
+      }
+    }
+
+    const result = await qb.getRawMany();
+
+    const response: Record<string, number> = {};
+    for (const sectorKey in ProjectSectorEnum) {
+      const sectorName = ProjectSectorEnum[sectorKey];
+      response[sectorName] = 0;
+    }
+
+    for (const row of result) {
+      const sector = row.sector ?? "Unknown";
+      response[ProjectSectorEnum[sector]] = parseInt(row.count, 10);
+    }
+
+    return response;
+  }
+  async getProjectCountBySectorScope(
+    filters: ProjectDataRequestDTO,
+    user: User
+  ): Promise<Record<string, number>> {
+    const subQuery = this.auditRepository
+      .createQueryBuilder("sub_audit")
+      .select("sub_audit.refId", "projectId")
+      .addSelect("MAX(sub_audit.createdTime)", "latestTime")
+      .groupBy("sub_audit.refId");
+
+    const qb = this.auditRepository
+      .createQueryBuilder("audit")
+      .innerJoin(
+        `(${subQuery.getQuery()})`,
+        "latest",
+        'latest."projectId" = audit.refId AND latest."latestTime" = audit.createdTime'
+      )
+      .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
       .select("project.sectoralScope", "sector")
       .addSelect("COUNT(DISTINCT project.refId)", "count")
       .groupBy("project.sectoralScope");
@@ -488,25 +539,17 @@ export class AnalyticsService {
     return response;
   }
 
-  async getCreditSummary(
-    filters: ProjectDataRequestDTO,
-    user: User
-  ): Promise<any> {
+  async getCreditSummary(filters: ProjectDataRequestDTO, user: User): Promise<any> {
     const orgId = user.companyId;
 
     const baseQb = this.auditRepository
       .createQueryBuilder("audit")
       .innerJoin(ProjectEntity, "project", "project.refId = audit.refId");
 
-    const buildAmountAndTime = (
-      logType: string,
-      direction: "toCompanyId" | "fromCompanyId"
-    ) => {
+    const buildAmountAndTime = (logType: string, direction: "toCompanyId" | "fromCompanyId") => {
       const amountSub = this.auditRepository
         .createQueryBuilder("inner_audit")
-        .select(
-          `COALESCE(SUM(CAST(inner_audit."data"->>'amount' AS INTEGER)), 0)`
-        )
+        .select(`COALESCE(SUM(CAST(inner_audit."data"->>'amount' AS INTEGER)), 0)`)
         .where(`inner_audit."logType" = '${logType}'`);
 
       const timeSub = this.auditRepository
@@ -515,31 +558,32 @@ export class AnalyticsService {
         .where(`inner_audit."logType" = '${logType}'`);
 
       if (filters?.isMine) {
-        amountSub.andWhere(
-          `(inner_audit."data"->>'${direction}')::int = ${orgId}`
-        );
-        timeSub.andWhere(
-          `(inner_audit."data"->>'${direction}')::int = ${orgId}`
-        );
+        amountSub.andWhere(`(inner_audit."data"->>'${direction}')::int = ${orgId}`);
+        timeSub.andWhere(`(inner_audit."data"->>'${direction}')::int = ${orgId}`);
       }
 
       return { amountSub, timeSub };
     };
 
-    const { amountSub: authorisedAmountSub, timeSub: lastAuthorisedTimeSub } =
-      buildAmountAndTime(ProjectAuditLogType.CREDITS_AUTHORISED, "toCompanyId");
+    const { amountSub: authorisedAmountSub, timeSub: lastAuthorisedTimeSub } = buildAmountAndTime(
+      ProjectAuditLogType.CREDITS_AUTHORISED,
+      "toCompanyId"
+    );
 
-    const { amountSub: issuedAmountSub, timeSub: lastIssuedTimeSub } =
-      buildAmountAndTime(ProjectAuditLogType.CREDIT_ISSUED, "toCompanyId");
+    const { amountSub: issuedAmountSub, timeSub: lastIssuedTimeSub } = buildAmountAndTime(
+      ProjectAuditLogType.CREDIT_ISSUED,
+      "toCompanyId"
+    );
 
-    const { amountSub: transferredAmountSub, timeSub: lastTransferredTimeSub } =
-      buildAmountAndTime(
-        ProjectAuditLogType.CREDIT_TRANSFERED,
-        "fromCompanyId"
-      );
+    const { amountSub: transferredAmountSub, timeSub: lastTransferredTimeSub } = buildAmountAndTime(
+      ProjectAuditLogType.CREDIT_TRANSFERED,
+      "fromCompanyId"
+    );
 
-    const { amountSub: retiredAmountSub, timeSub: lastRetiredTimeSub } =
-      buildAmountAndTime(ProjectAuditLogType.RETIRE_APPROVED, "fromCompanyId");
+    const { amountSub: retiredAmountSub, timeSub: lastRetiredTimeSub } = buildAmountAndTime(
+      ProjectAuditLogType.RETIRE_APPROVED,
+      "fromCompanyId"
+    );
 
     baseQb
       .select(`(${authorisedAmountSub.getQuery()})`, "authorisedAmount")
@@ -547,10 +591,7 @@ export class AnalyticsService {
       .addSelect(`(${issuedAmountSub.getQuery()})`, "issuedAmount")
       .addSelect(`(${lastIssuedTimeSub.getQuery()})`, "lastIssuedTime")
       .addSelect(`(${transferredAmountSub.getQuery()})`, "transferredAmount")
-      .addSelect(
-        `(${lastTransferredTimeSub.getQuery()})`,
-        "lastTransferredTime"
-      )
+      .addSelect(`(${lastTransferredTimeSub.getQuery()})`, "lastTransferredTime")
       .addSelect(`(${retiredAmountSub.getQuery()})`, "retiredAmount")
       .addSelect(`(${lastRetiredTimeSub.getQuery()})`, "lastRetiredTime");
 
@@ -586,24 +627,16 @@ export class AnalyticsService {
 
     return {
       authorisedAmount: parseInt(result.authorisedAmount, 10),
-      lastAuthorisedTime: result.lastAuthorisedTime
-        ? Number(result.lastAuthorisedTime)
-        : null,
+      lastAuthorisedTime: result.lastAuthorisedTime ? Number(result.lastAuthorisedTime) : null,
 
       issuedAmount: parseInt(result.issuedAmount, 10),
-      lastIssuedTime: result.lastIssuedTime
-        ? Number(result.lastIssuedTime)
-        : null,
+      lastIssuedTime: result.lastIssuedTime ? Number(result.lastIssuedTime) : null,
 
       transferredAmount: parseInt(result.transferredAmount, 10),
-      lastTransferredTime: result.lastTransferredTime
-        ? Number(result.lastTransferredTime)
-        : null,
+      lastTransferredTime: result.lastTransferredTime ? Number(result.lastTransferredTime) : null,
 
       retiredAmount: parseInt(result.retiredAmount, 10),
-      lastRetiredTime: result.lastRetiredTime
-        ? Number(result.lastRetiredTime)
-        : null,
+      lastRetiredTime: result.lastRetiredTime ? Number(result.lastRetiredTime) : null,
     };
   }
 
@@ -612,10 +645,7 @@ export class AnalyticsService {
 
     const qb = this.auditRepository
       .createQueryBuilder("audit")
-      .select(
-        `to_char(to_timestamp(audit."createdTime" / 1000), 'YYYY-MM-DD')`,
-        "date"
-      )
+      .select(`to_char(to_timestamp(audit."createdTime" / 1000), 'YYYY-MM-DD')`, "date")
       .addSelect('audit."logType"', "logType")
       .addSelect(`SUM(CAST(audit."data"->>'amount' AS INTEGER))`, "totalAmount")
       .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
