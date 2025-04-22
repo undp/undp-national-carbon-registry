@@ -16,9 +16,10 @@ import {
 import { ProjectDataRequestDTO } from "../dto/project-data-request.dto";
 import { AuditEntity } from "../entities/audit.entity";
 import { ProjectAuditLogType } from "../enum/project.audit.log.type.enum";
-import { ProjectSectorEnum } from "../enum/project.sector.enum";
 import { User } from "../entities/user.entity";
 import { ActivityEntity } from "../entities/activity.entity";
+import { InfSectoralScopeEnum } from "../enum/inf.sectoral.scope.enum";
+import { InfSectorEnum } from "../enum/inf.sector.enum";
 
 @Injectable()
 export class AnalyticsService {
@@ -459,14 +460,14 @@ export class AnalyticsService {
     const result = await qb.getRawMany();
 
     const response: Record<string, number> = {};
-    for (const sectorKey in ProjectSectorEnum) {
-      const sectorName = ProjectSectorEnum[sectorKey];
+    for (const sectorKey in InfSectorEnum) {
+      const sectorName = InfSectorEnum[sectorKey];
       response[sectorName] = 0;
     }
 
     for (const row of result) {
       const sector = row.sector ?? "Unknown";
-      response[ProjectSectorEnum[sector]] = parseInt(row.count, 10);
+      response[InfSectorEnum[sector]] = parseInt(row.count, 10);
     }
 
     return response;
@@ -526,14 +527,14 @@ export class AnalyticsService {
     const result = await qb.getRawMany();
 
     const response: Record<string, number> = {};
-    for (const sectorKey in ProjectSectorEnum) {
-      const sectorName = ProjectSectorEnum[sectorKey];
+    for (const sectorKey in InfSectoralScopeEnum) {
+      const sectorName = InfSectoralScopeEnum[sectorKey];
       response[sectorName] = 0;
     }
 
     for (const row of result) {
       const sector = row.sector ?? "Unknown";
-      response[ProjectSectorEnum[sector]] = parseInt(row.count, 10);
+      response[InfSectoralScopeEnum[sector]] = parseInt(row.count, 10);
     }
 
     return response;
