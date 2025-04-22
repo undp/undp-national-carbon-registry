@@ -89,11 +89,7 @@ export class OrganisationUpdateDto {
   @ApiPropertyOptional()
   address: string;
 
-  @ValidateIf((c) =>
-    [CompanyRole.DESIGNATED_NATIONAL_AUTHORITY, CompanyRole.MINISTRY].includes(
-      c.companyRole
-    )
-  )
+  @ValidateIf((c) => [CompanyRole.MINISTRY].includes(c.companyRole))
   @ApiProperty({ enum: GovDepartment })
   @IsNotEmpty()
   @IsEnum(GovDepartment, {
@@ -103,16 +99,13 @@ export class OrganisationUpdateDto {
   })
   govDep: GovDepartment;
 
-  @ValidateIf((c) =>
-    [CompanyRole.DESIGNATED_NATIONAL_AUTHORITY, CompanyRole.MINISTRY].includes(
-      c.companyRole
-    )
-  )
+  @ValidateIf((c) => [CompanyRole.MINISTRY].includes(c.companyRole))
   @ApiProperty({ enum: Ministry })
   @IsNotEmpty()
   @IsEnum(Ministry, {
     message:
-      "Invalid sector. Supported following sector:" + Object.values(Ministry),
+      "Invalid ministry. Supported following ministry:" +
+      Object.values(Ministry),
   })
   ministry: Ministry;
 
