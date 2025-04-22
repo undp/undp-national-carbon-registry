@@ -11,6 +11,7 @@ import { CreditBlockBalancesViewEntity } from "../view-entities/credit.block.bal
 import { CreditBlockTransfersViewEntity } from "../view-entities/credit.block.transfers.view.entity";
 import { CreditBlockRetirementsViewEntity } from "../view-entities/credit.block.retirements.view.entity";
 import { DocumentManagementModule } from "../document-management/document-management.module";
+import { AefReportManagementModule } from "../aef-report-management/aef-report-management.module";
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { DocumentManagementModule } from "../document-management/document-manage
       CreditBlockRetirementsViewEntity,
     ]),
     DocumentManagementModule,
+    AefReportManagementModule,
   ],
   providers: [CreditTransactionsManagementService],
   exports: [CreditTransactionsManagementService],

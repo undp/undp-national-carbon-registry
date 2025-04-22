@@ -36,7 +36,16 @@ export class ProjectEntity {
   letterOfAuthorizationUrl?: string;
 
   @Column()
+  sector: string;
+
+  @Column()
   sectoralScope: string;
+
+  @Column({ type: "bigint", nullable: true })
+  projectAuthorizationTime?: number;
+
+  @Column({ nullable: true })
+  authorizationId?: string;
 
   @Column("jsonb", { array: false, nullable: true })
   activities?: ActivityEntity[];
