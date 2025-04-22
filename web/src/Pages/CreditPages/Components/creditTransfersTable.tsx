@@ -1,41 +1,50 @@
-import { Col, Empty, Input, message, PaginationProps, Row, Table, Tag } from 'antd';
-import { useEffect, useRef, useState } from 'react';
-import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
-import { UserTableDataType } from '../../../Definitions/Definitions/userManagement.definitions';
-import { API_PATHS } from '../../../Config/apiConfig';
-import { ProfileIcon } from '../../../Components/IconComponents/ProfileIcon/profile.icon';
-import '../creditPageStyles.scss';
-import { CreditTransfersInterface } from '../Interfaces/creditTransfers.interface';
-import moment from 'moment';
-import { addCommSep } from '../../../Definitions/Definitions/programme.definitions';
-import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
-import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
+import {
+  Col,
+  Empty,
+  Input,
+  message,
+  PaginationProps,
+  Row,
+  Table,
+  Tag,
+} from "antd";
+import { useEffect, useRef, useState } from "react";
+import { useConnection } from "../../../Context/ConnectionContext/connectionContext";
+import { UserTableDataType } from "../../../Definitions/Definitions/userManagement.definitions";
+import { API_PATHS } from "../../../Config/apiConfig";
+import { ProfileIcon } from "../../../Components/IconComponents/ProfileIcon/profile.icon";
+import "../creditPageStyles.scss";
+import { CreditTransfersInterface } from "../Interfaces/creditTransfers.interface";
+import moment from "moment";
+import { addCommSep } from "../../../Definitions/Definitions/programme.definitions";
+import { useUserContext } from "../../../Context/UserInformationContext/userInformationContext";
+import { CompanyRole } from "../../../Definitions/Enums/company.role.enum";
 
 const { Search } = Input;
 
 enum CrediTransferColumns {
-  PROJECT_NAME = 'projectName',
-  TRANSFER_ID = 'transferId',
-  DATE = 'date',
-  SERIAL_NO = 'serialNo',
-  CREDIT_SENDER = 'creditSender',
-  CREDIT_RECEIVER = 'creditReceiver',
-  CREDIT_TRANSFERRED = 'credits',
-  STATUS = 'status',
+  PROJECT_NAME = "projectName",
+  TRANSFER_ID = "transferId",
+  DATE = "date",
+  SERIAL_NO = "serialNo",
+  CREDIT_SENDER = "creditSender",
+  CREDIT_RECEIVER = "creditReceiver",
+  CREDIT_TRANSFERRED = "credits",
+  STATUS = "status",
 }
 enum TransferStatus {
-  SENT = 'Sent',
-  RECEIVED = 'Received',
+  SENT = "Sent",
+  RECEIVED = "Received",
 }
 
 export const getStatusColor = (status: TransferStatus) => {
   switch (status) {
     case TransferStatus.SENT:
-      return 'success';
+      return "success";
     case TransferStatus.RECEIVED:
-      return 'gold';
+      return "gold";
     default:
-      return 'default';
+      return "default";
   }
 };
 
@@ -60,10 +69,10 @@ export const CreditTransfersTableComponent = (props: any) => {
     const filter: any[] = [];
     const filterOr: any[] = [];
 
-    if (search && search !== '') {
+    if (search && search !== "") {
       filter.push({
-        key: 'project.title',
-        operation: 'like',
+        key: "project.title",
+        operation: "like",
         value: `%${search}%`,
       });
     }
@@ -77,8 +86,8 @@ export const CreditTransfersTableComponent = (props: any) => {
       };
     } else {
       sort = {
-        key: 'createdDate',
-        order: 'DESC',
+        key: "createdDate",
+        order: "DESC",
       };
     }
 
@@ -91,16 +100,18 @@ export const CreditTransfersTableComponent = (props: any) => {
         sort: sort,
       });
       setTableData(response?.data ? response.data : []);
-      setTotalProgramme(response.response?.data?.total ? response.response?.data?.total : 0);
+      setTotalProgramme(
+        response.response?.data?.total ? response.response?.data?.total : 0
+      );
       setLoading(false);
       isInitialRender.current = true;
     } catch (error: any) {
-      console.log('Error in getting Credit Transfer List', error);
+      console.log("Error in getting Credit Transfer List", error);
       message.open({
-        type: 'error',
+        type: "error",
         content: error.message,
         duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
       setLoading(false);
     }
@@ -109,55 +120,59 @@ export const CreditTransfersTableComponent = (props: any) => {
   const columns = [
     {
       title: t(CrediTransferColumns.TRANSFER_ID),
-      key: 'id',
+      key: "id",
       sorter: true,
-      align: 'left' as const,
+      align: "left" as const,
       render: (item: CreditTransfersInterface) => {
-        return <span style={{ marginLeft: '20px' }}>{item?.id}</span>;
+        return <span style={{ marginLeft: "20px" }}>{item?.id}</span>;
       },
     },
     {
       title: t(CrediTransferColumns.PROJECT_NAME),
-      key: 'project.title',
+      key: "project.title",
       sorter: true,
-      align: 'left' as const,
+      align: "left" as const,
       render: (item: CreditTransfersInterface) => {
         return <span>{item?.projectName}</span>;
       },
     },
     {
       title: t(CrediTransferColumns.DATE),
-      key: 'createdDate',
+      key: "createdDate",
       sorter: true,
-      align: 'left' as const,
+      align: "left" as const,
       render: (item: CreditTransfersInterface) => {
         return (
-          <span>{moment(parseInt(String(item?.createdDate))).format('YYYY-MM-DD HH:mm:ss')}</span>
+          <span>
+            {moment(parseInt(String(item?.createdDate))).format(
+              "YYYY-MM-DD HH:mm:ss"
+            )}
+          </span>
         );
       },
     },
     {
       title: t(CrediTransferColumns.SERIAL_NO),
       key: CrediTransferColumns.SERIAL_NO,
-      align: 'left' as const,
+      align: "left" as const,
       render: (item: CreditTransfersInterface) => {
         return <span>{item?.serialNumber}</span>;
       },
     },
     {
       title: t(CrediTransferColumns.CREDIT_SENDER),
-      key: 'sender.name',
+      key: "sender.name",
       sorter: true,
-      align: 'left' as const,
+      align: "left" as const,
       render: (item: CreditTransfersInterface) => {
         const elements = (
           <Row>
             <ProfileIcon
               icon={item.senderLogo}
-              bg={'rgba(185, 226, 244, 0.56)'}
+              bg={"rgba(185, 226, 244, 0.56)"}
               name={item.senderName}
             />
-            <span style={{ marginTop: '6px' }}>{item.senderName}</span>
+            <span style={{ marginTop: "6px" }}>{item.senderName}</span>
           </Row>
         );
         return <div className="org-list">{elements}</div>;
@@ -165,18 +180,18 @@ export const CreditTransfersTableComponent = (props: any) => {
     },
     {
       title: t(CrediTransferColumns.CREDIT_RECEIVER),
-      key: 'receiver.name',
+      key: "receiver.name",
       sorter: true,
-      align: 'left' as const,
+      align: "left" as const,
       render: (item: CreditTransfersInterface) => {
         const elements = (
           <Row>
             <ProfileIcon
               icon={item.receiverLogo}
-              bg={'rgba(185, 226, 244, 0.56)'}
+              bg={"rgba(185, 226, 244, 0.56)"}
               name={item.receiverName}
             />
-            <span style={{ marginTop: '6px' }}>{item.receiverName}</span>
+            <span style={{ marginTop: "6px" }}>{item.receiverName}</span>
           </Row>
         );
         return <div className="org-list">{elements}</div>;
@@ -185,9 +200,13 @@ export const CreditTransfersTableComponent = (props: any) => {
     {
       title: t(CrediTransferColumns.CREDIT_TRANSFERRED),
       key: CrediTransferColumns.CREDIT_TRANSFERRED,
-      align: 'left' as const,
+      align: "left" as const,
       render: (item: CreditTransfersInterface) => {
-        return <span style={{ marginLeft: '20px' }}>{addCommSep(String(item?.creditAmount))}</span>;
+        return (
+          <span style={{ marginLeft: "20px" }}>
+            {addCommSep(String(item?.creditAmount))}
+          </span>
+        );
       },
     },
     ...(userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER
@@ -195,11 +214,23 @@ export const CreditTransfersTableComponent = (props: any) => {
           {
             title: t(CrediTransferColumns.STATUS),
             key: CrediTransferColumns.STATUS,
-            align: 'center' as const,
+            align: "center" as const,
             render: (item: CreditTransfersInterface) => {
               return (
-                <Tag color={getStatusColor(item.transferStatus as TransferStatus)}>
-                  {t(item.transferStatus)}
+                <Tag
+                  color={getStatusColor(
+                    item?.senderName &&
+                      item?.senderName === userInfoState?.companyName
+                      ? TransferStatus.SENT
+                      : TransferStatus.RECEIVED
+                  )}
+                >
+                  {t(
+                    item?.senderName &&
+                      item?.senderName === userInfoState?.companyName
+                      ? TransferStatus.SENT
+                      : TransferStatus.RECEIVED
+                  )}
                 </Tag>
               );
             },
@@ -212,18 +243,22 @@ export const CreditTransfersTableComponent = (props: any) => {
     if (value) {
       setSearch(value.toLowerCase());
     } else {
-      setSearch('');
+      setSearch("");
     }
   };
 
-  const onPaginationChange: PaginationProps['onChange'] = (page, size) => {
+  const onPaginationChange: PaginationProps["onChange"] = (page, size) => {
     setCurrentPage(page);
     setPageSize(size);
   };
 
   const onHandleTableChange = (page: any, sorter: any) => {
     setSortOrder(
-      sorter.order === 'ascend' ? 'ASC' : sorter.order === 'descend' ? 'DESC' : undefined
+      sorter.order === "ascend"
+        ? "ASC"
+        : sorter.order === "descend"
+        ? "DESC"
+        : undefined
     );
     setSortField(sorter.columnKey);
     // setCurrentPage(1);
@@ -244,13 +279,15 @@ export const CreditTransfersTableComponent = (props: any) => {
 
   return (
     <div className="content-card">
-      <Row justify={'end'} className="table-actions-section">
+      <Row justify={"end"} className="table-actions-section">
         <Col lg={{ span: 9 }} md={{ span: 10 }}>
           <div className="filter-section">
             <div className="search-bar">
               <Search
-                onPressEnter={(e) => onSearch((e.target as HTMLInputElement).value)}
-                placeholder={`${t('search')}`}
+                onPressEnter={(e) =>
+                  onSearch((e.target as HTMLInputElement).value)
+                }
+                placeholder={`${t("search")}`}
                 allowClear
                 onSearch={onSearch}
                 style={{ width: 265 }}
@@ -263,7 +300,7 @@ export const CreditTransfersTableComponent = (props: any) => {
         <Col span={24}>
           <div className="credit-table-container">
             <Table
-              style={{ width: '200%' }}
+              style={{ width: "200%" }}
               dataSource={tableData.length ? tableData : []}
               columns={columns}
               className="common-table-class"
@@ -277,12 +314,16 @@ export const CreditTransfersTableComponent = (props: any) => {
                 onChange: onPaginationChange,
               }}
               // eslint-disable-next-line no-unused-vars
-              onChange={(val: any, _: any, sorter: any) => onHandleTableChange(val, sorter)}
+              onChange={(val: any, _: any, sorter: any) =>
+                onHandleTableChange(val, sorter)
+              }
               locale={{
                 emptyText: (
                   <Empty
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description={tableData.length === 0 ? t('noTransfers') : null}
+                    description={
+                      tableData.length === 0 ? t("noTransfers") : null
+                    }
                   />
                 ),
               }}

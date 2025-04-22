@@ -16,6 +16,7 @@ import {
   Select,
 } from 'antd';
 import { useEffect, useState } from 'react';
+import moment from 'moment';
 import './ProgrammeManagementComponent.scss';
 import '../../Styles/common.table.scss';
 import { UserTableDataType } from '../../Definitions/Definitions/userManagement.definitions';
@@ -48,6 +49,7 @@ import { API_PATHS } from '../../Config/apiConfig';
 import { APPLICATION_STAGE } from '../../Definitions/Constants/ApplicationStage';
 import { downloadCSV } from '../../Utils/downloadCSV';
 import { deepCopy } from '../../Utils/deepCopy';
+import { toMoment } from '../../Utils/convertTime';
 
 const { Search } = Input;
 
@@ -216,6 +218,16 @@ export const ProgrammeManagementComponent = (props: any) => {
     //   },
     // },
     {
+      title: t('projectList:sector'),
+      dataIndex: 'sector',
+      key: ProgrammeManagementSlColumns.sector,
+      sorter: true,
+      align: 'center' as const,
+      render: (item: any) => {
+        return <>{item ? t(`projectList:${item}`): t('projectList:na')}</>;
+      },
+    },
+    {
       title: t('projectList:sectoralScope'),
       dataIndex: 'sectoralScope',
       key: ProgrammeManagementSlColumns.sectoralScope,
@@ -225,16 +237,6 @@ export const ProgrammeManagementComponent = (props: any) => {
         return <>{t(`projectList:${item}`)}</>;
       },
     },
-    // {
-    //   title: t('projectList:status'),
-    //   dataIndex: 'projectStatus',
-    //   key: ProgrammeManagementSlColumns.projectStatus,
-    //   sorter: true,
-    //   align: 'center' as const,
-    //   render: (item: any) => {
-    //     return <span>{t(`projectList:${item}`)}</span>;
-    //   },
-    // },
     {
       title: t('projectList:proposalStage'),
       dataIndex: 'projectProposalStage',
@@ -249,20 +251,6 @@ export const ProgrammeManagementComponent = (props: any) => {
         );
       },
     },
-    // {
-    //   title: t('projectList:purposeOfCreditDevelopment'),
-    //   dataIndex: 'purposeOfCreditDevelopment',
-    //   key: ProgrammeManagementSlColumns.purposeOfCreditDevelopment,
-    //   sorter: true,
-    //   align: 'center' as const,
-    //   render: (item: any) => {
-    //     return (
-    //       <Tag color={getCreditTypeTagType(item as CreditTypeSl)}>
-    //         {addSpaces(getCreditTypeName(item as string))}
-    //       </Tag>
-    //     );
-    //   },
-    // },
     {
       title: t('projectList:balance'),
       dataIndex: 'creditBalance',
@@ -284,17 +272,26 @@ export const ProgrammeManagementComponent = (props: any) => {
       },
     },
     {
-      title: t('projectList:projectId'),
-      dataIndex: 'projectId',
-      key: ProgrammeManagementSlColumns.projectId,
+      title: t('projectList:authorizationId'),
+      dataIndex: 'authorizationId',
+      key: ProgrammeManagementSlColumns.authorizationId,
       align: 'center' as const,
+      render: (item: any) => {
+        return <span>{item ? item : t('projectList:na')}</span>
+      }
     },
-    // {
-    //   title: t('projectList:regitrationSerialNo'),
-    //   dataIndex: 'serialNo',
-    //   key: ProgrammeManagementSlColumns.serialNo,
-    //   align: 'left' as const,
-    // },
+    {
+      title: t('projectList:projectCreatedDate'),
+      dataIndex: 'createdTime',
+      key: ProgrammeManagementSlColumns.projectCreatedDate,
+      align: 'center' as const,
+      render: (item: any) => {
+        console.log("-----------item-----------", item);
+        return (
+          <>{toMoment(Number(item)).format('YYYY/MM/DD HH:mm:ss')}</>
+        )
+      }
+    },
     {
       title: t(''),
       width: 6,
