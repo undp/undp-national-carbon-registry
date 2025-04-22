@@ -1,0 +1,34 @@
+@use '../../Styles/variables.scss';
+
+.dialog-box {
+  width: 400px !important;
+  .icon {
+    width: 95px;
+  }
+  .message {
+    color: variables.$confirm-modal-message-color;
+    margin-top: 10px;
+  }
+  .subMessage {
+    color: variables.$confirm-modal-submessage-color;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 36px;
+    margin-top: 32px;
+
+    button {
+      text-transform: uppercase;
+      width: 100px;
+    }
+  }
+
+  .checkbox-row {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    cursor: pointer;
+  }
+}

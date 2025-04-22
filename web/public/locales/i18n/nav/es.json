@@ -1,0 +1,21 @@
+{
+  "dashboard": "Tablero",
+  "ghgInventory": "Inventario de GEI",
+  "emissions": "Emisiones",
+  "projections": "Proyecciones",
+  "slcfprogrammes": "Proyectos SLCF",
+  "programmes": "Proyectos del Artículo 6",
+  "transfers": "Transferencias",
+  "companies": "Organizaciones",
+  "users": "Usuarios",
+  "viewAll": "Ver Todo",
+  "addNew": "Agregar Nuevo",
+  "investments": "Financiamiento de Proyectos",
+  "ndcActions": "Actividades de Proyectos",
+  "ndcDetails": "Acciones NDC",
+  "reports": "Informes",
+  "support": "Financiamiento",
+  "nationalAccounting": "Contabilidad Nacional",
+  "retirements": "Retiros",
+  "settings": "Configuraciones"
+}

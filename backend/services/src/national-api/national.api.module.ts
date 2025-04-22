@@ -1,44 +1,51 @@
-import { Logger, Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { NationalAPIController } from './national.api.controller';
-import { NationalAPIService } from './national.api.service';
-import { GhgInventoryModule, configuration } from "@undp/carbon-services-lib";
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '@undp/carbon-services-lib';
-// import { Programme } from './entities/programme.entity';
-import { AuthModule ,CompanyModule,UserModule,UtilModule,CaslModule} from "@undp/carbon-services-lib";
-import { ProgrammeModule } from '@undp/carbon-services-lib';
-import { CompanyController } from './company.controller';
-import { UserController } from './user.controller';
-import { AuthController } from './auth.controller';
-import { ProgrammeController } from './programme.controller';
-import { SettingsController } from './settings.controller';
-import { GHGEmissionController } from './ghg,emission.controller';
-import { GHGProjectionController } from './ghg,projection.controller';
+import { CoreModule } from "@app/core";
+import { SharedModule } from "@app/shared";
+import { Logger, Module } from "@nestjs/common";
+import { RateLimiterModule } from "nestjs-rate-limiter";
+import { AuthController } from "./auth.controller";
+import { CompanyController } from "./company.controller";
+import { CreditRetirementSlController } from "./creditRetirement.controller";
+import { LocationController } from "./location.controller";
+import { NationalAPIController } from "./national.api.controller";
+import { NationalAPIService } from "./national.api.service";
+import { ProgrammeController } from "./programme.controller";
+import { ProgrammeAuditSlController } from "./programmeAuditSl/programmeAuditSl.controller";
+import { ProgrammeSlController } from "./programmeSl.controller";
+import { SettingsController } from "./settings.controller";
+import { UserController } from "./user.controller";
+import { VerificationController } from "./verification/verification.controller";
+import { ProjectManagementController } from "./project-management.controller";
+import { DocumentManagementController } from "./document.controller";
+import { AnalyticsController } from "./analytics.controller";
+import { CreditTransactionsManagementController } from "./credit.transactions.management.controller";
+import { ReportsManagementController } from "./reports.management.controller";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration.default],
-      envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`]
+    RateLimiterModule.register({
+      type: "Memory", // In-memory store for rate limiting
     }),
-    TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService,
-      imports: undefined
-    }),
-    AuthModule,
-    UserModule,
-    CaslModule,
-    ProgrammeModule,
-    CompanyModule,
-    UtilModule,
-    GhgInventoryModule
+    SharedModule,
+    CoreModule,
   ],
-  controllers: [ NationalAPIController, UserController, AuthController, CompanyController, ProgrammeController, SettingsController, GHGEmissionController, GHGProjectionController ],
-  providers: [
-    NationalAPIService, 
-    Logger
+  controllers: [
+    NationalAPIController,
+    UserController,
+    AuthController,
+    CompanyController,
+    ProgrammeController,
+    SettingsController,
+    LocationController,
+    ProgrammeSlController,
+    CreditRetirementSlController,
+    VerificationController,
+    ProgrammeAuditSlController,
+    ProjectManagementController,
+    DocumentManagementController,
+    AnalyticsController,
+    CreditTransactionsManagementController,
+    ReportsManagementController,
   ],
+  providers: [NationalAPIService, Logger],
 })
 export class NationalAPIModule {}

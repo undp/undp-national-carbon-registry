@@ -1,11 +1,12 @@
-import { Col, Divider, Row } from 'antd';
-import { useTranslation } from 'react-i18next';
-import sliderLogo from '../../Assets/Images/logo-slider.png';
-import './layout.footer.scss';
-import { CcCircle } from 'react-bootstrap-icons';
+import { Col, Divider, Row } from "antd";
+import { useTranslation } from "react-i18next";
+import sliderLogo from "../../Assets/Images/logo-slider.png";
+import "./layout.footer.scss";
+import { CcCircle } from "react-bootstrap-icons";
 
 const LayoutFooter = () => {
-  const { i18n, t } = useTranslation(['common', 'homepage']);
+  const { i18n, t } = useTranslation(["common", "homepage"]);
+  const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
 
   return (
     <div className="homepage-footer-container">
@@ -16,27 +17,25 @@ const LayoutFooter = () => {
               <img src={sliderLogo} alt="slider-logo" />
             </div>
             <div>
-              <div style={{ display: 'flex' }}>
-                <div className="title">{'CARBON'}</div>
-                <div className="title-sub">{'REGISTRY'}</div>
+              <div style={{ display: "flex" }}>
+                <div className="title">{"CARBON MARKET DIGITAL PLATFORM"}</div>
+                {/* <div className="title-sub">{'REGISTRY'}</div> */}
               </div>
-              <div className="footer-country-name">
-                {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}
-              </div>
+              <div className="footer-country-name">{countryName}</div>
             </div>
           </div>
         </Col>
       </Row>
-      <Divider className="divider" style={{ backgroundColor: '#FFFF' }} />
+      <Divider className="divider" style={{ backgroundColor: "#FFFF" }} />
       <Row>
         <Col md={24} lg={24}>
-          <div className="footertext">{t('homepage:footertext1')}</div>
+          <div className="footertext">{t("homepage:footertext1")}</div>
         </Col>
       </Row>
       <Row>
         <Col md={10} lg={10}>
           <div className="footertext-bottom">
-            {process.env.REACT_APP_COUNTRY_NAME || 'CountryX'}
+            {import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX"}
             <CcCircle className="cc" color="#FFFF" size="10px" />
           </div>
         </Col>
@@ -45,27 +44,31 @@ const LayoutFooter = () => {
             <div>
               <a
                 href="https://nationalcarbonregistrydemo.tawk.help/"
-                target={'blank'}
+                target={"blank"}
                 className="footertext-links"
               >
-                {t('homepage:Help')}
+                {t("homepage:Help")}
               </a>
-              <a href="https://status.carbreg.org/" target={'blank'} className="footertext-links">
-                {t('homepage:Status')}
+              <a
+                href="https://status.carbreg.org/"
+                target={"blank"}
+                className="footertext-links"
+              >
+                {t("homepage:Status")}
               </a>
               <a href="/cookie" className="footertext-links">
-                {t('homepage:Cookie')}
+                {t("homepage:Cookie")}
               </a>
             </div>
             <div>
               <a href="codeconduct" className="footertext-links">
-                {t('homepage:codeconduct')}
+                {t("homepage:codeconduct")}
               </a>
               <a href="/terms#termuse" className="footertext-links">
-                {t('homepage:terms')}
+                {t("homepage:terms")}
               </a>
               <a href="/privacy" className="footertext-links">
-                {t('homepage:privacy')}
+                {t("homepage:privacy")}
               </a>
             </div>
           </div>

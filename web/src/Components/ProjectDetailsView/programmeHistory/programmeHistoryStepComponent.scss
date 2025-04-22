@@ -1,0 +1,272 @@
+.programme-timeline-container {
+  .ant-steps-item-title {
+    color: rgba(58, 53, 65, 0.8) !important;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .ant-steps-item-description {
+    color: rgba(58, 53, 65, 0.6);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-tail:after {
+    background-color: #16b1ff !important;
+    width: 1.7px !important;
+  }
+
+  .ant-steps-vertical > .ant-steps-item > .ant-steps-item-container > .ant-steps-item-tail::after {
+    background-color: #16b1ff !important;
+    width: 1px;
+    height: 100%;
+    border-color: #b0e0f8;
+  }
+  .timeline-icon {
+    background-color: rgba(#c7c7c7, 0.5);
+    color: #211f1e;
+    font-size: 1rem;
+    padding: 0.3rem 0.45rem 0.3rem;
+    border-radius: 100%;
+    margin-right: 10px;
+  }
+
+  .pending {
+    color: #ff8352;
+    background-color: #ffd2c0;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .approved {
+    color: #3575c8;
+    background-color: #c0e7ff;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .rejected {
+    color: #ff4d4f;
+    background-color: #ffe0e0;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .no_objection_letter_generated {
+    color: #cfa42f;
+    background-color: #ffeec0;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .pdd_submitted {
+    color: #cfa42f;
+    background-color: #ffeec0;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .pdd_rejected_by_certifier {
+    color: #ff4d4f;
+    background-color: #ffe0e0;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .pdd_approved_by_certifier {
+    color: #3dc835;
+    background-color: #c0ffc2;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .pdd_rejected_by_dna {
+    color: #ff4d4f;
+    background-color: #ffe0e0;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .pdd_approved_by_dna {
+    color: #3dc835;
+    background-color: #c0ffc2;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .validation_report_submitted {
+    color: #cfa42f;
+    background-color: #ffeec0;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .validation_report_rejected {
+    color: #ff4d4f;
+    background-color: #ffe0e0;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .authorised {
+    color: #f3fcc9;
+    background-color: #bad442;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .monitoring_report_submitted {
+    color: #cfa42f;
+    background-color: #ffeec0;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .monitoring_report_rejected {
+    color: #ff4d4f;
+    background-color: #ffe0e0;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .monitoring_report_approved {
+    color: #3dc835;
+    background-color: #c0ffc2;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .verification_report_submitted {
+    color: #cfa42f;
+    background-color: #ffeec0;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .verification_report_rejected {
+    color: #ff4d4f;
+    background-color: #ffe0e0;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .verification_report_approved {
+    color: #3575c8;
+    background-color: #c0e7ff;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .credits_authorised {
+    color: #2515ad;
+    background-color: #e5e3f6;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+  .credits_issued {
+    color: #1bae67;
+    background-color: #bfedd6;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .credit_transfered {
+    color: #72cb57;
+    background-color: #eeffe6;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .retire_requested {
+    color: #f6f2e3;
+    background-color: #cbb057;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .retire_cancelled {
+    color: #ff4d4f;
+    background-color: #ffe0e0;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .retire_approved {
+    color: #3DC835;
+    background-color: #c0ffc2;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .retire_rejected {
+    color: #ad1515;
+    background-color: #f6e3e3;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .remarks {
+    margin-top: 6px;
+
+    span {
+      color: #3a3541cc;
+      size: 16px;
+      font-weight: 500;
+    }
+  }
+
+  // .transfer_requested {
+  //   background-color: rgba(#bfa8ff, 0.5);
+  //   color: #937fcc;
+  //   font-size: 1rem;
+  //   padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  // }
+
+  // .transfer_approved {
+  //   color: #9bb42d;
+  //   background-color: rgba(#e7fa94, 0.5);
+  //   font-size: 1rem;
+  //   padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  // }
+
+  // .transfer_rejected {
+  //   color: #c22e2e;
+  //   background-color: rgba(#ff8c8c, 0.5);
+  //   font-size: 1rem;
+  //   padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  // }
+
+  // .transfer_cancelled {
+  //   // color: #c22e2e;
+  //   // background-color: rgba(#ff8c8c, 0.5);
+  //   font-size: 1rem;
+  //   padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  // }
+
+  // .retire_requested {
+  //   background-color: rgba(#ffa8fb, 0.5);
+  //   color: #c97fcc;
+  //   font-size: 1rem;
+  //   padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  // }
+
+  // .retire_approved {
+  //   color: #9bb42d;
+  //   background-color: rgba(#e7fa94, 0.5);
+  //   font-size: 1rem;
+  //   padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  // }
+
+  // .retire_rejected {
+  //   color: #c22e2e;
+  //   background-color: rgba(#ff8c8c, 0.5);
+  //   font-size: 1rem;
+  //   padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  // }
+
+  // .retire_cancelled {
+  //   // color: #c22e2e;
+  //   // background-color: rgba(#ff8c8c, 0.5);
+  //   font-size: 1rem;
+  //   padding: 0.4rem 0.4rem 0.2rem 0.4rem;
+  // }
+}

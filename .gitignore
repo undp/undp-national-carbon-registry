@@ -3,12 +3,14 @@
 **/dist/
 **/.build/
 backend/services/.env.local
+backend/services/.env
 **/yarn-error.log
 **/coverage
 .env.local
 ./data/*
 !./data/README.md
 web/src/Assets/.DS_Store
-web/public/locales/*
 .yalc
 yalc.lock
+backend/services/*.pdf
+backend/services/public/*

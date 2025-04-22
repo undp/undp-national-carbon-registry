@@ -1,0 +1,26 @@
+{
+    "nationalAccounting": "National Accounting",
+    "creditAuthorized": "Authorised Credits",
+    "creditIssued": "Issued Credits",
+    "creditRetired": "Retired Credits",
+    "tCreditAuthorized": "Authorised total credit amount",
+    "tCreditIssued": "Issued total credit amount",
+    "tCreditRetired": "Retired total credit amount",
+    "CREDIT_RETIRED": "Credits Retired",
+    "CREDIT_ISSUED": "Credits Issued",
+    "CREDIT_AUTHORIZED": "Credits Authorised",
+    "creditReceiver": "Credit Receiver",
+    "date": "DATE",
+    "programmeTitle": "PROJECT NAME",
+    "sector": "SECTOR",
+    "type": "type",
+    "organisation": "Organisation",
+    "creditAmount": "Credits",
+    "crossBorderTransfer": "Cross Border Transactions",
+    "transactionCount": "Transaction Count",
+    "latestTransaction": "Last Transaction",
+    "creditTransactions": "Credit Activity Log",
+    "country": "country",
+    "noRecords": "No records found"
+
+}

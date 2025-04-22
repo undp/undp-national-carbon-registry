@@ -1,0 +1,12 @@
+{
+  "notProjectParticipant": "Not a project participant",
+  "notAuthorised": "Not Authorised",
+  "noCompanyExistingInSystem": "Project particpant organization is not existing in the system for the logged in user",
+  "noICExistingInSystem": "Project independant certifier is not existing in the system",
+  "programmeExistsWithSameProgrammeId": "Programme exists with same programme ID",
+  "cannotCreateCMAForOtherProjectParticipants": "Cannot create CMA for other project participants",
+  "programmeNotExist": "Programme is not existing with the given Programme ID",
+  "programmeIsNotInSuitableStageToProceed": "Programme is not in a suitable state to proceed",
+  "shouldHaveOnlySingleCoordinateForSingleProjectGeography": "Should have only single pair of coordinates when project geography is single",
+  "shouldHaveMoreThanSingleCoordinateForMultipleProjectGeography": "Should have more than single pair of coordinates when project geography is multiple"
+}
