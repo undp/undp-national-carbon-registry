@@ -28,6 +28,31 @@
 
     .report-type-selector {
       width: 100%;
+
+      .ant-select-selector {
+        padding: 10px;
+
+        .ant-select-selection-item {
+          background-color: color.scale(
+            $color: variables.$primary-color,
+            $lightness: 85%
+          );
+
+          color: color.scale($color: variables.$primary-color, $lightness: 10%);
+
+          padding: 0px 16px;
+
+          border-radius: 6px;
+
+          border-width: 0px;
+
+          margin: 0px 6px;
+
+          .anticon {
+            color: color.scale(variables.$primary-color, $lightness: 10%);
+          }
+        }
+      }
     }
   }
 }
