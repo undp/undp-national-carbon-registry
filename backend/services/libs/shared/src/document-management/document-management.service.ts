@@ -1058,18 +1058,23 @@ export class DocumentManagementService {
           }
           break;
       }
-      const documentTypeMap = {
-        [DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT]: "pddRejected",
-        [DocumentTypeEnum.VALIDATION]: "validationRejected",
-        [DocumentTypeEnum.MONITORING]: "monitoringRejected",
-        [DocumentTypeEnum.VERIFICATION]: "verificationRejected",
-      };
+      // Removed to throw common meaningful message
+      // const documentTypeMap = {
+      //   [DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT]: "pddRejected",
+      //   [DocumentTypeEnum.VALIDATION]: "validationRejected",
+      //   [DocumentTypeEnum.MONITORING]: "monitoringRejected",
+      //   [DocumentTypeEnum.VERIFICATION]: "verificationRejected",
+      // };
 
-      const response = documentTypeMap[existingDocument.type];
+      // const response = documentTypeMap[existingDocument.type];
 
+      // return new BasicResponseDto(
+      //   HttpStatus.OK,
+      //   this.helperService.formatReqMessagesString(`project.${response}`, [])
+      // );
       return new BasicResponseDto(
         HttpStatus.OK,
-        this.helperService.formatReqMessagesString(`project.${response}`, [])
+        this.helperService.formatReqMessagesString(`project.success`, [])
       );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
