@@ -135,21 +135,21 @@ export class OrganisationUpdateDto {
 
   geographicalLocationCordintes?: any;
 
-  @ValidateIf((c) => CompanyRole.DESIGNATED_NATIONAL_AUTHORITY == c.companyRole)
-  @IsNotEmpty()
-  @IsNumber()
-  @IsInt()
-  @Min(0)
-  @Max(99)
-  @ApiProperty()
+  // @ValidateIf((c) => CompanyRole.DESIGNATED_NATIONAL_AUTHORITY == c.companyRole)
+  // @IsNotEmpty()
+  // @IsNumber()
+  // @IsInt()
+  // @Min(0)
+  // @Max(99)
+  // @ApiProperty()
   omgePercentage: number;
 
-  @ValidateIf((c) => CompanyRole.DESIGNATED_NATIONAL_AUTHORITY == c.companyRole)
-  @IsNotEmpty()
-  @IsNumber()
-  @IsInt()
-  @Min(0)
-  @Max(99)
-  @ApiProperty()
+  // @ValidateIf((c) => CompanyRole.DESIGNATED_NATIONAL_AUTHORITY == c.companyRole)
+  // @IsNotEmpty()
+  // @IsNumber()
+  // @IsInt()
+  // @Min(0)
+  // @Max(99)
+  // @ApiProperty()
   nationalSopValue: number;
 }
