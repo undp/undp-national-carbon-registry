@@ -1,0 +1,731 @@
+@use '../../Styles/variables.scss';
+
+.mapboxgl-popup-content {
+  background-color: variables.$white !important;
+  color: variables.$card-title !important;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  border-top-color: variables.$white !important;
+}
+
+.mapboxgl-popup-close-button,
+.mapboxgl-popup-close-button:hover {
+  display: none;
+}
+
+.total-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid gray;
+}
+.annual-report {
+  display: flex;
+  margin-top: 30px;
+  margin-left: 22px;
+}
+.ant-btn.annual-report-downloadbutton {
+  border-radius: 0px 5px 5px 0px !important;
+}
+.ant-btn.annual-report-dropdownbutton {
+  margin-left: 20px;
+  border-radius: 5px 0px 0px 0px !important;
+}
+.margin-top-6 {
+  margin-top: 7.5rem;
+}
+
+.margin-top-2 {
+  margin-top: 2rem;
+}
+
+.margin-top-1 {
+  margin-top: 1rem;
+}
+
+.ant-btn.slcf-primary {
+  border-radius: 5px 0px 0px 5px !important;
+}
+
+.ant-btn.slcf-default {
+  border-radius: 0px 5px 5px 0px !important;
+}
+
+.pending-item-list {
+  margin-top: 1vh;
+  max-height: 420px;
+  overflow-y: auto;
+  .pending-action-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+.pending-action-button {
+  border: none;
+  background-color: rgba(179, 233, 255, 0.24) !important;
+  .pending-action-button-icon {
+    margin-top: 5px;
+  }
+}
+
+.ant-btn.mid-default-btn {
+  border-radius: 0px 0px 0px 0px !important;
+}
+
+.cards-title {
+  font-family: 'Inter';
+  align-items: flex-start;
+  justify-content: flex-start;
+  font-style: normal;
+  font-weight: 600;
+  height: 50px;
+  font-size: 1.15rem;
+  margin-top: 1rem;
+  color: variables.$card-title;
+}
+
+.slcf-dashboard-main-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  padding: 0 2rem 0 2rem;
+
+  .dashboard-inner-container {
+    background: white;
+  }
+
+  .header-and-title {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: 0 15px 0 15px;
+    font-family: 'Inter-Regular';
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+
+  .statistics-cards-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+
+    .statistics-card-row {
+      width: 100%;
+
+      .statistics-card-col {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+      }
+    }
+  }
+
+  .ant-progress-success-bg,
+  .ant-progress-bg {
+    background-color: transparent !important;
+  }
+
+  .filter-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2rem;
+    padding: 0 1.2rem 0 1.2rem;
+
+    .category-filter {
+      padding-left: 25px;
+
+      .ant-select-selector {
+        border-radius: 5px !important;
+        height: 35px !important;
+      }
+    }
+
+    .credit-type-filter {
+      padding-left: 25px;
+
+      .ant-select-selector {
+        border-radius: 5px !important;
+        height: 35px !important;
+      }
+    }
+  }
+
+  .center {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .height-pie-rem {
+    height: 31rem;
+
+    .apexcharts-legend {
+      display: flex !important;
+      flex-direction: row !important;
+      justify-content: center !important; /* or space-between/space-around */
+      flex-wrap: wrap !important;
+      gap: 8px;
+      overflow: visible !important;
+      align-items: center !important;
+    }
+
+    /* Force each legend item to take about 25% of the container width (adjust as needed) */
+    .apexcharts-legend-series {
+      text-align: center;
+    }
+  }
+
+  .height-bar-rem {
+    height: 31rem;
+  }
+
+  .project-details-bar-chart {
+    ul {
+      padding-left: 50px;
+      list-style-type: none;
+    }
+    .list-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: rgba(140, 140, 140, 1);
+      margin-bottom: 6px;
+      margin-top: 20px;
+    }
+    .list-item {
+      margin-left: 10px;
+      list-style-type: none;
+      font-size: 0.7rem;
+      font-weight: 400;
+      color: rgba(140, 140, 140, 1);
+    }
+    .details-bar-chart-pending-list {
+      // margin-top: 10px;
+      line-height: 23px;
+    }
+    .details-bar-chart-rejected-list,
+    .details-bar-chart-authorised-list {
+      line-height: 23px;
+    }
+
+    .details-bar-chart-pending-list .list-title::before {
+      content: '•';
+      position: absolute;
+      color: rgba(72, 150, 254, 1);
+      font-size: 40px;
+      line-height: 1;
+      margin-left: -22px;
+      margin-top: -10px;
+    }
+    .pie-charts-section {
+      display: flex;
+      align-items: start !important;
+      justify-content: center;
+      width: 100%;
+      margin-top: -10px;
+    }
+
+    .details-bar-chart-rejected-list .list-title::before {
+      content: '•';
+      position: absolute;
+      color: rgba(255, 99, 97, 1);
+      font-size: 40px;
+      line-height: 1;
+      margin-left: -22px;
+      margin-top: -10px;
+    }
+
+    .details-bar-chart-authorised-list .list-title::before {
+      content: '•';
+      position: absolute;
+      color: rgba(22, 200, 199, 1);
+      font-size: 40px;
+      line-height: 1;
+      margin-left: -22px;
+      margin-top: -10px;
+    }
+  }
+
+  .height-map-rem {
+    height: 464px;
+  }
+
+  .credits-by-status-container {
+    padding: 0 20px;
+
+    .credits-by-status-row {
+      border: 1px solid #d8d8d8;
+      border-radius: 8px;
+      padding: 30px 11px;
+      width: 100%;
+
+      .credits-by-status-top {
+        display: flex;
+        padding: 0 26px 15px;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: rgba(58, 53, 65, 0.8);
+      }
+
+      .info-container {
+        margin-left: 10px;
+      }
+
+      .statistic-card-row {
+        padding-left: 24px;
+      }
+    }
+  }
+
+  .credits-by-date-chart-col {
+    padding-left: 10px;
+  }
+  .retirements-by-date-chart-col {
+    padding-left: 10px;
+  }
+  .credits-by-purpose-chart-col {
+    rect {
+      stroke: none !important;
+    }
+  }
+
+  .statistics-and-charts-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+
+    .statistic-card-row {
+      width: 100%;
+      padding-left: 10px;
+      padding-right: 20px;
+      .statistic-card-col {
+        .statistics-and-pie-card {
+          display: flex;
+          flex-direction: column;
+          background-color: variables.$white;
+          border-radius: 10px;
+          padding: 0 1rem 0.7rem 1rem;
+          width: 100%;
+          border: 1px solid rgba(216, 216, 216, 1);
+
+          .margin-top-2 {
+            width: 100%;
+            margin-top: 2rem;
+          }
+
+          .title-section {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            // justify-content: space-between;
+            width: 100%;
+            padding: 1rem 1rem 0 1rem;
+
+            .title {
+              font-family: 'Inter';
+              font-style: normal;
+              font-weight: 600;
+              // width: 61%;
+              font-size: 1.15rem;
+              color: variables.$card-title;
+            }
+
+            .info-container {
+              display: flex;
+              flex-direction: row;
+              width: 10%;
+              height: 34px;
+              align-items: center;
+              padding-left: 10px;
+            }
+          }
+
+          .total-programme-details {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            height: 150px;
+            margin-top: -0.5rem;
+
+            .details {
+              display: flex;
+              justify-content: space-between;
+              width: 100%;
+              // flex-direction: column;
+              // width: 70%;
+              padding: 0 1rem 0 0.8rem;
+
+              .detail {
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 400;
+                font-size: 0.875rem;
+                line-height: 1.375rem;
+                padding-left: 0.125rem;
+                color: variables.$card-title;
+                margin-bottom: 0.5rem;
+              }
+
+              .value {
+                font-family: 'Inter';
+                font-style: normal;
+                font-weight: 600;
+                font-size: 2rem;
+                line-height: 22px;
+                padding-left: 0.125rem;
+                padding: 0;
+                color: rgba(72, 150, 254, 1);
+              }
+            }
+
+            .icon {
+              display: flex;
+              align-items: center;
+              justify-content: flex-end;
+              width: 30%;
+
+              img {
+                height: 80px;
+              }
+            }
+          }
+
+          .total-programme-extra-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            height: 100px;
+            width: 100%;
+            margin-top: -1rem;
+            margin-bottom: 0.5rem;
+            padding: 0 0.5rem 0 0.5rem;
+
+            .rejected-details,
+            .transfered-details {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              justify-content: space-between;
+              width: 100%;
+
+              .icon {
+                display: flex;
+                flex-direction: row;
+                width: 20%;
+
+                .icon-container {
+                  display: flex;
+                  flex-direction: row;
+                  align-items: center;
+                  justify-content: center;
+                  border-radius: 50px;
+                  width: 2.188rem;
+                  height: 2.188rem;
+                }
+
+                .reject {
+                  background-color: rgba(255, 166, 166, 0.4);
+                }
+
+                .transfer {
+                  background-color: rgba(254, 241, 173, 0.5);
+                }
+
+                .pending {
+                  background-color: rgba(201, 224, 255, 1);
+                }
+
+                .authorized {
+                  background-color: rgba(22, 200, 199, 0.3);
+                }
+              }
+
+              .details {
+                display: flex;
+                flex-direction: column;
+                width: 80%;
+                height: 3.438rem;
+
+                .label-and-value {
+                  display: flex;
+                  flex-direction: row;
+                  align-items: flex-start;
+                  justify-content: space-between;
+
+                  .label {
+                    font-family: 'Inter';
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 0.875rem;
+                    color: variables.$card-labels;
+                  }
+
+                  .value {
+                    font-family: 'Inter';
+                    font-style: normal;
+                    font-weight: 400;
+                    height: 30px;
+                    font-size: 1.5rem;
+                    margin-top: -8px;
+                    color: rgba(72, 150, 254, 1);
+                  }
+                }
+              }
+            }
+          }
+
+          .stage-legends {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
+          }
+
+          .updated-on {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            justify-content: flex-end;
+            padding: 0 1rem 0 0.8rem;
+            height: 50px;
+
+            .updated-moment-container {
+              display: flex;
+              flex-direction: row;
+              font-size: 0.75rem;
+              border-radius: 3.125rem;
+              padding: 0.05rem 0.8rem 0.05rem 0.8rem;
+              color: variables.$primary-blue;
+              background-color: rgba($color: #b9e2f4, $alpha: 0.4);
+            }
+          }
+
+          .pie-charts-top {
+            display: flex;
+            flex-direction: row;
+            // justify-content: space-between;
+            padding: 0 1rem 0 1rem;
+            .pie-charts-title {
+              display: flex;
+              flex-direction: row;
+              font-family: 'Inter';
+              align-items: flex-start;
+              justify-content: flex-start;
+              font-style: normal;
+              font-weight: 600;
+              height: 50px;
+              font-size: 1.15rem;
+              margin-top: 1rem;
+              color: variables.$card-title;
+
+              .unit {
+                display: flex;
+                margin: 0 0 0 0.5rem;
+                font-family: 'Inter';
+                font-size: 1.15rem;
+                font-weight: 500;
+                color: rgba(58, 53, 65, 0.5);
+              }
+            }
+
+            .info-container {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              padding-left: 10px;
+            }
+          }
+
+          .pie-charts-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+
+  .statistics-and-pie-card:hover,
+  .statistic-card-main-container:hover {
+    box-shadow: rgba(0, 5, 18, 0.2) 0px 8px 24px;
+  }
+
+  .stastics-charts-container-total-programmes {
+    display: flex;
+    flex-direction: row;
+    width: 98%;
+    margin: 60px 10px 25px 15px;
+
+    .stastic-charts-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+
+      .stastic-charts-col {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+
+        .chart-card {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 400px;
+          background: #f6f6f6;
+          box-shadow: rgba(106, 106, 106, 0.2) 0px 8px 24px;
+          border-radius: 10px;
+          padding: 10px 10px 10px 10px;
+        }
+
+        .chart-card:hover {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          background: #f1f1f1;
+          box-shadow: rgba(124, 124, 124, 0.2) 0px 8px 24px;
+          border-radius: 10px;
+          padding: 10px 10px 10px 10px;
+        }
+      }
+    }
+  }
+
+  .stastics-charts-container-certified-programmes {
+    display: flex;
+    flex-direction: row;
+    width: 98%;
+    margin: 5px 10px 25px 15px;
+    .stastic-charts-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+
+      .stastic-charts-col {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+
+        .chart-card {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 400px;
+          background: #f6f6f6;
+          box-shadow: rgba(106, 106, 106, 0.2) 0px 8px 24px;
+          border-radius: 10px;
+          padding: 10px 10px 10px 10px;
+        }
+
+        .chart-card:hover {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          background: #f1f1f1;
+          box-shadow: rgba(124, 124, 124, 0.2) 0px 8px 24px;
+          border-radius: 10px;
+          padding: 10px 10px 10px 10px;
+        }
+      }
+    }
+  }
+
+  .stastics-pie-charts-container {
+    display: flex;
+    flex-direction: row;
+    width: 98%;
+    margin: 5px 10px 25px 15px;
+    .stastic-charts-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+
+      .stastic-charts-col {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+
+        .chart-card {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 400px;
+          background: #f6f6f6;
+          box-shadow: rgba(106, 106, 106, 0.2) 0px 8px 24px;
+          border-radius: 10px;
+          padding: 10px 10px 10px 10px;
+        }
+
+        .chart-card:hover {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          background: #f1f1f1;
+          box-shadow: rgba(124, 124, 124, 0.2) 0px 8px 24px;
+          border-radius: 10px;
+          padding: 10px 10px 10px 10px;
+        }
+      }
+    }
+  }
+
+  .maps-container {
+    display: flex;
+    flex-direction: row;
+    border-radius: 10px;
+    margin: 25px 20px 25px 15px;
+    height: auto;
+    .maps-container-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+
+      .maps-container-col {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+      }
+    }
+  }
+}

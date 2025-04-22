@@ -1,21 +1,22 @@
-import { InvestmentCreationComponent } from '@undp/carbon-library';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { InvestmentCreationComponent } from '../../Components/Investment/AddNewInvestment/investmentCreationComponent';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const AddInvestmentComponent = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['common', 'programme']);
 
   const onNavigateToProgrammeView = (id: string) => {
-    navigate('/programmeManagement/view/' + id);
+    navigate(ROUTES.VIEW_PROGRAMME + id);
   };
 
   const onNavigateToProgrammeManagementView = () => {
-    navigate('/programmeManagement/viewAll');
+    navigate(ROUTES.VIEW_PROGRAMMES);
   };
 
   const onNavigateToInvestmentManagementView = () => {
-    navigate('/investmentManagement/viewAll');
+    navigate(ROUTES.VIEW_INVESTMENTS);
   };
 
   return (

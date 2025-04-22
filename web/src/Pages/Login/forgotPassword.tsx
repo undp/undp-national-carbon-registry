@@ -5,7 +5,10 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { useNavigate } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { userForgotPasswordProps, useConnection } from '@undp/carbon-library';
+import { userForgotPasswordProps } from '../../Definitions/Definitions/userForgotPassword.definitions';
+import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import { API_PATHS } from '../../Config/apiConfig';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const ForgotPassword = () => {
   const { post } = useConnection();
@@ -19,7 +22,7 @@ const ForgotPassword = () => {
     setLoading(true);
     try {
       const email = values.email.trim();
-      const response = await post('national/auth/forgotPassword', {
+      const response = await post(API_PATHS.FORGOT_PW, {
         email: email.trim(),
       });
 
@@ -36,7 +39,7 @@ const ForgotPassword = () => {
   };
 
   const onClickBacktoSignIn = () => {
-    navigate('/login', { replace: true });
+    navigate(ROUTES.LOGIN, { replace: true });
   };
 
   const onChangeEmail = () => {

@@ -1,0 +1,202 @@
+name: Carbon Registry ZIM Test Deployment
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - web/**
+      - backend/**
+      - .github/workflows/deployment*
+      - docker-compose*
+
+jobs:
+  changes:
+    name: Deploy Pre Check
+    runs-on: ubuntu-latest
+    outputs:
+      backend-changes: ${{ steps.changes.outputs.backend-changes }}
+      all-changes: ${{ steps.changes.outputs.all-changes }}
+      workflows-changes: ${{ steps.changes.outputs.workflows-changes }}
+      frontend-changes: ${{ steps.changes.outputs.frontend-changes }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.branch_name || github.ref }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Determine changed services
+        id: changes
+        run: |
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+
+          if echo "$CHANGED_FILES" | grep -q "docker-"; then
+            echo "All changes detected."
+            echo "all-changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "No All changes detected."
+            echo "all-changes=false" >> $GITHUB_OUTPUT
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q ".github/workflows/"; then
+            echo "Workflow changes detected."
+            echo "workflows-changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "No Workflow changes detected."
+            echo "workflows-changes=false" >> $GITHUB_OUTPUT
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "web/"; then
+            echo "Frontend changes detected."
+            echo "frontend-changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "No Frontend changes detected."
+            echo "frontend-changes=false" >> $GITHUB_OUTPUT
+          fi
+
+          if echo "$CHANGED_FILES" | grep -q "backend/"; then
+            echo "Backend changes detected."
+            echo "backend-changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "No Backend changes detected."
+            echo "backend-changes=false" >> $GITHUB_OUTPUT
+          fi
+
+  deploy_frontend:
+    name: Carbon Registry ZIM Frontend Deploy
+    needs: changes
+    if: needs.changes.outputs.frontend-changes == 'true' || needs.changes.outputs.workflows-changes == 'true' || needs.changes.outputs.all-changes == 'true'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-'frontend'
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 5
+      - name: Check Docker variable changes
+        run: |
+          echo "docker-compose file Change...."
+          git diff HEAD~ -- HEAD -z ./docker-compose*
+      - name: Cache modules
+        uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      # - name: Install dependencies
+      #   working-directory: ./web
+      #   run: CI=false yarn install
+      # - name: Build
+      #   working-directory: ./web
+      #   run: CI=false yarn build
+      # - name: Deploy
+      #   run: aws s3 sync ./web/build s3://carbon-www-dev
+      # - name: Deploy Test
+      #   run: aws s3 sync ./web/build s3://www-test-carbon
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      # - name: Build, tag, and push the image to Amazon ECR
+      #   id: build-image
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     ECR_REPOSITORY: carbon-web
+      #     IMAGE_TAG: unified
+      #   run: |
+      #     # Build a docker container and push it to ECR
+      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg REACT_APP_BACKEND=http://3.232.219.197:3000 --build-arg REACT_APP_STAT_URL=http://3.232.219.197:3100 --build-arg REACT_APP_COUNTRY_NAME="CountryX" --build-arg COUNTRY_FLAG_URL="https://carbon-common-dev.s3.amazonaws.com/flag.png" --build-arg COUNTRY_CODE="NG" --build-arg REACT_APP_MAP_TYPE="Mapbox" --build-arg REACT_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }}
+      #     echo "Pushing image to ECR...."
+      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      #     echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      - name: Build, tag, and push the image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: carbon-registry-zim-web
+          IMAGE_TAG: ${{ github.head_ref || github.ref_name }}
+        run: |
+          # Build a docker container and push it to ECR 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg VITE_APP_BACKEND=http://localhost:3000 --build-arg VITE_APP_STAT_URL=http://localhost:3100 --build-arg COUNTRY_NAME="United Nations" --build-arg VITE_APP_REGISTRY_NAME="UNDP Demo Carbon Registry" --build-arg COUNTRY_CODE="NG" --build-arg VITE_APP_MAP_TYPE="Mapbox" --build-arg VITE_APP_GOVERNMENT_MINISTRY:"Ministry Of Environment" --build-arg VITE_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }} --build-arg VITE_APP_MAXIMUM_FILE_SIZE=1048576 --build-arg COUNTRY_FLAG_URL="https://carbon-common-dev.s3.amazonaws.com/flag.png" 
+          echo "Pushing image to ECR..."
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      - name: Deploy docker image to Amazon EC2
+        if: github.ref == 'refs/heads/develop'
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: carbon-registry-zim-web
+          IMAGE_TAG: ${{ github.head_ref || github.ref_name }}
+          PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_TEST }}
+          HOSTNAME: ${{secrets.HOST_IP_TEST }}
+          USER_NAME: ec2-user
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+            carbon-zim/zim_frontend_deploy.sh '
+
+  deploy_backend:
+    name: Carbon Registry ZIM Backend Deploy
+    needs: changes
+    if: needs.changes.outputs.backend-changes == 'true' || needs.changes.outputs.workflows-changes == 'true' || needs.changes.outputs.all-changes == 'true'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-'backend'
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 5
+      - name: Check Docker variable changes
+        run: |
+          echo "docker-compose file Change...."
+          git diff HEAD~ -- HEAD -z ./docker-compose*
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build, tag, and push the development image to Amazon ECR
+        if: github.ref == 'refs/heads/develop'
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: carbon-registry-zim-services
+          IMAGE_TAG: ${{ github.head_ref || github.ref_name }}
+        run: |
+          # Build a docker container and push it to ECR 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/services/Dockerfile .
+          echo "Pushing image to ECR..."
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      - name: Deploy development docker image to Amazon EC2
+        if: github.ref == 'refs/heads/develop'
+        env:
+          PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_TEST }}
+          HOSTNAME: ${{secrets.HOST_IP_TEST }}
+          USER_NAME: ec2-user
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+            carbon-zim/zim_backend_deploy.sh '

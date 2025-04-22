@@ -1,0 +1,540 @@
+@use '../../Styles/colors.addProgramme.scss';
+@use '../../Styles/colors.role.scss' as colors2;
+@use '../../Styles/variables.scss';
+
+.cma-form-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  padding: 0 50px;
+
+  .title-container {
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+
+    .main {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: variables.$primary-color;
+    }
+
+    .sub {
+      font-size: 0.8rem;
+      color: colors.$title-sub;
+    }
+
+    .version-selector {
+      .ant-select-selector {
+        border-radius: 8px;
+        .ant-select-selection-item {
+          color: #000000 !important;
+        }
+      }
+    }
+  }
+
+  .netEmissionsTitle {
+    color: '#3A3541CC';
+    font-size: 16px;
+  }
+
+  .forms-container {
+    display: flex;
+    flex-direction: column;
+    background-color: colors.$common-form-white;
+    margin: 1rem 0 1rem 0;
+    border-radius: 10px;
+    padding: 2.5rem 1.5rem 2.5rem 1.5rem;
+  }
+
+  .stepper-container {
+    display: flex;
+    margin-bottom: 2rem;
+  }
+}
+
+.step-form-container {
+  width: 100%;
+  padding: 20px 0;
+
+  .website-input {
+    .ant-input {
+      margin-left: 0.3rem;
+    }
+    .ant-input-group-addon {
+      border: 1px solid variables.$common-form-input-border;
+    }
+  }
+
+  .equation-container {
+    background-color: #f3f3f3;
+    padding: 12px;
+    border-radius: 4px;
+    border: 1px solid #d9d9d9;
+    margin: 8px 0px 16px 0px;
+
+    .equation {
+      display: flex;
+      width: 350px;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: #615d67;
+      i:first-child {
+        font-size: 14px;
+      }
+      sub {
+        font-size: 9px;
+      }
+
+      span {
+        font-weight: 400;
+        margin-bottom: 0 !important;
+        i {
+          font-size: 14px !important;
+        }
+      }
+    }
+
+    .equation-description {
+      p:first-child {
+        margin-bottom: 0px !important;
+      }
+    }
+  }
+
+  .form-section-title {
+    margin-bottom: 20px;
+    margin-top: 30px;
+    color: rgba(58, 53, 65, 0.5);
+    font-weight: 400;
+  }
+
+  .form-section-heading {
+    margin-bottom: 20px;
+    margin-top: 30px;
+    color: rgba(58, 53, 65, 0.5);
+    font-weight: 500;
+    font-size: 16;
+  }
+
+  .to-margin {
+    margin-top: 8px;
+    color: rgba(58, 53, 65, 0.5);
+  }
+
+  .appendix-title {
+    font-size: 18px;
+    margin-top: 36px;
+    color: rgba(58, 53, 65, 0.58);
+    i {
+      color: rgba(58, 53, 65, 0.5);
+    }
+  }
+
+  .appendix-fax-top-margin {
+    @media (min-width: 980px) {
+      margin-top: 38px;
+    }
+  }
+
+  .list-item-title {
+    color: rgba(58, 53, 65, 0.5);
+    font-weight: 400;
+  }
+
+  .annualGHGEmissions {
+    .ant-input-number-input {
+      text-align: left;
+    }
+  }
+
+  .project-track {
+    color: rgba(58, 53, 65, 0.5);
+  }
+
+  .custom-required:after {
+    content: '*';
+    color: rgba(255, 77, 79, 0.8) !important;
+    font-size: 14px;
+    top: 0px;
+    position: relative;
+    left: 4px;
+  }
+  .projectParticipantsTable {
+    margin: 20px 0px;
+
+    .col-1 {
+      border: 0.5px solid #c4c4c4;
+      width: 30%;
+      padding: 10px 20px;
+    }
+
+    .col-2 {
+      width: 50%;
+      border: 0.5px solid #c4c4c4;
+      padding: 10px 20px;
+    }
+
+    .col-3 {
+      width: 20%;
+      padding: 10px 20px;
+    }
+
+    .header {
+      display: flex;
+      flex-direction: row;
+
+      .col-1 {
+        background-color: #fbfbfb;
+      }
+
+      .col-2 {
+        background-color: #fbfbfb;
+      }
+    }
+
+    .data-body {
+      display: flex;
+      flex-direction: column;
+
+      .row {
+        display: flex;
+        flex-direction: row;
+      }
+
+      .participant-col {
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 16px;
+      }
+
+      .addMinusBtn {
+        height: 32px !important;
+        width: 20px !important;
+        margin-left: 16px;
+      }
+
+      .participant-form-item {
+        width: 60% !important;
+        margin-bottom: 16px;
+      }
+
+      .col-1 {
+        background-color: white !important;
+
+        .ant-form-item {
+          margin-bottom: 0 !important;
+        }
+      }
+
+      .col-2 {
+        background-color: white !important;
+        .ant-form-item {
+          margin-bottom: 0 !important;
+        }
+      }
+    }
+  }
+
+  .gases-included-container {
+    .table {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      flex-wrap: wrap;
+      height: fit-content;
+      align-items: center;
+      background-color: #f3f3f3;
+      // background-color: #F3F3F3;
+    }
+
+    .sidebar-header {
+      width: 30px;
+      rotate: -180deg;
+      background-color: #f3f3f3;
+      writing-mode: vertical-lr;
+    }
+
+    .full-width {
+      width: 100%;
+    }
+    .data-side {
+      width: calc(100% - 30px);
+      background-color: white;
+      border-bottom: #e4e3e3 2px solid;
+      padding-bottom: 10px;
+
+      .add-padding-top {
+        padding-top: 20px;
+      }
+    }
+    .header-row {
+      display: flex;
+      flex-direction: row;
+      // justify-content: space-between;
+      background-color: #f3f3f3;
+      padding: 10px 0;
+      gap: 20px;
+      width: calc(100% - 60px);
+      margin-bottom: 10px;
+    }
+
+    .data-row-wrapper {
+      width: 100%;
+      background-color: white;
+    }
+    .data-row {
+      width: calc(100% - 60px);
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      // justify-content: space-between;
+
+      .data-col {
+        padding: 10px;
+
+        .add-margin {
+          margin-top: 35px;
+        }
+      }
+
+      .gases-col {
+        display: flex;
+      }
+    }
+
+    .col1 {
+      width: 15%;
+      padding: 0px 10px;
+    }
+
+    .col2 {
+      width: 10%;
+      padding: 0px 10px;
+    }
+
+    .col3 {
+      width: 10%;
+      padding: 0px 10px;
+    }
+
+    .col4 {
+      width: 40%;
+      padding: 0px 10px;
+    }
+  }
+  .eligibility-table-form {
+    .header {
+      background-color: #f9fafc;
+      text-align: center;
+      padding: 20px 0;
+      font-weight: 600px;
+    }
+
+    .col-1 {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .data-row {
+      padding: 15px 0;
+    }
+    .col-2 {
+      // text-align: left;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      // padding: 15px 0;
+    }
+  }
+
+  .estimated-emmissions-table-form {
+    margin-top: 30px;
+    .header {
+      padding: 20px 0px;
+      // text-align: left;
+      font-weight: 600;
+      font-size: 15px;
+      color: #28282899;
+
+      div {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+      }
+    }
+
+    .col1 {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      p {
+        margin-top: 8px;
+        color: rgba(58, 53, 65, 0.5);
+      }
+    }
+
+    .total-cols {
+      display: flex;
+      flex-direction: row;
+      justify-content: start;
+      align-items: center;
+    }
+    .datepicker {
+      width: 46%;
+
+      .ant-picker-large .ant-picker-input > input {
+        font-size: 13px;
+      }
+    }
+  }
+  .form-section {
+    background-color: #fbfbfb;
+    padding: 25px 30px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  .design-upload-section-pdd {
+    display: block;
+    align-items: start;
+    width: 50%;
+
+    .icon-color {
+      color: variables.$primary-color !important;
+    }
+
+    .ant-upload-list {
+      margin-top: 10px;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+  }
+
+  .form-item-flex-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .radio-btn-flex-row {
+    display: flex;
+    flex-direction: row;
+    width: 20%;
+  }
+  .crediting-period-title {
+    color: rgba(58, 53, 65, 0.5);
+    font-weight: 400;
+  }
+  .crediting-period-flex-row {
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+    // align-items: center;
+    p {
+      margin-top: 6px;
+      color: rgba(58, 53, 65, 0.5);
+    }
+
+    .crediting-datepicker {
+      width: 50%;
+    }
+  }
+  .half-width-form-item {
+    width: 40%;
+  }
+
+  .form-list-actions {
+    display: flex;
+    flex-direction: row;
+    // align-items: center;
+
+    h4 {
+      margin-top: 6px;
+      margin-right: 20px;
+    }
+    button {
+      margin-right: 20px;
+    }
+
+    .ant-btn-lg {
+      padding: 0 15px !important;
+    }
+  }
+  .custom-label {
+    .ant-form-item-label
+      > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+      margin-bottom: 10px;
+    }
+  }
+
+  .custom-label-pdd {
+    color: rgba(58, 53, 65, 0.5);
+    margin-bottom: 10px;
+  }
+
+  .ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input,
+  .ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input:hover {
+    border-color: #ff4d4f !important;
+  }
+
+  .ant-picker-large {
+    height: 40px !important;
+    width: 100%;
+  }
+
+  .ant-upload-list-item-name {
+    color: variables.$primary-color;
+  }
+
+  .step-actions {
+    &-end {
+      button {
+        margin-right: 10px;
+      }
+    }
+  }
+
+  .full-width-form-item {
+    width: 100%;
+  }
+
+  .row {
+    width: 100%;
+    // .step-form-right-col {
+
+    // }
+  }
+}
+
+.stepper-title-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  .step-count {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-right: 0.4rem;
+    color: colors.$steps-count;
+  }
+
+  .title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: colors.$steps-title;
+  }
+}
+
+.ant-form-item-tooltip {
+  cursor: default !important;
+}

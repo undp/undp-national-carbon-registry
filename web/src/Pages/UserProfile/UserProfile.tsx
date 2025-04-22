@@ -1,13 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { UserProfileComponent } from '@undp/carbon-library';
+import { UserProfileComponent } from '../../Components/User/UserProfile/userProfileComponent';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const CompanyProfile = () => {
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation(['userProfile', 'companyDetails']);
+  const { t, i18n } = useTranslation(['userProfile', 'companyDetails', 'companyRoles']);
 
   const onNavigateUpdateUser = (organisationDetails: any, userDetails: any) => {
-    navigate('/userManagement/updateUser', {
+    navigate(ROUTES.UPDATE_USER, {
       state: {
         record: {
           company: organisationDetails,
@@ -18,7 +19,7 @@ const CompanyProfile = () => {
   };
 
   const onNavigateToLogin = () => {
-    navigate('/login', { replace: true });
+    navigate(ROUTES.LOGIN, { replace: true });
   };
 
   return (

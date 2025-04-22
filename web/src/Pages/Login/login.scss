@@ -1,27 +1,27 @@
-@import '../../Assets/Fonts/fonts.scss';
-@import '../../Styles/variables.scss';
+@use '../../Assets/Fonts/fonts.scss';
+@use '../../Styles/variables.scss';
 
 .login-container {
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
-  background-color: $outside-background-color;
+  background-color: variables.$outside-background-color;
 
   .title {
     font-family: 'MuseoSans';
     font-size: 0.7rem;
-    color: $logo-text-color;
+    color: variables.$logo-text-color;
     font-weight: 700;
     margin-right: 0.5rem;
     margin-top: -10px;
   }
 
   .title-sub {
-    font-weight: 100 !important;
+    font-weight: 700;
     font-family: 'MuseoSans';
     font-size: 0.7rem;
-    color: $logo-text-color;
-    padding-left: 6px;
+    color: variables.$logo-text-color;
+    margin-top: -8px;
   }
 
   .country-name {
@@ -36,7 +36,7 @@
     left: 2rem;
     font-weight: regular;
     font-size: 0.8rem;
-    color: $body-text-color;
+    color: variables.$body-text-color;
 
     .login-language-selection-txt {
       font-size: 0.8rem;
@@ -45,17 +45,17 @@
 
     .ant-select-selector {
       border: none !important;
-      color: $body-text-color !important;
+      color: variables.$body-text-color !important;
       font-size: 0.8rem;
       padding: 0px !important;
     }
 
     .ant-select-selection-item {
-      color: $body-text-color !important;
+      color: variables.$body-text-color !important;
     }
 
     .ant-select-arrow {
-      color: $body-text-color !important;
+      color: variables.$body-text-color !important;
     }
 
     .sep {
@@ -69,25 +69,21 @@
   .container-image {
     background-image: linear-gradient(
         to bottom,
-        rgba(196, 196, 196, 0) 0%,
-        rgba(4, 104, 177, 0.6) 0.01%
+        rgba(255, 255, 255, 0.3) 10%,
+        rgba(4, 105, 177, 0.24) 40%
       ),
-      url('../../Assets/Images/factory.webp');
+      url('../../Assets/Images/home_image.jpg');
     background-image: linear-gradient(
         to bottom,
-        rgba(196, 196, 196, 0) 0% rgba(4, 104, 177, 0.6) 0.01%
+        rgba(255, 255, 255, 0.3) 10%,
+        rgba(4, 105, 177, 0.24) 40%
       ),
       image-set(
-        '../../Assets/Images/factory.png' type('image/png'),
-        '../../Assets/Images/factory.webp' type('image/webp')
-      );
-    background-image: -webkit-gradient(
-      linear,left top,left bottom,from(hsla(0,0%,77%,0),rgba(4,104,177,.6))),
-      image-set(
-        '../../Assets/Images/factory.png' type('image/png'),
-        '../../Assets/Images/factory.webp' type('image/webp')
+        '../../Assets/Images/home_image.jpg' type('image/jpg'),
+        '../../Assets/Images/home_image.webp' type('image/webp')
       );
     background-size: cover;
+    background-position: top !important;
   }
 
   .login-img-container {
@@ -99,9 +95,9 @@
     display: flex;
     flex: 1;
     text-align: left;
-    background-size: 300vh;
+    // background-size: 300vh;
 
-    @media (max-width: $lg-size) {
+    @media (max-width: variables.$lg-size) {
       text-align: center;
       justify-content: center;
     }
@@ -109,13 +105,13 @@
     .text-ctn {
       margin-left: 2vw;
       margin-bottom: 8vh;
-      font-family: $secondary-font-family;
+      font-family: variables.$secondary-font-family;
       font-size: 4rem;
-      color: $outside-background-color;
+      color: variables.$outside-background-color;
       line-height: 1.2em;
       text-transform: uppercase;
 
-      @media (max-width: $lg-size) {
+      @media (max-width: variables.$lg-size) {
         font-size: 2.2rem;
         margin-top: 1rem;
         margin-bottom: unset;
@@ -144,10 +140,10 @@
     align-items: center;
     display: flex;
     margin-top: 1.5vh;
-    color: $title-text-color;
+    color: variables.$title-text-color;
 
     span {
-      @media (max-width: $lg-size) {
+      @media (max-width: variables.$lg-size) {
         text-align: center;
       }
     }
@@ -158,14 +154,14 @@
     flex-direction: column;
     margin-top: 5vh;
 
-    @media (max-width: $lg-size) {
+    @media (max-width: variables.$lg-size) {
       text-align: center;
     }
 
     .login-text-signin {
       font-size: 2.25rem;
       line-height: 2.5rem;
-      color: $title-text-color;
+      color: variables.$title-text-color;
       font-weight: 600;
 
       .login-text-welcome {
@@ -187,9 +183,9 @@
     .ant-btn-primary[disabled]:hover,
     .ant-btn-primary[disabled]:focus,
     .ant-btn-primary[disabled]:active {
-      color: $dark-text-color;
+      color: variables.$dark-text-color;
       border-color: none;
-      background: $line-colors;
+      background: variables.$line-colors;
       text-shadow: none;
       box-shadow: none;
     }
@@ -209,7 +205,7 @@
       .msg {
         display: flex;
         width: 95%;
-        color: $error-color;
+        color: variables.$error-color;
         font-size: 0.8rem;
       }
     }
@@ -240,7 +236,7 @@
       .msg {
         display: flex;
         width: 95%;
-        color: $error-color;
+        color: variables.$error-color;
         font-size: 0.8rem;
       }
     }
@@ -249,11 +245,11 @@
   .email-success-msg {
     font-size: 14px;
     margin-top: 0.5rem;
-    color: $primary-color;
+    color: variables.$primary-color;
   }
 
   .login-input-fields {
-    @media (max-width: $lg-size) {
+    @media (max-width: variables.$lg-size) {
       margin: auto;
       padding: 30px;
       width: 100vw;
@@ -294,7 +290,7 @@
 
       .login-forget-pwd-txt {
         font-size: 0.8rem;
-        color: $title-text-color;
+        color: variables.$title-text-color;
         cursor: pointer;
       }
     }
@@ -305,11 +301,11 @@
       width: 100%;
       margin-top: 1.5rem;
       justify-content: center;
-      color: $note-light-text;
+      color: variables.$note-light-text;
       font-weight: 400;
 
       .backto-signin-txt {
-        color: $primary-color;
+        color: variables.$primary-color;
         font-weight: 600;
         cursor: pointer;
       }
@@ -325,15 +321,15 @@
       justify-content: center;
       margin-top: 1rem;
       font-size: 0.9rem;
-      color: $body-text-color;
+      color: variables.$body-text-color;
 
       .login-register-new-txt {
         font-size: 0.8rem;
-        color: $body-text-color;
+        color: variables.$body-text-color;
         cursor: pointer;
 
         .login-register-new-txt-span {
-          color: $primary-color;
+          color: variables.$primary-color;
           font-weight: 600 !important;
         }
       }
@@ -341,7 +337,7 @@
 
     .ant-form-item-label {
       label {
-        color: $title-text-color;
+        color: variables.$title-text-color;
       }
     }
 
@@ -350,16 +346,16 @@
         height: 2.8rem;
         border-radius: 0.3rem;
         font-size: 0.8rem;
-        border: 1px solid $line-colors;
+        border: 1px solid variables.$line-colors;
         padding-left: 1.5rem;
-        color: $title-text-color;
+        color: variables.$title-text-color;
       }
 
       input[type='username']:-webkit-autofill,
       input[type='username']:-webkit-autofill:hover,
       input[type='username']:-webkit-autofill:focus {
-        -webkit-text-fill-color: $title-text-color;
-        -webkit-box-shadow: 0 0 0 30px $outside-background-color inset !important;
+        -webkit-text-fill-color: variables.$title-text-color;
+        -webkit-box-shadow: 0 0 0 30px variables.$outside-background-color inset !important;
       }
 
       .ant-input:focus {
@@ -377,29 +373,29 @@
       }
 
       .ant-input-password {
-        border: 1px solid $line-colors;
+        border: 1px solid variables.$line-colors;
         border-radius: 0.3rem;
         box-shadow: none;
-        background-color: $outside-background-color !important;
+        background-color: variables.$outside-background-color !important;
         padding: 0px 11px;
       }
 
       input[type='password']:-webkit-autofill,
       input[type='password']:-webkit-autofill:hover,
       input[type='password']:-webkit-autofill:focus {
-        -webkit-text-fill-color: $title-text-color;
-        -webkit-box-shadow: 0 0 0 30px $outside-background-color inset !important;
+        -webkit-text-fill-color: variables.$title-text-color;
+        -webkit-box-shadow: 0 0 0 30px variables.$outside-background-color inset !important;
       }
     }
   }
 
   .ant-input::placeholder {
     font-size: 1rem;
-    color: $light-text-color;
+    color: variables.$light-text-color;
   }
 
   .ant-btn-primary {
-    background: linear-gradient(to right, $gradient-background-start, $gradient-background-end);
+    background: linear-gradient(to right, variables.$gradient-background-start, variables.$gradient-background-end);
     border: none;
     height: 2.4rem;
     font-size: 1rem;
@@ -409,7 +405,7 @@
 
   .ant-select-selector {
     border: none;
-    color: $background-color;
+    color: variables.$background-color;
   }
 }
 
@@ -421,7 +417,7 @@
     justify-content: space-between;
     margin-top: 1.5rem;
     font-size: 0.875rem;
-    color: $note-light-text;
+    color: variables.$note-light-text;
     text-align: justify;
 
     .label {

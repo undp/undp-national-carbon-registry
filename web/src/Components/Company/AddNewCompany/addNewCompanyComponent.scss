@@ -1,0 +1,320 @@
+@use "../../../Styles/colors.addCompany.scss";
+@use "../../../Styles/colors.role.scss" as colors2;
+@use "../../../Styles/variables.scss";
+
+.company-details-form-container {
+  width: 100%;
+  .company-details-form {
+    .steps-actions {
+      display: flex;
+      flex-direction: row-reverse;
+      .mg-left-1 {
+        margin-left: 1rem;
+      }
+    }
+    .row {
+      .website {
+        .ant-input {
+          margin-left: 0.3rem;
+        }
+        .ant-input-group-addon {
+          border: 1px solid variables.$common-form-input-border;
+        }
+      }
+      .logo-upload-section {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: start;
+        width: 100%;
+
+        .ant-upload {
+          width: 20%;
+        }
+
+        .ant-upload-list {
+          align-items: center;
+          justify-content: center;
+          width: 75%;
+
+          .ant-upload-list-item {
+            margin-top: 0;
+          }
+        }
+      }
+      .details-part-one {
+        .space-container {
+          width: 100%;
+          .ant-space-item {
+            width: 100%;
+          }
+        }
+      }
+      .details-part-two {
+        .ant-input-number {
+          margin-left: 0;
+        }
+        .role-group {
+          .certifier-radio-container {
+            width: 30%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: colors2.$cert-color !important;
+              border-color: colors2.$cert-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: #eeeeee;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: colors2.$cert-color;
+            }
+          }
+          .dev-radio-container {
+            width: 35%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: colors2.$dev-color !important;
+              border-color: colors2.$dev-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: #eeeeee;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: colors2.$dev-color;
+            }
+          }
+          .minister-radio-container {
+            width: 30%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: colors2.$ministry-color !important;
+              border-color: colors2.$ministry-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: #eeeeee;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: colors2.$ministry-color;
+            }
+          }
+          .gov-radio-container {
+            width: 45%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: colors2.$gov-color !important;
+              border-color: colors2.$gov-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: #eeeeee;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: colors2.$gov-color;
+            }
+          }
+          .climate-fund-radio-container {
+            width: 45%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: colors2.$cf-color !important;
+              border-color: colors2.$cf-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: #eeeeee;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: colors2.$cf-color;
+            }
+          }
+          .executive-committee-radio-container {
+            width: 45%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: colors2.$ex-color !important;
+              border-color: colors2.$ex-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: #eeeeee;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: colors2.$ex-color;
+            }
+          }
+          .observer-radio-container {
+            width: 25%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: colors2.$view-color !important;
+              border-color: colors2.$view-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: #eeeeee;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: colors2.$view-color;
+            }
+          }
+          .ant-radio-button-wrapper::before {
+            background-color: transparent;
+          }
+          .ant-radio-button-wrapper {
+            border: 1px solid variables.$common-form-input-border;
+          }
+
+          .anticon {
+            margin-right: 0.5rem;
+          }
+          .certifier {
+            width: 100%;
+            .ant-radio-button-checked {
+              background: colors2.$cert-bg-color;
+              color: colors2.$cert-color;
+            }
+          }
+          .dev {
+            width: 100%;
+            .ant-radio-button-checked {
+              background: colors2.$dev-bg-color;
+              color: colors2.$dev-color;
+            }
+          }
+          .gov {
+            width: 100%;
+            .ant-radio-button-checked {
+              background: colors2.$gov-bg-color;
+              color: colors2.$gov-color;
+            }
+          }
+          .minister {
+            width: 100%;
+            .ant-radio-button-checked {
+              background: colors2.$ministry-bg-color;
+              color: colors2.$ministry-color;
+            }
+          }
+          .observer {
+            width: 100%;
+            .ant-radio-button-checked {
+              background: colors2.$view-bg-color;
+              color: colors2.$view-color;
+            }
+          }
+          .role-icons {
+            margin-right: 5px;
+          }
+        }
+        .space-container {
+          width: 100%;
+          .ant-space-item {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+.step-title-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  .step-count {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-right: 0.4rem;
+    color: colors.$steps-count;
+  }
+
+  .title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: colors.$steps-title;
+  }
+}
+
+.add-company-main-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  padding: 0 50px;
+
+  .title-container {
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+
+    .main {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: variables.$primary-color;
+    }
+
+    .sub {
+      font-size: 0.8rem;
+      color: colors.$title-sub;
+    }
+  }
+
+  .adding-section {
+    display: flex;
+    flex-direction: column;
+    background-color: colors.$common-form-white;
+    margin: 1rem 0 1rem 0;
+    border-radius: 10px;
+    padding: 2.5rem 1.5rem 2.5rem 1.5rem;
+
+    .form-section {
+      display: flex;
+      margin-bottom: 2rem;
+
+      .form-one {
+        width: 100%;
+      }
+      .steps {
+        width: 15%;
+      }
+
+      .steps-content {
+        width: 85%;
+      }
+    }
+
+    .steps-action {
+      display: flex;
+      flex-direction: row-reverse;
+    }
+  }
+}
+
+.ant-upload-list-picture .ant-upload-list-item-error,
+.ant-upload-list-picture-card .ant-upload-list-item-error {
+  height: auto;
+  max-height: 200px;
+}
+
+.hide {
+  display: none !important;
+}
