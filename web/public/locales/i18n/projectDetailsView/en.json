@@ -5,6 +5,7 @@
   "creditRetired": "Credit Retire",
   "creditBalance": "Credit Balance",
   "projectCategory": "Project Category",
+  "authorizationId": "Authorization ID",
   "purposeOfCreditDevelopment": "Credit Type",
   "desc": "",
   "projectProposalStage": "Application Stage",
@@ -295,5 +296,13 @@
   "AFFORESTATION_AND_REFORESTATION": "Afforestation and Reforestation",
   "AGRICULTURE": "Agriculture",
   "checkboxConfirmMessage": "I reviewed all the attached documents",
-  "infConfirmSubMessage": "The system will generate a No Objection Letter"
+  "infConfirmSubMessage": "The system will generate a No Objection Letter",
+  "ENERGY": "Energy",
+  "HEALTH": "Health",
+  "EDUCATION": "Education",
+  "MANUFACTURING": "Manufacturing",
+  "HOSPITALITY": "Hospitality",
+  "FORESTRY": "Forestry",
+  "WASTE": "Waste",
+  "OTHER": "Other"
 }
