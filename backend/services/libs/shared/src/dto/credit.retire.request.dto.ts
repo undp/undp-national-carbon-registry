@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import {
   IsInt,
@@ -7,6 +7,7 @@ import {
   IsEnum,
   IsString,
   IsNotEmpty,
+  IsOptional,
 } from "class-validator";
 import { CreditRetirementTypeEnum } from "../enum/credit.retirement.type.enum";
 
@@ -22,10 +23,10 @@ export class CreditRetireRequestDto {
   @IsNotEmpty()
   amount: number;
 
-  @ApiProperty()
-  @IsNotEmpty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
-  remarks: string;
+  remarks?: string;
 
   @ApiProperty({ enum: CreditRetirementTypeEnum })
   @IsEnum(CreditRetirementTypeEnum)
@@ -38,6 +39,13 @@ export class CreditRetireRequestDto {
       o.retirementType === CreditRetirementTypeEnum.CROSS_BORDER_TRANSACTIONS
   )
   @IsString()
-  @IsNotEmpty()
-  country: string;
+  country?: string;
+
+  @ApiProperty()
+  @ValidateIf(
+    (o) =>
+      o.retirementType === CreditRetirementTypeEnum.CROSS_BORDER_TRANSACTIONS
+  )
+  @IsString()
+  organizationName?: string;
 }

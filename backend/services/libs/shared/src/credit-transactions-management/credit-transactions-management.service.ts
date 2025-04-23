@@ -428,6 +428,7 @@ export class CreditTransactionsManagementService {
         retirementType: txData.retirementType,
         remarks: txData.remarks,
         country: txData.country,
+        organizationName: txData.organizationName,
       });
       await em.save(CreditTransactionsEntity, newTranferRecord);
     } else if (creditBlock.txType == TxType.RETIRE) {
