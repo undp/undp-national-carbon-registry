@@ -77,7 +77,7 @@ export const PURPOSE_CREDIT_DEVELOPMENT: { [key: string]: string } = {
   TRACK_2: "Track 2",
 };
 
-const INF_SECTOR: { [key: string]: string } = {
+export const INF_SECTOR: { [key: string]: string } = {
   ENERGY: 'Energy',
   AGRICULTURE: 'Agriculture',
   HEALTH: 'Health',
