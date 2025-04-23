@@ -26,7 +26,7 @@ import { API_PATHS } from '../../../Config/apiConfig';
 import { CreditBalanceInterface } from '../Interfaces/creditBalance.interface';
 import { ProfileIcon } from '../../../Components/IconComponents/ProfileIcon/profile.icon';
 import '../creditPageStyles.scss';
-import { CreditEventTypeEnum } from '../Enums/creditEventEnum';
+import { IssuedOrReceivedOptions } from "../Enums/creditEventEnum";
 import { CreditActionType } from '../Enums/creditActionType.enum';
 import { CreditActionModal } from './creditActionModal';
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
@@ -52,10 +52,7 @@ enum CrediBalanceColumns {
   ACTION = 'action',
   DATE = 'date',
 }
-enum IssuedOrReceivedOptions {
-  ISSUED = 'issued',
-  RECEIVED = 'received',
-}
+
 
 export const getIssuedReceivedTagColor = (status: IssuedOrReceivedOptions) => {
   switch (status) {
@@ -113,13 +110,13 @@ export const CreditBalanceTableComponent = (props: any) => {
     const filterAnd: any[] = [];
     const filterOr: any[] = [];
 
-    // if (checkBoxOptions) {
-    //   filterAnd.push({
-    //     key: 'type',
-    //     operation: 'in',
-    //     value: checkBoxOptions,
-    //   });
-    // }
+    if (!checkAllBox && checkBoxOptions) {
+      filterAnd.push({
+        key: 'type',
+        operation: 'in',
+        value: checkBoxOptions,
+      });
+    }
 
     if (search && search !== '') {
       filterOr.push({
@@ -224,18 +221,18 @@ export const CreditBalanceTableComponent = (props: any) => {
   const columns = [
     {
       title: t(CrediBalanceColumns.ORGANIZATION_NAME),
-      key: 'receiver.name',
+      key: "receiver.name",
       sorter: true,
-      align: 'left' as const,
+      align: "left" as const,
       render: (record: CreditBalanceInterface) => {
         const elements = (
           <Row>
             <ProfileIcon
               icon={record.receiverLogo}
-              bg={'rgba(185, 226, 244, 0.56)'}
+              bg={"rgba(185, 226, 244, 0.56)"}
               name={record.receiverName}
             />
-            <span style={{ marginTop: '6px' }}>{record.receiverName}</span>
+            <span style={{ marginTop: "6px" }}>{record.receiverName}</span>
           </Row>
         );
         return <div className="org-list">{elements}</div>;
@@ -243,9 +240,9 @@ export const CreditBalanceTableComponent = (props: any) => {
     },
     {
       title: t(CrediBalanceColumns.PROJECT_NAME),
-      key: 'project.title',
+      key: "project.title",
       sorter: true,
-      align: 'left' as const,
+      align: "left" as const,
       render: (record: CreditBalanceInterface) => {
         return <span>{record?.projectName}</span>;
       },
@@ -253,19 +250,23 @@ export const CreditBalanceTableComponent = (props: any) => {
     {
       title: t(CrediBalanceColumns.SERIAL_NO),
       key: CrediBalanceColumns.SERIAL_NO,
-      align: 'left' as const,
+      align: "left" as const,
       render: (record: CreditBalanceInterface) => {
         return <span>{record?.serialNumber}</span>;
       },
     },
     {
       title: t(CrediBalanceColumns.DATE),
-      key: 'createdDate',
+      key: "createdDate",
       sorter: true,
-      align: 'left' as const,
+      align: "left" as const,
       render: (item: CreditBalanceInterface) => {
         return (
-          <span>{moment(parseInt(String(item?.createdDate))).format('YYYY-MM-DD HH:mm:ss')}</span>
+          <span>
+            {moment(parseInt(String(item?.createdDate))).format(
+              "YYYY-MM-DD HH:mm:ss"
+            )}
+          </span>
         );
       },
     },
@@ -274,21 +275,11 @@ export const CreditBalanceTableComponent = (props: any) => {
           {
             title: t(CrediBalanceColumns.ISSUE_OR_RECEIVED),
             key: CrediBalanceColumns.ISSUE_OR_RECEIVED,
-            align: 'center' as const,
+            align: "center" as const,
             render: (record: CreditBalanceInterface) => {
               return (
-                <Tag
-                  color={getIssuedReceivedTagColor(
-                    capitalize(record?.eventType) === CreditEventTypeEnum.ISSUED
-                      ? IssuedOrReceivedOptions.ISSUED
-                      : IssuedOrReceivedOptions.RECEIVED
-                  )}
-                >
-                  {t(
-                    capitalize(record?.eventType) === CreditEventTypeEnum.ISSUED
-                      ? IssuedOrReceivedOptions.ISSUED
-                      : IssuedOrReceivedOptions.RECEIVED
-                  )}
+                <Tag color={getIssuedReceivedTagColor(record?.type)}>
+                  {t(record?.type)}
                 </Tag>
               );
             },
@@ -297,12 +288,14 @@ export const CreditBalanceTableComponent = (props: any) => {
       : []),
     {
       title: t(CrediBalanceColumns.CREDITS),
-      key: 'creditAmount',
+      key: "creditAmount",
       sorter: true,
-      align: 'left' as const,
+      align: "left" as const,
       render: (record: CreditBalanceInterface) => {
         return (
-          <span style={{ marginLeft: '20px' }}>{addCommSep(String(record?.creditAmount))}</span>
+          <span style={{ marginLeft: "20px" }}>
+            {addCommSep(String(record?.creditAmount))}
+          </span>
         );
       },
     },
@@ -310,18 +303,26 @@ export const CreditBalanceTableComponent = (props: any) => {
     userInfoState?.userRole === Role.Admin
       ? [
           {
-            title: t(''),
+            title: t(""),
             width: 6,
-            align: 'right' as const,
+            align: "right" as const,
             key: CrediBalanceColumns.ACTION,
             render: (record: any) => {
               const menu = actionMenu(record);
               return (
                 menu && (
-                  <Popover placement="bottomRight" content={menu} trigger="click">
+                  <Popover
+                    placement="bottomRight"
+                    content={menu}
+                    trigger="click"
+                  >
                     <EllipsisOutlined
                       rotate={90}
-                      style={{ fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
+                      style={{
+                        fontWeight: 600,
+                        fontSize: "1rem",
+                        cursor: "pointer",
+                      }}
                     />
                   </Popover>
                 )
