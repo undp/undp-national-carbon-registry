@@ -452,7 +452,6 @@ export const CreditBalanceTableComponent = (props: any) => {
                 organizationName: reciveParty.organization,
               }
             : {}),
-
           amount: Number(creditAmount),
         });
       }
