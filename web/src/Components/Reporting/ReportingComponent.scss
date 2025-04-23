@@ -114,10 +114,14 @@
     table-layout: fixed;
   }
 
-  .ant-table-tbody > tr > td {
-    word-wrap: break-word;
+  // .ant-table-tbody > tr > td {
+  //   word-wrap: break-word;
 
-    word-break: break-all;
+  //   word-break: break-all;
+  // }
+
+  td {
+    font-weight: 400 !important;
   }
 }
 
