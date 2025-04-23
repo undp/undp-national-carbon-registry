@@ -348,7 +348,12 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                   </span>
                 }
                 name="retirementType"
-                required
+                rules={[
+                  {
+                    required: !isProceed,
+                    message: t("required"),
+                  },
+                ]}
               >
                 <Radio.Group disabled={isProceed}>
                   <Radio value={RetirementType.CROSS_BORDER}>
@@ -419,6 +424,12 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                       className="credit-action-organization-name"
                       label={t("organizationName")}
                       name="toOrganization"
+                      rules={[
+                        {
+                          required: !isProceed,
+                          message: t("required"),
+                        },
+                      ]}
                     >
                       <Input
                         disabled={isProceed}
@@ -440,16 +451,18 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                     style={{ color: `${COLOR_CONFIGS.PRIMARY_FONT_COLOR}` }}
                   >
                     {t("creditAmount")}
-                    <span
-                      style={{
-                        color: `${COLOR_CONFIGS.PRIMARY_RED_COLOR}`,
-                        position: "relative",
-                        top: "2px",
-                        marginLeft: 2,
-                      }}
-                    >
-                      *
-                    </span>
+                    {!isProceed && (
+                      <span
+                        style={{
+                          color: `${COLOR_CONFIGS.PRIMARY_RED_COLOR}`,
+                          position: "relative",
+                          top: "2px",
+                          marginLeft: 2,
+                        }}
+                      >
+                        *
+                      </span>
+                    )}
                   </span>
                 </label>
               </Col>
