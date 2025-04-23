@@ -30,6 +30,7 @@ import { DataResponseDto } from "../dto/data.response.dto";
 import { DataResponseMessageDto } from "../dto/data.response.message";
 import { BasicResponseDto } from "../dto/basic.response.dto";
 import { AefReportManagementService } from "../aef-report-management/aef-report-management.service";
+import { Role } from "../casl/role.enum";
 
 @Injectable()
 export class CreditTransactionsManagementService {
@@ -57,7 +58,10 @@ export class CreditTransactionsManagementService {
     user: User
   ) {
     try {
-      if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
+      if (
+        user.companyRole != CompanyRole.PROJECT_DEVELOPER ||
+        user.role != Role.Admin
+      ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
             "creditTransaction.noTransferPermission",
@@ -169,7 +173,10 @@ export class CreditTransactionsManagementService {
     user: User
   ) {
     try {
-      if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
+      if (
+        user.companyRole != CompanyRole.PROJECT_DEVELOPER ||
+        user.role != Role.Admin
+      ) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
             "creditTransaction.noRetirePermission",
@@ -288,7 +295,10 @@ export class CreditTransactionsManagementService {
         retirementAction.action == RetirementACtionEnum.ACCEPT ||
         retirementAction.action == RetirementACtionEnum.REJECT
       ) {
-        if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+        if (
+          user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+          ![Role.Admin, Role.Root].includes(user.role)
+        ) {
           throw new HttpException(
             this.helperService.formatReqMessagesString(
               "creditTransaction.noRetireActionPermission",
@@ -298,10 +308,13 @@ export class CreditTransactionsManagementService {
           );
         }
       } else if (retirementAction.action == RetirementACtionEnum.CANCEL) {
-        if (user.companyRole != CompanyRole.PROJECT_DEVELOPER) {
+        if (
+          user.companyRole != CompanyRole.PROJECT_DEVELOPER ||
+          user.role != Role.Admin
+        ) {
           throw new HttpException(
             this.helperService.formatReqMessagesString(
-              "project.notProjectParticipant",
+              "project.notAuthorizedProjectParticipant",
               []
             ),
             HttpStatus.BAD_REQUEST
@@ -459,6 +472,14 @@ export class CreditTransactionsManagementService {
       query.filterAnd
         ? query.filterAnd.push(onlyOwn)
         : (query.filterAnd = [onlyOwn]);
+    } else if (user.companyRole == CompanyRole.INDEPENDENT_CERTIFIER) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "creditTransaction.unauthorized",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
     }
     const resp = await this.creditBlockBalancesViewEntityRepository
       .createQueryBuilder("creditBlock")
@@ -494,6 +515,14 @@ export class CreditTransactionsManagementService {
       query.filterOr
         ? query.filterOr.push(...ownTransfers)
         : (query.filterOr = ownTransfers);
+    } else if (user.companyRole == CompanyRole.INDEPENDENT_CERTIFIER) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "creditTransaction.unauthorized",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
     }
     const resp = await this.creditBlockTransfersViewEntityRepository
       .createQueryBuilder("creditTx")
@@ -530,6 +559,14 @@ export class CreditTransactionsManagementService {
       query.filterAnd
         ? query.filterAnd.push(onlyOwn)
         : (query.filterAnd = [onlyOwn]);
+    } else if (user.companyRole == CompanyRole.INDEPENDENT_CERTIFIER) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "creditTransaction.unauthorized",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
     }
     const resp = await this.creditBlockRetirementsViewEntityRepository
       .createQueryBuilder("creditTx")
