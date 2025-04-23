@@ -284,5 +284,6 @@ export default ConnectionContext;
 
 export const useConnection = () => {
   const context = useContext(ConnectionContext);
+  console.log("----------useConnection running----------", context);
   return context.connection!;
 };

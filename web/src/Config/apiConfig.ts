@@ -167,4 +167,6 @@ export const API_PATHS = {
   REJECT_VALIDATION: "national/programmeSl/validation/reject",
   APPROVE_VALIDATION: "national/programmeSl/validation/approve",
   POPUP_ACTION: (endpoint: string) => `national/programme/${endpoint}`,
+  // AEF RECORDS:
+  QUERY_AEF_RECORDS: `national/reportsManagement/queryAefRecords`,
 };
