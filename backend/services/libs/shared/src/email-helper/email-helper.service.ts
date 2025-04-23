@@ -474,8 +474,7 @@ export class EmailHelperService {
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "PDD_APPROVAL_IC_TO_DNA":
@@ -484,8 +483,7 @@ export class EmailHelperService {
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "VALIDATION_SUBMITTED_TO_DNA":
@@ -494,8 +492,7 @@ export class EmailHelperService {
           pdOrganizationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "VERIFICATION_CREATE_TO_DNA":
@@ -504,8 +501,7 @@ export class EmailHelperService {
           organizationNamePD: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
     }
@@ -569,8 +565,7 @@ export class EmailHelperService {
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "PDD_CREATE":
@@ -578,8 +573,7 @@ export class EmailHelperService {
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "PDD_DNA_REJECT_TO_IC":
@@ -588,8 +582,7 @@ export class EmailHelperService {
           pdOrganisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "PDD_APPROVAL_DNA_TO_IC":
@@ -598,8 +591,7 @@ export class EmailHelperService {
           pdOrganisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "VALIDATION_APPROVED_TO_IC":
@@ -608,8 +600,7 @@ export class EmailHelperService {
           pdOrganisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "VALIDATION_REJECTED_TO_IC":
@@ -618,8 +609,7 @@ export class EmailHelperService {
           pdOrganisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "MONITORING_UPLOADED":
@@ -627,8 +617,7 @@ export class EmailHelperService {
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "VERIFICATION_REJECTED_TO_IC":
@@ -638,8 +627,7 @@ export class EmailHelperService {
           organisationNamePD: company.name,
           countryName: systemCountryName,
           projectName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "VERIFICATION_APPROVED_TO_IC":
@@ -648,8 +636,7 @@ export class EmailHelperService {
           organisationNamePD: company.name,
           countryName: systemCountryName,
           projectName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
     }
@@ -720,8 +707,7 @@ export class EmailHelperService {
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "INF_REJECT":
@@ -729,8 +715,7 @@ export class EmailHelperService {
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "PDD_APPROVAL_IC_TO_PD":
@@ -739,8 +724,7 @@ export class EmailHelperService {
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "PDD_IC_REJECT":
@@ -749,8 +733,7 @@ export class EmailHelperService {
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "PDD_DNA_REJECT_TO_PD":
@@ -758,8 +741,7 @@ export class EmailHelperService {
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "PDD_APPROVAL_DNA_TO_PD":
@@ -767,18 +749,16 @@ export class EmailHelperService {
           organisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "VALIDATION_SUBMITTED":
         templateData = {
           pdOrganizationName: company.name,
-          organisationName: templateData.organisationName,
+          icOrganisationName: templateData.icOrganisationName,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "VALIDATION_APPROVED_TO_PD":
@@ -787,8 +767,7 @@ export class EmailHelperService {
           icOrganizationName: templateData.icOrganizationName,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "VALIDATION_REJECTED_TO_PD":
@@ -797,8 +776,7 @@ export class EmailHelperService {
           icOrganizationName: templateData.icOrganizationName,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "VERIFICATION_CREATE_TO_PD":
@@ -807,8 +785,7 @@ export class EmailHelperService {
           organizationNameIC: templateData.icOrganizationName,
           countryName: systemCountryName,
           projectName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "MONITORING_REJECT":
@@ -818,8 +795,7 @@ export class EmailHelperService {
           remarks: templateData.remarks,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "MONITORING_APPROVE":
@@ -828,8 +804,7 @@ export class EmailHelperService {
           pdOrganisationName: company.name,
           countryName: systemCountryName,
           programmeName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "VERIFICATION_REJECTED_TO_PD":
@@ -839,8 +814,7 @@ export class EmailHelperService {
           organisationNamePD: company.name,
           countryName: systemCountryName,
           projectName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
       case "VERIFICATION_APPROVED_TO_PD":
@@ -849,8 +823,7 @@ export class EmailHelperService {
           organisationNamePD: company.name,
           countryName: systemCountryName,
           projectName: project.title,
-          programmePageLink:
-            hostAddress + `/programmeManagementSLCF/view/${refId}`,
+          programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
     }

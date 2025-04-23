@@ -395,7 +395,7 @@ export class DocumentManagementService {
           await this.emailHelperService.sendEmailToPDAdmins(
             EmailTemplates.VALIDATION_SUBMITTED,
             {
-              organizationName: ICCompany.name,
+              icOrganisationName: ICCompany.name,
             },
             addDocumentDto.projectRefId
           );
@@ -1700,7 +1700,7 @@ export class DocumentManagementService {
         );
         await this.emailHelperService.sendEmailToICAdmins(
           EmailTemplates.VALIDATION_APPROVED_TO_IC,
-          { icOrganizationName: vrSubmittedIC.Organisation.name },
+          { icOrganisationName: vrSubmittedIC.Organisation.name },
           project.refId
         );
         await this.logProjectStage(
