@@ -85,10 +85,10 @@ export const EmailTemplates = {
   },
   CHANGE_PASSOWRD: {
     id: "CHANGE_PASSOWRD",
-    subject: "Your {CountryName} Carbon Registry Account Password is Changed",
+    subject: "Your {{countryName}} Carbon Registry Account Password is Changed",
     html: `
         Hi, <br><br>
-        The password of your {CountryName} Carbon Registry account was changed successfully. 
+        The password of your {{countryName}} Carbon Registry account was changed successfully. 
 
         <br><br>
         Sincerely, <br>
@@ -1458,7 +1458,7 @@ export const EmailTemplates = {
         {{remarks}}
         <br><br>
 
-        Please re-submit the Project Design Document by clicking  {{programmePageLink}} here. <br><br>
+        Please re-submit the Project Design Document by clicking <a href={{programmePageLink}}>here</a>. <br><br>
 
         Sincerely,<br>
         The {{countryName}} Carbon Registry Team.
