@@ -1,9 +1,8 @@
 import moment from "moment";
 
 export function toMoment(unixTimestamp: number) {
-
   if (!unixTimestamp) {
-    return undefined
+    return undefined;
   }
   // Check if it's in seconds (10 digits) and convert
   if (String(unixTimestamp).length === 10) {
@@ -11,5 +10,6 @@ export function toMoment(unixTimestamp: number) {
   }
 
   // Assume it's already in milliseconds
+  console.log("-----auth-----", unixTimestamp, moment(Number(unixTimestamp)));
   return moment(unixTimestamp); // milliseconds -> moment
 }

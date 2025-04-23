@@ -40,6 +40,7 @@ import moment from 'moment';
 import { addCommSep } from '../../../Definitions/Definitions/programme.definitions';
 import { Role } from '../../../Definitions/Enums/role.enum';
 import { COLOR_CONFIGS } from '../../../Config/colorConfigs';
+import { capitalize } from '../../../Utils/capitalize';
 
 const { Search } = Input;
 
