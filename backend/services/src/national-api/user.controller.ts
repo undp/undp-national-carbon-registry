@@ -96,7 +96,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
   @Post("query")
   queryUser(@Body() query: QueryDto, @Request() req) {
-    return this.userService.query(query, req.abilityCondition);
+    return this.userService.query(query, req.abilityCondition, req.user);
   }
 
   @ApiBearerAuth()

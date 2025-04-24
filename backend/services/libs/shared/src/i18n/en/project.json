@@ -19,6 +19,7 @@
   "noCompanyExistingInSystem": "No company exists in the system",
   "noRecieverCompanyExistingInSystem": "No reciever company exists in the system",
   "recieverNotProjectParticipant": "Credit reciever is not a project participant",
+  "recieverNotAcitiveProjectParticipant": "Credit receiver is not an active project participant",
   "noICExistingInSystem": "No independent certifier exists in the system",
   "notAuthorised": "User is not authorized to perform this action",
   "noProject": "No project found with the provided ID",
@@ -45,5 +46,6 @@
   "invlaidCreditVerifed": "Credit amounts to verify are invalid",
   "greaterThanCurrentVintage": "Activity vintage is greater than current vintage",
   "invalidSectoralScopeForSector": "Invalid sectoral scope for the sector",
-  "success": "SUCCESS"
+  "success": "SUCCESS",
+  "notAuthorizedProjectParticipant": "Not authorized project participant"
 }
