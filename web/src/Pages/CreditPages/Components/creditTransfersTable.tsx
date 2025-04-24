@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Col,
   Empty,
@@ -71,7 +72,7 @@ export const CreditTransfersTableComponent = (props: any) => {
 
     if (search && search !== "") {
       filter.push({
-        key: "project.title",
+        key: "projectName",
         operation: "like",
         value: `%${search}%`,
       });
@@ -129,7 +130,7 @@ export const CreditTransfersTableComponent = (props: any) => {
     },
     {
       title: t(CrediTransferColumns.PROJECT_NAME),
-      key: "project.title",
+      key: "projectName",
       sorter: true,
       align: "left" as const,
       render: (item: CreditTransfersInterface) => {
@@ -161,7 +162,7 @@ export const CreditTransfersTableComponent = (props: any) => {
     },
     {
       title: t(CrediTransferColumns.CREDIT_SENDER),
-      key: "sender.name",
+      key: "senderName",
       sorter: true,
       align: "left" as const,
       render: (item: CreditTransfersInterface) => {
@@ -180,7 +181,7 @@ export const CreditTransfersTableComponent = (props: any) => {
     },
     {
       title: t(CrediTransferColumns.CREDIT_RECEIVER),
-      key: "receiver.name",
+      key: "receiverName",
       sorter: true,
       align: "left" as const,
       render: (item: CreditTransfersInterface) => {
@@ -270,11 +271,20 @@ export const CreditTransfersTableComponent = (props: any) => {
   }, []);
 
   useEffect(() => {
-    if (!isInitialRender.current) return;
+    if (isInitialRender.current) {
+      getQueryData();
+    }
+  }, [currentPage, pageSize]);
 
-    getQueryData();
-  }, [currentPage, pageSize, sortField, sortOrder, search]);
-
+  useEffect(() => {
+    if (isInitialRender.current) {
+      if (currentPage !== 1) {
+        setCurrentPage(1);
+      } else {
+        getQueryData();
+      }
+    }
+  }, [sortField, sortOrder, search]);
   // MARK: Main JSX START
 
   return (
@@ -287,9 +297,9 @@ export const CreditTransfersTableComponent = (props: any) => {
                 onPressEnter={(e) =>
                   onSearch((e.target as HTMLInputElement).value)
                 }
-                placeholder={`${t("search")}`}
+                placeholder={`${t("searchByNameProjectName")}`}
                 allowClear
-                onSearch={onSearch}
+                onChange={(e) => setSearch(e.target.value)}
                 style={{ width: 265 }}
               />
             </div>
