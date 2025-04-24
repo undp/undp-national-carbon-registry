@@ -72,7 +72,7 @@ export const CreditTransfersTableComponent = (props: any) => {
 
     if (search && search !== "") {
       filter.push({
-        key: 'project"."title',
+        key: "projectName",
         operation: "like",
         value: `%${search}%`,
       });
@@ -130,7 +130,7 @@ export const CreditTransfersTableComponent = (props: any) => {
     },
     {
       title: t(CrediTransferColumns.PROJECT_NAME),
-      key: "project.title",
+      key: "projectName",
       sorter: true,
       align: "left" as const,
       render: (item: CreditTransfersInterface) => {
@@ -162,7 +162,7 @@ export const CreditTransfersTableComponent = (props: any) => {
     },
     {
       title: t(CrediTransferColumns.CREDIT_SENDER),
-      key: "sender.name",
+      key: "senderName",
       sorter: true,
       align: "left" as const,
       render: (item: CreditTransfersInterface) => {
@@ -181,7 +181,7 @@ export const CreditTransfersTableComponent = (props: any) => {
     },
     {
       title: t(CrediTransferColumns.CREDIT_RECEIVER),
-      key: "receiver.name",
+      key: "receiverName",
       sorter: true,
       align: "left" as const,
       render: (item: CreditTransfersInterface) => {

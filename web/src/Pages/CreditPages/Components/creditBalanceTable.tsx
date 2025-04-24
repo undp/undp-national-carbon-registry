@@ -109,7 +109,7 @@ export const CreditBalanceTableComponent = (props: any) => {
     const filterAnd: any[] = [];
     const filterOr: any[] = [];
 
-    if (checkBoxOptions) {
+    if (checkBoxOptions && checkBoxOptions?.length > 0) {
       filterAnd.push({
         key: "type",
         operation: "in",
@@ -119,12 +119,12 @@ export const CreditBalanceTableComponent = (props: any) => {
 
     if (search && search !== "") {
       filterOr.push({
-        key: "receiver.name",
+        key: "receiverName",
         operation: "like",
         value: `%${search}%`,
       });
       filterOr.push({
-        key: "project.title",
+        key: "projectName",
         operation: "like",
         value: `%${search}%`,
       });
@@ -152,6 +152,11 @@ export const CreditBalanceTableComponent = (props: any) => {
         filterOr: filterOr?.length > 0 ? filterOr : undefined,
         sort: sort,
       });
+      if (checkBoxOptions?.length <= 0) {
+        setTableData([]);
+        setTotalProgramme(0);
+        return true;
+      }
       setTableData(response?.data ? response.data : []);
       setTotalProgramme(
         response.response?.data?.total ? response.response?.data?.total : 0
@@ -234,7 +239,7 @@ export const CreditBalanceTableComponent = (props: any) => {
   const columns = [
     {
       title: t(CrediBalanceColumns.ORGANIZATION_NAME),
-      key: "receiver.name",
+      key: "receiverName",
       sorter: true,
       align: "left" as const,
       render: (record: CreditBalanceInterface) => {
@@ -253,7 +258,7 @@ export const CreditBalanceTableComponent = (props: any) => {
     },
     {
       title: t(CrediBalanceColumns.PROJECT_NAME),
-      key: "project.title",
+      key: "projectName",
       sorter: true,
       align: "left" as const,
       render: (record: CreditBalanceInterface) => {
