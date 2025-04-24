@@ -15,6 +15,10 @@
         "include": "../libs/shared/src/i18n/**/*",
         "watchAssets": true,
         "outDir": ".build/src"
+      },
+      {
+        "include": "../libs/shared/src/templates/**/*",
+        "outDir": "dist"
       }
     ]
   },
