@@ -124,7 +124,7 @@ export const CreditRetirementsTableComponent = (props: any) => {
     const filter: any[] = [];
     const filterOr: any[] = [];
 
-    if (checkBoxOptions) {
+    if (checkBoxOptions && checkBoxOptions?.length > 0) {
       filter.push({
         key: 'creditTx"."status',
         operation: "in",
@@ -134,7 +134,7 @@ export const CreditRetirementsTableComponent = (props: any) => {
 
     if (search && search !== "") {
       filter.push({
-        key: 'project"."title',
+        key: "projectName",
         operation: "like",
         value: `%${search}%`,
       });
@@ -162,11 +162,15 @@ export const CreditRetirementsTableComponent = (props: any) => {
         filterOr: filterOr?.length > 0 ? filterOr : undefined,
         sort: sort,
       });
+      if (checkBoxOptions?.length <= 0) {
+        setTableData([]);
+        setTotalProgramme(0);
+        return true;
+      }
       setTableData(response?.data ? response.data : []);
       setTotalProgramme(
         response.response?.data?.total ? response.response?.data?.total : 0
       );
-      setLoading(false);
       isInitialRender.current = true;
     } catch (error: any) {
       console.log("Error in getting Credit Retirements", error);
@@ -176,6 +180,7 @@ export const CreditRetirementsTableComponent = (props: any) => {
         duration: 3,
         style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
+    } finally {
       setLoading(false);
     }
   };
@@ -278,7 +283,7 @@ export const CreditRetirementsTableComponent = (props: any) => {
     },
     {
       title: t(CrediRetirementsColumns.PROJECT_NAME),
-      key: "project.title",
+      key: "projectName",
       sorter: true,
       align: "left" as const,
       render: (item: CreditRetirementInterface) => {
@@ -287,7 +292,7 @@ export const CreditRetirementsTableComponent = (props: any) => {
     },
     {
       title: t(CrediRetirementsColumns.ORGANIZATION_NAME),
-      key: "sender.name",
+      key: "senderName",
       sorter: true,
       align: "left" as const,
       render: (item: CreditRetirementInterface) => {
