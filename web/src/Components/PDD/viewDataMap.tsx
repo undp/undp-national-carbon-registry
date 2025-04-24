@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { toMoment } from '../../Utils/convertTime';
 
 export const BasicInformationDataMapToFields = (vals: any) => {
   if (vals === undefined) return;
@@ -214,11 +215,8 @@ export const applicationOfMethodologyDataMapToFields = (vals: any) => {
     descriptionOfMeasurementMethods: vals?.dataAndParametersExAnte?.descriptionOfMeasurementMethods,
     purpose: vals?.dataAndParametersExAnte?.purpose,
     comments: vals?.dataAndParametersExAnte?.comments,
-    emissionsPeriodStart: firstYearlyReductions?.startDate
-      ? moment.unix(firstYearlyReductions?.startDate)
-      : undefined,
-    emissionsPeriodEnd: firstYearlyReductions?.endDate
-      ? moment.unix(firstYearlyReductions?.endDate)
+    vintage: firstYearlyReductions?.vintage
+      ? toMoment(firstYearlyReductions?.vintage)
       : undefined,
     baselineEmissionReductions: String(firstYearlyReductions?.baselineEmissionReductions),
     projectEmissionReductions: String(firstYearlyReductions?.projectEmissionReductions),
@@ -230,10 +228,9 @@ export const applicationOfMethodologyDataMapToFields = (vals: any) => {
       if (yearlyReductions !== undefined && yearlyReductions?.length > 0) {
         tempExtraReductions = yearlyReductions.map((reductions: any) => {
           return {
-            emissionsPeriodStart: reductions?.startDate
-              ? moment.unix(reductions?.startDate)
+            vintage: reductions?.vintage
+              ? toMoment(reductions?.vintage)
               : undefined,
-            emissionsPeriodEnd: reductions?.endDate ? moment.unix(reductions?.endDate) : undefined,
             baselineEmissionReductions: String(reductions?.baselineEmissionReductions),
             projectEmissionReductions: String(reductions?.projectEmissionReductions),
             leakageEmissionReductions: String(reductions?.leakageEmissionReductions),
