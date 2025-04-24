@@ -75,7 +75,6 @@ export class OrganisationDto {
 
   @ApiPropertyOptional()
   @IsArray()
-  @ArrayMinSize(1)
   @MaxLength(100, { each: true })
   @IsNotEmpty({ each: true })
   @IsOptional()
