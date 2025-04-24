@@ -499,7 +499,7 @@ export const getFinancialFieldsSl = (programme: ProgrammeSlU) => {
   // };
 
   return {
-    estimatedProgrammeCostLKR: programme.estimatedProjectCost
+    estimatedProgrammeCostUSD: programme.estimatedProjectCost
       ? programme.estimatedProjectCost
       : '-',
     creditEst: programme.creditEst ? programme.creditEst : '-',
