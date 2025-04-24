@@ -127,65 +127,11 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
     // console.log('onFinish triggered');
     // console.log('-----------temp Values before-------');
 
-    // const firstObj = {
-    //   locationOfProjectActivity: values?.locationOfProjectActivity,
-    //   siteNo: values?.pa_siteNo,
-    //   province: values?.province,
-    //   district: values?.district,
-    //   city: values?.pa_city,
-    //   community: values?.community,
-    //   geographicalLocationCoordinates: values?.location,
-    //   uploadImages: await async function () {
-    //     const base64Docs: string[] = [];
-
-    //     if (values?.optionalImages && values?.optionalImages.length > 0) {
-    //       const docs = values.optionalImages;
-    //       for (let i = 0; i < docs.length; i++) {
-    //         if (docs[i]?.originFileObj === undefined) {
-    //           base64Docs.push(docs[i]?.url);
-    //         } else {
-    //           const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-    //           base64Docs.push(temp); // No need for Promise.resolve
-    //         }
-    //       }
-    //     }
-
-    //     return base64Docs;
-    //   },
-    // };
-    // tempList.push(firstObj);
     // console.log(firstObj);
-
-    const locationDetailsOfProjectActivity = await (async function () {
-      const tempList: any[] = [];
-
-      if (values?.extraLocations) {
-        for (const item of values.extraLocations) {
-          const tempObj = {
-            locationOfProjectActivity: item.locationOfProjectActivity, // Use item, not values
-            siteNo: item.siteNo,
-            province: item.province,
-            district: item.district,
-            city: item.city,
-            community: item.community,
-            geographicalLocationCoordinates:
-              item.geographicalLocationCoordinates, // Use item, not values
-            pa_uploadImages: await fileUploadValueExtract(
-              item?.pa_uploadImages,
-              "pa_uploadImages"
-            ),
-          };
-          tempList.push(tempObj);
-        }
-      }
-      // console.log('Final tempList:', tempList);
-      return tempList;
-    })();
 
     const tempValues: any = {
       projectActivityDetails: {
         pa_monitoringPurpose: values?.pa_monitoringPurpose,
-        locationOfProjectActivity: locationDetailsOfProjectActivity,
         projectParticipants: values?.projectParticipants,
         pa_methodology: values?.pa_methodology,
         pa_creditingPeriodType: values?.pa_creditingPeriodType,
@@ -197,9 +143,82 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
         )
           .startOf("day")
           .unix(),
+        locationDetailsOfProjectActivity: await (async function () {
+          const tempList: any[] = [];
+          const firstObj = {
+            locationOfProjectActivity: values?.locationOfProjectActivity,
+            siteNo: values?.siteNo,
+            province: values?.province,
+            district: values?.district,
+            city: values?.city,
+            community: values?.community,
+            geographicalLocationCoordinates:
+              values?.geographicalLocationCoordinates,
+            additionalDocuments: await (async function () {
+              const base64Docs: string[] = [];
+
+              if (values?.optionalImages && values?.optionalImages.length > 0) {
+                const docs = values.optionalImages;
+                for (let i = 0; i < docs.length; i++) {
+                  if (docs[i]?.originFileObj === undefined) {
+                    base64Docs.push(docs[i]?.url);
+                  } else {
+                    const temp = await getBase64(
+                      docs[i]?.originFileObj as RcFile
+                    );
+                    base64Docs.push(temp); // No need for Promise.resolve
+                  }
+                }
+              }
+
+              return base64Docs;
+            })(),
+          };
+          tempList.push(firstObj);
+          //console.log(firstObj);
+
+          if (values?.extraLocations) {
+            for (const item of values.extraLocations) {
+              const tempObj = {
+                locationOfProjectActivity: item.locationOfProjectActivity, // Use item, not values
+                siteNo: item.siteNo,
+                province: item.province,
+                district: item.district,
+                city: item.city,
+                community: item.community,
+                geographicalLocationCoordinates:
+                  item.geographicalLocationCoordinates, // Use item, not values
+                additionalDocuments: await (async function () {
+                  const base64Docs: string[] = [];
+
+                  if (
+                    values?.optionalImages &&
+                    values?.optionalImages.length > 0
+                  ) {
+                    const docs = values.optionalImages;
+                    for (let i = 0; i < docs.length; i++) {
+                      if (docs[i]?.originFileObj === undefined) {
+                        base64Docs.push(docs[i]?.url);
+                      } else {
+                        const temp = await getBase64(
+                          docs[i]?.originFileObj as RcFile
+                        );
+                        base64Docs.push(temp); // No need for Promise.resolve
+                      }
+                    }
+                  }
+
+                  return base64Docs;
+                })(),
+              };
+              tempList.push(tempObj);
+            }
+          }
+          //console.log('Final tempList:', tempList);
+          return tempList;
+        })(),
       },
     };
-    console.log(tempValues);
     handleValuesUpdate(tempValues);
   };
 
@@ -517,7 +536,7 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
 
                   <Col xl={24} md={24}>
                     <div className="custom-label-monitoring">
-                      {t('monitoringReport:pa_uploadImages')}
+                      {t("monitoringReport:pa_uploadImages")}
                     </div>
                     <Form.Item
                       //label={t('monitoringReport:pa_uploadImages')}
@@ -879,12 +898,12 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
 
                             <Col xl={24} md={24}>
                               <div className="custom-label-monitoring">
-                                {t('monitoringReport:pa_uploadImages')}
+                                {t("monitoringReport:pa_uploadImages")}
                               </div>
 
                               <Form.Item
                                 //label={t('monitoringReport:pa_uploadImages')}
-                                name={[name, 'uploadImages']}
+                                name={[name, "uploadImages"]}
                                 valuePropName="fileList"
                                 getValueFromEvent={normFile}
                                 required={false}
