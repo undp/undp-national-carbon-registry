@@ -3,8 +3,7 @@ export default () => ({
   systemCountry: process.env.systemCountryCode || "NG",
   systemCountryName: process.env.systemCountryName || "CountryX",
   systemContinentName: process.env.systemContinentName || "CountryX",
-  countryClimateFundName:
-    process.env.countryClimateFundName || "CountryX Climate Fund (Pvt) Ltd",
+  countryClimateFundName: process.env.countryClimateFundName || "CountryX Climate Fund (Pvt) Ltd",
   defaultCreditUnit: process.env.defaultCreditUnit || "ITMO",
   year: parseInt(process.env.REPORT_YEAR),
   dateTimeFormat: "DD LLLL yyyy @ HH:mm",
@@ -45,8 +44,7 @@ export default () => ({
     username: process.env.SMTP_USERNAME || "AKIAUMXKTXDJIOFY2QXL",
     password: process.env.SMTP_PASSWORD,
     disabled: process.env.IS_EMAIL_DISABLED === "true" ? true : false,
-    disableLowPriorityEmails:
-      process.env.DISABLE_LOW_PRIORITY_EMAIL === "true" ? true : false,
+    disableLowPriorityEmails: process.env.DISABLE_LOW_PRIORITY_EMAIL === "true" ? true : false,
     getemailprefix: process.env.EMAILPREFIX || "🏬📐 🇦🇶",
     adresss: process.env.HOST_ADDRESS || "Address <br>Region, Country Zipcode",
   },
@@ -80,8 +78,7 @@ export default () => ({
   registry: {
     syncEnable: process.env.SYNC_ENABLE === "true" ? true : false,
     endpoint:
-      process.env.SYNC_ENDPOINT ||
-      "https://u4h9swxm8b.execute-api.us-east-1.amazonaws.com/dev",
+      process.env.SYNC_ENDPOINT || "https://u4h9swxm8b.execute-api.us-east-1.amazonaws.com/dev",
     apiToken: process.env.SYNC_API_TOKEN,
   },
   docGenerate: {
@@ -91,8 +88,7 @@ export default () => ({
       "\nHonorable Minister X\nMinister\nMinistry of Environment, Forestry & Tourism",
     ministryName: "Ministry of Environment, Forestry & Tourism",
     countryCapital: process.env.COUNTRY_CAPITAL || "Capital X",
-    contactEmailForQuestions:
-      process.env.CONTACT_EMAIL || "contactus@email.com",
+    contactEmailForQuestions: process.env.CONTACT_EMAIL || "contactus@email.com",
   },
   cadTrust: {
     enable: process.env.CADTRUST_ENABLE === "true" ? true : false,
@@ -100,8 +96,7 @@ export default () => ({
   },
   systemType: process.env.SYSTEM_TYPE || "CARBON_UNIFIED_SYSTEM",
   systemName: process.env.SYSTEM_NAME || "SystemX",
-  environmentalManagementActHyperlink:
-    process.env.ENVIRONMENTAL_MANAGEMENT_ACT_HYPERLINK || "",
+  environmentalManagementActHyperlink: process.env.ENVIRONMENTAL_MANAGEMENT_ACT_HYPERLINK || "",
   cache: {
     project: {
       ttl: process.env.CACHE_PROJECT_TTL || 60 * 1000, // ttl is set in milliseconds
@@ -147,11 +142,11 @@ export default () => ({
     firstTransferingParty: process.env.systemCountryCode || "NG",
     purposeForAuthorization: process.env.ACTION_TYPE_LABEL_LABEL || "NDC",
     OIMP: process.env.NOT_APPLICABLE_LABEL || "NA",
-    firstTransferDefinition:
-      process.env.FIRST_TRANSFER_DEFINITION || "Authorization",
+    firstTransferDefinition: process.env.FIRST_TRANSFER_DEFINITION || "Authorization",
     transferingParty: process.env.systemCountryCode || "NG",
     defaultAquiringParty: process.env.systemCountryCode || "NG",
     purposeForCancellation: process.env.ACTION_TYPE_LABEL_LABEL || "NDC",
     actionBy: process.env.NOT_APPLICABLE_LABEL || "NA",
+    party: process.env.PARTY || "Sri Lanka",
   },
 });

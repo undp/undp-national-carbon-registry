@@ -50,6 +50,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "dotenv-flow": "^3.2.0",
+    "exceljs": "^4.4.0",
     "fs": "^0.0.1-security",
     "ion-js": "^4.3.0",
     "jsbi": "^4.3.0",
@@ -68,7 +69,8 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "typeorm": "^0.3.10",
-    "winston": "^3.8.2"
+    "winston": "^3.8.2",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

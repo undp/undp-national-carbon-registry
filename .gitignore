@@ -13,4 +13,6 @@ web/src/Assets/.DS_Store
 .yalc
 yalc.lock
 backend/services/*.pdf
+backend/services/*.csv
+backend/services/*.xlsx
 backend/services/public/*
