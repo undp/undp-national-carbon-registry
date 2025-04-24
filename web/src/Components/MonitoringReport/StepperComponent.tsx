@@ -403,7 +403,7 @@ const StepperComponent = (props: CustomStepsProps) => {
   };
 
   const handleValuesUpdate = (val: any) => {
-    // console.log('----------temp vals stepper-------------', val);
+    console.log('----------temp vals stepper-------------', val);
     setValues((prevVal: any) => {
       const tempContent = {
         ...prevVal.data,
