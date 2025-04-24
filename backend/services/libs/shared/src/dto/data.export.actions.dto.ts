@@ -26,6 +26,7 @@ export class DataExportActions extends DataExportDto {
   actionType: string;
   transferingParty: string;
   aquiringParty: string;
-  actionBy: string;
   purposeForCancellation: string;
+  actionBy: string;
+  firstTransfer: string;
 }

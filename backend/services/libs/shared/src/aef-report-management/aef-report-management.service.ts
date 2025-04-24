@@ -142,35 +142,31 @@ export class AefReportManagementService {
     if (resp.total > 0) {
       let prepData;
       let localFileName;
-      let localTableNameKey;
 
       switch (exportDto.reportType) {
         case AefReportTypeEnum.HOLDINGS:
           prepData = this.prepareHoldingsData(resp);
           localFileName = `${AefReportTypeEnum.HOLDINGS}`;
-          localTableNameKey = ``;
           break;
-
         case AefReportTypeEnum.ACTIONS:
           prepData = this.prepareActionsData(resp);
           localFileName = `${AefReportTypeEnum.ACTIONS}`;
-          localTableNameKey = ``;
           break;
-
         default:
           break;
       }
 
       let headers: string[] = [];
       const titleKeys = Object.keys(prepData[0]);
-      // for (const key of titleKeys) {
-      //   headers.push(this.helperService.formatReqMessagesString(localTableNameKey + key, []));
-      // }
+      for (const key of titleKeys) {
+        headers.push(this.helperService.formatReqMessagesString("aef." + key, []));
+      }
 
       const path = await this.generateCsvOrExcel(
         prepData,
-        titleKeys,
+        exportDto.fileType === ExportFileType.CSV ? headers : titleKeys,
         this.helperService.formatReqMessagesString(localFileName, []),
+        exportDto.reportType,
         exportDto.fileType
       );
 
@@ -241,8 +237,9 @@ export class AefReportManagementService {
       dto.actionType = report.actionType;
       dto.transferingParty = report.transferingParty;
       dto.aquiringParty = report.aquiringParty;
-      dto.actionBy = report.actionBy;
       dto.purposeForCancellation = report.purposeForCancellation;
+      dto.actionBy = report.actionBy;
+      dto.firstTransfer = report.firstTransferingParty;
 
       exportData.push(dto);
     }
@@ -254,6 +251,7 @@ export class AefReportManagementService {
     data: DataExportDto[],
     headers: string[],
     fileName: string,
+    reportType: AefReportTypeEnum,
     fileType: ExportFileType
   ) {
     const currentDate = new Date();
@@ -288,14 +286,30 @@ export class AefReportManagementService {
 
       fs.writeFileSync(outputFileName, csvContent);
     } else if (fileType === ExportFileType.XLSX) {
-      await this.fillTemplate(
-        "aef_template.xlsx",
-        "Actions",
-        headers,
-        data,
-        /* startRow */ 11,
-        outputFileName
-      );
+      switch (reportType) {
+        case AefReportTypeEnum.ACTIONS:
+          await this.fillTemplate(
+            "aef_actions_template.xlsx",
+            "Actions",
+            headers,
+            data,
+            11,
+            outputFileName
+          );
+          break;
+        case AefReportTypeEnum.HOLDINGS:
+          await this.fillTemplate(
+            "aef_holdings_template.xlsx",
+            "Holdings",
+            headers,
+            data,
+            7,
+            outputFileName
+          );
+          break;
+        default:
+          break;
+      }
     }
 
     const content = fs.readFileSync(outputFileName, { encoding: "base64" });
@@ -320,14 +334,28 @@ export class AefReportManagementService {
     const sheet = wb.getWorksheet(sheetName);
     if (!sheet) throw new Error(`Sheet ${sheetName} not found in ${templateName}`);
 
+    if (templateName === "aef_actions_template.xlsx") {
+      sheet.getCell("B3").value = this.configService.get("AEF.party");
+      sheet.getCell("B4").value = new Date().getFullYear();
+      sheet.getCell("B3").font = { name: "Times New Roman", size: 10 };
+      sheet.getCell("B4").font = { name: "Times New Roman", size: 10 };
+    }
+
     let rowIdx = startRow;
+
     console.log(headers);
-    console.log(data);
     for (const item of data) {
       const row = sheet.getRow(rowIdx++);
-      headers.forEach((colKey, i) => {
-        const val = item[colKey];
-        row.getCell(i + 1).value = val == null ? "" : val;
+      headers.forEach((key, colIdx) => {
+        const cell = row.getCell(colIdx + 1);
+        const v = item[key];
+        cell.value = v == null ? "" : v;
+        cell.font = { name: "Times New Roman", size: 10 };
+        cell.alignment = {
+          wrapText: true,
+          vertical: "top",
+          horizontal: "left",
+        };
       });
       row.commit();
     }
