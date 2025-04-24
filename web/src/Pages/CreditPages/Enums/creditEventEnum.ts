@@ -17,3 +17,8 @@ export enum CreditEventStatusEnum {
   REJECTED = 'Rejected',
   CANCELLED = 'Cancelled',
 }
+
+export enum IssuedOrReceivedOptions {
+  ISSUED = 'issued',
+  RECEIVED = 'received',
+}

@@ -1,27 +1,38 @@
 import { i18n } from "i18next";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./ReportingComponent.scss";
 import { DatePicker, Empty, Row, Select } from "antd";
-import moment from "moment";
+import moment, { Moment } from "moment";
 import ReportCard from "./ReportCard";
 import {
   getActionsReportColumns,
   getHoldingsReportColumns,
 } from "./reportingColumns";
 import { REPORT_TYPES } from "./reportTypes";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { API_PATHS } from "../../Config/apiConfig";
 
 const ReportingComponent = (props: { translator: i18n }) => {
   const { translator } = props;
 
   const t = translator.t;
 
+  const { post } = useConnection();
+
+  const [selectedYearsArr, setSelectedYearsArr] = useState([
+    REPORT_TYPES.ACTIONS,
+    REPORT_TYPES.HOLDINGS,
+  ]);
+
   const [selectedReports, setSelectedReports] = useState<{
     [REPORT_TYPES.ACTIONS]: boolean;
     [REPORT_TYPES.HOLDINGS]: boolean;
   }>({
-    [REPORT_TYPES.ACTIONS]: false,
-    [REPORT_TYPES.HOLDINGS]: false,
+    [REPORT_TYPES.ACTIONS]: true,
+    [REPORT_TYPES.HOLDINGS]: true,
   });
+
+  const [actionsData, setActionsData] = useState<any[]>([]);
 
   const [paginationInfo, setPaginationInfo] = useState<
     Partial<
@@ -29,11 +40,11 @@ const ReportingComponent = (props: { translator: i18n }) => {
     >
   >({
     [REPORT_TYPES.ACTIONS]: {
-      page: 0,
+      page: 1,
       pageSize: 10,
     },
     [REPORT_TYPES.HOLDINGS]: {
-      page: 0,
+      page: 1,
       pageSize: 10,
     },
   });
@@ -54,13 +65,46 @@ const ReportingComponent = (props: { translator: i18n }) => {
     console.log("-----paginationInfo--------", paginationInfo);
   };
 
-  const [selectedYear, setSelectedYear] = useState<any>();
+  const [selectedYear, setSelectedYear] = useState<Moment>(moment());
+
+  const getActionsReports = async () => {
+    try {
+      console.log("-------post----------", post);
+      if (post) {
+        const res = await post(API_PATHS.QUERY_AEF_RECORDS, {
+          page: paginationInfo[REPORT_TYPES.ACTIONS]?.page,
+          size: paginationInfo[REPORT_TYPES.ACTIONS]?.pageSize,
+          filterAnd: [
+            {
+              key: "actionTime",
+              operation: ">",
+              value: selectedYear.startOf("year").valueOf(),
+            },
+            {
+              key: "actionTime",
+              operation: "<",
+              value: selectedYear.endOf("year").valueOf(),
+            },
+          ],
+        });
+
+        console.log("---------------res--------------", res);
+        if (res?.statusText === 'SUCCESS') {
+          setActionsData(res?.data);
+        }
+      }
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    getActionsReports();
+  }, [selectedYear]);
 
   const checkIfAnyReportIsSelected = () => {
-    let isReportSelected = Object.values(selectedReports).some(Boolean)
+    let isReportSelected = Object.values(selectedReports).some(Boolean);
     console.log("---------isReportSelected---------", isReportSelected);
-    return isReportSelected
-  }
+    return isReportSelected;
+  };
 
   return (
     <div className="reporting-container">
@@ -72,6 +116,7 @@ const ReportingComponent = (props: { translator: i18n }) => {
           <DatePicker
             size="large"
             picker="year"
+            value={selectedYear}
             onChange={(value: any) => {
               console.log("---------value-----------", value);
               const date = moment(value).local();
@@ -85,19 +130,22 @@ const ReportingComponent = (props: { translator: i18n }) => {
             size="large"
             placeholder="click to select the Reports to display"
             mode={"multiple"}
+            value={[...selectedYearsArr]}
             className="report-type-selector"
-            onSelect={(value) =>
+            onSelect={(value) => {
+              setSelectedYearsArr((prev) => [...prev, value]);
               setSelectedReports((prev) => ({
                 ...prev,
                 [value]: true,
-              }))
-            }
-            onDeselect={(value) =>
+              }));
+            }}
+            onDeselect={(value) => {
+              setSelectedYearsArr((prev) => ([...prev.filter((item) => item !== value)]))
               setSelectedReports((prev) => ({
                 ...prev,
                 [value]: false,
-              }))
-            }
+              }));
+            }}
           >
             {Object.keys(REPORT_TYPES).map(
               (type: keyof typeof REPORT_TYPES) => (
@@ -115,7 +163,7 @@ const ReportingComponent = (props: { translator: i18n }) => {
           title={"Actions Report"}
           reportType={REPORT_TYPES.ACTIONS}
           host={"Sri lanka"}
-          year="2025"
+          year={String(selectedYear.year())}
           columns={getActionsReportColumns(t)}
           handlePaginationChange={handlePaginationInfoChange}
           pagination={{
@@ -124,7 +172,7 @@ const ReportingComponent = (props: { translator: i18n }) => {
             pageSize: paginationInfo[REPORT_TYPES.ACTIONS].pageSize || 1,
             pageSizeOptions: [10, 20, 30],
           }}
-          data={[]}
+          data={actionsData || []}
           downloadCSV={() => {}}
           downloadExcel={() => {}}
         />
@@ -135,7 +183,7 @@ const ReportingComponent = (props: { translator: i18n }) => {
           title={"Holdings Report"}
           reportType={REPORT_TYPES.ACTIONS}
           host={"Sri lanka"}
-          year="2025"
+          year={String(selectedYear.year())}
           columns={getHoldingsReportColumns(t)}
           handlePaginationChange={handlePaginationInfoChange}
           pagination={{
@@ -152,7 +200,9 @@ const ReportingComponent = (props: { translator: i18n }) => {
 
       {!checkIfAnyReportIsSelected() && (
         <div className="no-reports">
-          <Empty description={<span className="description">No report found !</span>} />
+          <Empty
+            description={<span className="description">No report found !</span>}
+          />
         </div>
       )}
     </div>
