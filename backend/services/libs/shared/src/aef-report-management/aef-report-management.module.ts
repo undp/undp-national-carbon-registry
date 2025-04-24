@@ -6,12 +6,14 @@ import { SerialNumberManagementModule } from "../serial-number-management/serial
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { CreditTransactionsEntity } from "../entities/credit.transactions.entity";
 import { AefActionsTableEntity } from "../entities/aef.actions.table.entity";
+import { FileHandlerModule } from "../file-handler/filehandler.module";
 
 @Module({
   imports: [
     UtilModule,
     ProgrammeLedgerModule,
     SerialNumberManagementModule,
+    FileHandlerModule,
     TypeOrmModule.forFeature([CreditTransactionsEntity, AefActionsTableEntity]),
   ],
   providers: [AefReportManagementService],
