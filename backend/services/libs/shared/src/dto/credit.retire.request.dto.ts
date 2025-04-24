@@ -38,6 +38,7 @@ export class CreditRetireRequestDto {
     (o) =>
       o.retirementType === CreditRetirementTypeEnum.CROSS_BORDER_TRANSACTIONS
   )
+  @IsNotEmpty()
   @IsString()
   country?: string;
 
