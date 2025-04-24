@@ -1530,12 +1530,6 @@ export class DocumentManagementService {
         const updateProjectProposalStage = {
           programmeId: project.refId,
           txType: TxType.APPROVE_PDD_BY_DNA,
-          data: {
-            serialNumber:
-              this.serialNumberManagementService.getProjectSerialNumber(
-                Number(project.refId)
-              ),
-          },
         };
         await this.updateProposalStage(
           updateProjectProposalStage,
@@ -1682,6 +1676,10 @@ export class DocumentManagementService {
           data: {
             letterOfAuthorizationUrl: letterOfAuthorizationUrl,
             creditEst: creditEst,
+            serialNumber:
+              this.serialNumberManagementService.getProjectSerialNumber(
+                Number(project.refId)
+              ),
           },
         };
         await this.updateProposalStage(
