@@ -9,7 +9,6 @@ import { AefActionsTableEntity } from "../entities/aef.actions.table.entity";
 import { SerialNumberManagementService } from "../serial-number-management/serial-number-management.service";
 import { AefActionTypeEnum } from "../enum/aef.action.type.enum";
 import { CreditRetireActionDto } from "../dto/credit.retire.action.dto";
-import { CreditTransactionStatusEnum } from "../enum/credit.transaction.status.enum";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreditTransactionsEntity } from "../entities/credit.transactions.entity";
 import { RetirementACtionEnum } from "../enum/retirement.action.enum";
@@ -28,6 +27,9 @@ import * as XLSX from "xlsx";
 import { DataExportDto } from "../dto/data.export.dto";
 import { DataExportHoldings } from "../dto/data.export.holdings.dto";
 import { DataExportActions } from "../dto/data.export.actions.dto";
+import { AefExportDto } from "../dto/aef.export.dto";
+import * as ExcelJS from "exceljs";
+import * as path from "path";
 @Injectable()
 export class AefReportManagementService {
   constructor(
@@ -122,7 +124,7 @@ export class AefReportManagementService {
     return new DataListResponseDto(updatedRecords, resp.length > 1 ? resp[1] : undefined);
   }
 
-  async downloadAefReport(reportType: AefReportTypeEnum, abilityCondition: string, user: User) {
+  async downloadAefReport(exportDto: AefExportDto, abilityCondition: string, user: User) {
     if (
       user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
       ![Role.Admin, Role.Root].includes(user.role)
@@ -133,7 +135,7 @@ export class AefReportManagementService {
       );
     }
     const query = new QueryDto();
-    query.page = 0;
+    query.page = 1;
     query.size = 10;
     const resp = await this.queryAefRecords(query, abilityCondition, user);
 
@@ -142,17 +144,17 @@ export class AefReportManagementService {
       let localFileName;
       let localTableNameKey;
 
-      switch (reportType) {
+      switch (exportDto.reportType) {
         case AefReportTypeEnum.HOLDINGS:
           prepData = this.prepareHoldingsData(resp);
-          localFileName = "reportExport.";
-          localTableNameKey = "reportExport.tableFive";
+          localFileName = `${AefReportTypeEnum.HOLDINGS}`;
+          localTableNameKey = ``;
           break;
 
         case AefReportTypeEnum.ACTIONS:
           prepData = this.prepareActionsData(resp);
-          localFileName = "reportSixExport.";
-          localTableNameKey = "reportSixExport.tableSix";
+          localFileName = `${AefReportTypeEnum.ACTIONS}`;
+          localTableNameKey = ``;
           break;
 
         default:
@@ -161,15 +163,15 @@ export class AefReportManagementService {
 
       let headers: string[] = [];
       const titleKeys = Object.keys(prepData[0]);
-      for (const key of titleKeys) {
-        headers.push(this.helperService.formatReqMessagesString(localFileName + key, []));
-      }
+      // for (const key of titleKeys) {
+      //   headers.push(this.helperService.formatReqMessagesString(localTableNameKey + key, []));
+      // }
 
       const path = await this.generateCsvOrExcel(
         prepData,
-        headers,
-        this.helperService.formatReqMessagesString(localTableNameKey, []),
-        ExportFileType.XLSX
+        titleKeys,
+        this.helperService.formatReqMessagesString(localFileName, []),
+        exportDto.fileType
       );
 
       return path;
@@ -286,22 +288,14 @@ export class AefReportManagementService {
 
       fs.writeFileSync(outputFileName, csvContent);
     } else if (fileType === ExportFileType.XLSX) {
-      const worksheetData = [
+      await this.fillTemplate(
+        "aef_template.xlsx",
+        "Actions",
         headers,
-        ...data.map((item) =>
-          Object.values(item).map((value) => {
-            if (Array.isArray(value)) {
-              return value.join("; "); // Convert array to a semicolon-separated string
-            }
-            return value === undefined || value === null ? "" : value;
-          })
-        ),
-      ];
-
-      const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-      XLSX.writeFile(workbook, outputFileName);
+        data,
+        /* startRow */ 11,
+        outputFileName
+      );
     }
 
     const content = fs.readFileSync(outputFileName, { encoding: "base64" });
@@ -309,5 +303,36 @@ export class AefReportManagementService {
 
     console.log("Export completed", "exports/", url);
     return { url, outputFileName };
+  }
+
+  async fillTemplate(
+    templateName: string,
+    sheetName: string,
+    headers: string[],
+    data: Record<string, any>[],
+    startRow: number,
+    outputFileName: string
+  ) {
+    const templatePath = path.resolve(__dirname, "shared", "src", "templates", templateName);
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.readFile(templatePath);
+
+    const sheet = wb.getWorksheet(sheetName);
+    if (!sheet) throw new Error(`Sheet ${sheetName} not found in ${templateName}`);
+
+    let rowIdx = startRow;
+    console.log(headers);
+    console.log(data);
+    for (const item of data) {
+      const row = sheet.getRow(rowIdx++);
+      headers.forEach((colKey, i) => {
+        const val = item[colKey];
+        row.getCell(i + 1).value = val == null ? "" : val;
+      });
+      row.commit();
+    }
+
+    await wb.xlsx.writeFile(outputFileName);
+    return outputFileName;
   }
 }
