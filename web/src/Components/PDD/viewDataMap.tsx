@@ -211,8 +211,10 @@ export const applicationOfMethodologyDataMapToFields = (vals: any) => {
     unit: vals?.dataAndParametersExAnte?.unit,
     description: vals?.dataAndParametersExAnte?.description,
     source: vals?.dataAndParametersExAnte?.source,
+    valueApplied: vals?.dataAndParametersExAnte?.valueApplied,
     descriptionOfMeasurementMethods: vals?.dataAndParametersExAnte?.descriptionOfMeasurementMethods,
     purpose: vals?.dataAndParametersExAnte?.purpose,
+
     comments: vals?.dataAndParametersExAnte?.comments,
     emissionsPeriodStart: firstYearlyReductions?.startDate
       ? moment.unix(firstYearlyReductions?.startDate)
