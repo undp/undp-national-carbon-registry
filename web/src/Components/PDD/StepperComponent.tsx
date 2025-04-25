@@ -37,6 +37,7 @@ import Monitoring from './Monitoring';
 import { DocumentEnum } from '../../Definitions/Enums/document.enum';
 import { ROUTES } from '../../Config/uiRoutingConfig';
 import { INF_SECTORAL_SCOPE } from '../AddNewProgramme/ProgrammeCreationComponent';
+import { toMoment } from '../../Utils/convertTime';
 
 const CMA_STEPS = {};
 
@@ -142,10 +143,10 @@ const StepperComponent = (props: any) => {
           projectTitle: data?.title,
           versionNumber: 1,
           projectProponent: data?.company?.name,
-          sectoralScope: INF_SECTORAL_SCOPE[data?.sectoralScope],
+          sectoralScope: INF_SECTORAL_SCOPE[data?.sectoralScope] || 'N/A',
         });
         form4.setFieldsValue({
-          projectActivityStartDate: moment(data?.startDate * 1000).format('YYYY-MM-DD'),
+          projectActivityStartDate: toMoment(data?.startDate).format('YYYY-MM-DD'),
         });
       }
       //.log('----------running form values--------', form4.getFieldsValue());
