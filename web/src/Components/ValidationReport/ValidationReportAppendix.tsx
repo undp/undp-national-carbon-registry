@@ -143,7 +143,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
         if (res?.statusText === "SUCCESS") {
           message.open({
             type: "success",
-            content: "Validation report was approved successfully",
+            content: "Validation report approved successfully",
             duration: 4,
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
