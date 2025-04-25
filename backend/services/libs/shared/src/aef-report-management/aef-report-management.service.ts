@@ -30,6 +30,7 @@ import { DataExportActions } from "../dto/data.export.actions.dto";
 import { AefExportDto } from "../dto/aef.export.dto";
 import * as ExcelJS from "exceljs";
 import * as path from "path";
+import * as moment from "moment";
 @Injectable()
 export class AefReportManagementService {
   constructor(
@@ -197,7 +198,9 @@ export class AefReportManagementService {
       dto.vintage = report.vintage;
       dto.sector = report.sector;
       dto.sectoralScope = report.sectoralScope;
-      dto.projectAuthorizationTime = report.projectAuthorizationTime;
+      dto.projectAuthorizationTime = report.projectAuthorizationTime
+        ? moment(parseInt(report.projectAuthorizationTime)).format("YY-MM-DD")
+        : "";
       dto.authorizationId = report.authorizationId;
       dto.purposeForAuthorization = report.purposeForAuthorization;
       dto.oimp = report.OIMP;
@@ -228,12 +231,16 @@ export class AefReportManagementService {
       dto.vintage = report.vintage;
       dto.sector = report.sector;
       dto.sectoralScope = report.sectoralScope;
-      dto.projectAuthorizationTime = report.projectAuthorizationTime;
+      dto.projectAuthorizationTime = report.projectAuthorizationTime
+        ? moment(parseInt(report.projectAuthorizationTime)).format("YY-MM-DD")
+        : "";
       dto.authorizationId = report.authorizationId;
       dto.purposeForAuthorization = report.purposeForAuthorization;
       dto.oimp = report.OIMP;
       dto.firstTransferDefinition = report.firstTransferDefinition;
-      dto.actionTime = report.actionTime;
+      dto.actionTime = report.actionTime
+        ? moment(parseInt(report.actionTime)).format("YY-MM-DD")
+        : "";
       dto.actionType = report.actionType;
       dto.transferingParty = report.transferingParty;
       dto.aquiringParty = report.aquiringParty;
