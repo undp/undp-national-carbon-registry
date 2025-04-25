@@ -10,6 +10,5 @@ export function toMoment(unixTimestamp: number) {
   }
 
   // Assume it's already in milliseconds
-  console.log("-----auth-----", unixTimestamp, moment(Number(unixTimestamp)));
   return moment(unixTimestamp); // milliseconds -> moment
 }
