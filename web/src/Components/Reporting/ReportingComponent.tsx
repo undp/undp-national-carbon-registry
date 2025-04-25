@@ -237,7 +237,7 @@ const ReportingComponent = (props: { translator: i18n }) => {
       setHoldingsLoading(true)
       const res = await post(API_PATHS.DOWNLOAD_AEF_RECORDS, {
         reportType: REPORT_TYPES.HOLDINGS,
-        fileType: FILE_TYPES.csv
+        fileType: FILE_TYPES.xlsx
       })
 
       console.log("--------res--------", res);
