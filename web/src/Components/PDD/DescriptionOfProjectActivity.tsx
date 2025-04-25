@@ -1573,7 +1573,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
               {/* project participant table start */}
               {/* need to check again */}
-              <h4 className="form-section-title">
+              <h4 className="form-section-title custom-required">
                 {t("PDD:projectParticipantTable")}
               </h4>
               <div className="projectParticipantsTable">
