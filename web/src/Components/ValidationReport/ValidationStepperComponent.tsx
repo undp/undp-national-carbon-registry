@@ -110,7 +110,7 @@ const StepperComponent = (props: any) => {
       if (res?.statusText === "SUCCESS") {
         message.open({
           type: "success",
-          content: "Validation report has been submitted successfully",
+          content: "Validation report approved successfully",
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
