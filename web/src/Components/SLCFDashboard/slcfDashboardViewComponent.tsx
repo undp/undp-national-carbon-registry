@@ -56,18 +56,21 @@ export const SLCFDashboardComponent = (props: any) => {
     pendingCount: number;
     rejectedCount: number;
   }>({ totalProjects: 0, authorisedCount: 0, pendingCount: 0, rejectedCount: 0 });
+
   const [projectsByStatusDetail, setProjectsByStatusDetail] = useState<any[]>([
     {
       name: 'Project',
       data: [],
     },
   ]);
+
   const [projectCountBySector, setProjectCountBySector] = useState<any>([
     {
       name: 'Project',
       data: [],
     },
   ]);
+  
   const [creditSummary, setCreditSummary] = useState<{
     authorisedAmount: number;
     issuedAmount: number;
@@ -92,6 +95,7 @@ export const SLCFDashboardComponent = (props: any) => {
     last_credit_issued_time: 0,
     last_retire_approved_time: 0,
   });
+
   const [projectStatusSummaryLastUpdatedEpoch, setProjectStatusSummaryLastUpdatedEpoch] =
     useState<number>(0);
   const [creditSummaryLastUpdatedEpoch, setCreditSummaryLastUpdatedEpoch] = useState<{
@@ -888,7 +892,7 @@ export const SLCFDashboardComponent = (props: any) => {
                   'Last 7 days': [moment().subtract('6', 'days'), moment()],
                   'Last 14 days': [moment().subtract('13', 'days'), moment()],
                 }}
-                defaultValue={[moment().subtract('13', 'days'), moment()]}
+                defaultValue={[moment().subtract('6', 'months'), moment()]}
                 showTime
                 allowClear={true}
                 format="DD:MM:YYYY"
