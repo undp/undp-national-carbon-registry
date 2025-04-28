@@ -782,9 +782,9 @@ export class EmailHelperService {
       case "VERIFICATION_CREATE_TO_PD":
         templateData = {
           organizationNamePD: company.name,
-          organizationNameIC: templateData.icOrganizationName,
+          organizationNameIC: templateData.icOrganisationName,
           countryName: systemCountryName,
-          projectName: project.title,
+          programmeName: project.title,
           programmePageLink: hostAddress + `/programmeManagement/view/${refId}`,
         };
         break;
