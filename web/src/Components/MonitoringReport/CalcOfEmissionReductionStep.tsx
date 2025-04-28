@@ -255,8 +255,12 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
           const tempYearlyReductions: any = [];
 
           const firstReduction = {
-            vintage: moment(values?.vintage)
-              .startOf("year")
+            vintage: moment({
+              year: moment(values?.vintage).year(),
+              month: 1,
+              day: 1,
+            })
+              .startOf("day")
               .valueOf(),
             baselineEmissionReductions: Number(
               values?.baselineEmissionReductions
@@ -275,9 +279,7 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
           if (values?.extraEmissionReductions) {
             values.extraEmissionReductions.forEach((item: any) => {
               const tempObj = {
-                vintage: moment(item?.vintage)
-                  .startOf("year")
-                  .valueOf(),
+                vintage:  moment({ year: moment(item?.vintage).year(), month: 1, day: 1 }).startOf('day').valueOf(),
                 baselineEmissionReductions: Number(
                   item?.baselineEmissionReductions
                 ),
@@ -524,8 +526,8 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                                       return disableYears(
                                         currentDate,
                                         form,
-                                        "extraEmissionReductions", 
-                                        true,
+                                        "extraEmissionReductions",
+                                        true
                                       );
                                     }}
                                     // disabledDate={(currentDate: any) => currentDate < moment().startOf('day')}

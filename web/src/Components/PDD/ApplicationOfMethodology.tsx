@@ -305,7 +305,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
         const tempYearlyReductions: any = [];
 
         const firstReduction = {
-          vintage: moment(values?.vintage).startOf("year").valueOf(),
+          vintage: { year: moment(values?.vintage).year(), month: 1, day: 1 },
           baselineEmissionReductions: Number(
             values?.baselineEmissionReductions
           ),
@@ -319,7 +319,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
         if (values?.extraEmissionReductions) {
           values.extraEmissionReductions.forEach((item: any) => {
             const tempObj = {
-              vintage: moment(values?.vintage).startOf("year").valueOf(),
+              vintage: moment({ year: moment(item?.vintage).year(), month: 1, day: 1 }).startOf("day").valueOf(),
               baselineEmissionReductions: Number(
                 item?.baselineEmissionReductions
               ),
