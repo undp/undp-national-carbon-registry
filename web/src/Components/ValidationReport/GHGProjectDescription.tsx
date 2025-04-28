@@ -27,8 +27,7 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
       estimatedNetEmissionReductions: values?.estimatedNetEmissionReductions.map((item: any) => {
         const temp = {
           ...item,
-          startDate: item?.startDate ? moment(item?.startDate).startOf('day').unix() : undefined,
-          endDate: item?.endDate ? moment(item?.endDate).startOf('day').unix() : undefined,
+          vintage: item?.vintage ? moment(item?.vintage).startOf('day').valueOf() : undefined,
         };
         return temp;
       }),
