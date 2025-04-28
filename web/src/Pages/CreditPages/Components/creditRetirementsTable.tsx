@@ -132,11 +132,11 @@ export const CreditRetirementsTableComponent = (props: any) => {
       });
     }
 
-    if (search && search !== "") {
+    if (search && search.trim() !== "") {
       filter.push({
         key: "projectName",
         operation: "like",
-        value: `%${search}%`,
+        value: `%${search.trim()}%`,
       });
     }
 
