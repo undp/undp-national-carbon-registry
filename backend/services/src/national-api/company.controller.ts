@@ -178,7 +178,7 @@ export class CompanyController {
   @UseGuards(JwtAuthGuard)
   @Get("profile")
   async getCompany(@Query("id") companyId: number, @Request() req) {
-    return await this.companyService.findByCompanyId(companyId);
+    return await this.companyService.findByCompanyId(companyId, true);
   }
 
   @ApiBearerAuth()
