@@ -38,6 +38,7 @@ import {
 import { mapBase64ToFields } from "../../Utils/mapBase64ToFields";
 import { INF_SECTORAL_SCOPE } from "../AddNewProgramme/ProgrammeCreationComponent";
 import { toMoment } from "../../Utils/convertTime";
+import { safeClone } from "../../Utils/deepCopy";
 
 export enum ProcessSteps {
   VR_PROJECT_DETAILS = "VR_PROJECT_DETAILS",
@@ -98,9 +99,9 @@ const StepperComponent = (props: any) => {
     setLoading(true);
 
     const tempValues = {
-      ...structuredClone(existingFormValues),
+      ...safeClone(existingFormValues),
       data: {
-        ...structuredClone(existingFormValues.data),
+        ...safeClone(existingFormValues.data),
         appendix: appendixVals,
       },
     };
@@ -310,8 +311,8 @@ const StepperComponent = (props: any) => {
     console.log("---------values--------", val);
     setExistingFormValues((prevVal: any) => {
       const tempContent = {
-        ...structuredClone(prevVal.data),
-        ...structuredClone(val),
+        ...prevVal.data,
+        ...val,
       };
       return { ...prevVal, data: tempContent };
     });

@@ -157,7 +157,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
       interviewees: values?.interviewees.map((item: any) => {
         return {
           ...item,
-          date: moment.unix(item?.date).startOf("day").unix(),
+          date: moment(item?.date).startOf("day").unix(),
         };
       }),
     };
