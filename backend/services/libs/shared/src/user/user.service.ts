@@ -139,11 +139,21 @@ export class UserService {
     return users && users.length > 0 ? users[0] : undefined;
   }
 
-  async getUserProfileDetails(id: number) {
+  async getUserProfileDetails(
+    id: number,
+    includeCreditBlockBalance: boolean = false
+  ) {
     const userProfileDetails = await this.findById(id);
     const organisationDetails = await this.companyService.findByCompanyId(
       userProfileDetails.companyId
     );
+    if (includeCreditBlockBalance) {
+      const creditBlockBalance =
+        await this.companyService.getCompanyAvailableCreditBlockBalance(
+          userProfileDetails.companyId
+        );
+      organisationDetails.creditBalance = creditBlockBalance;
+    }
     return {
       user: userProfileDetails,
       Organisation: organisationDetails,
