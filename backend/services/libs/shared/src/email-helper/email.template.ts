@@ -1263,7 +1263,7 @@ export const EmailTemplates = {
     html: `
         Hi,<br><br> 
         
-        Initial Notification has been submitted, by {{organisationName}} organisation.<br> 
+        Initial Notification has been submitted by {{organisationName}} organisation.<br> 
 
         Please review and approve by clicking <a href={{programmePageLink}}>here</a>.<br> 
         <br>
