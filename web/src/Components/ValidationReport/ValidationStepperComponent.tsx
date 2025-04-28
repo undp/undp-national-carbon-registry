@@ -98,9 +98,9 @@ const StepperComponent = (props: any) => {
     setLoading(true);
 
     const tempValues = {
-      ...existingFormValues,
+      ...structuredClone(existingFormValues),
       data: {
-        ...existingFormValues.data,
+        ...structuredClone(existingFormValues.data),
         appendix: appendixVals,
       },
     };
@@ -111,7 +111,7 @@ const StepperComponent = (props: any) => {
       if (res?.statusText === "SUCCESS") {
         message.open({
           type: "success",
-          content: "Validation report has been submitted successfully",
+          content: "Validation report submitted successfully",
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
@@ -310,8 +310,8 @@ const StepperComponent = (props: any) => {
     console.log("---------values--------", val);
     setExistingFormValues((prevVal: any) => {
       const tempContent = {
-        ...prevVal.data,
-        ...val,
+        ...structuredClone(prevVal.data),
+        ...structuredClone(val),
       };
       return { ...prevVal, data: tempContent };
     });

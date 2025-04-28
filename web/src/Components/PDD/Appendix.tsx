@@ -650,33 +650,13 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 1 end */}
 
               {/* appendix 2 start */}
-              <h4 className="appendix-title custom-required">
+              <h4 className="appendix-title">
                 <i>{`${t("PDD:appendix2")}`}</i> : {t("PDD:appendix2Title")}
               </h4>
               <Form.Item
                 className='className="full-width-form-item'
                 // label={`${t('PDD:additionalComments')}`}
                 name="appendix2Comments"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === "" ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(
-                          `${t("PDD:additionalComments")} ${t("isRequired")}`
-                        );
-                      }
-                    },
-                  },
-                ]}
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
@@ -728,33 +708,13 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 2 end */}
 
               {/* appendix 3 start */}
-              <h4 className="appendix-title custom-required">
+              <h4 className="appendix-title">
                 <i>{`${t("PDD:appendix3")}`}</i> : {t("PDD:appendix3Title")}
               </h4>
               <Form.Item
                 className='className="full-width-form-item'
                 // label={`${t('PDD:additionalComments')}`}
                 name="appendix3Comments"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === "" ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(
-                          `${t("PDD:additionalComments")} ${t("isRequired")}`
-                        );
-                      }
-                    },
-                  },
-                ]}
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
@@ -805,33 +765,13 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 3 end */}
 
               {/* appendix 4 start */}
-              <h4 className="appendix-title custom-required">
+              <h4 className="appendix-title">
                 <i>{`${t("PDD:appendix4")}`}</i> : {t("PDD:appendix4Title")}
               </h4>
               <Form.Item
                 className='className="full-width-form-item'
                 // label={`${t('PDD:additionalComments')}`}
                 name="appendix4Comments"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === "" ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(
-                          `${t("PDD:additionalComments")} ${t("isRequired")}`
-                        );
-                      }
-                    },
-                  },
-                ]}
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
@@ -891,26 +831,6 @@ const Step08 = (props: CustomStepsProps) => {
                 className='className="full-width-form-item'
                 // label={`${t('PDD:additionalComments')}`}
                 name="appendix5Comments"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === "" ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(
-                          `${t("PDD:additionalComments")} ${t("isRequired")}`
-                        );
-                      }
-                    },
-                  },
-                ]}
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
@@ -961,7 +881,7 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 5 end */}
 
               {/* appendix 6 start */}
-              <h4 className="appendix-title custom-required">
+              <h4 className="appendix-title">
                 <i>{`${t("PDD:appendix6")}`}</i> : {t("PDD:appendix6Title")}
               </h4>
 
@@ -969,26 +889,6 @@ const Step08 = (props: CustomStepsProps) => {
                 className='className="full-width-form-item'
                 // label={`${t('PDD:additionalComments')}`}
                 name="appendix6Comments"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === "" ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(
-                          `${t("PDD:additionalComments")} ${t("isRequired")}`
-                        );
-                      }
-                    },
-                  },
-                ]}
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
@@ -1040,7 +940,7 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 6 end */}
 
               {/* appendix 7 start */}
-              <h4 className="appendix-title custom-required">
+              <h4 className="appendix-title">
                 <i>{`${t("PDD:appendix7")}`}</i> : {t("PDD:appendix7Title")}
               </h4>
 
@@ -1048,26 +948,6 @@ const Step08 = (props: CustomStepsProps) => {
                 className='className="full-width-form-item'
                 // label={`${t('PDD:additionalComments')}`}
                 name="appendix7Comments"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === "" ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(
-                          `${t("PDD:additionalComments")} ${t("isRequired")}`
-                        );
-                      }
-                    },
-                  },
-                ]}
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Checkbox,
   Col,
@@ -11,58 +12,52 @@ import {
   List,
   Typography,
   Tag,
-} from 'antd';
-import {
-  EllipsisOutlined,
-  CheckCircleOutlined,
-  ExclamationCircleOutlined,
-} from '@ant-design/icons';
-import { useEffect, useRef, useState } from 'react';
-import { CheckboxValueType } from 'antd/lib/checkbox/Group';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
-import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
-import { API_PATHS } from '../../../Config/apiConfig';
-import { CreditBalanceInterface } from '../Interfaces/creditBalance.interface';
-import { ProfileIcon } from '../../../Components/IconComponents/ProfileIcon/profile.icon';
-import '../creditPageStyles.scss';
+} from "antd";
+import { EllipsisOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { useEffect, useRef, useState } from "react";
+import { CheckboxValueType } from "antd/lib/checkbox/Group";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import { useConnection } from "../../../Context/ConnectionContext/connectionContext";
+import { useUserContext } from "../../../Context/UserInformationContext/userInformationContext";
+import { API_PATHS } from "../../../Config/apiConfig";
+import { CreditBalanceInterface } from "../Interfaces/creditBalance.interface";
+import { ProfileIcon } from "../../../Components/IconComponents/ProfileIcon/profile.icon";
+import "../creditPageStyles.scss";
 import { IssuedOrReceivedOptions } from "../Enums/creditEventEnum";
-import { CreditActionType } from '../Enums/creditActionType.enum';
-import { CreditActionModal } from './creditActionModal';
-import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
-import { HttpStatusCode } from 'axios';
-import { ActionResponseModal } from '../../../Components/Models/actionResponseModal';
-import { ActionResponseType } from '../../../Definitions/Enums/actionResponse.enum';
-import * as Icon from 'react-bootstrap-icons';
-import { CreditRetirementProceedAction } from '../Enums/creditRetirementProceedType.enum';
-import { CreditRetirementTypeEmnum } from '../Enums/creditRetirementType.enum';
-import moment from 'moment';
-import { addCommSep } from '../../../Definitions/Definitions/programme.definitions';
-import { Role } from '../../../Definitions/Enums/role.enum';
-import { COLOR_CONFIGS } from '../../../Config/colorConfigs';
-import { capitalize } from '../../../Utils/capitalize';
+import { CreditActionType } from "../Enums/creditActionType.enum";
+import { CreditActionModal } from "./creditActionModal";
+import { CompanyRole } from "../../../Definitions/Enums/company.role.enum";
+import { HttpStatusCode } from "axios";
+import { ActionResponseModal } from "../../../Components/Models/actionResponseModal";
+import { ActionResponseType } from "../../../Definitions/Enums/actionResponse.enum";
+import * as Icon from "react-bootstrap-icons";
+import { CreditRetirementProceedAction } from "../Enums/creditRetirementProceedType.enum";
+import { CreditRetirementTypeEmnum } from "../Enums/creditRetirementType.enum";
+import moment from "moment";
+import { addCommSep } from "../../../Definitions/Definitions/programme.definitions";
+import { Role } from "../../../Definitions/Enums/role.enum";
+import { COLOR_CONFIGS } from "../../../Config/colorConfigs";
 
 const { Search } = Input;
 
 enum CrediBalanceColumns {
-  ORGANIZATION_NAME = 'organizationName',
-  PROJECT_NAME = 'projectName',
-  SERIAL_NO = 'serialNo',
-  ISSUE_OR_RECEIVED = 'issueOrReceived',
-  CREDITS = 'credits',
-  ACTION = 'action',
-  DATE = 'date',
+  ORGANIZATION_NAME = "organizationName",
+  PROJECT_NAME = "projectName",
+  SERIAL_NO = "serialNo",
+  ISSUE_OR_RECEIVED = "issueOrReceived",
+  CREDITS = "credits",
+  ACTION = "action",
+  DATE = "date",
 }
-
 
 export const getIssuedReceivedTagColor = (status: IssuedOrReceivedOptions) => {
   switch (status) {
     case IssuedOrReceivedOptions.ISSUED:
-      return 'processing';
+      return "processing";
     case IssuedOrReceivedOptions.RECEIVED:
-      return 'success';
+      return "success";
     default:
-      return 'default';
+      return "default";
   }
 };
 
@@ -82,11 +77,13 @@ export const CreditBalanceTableComponent = (props: any) => {
   const [sortField, setSortField] = useState<string>();
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAllBox, setCheckAllBox] = useState<boolean>(true);
-  const [checkBoxOptions, setCheckBoxOptions] = useState<any[]>([]);
   const checkBoxMenu = Object.keys(IssuedOrReceivedOptions).map((k, index) => ({
     label: t(Object.values(IssuedOrReceivedOptions)[index]),
     value: Object.values(IssuedOrReceivedOptions)[index],
   }));
+  const [checkBoxOptions, setCheckBoxOptions] = useState<any[]>(
+    checkBoxMenu.map((e) => e.value)
+  );
   const [modalActionVisible, setModalActionVisible] = useState<boolean>(false);
   const [modalActionLoading, setModalActionLoading] = useState<boolean>(false);
   const [modalActionData, setModalActionData] = useState<{
@@ -98,7 +95,8 @@ export const CreditBalanceTableComponent = (props: any) => {
     data: CreditBalanceInterface;
     proceedAction: CreditRetirementProceedAction;
   }>();
-  const [modalResponseVisible, setModalResponseVisible] = useState<boolean>(false);
+  const [modalResponseVisible, setModalResponseVisible] =
+    useState<boolean>(false);
   const [modalResponseData, setModalResponseData] = useState<{
     type: ActionResponseType;
     icon: any;
@@ -111,23 +109,23 @@ export const CreditBalanceTableComponent = (props: any) => {
     const filterAnd: any[] = [];
     const filterOr: any[] = [];
 
-    if (!checkAllBox && checkBoxOptions) {
+    if (checkBoxOptions && checkBoxOptions?.length > 0) {
       filterAnd.push({
-        key: 'type',
-        operation: 'in',
+        key: "type",
+        operation: "in",
         value: checkBoxOptions,
       });
     }
 
-    if (search && search !== '') {
+    if (search && search !== "") {
       filterOr.push({
-        key: 'receiver.name',
-        operation: 'like',
+        key: "receiverName",
+        operation: "like",
         value: `%${search}%`,
       });
       filterOr.push({
-        key: 'project.title',
-        operation: 'like',
+        key: "projectName",
+        operation: "like",
         value: `%${search}%`,
       });
     }
@@ -141,8 +139,8 @@ export const CreditBalanceTableComponent = (props: any) => {
       };
     } else {
       sort = {
-        key: 'createdDate',
-        order: 'DESC',
+        key: "createdDate",
+        order: "DESC",
       };
     }
 
@@ -154,16 +152,23 @@ export const CreditBalanceTableComponent = (props: any) => {
         filterOr: filterOr?.length > 0 ? filterOr : undefined,
         sort: sort,
       });
+      if (checkBoxOptions?.length <= 0) {
+        setTableData([]);
+        setTotalProgramme(0);
+        return true;
+      }
       setTableData(response?.data ? response.data : []);
-      setTotalProgramme(response.response?.data?.total ? response.response?.data?.total : 0);
+      setTotalProgramme(
+        response.response?.data?.total ? response.response?.data?.total : 0
+      );
       isInitialRender.current = true;
     } catch (error: any) {
-      console.log('Error in getting Credit Balances', error);
+      console.log("Error in getting Credit Balances", error);
       message.open({
-        type: 'error',
+        type: "error",
         content: error.message,
         duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       setLoading(false);
@@ -177,14 +182,20 @@ export const CreditBalanceTableComponent = (props: any) => {
         size="small"
         dataSource={[
           {
-            text: t('transfer'),
-            icon: <Icon.ArrowLeftRight color={COLOR_CONFIGS.PRIMARY_THEME_COLOR} />,
+            text: t("transfer"),
+            icon: (
+              <Icon.ArrowLeftRight color={COLOR_CONFIGS.PRIMARY_THEME_COLOR} />
+            ),
             click: () => {
               setModalActionData({
-                icon: <Icon.BoxArrowRight color={COLOR_CONFIGS.PRIMARY_THEME_COLOR} />,
-                title: t('tranferCredit'),
+                icon: (
+                  <Icon.BoxArrowRight
+                    color={COLOR_CONFIGS.PRIMARY_THEME_COLOR}
+                  />
+                ),
+                title: t("tranferCredit"),
                 type: CreditActionType.TRANSFER,
-                actionBtnText: t('transfer'),
+                actionBtnText: t("transfer"),
                 remarkRequired: false,
                 proceedAction: CreditRetirementProceedAction.ACCEPT,
                 data: record,
@@ -193,14 +204,18 @@ export const CreditBalanceTableComponent = (props: any) => {
             },
           },
           {
-            text: t('retire'),
+            text: t("retire"),
             icon: <Icon.ClockHistory color="#FF4D4F" />,
             click: () => {
               setModalActionData({
-                icon: <Icon.BoxArrowDown color={COLOR_CONFIGS.PRIMARY_THEME_COLOR} />,
-                title: t('areYouWantToRetireCredit'),
+                icon: (
+                  <Icon.BoxArrowDown
+                    color={COLOR_CONFIGS.PRIMARY_THEME_COLOR}
+                  />
+                ),
+                title: t("areYouWantToRetireCredit"),
                 type: CreditActionType.RETIREMENT,
-                actionBtnText: t('retire'),
+                actionBtnText: t("retire"),
                 remarkRequired: false,
                 proceedAction: CreditRetirementProceedAction.ACCEPT,
                 data: record,
@@ -211,7 +226,9 @@ export const CreditBalanceTableComponent = (props: any) => {
         ]}
         renderItem={(item: any) => (
           <List.Item onClick={item.click}>
-            <Typography.Text className="action-icon color-primary">{item.icon}</Typography.Text>
+            <Typography.Text className="action-icon color-primary">
+              {item.icon}
+            </Typography.Text>
             <span>{item.text}</span>
           </List.Item>
         )}
@@ -222,7 +239,7 @@ export const CreditBalanceTableComponent = (props: any) => {
   const columns = [
     {
       title: t(CrediBalanceColumns.ORGANIZATION_NAME),
-      key: "receiver.name",
+      key: "receiverName",
       sorter: true,
       align: "left" as const,
       render: (record: CreditBalanceInterface) => {
@@ -241,7 +258,7 @@ export const CreditBalanceTableComponent = (props: any) => {
     },
     {
       title: t(CrediBalanceColumns.PROJECT_NAME),
-      key: "project.title",
+      key: "projectName",
       sorter: true,
       align: "left" as const,
       render: (record: CreditBalanceInterface) => {
@@ -338,13 +355,15 @@ export const CreditBalanceTableComponent = (props: any) => {
     if (value) {
       setSearch(value.toLowerCase());
     } else {
-      setSearch('');
+      setSearch("");
     }
   };
 
   const onStatusQuery = async (checkedValues: CheckboxValueType[]) => {
     setCheckBoxOptions(checkedValues as string[]);
-    setIndeterminate(!!checkedValues.length && checkedValues.length < checkBoxMenu.length);
+    setIndeterminate(
+      !!checkedValues.length && checkedValues.length < checkBoxMenu.length
+    );
     setCheckAllBox(checkedValues.length === checkBoxMenu.length);
   };
 
@@ -360,14 +379,22 @@ export const CreditBalanceTableComponent = (props: any) => {
     }
   };
 
-  const onPaginationChange: PaginationProps['onChange'] = (page, size) => {
+  const onPaginationChange: PaginationProps["onChange"] = (page, size) => {
     setCurrentPage(page);
     setPageSize(size);
   };
 
-  const onHandleTableChange = (_pagination: any, _filters: any, sorter: any) => {
+  const onHandleTableChange = (
+    _pagination: any,
+    _filters: any,
+    sorter: any
+  ) => {
     setSortOrder(
-      sorter.order === 'ascend' ? 'ASC' : sorter.order === 'descend' ? 'DESC' : undefined
+      sorter.order === "ascend"
+        ? "ASC"
+        : sorter.order === "descend"
+        ? "DESC"
+        : undefined
     );
     setSortField(sorter.columnKey);
   };
@@ -381,9 +408,17 @@ export const CreditBalanceTableComponent = (props: any) => {
     if (isInitialRender.current) {
       getQueryData();
     }
+  }, [currentPage, pageSize]);
+
+  useEffect(() => {
+    if (isInitialRender.current) {
+      if (currentPage !== 1) {
+        setCurrentPage(1);
+      } else {
+        getQueryData();
+      }
+    }
   }, [
-    currentPage,
-    pageSize,
     sortField,
     sortOrder,
     search,
@@ -407,7 +442,7 @@ export const CreditBalanceTableComponent = (props: any) => {
         response = await post(API_PATHS.CREDIT_TRANSFER_REQUEST, {
           receiverOrgId: reciveParty,
           blockId: blockId,
-          amount: creditAmount,
+          amount: Number(creditAmount),
           remarks: remark,
         });
       } else {
@@ -415,40 +450,54 @@ export const CreditBalanceTableComponent = (props: any) => {
           blockId: blockId,
           remarks: remark,
           retirementType: retirementType,
-          country: reciveParty,
-          amount: creditAmount,
+          ...(retirementType ===
+          CreditRetirementTypeEmnum.CROSS_BORDER_TRANSACTIONS
+            ? {
+                country: reciveParty.country,
+                organizationName: reciveParty.organization,
+              }
+            : {}),
+          amount: Number(creditAmount),
         });
       }
       if (response.status === HttpStatusCode.Created) {
         setModalResponseData({
           type: ActionResponseType.SUCCESS,
-          icon: <CheckCircleOutlined />,
+          icon: (
+            <Icon.CheckCircle color={COLOR_CONFIGS.SUCCESS_RESPONSE_COLOR} />
+          ),
           title: t(
             modalActionData?.type === CreditActionType.TRANSFER
-              ? 'creditTransferInitiated'
-              : 'creditRetirementSubmitted'
+              ? "creditTransferInitiated"
+              : "creditRetirementSubmitted"
           ),
-          buttonText: t('okay'),
+          buttonText: t("okay"),
         });
       } else {
         setModalResponseData({
           type: ActionResponseType.FAILED,
-          icon: <ExclamationCircleOutlined />,
+          icon: (
+            <ExclamationCircleOutlined
+              color={COLOR_CONFIGS.FAILED_RESPONSE_COLOR}
+            />
+          ),
           title: t(
             modalActionData?.type === CreditActionType.TRANSFER
-              ? 'creditTransferInitiatedFailed'
-              : 'creditRetirementSubmittedFailed'
+              ? "creditTransferInitiatedFailed"
+              : "creditRetirementSubmittedFailed"
           ),
-          buttonText: t('okay'),
+          buttonText: t("okay"),
         });
       }
     } catch (error: any) {
-      message.error(error.message || t('somethingWentWrong'));
+      message.error(error.message || t("somethingWentWrong"));
       setModalResponseData({
         type: ActionResponseType.FAILED,
-        icon: <Icon.ExclamationCircle color="#FF4D4F" />,
-        title: t('somethingWentWrong'),
-        buttonText: t('okay'),
+        icon: (
+          <Icon.ExclamationCircle color={COLOR_CONFIGS.FAILED_RESPONSE_COLOR} />
+        ),
+        title: t("somethingWentWrong"),
+        buttonText: t("okay"),
       });
     } finally {
       setModalResponseVisible(true);
@@ -459,37 +508,48 @@ export const CreditBalanceTableComponent = (props: any) => {
 
   return (
     <div className="content-card">
-      <Row className="table-actions-section">
-        <Col lg={{ span: 15 }} md={{ span: 14 }}>
-          <div className="action-bar">
-            <Checkbox
-              className="all-check"
-              disabled={loading}
-              indeterminate={indeterminate}
-              onChange={onCheckBoxesChange}
-              checked={checkAllBox}
-              defaultChecked={true}
-            >
-              {t('all')}
-            </Checkbox>
-            <Checkbox.Group
-              disabled={loading}
-              options={checkBoxMenu}
-              defaultValue={checkBoxMenu.map((e) => e.value)}
-              value={checkBoxOptions}
-              onChange={onStatusQuery}
-            />
-          </div>
-        </Col>
-        <Col lg={{ span: 9 }} md={{ span: 10 }}>
+      <Row
+        justify={
+          userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER
+            ? "space-between"
+            : "end"
+        }
+        className="table-actions-section"
+      >
+        {userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER && (
+          <Col lg={{ span: 13 }} md={{ span: 12 }}>
+            <div className="action-bar">
+              <Checkbox
+                className="all-check"
+                disabled={loading}
+                indeterminate={indeterminate}
+                onChange={onCheckBoxesChange}
+                checked={checkAllBox}
+                defaultChecked={true}
+              >
+                {t("all")}
+              </Checkbox>
+              <Checkbox.Group
+                disabled={loading}
+                options={checkBoxMenu}
+                defaultValue={checkBoxMenu.map((e) => e.value)}
+                value={checkBoxOptions}
+                onChange={onStatusQuery}
+              />
+            </div>
+          </Col>
+        )}
+        <Col lg={{ span: 11 }} md={{ span: 12 }}>
           <div className="filter-section">
             <div className="search-bar">
               <Search
-                onPressEnter={(e) => onSearch((e.target as HTMLInputElement).value)}
-                placeholder={`${t('searchByProjectOrOrg')}`}
+                onPressEnter={(e) =>
+                  onSearch((e.target as HTMLInputElement).value)
+                }
+                placeholder={`${t("searchByProjectOrOrg")}`}
                 allowClear
-                onSearch={onSearch}
-                style={{ width: 265 }}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{ width: 285 }}
               />
             </div>
           </div>
@@ -517,7 +577,7 @@ export const CreditBalanceTableComponent = (props: any) => {
                 emptyText: (
                   <Empty
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description={tableData.length === 0 ? t('noCredits') : null}
+                    description={tableData.length === 0 ? t("noCredits") : null}
                   />
                 ),
               }}
@@ -544,7 +604,7 @@ export const CreditBalanceTableComponent = (props: any) => {
         type={modalResponseData?.type}
         icon={modalResponseData?.icon}
         title={modalResponseData?.title}
-        buttonText={modalResponseData?.buttonText || ''}
+        buttonText={modalResponseData?.buttonText || ""}
         onCancel={() => {
           setModalResponseVisible(false);
         }}

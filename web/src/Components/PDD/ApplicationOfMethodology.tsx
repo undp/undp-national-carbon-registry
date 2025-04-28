@@ -204,6 +204,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
         descriptionOfMeasurementMethods:
           values?.descriptionOfMeasurementMethods,
         purpose: values?.purpose,
+        valueApplied: values?.valueApplied,
         comments: values?.comments,
       },
       dataAndParametersMonitored: {
@@ -1783,7 +1784,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                     <Col xl={24} md={24}>
                       <Form.Item
                         label={t("PDD:valueApplied")}
-                        name="monitoringValueApplied"
+                        name="valueApplied"
                         rules={[
                           {
                             required: true,

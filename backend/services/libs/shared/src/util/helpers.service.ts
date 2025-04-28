@@ -93,6 +93,8 @@ export class HelperService {
         "programmeTitle",
         "programmeName",
         "id",
+        "projectName",
+        "receiverName",
       ].includes(key)
     )
       return true;
