@@ -24,6 +24,7 @@ const NetEmissionReduction = (props: any) => {
     projectCategory,
     disabled,
     maxNetGHGReduction,
+    disableFutureYears,
   } = props;
 
   console.log("--------disabled-----------", disabled);
@@ -312,7 +313,8 @@ const NetEmissionReduction = (props: any) => {
                               return disableYears(
                                 currentDate,
                                 form,
-                                "estimatedNetEmissionReductions"
+                                "estimatedNetEmissionReductions",
+                                disableFutureYears
                               );
                             }}
                             onChange={(value) =>
