@@ -29,8 +29,7 @@ export const ghgProjectDescriptionMapDataToFields = (vals: any) => {
       (item: any) => {
         return {
           ...item,
-          startDate: item?.startDate ? toMoment(item?.startDate) : undefined,
-          endDate: item?.endDate ? toMoment(item?.endDate) : undefined,
+          vintage: item?.vintage ? toMoment(item?.vintage) : undefined,
         };
       }
     ),

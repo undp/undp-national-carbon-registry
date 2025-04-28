@@ -5,6 +5,8 @@ import { formatNumberWithDecimalPlaces } from "../../Utils/utilityHelper";
 import { useState } from "react";
 import { ProjectCategory } from "../../Definitions/Enums/slRegistryEnum";
 import { toMoment } from "../../Utils/convertTime";
+import "./NetEmissonReduction.scss";
+import { disableYears } from "../../Utils/disableYears";
 
 const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
   baselineEmissionReductions: "avgBaselineEmissionReductions",
@@ -22,6 +24,7 @@ const NetEmissionReduction = (props: any) => {
     projectCategory,
     disabled,
     maxNetGHGReduction,
+    disableFutureYears,
   } = props;
 
   console.log("--------disabled-----------", disabled);
@@ -220,23 +223,14 @@ const NetEmissionReduction = (props: any) => {
     }
   };
 
-  const onPeriodChange = () => {
-    const reductions = form.getFieldValue("estimatedNetEmissionReductions");
-    let totalCreditingYears = 0;
-
-    reductions.forEach((reduction: any) => {
-      const start = toMoment(reduction.startDate)?.startOf("month");
-      const end = toMoment(reduction.endDate)?.endOf("month");
-
-      if (start && end) {
-        const diff = moment.duration(end.diff(start));
-        totalCreditingYears += Math.floor(diff.asMonths() + 1) / 12;
-      }
-    });
-    form.setFieldValue(
-      "totalNumberOfCreditingYears",
-      Number(totalCreditingYears).toFixed(2)
-    );
+  const onPeriodChange = (value: any, fieldCounts: number) => {
+    let totalCreditingYears = form.getFieldValue("totalCreditingYears") || 0;
+    if (value && totalCreditingYears < fieldCounts) {
+      totalCreditingYears += 1;
+    } else if (value === null && totalCreditingYears !== 0 && totalCreditingYears === fieldCounts) {
+      totalCreditingYears -= 1;
+    }
+    form.setFieldValue("totalCreditingYears", totalCreditingYears);
   };
 
   return (
@@ -288,7 +282,7 @@ const NetEmissionReduction = (props: any) => {
                       >
                         <Form.Item
                           label={``}
-                          name={[name, "startDate"]}
+                          name={[name, "vintage"]}
                           className="datepicker"
                           rules={[
                             {
@@ -312,72 +306,20 @@ const NetEmissionReduction = (props: any) => {
                           <DatePicker
                             size="large"
                             placeholder="Start Date"
-                            picker="month"
-                            format="YYYY MMM"
+                            picker="year"
+                            format="YYYY"
                             disabled={disabled}
-                            onChange={(_value) => onPeriodChange()}
-                          />
-                        </Form.Item>
-                        <span style={{ marginBottom: 23 }}>to</span>
-                        <Form.Item
-                          label={``}
-                          name={[name, "endDate"]}
-                          className="datepicker"
-                          rules={[
-                            {
-                              required: true,
-                              message: "",
-                            },
-                            {
-                              validator: async (rule, value) => {
-                                if (
-                                  String(value).trim() === "" ||
-                                  String(value).trim() === undefined ||
-                                  value === null ||
-                                  value === undefined
-                                ) {
-                                  throw new Error(`${t("common:required")}`);
-                                }
-
-                                const startDate = moment(
-                                  form.getFieldValue(
-                                    "estimatedNetEmissionReductions"
-                                  )[name].startDate
-                                ).startOf("month");
-                                const selectedDate =
-                                  moment(value).startOf("month");
-
-                                if (selectedDate.year() !== startDate.year()) {
-                                  throw new Error(
-                                    "End date also should be in the same year!"
-                                  );
-                                }
-
-                                const duration = moment.duration(
-                                  selectedDate.diff(startDate)
-                                );
-
-                                if (duration.asDays() < 0) {
-                                  throw new Error(
-                                    "End date cannot be before Start date!"
-                                  );
-                                }
-                                // const isOneYear = Math.round(duration.asMonths()) === 12;
-
-                                // if (!isOneYear) {
-                                //   throw new Error('Duration should be a year');
-                                // }
-                              },
-                            },
-                          ]}
-                        >
-                          <DatePicker
-                            size="large"
-                            placeholder="End Date"
-                            picker="month"
-                            format="YYYY MMM"
-                            onChange={(_value) => onPeriodChange()}
-                            disabled={disabled}
+                            disabledDate={(currentDate: any) => {
+                              return disableYears(
+                                currentDate,
+                                form,
+                                "estimatedNetEmissionReductions",
+                                disableFutureYears
+                              );
+                            }}
+                            onChange={(value) =>
+                              onPeriodChange(value, name + 1)
+                            }
                           />
                         </Form.Item>
                       </div>
@@ -626,7 +568,7 @@ const NetEmissionReduction = (props: any) => {
                             onClick={() => {
                               // reduceTotalCreditingYears()
                               remove(name);
-                              onPeriodChange();
+                              onPeriodChange(null, name + 1);
                               calculateTotalEmissions(
                                 null,
                                 "projectEmissionReductions",
