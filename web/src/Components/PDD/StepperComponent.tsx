@@ -269,9 +269,9 @@ const StepperComponent = (props: any) => {
 
   const submitForm = async (appendixVals: any) => {
     const tempValues = {
-      ...values,
+      ...structuredClone(values),
       data: {
-        ...values.data,
+        ...structuredClone(values.data),
         appendix: appendixVals,
       },
     };
