@@ -458,7 +458,7 @@ export const EmailTemplates = {
         Hi, <br><br>
 
         A new Verfication Report has been submitted by {{organizationNameIC}}.<br>
-        Independant Certifier for the project {{projectName}} owned by your {{organizationNamePD}}. <br><br>
+        Independant Certifier for the project {{programmeName}} owned by your {{organizationNamePD}}. <br><br>
 
         Designated National Authority can review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -474,7 +474,7 @@ export const EmailTemplates = {
         Hi, <br><br>
 
         A new Verfication Report has been submitted by {{organizationNameIC}}.<br>
-        Independant Certifier for the project {{projectName}} owned by the {{organizationNamePD}}.<br><br>
+        Independant Certifier for the project {{programmeName}} owned by the {{organizationNamePD}}.<br><br>
 
         Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
