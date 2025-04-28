@@ -305,10 +305,10 @@ const StepperComponent = (props: VerificationStepProps) => {
       );
 
       const tempValues = {
-        ...values,
+        ...structuredClone(values),
         activityRefId: state?.activityId,
         data: {
-          ...values.data,
+          ...structuredClone(values.data),
           appendix: appendixVals,
         },
       };
