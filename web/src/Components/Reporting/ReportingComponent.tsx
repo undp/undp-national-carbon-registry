@@ -4,10 +4,14 @@ import "./ReportingComponent.scss";
 import { DatePicker, Empty, Row, Select } from "antd";
 import moment, { Moment } from "moment";
 import ReportCard from "./ReportCard";
-import { getActionsReportColumns, getHoldingsReportColumns } from "./reportingColumns";
-import { REPORT_TYPES } from "./reportTypes";
+import {
+  getActionsReportColumns,
+  getHoldingsReportColumns,
+} from "./reportingColumns";
+import { FILE_TYPES, REPORT_TYPES } from "./reportTypes";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
 import { API_PATHS } from "../../Config/apiConfig";
+import { Loading } from "../Loading/loading";
 
 const ReportingComponent = (props: { translator: i18n }) => {
   const { translator } = props;
@@ -15,6 +19,9 @@ const ReportingComponent = (props: { translator: i18n }) => {
   const t = translator.t;
 
   const { post } = useConnection();
+
+  const [actionsLoading, setActionsLoading] = useState<boolean>(false);
+  const [holdingsLoading, setHoldingsLoading] = useState<boolean>(false);
 
   const [selectedYearsArr, setSelectedYearsArr] = useState([
     REPORT_TYPES.ACTIONS,
@@ -33,7 +40,9 @@ const ReportingComponent = (props: { translator: i18n }) => {
   const [holdingsData, setHoldingsData] = useState<any[]>([]);
 
   const [paginationInfo, setPaginationInfo] = useState<
-    Partial<Record<keyof typeof REPORT_TYPES, { page: number; pageSize: number }>>
+    Partial<
+      Record<keyof typeof REPORT_TYPES, { page: number; pageSize: number }>
+    >
   >({
     [REPORT_TYPES.ACTIONS]: {
       page: 1,
@@ -45,7 +54,11 @@ const ReportingComponent = (props: { translator: i18n }) => {
     },
   });
 
-  const handlePaginationInfoChange = (page: number, pageSize: number, reportType: REPORT_TYPES) => {
+  const handlePaginationInfoChange = (
+    page: number,
+    pageSize: number,
+    reportType: REPORT_TYPES
+  ) => {
     setPaginationInfo((prev) => ({
       ...prev,
       [reportType]: {
@@ -61,66 +74,72 @@ const ReportingComponent = (props: { translator: i18n }) => {
 
   const getActionsReports = async () => {
     try {
-      console.log("-------post----------", post);
-      if (post) {
-        const res = await post(API_PATHS.QUERY_AEF_RECORDS, {
-          page: paginationInfo[REPORT_TYPES.ACTIONS]?.page,
-          size: paginationInfo[REPORT_TYPES.ACTIONS]?.pageSize,
-          filterAnd: [
-            {
-              key: "actionTime",
-              operation: ">",
-              value: selectedYear.startOf("year").valueOf(),
-            },
-            {
-              key: "actionTime",
-              operation: "<",
-              value: selectedYear.endOf("year").valueOf(),
-            },
-          ],
-        });
+      setActionsLoading(true)
+      const res = await post(API_PATHS.QUERY_AEF_RECORDS, {
+        page: paginationInfo[REPORT_TYPES.ACTIONS]?.page,
+        size: paginationInfo[REPORT_TYPES.ACTIONS]?.pageSize,
+        filterAnd: [
+          {
+            key: "actionTime",
+            operation: ">",
+            value: selectedYear.startOf("year").valueOf(),
+          },
+          {
+            key: "actionTime",
+            operation: "<",
+            value: selectedYear.endOf("year").valueOf(),
+          },
+        ],
+      });
 
-        console.log("---------------res--------------", res);
-        if (res?.statusText === "SUCCESS") {
-          setActionsData(res?.data);
-        }
+      if (res?.statusText === "SUCCESS") {
+        setActionsData(res?.data);
       }
-    } catch (error) {}
+    } catch (error: any) {
+      console.log("error:", error)
+    }
+    finally {
+      setActionsLoading(false)
+    }
   };
 
   const getHoldingReports = async () => {
     try {
-      console.log("-------post----------", post);
-      if (post) {
-        const res = await post(API_PATHS.QUERY_AEF_RECORDS, {
-          page: paginationInfo[REPORT_TYPES.HOLDINGS]?.page,
-          size: paginationInfo[REPORT_TYPES.HOLDINGS]?.pageSize,
-          filterAnd: [
-            {
-              key: "actionTime",
-              operation: ">",
-              value: selectedYear.startOf("year").valueOf(),
-            },
-            {
-              key: "actionTime",
-              operation: "<",
-              value: selectedYear.endOf("year").valueOf(),
-            },
-            {
-              key: "actionType",
-              operation: "=",
-              value: "authorization",
-            },
-          ],
-        });
+      setHoldingsLoading(true);
+      const res = await post(API_PATHS.QUERY_AEF_RECORDS, {
+        page: paginationInfo[REPORT_TYPES.HOLDINGS]?.page,
+        size: paginationInfo[REPORT_TYPES.HOLDINGS]?.pageSize,
+        filterAnd: [
+          {
+            key: "actionTime",
+            operation: ">",
+            value: selectedYear.startOf("year").valueOf(),
+          },
+          {
+            key: "actionTime",
+            operation: "<",
+            value: selectedYear.endOf("year").valueOf(),
+          },
+          {
+            key: "actionType",
+            operation: "=",
+            value: "authorization",
+          },
+        ],
+      });
 
-        console.log("---------------res--------------", res);
-        if (res?.statusText === "SUCCESS") {
-          setHoldingsData(res?.data);
-        }
+      console.log("---------------res--------------", res);
+      if (res?.statusText === "SUCCESS") {
+        setHoldingsData(res?.data);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log("error:", error)
+    }
+    finally {
+      setHoldingsLoading(false);
+    }
   };
+
   useEffect(() => {
     getActionsReports();
     getHoldingReports();
@@ -131,7 +150,114 @@ const ReportingComponent = (props: { translator: i18n }) => {
     console.log("---------isReportSelected---------", isReportSelected);
     return isReportSelected;
   };
+  
+  const downloadActionCSV = async () => {
+    try {
+      setActionsLoading(true)
+      const res = await post(API_PATHS.DOWNLOAD_AEF_RECORDS, {
+        reportType: REPORT_TYPES.ACTIONS,
+        fileType: FILE_TYPES.csv
+      })
 
+      console.log("--------res--------", res);
+
+      if (res?.statusText === "SUCCESS") {
+        const url = res.data.url;
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = res.data.outputFileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.log("error:", error)
+    } finally {
+      setActionsLoading(false);
+    }
+  }
+
+  const downloadActionExcell = async () => {
+    try {
+      setActionsLoading(true)
+      const res = await post(API_PATHS.DOWNLOAD_AEF_RECORDS, {
+        reportType: REPORT_TYPES.ACTIONS,
+        fileType: FILE_TYPES.xlsx
+      })
+
+      console.log("--------res--------", res);
+
+      if (res?.statusText === "SUCCESS") {
+        const url = res.data.url;
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = res.data.outputFileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.log("error:", error)
+    } finally {
+      setActionsLoading(false);
+    }
+  }
+
+  const downloadHoldingsCSV = async () => {
+    try {
+      setHoldingsLoading(true)
+      const res = await post(API_PATHS.DOWNLOAD_AEF_RECORDS, {
+        reportType: REPORT_TYPES.HOLDINGS,
+        fileType: FILE_TYPES.csv
+      })
+
+      console.log("--------res--------", res);
+
+      if (res?.statusText === "SUCCESS") {
+        const url = res.data.url;
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = res.data.outputFileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.log("error:", error)
+    } finally {
+      setHoldingsLoading(false);
+    }
+  }
+
+  const downloadHoldingsExcell = async () => {
+    try {
+      setHoldingsLoading(true)
+      const res = await post(API_PATHS.DOWNLOAD_AEF_RECORDS, {
+        reportType: REPORT_TYPES.HOLDINGS,
+        fileType: FILE_TYPES.xlsx
+      })
+
+      console.log("--------res--------", res);
+
+      if (res?.statusText === "SUCCESS") {
+        const url = res.data.url;
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = res.data.outputFileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.log("error:", error)
+    } finally {
+      setHoldingsLoading(false);
+    }
+  }
   return (
     <div className="reporting-container">
       <div className="title-container">
@@ -166,20 +292,28 @@ const ReportingComponent = (props: { translator: i18n }) => {
               }));
             }}
             onDeselect={(value) => {
-              setSelectedYearsArr((prev) => [...prev.filter((item) => item !== value)]);
+              setSelectedYearsArr((prev) => [
+                ...prev.filter((item) => item !== value),
+              ]);
               setSelectedReports((prev) => ({
                 ...prev,
                 [value]: false,
               }));
             }}
           >
-            {Object.keys(REPORT_TYPES).map((type: keyof typeof REPORT_TYPES) => (
-              <Select.Option value={type}>{t(`reporting:${String(type)}`)}</Select.Option>
-            ))}
+            {Object.keys(REPORT_TYPES).map(
+              (type: keyof typeof REPORT_TYPES) => (
+                <Select.Option value={type}>
+                  {t(`reporting:${String(type)}`)}
+                </Select.Option>
+              )
+            )}
           </Select>
         </Row>
       </div>
-
+      
+      {(actionsLoading || holdingsLoading) && (<Loading />)}
+      
       {selectedReports[REPORT_TYPES.ACTIONS] && (
         <ReportCard
           title={"Actions Report"}
@@ -195,8 +329,8 @@ const ReportingComponent = (props: { translator: i18n }) => {
             pageSizeOptions: [10, 20, 30],
           }}
           data={actionsData || []}
-          downloadCSV={() => {}}
-          downloadExcel={() => {}}
+          downloadCSV={downloadActionCSV}
+          downloadExcel={downloadActionExcell}
         />
       )}
 
@@ -215,14 +349,16 @@ const ReportingComponent = (props: { translator: i18n }) => {
             pageSizeOptions: [10, 20, 30],
           }}
           data={holdingsData || []}
-          downloadCSV={() => {}}
-          downloadExcel={() => {}}
+          downloadCSV={downloadHoldingsCSV}
+          downloadExcel={downloadHoldingsExcell}
         />
       )}
 
       {!checkIfAnyReportIsSelected() && (
         <div className="no-reports">
-          <Empty description={<span className="description">No report found !</span>} />
+          <Empty
+            description={<span className="description">No report found !</span>}
+          />
         </div>
       )}
     </div>
