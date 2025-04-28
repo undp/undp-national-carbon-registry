@@ -43,7 +43,7 @@ const CMA_STEPS = {};
 
 const StepperComponent = (props: any) => {
   const { t, selectedVersion, handleDocumentStatus } = props;
-  const [current, setCurrent] = useState(2);
+  const [current, setCurrent] = useState(0);
   const [documentId, setDocumentId] = useState<string>();
   const navigate = useNavigate();
   const { state } = useLocation();
