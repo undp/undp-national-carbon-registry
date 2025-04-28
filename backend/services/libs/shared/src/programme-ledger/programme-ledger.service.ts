@@ -388,7 +388,6 @@ export class ProgrammeLedgerService {
           case TxType.APPROVE_PDD_BY_DNA:
             uPayload["projectProposalStage"] =
               ProjectProposalStage.PDD_APPROVED_BY_DNA;
-            uPayload["serialNumber"] = data.serialNumber;
             expectedCurrentProposalStages = [
               ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER,
             ];
@@ -413,6 +412,7 @@ export class ProgrammeLedgerService {
             uPayload["letterOfAuthorizationUrl"] =
               data?.letterOfAuthorizationUrl;
             uPayload["creditEst"] = data?.creditEst;
+            uPayload["serialNumber"] = data.serialNumber;
             uPayload["projectAuthorizationTime"] = project.txTime;
             uPayload["authorizationId"] =
               this.serialNumberManagementService.getAuthorizationId(

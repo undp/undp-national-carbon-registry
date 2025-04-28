@@ -1555,7 +1555,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      value.trim().length > 0 &&
+                                      value && value.trim().length > 0 &&
                                       !validator.isURL(value)
                                     )
                                       throw new Error(

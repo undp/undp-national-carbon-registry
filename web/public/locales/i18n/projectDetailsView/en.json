@@ -295,7 +295,7 @@
   "WASTE_HANDLING_AND_DISPOSAL": "Waste Handling and Disposal",
   "AFFORESTATION_AND_REFORESTATION": "Afforestation and Reforestation",
   "AGRICULTURE": "Agriculture",
-  "checkboxConfirmMessage": "I reviewed all the attached documents",
+  "checkboxConfirmMessage": "I understand that this action cannot be undone",
   "infConfirmSubMessage": "The system will generate a No Objection Letter",
   "ENERGY": "Energy",
   "HEALTH": "Health",

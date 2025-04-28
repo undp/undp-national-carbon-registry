@@ -31,6 +31,7 @@ import { DataResponseMessageDto } from "../dto/data.response.message";
 import { BasicResponseDto } from "../dto/basic.response.dto";
 import { AefReportManagementService } from "../aef-report-management/aef-report-management.service";
 import { Role } from "../casl/role.enum";
+import { CompanyState } from "../enum/company.state.enum";
 
 @Injectable()
 export class CreditTransactionsManagementService {
@@ -97,6 +98,15 @@ export class CreditTransactionsManagementService {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
             "project.recieverNotProjectParticipant",
+            []
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      if (recieverCompany.state != CompanyState.ACTIVE) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.recieverNotAcitiveProjectParticipant",
             []
           ),
           HttpStatus.BAD_REQUEST
@@ -256,6 +266,7 @@ export class CreditTransactionsManagementService {
           []
         ),
         {
+          id: newRetireId,
           amount: creditRetireRequestDto.amount,
         }
       );
@@ -428,6 +439,7 @@ export class CreditTransactionsManagementService {
         retirementType: txData.retirementType,
         remarks: txData.remarks,
         country: txData.country,
+        organizationName: txData.organizationName,
       });
       await em.save(CreditTransactionsEntity, newTranferRecord);
     } else if (creditBlock.txType == TxType.RETIRE) {

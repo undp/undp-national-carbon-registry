@@ -27,19 +27,14 @@ interface IReportCard {
 
   pagination: {
     total: number;
-
     current: number;
-
     pageSize: number;
-
     pageSizeOptions: number[];
   };
 
   handlePaginationChange: (
     page: number,
-
     pageSize: number,
-
     reportType: REPORT_TYPES
   ) => void;
 }
@@ -47,23 +42,14 @@ interface IReportCard {
 const ReportCard = (props: IReportCard) => {
   const {
     title,
-
     reportType,
-
     host,
-
     year,
-
     columns,
-
     data,
-
     downloadCSV,
-
     downloadExcel,
-
     handlePaginationChange,
-
     pagination,
   } = props;
 
