@@ -109,7 +109,7 @@ export const INF_SECTORAL_SCOPE: { [key: string]: string } = {
   SOLVENT_USE: 'Solvent Use',
 };
 
-const SECTOR_TO_SCOPES_MAP: { [key: string]: string[] } = {
+export const SECTOR_TO_SCOPES_MAP: { [key: string]: string[] } = {
   ENERGY: ['ENERGY_INDUSTRIES', 'ENERGY_DISTRIBUTION', 'ENERGY_DEMAND'],
   AGRICULTURE: ['AGRICULTURE'],
   FORESTRY: ['AFFORESTATION_AND_REFORESTATION'],
