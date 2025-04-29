@@ -70,11 +70,11 @@ export const CreditTransfersTableComponent = (props: any) => {
     const filter: any[] = [];
     const filterOr: any[] = [];
 
-    if (search && search !== "") {
+    if (search && search.trim() !== "") {
       filter.push({
         key: "projectName",
         operation: "like",
-        value: `%${search}%`,
+        value: `%${search.trim()}%`,
       });
     }
 
