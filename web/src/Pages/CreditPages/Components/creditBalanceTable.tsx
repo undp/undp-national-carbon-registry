@@ -408,7 +408,7 @@ export const CreditBalanceTableComponent = (props: any) => {
     if (isInitialRender.current) {
       getQueryData();
     }
-  }, [currentPage, pageSize]);
+  }, [currentPage, pageSize, modalActionVisible, modalResponseVisible]);
 
   useEffect(() => {
     if (isInitialRender.current) {
@@ -418,14 +418,7 @@ export const CreditBalanceTableComponent = (props: any) => {
         getQueryData();
       }
     }
-  }, [
-    sortField,
-    sortOrder,
-    search,
-    checkBoxOptions,
-    modalActionVisible,
-    modalResponseVisible,
-  ]);
+  }, [sortField, sortOrder, search, checkBoxOptions]);
 
   const onFinishAction = async (
     reciveParty: any,

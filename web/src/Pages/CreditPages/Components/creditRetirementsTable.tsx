@@ -440,7 +440,7 @@ export const CreditRetirementsTableComponent = (props: any) => {
     if (isInitialRender.current) {
       getQueryData();
     }
-  }, [currentPage, pageSize]);
+  }, [currentPage, pageSize, modalActionVisible, modalResponseVisible]);
 
   useEffect(() => {
     if (isInitialRender.current) {
@@ -450,14 +450,7 @@ export const CreditRetirementsTableComponent = (props: any) => {
         getQueryData();
       }
     }
-  }, [
-    sortField,
-    sortOrder,
-    search,
-    checkBoxOptions,
-    modalActionVisible,
-    modalResponseVisible,
-  ]);
+  }, [sortField, sortOrder, search, checkBoxOptions]);
   const onFinishAction = async (
     transactionId: any,
     action: RetirementActionEnum,
