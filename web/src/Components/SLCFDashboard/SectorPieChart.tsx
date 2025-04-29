@@ -1,10 +1,8 @@
 import { FC } from "react";
-import { Col, Row, Skeleton, Tooltip } from "antd";
+import { Row, Skeleton, Tooltip } from "antd";
 import { InfoCircle } from "react-bootstrap-icons";
-import { ProjectSectorEnum } from "../../Definitions/Enums/projectSector.enum";
-import { INF_SECTOR } from "../AddNewProgramme/ProgrammeCreationComponent";
 
-export interface SideBarChartStatsProps {
+export interface ISectorPieChart {
   id: string;
   title: any;
   options: any;
@@ -13,25 +11,13 @@ export interface SideBarChartStatsProps {
   width: string;
   toolTipText: string;
   Chart: any;
-  sector: ProjectSectorEnum;
 }
 
-export const SLCFSideBarChartsStatComponent: FC<SideBarChartStatsProps> = (
-  props: SideBarChartStatsProps
-) => {
-  const {
-    id,
-    title,
-    options,
-    series,
-    loading,
-    toolTipText,
-    Chart,
-    width,
-    sector,
-  } = props;
+export const SectorPieChart: FC<ISectorPieChart> = (props: ISectorPieChart) => {
+  const { id, title, options, series, loading, toolTipText, Chart, width } =
+    props;
 
-  console.log("------------ bar series-------------", series, options);
+  console.log("--------------pie chart-----------", series);
 
   return (
     <div className="statistics-and-pie-card height-pie-rem">
@@ -43,11 +29,11 @@ export const SLCFSideBarChartsStatComponent: FC<SideBarChartStatsProps> = (
       ) : (
         <>
           <Row
-            align={"middle"}
             justify={"space-between"}
-            className="pie-charts-top sectoral-scope-chart"
+            align={"middle"}
+            className="pie-charts-top"
           >
-            <Col md={16} className="pie-chart-col-1">
+            <Row align={"middle"}>
               <div className="pie-charts-title">{title}</div>
               <div className="info-container">
                 <Tooltip
@@ -59,19 +45,14 @@ export const SLCFSideBarChartsStatComponent: FC<SideBarChartStatsProps> = (
                   <InfoCircle color="#000000" size={17} />
                 </Tooltip>
               </div>
-            </Col>
-            <Col md={3}>
-            {sector && (
-              <span className="sector-badge">{INF_SECTOR[sector]}</span>
-            )}
-            </Col>
+            </Row>
           </Row>
           <div className="pie-charts-section">
             <Chart
               id={id}
               options={options}
-              series={series}
-              type="bar"
+              series={series?.data || []}
+              type="donut"
               width={width}
               height="400px"
             />
