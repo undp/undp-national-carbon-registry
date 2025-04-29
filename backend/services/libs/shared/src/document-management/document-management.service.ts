@@ -46,6 +46,7 @@ import { BasicResponseDto } from "../dto/basic.response.dto";
 import { PositiveIntegerValidationDto } from "../dto/positive.integer.validation.dto";
 import { ActivityVintageCreditsArrayDto } from "../dto/activty.vintage.credits.array.dto";
 import { SECTOR_TO_SCOPES_MAP } from "../constants/inf.sector.sectoralScope.mapping.const";
+import { CompanyState } from "../enum/company.state.enum";
 
 @Injectable()
 export class DocumentManagementService {
@@ -1851,6 +1852,19 @@ export class DocumentManagementService {
     const project = await this.programmeLedgerService.getProjectById(
       document.programmeId
     );
+
+    const projectCompany = await this.companyService.findByCompanyId(
+      project.companyId
+    );
+    if (projectCompany.state == CompanyState.SUSPENDED) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "project.companyInDeactivatedState",
+          []
+        ),
+        HttpStatus.UNAUTHORIZED
+      );
+    }
 
     if (
       requestData.action === DocumentStatus.DNA_APPROVED ||

@@ -47,5 +47,6 @@
   "greaterThanCurrentVintage": "Activity vintage is greater than current vintage",
   "invalidSectoralScopeForSector": "Invalid sectoral scope for the sector",
   "success": "SUCCESS",
-  "notAuthorizedProjectParticipant": "Not authorized project participant"
+  "notAuthorizedProjectParticipant": "Not authorized project participant",
+  "companyInDeactivatedState": "Organisation is Deactivated, Action is Unauthorised"
 }
