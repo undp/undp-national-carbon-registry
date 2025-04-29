@@ -61,6 +61,7 @@ import { CompanyViewEntity } from "../view-entities/company.view.entity";
 import { GetOrganizationsRequest } from "../dto/organizations-request.dto";
 import { IDNameResponse } from "../dto/id-name.response.dto";
 import { Role } from "../casl/role.enum";
+import { CreditBlocksEntity } from "../entities/credit.blocks.entity";
 
 @Injectable()
 export class CompanyService {
@@ -87,7 +88,9 @@ export class CompanyService {
     private investmentRepo: Repository<Investment>,
     private dataExportService: DataExportService,
     private httpUtilService: HttpUtilService,
-    @Inject("CACHE_MANAGER") private cacheManager: Cache
+    @Inject("CACHE_MANAGER") private cacheManager: Cache,
+    @InjectRepository(CreditBlocksEntity)
+    private creditBlocksEntityRepository: Repository<CreditBlocksEntity>
   ) {}
 
   async suspend(
@@ -969,13 +972,35 @@ export class CompanyService {
     return companies && companies.length > 0 ? companies[0] : undefined;
   }
 
-  async findByCompanyId(companyId: number): Promise<Company | undefined> {
+  async findByCompanyId(
+    companyId: number,
+    includeCreditBlockBalance: boolean = false
+  ): Promise<Company | undefined> {
     const companies = await this.companyRepo.find({
       where: {
         companyId: companyId,
       },
     });
+    if (includeCreditBlockBalance && companies && companies.length > 0) {
+      const availableCreditBlockBalance =
+        await this.getCompanyAvailableCreditBlockBalance(companyId);
+      companies[0].creditBalance = availableCreditBlockBalance;
+    }
     return companies && companies.length > 0 ? companies[0] : undefined;
+  }
+
+  public async getCompanyAvailableCreditBlockBalance(
+    companyId: number
+  ): Promise<number> {
+    const creditBlocks = await this.creditBlocksEntityRepository.find({
+      where: { ownerCompanyId: companyId },
+    });
+    let availableBalance = 0;
+    creditBlocks.map((creditBlock) => {
+      availableBalance +=
+        creditBlock.creditAmount - creditBlock.reservedCreditAmount;
+    });
+    return availableBalance;
   }
 
   async findByCompanyIds(

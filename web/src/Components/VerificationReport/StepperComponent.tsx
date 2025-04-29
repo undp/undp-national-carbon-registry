@@ -47,6 +47,7 @@ import {
 import { Loading } from "../Loading/loading";
 import { INF_SECTORAL_SCOPE } from "../AddNewProgramme/ProgrammeCreationComponent";
 import { toMoment } from "../../Utils/convertTime";
+import { safeClone } from "../../Utils/deepCopy";
 
 const StepperComponent = (props: VerificationStepProps) => {
   const { translator, t } = props;
@@ -234,8 +235,7 @@ const StepperComponent = (props: VerificationStepProps) => {
         estimatedNetEmissionReductions: emReduction.map((item: any) => {
           return {
             ...item,
-            startDate: item?.startDate ? toMoment(item?.startDate) : undefined,
-            endDate: item?.endDate ? toMoment(item?.endDate) : undefined,
+            vintage: item?.vintage ? toMoment(item?.vintage) : undefined,
           };
         }),
         totalBaselineEmissionReductions: Number(
@@ -301,17 +301,26 @@ const StepperComponent = (props: VerificationStepProps) => {
     try {
       console.log(
         "---------------activityRefId-------------",
-        state?.activityRefId
+        state?.activityId
       );
 
       const tempValues = {
-        ...values,
+        ...safeClone(values),
         activityRefId: state?.activityId,
         data: {
-          ...values.data,
+          ...safeClone(values.data),
           appendix: appendixVals,
         },
       };
+
+      // const tempValues = {
+      //   values,
+      //   activityRefId: state?.activityId,
+      //   data: {
+      //     ...values.data,
+      //     appendix: appendixVals,
+      //   },
+      // };
       const res = await post(API_PATHS.ADD_DOCUMENT, tempValues);
       console.log(res);
       if (res?.statusText === "SUCCESS") {
@@ -324,6 +333,7 @@ const StepperComponent = (props: VerificationStepProps) => {
         navigateToDetailsPage();
       }
     } catch (error: any) {
+      console.log("---------verification report submit---------", error);
       message.open({
         type: "error",
         content: "Something went wrong",

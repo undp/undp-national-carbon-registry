@@ -476,15 +476,11 @@ export class DocumentManagementService {
           const creditVerified: ActivityVintageCreditsDto[] = [];
           let amountToVerify = 0;
           newDoc.content.calcEmissionReductions?.netGHGEmissionReductions?.yearlyGHGEmissionReductions.map(
-            (data: {
-              startDate: string;
-              endDate: string;
-              netEmissionReductions: string;
-            }) => {
+            (data: { vintage: string; netEmissionReductions: string }) => {
               const creditBlockToVerify = plainToClass(
                 ActivityVintageCreditsDto,
                 {
-                  vintage: new Date(parseInt(data.endDate))
+                  vintage: new Date(parseInt(data.vintage))
                     .getFullYear()
                     .toString(),
                   creditAmount: Number(data.netEmissionReductions),
@@ -685,15 +681,11 @@ export class DocumentManagementService {
           const creditVerified: ActivityVintageCreditsDto[] = [];
           let amountToVerify = 0;
           newDoc.content.ghgProjectDescription?.estimatedNetEmissionReductions?.map(
-            (data: {
-              startDate: string;
-              endDate: string;
-              netEmissionReductions: string;
-            }) => {
+            (data: { vintage: string; netEmissionReductions: string }) => {
               const creditBlockToVerify = plainToClass(
                 ActivityVintageCreditsDto,
                 {
-                  vintage: new Date(parseInt(data.endDate))
+                  vintage: new Date(parseInt(data.vintage))
                     .getFullYear()
                     .toString(),
                   creditAmount: Number(data.netEmissionReductions),
@@ -1958,15 +1950,11 @@ export class DocumentManagementService {
         }
         const creditVerified: ActivityVintageCreditsDto[] = [];
         document.content.ghgProjectDescription?.estimatedNetEmissionReductions?.map(
-          (data: {
-            startDate: string;
-            endDate: string;
-            netEmissionReductions: string;
-          }) => {
+          (data: { vintage: string; netEmissionReductions: string }) => {
             const creditBlockToVerify = plainToClass(
               ActivityVintageCreditsDto,
               {
-                vintage: new Date(parseInt(data.endDate))
+                vintage: new Date(parseInt(data.vintage))
                   .getFullYear()
                   .toString(),
                 creditAmount: Number(data.netEmissionReductions),

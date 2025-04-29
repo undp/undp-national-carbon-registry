@@ -39,6 +39,7 @@ import {
 } from "./viewDataMap";
 import { mapBase64ToFields } from "../../Utils/mapBase64ToFields";
 import { INF_SECTORAL_SCOPE } from "../AddNewProgramme/ProgrammeCreationComponent";
+import { safeClone } from "../../Utils/deepCopy";
 
 const StepperComponent = (props: CustomStepsProps) => {
   const navigate = useNavigate();
@@ -204,7 +205,7 @@ const StepperComponent = (props: CustomStepsProps) => {
         state?.documents?.[DocumentEnum.MONITORING as any]?.version;
       const latestVersion = docVersions ? docVersions + 1 : 1;
       basicInformationForm.setFieldsValue({
-        bi_sectoralScope: INF_SECTORAL_SCOPE[programmeData?.sectoralScope],
+        bi_sectoralScope: INF_SECTORAL_SCOPE[programmeData?.sectoralScope] || 'N/A',
         bi_projectTitle:
           validationData?.basicInformation?.titleOfTheProjectActivity,
         bi_applicablePDDVersionNo:
@@ -370,9 +371,9 @@ const StepperComponent = (props: CustomStepsProps) => {
       console.log("----form vals-----", appendixVals);
       setLoading(true);
       const tempValues = {
-        ...values,
+        ...safeClone(values),
         data: {
-          ...values.data,
+          ...safeClone(values.data),
           appendix: appendixVals,
         },
       };

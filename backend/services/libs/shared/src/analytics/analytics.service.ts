@@ -45,7 +45,7 @@ export class AnalyticsService {
 
       // add sector filter
       if (filters.sector) {
-        where.sectoralScope = filters.sector;
+        where.sector = filters.sector;
       }
 
       // add isMine filter
@@ -276,7 +276,7 @@ export class AnalyticsService {
     }
 
     if (filters?.sector) {
-      latestStatusQb.andWhere("project.sectoralScope = :sector", {
+      latestStatusQb.andWhere("project.sector = :sector", {
         sector: filters.sector,
       });
     }
@@ -374,7 +374,7 @@ export class AnalyticsService {
       });
     }
     if (filters?.sector) {
-      latestStatusQb.andWhere("project.sectoralScope = :sector", {
+      latestStatusQb.andWhere("project.sector = :sector", {
         sector: filters.sector,
       });
     }
@@ -507,7 +507,7 @@ export class AnalyticsService {
     }
 
     if (filters?.sector) {
-      qb.andWhere("project.sectoralScope = :sector", {
+      qb.andWhere("project.sector = :sector", {
         sector: filters.sector,
       });
     }
@@ -609,7 +609,7 @@ export class AnalyticsService {
     }
 
     if (filters?.sector) {
-      baseQb.andWhere("project.sectoralScope = :sector", {
+      baseQb.andWhere("project.sector = :sector", {
         sector: filters.sector,
       });
     }
@@ -672,7 +672,7 @@ export class AnalyticsService {
     }
 
     if (filters?.sector) {
-      qb.andWhere("project.sectoralScope = :sector", {
+      qb.andWhere("project.sector = :sector", {
         sector: filters.sector,
       });
     }
