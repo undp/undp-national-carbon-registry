@@ -368,10 +368,11 @@ export class CompanyService {
         this.getUserRefWithRemarks(user, `${remarks}#${company.name}`),
         false
       );
+      const hostAddress = this.configService.get("host");
       await this.emailHelperService.sendEmail(
         company.email,
         EmailTemplates.ORG_REACTIVATION,
-        {},
+        { home: hostAddress },
         user.companyId
       );
       return new BasicResponseDto(

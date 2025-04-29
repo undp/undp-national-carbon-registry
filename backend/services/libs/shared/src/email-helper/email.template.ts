@@ -17,7 +17,7 @@ export const EmailTemplates = {
     html: `
         Welcome,<br><br>
 
-        A new {{organisationRole}} organisation has been created for the {countryName} Carbon Registry. Please review and approve it by clicking
+        A new {{organisationRole}} organisation has been created for the {{countryName}} Carbon Registry. Please review and approve it by clicking
         <a href="{{organisationPageLink}}">here</a>.
 
         <br><br>
@@ -946,11 +946,11 @@ export const EmailTemplates = {
   },
   PROGRAMME_DEVELOPER_ORG_DEACTIVATION: {
     id: "PROGRAMME_DEVELOPER_ORG_DEACTIVATION",
-    subject: "Your {CountryName} Carbon Registry Organisation is Deactivated",
+    subject: "Your {{countryName}} Carbon Registry Organisation is Deactivated",
     html: `
         Hi,<br><br>
 
-        Your organisation in the {CountryName} Carbon Registry has been deactivated. <br><br>
+        Your organisation in the {{countryName}} Carbon Registry has been deactivated. <br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Registry Team
@@ -1061,11 +1061,11 @@ export const EmailTemplates = {
   },
   ORG_REACTIVATION: {
     id: "ORG_REACTIVATION",
-    subject: "Your {CountryName} Carbon Registry Organisation is Reactivated",
+    subject: "Your {{countryName}} Carbon Registry Organisation is Reactivated",
     html: `
         Hi <br><br>
 
-        Your organization in the {CountryName} Carbon Registry has been reactivated. {Home} to login to the system.  <br><br>
+        Your organization in the {{countryName}} Carbon Registry has been reactivated. Click <a href="{{home}}">here</a> to login to the system.  <br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Registry Team
