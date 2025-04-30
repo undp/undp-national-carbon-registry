@@ -302,6 +302,18 @@ export class CreditTransactionsManagementService {
           HttpStatus.BAD_REQUEST
         );
       }
+      const projectCompany = await this.companyService.findByCompanyId(
+        creditRetireRequest.senderId
+      );
+      if (projectCompany.state == CompanyState.SUSPENDED) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.companyInDeactivatedState",
+            []
+          ),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
       if (
         retirementAction.action == RetirementACtionEnum.ACCEPT ||
         retirementAction.action == RetirementACtionEnum.REJECT
