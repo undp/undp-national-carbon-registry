@@ -39,6 +39,7 @@ import { mapBase64ToFields } from "../../Utils/mapBase64ToFields";
 import { INF_SECTORAL_SCOPE } from "../AddNewProgramme/ProgrammeCreationComponent";
 import { toMoment } from "../../Utils/convertTime";
 import { safeClone } from "../../Utils/deepCopy";
+import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 
 export enum ProcessSteps {
   VR_PROJECT_DETAILS = "VR_PROJECT_DETAILS",
@@ -116,7 +117,11 @@ const StepperComponent = (props: any) => {
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-        navigateToDetailsPage();
+
+        setTimeout(() => {
+          navigateToDetailsPage();
+          setLoading(false);
+        }, defaultTimeout);
       }
     } catch (error: any) {
       console.log("----------error----------", error);
@@ -126,9 +131,8 @@ const StepperComponent = (props: any) => {
         duration: 4,
         style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
-    } finally {
-      setLoading(false);
-    }
+      setLoading(true)
+    } 
   };
 
   const next = () => {
