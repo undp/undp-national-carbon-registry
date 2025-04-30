@@ -48,6 +48,7 @@ import { Loading } from "../Loading/loading";
 import { INF_SECTORAL_SCOPE } from "../AddNewProgramme/ProgrammeCreationComponent";
 import { toMoment } from "../../Utils/convertTime";
 import { safeClone } from "../../Utils/deepCopy";
+import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 
 const StepperComponent = (props: VerificationStepProps) => {
   const { translator, t } = props;
@@ -330,7 +331,11 @@ const StepperComponent = (props: VerificationStepProps) => {
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-        navigateToDetailsPage();
+
+        setTimeout(() => {
+          navigateToDetailsPage();
+          setLoading(false);
+        }, defaultTimeout)
       }
     } catch (error: any) {
       console.log("---------verification report submit---------", error);
@@ -340,7 +345,6 @@ const StepperComponent = (props: VerificationStepProps) => {
         duration: 4,
         style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
-    } finally {
       setLoading(false);
     }
   };

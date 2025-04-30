@@ -32,6 +32,7 @@ import { API_PATHS } from "../../Config/apiConfig";
 import { DocumentStateEnum } from "../../Definitions/Definitions/documentState.enum";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
 import { ValidationStepsProps } from "./StepProps";
+import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 
 const ValidationReportAppendix = (props: ValidationStepsProps) => {
   const {
@@ -149,7 +150,9 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
           });
 
           if (next) {
-            next();
+            setTimeout(() => {
+              next();
+            }, defaultTimeout);
           }
         }
       } catch (error) {
@@ -189,7 +192,9 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
           });
 
           if (next) {
-            next();
+            setTimeout(() => {
+              next();
+            }, defaultTimeout)
           }
         }
       } catch (error) {
@@ -341,7 +346,9 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                   <TextArea rows={4} disabled={disableFields} />
                 </Form.Item>
 
-                <div className="custom-label-validation">{t('validationReport:uploadDocs')}</div>
+                <div className="custom-label-validation">
+                  {t("validationReport:uploadDocs")}
+                </div>
                 <Form.Item
                   // label={t('validationReport:uploadDocs')}
                   name="appendix1Documents"

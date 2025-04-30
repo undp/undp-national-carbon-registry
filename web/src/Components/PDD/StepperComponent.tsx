@@ -39,6 +39,7 @@ import { ROUTES } from '../../Config/uiRoutingConfig';
 import { INF_SECTORAL_SCOPE } from '../AddNewProgramme/ProgrammeCreationComponent';
 import { toMoment } from '../../Utils/convertTime';
 import { safeClone } from '../../Utils/deepCopy';
+import { defaultTimeout } from '../../Definitions/Constants/defaultTimeout';
 
 const CMA_STEPS = {};
 
@@ -291,7 +292,11 @@ const StepperComponent = (props: any) => {
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
-        navigateToDetailsPage();
+        
+        setTimeout(() => {
+          navigateToDetailsPage();
+          setLoading(false);
+        }, defaultTimeout)
       }
     } catch (error: any) {
       message.open({
@@ -300,7 +305,6 @@ const StepperComponent = (props: any) => {
         duration: 4,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
-    } finally {
       setLoading(false);
     }
   };
