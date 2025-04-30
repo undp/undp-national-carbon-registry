@@ -389,7 +389,10 @@ const StepperComponent = (props: CustomStepsProps) => {
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-        navigateToDetailsPage();
+        setTimeout(() => {
+          navigateToDetailsPage();
+          setLoading(false)
+        })
       }
     } catch (error: any) {
       message.open({
@@ -398,8 +401,7 @@ const StepperComponent = (props: CustomStepsProps) => {
         duration: 4,
         style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
-    } finally {
-      setLoading(false);
+      setLoading(true)
     }
   };
 

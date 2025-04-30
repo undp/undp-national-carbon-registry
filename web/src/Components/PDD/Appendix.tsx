@@ -37,6 +37,7 @@ import { API_PATHS } from "../../Config/apiConfig";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
 import { DocumentStateEnum } from "../../Definitions/Definitions/documentState.enum";
 import { DocumentEnum } from "../../Definitions/Enums/document.enum";
+import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 
 // import { countries } from 'react-circle-flags';
 
@@ -249,7 +250,9 @@ const Step08 = (props: CustomStepsProps) => {
             });
 
             if (next) {
-              next();
+              setTimeout(() => {
+                next();
+              }, defaultTimeout);
             }
           }
         } catch (error) {
@@ -259,7 +262,6 @@ const Step08 = (props: CustomStepsProps) => {
             duration: 4,
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
-        } finally {
           if (handleLoading) {
             handleLoading(false);
           }
@@ -286,7 +288,9 @@ const Step08 = (props: CustomStepsProps) => {
             });
 
             if (next) {
-              next();
+              setTimeout(() => {
+                next();
+              }, defaultTimeout);
             }
           }
         } catch (error) {
@@ -328,7 +332,9 @@ const Step08 = (props: CustomStepsProps) => {
             });
 
             if (next) {
-              next();
+              setTimeout(() => {
+                next();
+              }, defaultTimeout)
             }
           }
         } catch (error) {
@@ -365,7 +371,9 @@ const Step08 = (props: CustomStepsProps) => {
             });
 
             if (next) {
-              next();
+              setTimeout(() => {
+                next();
+              }, defaultTimeout)
             }
           }
         } catch (error) {
@@ -661,7 +669,9 @@ const Step08 = (props: CustomStepsProps) => {
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
-              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
+              <div className="custom-label-pdd">
+                {t("PDD:uploadDocsAppendix")}
+              </div>
               <Form.Item
                 //label={t('PDD:uploadDocsAppendix')}
                 name="appendix2Documents"
@@ -718,7 +728,9 @@ const Step08 = (props: CustomStepsProps) => {
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
-              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
+              <div className="custom-label-pdd">
+                {t("PDD:uploadDocsAppendix")}
+              </div>
               <Form.Item
                 //label={t('PDD:uploadDocsAppendix')}
                 name="appendix3Documents"
@@ -776,7 +788,9 @@ const Step08 = (props: CustomStepsProps) => {
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
-              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
+              <div className="custom-label-pdd">
+                {t("PDD:uploadDocsAppendix")}
+              </div>
               <Form.Item
                 //label={t('PDD:uploadDocsAppendix')}
                 name="appendix4Documents"
@@ -834,7 +848,9 @@ const Step08 = (props: CustomStepsProps) => {
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
-              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
+              <div className="custom-label-pdd">
+                {t("PDD:uploadDocsAppendix")}
+              </div>
               <Form.Item
                 //label={t('PDD:uploadDocsAppendix')}
                 name="appendix5Documents"
@@ -893,7 +909,9 @@ const Step08 = (props: CustomStepsProps) => {
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
-              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
+              <div className="custom-label-pdd">
+                {t("PDD:uploadDocsAppendix")}
+              </div>
               <Form.Item
                 //label={t('PDD:uploadDocsAppendix')}
                 name="appendix6Documents"
@@ -952,7 +970,9 @@ const Step08 = (props: CustomStepsProps) => {
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
-              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
+              <div className="custom-label-pdd">
+                {t("PDD:uploadDocsAppendix")}
+              </div>
               <Form.Item
                 //label={t('PDD:uploadDocsAppendix')}
                 name="appendix7Documents"

@@ -46,6 +46,7 @@ import { FormMode } from "../../Definitions/Enums/formMode.enum";
 import { mapBase64ToFields } from "../../Utils/mapBase64ToFields";
 import validator from "validator";
 import { toMoment } from "../../Utils/convertTime";
+import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 
 type SizeType = Parameters<typeof Form>[0]["size"];
 
@@ -454,16 +455,19 @@ export const ProgrammeCreationComponent = (props: any) => {
           ...body,
         },
       };
-      console.log('-------------temp vals INF-----------', tempValues);
       const res = await post(API_PATHS.ADD_DOCUMENT, tempValues);
       if (res?.statusText === "SUCCESS") {
+        console.log("-------timeout-----------")
         message.open({
           type: "success",
           content: t("addProgramme:programmeCreationSuccess"),
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-        navigate(ROUTES.VIEW_PROGRAMMES);
+        setTimeout(() => {
+          navigate(ROUTES.VIEW_PROGRAMMES);
+          setLoading(false);
+        }, defaultTimeout);
       }
     } catch (error: any) {
       if (error && error.errors && error.errors.length > 0) {
@@ -485,9 +489,8 @@ export const ProgrammeCreationComponent = (props: any) => {
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
+        setLoading(false)
       }
-    } finally {
-      setLoading(false);
     }
   };
 

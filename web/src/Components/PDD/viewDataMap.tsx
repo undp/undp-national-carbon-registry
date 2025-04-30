@@ -268,9 +268,7 @@ export const startDateCreditingPeriodDataMapToFields = (vals: any) => {
     creditingPeriodStart: vals?.creditingPeriodStart
       ? moment.unix(vals?.creditingPeriodStart)
       : undefined,
-    projectActivityStartDate: vals?.projectActivityStartDate
-      ? moment.unix(vals?.projectActivityStartDate)
-      : undefined,
+    projectActivityStartDate: vals?.projectActivityStartDate,
   };
   return tempValues;
 };
