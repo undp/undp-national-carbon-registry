@@ -143,6 +143,7 @@ export class AnalyticsService {
       where: {
         state: In(activityStates),
       },
+      order: { updatedTime: "ASC" },
     });
 
     const projectIds = [
@@ -192,6 +193,7 @@ export class AnalyticsService {
         } else {
           project.activities.push(activity);
         }
+        project.updateTime = activity.updatedTime;
       });
     });
 
