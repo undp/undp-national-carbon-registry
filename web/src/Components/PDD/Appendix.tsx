@@ -837,7 +837,7 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 4 end */}
 
               {/* appendix 5 start */}
-              <h4 className="appendix-title custom-required">
+              <h4 className="appendix-title">
                 <i>{`${t("PDD:appendix5")}`}</i> : {t("PDD:appendix5Title")}
               </h4>
 
