@@ -236,6 +236,7 @@ export class DocumentManagementService {
           );
           return new DataResponseDto(HttpStatus.OK, {
             ...savedProgramme,
+            createdTime: savedProgramme.createTime,
             company: {
               companyId: projectCompany.companyId,
               name: projectCompany.name,

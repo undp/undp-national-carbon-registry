@@ -95,118 +95,126 @@ const App = () => {
       >
         <UserInformationContextProvider>
           <SettingsContextProvider>
-            <BrowserRouter>
-              <Routes>
-                <Route path="login" element={<Login />} />
-                <Route
-                  path="forgotPassword"
-                  element={<Login forgotPassword={true} />}
-                />
-                <Route
-                  path="resetPassword/:requestid"
-                  element={<Login resetPassword={true} />}
-                />
-                <Route path="signUp" element={<SignUp />} />
-                <Route path="privacy" element={<PrivacyPolicy />} />
-                <Route path="help" element={<CarbonHelp />} />
-                <Route path="codeconduct" element={<CodeOfConduct />} />
-                <Route path="cookie" element={<CookiePolicy />} />
-                <Route path="terms" element={<TermsOfUse />} />
-                <Route path="/" element={<Homepage />} />
-                <Route path="/" element={<PrivateRoute />}>
+              <BrowserRouter>
+                <Routes>
+                  <Route path="login" element={<Login />} />
                   <Route
-                    path="/dashboard"
-                    element={<CustomLayout selectedKey="dashboard" />}
-                  >
-                    <Route path="/dashboard" element={<SLCFDashboard />} />
+                    path="forgotPassword"
+                    element={<Login forgotPassword={true} />}
+                  />
+                  <Route
+                    path="resetPassword/:requestid"
+                    element={<Login resetPassword={true} />}
+                  />
+                  <Route path="signUp" element={<SignUp />} />
+                  <Route path="privacy" element={<PrivacyPolicy />} />
+                  <Route path="help" element={<CarbonHelp />} />
+                  <Route path="codeconduct" element={<CodeOfConduct />} />
+                  <Route path="cookie" element={<CookiePolicy />} />
+                  <Route path="terms" element={<TermsOfUse />} />
+                  <Route path="/" element={<Homepage />} />
+                  <Route path="/" element={<PrivateRoute />}>
                     <Route
-                      path="/dashboard/cr"
-                      element={<RegistryDashboard />}
-                    />
-                  </Route>
-                  <Route
-                    path="/nationalAccounting"
-                    element={<CustomLayout selectedKey="nationalAccounting" />}
-                  >
+                      path="/dashboard"
+                      element={<CustomLayout selectedKey="dashboard" />}
+                    >
+                      <Route path="/dashboard" element={<SLCFDashboard />} />
+                      <Route
+                        path="/dashboard/cr"
+                        element={<RegistryDashboard />}
+                      />
+                    </Route>
                     <Route
                       path="/nationalAccounting"
-                      element={<NationalAccountingDashboard />}
-                    />
-                  </Route>
+                      element={
+                        <CustomLayout selectedKey="nationalAccounting" />
+                      }
+                    >
+                      <Route
+                        path="/nationalAccounting"
+                        element={<NationalAccountingDashboard />}
+                      />
+                    </Route>
 
-                  <Route
-                    path="/programmeManagement"
-                    element={
-                      <CustomLayout selectedKey="programmeManagement/viewAll" />
-                    }
-                  >
-                    <Route path="viewAll" element={<ProgrammeManagement />} />
                     <Route
-                      path="viewAllProjects"
-                      element={<ProgrammeManagement />}
-                    />
-                    <Route path="view/:id" element={<ProjectDetailsView />} />
-                    <Route path="addProgramme" element={<AddProgramme />} />
-                    <Route path="addProgramme/:id" element={<AddProgramme />} />
-                    <Route path="addNdcAction" element={<AddNDCAction />} />
+                      path="/programmeManagement"
+                      element={
+                        <CustomLayout selectedKey="programmeManagement/viewAll" />
+                      }
+                    >
+                      <Route path="viewAll" element={<ProgrammeManagement />} />
+                      <Route
+                        path="viewAllProjects"
+                        element={<ProgrammeManagement />}
+                      />
+                      <Route path="view/:id" element={<ProjectDetailsView />} />
+                      <Route path="addProgramme" element={<AddProgramme />} />
+                      <Route
+                        path="addProgramme/:id"
+                        element={<AddProgramme />}
+                      />
+                      <Route path="addNdcAction" element={<AddNDCAction />} />
+                      <Route
+                        path="monitoringReport/:id"
+                        element={<MonitoringReport />}
+                      />
+                      <Route
+                        path="monitoringReport/:id/:verificationRequestId"
+                        element={<MonitoringReport />}
+                      />
+                      <Route
+                        path="verificationReport/:id"
+                        element={<VerificationReport />}
+                      />
+                      <Route
+                        path="verificationReport/:id/:verificationRequestId"
+                        element={<VerificationReport />}
+                      />
+                      <Route
+                        path="addCostQuotation/:id"
+                        element={<CostQuotationForm />}
+                      />
+                      <Route
+                        path="projectProposal/:id"
+                        element={<ProjectProposalPage />}
+                      />
+                      <Route
+                        path="siteVisitCheckList/:id/"
+                        element={<SiteVisitCheckListPage />}
+                      />
+                      <Route
+                        path="validationAgreement/:id"
+                        element={<ValidationAgreementPage />}
+                      />{" "}
+                      <Route path="pdd/:id/" element={<CMAFormPage />} />
+                      <Route
+                        path="validationReport/:id"
+                        element={<ValidationReportPage />}
+                      />
+                    </Route>
+                    <Route path="/credits" element={<CustomLayout />}>
+                      <Route path="balance" element={<CreditBalancePage />} />
+                      <Route
+                        path="transfers"
+                        element={<CreditTransfersPage />}
+                      />
+                      <Route
+                        path="retirements"
+                        element={<CreditRetirementsPage />}
+                      />
+                    </Route>
                     <Route
-                      path="monitoringReport/:id"
-                      element={<MonitoringReport />}
-                    />
-                    <Route
-                      path="monitoringReport/:id/:verificationRequestId"
-                      element={<MonitoringReport />}
-                    />
-                    <Route
-                      path="verificationReport/:id"
-                      element={<VerificationReport />}
-                    />
-                    <Route
-                      path="verificationReport/:id/:verificationRequestId"
-                      element={<VerificationReport />}
-                    />
-                    <Route
-                      path="addCostQuotation/:id"
-                      element={<CostQuotationForm />}
-                    />
-                    <Route
-                      path="projectProposal/:id"
-                      element={<ProjectProposalPage />}
-                    />
-                    <Route
-                      path="siteVisitCheckList/:id/"
-                      element={<SiteVisitCheckListPage />}
-                    />
-                    <Route
-                      path="validationAgreement/:id"
-                      element={<ValidationAgreementPage />}
-                    />{" "}
-                    <Route path="pdd/:id/" element={<CMAFormPage />} />
-                    <Route
-                      path="validationReport/:id"
-                      element={<ValidationReportPage />}
-                    />
-                  </Route>
-                  <Route path="/credits" element={<CustomLayout />}>
-                    <Route path="balance" element={<CreditBalancePage />} />
-                    <Route path="transfers" element={<CreditTransfersPage />} />
-                    <Route
-                      path="retirements"
-                      element={<CreditRetirementsPage />}
-                    />
-                  </Route>
-                  <Route
-                    path="/retirementManagement"
-                    element={
-                      <CustomLayout selectedKey="retirementManagement/viewAll" />
-                    }
-                  >
-                    <Route path="viewAll" element={<SLCFRetirement />} />
-                    {/* <Route path="view" element={<ProgrammeView />} /> */}
-                  </Route>
+                      path="/retirementManagement"
+                      element={
+                        <CustomLayout selectedKey="retirementManagement/viewAll" />
+                      }
+                    >
+                      <Route path="viewAll" element={<SLCFRetirement />} />
+                      {/* <Route path="view" element={<ProgrammeView />} /> */}
+                    </Route>
 
-                  {/* ---------- old programme management routes start ------------ */}
-                  {/* <Route
+                    {/* ---------- old programme management routes start ------------ */}
+                    {/* <Route
                     path="/programmeManagement"
                     element={<CustomLayout selectedKey="programmeManagement/viewAll" />}
                   >
@@ -215,102 +223,103 @@ const App = () => {
                     <Route path="addProgramme" element={<AddProgramme />} />
                     <Route path="addNdcAction" element={<AddNDCAction />} />
                   </Route> */}
-                  {/* ---------- old programme management routes end ------------ */}
+                    {/* ---------- old programme management routes end ------------ */}
 
-                  <Route
-                    path="/investmentManagement"
-                    element={
-                      <CustomLayout selectedKey="investmentManagement/viewAll" />
-                    }
-                  >
-                    <Route path="viewAll" element={<InvestmentManagement />} />
                     <Route
-                      path="addInvestment"
-                      element={<AddInvestmentComponent />}
+                      path="/investmentManagement"
+                      element={
+                        <CustomLayout selectedKey="investmentManagement/viewAll" />
+                      }
+                    >
+                      <Route
+                        path="viewAll"
+                        element={<InvestmentManagement />}
+                      />
+                      <Route
+                        path="addInvestment"
+                        element={<AddInvestmentComponent />}
+                      />
+                    </Route>
+                    <Route
+                      path="/ndcManagement"
+                      element={
+                        <CustomLayout selectedKey="ndcManagement/viewAll" />
+                      }
+                    >
+                      <Route path="viewAll" element={<NdcActionManagement />} />
+                      <Route path="view" element={<NdcActionView />} />
+                    </Route>
+                    <Route
+                      path="/companyManagement"
+                      element={
+                        <CustomLayout selectedKey="companyManagement/viewAll" />
+                      }
+                    >
+                      <Route path="viewAll" element={<CompanyManagement />} />
+                      <Route path="addCompany" element={<AddNewCompany />} />
+                      <Route path="updateCompany" element={<AddNewCompany />} />
+                    </Route>
+                    <Route
+                      path="/userManagement"
+                      element={
+                        <CustomLayout selectedKey="userManagement/viewAll" />
+                      }
+                    >
+                      <Route path="viewAll" element={<UserManagement />} />
+                      <Route path="addUser" element={<AddUser />} />
+                      <Route path="updateUser" element={<AddUser />} />
+                    </Route>
+                    <Route
+                      path="/creditTransfers"
+                      element={
+                        <CustomLayout selectedKey="creditTransfers/viewAll" />
+                      }
+                    >
+                      <Route path="viewAll" element={<CreditTransfers />} />
+                      {/* <Route path="view" element={<ProgrammeView />} /> */}
+                    </Route>
+                    <Route
+                      path="/userProfile"
+                      element={
+                        <CustomLayout selectedKey="userManagement/viewAll" />
+                      }
+                    >
+                      <Route path="view" element={<UserProfile />} />
+                    </Route>
+                    <Route
+                      path="/reports"
+                      element={<CustomLayout selectedKey="reports" />}
+                    >
+                      <Route path="" element={<Reports />} />
+                    </Route>
+                    <Route
+                      path="/companyProfile"
+                      element={
+                        <CustomLayout selectedKey="companyManagement/viewAll" />
+                      }
+                    >
+                      <Route path="view" element={<CompanyProfile />} />
+                    </Route>
+                    <Route
+                      path="/settings"
+                      element={<CustomLayout selectedKey="settings" />}
+                    >
+                      <Route path="/settings" element={<Settings />} />
+                    </Route>
+                  </Route>
+                  {enableRegistration === "true" && (
+                    <Route
+                      path="registerCompany"
+                      element={
+                        <Suspense fallback={<Loading />}>
+                          <RegisterNewCompany />
+                        </Suspense>
+                      }
                     />
-                  </Route>
-                  <Route
-                    path="/ndcManagement"
-                    element={
-                      <CustomLayout selectedKey="ndcManagement/viewAll" />
-                    }
-                  >
-                    <Route path="viewAll" element={<NdcActionManagement />} />
-                    <Route path="view" element={<NdcActionView />} />
-                  </Route>
-                  <Route
-                    path="/companyManagement"
-                    element={
-                      <CustomLayout selectedKey="companyManagement/viewAll" />
-                    }
-                  >
-                    <Route path="viewAll" element={<CompanyManagement />} />
-                    <Route path="addCompany" element={<AddNewCompany />} />
-                    <Route path="updateCompany" element={<AddNewCompany />} />
-                  </Route>
-                  <Route
-                    path="/userManagement"
-                    element={
-                      <CustomLayout selectedKey="userManagement/viewAll" />
-                    }
-                  >
-                    <Route path="viewAll" element={<UserManagement />} />
-                    <Route path="addUser" element={<AddUser />} />
-                    <Route path="updateUser" element={<AddUser />} />
-                  </Route>
-                  <Route
-                    path="/creditTransfers"
-                    element={
-                      <CustomLayout selectedKey="creditTransfers/viewAll" />
-                    }
-                  >
-                    <Route path="viewAll" element={<CreditTransfers />} />
-                    {/* <Route path="view" element={<ProgrammeView />} /> */}
-                  </Route>
-                  <Route
-                    path="/userProfile"
-                    element={
-                      <CustomLayout selectedKey="userManagement/viewAll" />
-                    }
-                  >
-                    <Route path="view" element={<UserProfile />} />
-                  </Route>
-                  <Route
-                    path="/reports"
-                    element={
-                      <CustomLayout selectedKey="reports" />
-                    }
-                  >
-                    <Route path="" element={<Reports />} />
-                  </Route>
-                  <Route
-                    path="/companyProfile"
-                    element={
-                      <CustomLayout selectedKey="companyManagement/viewAll" />
-                    }
-                  >
-                    <Route path="view" element={<CompanyProfile />} />
-                  </Route>
-                  <Route
-                    path="/settings"
-                    element={<CustomLayout selectedKey="settings" />}
-                  >
-                    <Route path="/settings" element={<Settings />} />
-                  </Route>
-                </Route>
-                {enableRegistration === "true" && (
-                  <Route
-                    path="registerCompany"
-                    element={
-                      <Suspense fallback={<Loading />}>
-                        <RegisterNewCompany />
-                      </Suspense>
-                    }
-                  />
-                )}
-                <Route path="/*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </BrowserRouter>
+                  )}
+                  <Route path="/*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </BrowserRouter>
           </SettingsContextProvider>
         </UserInformationContextProvider>
       </ConnectionContextProvider>
