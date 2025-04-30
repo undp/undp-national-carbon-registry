@@ -234,8 +234,14 @@ export class DocumentManagementService {
             ProjectAuditLogType.PENDING,
             user.id
           );
-          return new DataResponseDto(HttpStatus.OK, savedProgramme);
-          break;
+          return new DataResponseDto(HttpStatus.OK, {
+            ...savedProgramme,
+            company: {
+              companyId: projectCompany.companyId,
+              name: projectCompany.name,
+              logo: projectCompany.logo,
+            },
+          });
         }
         case DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT: {
           if (user.companyId != project.companyId || user.role !== Role.Admin) {
