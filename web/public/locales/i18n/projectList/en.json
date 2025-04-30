@@ -145,6 +145,7 @@
   "FUGITIVE_EMISSIONS_PRODUCTION": "Fugitive Emissions from Production and Consumption of Halocarbons and Sulphur Hexafluoride",
   "SOLVENT_USE": "Solvent Use",
   "WASTE_HANDLING_AND_DISPOSAL": "Waste Handling and Disposal",
+  "WASTE_FROM_FUELS": "Fugitive Emissions from Fuels (Solid, Oil and Gas)",
   "AFFORESTATION_AND_REFORESTATION": "Afforestation and Reforestation",
   "AGRICULTURE": "Agriculture",
   "ENERGY": "Energy",
