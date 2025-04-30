@@ -194,7 +194,7 @@ export const SLCFDashboardComponent = (props: any) => {
 
   // Chart Components Width
   const [statusBarchartWidth, setStatusBarChartWidth] = useState(
-    window.innerWidth > 1600 ? "300%" : "200%"
+    window.innerWidth > 1600 ? "300%" : "180%"
   );
   const [scopeBarchartWidth, setScopeBarChartWidth] = useState(
     window.innerWidth > 1600 ? "270%" : "220%"
@@ -945,12 +945,12 @@ export const SLCFDashboardComponent = (props: any) => {
         setSectorPieChartWidth("150%");
       } else if (window.innerWidth > 1200) {
         setScopeBarChartWidth("220%");
-        setStatusBarChartWidth("200%");
+        setStatusBarChartWidth("180%");
         setCreditChartsWidth("390%");
         setSectorPieChartWidth("90%");
       } else {
         setScopeBarChartWidth("220%");
-        setStatusBarChartWidth("300%");
+        setStatusBarChartWidth("180%");
         setCreditChartsWidth("390%");
         setSectorPieChartWidth("90%");
       }
@@ -1240,7 +1240,7 @@ export const SLCFDashboardComponent = (props: any) => {
             <Col xxl={8} xl={8} md={12} className="statistic-card-col">
               <SectorPieChart
                 id="credits"
-                title={t("projectsBySectoralScope")}
+                title={t("projectsBySector")}
                 options={sectorPieChartOptions}
                 series={projectCountBySector}
                 loading={loadingProjectCountBySector}
