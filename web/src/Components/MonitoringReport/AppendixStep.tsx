@@ -245,7 +245,8 @@ export const AnnexureStep = (props: CustomStepsProps) => {
                         {
                           validator: async (rule, file) => {
                             if (file?.length > 0) {
-                              if (file[0]?.size > maximumImageSize) {
+                              console.log("------file-------", file);
+                              if (file.some((item: any) => item?.size > maximumImageSize)) {
                                 // default size format of files would be in bytes -> 1MB = 1000000bytes
                                 throw new Error(`${t("common:maxSizeVal")}`);
                               }
