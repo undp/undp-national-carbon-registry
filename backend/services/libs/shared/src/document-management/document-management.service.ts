@@ -1351,7 +1351,11 @@ export class DocumentManagementService {
       await this.logProjectStage(
         project.refId,
         ProjectAuditLogType.REJECTED,
-        user.id
+        user.id,
+        undefined,
+        {
+          remarks: requestData.remarks,
+        }
       );
     } else {
       throw new HttpException(
@@ -1434,7 +1438,11 @@ export class DocumentManagementService {
         await this.logProjectStage(
           project.refId,
           ProjectAuditLogType.PDD_REJECTED_BY_CERTIFIER,
-          user.id
+          user.id,
+          undefined,
+          {
+            remarks: requestData.remarks,
+          }
         );
       } else if (requestData.action === DocumentStatus.IC_APPROVED) {
         const updateProjectProposalStage = {
@@ -1524,7 +1532,11 @@ export class DocumentManagementService {
         await this.logProjectStage(
           project.refId,
           ProjectAuditLogType.PDD_REJECTED_BY_DNA,
-          user.id
+          user.id,
+          undefined,
+          {
+            remarks: requestData.remarks,
+          }
         );
       } else if (requestData.action === DocumentStatus.DNA_APPROVED) {
         const updateProjectProposalStage = {
@@ -1632,7 +1644,11 @@ export class DocumentManagementService {
         await this.logProjectStage(
           project.refId,
           ProjectAuditLogType.VALIDATION_DNA_REJECTED,
-          user.id
+          user.id,
+          undefined,
+          {
+            remarks: requestData.remarks,
+          }
         );
       } else if (requestData.action === DocumentStatus.DNA_APPROVED) {
         const projectCompany = await this.companyService.findByCompanyId(
