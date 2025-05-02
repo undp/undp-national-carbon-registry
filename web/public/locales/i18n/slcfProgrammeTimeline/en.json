@@ -18,7 +18,7 @@
   "pddSubmittedDescription": "Project Design Document was created by {}",
 
   "pddRejectedICTitle": "Project Design Document Rejected by Independent Certifier",
-  "pddRejectedDNATitle": "Project Design Document Rejected by DNA", 
+  "pddRejectedDNATitle": "Project Design Document Rejected by DNA",
   "pddRejectedDescription": "Project Design Document was rejected by {}",
 
   "pddApprovedICTitle": "Project Design Document Accepted by Independent Certifier",
@@ -30,7 +30,7 @@
 
   "validationReportRejectedTitle": "Validation Report Rejected",
   "validationReportRejectedDescription": "The Validation Report was rejected by {}",
-  
+
   "validationReportApprovedTitle": "Validation Report Rejected",
   "validationReportApprovedDescription": "The Validation Report was rejected by {}",
 
@@ -65,7 +65,7 @@
   "creditTransferedDescription": "{} credits have been transferred to {} from {}",
 
   "retireRequestedTitle": "Credit Retirement Request",
-  "retireRequestedDescription": "{} Credits have been requested to retire on {} for the type {}",
+  "retireRequestedDescription": "{} Credits have been requested to retire from {} for the {}.",
 
   "retirementApprovedTitle": "Credit Retirement Accepted",
   "retirementApprovedDescription": "{} Credits have been accepted on {} for the type {} was Accepted",
