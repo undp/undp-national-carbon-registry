@@ -1244,7 +1244,7 @@ export const SLCFDashboardComponent = (props: any) => {
                 options={sectorPieChartOptions}
                 series={projectCountBySector}
                 loading={loadingProjectCountBySector}
-                toolTipText={t("projectsBySectoralScopeTooltip")}
+                toolTipText={t("projectsBySectorTooltip")}
                 width={sectorPieChartWidth}
                 Chart={Chart}
               />
