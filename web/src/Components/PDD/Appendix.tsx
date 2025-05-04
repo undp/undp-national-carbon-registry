@@ -287,11 +287,14 @@ const Step08 = (props: CustomStepsProps) => {
               style: { textAlign: "right", marginRight: 15, marginTop: 10 },
             });
 
-            if (next) {
-              setTimeout(() => {
+            setTimeout(() => {
+              if (next) {
                 next();
-              }, defaultTimeout);
-            }
+              }
+              if (handleLoading) {
+                handleLoading(false);
+              }
+            }, defaultTimeout);
           }
         } catch (error) {
           message.open({
@@ -331,11 +334,14 @@ const Step08 = (props: CustomStepsProps) => {
               style: { textAlign: "right", marginRight: 15, marginTop: 10 },
             });
 
-            if (next) {
-              setTimeout(() => {
+            setTimeout(() => {
+              if (next) {
                 next();
-              }, defaultTimeout)
-            }
+              }
+              if (handleLoading) {
+                handleLoading(false);
+              }
+            }, defaultTimeout);
           }
         } catch (error) {
           message.open({
@@ -373,7 +379,7 @@ const Step08 = (props: CustomStepsProps) => {
             if (next) {
               setTimeout(() => {
                 next();
-              }, defaultTimeout)
+              }, defaultTimeout);
             }
           }
         } catch (error) {

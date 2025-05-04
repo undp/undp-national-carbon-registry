@@ -138,7 +138,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
       await fileUploadValueExtract(values, "approverSignature")
     )[0];
     const projectDetailsFormValues = {
-      // ...values,
+      ...values,
       completionDate: moment(values?.completionDate).startOf("day").unix(),
       pddUploadedGlobalStakeholderConsultation: moment(
         values?.pddUploadedGlobalStakeholderConsultation
