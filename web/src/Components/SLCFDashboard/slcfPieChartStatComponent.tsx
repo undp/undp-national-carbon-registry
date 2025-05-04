@@ -61,9 +61,9 @@ export const SLCFSideBarChartsStatComponent: FC<SideBarChartStatsProps> = (
               </div>
             </Col>
             <Col md={3}>
-            {sector && (
-              <span className="sector-badge">{INF_SECTOR[sector]}</span>
-            )}
+              {sector && (
+                <span className="sector-badge">{INF_SECTOR[sector]}</span>
+              )}
             </Col>
           </Row>
           <div className="pie-charts-section">
