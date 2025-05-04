@@ -40,6 +40,7 @@ import {
 import { mapBase64ToFields } from "../../Utils/mapBase64ToFields";
 import { INF_SECTORAL_SCOPE } from "../AddNewProgramme/ProgrammeCreationComponent";
 import { safeClone } from "../../Utils/deepCopy";
+import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 
 const StepperComponent = (props: CustomStepsProps) => {
   const navigate = useNavigate();
@@ -392,7 +393,7 @@ const StepperComponent = (props: CustomStepsProps) => {
         setTimeout(() => {
           navigateToDetailsPage();
           setLoading(false)
-        })
+        }, defaultTimeout)
       }
     } catch (error: any) {
       message.open({

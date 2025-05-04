@@ -16,6 +16,7 @@ import { useConnection } from "../../Context/ConnectionContext/connectionContext
 import { API_PATHS } from "../../Config/apiConfig";
 import { DocumentEnum } from "../../Definitions/Enums/document.enum";
 import { DocumentStateEnum } from "../../Definitions/Definitions/documentState.enum";
+import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 
 export const AnnexureStep = (props: CustomStepsProps) => {
   const {
@@ -91,11 +92,19 @@ export const AnnexureStep = (props: CustomStepsProps) => {
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
 
-          if (next) {
-            next();
-          }
+          setTimeout(() => {
+            if (next) {
+              next();
+            }
+            if (handleLoading) {
+              handleLoading(false);
+            }
+          }, defaultTimeout);
         }
       } catch (error) {
+        if (handleLoading) {
+          handleLoading(false);
+        }
         message.open({
           type: "error",
           content: t("common:somethingWentWrong"),
@@ -131,9 +140,14 @@ export const AnnexureStep = (props: CustomStepsProps) => {
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
 
-          if (next) {
-            next();
-          }
+          setTimeout(() => {
+            if (next) {
+              next();
+            }
+            if (handleLoading) {
+              handleLoading(false);
+            }
+          }, defaultTimeout);
         }
       } catch (error) {
         message.open({
@@ -233,7 +247,7 @@ export const AnnexureStep = (props: CustomStepsProps) => {
                     </Form.Item>
 
                     <div className="custom-label-monitoring">
-                      {t('monitoringReport:a_uploadDoc')}
+                      {t("monitoringReport:a_uploadDoc")}
                     </div>
                     <Form.Item
                       //label={t('monitoringReport:a_uploadDoc')}
@@ -246,7 +260,11 @@ export const AnnexureStep = (props: CustomStepsProps) => {
                           validator: async (rule, file) => {
                             if (file?.length > 0) {
                               console.log("------file-------", file);
-                              if (file.some((item: any) => item?.size > maximumImageSize)) {
+                              if (
+                                file.some(
+                                  (item: any) => item?.size > maximumImageSize
+                                )
+                              ) {
                                 // default size format of files would be in bytes -> 1MB = 1000000bytes
                                 throw new Error(`${t("common:maxSizeVal")}`);
                               }

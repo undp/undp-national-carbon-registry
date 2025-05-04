@@ -202,6 +202,8 @@
   "uploadDocsAppendix": "Upload your additional documents here",
   "country": "Country",
   "projectActivityStartDate": "Start date of project activity",
+  "projectCreditingPeriodEndDate": "Crediting period end date",
+  "projectCreditingPeriodStartDate": "Crediting period start date",
   "creditingPeriodStart": "Start date of crediting period",
   "operationalLifetime": "Expected operational lifetime of project activity",
   "creditingPeriodType": "Type of crediting Period",
