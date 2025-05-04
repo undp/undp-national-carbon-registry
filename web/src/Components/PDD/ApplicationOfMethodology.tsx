@@ -158,10 +158,12 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
     const reductions = form.getFieldValue("extraEmissionReductions");
 
     let totalCreditingYears = form.getFieldValue("totalCreditingYears") || 0;
+
+    console.log("------totalCreditingYears t f-------", totalCreditingYears, fieldCounts)
     if (value && totalCreditingYears < fieldCounts) {
       totalCreditingYears += 1;
     } 
-    else if (value === null && totalCreditingYears !== 0 && totalCreditingYears === fieldCounts) {
+    else if (value === null && totalCreditingYears !== 0 && totalCreditingYears > fieldCounts) {
       totalCreditingYears -= 1;
     }
     form.setFieldValue("totalCreditingYears", totalCreditingYears);
@@ -2229,7 +2231,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           "-------vintage value------",
                                           value
                                         );
-                                        onPeriodChange(value, name + 2);
+                                        onPeriodChange(value, fields?.length + 1);
                                       }}
                                       disabledDate={(currentDate: any) => {
                                         return disableYears(currentDate, form, "extraEmissionReductions");
@@ -2452,7 +2454,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                       onClick={() => {
                                         // reduceTotalCreditingYears()
                                         remove(name);
-                                        onPeriodChange(null, name);
+                                        onPeriodChange(null, fields?.length);
                                         calculateTotalEmissions(
                                           null,
                                           "projectEmissionReductions",
