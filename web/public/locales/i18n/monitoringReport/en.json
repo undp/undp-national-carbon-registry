@@ -103,7 +103,7 @@
   "pa_methodology": "References to applied methodologies and standardized baselines",
   "pa_creditingPeriodType": "Crediting period type",
   "pa_projectCreditingPeriod": "Crediting period duration",
-  "pa_projectCreditingStartDate": "Crediting period start date",
+  "pa_projectCreditingPeriodStartDate": "Crediting period start date",
   "pa_projectCreditingPeriodEndDate": "Crediting period end date",
   "ce_baselineEmission": "Baseline Emissions",
   "ce_documentUpload": "Upload your Documents Here(Optional)",

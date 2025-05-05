@@ -212,7 +212,7 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
     } else if (
       value === null &&
       totalCreditingYears !== 0 &&
-      totalCreditingYears === fieldCounts
+      totalCreditingYears >= fieldCounts
     ) {
       totalCreditingYears -= 1;
     }
@@ -806,7 +806,7 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                                               picker="year"
                                               format="YYYY"
                                               onChange={(value: any) => {
-                                                onPeriodChange(value, name + 2);
+                                                onPeriodChange(value, fields?.length + 1);
                                               }}
                                               disabledDate={(
                                                 currentDate: any
@@ -1108,7 +1108,7 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                                               onClick={() => {
                                                 // reduceTotalCreditingYears()
                                                 remove(name);
-                                                onPeriodChange(null, name + 2);
+                                                onPeriodChange(null, fields?.length + 1);
                                                 calculateTotalEmissions(
                                                   null,
                                                   "projectEmissionReductions",

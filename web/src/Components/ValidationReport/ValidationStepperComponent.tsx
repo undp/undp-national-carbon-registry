@@ -274,7 +274,8 @@ const StepperComponent = (props: any) => {
 
       const netGHGEmissionReductions =
         pddData?.data?.applicationOfMethodology?.netGHGEmissionReductions;
-     
+      
+      
       form2.setFieldsValue({
         estimatedNetEmissionReductions:
           netGHGEmissionReductions.yearlyGHGEmissionReductions?.map(
