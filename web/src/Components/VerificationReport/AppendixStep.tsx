@@ -31,6 +31,7 @@ import { DocumentStateEnum } from "../../Definitions/Definitions/documentState.e
 import { SlcfFormActionModel } from "../Models/SlcfFormActionModel";
 import { useLocation } from "react-router-dom";
 import ConfirmSubmitSVG from "../../Assets/DialogIcons/ConfirmSubmit.svg";
+import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 
 export const AppendixStep = (props: VerificationStepProps) => {
   const {
@@ -128,9 +129,14 @@ export const AppendixStep = (props: VerificationStepProps) => {
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
 
-          if (next) {
-            next();
-          }
+          setTimeout(() => {
+            if (next) {
+              next();
+            }
+            if (handleLoading) {
+              handleLoading(false);
+            }
+          }, defaultTimeout);
         }
       } catch (error: any) {
         console.log("--------------error----------------", error);
@@ -142,16 +148,15 @@ export const AppendixStep = (props: VerificationStepProps) => {
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
         } else {
+          if (handleLoading) {
+            handleLoading(false);
+          }
           message.open({
             type: "error",
             content: t("common:somethingWentWrong"),
             duration: 4,
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
-        }
-      } finally {
-        if (handleLoading) {
-          handleLoading(false);
         }
       }
     }
@@ -178,21 +183,25 @@ export const AppendixStep = (props: VerificationStepProps) => {
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
 
-          if (next) {
-            next();
-          }
+          setTimeout(() => {
+            if (next) {
+              next();
+            }
+            if (handleLoading) {
+              handleLoading(false);
+            }
+          }, defaultTimeout);
         }
       } catch (error) {
+        if (handleLoading) {
+          handleLoading(false);
+        }
         message.open({
           type: "error",
           content: t("common:somethingWentWrong"),
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-      } finally {
-        if (handleLoading) {
-          handleLoading(false);
-        }
       }
     }
   };
@@ -307,7 +316,7 @@ export const AppendixStep = (props: VerificationStepProps) => {
                       </Form.Item>
 
                       <div className="custom-upload-verification">
-                        {t('verificationReport:appendix1Documents')}
+                        {t("verificationReport:appendix1Documents")}
                       </div>
                       <Form.Item
                         //label={t('verificationReport:appendix1Documents')}

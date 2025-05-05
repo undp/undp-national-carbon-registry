@@ -23,6 +23,9 @@ const ReportingComponent = (props: { translator: i18n }) => {
   const [actionsLoading, setActionsLoading] = useState<boolean>(false);
   const [holdingsLoading, setHoldingsLoading] = useState<boolean>(false);
 
+  const [actionsCount, setActionsCount] = useState<number>(0);
+  const [holdingsCount, setHoldingsCount] = useState<number>(0);
+
   const [selectedYearsArr, setSelectedYearsArr] = useState([
     REPORT_TYPES.ACTIONS,
     REPORT_TYPES.HOLDINGS,
@@ -94,6 +97,7 @@ const ReportingComponent = (props: { translator: i18n }) => {
 
       if (res?.statusText === "SUCCESS") {
         setActionsData(res?.data);
+        setActionsCount(res?.response?.data?.total);
       }
     } catch (error: any) {
       console.log("error:", error)
@@ -131,6 +135,7 @@ const ReportingComponent = (props: { translator: i18n }) => {
       console.log("---------------res--------------", res);
       if (res?.statusText === "SUCCESS") {
         setHoldingsData(res?.data);
+        setHoldingsCount(res?.response?.data?.total);
       }
     } catch (error) {
       console.log("error:", error)
@@ -323,7 +328,7 @@ const ReportingComponent = (props: { translator: i18n }) => {
           columns={getActionsReportColumns(t)}
           handlePaginationChange={handlePaginationInfoChange}
           pagination={{
-            total: 10,
+            total: actionsCount,
             current: paginationInfo[REPORT_TYPES.ACTIONS].page || 1,
             pageSize: paginationInfo[REPORT_TYPES.ACTIONS].pageSize || 1,
             pageSizeOptions: [10, 20, 30],
@@ -343,7 +348,7 @@ const ReportingComponent = (props: { translator: i18n }) => {
           columns={getHoldingsReportColumns(t)}
           handlePaginationChange={handlePaginationInfoChange}
           pagination={{
-            total: 10,
+            total: holdingsCount,
             current: paginationInfo[REPORT_TYPES.HOLDINGS].page || 1,
             pageSize: paginationInfo[REPORT_TYPES.HOLDINGS].pageSize || 1,
             pageSizeOptions: [10, 20, 30],

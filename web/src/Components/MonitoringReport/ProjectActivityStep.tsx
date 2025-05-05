@@ -1259,7 +1259,7 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
                               ) {
                                 throw new Error(
                                   `${t(
-                                    "monitoringReport:pa_projectCreditingPeriod"
+                                    "monitoringReport:pa_projectCreditingPeriodStartDate"
                                   )} ${t("isRequired")}`
                                 );
                               }

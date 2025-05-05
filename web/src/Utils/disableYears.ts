@@ -20,7 +20,7 @@ export const disableYears = (currentDate: any, form: FormInstance, key: string, 
     }
   });
 
-  console.log("vintageMap", vintageMap);
+  // console.log("vintageMap", vintageMap);
 
   if (vintageMap[currentDate?.year()]) {
     disableYears = true

@@ -149,23 +149,25 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
 
-          if (next) {
-            setTimeout(() => {
+          setTimeout(() => {
+            if (next) {
               next();
-            }, defaultTimeout);
-          }
+            }
+            if (handleLoading) {
+              handleLoading(false);
+            }
+          }, defaultTimeout);
         }
       } catch (error) {
+        if (handleLoading) {
+          handleLoading(false);
+        }
         message.open({
           type: "error",
           content: t("common:somethingWentWrong"),
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-      } finally {
-        if (handleLoading) {
-          handleLoading(false);
-        }
       }
     }
   };
@@ -191,24 +193,26 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
 
-          if (next) {
-            setTimeout(() => {
+          setTimeout(() => {
+            if (next) {
               next();
-            }, defaultTimeout)
-          }
+            }
+            if (handleLoading) {
+              handleLoading(false);
+            }
+          }, defaultTimeout);
         }
       } catch (error) {
+        if (handleLoading) {
+          handleLoading(false);
+        }
         message.open({
           type: "error",
           content: t("common:somethingWentWrong"),
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-      } finally {
-        if (handleLoading) {
-          handleLoading(false);
-        }
-      }
+      } 
     }
   };
 
@@ -622,7 +626,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input disabled={disableFields} />
+                        <Input disabled={disableFields} size="large" />
                       </Form.Item>
 
                       <Form.Item
@@ -687,7 +691,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input disabled={disableFields} />
+                        <Input disabled={disableFields} size="large" />
                       </Form.Item>
                     </Col>
 
@@ -928,7 +932,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input disabled={disableFields} />
+                        <Input disabled={disableFields} size="large" />
                       </Form.Item>
 
                       <Form.Item
@@ -993,7 +997,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input disabled={disableFields} />
+                        <Input disabled={disableFields} size="large" />
                       </Form.Item>
                     </Col>
 
@@ -1234,7 +1238,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input disabled={disableFields} />
+                        <Input disabled={disableFields} size="large" />
                       </Form.Item>
 
                       <Form.Item
@@ -1299,7 +1303,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input disabled={disableFields} />
+                        <Input disabled={disableFields} size="large" />
                       </Form.Item>
                     </Col>
 
