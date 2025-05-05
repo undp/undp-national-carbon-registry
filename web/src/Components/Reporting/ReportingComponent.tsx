@@ -70,7 +70,6 @@ const ReportingComponent = (props: { translator: i18n }) => {
       },
     }));
 
-    console.log("-----paginationInfo--------", paginationInfo);
   };
 
   const [selectedYear, setSelectedYear] = useState<Moment>(moment());
@@ -148,7 +147,7 @@ const ReportingComponent = (props: { translator: i18n }) => {
   useEffect(() => {
     getActionsReports();
     getHoldingReports();
-  }, [selectedYear]);
+  }, [selectedYear, paginationInfo]);
 
   const checkIfAnyReportIsSelected = () => {
     let isReportSelected = Object.values(selectedReports).some(Boolean);
