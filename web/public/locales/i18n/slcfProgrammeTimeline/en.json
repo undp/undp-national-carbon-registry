@@ -18,7 +18,7 @@
   "pddSubmittedDescription": "Project Design Document was created by {}",
 
   "pddRejectedICTitle": "Project Design Document Rejected by Independent Certifier",
-  "pddRejectedDNATitle": "Project Design Document Rejected by DNA", 
+  "pddRejectedDNATitle": "Project Design Document Rejected by DNA",
   "pddRejectedDescription": "Project Design Document was rejected by {}",
 
   "pddApprovedICTitle": "Project Design Document Accepted by Independent Certifier",
@@ -30,7 +30,7 @@
 
   "validationReportRejectedTitle": "Validation Report Rejected",
   "validationReportRejectedDescription": "The Validation Report was rejected by {}",
-  
+
   "validationReportApprovedTitle": "Validation Report Rejected",
   "validationReportApprovedDescription": "The Validation Report was rejected by {}",
 
@@ -64,15 +64,15 @@
   "creditTransferedTitle": "Credit Transfered",
   "creditTransferedDescription": "{} credits have been transferred to {} from {}",
 
-    "retireRequestedTitle": "Credit Retirement Request",
-    "retireRequestedDescription": "{} Credits have been requested to retire from {} for the {}",
+  "retireRequestedTitle": "Credit Retirement Request",
+  "retireRequestedDescription": "{} Credits have been requested to retire from {} for the {}.",
 
-    "retirementApprovedTitle": "Credit Retirement Accepted",
-    "retirementApprovedDescription": "{} request to retire {} credits from {} was accepted.",
+  "retirementApprovedTitle": "Credit Retirement Accepted",
+  "retirementApprovedDescription": "{} request to retire {} credits from {} was accepted.",
 
-    "retirementCancelledTitle": "Credit Retirement Cancelled",
-    "retirementCancelledDescription": "{} request to retire {} credits from {} was cancelled",
+  "retirementCancelledTitle": "Credit Retirement Cancelled",
+  "retirementCancelledDescription": "{} request to retire {} credits from {} was cancelled",
 
-    "retirementRejectedTitle": "Credit Retirement Rejected",
-    "retirementRejectedDescription": "{} request to retire {} credits from {} was accepted."
+  "retirementRejectedTitle": "Credit Retirement Rejected",
+  "retirementRejectedDescription": "{} request to retire {} credits from {} was accepted."
 }
