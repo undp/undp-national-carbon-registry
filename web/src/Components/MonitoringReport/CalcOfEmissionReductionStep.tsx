@@ -212,7 +212,7 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
     } else if (
       value === null &&
       totalCreditingYears !== 0 &&
-      totalCreditingYears === fieldCounts
+      totalCreditingYears >= fieldCounts
     ) {
       totalCreditingYears -= 1;
     }

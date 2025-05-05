@@ -159,11 +159,18 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
 
     let totalCreditingYears = form.getFieldValue("totalCreditingYears") || 0;
 
-    console.log("------totalCreditingYears t f-------", totalCreditingYears, fieldCounts)
+    console.log(
+      "------totalCreditingYears t f-------",
+      totalCreditingYears,
+      fieldCounts
+    );
     if (value && totalCreditingYears < fieldCounts) {
       totalCreditingYears += 1;
-    } 
-    else if (value === null && totalCreditingYears !== 0 && totalCreditingYears > fieldCounts) {
+    } else if (
+      value === null &&
+      totalCreditingYears !== 0 &&
+      totalCreditingYears > fieldCounts
+    ) {
       totalCreditingYears -= 1;
     }
     form.setFieldValue("totalCreditingYears", totalCreditingYears);
@@ -321,7 +328,13 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
         if (values?.extraEmissionReductions) {
           values.extraEmissionReductions.forEach((item: any) => {
             const tempObj = {
-              vintage: moment({ year: moment(item?.vintage).year(), month: 1, day: 1 }).startOf("day").valueOf(),
+              vintage: moment({
+                year: moment(item?.vintage).year(),
+                month: 1,
+                day: 1,
+              })
+                .startOf("day")
+                .valueOf(),
               baselineEmissionReductions: Number(
                 item?.baselineEmissionReductions
               ),
@@ -1983,7 +1996,11 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             }}
                             disabled={disableFields}
                             disabledDate={(currentDate: any) => {
-                              return disableYears(currentDate, form, "extraEmissionReductions");
+                              return disableYears(
+                                currentDate,
+                                form,
+                                "extraEmissionReductions"
+                              );
                             }}
                           />
                         </Form.Item>
@@ -1995,7 +2012,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                             {
                               required: true,
                               message: ``,
-                            },  
+                            },
                             {
                               validator: async (rule, value) => {
                                 if (
@@ -2231,10 +2248,17 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
                                           "-------vintage value------",
                                           value
                                         );
-                                        onPeriodChange(value, fields?.length + 1);
+                                        onPeriodChange(
+                                          value,
+                                          fields?.length + 1
+                                        );
                                       }}
                                       disabledDate={(currentDate: any) => {
-                                        return disableYears(currentDate, form, "extraEmissionReductions");
+                                        return disableYears(
+                                          currentDate,
+                                          form,
+                                          "extraEmissionReductions"
+                                        );
                                       }}
                                     />
                                   </Form.Item>

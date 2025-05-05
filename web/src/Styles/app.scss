@@ -1,6 +1,5 @@
 @use "variables.scss";
 
-
 body {
   background-color: variables.$background-color;
   font-family: variables.$primary-font-family;
@@ -56,6 +55,11 @@ body {
 
 .ant-input-group .ant-input {
   width: 99% !important;
+}
+
+.ant-table-pagination {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .ant-tooltip-inner {

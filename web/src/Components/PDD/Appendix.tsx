@@ -249,11 +249,14 @@ const Step08 = (props: CustomStepsProps) => {
               style: { textAlign: "right", marginRight: 15, marginTop: 10 },
             });
 
-            if (next) {
-              setTimeout(() => {
+            setTimeout(() => {
+              if (next) {
                 next();
-              }, defaultTimeout);
-            }
+              }
+              if (handleLoading) {
+                handleLoading(false);
+              }
+            }, defaultTimeout);
           }
         } catch (error) {
           message.open({
@@ -303,11 +306,7 @@ const Step08 = (props: CustomStepsProps) => {
             duration: 4,
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
-        } finally {
-          if (handleLoading) {
-            handleLoading(false);
-          }
-        }
+        } 
       }
     }
   };
@@ -350,11 +349,7 @@ const Step08 = (props: CustomStepsProps) => {
             duration: 4,
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
-        } finally {
-          if (handleLoading) {
-            handleLoading(false);
-          }
-        }
+        } 
       }
 
       if (
@@ -376,23 +371,25 @@ const Step08 = (props: CustomStepsProps) => {
               style: { textAlign: "right", marginRight: 15, marginTop: 10 },
             });
 
-            if (next) {
-              setTimeout(() => {
+            setTimeout(() => {
+              if (next) {
                 next();
-              }, defaultTimeout);
-            }
+              }
+              if (handleLoading) {
+                handleLoading(false);
+              }
+            }, defaultTimeout);
           }
         } catch (error) {
+          if (handleLoading) {
+            handleLoading(false);
+          }
           message.open({
             type: "error",
             content: t("common:somethingWentWrong"),
             duration: 4,
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
-        } finally {
-          if (handleLoading) {
-            handleLoading(false);
-          }
         }
       }
     }

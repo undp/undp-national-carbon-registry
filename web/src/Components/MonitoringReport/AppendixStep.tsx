@@ -111,10 +111,6 @@ export const AnnexureStep = (props: CustomStepsProps) => {
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-      } finally {
-        if (handleLoading) {
-          handleLoading(false);
-        }
       }
     }
   };
@@ -150,16 +146,15 @@ export const AnnexureStep = (props: CustomStepsProps) => {
           }, defaultTimeout);
         }
       } catch (error) {
+        if (handleLoading) {
+          handleLoading(false);
+        }
         message.open({
           type: "error",
           content: t("common:somethingWentWrong"),
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-      } finally {
-        if (handleLoading) {
-          handleLoading(false);
-        }
       }
     }
   };
