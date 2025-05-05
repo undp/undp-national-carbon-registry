@@ -148,16 +148,15 @@ export const AppendixStep = (props: VerificationStepProps) => {
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
         } else {
+          if (handleLoading) {
+            handleLoading(false);
+          }
           message.open({
             type: "error",
             content: t("common:somethingWentWrong"),
             duration: 4,
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
-        }
-      } finally {
-        if (handleLoading) {
-          handleLoading(false);
         }
       }
     }
@@ -194,16 +193,15 @@ export const AppendixStep = (props: VerificationStepProps) => {
           }, defaultTimeout);
         }
       } catch (error) {
+        if (handleLoading) {
+          handleLoading(false);
+        }
         message.open({
           type: "error",
           content: t("common:somethingWentWrong"),
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-      } finally {
-        if (handleLoading) {
-          handleLoading(false);
-        }
       }
     }
   };
