@@ -1134,7 +1134,7 @@ export class ProgrammeLedgerService {
         let insertMap = {};
         if (retirementAction.action == RetirementACtionEnum.ACCEPT) {
           if (
-            creditBlock.reservedCreditAmount == 0 &&
+            creditBlock.reservedCreditAmount == retireRequestRecord.amount &&
             creditBlock.creditAmount == retireRequestRecord.amount
           ) {
             updateMap[this.ledger.creditBlocksTable] = {
