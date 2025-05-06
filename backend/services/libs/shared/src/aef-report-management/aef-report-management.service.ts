@@ -139,6 +139,15 @@ export class AefReportManagementService {
     const query = new QueryDto();
     query.page = 1;
     query.size = query.size = await this.aefActionsTableEntityRepository.count();
+    if (exportDto.reportType === AefReportTypeEnum.HOLDINGS) {
+      query.filterAnd = [
+        {
+          key: "actionType",
+          operation: "=",
+          value: "authorization",
+        },
+      ];
+    }
     const resp = await this.queryAefRecords(query, abilityCondition, user);
 
     if (resp.total > 0) {
