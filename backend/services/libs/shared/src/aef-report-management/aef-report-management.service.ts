@@ -121,6 +121,7 @@ export class AefReportManagementService {
     const updatedRecords = records.map((record) => ({
       ...record,
       ...staticFields,
+      actionType: this.helperService.formatReqMessagesString(`aef.${record.actionType}`, []),
     }));
     return new DataListResponseDto(updatedRecords, resp.length > 1 ? resp[1] : undefined);
   }

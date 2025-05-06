@@ -41,7 +41,7 @@
 
   "activityType": "ACTIVITY TYPE",
 
-  "authorization": "AUTHORIZATION",
+  "authorizationTitle": "AUTHORIZATION",
 
   "dateOfAuthorization": "DATE OF AUTHORIZATION",
 
@@ -69,5 +69,8 @@
 
   "usingParticipating": "USING PARTIICPATING PARTY OR AUTHIRIZED ENTITY OR ENTITIES",
 
-  "firstTransfer": "FIRST TRANSFER"
+  "firstTransfer": "FIRST TRANSFER",
+  "authorization": "Authorization",
+  "transfer": "Transfer",
+  "crossBoarderTransfer": "Cross Boarder Transfer"
 }
