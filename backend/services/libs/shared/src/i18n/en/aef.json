@@ -25,5 +25,9 @@
   "aquiringParty": "Acquiring participating Party",
   "purposeForCancellation": "Purposes for cancellation",
   "actionBy": "Using participating Party or authorized entity or entities",
-  "firstTransfer": "First transfer"
+  "firstTransfer": "First transfer",
+  "authorization": "Authorization",
+  "transfer": "Transfer",
+  "crossBoarderTransfer": "Cross Boarder Transfer",
+  "retire": "Retire"
 }

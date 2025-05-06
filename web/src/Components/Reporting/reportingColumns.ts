@@ -101,7 +101,7 @@ export const getActionsReportColumns = (t: any) => [
     ],
   },
   {
-    title: t("reporting:authorization"),
+    title: t("reporting:authorizationTitle"),
     children: [
       {
         title: t("reporting:dateOfAuthorization"),
@@ -294,7 +294,7 @@ export const getHoldingsReportColumns = (t: any) => [
     ],
   },
   {
-    title: t("reporting:authorization"),
+    title: t("reporting:authorizationTitle"),
     children: [
       {
         title: t("reporting:dateOfAuthorization"),
