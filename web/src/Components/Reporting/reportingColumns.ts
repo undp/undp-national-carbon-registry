@@ -96,7 +96,10 @@ export const getActionsReportColumns = (t: any) => [
             dataIndex: "sectoralScope",
             key: "sectoralScope",
             render: (item: any) => {
-              return INF_SECTORAL_SCOPE[item];
+              if (INF_SECTORAL_SCOPE[item]) {
+                return INF_SECTORAL_SCOPE[item];
+              }
+              return "NA";
             },
           },
         ],
@@ -298,7 +301,10 @@ export const getHoldingsReportColumns = (t: any) => [
             dataIndex: "sectoralScope",
             key: "sectoralScope",
             render: (item: any) => {
-              return INF_SECTORAL_SCOPE[item];
+              if (INF_SECTORAL_SCOPE[item]) {
+                return INF_SECTORAL_SCOPE[item];
+              }
+              return "NA";
             },
           },
         ],
