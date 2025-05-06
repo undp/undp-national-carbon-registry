@@ -7,7 +7,7 @@
 
   "recordId": "ARTICLE 6 DATABASE RECORD ID",
 
-  "cooperativeApproach": "COOOPERATIVE APPROACH",
+  "cooperativeApproach": "COOPERATIVE APPROACH",
 
   "itmo": "ITMO",
 
@@ -33,7 +33,7 @@
 
   "itmoDetails": "ITMO DETAILS",
 
-  "firstTransferParty": "FIRST TRANSFERRING PARTY",
+  "firstTransferParty": "FIRST TRANSFERRING PARTICIPATING PARTY",
 
   "vintage": "VINTAGE",
 
@@ -45,11 +45,11 @@
 
   "dateOfAuthorization": "DATE OF AUTHORIZATION",
 
-  "authorizationId": "AUTHORIZAITON ID",
+  "authorizationId": "AUTHORIZATION ID",
 
-  "authorizationPurposes": "PURPOSES FOR AUTHORIZAITON",
+  "authorizationPurposes": "PURPOSES FOR AUTHORIZATION",
 
-  "oimpAuthorized": "OIMP AUHTORIZED BY THE PARTY",
+  "oimpAuthorized": "OIMP AUTHORIZED BY THE PARTY",
 
   "firstTransferDefinition": "FIRST TRANSFER DEFINITION",
 
@@ -67,7 +67,7 @@
 
   "purposesForCancellation": "PURPOSES FOR CANCELLATION",
 
-  "usingParticipating": "USING PARTIICPATING PARTY OR AUTHIRIZED ENTITY OR ENTITIES",
+  "usingParticipating": "USING PARTIICPATING PARTY OR AUTHORIZED ENTITY OR ENTITIES",
 
   "firstTransfer": "FIRST TRANSFER",
   "authorization": "Authorization",

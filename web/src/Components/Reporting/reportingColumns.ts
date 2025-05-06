@@ -16,6 +16,9 @@ export const getActionsReportColumns = (t: any) => [
   },
   {
     title: t("reporting:itmo"),
+    onHeaderCell: () => ({
+      style: { fontWeight: "bold" },
+    }),
     children: [
       {
         title: t("reporting:uniqueIdentifier"),
@@ -108,7 +111,7 @@ export const getActionsReportColumns = (t: any) => [
         dataIndex: "projectAuthorizationTime",
         key: "projectAuthorizationTime",
         render: (item: any) => {
-          return toMoment(Number(item)).format("DD-MM-YY");
+          return toMoment(Number(item)).format("DD-MMM-YY");
         },
         //
       },
@@ -139,6 +142,9 @@ export const getActionsReportColumns = (t: any) => [
   },
   {
     title: t("reporting:actions"),
+    onHeaderCell: () => ({
+      style: { fontWeight: "bold" },
+    }),
     children: [
       {
         title: t("reporting:actionDetails"),
@@ -150,7 +156,7 @@ export const getActionsReportColumns = (t: any) => [
             dataIndex: "actionTime",
             key: "actionTime",
             render: (item: any) => {
-              return toMoment(Number(item)).format("DD-MM-YY");
+              return toMoment(Number(item)).format("DD-MMM-YY");
             },
             //
           },
@@ -207,6 +213,9 @@ export const getHoldingsReportColumns = (t: any) => [
 
   {
     title: t("reporting:itmo"),
+    onHeaderCell: () => ({
+      style: { fontWeight: "bold" },
+    }),
     children: [
       {
         title: t("reporting:uniqueIdentifier"),
@@ -301,7 +310,7 @@ export const getHoldingsReportColumns = (t: any) => [
         dataIndex: "projectAuthorizationTime",
         key: "projectAuthorizationTime",
         render: (item: any) => {
-          return toMoment(Number(item)).format("DD-MM-YY");
+          return toMoment(Number(item)).format("DD-MMM-YY");
         },
       },
       {
