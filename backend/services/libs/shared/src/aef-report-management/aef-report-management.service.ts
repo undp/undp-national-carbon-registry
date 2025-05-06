@@ -246,7 +246,7 @@ export class AefReportManagementService {
       dto.aquiringParty = report.aquiringParty;
       dto.purposeForCancellation = report.purposeForCancellation;
       dto.actionBy = report.actionBy;
-      dto.firstTransfer = report.firstTransferingParty;
+      dto.firstTransfer = report.firstTransferDefinition;
 
       exportData.push(dto);
     }
