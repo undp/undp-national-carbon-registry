@@ -250,6 +250,9 @@ const ReportingComponent = (props: { translator: i18n }) => {
       setHoldingsLoading(false);
     }
   };
+  const disabledDate = (current: any) => {
+    return current && current.year() < 1970;
+  };
   return (
     <div className="reporting-container">
       <div className="title-container">
@@ -262,6 +265,7 @@ const ReportingComponent = (props: { translator: i18n }) => {
             picker="year"
             allowClear={false}
             value={selectedYear}
+            disabledDate={disabledDate}
             onChange={(value: any) => {
               console.log("---------value-----------", value);
               const date = moment(value).local();
