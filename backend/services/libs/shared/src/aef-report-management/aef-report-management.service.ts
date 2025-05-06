@@ -138,7 +138,7 @@ export class AefReportManagementService {
     }
     const query = new QueryDto();
     query.page = 1;
-    query.size = 10;
+    query.size = query.size = await this.aefActionsTableEntityRepository.count();
     const resp = await this.queryAefRecords(query, abilityCondition, user);
 
     if (resp.total > 0) {
