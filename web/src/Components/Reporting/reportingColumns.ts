@@ -304,6 +304,9 @@ export const getHoldingsReportColumns = (t: any) => [
   },
   {
     title: t("reporting:authorizationTitle"),
+    onHeaderCell: () => ({
+      style: { fontWeight: "bold" },
+    }),
     children: [
       {
         title: t("reporting:dateOfAuthorization"),
