@@ -185,7 +185,7 @@ export const getActionsReportColumns = (t: any) => [
   },
   {
     title: t("reporting:firstTransfer"),
-    dataIndex: "firstTransferingParty",
+    dataIndex: "firstTransferDefinition",
     key: "firstTransferDefinition",
   },
 ];
