@@ -1,12 +1,11 @@
 {
   "unauthorized": "Unauthorized",
   "article6RecordId": "Article 6 database record ID",
-  "article6RecordId": "Article 6 database record ID",
   "cooperativeApproach": "Cooperative approach",
   "firstUniqueIdentifier": "First unique identifier",
   "lastUniqueIdentifier": "Last unique identifier",
   "creditBlockStartId": "Underlying unit block start ID",
-  "creditBlockEndId": "Underlying unit last block end",
+  "creditBlockEndId": "Underlying unit last block end ID",
   "metric": "Metric",
   "quantityInMetric": "Quantity (expressed in metric)",
   "creditAmount": "Quantity (t CO2 eq)",
