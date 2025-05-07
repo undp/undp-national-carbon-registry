@@ -139,6 +139,7 @@ export const handler: Handler = async (event) => {
           name: fields[0],
           email: fields[1],
           phoneNo: fields[2],
+          faxNo: undefined,
           nameOfMinister: undefined,
           sectoralScope: undefined,
           ministry: undefined,

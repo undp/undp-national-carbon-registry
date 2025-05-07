@@ -32,11 +32,7 @@ interface IReportCard {
     pageSizeOptions: number[];
   };
 
-  handlePaginationChange: (
-    page: number,
-    pageSize: number,
-    reportType: REPORT_TYPES
-  ) => void;
+  handlePaginationChange: (page: number, pageSize: number, reportType: REPORT_TYPES) => void;
 }
 
 const ReportCard = (props: IReportCard) => {
@@ -55,12 +51,7 @@ const ReportCard = (props: IReportCard) => {
 
   return (
     <div className="report-card">
-      <Row
-        gutter={20}
-        justify={"space-between"}
-        align={"middle"}
-        className="header-row"
-      >
+      <Row gutter={20} justify={"space-between"} align={"middle"} className="header-row">
         <Col>
           <p className="title">{title}</p>
         </Col>
@@ -75,7 +66,7 @@ const ReportCard = (props: IReportCard) => {
               downloadExcel();
             }}
           >
-            Export AS EXCELL <UploadOutlined className="icon" />
+            Export AS EXCEL <UploadOutlined className="icon" />
           </Button>
 
           <Button
