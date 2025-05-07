@@ -202,5 +202,6 @@
   "confirmModalSubMessage": "You can't undo this action",
   "approveMessage": "Are you sure you want to approve this Monitoring Report?",
   "declineMessage": "Are you sure you want to decline this Monitoring Report?",
-  "checkboxMessage": "I understand that this action cannot be undone"
+  "checkboxMessage": "I understand that this action cannot be undone",
+  "required": "Required!"
 }
