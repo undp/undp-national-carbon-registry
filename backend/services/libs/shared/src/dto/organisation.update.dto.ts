@@ -20,18 +20,7 @@ import {
 import { CompanyRole } from "../enum/company.role.enum";
 import { GovDepartment } from "../enum/govDep.enum";
 import { Ministry } from "../enum/ministry.enum";
-
-const VALID_PROVINCES = [
-  "Central",
-  "Eastern",
-  "Northern",
-  "Southern",
-  "Western",
-  "North Western",
-  "North Central",
-  "Uva",
-  "Sabaragamuwa",
-];
+import { IsValidProvince } from "../decorators/validProvince.decorator";
 
 export class OrganisationUpdateDto {
   @IsNotEmpty()
@@ -104,13 +93,13 @@ export class OrganisationUpdateDto {
   )
   @IsString()
   @ApiPropertyOptional()
-  @IsPhoneNumber(null, { message: "Invalid phone number format." })
+  @IsPhoneNumber(null)
   phoneNo: string;
 
   @IsString()
   @ApiPropertyOptional()
   @IsOptional()
-  @IsPhoneNumber(null, { message: "Invalid fax number format." })
+  @IsPhoneNumber(null)
   faxNo: string;
 
   @ValidateIf(
@@ -162,7 +151,7 @@ export class OrganisationUpdateDto {
   @ApiPropertyOptional()
   @IsArray()
   @MaxLength(100, { each: true })
-  @IsIn(VALID_PROVINCES, { each: true })
+  @IsValidProvince()
   @IsNotEmpty({ each: true })
   @IsOptional()
   provinces: string[];

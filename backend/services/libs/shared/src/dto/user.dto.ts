@@ -36,9 +36,8 @@ export class UserDto {
   name: string;
 
   @IsOptional()
-  @ValidateIf((o) => o.phoneNo !== "")
   @IsString()
-  @IsPhoneNumber(null, { message: "Invalid phone number format." })
+  @IsPhoneNumber(null)
   @ApiPropertyOptional()
   phoneNo: string;
 

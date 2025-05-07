@@ -21,18 +21,7 @@ import { SectoralScope } from "@undp/serial-number-gen";
 import { CompanyState } from "../enum/company.state.enum";
 import { GovDepartment } from "../enum/govDep.enum";
 import { Ministry } from "../enum/ministry.enum";
-
-const VALID_PROVINCES = [
-  "Central",
-  "Eastern",
-  "Northern",
-  "Southern",
-  "Western",
-  "North Western",
-  "North Central",
-  "Uva",
-  "Sabaragamuwa",
-];
+import { IsValidProvince } from "../decorators/validProvince.decorator";
 
 export class OrganisationDto {
   companyId: number;
@@ -90,9 +79,9 @@ export class OrganisationDto {
   @ApiPropertyOptional()
   @IsArray()
   @MaxLength(100, { each: true })
-  @IsIn(VALID_PROVINCES, { each: true })
   @IsNotEmpty({ each: true })
   @IsOptional()
+  @IsValidProvince()
   provinces: string[];
 
   @ValidateIf(
@@ -101,7 +90,7 @@ export class OrganisationDto {
         c.companyRole
       )
   )
-  @IsPhoneNumber(null, { message: "Invalid phone number format." })
+  @IsPhoneNumber(null)
   @IsNotEmpty()
   @IsString()
   @ApiPropertyOptional()
@@ -111,7 +100,7 @@ export class OrganisationDto {
   @ApiPropertyOptional()
   @IsNotEmpty()
   @IsOptional()
-  @IsPhoneNumber(null, { message: "Invalid fax number format." })
+  @IsPhoneNumber(null)
   faxNo: string;
 
   @ValidateIf(

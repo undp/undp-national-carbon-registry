@@ -35,6 +35,9 @@ import { CreditIssueCertificateGenerator } from "./document-generators/creditIss
 import { CarbonNeutralCertificateGenerator } from "./document-generators/carbonNeutralCertificate.gen";
 import { CoreModule } from "@app/core";
 import { NoObjectionLetterGenerateService } from "./document-generators/no.objection.letter.gen";
+import { ProvinceService } from "./province.service";
+import { Province } from "../entities/province.entity";
+import { IsValidProvinceConstraint } from "../decorators/validProvince.decorator";
 
 @Module({
   imports: [
@@ -48,6 +51,7 @@ import { NoObjectionLetterGenerateService } from "./document-generators/no.objec
     TypeOrmModule.forFeature([
       Counter,
       Country,
+      Province,
       Company,
       PasswordReset,
       User,
@@ -62,7 +66,9 @@ import { NoObjectionLetterGenerateService } from "./document-generators/no.objec
   providers: [
     CounterService,
     CountryService,
+    ProvinceService,
     IsValidCountryConstraint,
+    IsValidProvinceConstraint,
     HelperService,
     PasswordResetService,
     Logger,
@@ -88,6 +94,7 @@ import { NoObjectionLetterGenerateService } from "./document-generators/no.objec
   exports: [
     CounterService,
     CountryService,
+    ProvinceService,
     HelperService,
     PasswordResetService,
     ConfigurationSettingsService,
