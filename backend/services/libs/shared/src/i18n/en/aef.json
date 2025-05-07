@@ -18,7 +18,7 @@
   "authorizationId": "Authorization ID",
   "purposeForAuthorization": "Purposes for authorization",
   "oimp": "OIMP authorized by the Party",
-  "firstTransferDefinition": "First transfer",
+  "firstTransferDefinition": "First transfer definition",
   "actionTime": "Action date",
   "actionType": "Action type",
   "transferingParty": "Transferring participating Party",
