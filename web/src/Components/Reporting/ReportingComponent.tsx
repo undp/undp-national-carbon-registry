@@ -69,14 +69,13 @@ const ReportingComponent = (props: { translator: i18n }) => {
         pageSize: pageSize,
       },
     }));
-
   };
 
   const [selectedYear, setSelectedYear] = useState<Moment>(moment());
 
   const getActionsReports = async () => {
     try {
-      setActionsLoading(true)
+      setActionsLoading(true);
       const res = await post(API_PATHS.QUERY_AEF_RECORDS, {
         page: paginationInfo[REPORT_TYPES.ACTIONS]?.page,
         size: paginationInfo[REPORT_TYPES.ACTIONS]?.pageSize,
@@ -92,6 +91,12 @@ const ReportingComponent = (props: { translator: i18n }) => {
             value: selectedYear.endOf("year").valueOf(),
           },
         ],
+        sort: [
+          {
+            key: "createdTime",
+            order: "DESC",
+          },
+        ],
       });
 
       if (res?.statusText === "SUCCESS") {
@@ -99,10 +104,9 @@ const ReportingComponent = (props: { translator: i18n }) => {
         setActionsCount(res?.response?.data?.total);
       }
     } catch (error: any) {
-      console.log("error:", error)
-    }
-    finally {
-      setActionsLoading(false)
+      console.log("error:", error);
+    } finally {
+      setActionsLoading(false);
     }
   };
 
@@ -129,6 +133,12 @@ const ReportingComponent = (props: { translator: i18n }) => {
             value: "authorization",
           },
         ],
+        sort: [
+          {
+            key: "createdTime",
+            order: "DESC",
+          },
+        ],
       });
 
       console.log("---------------res--------------", res);
@@ -137,9 +147,8 @@ const ReportingComponent = (props: { translator: i18n }) => {
         setHoldingsCount(res?.response?.data?.total);
       }
     } catch (error) {
-      console.log("error:", error)
-    }
-    finally {
+      console.log("error:", error);
+    } finally {
       setHoldingsLoading(false);
     }
   };
@@ -154,20 +163,20 @@ const ReportingComponent = (props: { translator: i18n }) => {
     console.log("---------isReportSelected---------", isReportSelected);
     return isReportSelected;
   };
-  
+
   const downloadActionCSV = async () => {
     try {
-      setActionsLoading(true)
+      setActionsLoading(true);
       const res = await post(API_PATHS.DOWNLOAD_AEF_RECORDS, {
         reportType: REPORT_TYPES.ACTIONS,
-        fileType: FILE_TYPES.csv
-      })
+        fileType: FILE_TYPES.csv,
+      });
 
       console.log("--------res--------", res);
 
       if (res?.statusText === "SUCCESS") {
         const url = res.data.url;
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = res.data.outputFileName;
         document.body.appendChild(a);
@@ -176,25 +185,25 @@ const ReportingComponent = (props: { translator: i18n }) => {
         window.URL.revokeObjectURL(url);
       }
     } catch (error) {
-      console.log("error:", error)
+      console.log("error:", error);
     } finally {
       setActionsLoading(false);
     }
-  }
+  };
 
   const downloadActionExcell = async () => {
     try {
-      setActionsLoading(true)
+      setActionsLoading(true);
       const res = await post(API_PATHS.DOWNLOAD_AEF_RECORDS, {
         reportType: REPORT_TYPES.ACTIONS,
-        fileType: FILE_TYPES.xlsx
-      })
+        fileType: FILE_TYPES.xlsx,
+      });
 
       console.log("--------res--------", res);
 
       if (res?.statusText === "SUCCESS") {
         const url = res.data.url;
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = res.data.outputFileName;
         document.body.appendChild(a);
@@ -203,25 +212,25 @@ const ReportingComponent = (props: { translator: i18n }) => {
         window.URL.revokeObjectURL(url);
       }
     } catch (error) {
-      console.log("error:", error)
+      console.log("error:", error);
     } finally {
       setActionsLoading(false);
     }
-  }
+  };
 
   const downloadHoldingsCSV = async () => {
     try {
-      setHoldingsLoading(true)
+      setHoldingsLoading(true);
       const res = await post(API_PATHS.DOWNLOAD_AEF_RECORDS, {
         reportType: REPORT_TYPES.HOLDINGS,
-        fileType: FILE_TYPES.csv
-      })
+        fileType: FILE_TYPES.csv,
+      });
 
       console.log("--------res--------", res);
 
       if (res?.statusText === "SUCCESS") {
         const url = res.data.url;
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = res.data.outputFileName;
         document.body.appendChild(a);
@@ -230,25 +239,25 @@ const ReportingComponent = (props: { translator: i18n }) => {
         window.URL.revokeObjectURL(url);
       }
     } catch (error) {
-      console.log("error:", error)
+      console.log("error:", error);
     } finally {
       setHoldingsLoading(false);
     }
-  }
+  };
 
   const downloadHoldingsExcell = async () => {
     try {
-      setHoldingsLoading(true)
+      setHoldingsLoading(true);
       const res = await post(API_PATHS.DOWNLOAD_AEF_RECORDS, {
         reportType: REPORT_TYPES.HOLDINGS,
-        fileType: FILE_TYPES.xlsx
-      })
+        fileType: FILE_TYPES.xlsx,
+      });
 
       console.log("--------res--------", res);
 
       if (res?.statusText === "SUCCESS") {
         const url = res.data.url;
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = res.data.outputFileName;
         document.body.appendChild(a);
@@ -257,11 +266,11 @@ const ReportingComponent = (props: { translator: i18n }) => {
         window.URL.revokeObjectURL(url);
       }
     } catch (error) {
-      console.log("error:", error)
+      console.log("error:", error);
     } finally {
       setHoldingsLoading(false);
     }
-  }
+  };
   return (
     <div className="reporting-container">
       <div className="title-container">
@@ -315,9 +324,9 @@ const ReportingComponent = (props: { translator: i18n }) => {
           </Select>
         </Row>
       </div>
-      
-      {(actionsLoading || holdingsLoading) && (<Loading />)}
-      
+
+      {(actionsLoading || holdingsLoading) && <Loading />}
+
       {selectedReports[REPORT_TYPES.ACTIONS] && (
         <ReportCard
           title={"Actions Report"}
