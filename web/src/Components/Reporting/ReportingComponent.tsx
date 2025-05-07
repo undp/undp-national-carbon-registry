@@ -82,6 +82,12 @@ const ReportingComponent = (props: { translator: i18n }) => {
             value: selectedYear.endOf("year").valueOf(),
           },
         ],
+        sort: [
+          {
+            key: "createdTime",
+            order: "DESC",
+          },
+        ],
       });
 
       if (res?.statusText === "SUCCESS") {
@@ -116,6 +122,12 @@ const ReportingComponent = (props: { translator: i18n }) => {
             key: "actionType",
             operation: "=",
             value: "authorization",
+          },
+        ],
+        sort: [
+          {
+            key: "createdTime",
+            order: "DESC",
           },
         ],
       });

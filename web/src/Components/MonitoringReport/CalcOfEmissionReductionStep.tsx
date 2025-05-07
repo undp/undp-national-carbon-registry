@@ -147,12 +147,13 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
     console.log(
       "---------maxNetGHGReduction---------",
       maxNetGHGReduction,
-      tempTotal
+      tempTotal,
+      tempTotal > maxNetGHGReduction
     );
 
     console.log("-----maxNetGHGReduction---------", maxNetGHGReduction);
 
-    if (maxNetGHGReduction && tempTotal > maxNetGHGReduction) {
+    if (maxNetGHGReduction !== undefined && tempTotal > maxNetGHGReduction) {
       form.setFields([
         {
           name: "totalNetEmissionReductions",
