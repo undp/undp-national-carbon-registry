@@ -5,7 +5,6 @@ import {
   IsOptional,
   IsPhoneNumber,
   IsString,
-  ValidateIf,
 } from "class-validator";
 
 export class UserUpdateDto {

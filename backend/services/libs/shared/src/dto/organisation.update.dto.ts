@@ -4,17 +4,12 @@ import {
   IsArray,
   IsEmail,
   IsEnum,
-  IsIn,
-  IsInt,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsPhoneNumber,
   IsString,
   IsUrl,
-  Max,
   MaxLength,
-  Min,
   ValidateIf,
 } from "class-validator";
 import { CompanyRole } from "../enum/company.role.enum";
@@ -110,6 +105,7 @@ export class OrganisationUpdateDto {
   )
   @IsString()
   @ApiProperty()
+  @IsNotEmpty()
   address: string;
 
   @ValidateIf((c) => [CompanyRole.MINISTRY].includes(c.companyRole))

@@ -6,11 +6,9 @@ import {
   IsNotEmpty,
   IsNotEmptyObject,
   IsNumber,
-  IsObject,
   IsOptional,
   IsPhoneNumber,
   IsString,
-  ValidateIf,
   ValidateNested,
 } from "class-validator";
 import { Role } from "../casl/role.enum";

@@ -5,16 +5,13 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   IsUrl,
   MaxLength,
   ValidateIf,
   IsPhoneNumber,
-  IsIn,
 } from "class-validator";
-import { Role } from "../casl/role.enum";
 import { CompanyRole } from "../enum/company.role.enum";
 import { IsValidCountry } from "../decorators/validcountry.decorator";
 import { SectoralScope } from "@undp/serial-number-gen";
