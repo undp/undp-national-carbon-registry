@@ -85,7 +85,7 @@ const ReportingComponent = (props: { translator: i18n }) => {
         sort: [
           {
             key: "createdTime",
-            order: "DESC",
+            order: "ASC",
           },
         ],
       });
@@ -127,7 +127,7 @@ const ReportingComponent = (props: { translator: i18n }) => {
         sort: [
           {
             key: "createdTime",
-            order: "DESC",
+            order: "ASC",
           },
         ],
       });
