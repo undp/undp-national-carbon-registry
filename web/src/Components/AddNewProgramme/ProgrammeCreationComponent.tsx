@@ -418,7 +418,7 @@ export const ProgrammeCreationComponent = (props: any) => {
     const body: any = {
       title: values?.title,
       sector: values?.sector,
-      sectoralScope: values?.sectoralScope,
+      sectoralScope: values?.sectoralScope === 'NA' ? 'N/A' : values?.sectoralScope,
       province: values?.province || "test",
       district: values?.district || "test",
       city: values?.city || "test",
