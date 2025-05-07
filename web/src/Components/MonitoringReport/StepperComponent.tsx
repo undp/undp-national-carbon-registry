@@ -45,7 +45,7 @@ import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 const StepperComponent = (props: CustomStepsProps) => {
   const navigate = useNavigate();
   const { translator, t } = props;
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(5);
   const [reportId, setReportId] = useState(0);
   const [status, setStatus] = useState(null);
   const { get, post } = useConnection();
@@ -210,7 +210,7 @@ const StepperComponent = (props: CustomStepsProps) => {
       const latestVersion = docVersions ? docVersions + 1 : 1;
       basicInformationForm.setFieldsValue({
         bi_sectoralScope:
-          INF_SECTORAL_SCOPE[programmeData?.sectoralScope] || "N/A",
+          INF_SECTORAL_SCOPE[programmeData?.sectoralScope] || "NA",
         bi_projectTitle:
           validationData?.basicInformation?.titleOfTheProjectActivity,
         bi_applicablePDDVersionNo:

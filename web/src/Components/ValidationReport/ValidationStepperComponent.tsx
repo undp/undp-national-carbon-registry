@@ -221,7 +221,7 @@ const StepperComponent = (props: any) => {
       form1.setFieldsValue({
         titleOfTheProjectActivity: programmeData?.title,
         mandatarySectoralScopes:
-          INF_SECTORAL_SCOPE[programmeData?.sectoralScope],
+          INF_SECTORAL_SCOPE[programmeData?.sectoralScope] || 'NA',
         projectDeveloper: programmeData?.projectParticipant,
         versionNumberPDD: pddData?.data?.projectDetails?.versionNumber,
         hostParty: pddData?.data?.projectDetails?.hostParty,
