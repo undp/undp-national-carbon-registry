@@ -8,6 +8,7 @@ import {
   IsNumber,
   IsObject,
   IsOptional,
+  IsPhoneNumber,
   IsString,
   ValidateIf,
   ValidateNested,
@@ -34,10 +35,11 @@ export class UserDto {
   @ApiProperty()
   name: string;
 
-  @IsString()
-  @ApiPropertyOptional()
-  @IsNotEmpty()
   @IsOptional()
+  @ValidateIf((o) => o.phoneNo !== "")
+  @IsString()
+  @IsPhoneNumber(null, { message: "Invalid phone number format." })
+  @ApiPropertyOptional()
   phoneNo: string;
 
   @IsNotEmptyObject()

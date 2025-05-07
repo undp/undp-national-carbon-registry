@@ -4,10 +4,12 @@ import {
   IsArray,
   IsEmail,
   IsEnum,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsPhoneNumber,
   IsString,
   IsUrl,
   Max,
@@ -18,6 +20,18 @@ import {
 import { CompanyRole } from "../enum/company.role.enum";
 import { GovDepartment } from "../enum/govDep.enum";
 import { Ministry } from "../enum/ministry.enum";
+
+const VALID_PROVINCES = [
+  "Central",
+  "Eastern",
+  "Northern",
+  "Southern",
+  "Western",
+  "North Western",
+  "North Central",
+  "Uva",
+  "Sabaragamuwa",
+];
 
 export class OrganisationUpdateDto {
   @IsNotEmpty()
@@ -55,6 +69,19 @@ export class OrganisationUpdateDto {
 
   @ValidateIf(
     (c) =>
+      ![
+        CompanyRole.DESIGNATED_NATIONAL_AUTHORITY,
+        CompanyRole.API,
+        CompanyRole.MINISTRY,
+      ].includes(c.companyRole)
+  )
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  paymentId: string;
+
+  @ValidateIf(
+    (c) =>
       ![CompanyRole.DESIGNATED_NATIONAL_AUTHORITY, CompanyRole.API].includes(
         c.companyRole
       )
@@ -77,7 +104,14 @@ export class OrganisationUpdateDto {
   )
   @IsString()
   @ApiPropertyOptional()
+  @IsPhoneNumber(null, { message: "Invalid phone number format." })
   phoneNo: string;
+
+  @IsString()
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsPhoneNumber(null, { message: "Invalid fax number format." })
+  faxNo: string;
 
   @ValidateIf(
     (c) =>
@@ -86,7 +120,7 @@ export class OrganisationUpdateDto {
       )
   )
   @IsString()
-  @ApiPropertyOptional()
+  @ApiProperty()
   address: string;
 
   @ValidateIf((c) => [CompanyRole.MINISTRY].includes(c.companyRole))
@@ -128,6 +162,7 @@ export class OrganisationUpdateDto {
   @ApiPropertyOptional()
   @IsArray()
   @MaxLength(100, { each: true })
+  @IsIn(VALID_PROVINCES, { each: true })
   @IsNotEmpty({ each: true })
   @IsOptional()
   provinces: string[];

@@ -1,5 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPhoneNumber,
+  IsString,
+  ValidateIf,
+} from "class-validator";
 
 export class UserUpdateDto {
   @IsNotEmpty()
@@ -15,6 +22,8 @@ export class UserUpdateDto {
 
   @IsString()
   @IsOptional()
+  @ValidateIf((o) => o.phoneNo !== "")
+  @IsPhoneNumber(null, { message: "Invalid phone number format." })
   @ApiPropertyOptional()
   phoneNo: string;
 }
