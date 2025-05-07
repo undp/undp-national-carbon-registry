@@ -45,7 +45,7 @@ import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 const StepperComponent = (props: CustomStepsProps) => {
   const navigate = useNavigate();
   const { translator, t } = props;
-  const [current, setCurrent] = useState(5);
+  const [current, setCurrent] = useState(0);
   const [reportId, setReportId] = useState(0);
   const [status, setStatus] = useState(null);
   const { get, post } = useConnection();
