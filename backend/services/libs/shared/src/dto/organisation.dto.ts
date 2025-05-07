@@ -11,6 +11,8 @@ import {
   IsUrl,
   MaxLength,
   ValidateIf,
+  IsPhoneNumber,
+  IsIn,
 } from "class-validator";
 import { Role } from "../casl/role.enum";
 import { CompanyRole } from "../enum/company.role.enum";
@@ -19,6 +21,18 @@ import { SectoralScope } from "@undp/serial-number-gen";
 import { CompanyState } from "../enum/company.state.enum";
 import { GovDepartment } from "../enum/govDep.enum";
 import { Ministry } from "../enum/ministry.enum";
+
+const VALID_PROVINCES = [
+  "Central",
+  "Eastern",
+  "Northern",
+  "Southern",
+  "Western",
+  "North Western",
+  "North Central",
+  "Uva",
+  "Sabaragamuwa",
+];
 
 export class OrganisationDto {
   companyId: number;
@@ -76,6 +90,7 @@ export class OrganisationDto {
   @ApiPropertyOptional()
   @IsArray()
   @MaxLength(100, { each: true })
+  @IsIn(VALID_PROVINCES, { each: true })
   @IsNotEmpty({ each: true })
   @IsOptional()
   provinces: string[];
@@ -86,10 +101,18 @@ export class OrganisationDto {
         c.companyRole
       )
   )
+  @IsPhoneNumber(null, { message: "Invalid phone number format." })
   @IsNotEmpty()
   @IsString()
   @ApiPropertyOptional()
   phoneNo: string;
+
+  @IsString()
+  @ApiPropertyOptional()
+  @IsNotEmpty()
+  @IsOptional()
+  @IsPhoneNumber(null, { message: "Invalid fax number format." })
+  faxNo: string;
 
   @ValidateIf(
     (c) =>
