@@ -176,6 +176,7 @@ export class ITMOSystemImporter implements ImporterInterface {
                       name: project.company,
                       email: email,
                       phoneNo: "00",
+                      faxNo: "00",
                       nameOfMinister: undefined,
                       sectoralScope: undefined,
                       govDep: undefined,
