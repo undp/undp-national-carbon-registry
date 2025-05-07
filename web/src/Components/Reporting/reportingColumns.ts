@@ -16,6 +16,9 @@ export const getActionsReportColumns = (t: any) => [
   },
   {
     title: t("reporting:itmo"),
+    onHeaderCell: () => ({
+      style: { fontWeight: "bold" },
+    }),
     children: [
       {
         title: t("reporting:uniqueIdentifier"),
@@ -93,7 +96,10 @@ export const getActionsReportColumns = (t: any) => [
             dataIndex: "sectoralScope",
             key: "sectoralScope",
             render: (item: any) => {
-              return INF_SECTORAL_SCOPE[item];
+              if (INF_SECTORAL_SCOPE[item]) {
+                return INF_SECTORAL_SCOPE[item];
+              }
+              return "NA";
             },
           },
         ],
@@ -101,14 +107,17 @@ export const getActionsReportColumns = (t: any) => [
     ],
   },
   {
-    title: t("reporting:authorization"),
+    title: t("reporting:authorizationTitle"),
+    onHeaderCell: () => ({
+      style: { fontWeight: "bold" },
+    }),
     children: [
       {
         title: t("reporting:dateOfAuthorization"),
         dataIndex: "projectAuthorizationTime",
         key: "projectAuthorizationTime",
         render: (item: any) => {
-          return toMoment(Number(item)).format("DD-MM-YY");
+          return toMoment(Number(item)).format("DD-MMM-YY");
         },
         //
       },
@@ -139,6 +148,9 @@ export const getActionsReportColumns = (t: any) => [
   },
   {
     title: t("reporting:actions"),
+    onHeaderCell: () => ({
+      style: { fontWeight: "bold" },
+    }),
     children: [
       {
         title: t("reporting:actionDetails"),
@@ -150,7 +162,7 @@ export const getActionsReportColumns = (t: any) => [
             dataIndex: "actionTime",
             key: "actionTime",
             render: (item: any) => {
-              return toMoment(Number(item)).format("DD-MM-YY");
+              return toMoment(Number(item)).format("DD-MMM-YY");
             },
             //
           },
@@ -185,8 +197,8 @@ export const getActionsReportColumns = (t: any) => [
   },
   {
     title: t("reporting:firstTransfer"),
-    dataIndex: "firstTransferingParty",
-    key: "firstTransferingParty",
+    dataIndex: "firstTransferDefinition",
+    key: "firstTransferDefinition",
   },
 ];
 
@@ -207,6 +219,9 @@ export const getHoldingsReportColumns = (t: any) => [
 
   {
     title: t("reporting:itmo"),
+    onHeaderCell: () => ({
+      style: { fontWeight: "bold" },
+    }),
     children: [
       {
         title: t("reporting:uniqueIdentifier"),
@@ -286,7 +301,10 @@ export const getHoldingsReportColumns = (t: any) => [
             dataIndex: "sectoralScope",
             key: "sectoralScope",
             render: (item: any) => {
-              return INF_SECTORAL_SCOPE[item];
+              if (INF_SECTORAL_SCOPE[item]) {
+                return INF_SECTORAL_SCOPE[item];
+              }
+              return "NA";
             },
           },
         ],
@@ -294,14 +312,17 @@ export const getHoldingsReportColumns = (t: any) => [
     ],
   },
   {
-    title: t("reporting:authorization"),
+    title: t("reporting:authorizationTitle"),
+    onHeaderCell: () => ({
+      style: { fontWeight: "bold" },
+    }),
     children: [
       {
         title: t("reporting:dateOfAuthorization"),
         dataIndex: "projectAuthorizationTime",
         key: "projectAuthorizationTime",
         render: (item: any) => {
-          return toMoment(Number(item)).format("DD-MM-YY");
+          return toMoment(Number(item)).format("DD-MMM-YY");
         },
       },
       {
@@ -326,10 +347,5 @@ export const getHoldingsReportColumns = (t: any) => [
     dataIndex: "firstTransferDefinition",
     key: "firstTransferDefinition",
     // width: 200,
-  },
-  {
-    title: t("reporting:firstTransfer"),
-    dataIndex: "firstTransferingParty",
-    key: "firstTransferingParty",
   },
 ];

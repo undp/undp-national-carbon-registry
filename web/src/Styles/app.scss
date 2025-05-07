@@ -60,6 +60,7 @@ body {
 .ant-table-pagination {
   display: flex;
   justify-content: flex-end;
+  font-weight: 400;
 }
 
 .ant-tooltip-inner {
@@ -68,11 +69,7 @@ body {
 }
 
 .ant-tooltip-arrow-content {
-  --antd-arrow-background-color: linear-gradient(
-    to right bottom,
-    #16b1ff,
-    #16b1ff
-  ) !important;
+  --antd-arrow-background-color: linear-gradient(to right bottom, #16b1ff, #16b1ff) !important;
 }
 
 .ant-radio-group {
@@ -118,12 +115,8 @@ body {
   .value {
   color: variables.$primary-purple !important;
 }
-.ant-steps-item-finish
-  > .ant-steps-item-container
-  > .ant-steps-item-tail::after,
-.ant-steps-item-process
-  > .ant-steps-item-container
-  > .ant-steps-item-tail::after {
+.ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-tail::after,
+.ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-tail::after {
   background-color: variables.$primary-color !important;
   width: 1.7px !important;
 }
@@ -165,9 +158,9 @@ body {
 
 .ant-table-thead
   > tr
-  > th:not(:last-child):not(.ant-table-selection-column):not(
-    .ant-table-row-expand-icon-cell
-  ):not([colspan])::before {
+  > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not(
+    [colspan]
+  )::before {
   background-color: transparent !important;
 }
 
@@ -177,9 +170,7 @@ body {
 }
 
 .ant-form-item-label
-  > label.ant-form-item-required:not(
-    .ant-form-item-required-mark-optional
-  )::before {
+  > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
   margin-left: 0.2rem !important;
   color: variables.$error-color !important;
 }

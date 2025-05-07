@@ -1,12 +1,11 @@
 {
   "unauthorized": "Unauthorized",
   "article6RecordId": "Article 6 database record ID",
-  "article6RecordId": "Article 6 database record ID",
   "cooperativeApproach": "Cooperative approach",
   "firstUniqueIdentifier": "First unique identifier",
   "lastUniqueIdentifier": "Last unique identifier",
   "creditBlockStartId": "Underlying unit block start ID",
-  "creditBlockEndId": "Underlying unit last block end",
+  "creditBlockEndId": "Underlying unit block last ID",
   "metric": "Metric",
   "quantityInMetric": "Quantity (expressed in metric)",
   "creditAmount": "Quantity (t CO2 eq)",
@@ -19,12 +18,16 @@
   "authorizationId": "Authorization ID",
   "purposeForAuthorization": "Purposes for authorization",
   "oimp": "OIMP authorized by the Party",
-  "firstTransferDefinition": "First transfer",
+  "firstTransferDefinition": "First transfer definition",
   "actionTime": "Action date",
   "actionType": "Action type",
   "transferingParty": "Transferring participating Party",
   "aquiringParty": "Acquiring participating Party",
   "purposeForCancellation": "Purposes for cancellation",
   "actionBy": "Using participating Party or authorized entity or entities",
-  "firstTransfer": "First transfer"
+  "firstTransfer": "First transfer",
+  "authorization": "Authorization",
+  "transfer": "Transfer",
+  "crossBoarderTransfer": "Cross Boarder Transfer",
+  "retire": "Retire"
 }

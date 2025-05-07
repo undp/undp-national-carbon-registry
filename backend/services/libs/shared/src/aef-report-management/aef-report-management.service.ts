@@ -31,6 +31,38 @@ import { AefExportDto } from "../dto/aef.export.dto";
 import * as ExcelJS from "exceljs";
 import * as path from "path";
 import * as moment from "moment";
+
+export const INF_SECTOR: { [key: string]: string } = {
+  ENERGY: "Energy",
+  AGRICULTURE: "Agriculture",
+  HEALTH: "Health",
+  EDUCATION: "Education",
+  TRANSPORT: "Transport",
+  MANUFACTURING: "Manufacturing",
+  HOSPITALITY: "Hospitality",
+  FORESTRY: "Forestry",
+  WASTE: "Waste",
+  OTHER: "Other",
+};
+
+export const INF_SECTORAL_SCOPE: { [key: string]: string } = {
+  ENERGY_INDUSTRIES: "Energy Industries (Renewable – / Non-Renewable Sources) ",
+  ENERGY_DISTRIBUTION: "Energy Distribution",
+  ENERGY_DEMAND: "Energy Demand",
+  AGRICULTURE: "Agriculture",
+  AFFORESTATION_AND_REFORESTATION: "Afforestation and Reforestation",
+  MANUFACTURING_INDUSTRIES: "Manufacturing Industries",
+  CHEMICAL_INDUSTRIES: "Chemical Industries",
+  METAL_PRODUCTION: "Metal Production",
+  TRANSPORT: "Transport",
+  WASTE_FROM_FUELS: "Fugitive Emissions from Fuels (Solid, Oil and Gas) ",
+  WASTE_HANDLING_AND_DISPOSAL: "Waste Handling and Disposal",
+  CONSTRUCTION: "Construction",
+  MINING_MINERAL_PRODUCTION: "Mining/Mineral Production",
+  FUGITIVE_EMISSIONS_PRODUCTION:
+    "Fugitive Emissions from Production and Consumption of Halocarbons and Sulphur Hexafluoride",
+  SOLVENT_USE: "Solvent Use",
+};
 @Injectable()
 export class AefReportManagementService {
   constructor(
@@ -121,6 +153,7 @@ export class AefReportManagementService {
     const updatedRecords = records.map((record) => ({
       ...record,
       ...staticFields,
+      actionType: this.helperService.formatReqMessagesString(`aef.${record.actionType}`, []),
     }));
     return new DataListResponseDto(updatedRecords, resp.length > 1 ? resp[1] : undefined);
   }
@@ -137,7 +170,16 @@ export class AefReportManagementService {
     }
     const query = new QueryDto();
     query.page = 1;
-    query.size = 10;
+    query.size = query.size = await this.aefActionsTableEntityRepository.count();
+    if (exportDto.reportType === AefReportTypeEnum.HOLDINGS) {
+      query.filterAnd = [
+        {
+          key: "actionType",
+          operation: "=",
+          value: "authorization",
+        },
+      ];
+    }
     const resp = await this.queryAefRecords(query, abilityCondition, user);
 
     if (resp.total > 0) {
@@ -196,10 +238,12 @@ export class AefReportManagementService {
       dto.conversionFactor = report.conversionFactor;
       dto.firstTransferingParty = report.firstTransferingParty;
       dto.vintage = report.vintage;
-      dto.sector = report.sector;
-      dto.sectoralScope = report.sectoralScope;
+      dto.sector = INF_SECTOR[report.sector];
+      dto.sectoralScope = INF_SECTORAL_SCOPE[report.sectoralScope]
+        ? INF_SECTORAL_SCOPE[report.sectoralScope]
+        : "NA";
       dto.projectAuthorizationTime = report.projectAuthorizationTime
-        ? moment(parseInt(report.projectAuthorizationTime)).format("YY-MM-DD")
+        ? moment(parseInt(report.projectAuthorizationTime)).format("DD-MMM-YY")
         : "";
       dto.authorizationId = report.authorizationId;
       dto.purposeForAuthorization = report.purposeForAuthorization;
@@ -229,24 +273,26 @@ export class AefReportManagementService {
       dto.conversionFactor = report.conversionFactor;
       dto.firstTransferingParty = report.firstTransferingParty;
       dto.vintage = report.vintage;
-      dto.sector = report.sector;
-      dto.sectoralScope = report.sectoralScope;
+      dto.sector = INF_SECTOR[report.sector];
+      dto.sectoralScope = INF_SECTORAL_SCOPE[report.sectoralScope]
+        ? INF_SECTORAL_SCOPE[report.sectoralScope]
+        : "NA";
       dto.projectAuthorizationTime = report.projectAuthorizationTime
-        ? moment(parseInt(report.projectAuthorizationTime)).format("YY-MM-DD")
+        ? moment(parseInt(report.projectAuthorizationTime)).format("DD-MMM-YY")
         : "";
       dto.authorizationId = report.authorizationId;
       dto.purposeForAuthorization = report.purposeForAuthorization;
       dto.oimp = report.OIMP;
       dto.firstTransferDefinition = report.firstTransferDefinition;
       dto.actionTime = report.actionTime
-        ? moment(parseInt(report.actionTime)).format("YY-MM-DD")
+        ? moment(parseInt(report.actionTime)).format("DD-MMM-YY")
         : "";
       dto.actionType = report.actionType;
       dto.transferingParty = report.transferingParty;
       dto.aquiringParty = report.aquiringParty;
       dto.purposeForCancellation = report.purposeForCancellation;
       dto.actionBy = report.actionBy;
-      dto.firstTransfer = report.firstTransferingParty;
+      dto.firstTransfer = report.firstTransferDefinition;
 
       exportData.push(dto);
     }
@@ -261,6 +307,7 @@ export class AefReportManagementService {
     reportType: AefReportTypeEnum,
     fileType: ExportFileType
   ) {
+    console.log(headers);
     const currentDate = new Date();
     const year = currentDate.getFullYear();
     const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
