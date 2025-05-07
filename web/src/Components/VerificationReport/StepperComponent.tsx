@@ -200,7 +200,6 @@ const StepperComponent = (props: VerificationStepProps) => {
           Number(programmeData?.creditRetired) +
           Number(programmeData?.creditTransferred));
 
-
       console.log(
         "-----------temp netGHG---------",
         tempNetGHGEmisisionReduction
@@ -339,16 +338,24 @@ const StepperComponent = (props: VerificationStepProps) => {
         setTimeout(() => {
           navigateToDetailsPage();
           setLoading(false);
-        }, defaultTimeout)
+        }, defaultTimeout);
       }
     } catch (error: any) {
       console.log("---------verification report submit---------", error);
-      message.open({
-        type: "error",
-        content: "Something went wrong",
-        duration: 4,
-        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
-      });
+      if (error.status === 400) {
+        message.open({
+          type: "error",
+          content: error.message,
+          duration: 4,
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+        });
+      } else {
+        message.open({
+          content: "Something went wrong",
+          duration: 4,
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+        });
+      }
       setLoading(false);
     }
   };
