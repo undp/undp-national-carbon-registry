@@ -307,6 +307,7 @@ export class AefReportManagementService {
     reportType: AefReportTypeEnum,
     fileType: ExportFileType
   ) {
+    console.log(headers);
     const currentDate = new Date();
     const year = currentDate.getFullYear();
     const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
