@@ -145,7 +145,7 @@ const StepperComponent = (props: any) => {
           projectTitle: data?.title,
           versionNumber: 1,
           projectProponent: data?.company?.name,
-          sectoralScope: INF_SECTORAL_SCOPE[data?.sectoralScope] || 'N/A',
+          sectoralScope: INF_SECTORAL_SCOPE[data?.sectoralScope] || 'NA',
         });
         form4.setFieldsValue({
           projectActivityStartDate: toMoment(data?.startDate).format('YYYY-MM-DD'),

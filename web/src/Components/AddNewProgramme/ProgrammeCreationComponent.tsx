@@ -614,7 +614,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                     setSelectedSector(value);
                                     const hasScopes = SECTOR_TO_SCOPES_MAP[value]?.length > 0;
                                     form.setFieldsValue({
-                                      sectoralScope: hasScopes ? undefined : 'N/A',
+                                      sectoralScope: hasScopes ? undefined : 'NA',
                                     });
                                   }}
                                 >

@@ -133,7 +133,7 @@ const NetEmissionReduction = (props: any) => {
     }
 
     console.log("----------netGHG reduction", maxNetGHGReduction);
-    if (maxNetGHGReduction && tempTotal >= maxNetGHGReduction) {
+    if (maxNetGHGReduction && tempTotal > maxNetGHGReduction) {
       form.setFields([
         {
           name: "totalNetEmissionReductions",
