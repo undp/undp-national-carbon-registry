@@ -1,8 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString } from "class-validator";
+import { IsString, IsNotEmpty } from "class-validator";
 
 export class OrganisationRejectDto {
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
   remarks: string;
 }
