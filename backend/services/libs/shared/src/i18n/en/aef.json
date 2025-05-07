@@ -5,7 +5,7 @@
   "firstUniqueIdentifier": "First unique identifier",
   "lastUniqueIdentifier": "Last unique identifier",
   "creditBlockStartId": "Underlying unit block start ID",
-  "creditBlockEndId": "Underlying unit last block end ID",
+  "creditBlockEndId": "Underlying unit block last ID",
   "metric": "Metric",
   "quantityInMetric": "Quantity (expressed in metric)",
   "creditAmount": "Quantity (t CO2 eq)",
