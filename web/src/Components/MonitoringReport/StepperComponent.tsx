@@ -400,13 +400,22 @@ const StepperComponent = (props: CustomStepsProps) => {
         }, defaultTimeout);
       }
     } catch (error: any) {
-      message.open({
-        type: "error",
-        content: "Something went wrong",
-        duration: 4,
-        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
-      });
-      setLoading(true);
+      console.log("-----------error------", error);
+      if (error.status === 400) {
+        message.open({
+          type: "error",
+          content: error.message,
+          duration: 4,
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+        });
+      } else {
+        message.open({
+          content: "Something went wrong",
+          duration: 4,
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+        })
+      }
+      setLoading(false);
     }
   };
 
