@@ -140,7 +140,7 @@ export const AppendixStep = (props: VerificationStepProps) => {
         }
       } catch (error: any) {
         console.log("--------------error----------------", error);
-        if (error?.status === 401) {
+        if (error?.status === 401 || error?.status === 400) {
           message.open({
             type: "error",
             content: error.message,
