@@ -173,7 +173,7 @@ export class AefReportManagementService {
     query.size = query.size = await this.aefActionsTableEntityRepository.count();
     query.sort = {
       key: "createdTime",
-      order: "ASC",
+      order: "DESC",
     };
     if (exportDto.reportType === AefReportTypeEnum.HOLDINGS) {
       query.filterAnd = [
