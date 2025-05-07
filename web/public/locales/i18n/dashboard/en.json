@@ -184,7 +184,7 @@
   "totalCreditsTooltip": "Displays the total number of credits issued in the system.",
   "totalRetiredCreditsTooltip": "Displays the total number of credits retired in the system.",
   "totalProgrammesByStatusTooltip": "Displays the distribution of total number of projects in detailed status. ",
-  "projectsBySectorTooltip": "Display the distribution of total number of projects by Sector",
+  "projectsBySectorTooltip": "Displays the distribution of total number of projects by Sectors",
   "projectsBySectoralScopeTooltip": "Displays the distribution of total number of projects by Sectoral Scope",
   "projectSummaryTooltip": "Displays the total number of projects and their current statuses.",
   "retirementsByDateTooltip": "Displays the distribution of retirements and transfers by date,  on a stack card.",

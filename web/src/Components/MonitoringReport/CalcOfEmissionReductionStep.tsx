@@ -17,6 +17,7 @@ import { RcFile } from "antd/lib/upload";
 import { CustomStepsProps } from "./StepProps";
 import { toMoment } from "../../Utils/convertTime";
 import { disableYears } from "../../Utils/disableYears";
+import { ValidateStatus } from "antd/es/form/FormItem";
 
 const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
   baselineEmissionReductions: "avgBaselineEmissionReductions",
@@ -151,7 +152,7 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
 
     console.log("-----maxNetGHGReduction---------", maxNetGHGReduction);
 
-    if (maxNetGHGReduction && tempTotal >= maxNetGHGReduction) {
+    if (maxNetGHGReduction && tempTotal > maxNetGHGReduction) {
       form.setFields([
         {
           name: "totalNetEmissionReductions",
@@ -279,7 +280,13 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
           if (values?.extraEmissionReductions) {
             values.extraEmissionReductions.forEach((item: any) => {
               const tempObj = {
-                vintage:  moment({ year: moment(item?.vintage).year(), month: 1, day: 1 }).startOf('day').valueOf(),
+                vintage: moment({
+                  year: moment(item?.vintage).year(),
+                  month: 1,
+                  day: 1,
+                })
+                  .startOf("day")
+                  .valueOf(),
                 baselineEmissionReductions: Number(
                   item?.baselineEmissionReductions
                 ),
@@ -806,7 +813,10 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                                               picker="year"
                                               format="YYYY"
                                               onChange={(value: any) => {
-                                                onPeriodChange(value, fields?.length + 1);
+                                                onPeriodChange(
+                                                  value,
+                                                  fields?.length + 1
+                                                );
                                               }}
                                               disabledDate={(
                                                 currentDate: any
@@ -1108,7 +1118,10 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                                               onClick={() => {
                                                 // reduceTotalCreditingYears()
                                                 remove(name);
-                                                onPeriodChange(null, fields?.length + 1);
+                                                onPeriodChange(
+                                                  null,
+                                                  fields?.length + 1
+                                                );
                                                 calculateTotalEmissions(
                                                   null,
                                                   "projectEmissionReductions",
