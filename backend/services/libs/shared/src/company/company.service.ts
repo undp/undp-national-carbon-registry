@@ -1111,7 +1111,7 @@ export class CompanyService {
       );
     }
 
-    if (companyUpdateDto.logo) {
+    if (companyUpdateDto.logo && this.helperService.isBase64(companyUpdateDto.logo)) {
       const response: any = await this.fileHandler.uploadFile(
         `profile_images/${
           companyUpdateDto.companyId
