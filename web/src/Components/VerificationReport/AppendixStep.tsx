@@ -139,7 +139,10 @@ export const AppendixStep = (props: VerificationStepProps) => {
           }, defaultTimeout);
         }
       } catch (error: any) {
-        console.log("--------------error----------------", error);
+        // console.log("--------------error----------------", error);
+        if (handleLoading) {
+          handleLoading(false);
+        }
         if (error?.status === 401 || error?.status === 400) {
           message.open({
             type: "error",
@@ -148,9 +151,6 @@ export const AppendixStep = (props: VerificationStepProps) => {
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
         } else {
-          if (handleLoading) {
-            handleLoading(false);
-          }
           message.open({
             type: "error",
             content: t("common:somethingWentWrong"),
