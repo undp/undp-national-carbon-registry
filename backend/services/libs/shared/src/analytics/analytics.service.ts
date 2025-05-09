@@ -549,91 +549,152 @@ export class AnalyticsService {
 
   async getCreditSummary(filters: ProjectDataRequestDTO, user: User): Promise<any> {
     const orgId = user.companyId;
-    const isPD = filters?.isMine && user.companyRole === CompanyRole.PROJECT_DEVELOPER;
+    const isMine = !!(filters?.isMine && user.companyRole === CompanyRole.PROJECT_DEVELOPER);
 
-    const baseQb = this.auditRepository
+    const qb = this.auditRepository
       .createQueryBuilder("audit")
-      .innerJoin(ProjectEntity, "project", "project.refId = audit.refId");
-
-    const buildSubQueries = (logType: string, direction: "toCompanyId" | "fromCompanyId") => {
-      const amountSub = this.auditRepository
-        .createQueryBuilder("inner_audit")
-        .select(`COALESCE(SUM((inner_audit.data->>'amount')::int), 0)`)
-        .where("inner_audit.logType = :logType", { logType });
-      const timeSub = this.auditRepository
-        .createQueryBuilder("inner_audit")
-        .select("MAX(inner_audit.createdTime)")
-        .where("inner_audit.logType = :logType", { logType });
-
-      if (isPD) {
-        const clause = `(inner_audit.data->>'${direction}')::int = :orgId`;
-        amountSub.andWhere(clause, { orgId });
-        timeSub.andWhere(clause, { orgId });
-      }
-
-      return { amountSub, timeSub };
-    };
-
-    const { amountSub: authorisedAmountSub, timeSub: lastAuthorisedTimeSub } = buildSubQueries(
-      ProjectAuditLogType.CREDITS_AUTHORISED,
-      "toCompanyId"
-    );
-
-    const { amountSub: issuedAmountSub, timeSub: lastIssuedTimeSub } = buildSubQueries(
-      ProjectAuditLogType.CREDIT_ISSUED,
-      "toCompanyId"
-    );
-
-    const transferDirection = isPD ? "toCompanyId" : "fromCompanyId";
-    const { amountSub: transferredAmountSub, timeSub: lastTransferredTimeSub } = buildSubQueries(
-      ProjectAuditLogType.CREDIT_TRANSFERED,
-      transferDirection
-    );
-
-    const { amountSub: retiredAmountSub, timeSub: lastRetiredTimeSub } = buildSubQueries(
-      ProjectAuditLogType.RETIRE_APPROVED,
-      "fromCompanyId"
-    );
-
-    baseQb
-      .select(`(${authorisedAmountSub.getQuery()})`, "authorisedAmount")
-      .addSelect(`(${lastAuthorisedTimeSub.getQuery()})`, "lastAuthorisedTime")
-      .addSelect(`(${issuedAmountSub.getQuery()})`, "issuedAmount")
-      .addSelect(`(${lastIssuedTimeSub.getQuery()})`, "lastIssuedTime")
-      .addSelect(`(${transferredAmountSub.getQuery()})`, "transferredAmount")
-      .addSelect(`(${lastTransferredTimeSub.getQuery()})`, "lastTransferredTime")
-      .addSelect(`(${retiredAmountSub.getQuery()})`, "retiredAmount")
-      .addSelect(`(${lastRetiredTimeSub.getQuery()})`, "lastRetiredTime");
-
-    baseQb.setParameters({
-      orgId,
-      ...authorisedAmountSub.getParameters(),
-      ...lastAuthorisedTimeSub.getParameters(),
-      ...issuedAmountSub.getParameters(),
-      ...lastIssuedTimeSub.getParameters(),
-      ...transferredAmountSub.getParameters(),
-      ...lastTransferredTimeSub.getParameters(),
-      ...retiredAmountSub.getParameters(),
-      ...lastRetiredTimeSub.getParameters(),
-    });
-
-    if (filters?.startDate) {
-      baseQb.andWhere(`audit.createdTime >= :startDate`, {
-        startDate: filters.startDate,
+      .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
+      .select(
+        `
+        SUM(
+          CASE
+            WHEN audit."logType" = :creditsAuth
+             AND (
+               :isMine = false
+               OR (audit.data->>'toCompanyId')::int = :orgId
+             )
+            THEN (audit.data->>'amount')::int
+            ELSE 0
+          END
+        )`,
+        "authorisedAmount"
+      )
+      .addSelect(
+        `
+        MAX(
+          CASE
+            WHEN audit."logType" = :creditsAuth
+             AND (
+               :isMine = false
+               OR (audit.data->>'toCompanyId')::int = :orgId
+             )
+            THEN audit."createdTime"
+          END
+        )`,
+        "lastAuthorisedTime"
+      )
+      .addSelect(
+        `
+        SUM(
+          CASE
+            WHEN audit."logType" = :creditIssued
+             AND (
+               :isMine = false
+               OR (audit.data->>'toCompanyId')::int = :orgId
+             )
+            THEN (audit.data->>'amount')::int
+            ELSE 0
+          END
+        )`,
+        "issuedAmount"
+      )
+      .addSelect(
+        `
+        MAX(
+          CASE
+            WHEN audit."logType" = :creditIssued
+             AND (
+               :isMine = false
+               OR (audit.data->>'toCompanyId')::int = :orgId
+             )
+            THEN audit."createdTime"
+          END
+        )`,
+        "lastIssuedTime"
+      )
+      .addSelect(
+        `
+        SUM(
+          CASE
+            WHEN audit."logType" = :creditTransferred
+             AND (
+               :isMine = true
+               AND (audit.data->>'toCompanyId')::int = :orgId
+               OR
+               :isMine = false
+               AND (audit.data->>'fromCompanyId')::int = :orgId
+             )
+            THEN (audit.data->>'amount')::int
+            ELSE 0
+          END
+        )`,
+        "transferredAmount"
+      )
+      .addSelect(
+        `
+        MAX(
+          CASE
+            WHEN audit."logType" = :creditTransferred
+             AND (
+               :isMine = true
+               AND (audit.data->>'toCompanyId')::int = :orgId
+               OR
+               :isMine = false
+               AND (audit.data->>'fromCompanyId')::int = :orgId
+             )
+            THEN audit."createdTime"
+          END
+        )`,
+        "lastTransferredTime"
+      )
+      .addSelect(
+        `
+        SUM(
+          CASE
+            WHEN audit."logType" = :retireApproved
+             AND (
+               :isMine = false
+               OR (audit.data->>'fromCompanyId')::int = :orgId
+             )
+            THEN (audit.data->>'amount')::int
+            ELSE 0
+          END
+        )`,
+        "retiredAmount"
+      )
+      .addSelect(
+        `
+        MAX(
+          CASE
+            WHEN audit."logType" = :retireApproved
+             AND (
+               :isMine = false
+               OR (audit.data->>'fromCompanyId')::int = :orgId
+             )
+            THEN audit."createdTime"
+          END
+        )`,
+        "lastRetiredTime"
+      )
+      .where(filters?.startDate ? "audit.createdTime >= :startDate" : "1=1", {
+        startDate: filters?.startDate,
+      })
+      .andWhere(filters?.endDate ? "audit.createdTime <= :endDate" : "1=1", {
+        endDate: filters?.endDate,
+      })
+      .andWhere(filters?.sector ? "project.sector = :sector" : "1=1", {
+        sector: filters?.sector,
+      })
+      .setParameters({
+        creditsAuth: ProjectAuditLogType.CREDITS_AUTHORISED,
+        creditIssued: ProjectAuditLogType.CREDIT_ISSUED,
+        creditTransferred: ProjectAuditLogType.CREDIT_TRANSFERED,
+        retireApproved: ProjectAuditLogType.RETIRE_APPROVED,
+        orgId,
+        isMine,
       });
-    }
-    if (filters?.endDate) {
-      baseQb.andWhere(`audit.createdTime <= :endDate`, {
-        endDate: filters.endDate,
-      });
-    }
-    if (filters?.sector) {
-      baseQb.andWhere("project.sector = :sector", {
-        sector: filters.sector,
-      });
-    }
 
-    const [result = {}] = await baseQb.getRawMany();
+    const result = await qb.getRawOne();
 
     return {
       authorisedAmount: parseInt(result.authorisedAmount, 10),
