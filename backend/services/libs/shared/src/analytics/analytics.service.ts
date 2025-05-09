@@ -622,7 +622,7 @@ export class AnalyticsService {
 
     if (filters?.isMine) {
       if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
-        baseQb.andWhere("audit.toCompanyId = :orgId", { orgId });
+        qb.andWhere(`(audit."data"->>'toCompanyId')::int = :orgId`, { orgId });
       }
     }
 
@@ -681,7 +681,7 @@ export class AnalyticsService {
 
     if (filters?.isMine) {
       if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
-        qb.andWhere("audit.toCompanyId = :orgId", { orgId });
+        qb.andWhere(`(audit."data"->>'toCompanyId')::int = :orgId`, { orgId });
       }
     }
 
