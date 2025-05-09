@@ -553,7 +553,7 @@ export class AnalyticsService {
 
     const qb = this.auditRepository
       .createQueryBuilder("audit")
-      .innerJoin(ProjectEntity, "project", "project.refId = audit.projectId")
+      .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
       .select(
         `
         SUM(
