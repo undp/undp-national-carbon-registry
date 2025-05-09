@@ -553,7 +553,7 @@ export class AnalyticsService {
 
     const qb = this.auditRepository
       .createQueryBuilder("audit")
-      .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
+      .innerJoin(ProjectEntity, "project", "project.refId = audit.projectId")
       .select(
         `
         SUM(
@@ -618,11 +618,8 @@ export class AnalyticsService {
           CASE
             WHEN audit."logType" = :creditTransferred
              AND (
-               :isMine = true
-               AND (audit.data->>'toCompanyId')::int = :orgId
-               OR
-               :isMine = false
-               AND (audit.data->>'fromCompanyId')::int = :orgId
+               (:isMine = true  AND (audit.data->>'toCompanyId')::int = :orgId)
+               OR :isMine = false
              )
             THEN (audit.data->>'amount')::int
             ELSE 0
@@ -636,11 +633,8 @@ export class AnalyticsService {
           CASE
             WHEN audit."logType" = :creditTransferred
              AND (
-               :isMine = true
-               AND (audit.data->>'toCompanyId')::int = :orgId
-               OR
-               :isMine = false
-               AND (audit.data->>'fromCompanyId')::int = :orgId
+               (:isMine = true  AND (audit.data->>'toCompanyId')::int = :orgId)
+               OR :isMine = false
              )
             THEN audit."createdTime"
           END
