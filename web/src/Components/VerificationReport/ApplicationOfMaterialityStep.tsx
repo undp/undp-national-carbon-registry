@@ -9,6 +9,7 @@ import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
 import { DocumentStatus } from "../../Definitions/Enums/document.status";
 import i18n from "../Internationalization/i18n";
 import { VerificationStepProps } from "./StepProps";
+import { safeClone } from "../../Utils/deepCopy";
 
 export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
   const {
@@ -41,7 +42,20 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
 
   const onFinish = (values: any) => {
     console.log("--------values-----------", values);
-    const body = { ...values };
+    const body = {
+      ...values,
+      materialityTable: values?.materialityTable?.map((item: any) => {
+        return (
+          {
+            riskThatCouldLead: item?.riskThatCouldLead,
+            riskLevel: item?.riskLevel,
+            justification: item?.justification,
+            response: item?.response,
+          }
+        )
+      }),
+    };
+
     handleValuesUpdate({
       applicationOfMateriality: body,
     });
