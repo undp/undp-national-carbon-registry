@@ -74,7 +74,14 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
   const onFinish = async (values: any) => {
     const tempVals: any = {
       ...values,
-      documentsReviewed: values?.documentsReviewed,
+      documentsReviewed: values?.documentsReviewed?.map((item: any) => {
+        return {
+          author: item?.author,
+          title: item?.title,
+          referenceToTheDoc: item?.referenceToTheDoc,
+          provider: item?.provider,
+        };
+      }),
       appendix1Documents: await fileUploadValueExtract(
         values,
         "appendix1Documents"
@@ -212,7 +219,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-      } 
+      }
     }
   };
 
