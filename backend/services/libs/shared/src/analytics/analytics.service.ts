@@ -948,10 +948,10 @@ export class AnalyticsService {
       ProjectAuditLogType.RETIRE_APPROVED,
     ];
 
-    if (isMine) {
-      inboundTypes.push(ProjectAuditLogType.CREDIT_TRANSFERED);
-      outboundTypes = outboundTypes.filter((t) => t !== ProjectAuditLogType.CREDIT_TRANSFERED);
-    }
+    // if (isMine) {
+    //   inboundTypes.push(ProjectAuditLogType.CREDIT_TRANSFERED);
+    //   outboundTypes = outboundTypes.filter((t) => t !== ProjectAuditLogType.CREDIT_TRANSFERED);
+    // }
 
     const allTypes = [...inboundTypes, ...outboundTypes];
 
