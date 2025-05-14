@@ -351,6 +351,7 @@ const StepperComponent = (props: VerificationStepProps) => {
         });
       } else {
         message.open({
+          type: "error",
           content: "Something went wrong",
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
