@@ -21,6 +21,7 @@ import { User } from "../entities/user.entity";
 import { ActivityEntity } from "../entities/activity.entity";
 import { InfSectoralScopeEnum } from "../enum/inf.sectoral.scope.enum";
 import { InfSectorEnum } from "../enum/inf.sector.enum";
+import { Role } from "../casl/role.enum";
 
 @Injectable()
 export class AnalyticsService {
@@ -547,9 +548,232 @@ export class AnalyticsService {
     return response;
   }
 
+  // async getCreditSummary(filters: ProjectDataRequestDTO, user: User): Promise<any> {
+  //   const orgId = user.companyId;
+  //   const isMine = !!(filters?.isMine && user.companyRole === CompanyRole.PROJECT_DEVELOPER);
+
+  //   const qb = this.auditRepository
+  //     .createQueryBuilder("audit")
+  //     .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
+  //     .select(
+  //       `
+  //       SUM(
+  //         CASE
+  //           WHEN audit."logType" = :creditsAuth
+  //            AND (
+  //              :isMine = false
+  //              OR (audit.data->>'toCompanyId')::int = :orgId
+  //            )
+  //           THEN (audit.data->>'amount')::int
+  //           ELSE 0
+  //         END
+  //       )`,
+  //       "authorisedAmount"
+  //     )
+  //     .addSelect(
+  //       `
+  //       MAX(
+  //         CASE
+  //           WHEN audit."logType" = :creditsAuth
+  //            AND (
+  //              :isMine = false
+  //              OR (audit.data->>'toCompanyId')::int = :orgId
+  //            )
+  //           THEN audit."createdTime"
+  //         END
+  //       )`,
+  //       "lastAuthorisedTime"
+  //     )
+  //     .addSelect(
+  //       `
+  //       SUM(
+  //         CASE
+  //           WHEN audit."logType" = :creditIssued
+  //            AND (
+  //              :isMine = false
+  //              OR (audit.data->>'toCompanyId')::int = :orgId
+  //            )
+  //           THEN (audit.data->>'amount')::int
+  //           ELSE 0
+  //         END
+  //       )`,
+  //       "issuedAmount"
+  //     )
+  //     .addSelect(
+  //       `
+  //       MAX(
+  //         CASE
+  //           WHEN audit."logType" = :creditIssued
+  //            AND (
+  //              :isMine = false
+  //              OR (audit.data->>'toCompanyId')::int = :orgId
+  //            )
+  //           THEN audit."createdTime"
+  //         END
+  //       )`,
+  //       "lastIssuedTime"
+  //     )
+  //     .addSelect(
+  //       `
+  //       SUM(
+  //         CASE
+  //           WHEN audit."logType" = :creditTransferred
+  //            AND (
+  //              (:isMine = true  AND (audit.data->>'toCompanyId')::int = :orgId)
+  //              OR :isMine = false
+  //            )
+  //           THEN (audit.data->>'amount')::int
+  //           ELSE 0
+  //         END
+  //       )`,
+  //       "transferredAmount"
+  //     )
+  //     .addSelect(
+  //       `
+  //       MAX(
+  //         CASE
+  //           WHEN audit."logType" = :creditTransferred
+  //            AND (
+  //              (:isMine = true  AND (audit.data->>'toCompanyId')::int = :orgId)
+  //              OR :isMine = false
+  //            )
+  //           THEN audit."createdTime"
+  //         END
+  //       )`,
+  //       "lastTransferredTime"
+  //     )
+  //     .addSelect(
+  //       `
+  //       SUM(
+  //         CASE
+  //           WHEN audit."logType" = :retireApproved
+  //            AND (
+  //              :isMine = false
+  //              OR (audit.data->>'fromCompanyId')::int = :orgId
+  //            )
+  //           THEN (audit.data->>'amount')::int
+  //           ELSE 0
+  //         END
+  //       )`,
+  //       "retiredAmount"
+  //     )
+  //     .addSelect(
+  //       `
+  //       MAX(
+  //         CASE
+  //           WHEN audit."logType" = :retireApproved
+  //            AND (
+  //              :isMine = false
+  //              OR (audit.data->>'fromCompanyId')::int = :orgId
+  //            )
+  //           THEN audit."createdTime"
+  //         END
+  //       )`,
+  //       "lastRetiredTime"
+  //     )
+  //     .where(filters?.startDate ? "audit.createdTime >= :startDate" : "1=1", {
+  //       startDate: filters?.startDate,
+  //     })
+  //     .andWhere(filters?.endDate ? "audit.createdTime <= :endDate" : "1=1", {
+  //       endDate: filters?.endDate,
+  //     })
+  //     .andWhere(filters?.sector ? "project.sector = :sector" : "1=1", {
+  //       sector: filters?.sector,
+  //     })
+  //     .setParameters({
+  //       creditsAuth: ProjectAuditLogType.CREDITS_AUTHORISED,
+  //       creditIssued: ProjectAuditLogType.CREDIT_ISSUED,
+  //       creditTransferred: ProjectAuditLogType.CREDIT_TRANSFERED,
+  //       retireApproved: ProjectAuditLogType.RETIRE_APPROVED,
+  //       orgId,
+  //       isMine,
+  //     });
+
+  //   const result = await qb.getRawOne();
+
+  //   return {
+  //     authorisedAmount: parseInt(result.authorisedAmount, 10),
+  //     lastAuthorisedTime: result.lastAuthorisedTime ? Number(result.lastAuthorisedTime) : null,
+  //     issuedAmount: parseInt(result.issuedAmount, 10),
+  //     lastIssuedTime: result.lastIssuedTime ? Number(result.lastIssuedTime) : null,
+  //     transferredAmount: parseInt(result.transferredAmount, 10),
+  //     lastTransferredTime: result.lastTransferredTime ? Number(result.lastTransferredTime) : null,
+  //     retiredAmount: parseInt(result.retiredAmount, 10),
+  //     lastRetiredTime: result.lastRetiredTime ? Number(result.lastRetiredTime) : null,
+  //   };
+  // }
+
+  // async creditsSummaryByDate(filters: ProjectDataRequestDTO, user: User) {
+  //   const orgId = user.companyId;
+  //   const isPD = filters?.isMine && user.companyRole === CompanyRole.PROJECT_DEVELOPER;
+
+  //   const inboundTypes = [
+  //     ProjectAuditLogType.CREDITS_AUTHORISED,
+  //     ProjectAuditLogType.CREDIT_ISSUED,
+  //   ];
+  //   const outboundTypes = [
+  //     ProjectAuditLogType.CREDIT_TRANSFERED,
+  //     ProjectAuditLogType.RETIRE_APPROVED,
+  //   ];
+
+  //   if (isPD) {
+  //     inboundTypes.push(ProjectAuditLogType.CREDIT_TRANSFERED);
+  //     const idx = outboundTypes.indexOf(ProjectAuditLogType.CREDIT_TRANSFERED);
+  //     if (idx > -1) outboundTypes.splice(idx, 1);
+  //   }
+
+  //   const qb = this.auditRepository
+  //     .createQueryBuilder("audit")
+  //     .select(`to_char(to_timestamp(audit."createdTime" / 1000), 'YYYY-MM-DD')`, "date")
+  //     .addSelect('audit."logType"', "logType")
+  //     .addSelect(`SUM(CAST(audit."data"->>'amount' AS INTEGER))`, "totalAmount")
+  //     .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
+  //     .where('audit."logType" IN (:...allTypes)', {
+  //       allTypes: [...inboundTypes, ...outboundTypes],
+  //     });
+
+  //   if (filters?.startDate) {
+  //     qb.andWhere('audit."createdTime" >= :startDate', { startDate: filters.startDate });
+  //   }
+  //   if (filters?.endDate) {
+  //     qb.andWhere('audit."createdTime" <= :endDate', { endDate: filters.endDate });
+  //   }
+  //   if (filters?.sector) {
+  //     qb.andWhere("project.sector = :sector", { sector: filters.sector });
+  //   }
+
+  //   if (isPD) {
+  //     qb.andWhere(
+  //       new Brackets((qb1) => {
+  //         qb1
+  //           .where(
+  //             `(audit."data"->>'toCompanyId')::int = :orgId
+  //            AND audit."logType" IN (:...inboundTypes)`,
+  //             { orgId, inboundTypes }
+  //           )
+  //           .orWhere(
+  //             `(audit."data"->>'fromCompanyId')::int = :orgId
+  //            AND audit."logType" IN (:...outboundTypes)`,
+  //             { orgId, outboundTypes }
+  //           );
+  //       })
+  //     );
+  //   }
+
+  //   qb.groupBy("date").addGroupBy('audit."logType"').orderBy("date", "DESC");
+
+  //   const results = await qb.getRawMany();
+  //   const pivoted: Record<string, any> = {};
+  //   for (const { date, logType, totalAmount } of results) {
+  //     pivoted[date] ??= { date };
+  //     pivoted[date][logType] = parseInt(totalAmount, 10);
+  //   }
+  //   return Object.values(pivoted);
+  // }
+
   async getCreditSummary(filters: ProjectDataRequestDTO, user: User): Promise<any> {
-    const orgId = user.companyId;
-    const isMine = !!(filters?.isMine && user.companyRole === CompanyRole.PROJECT_DEVELOPER);
+    const orgId = String(user.companyId);
+    const isMine = !!filters?.isMine && user.companyRole === CompanyRole.PROJECT_DEVELOPER;
 
     const qb = this.auditRepository
       .createQueryBuilder("audit")
@@ -561,12 +785,13 @@ export class AnalyticsService {
             WHEN audit."logType" = :creditsAuth
              AND (
                :isMine = false
-               OR (audit.data->>'toCompanyId')::int = :orgId
+               OR audit.data->>'toCompanyId' = :orgId
              )
             THEN (audit.data->>'amount')::int
             ELSE 0
           END
-        )`,
+        )
+        `,
         "authorisedAmount"
       )
       .addSelect(
@@ -576,11 +801,12 @@ export class AnalyticsService {
             WHEN audit."logType" = :creditsAuth
              AND (
                :isMine = false
-               OR (audit.data->>'toCompanyId')::int = :orgId
+               OR audit.data->>'toCompanyId' = :orgId
              )
             THEN audit."createdTime"
           END
-        )`,
+        )
+        `,
         "lastAuthorisedTime"
       )
       .addSelect(
@@ -590,12 +816,13 @@ export class AnalyticsService {
             WHEN audit."logType" = :creditIssued
              AND (
                :isMine = false
-               OR (audit.data->>'toCompanyId')::int = :orgId
+               OR audit.data->>'toCompanyId' = :orgId
              )
             THEN (audit.data->>'amount')::int
             ELSE 0
           END
-        )`,
+        )
+        `,
         "issuedAmount"
       )
       .addSelect(
@@ -605,11 +832,12 @@ export class AnalyticsService {
             WHEN audit."logType" = :creditIssued
              AND (
                :isMine = false
-               OR (audit.data->>'toCompanyId')::int = :orgId
+               OR audit.data->>'toCompanyId' = :orgId
              )
             THEN audit."createdTime"
           END
-        )`,
+        )
+        `,
         "lastIssuedTime"
       )
       .addSelect(
@@ -618,13 +846,14 @@ export class AnalyticsService {
           CASE
             WHEN audit."logType" = :creditTransferred
              AND (
-               (:isMine = true  AND (audit.data->>'toCompanyId')::int = :orgId)
-               OR :isMine = false
+               :isMine = false
+               OR audit.data->>'fromCompanyId' = :orgId
              )
             THEN (audit.data->>'amount')::int
             ELSE 0
           END
-        )`,
+        )
+        `,
         "transferredAmount"
       )
       .addSelect(
@@ -633,12 +862,13 @@ export class AnalyticsService {
           CASE
             WHEN audit."logType" = :creditTransferred
              AND (
-               (:isMine = true  AND (audit.data->>'toCompanyId')::int = :orgId)
-               OR :isMine = false
+               :isMine = false
+               OR audit.data->>'fromCompanyId' = :orgId
              )
             THEN audit."createdTime"
           END
-        )`,
+        )
+        `,
         "lastTransferredTime"
       )
       .addSelect(
@@ -648,12 +878,13 @@ export class AnalyticsService {
             WHEN audit."logType" = :retireApproved
              AND (
                :isMine = false
-               OR (audit.data->>'fromCompanyId')::int = :orgId
+               OR audit.data->>'fromCompanyId' = :orgId
              )
             THEN (audit.data->>'amount')::int
             ELSE 0
           END
-        )`,
+        )
+        `,
         "retiredAmount"
       )
       .addSelect(
@@ -663,17 +894,18 @@ export class AnalyticsService {
             WHEN audit."logType" = :retireApproved
              AND (
                :isMine = false
-               OR (audit.data->>'fromCompanyId')::int = :orgId
+               OR audit.data->>'fromCompanyId' = :orgId
              )
             THEN audit."createdTime"
           END
-        )`,
+        )
+        `,
         "lastRetiredTime"
       )
-      .where(filters?.startDate ? "audit.createdTime >= :startDate" : "1=1", {
+      .where(filters?.startDate ? 'audit."createdTime" >= :startDate' : "1=1", {
         startDate: filters?.startDate,
       })
-      .andWhere(filters?.endDate ? "audit.createdTime <= :endDate" : "1=1", {
+      .andWhere(filters?.endDate ? 'audit."createdTime" <= :endDate' : "1=1", {
         endDate: filters?.endDate,
       })
       .andWhere(filters?.sector ? "project.sector = :sector" : "1=1", {
@@ -702,71 +934,85 @@ export class AnalyticsService {
     };
   }
 
-  async creditsSummaryByDate(filters: ProjectDataRequestDTO, user: User) {
-    const orgId = user.companyId;
-    const isPD = filters?.isMine && user.companyRole === CompanyRole.PROJECT_DEVELOPER;
+  async creditsSummaryByDate(filters: ProjectDataRequestDTO, jwtData: User) {
+    const orgId = jwtData.companyId;
+    const isMine = !!filters?.isMine && jwtData.companyRole === CompanyRole.PROJECT_DEVELOPER;
+    const offsetInMinutes = filters.timeZone ?? 0;
 
     const inboundTypes = [
       ProjectAuditLogType.CREDITS_AUTHORISED,
       ProjectAuditLogType.CREDIT_ISSUED,
     ];
-    const outboundTypes = [
+    let outboundTypes = [
       ProjectAuditLogType.CREDIT_TRANSFERED,
       ProjectAuditLogType.RETIRE_APPROVED,
     ];
 
-    if (isPD) {
+    if (isMine) {
       inboundTypes.push(ProjectAuditLogType.CREDIT_TRANSFERED);
-      const idx = outboundTypes.indexOf(ProjectAuditLogType.CREDIT_TRANSFERED);
-      if (idx > -1) outboundTypes.splice(idx, 1);
+      outboundTypes = outboundTypes.filter((t) => t !== ProjectAuditLogType.CREDIT_TRANSFERED);
     }
+
+    const allTypes = [...inboundTypes, ...outboundTypes];
 
     const qb = this.auditRepository
       .createQueryBuilder("audit")
-      .select(`to_char(to_timestamp(audit."createdTime" / 1000), 'YYYY-MM-DD')`, "date")
+      .select(
+        `to_char(
+         to_timestamp(audit."createdTime" / 1000)
+         - (:offsetInMinutes * interval '1 minute'),
+         'YYYY-MM-DD'
+       )`,
+        "date"
+      )
       .addSelect('audit."logType"', "logType")
-      .addSelect(`SUM(CAST(audit."data"->>'amount' AS INTEGER))`, "totalAmount")
+      .addSelect(`SUM((audit.data->>'amount')::int)`, "totalAmount")
       .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
-      .where('audit."logType" IN (:...allTypes)', {
-        allTypes: [...inboundTypes, ...outboundTypes],
-      });
+      .where('audit."logType" IN (:...allTypes)', { allTypes })
+      .setParameter("offsetInMinutes", offsetInMinutes);
 
-    if (filters?.startDate) {
-      qb.andWhere('audit."createdTime" >= :startDate', { startDate: filters.startDate });
+    if (filters.startDate) {
+      qb.andWhere('audit."createdTime" >= :startDate', {
+        startDate: filters.startDate,
+      });
     }
-    if (filters?.endDate) {
-      qb.andWhere('audit."createdTime" <= :endDate', { endDate: filters.endDate });
+    if (filters.endDate) {
+      qb.andWhere('audit."createdTime" <= :endDate', {
+        endDate: filters.endDate,
+      });
     }
-    if (filters?.sector) {
+    if (filters.sector) {
       qb.andWhere("project.sector = :sector", { sector: filters.sector });
     }
 
-    if (isPD) {
+    if (isMine) {
       qb.andWhere(
         new Brackets((qb1) => {
           qb1
             .where(
-              `(audit."data"->>'toCompanyId')::int = :orgId
-             AND audit."logType" IN (:...inboundTypes)`,
-              { orgId, inboundTypes }
+              "audit.\"logType\" IN (:...inboundTypes) AND (audit.data->>'toCompanyId')::int = :orgId",
+              { inboundTypes, orgId }
             )
             .orWhere(
-              `(audit."data"->>'fromCompanyId')::int = :orgId
-             AND audit."logType" IN (:...outboundTypes)`,
-              { orgId, outboundTypes }
+              "audit.\"logType\" IN (:...outboundTypes) AND (audit.data->>'fromCompanyId')::int = :orgId",
+              { outboundTypes, orgId }
             );
         })
       );
     }
 
-    qb.groupBy("date").addGroupBy('audit."logType"').orderBy("date", "DESC");
+    qb.groupBy("date").addGroupBy('audit."logType"').orderBy("date", "ASC");
 
     const results = await qb.getRawMany();
+
     const pivoted: Record<string, any> = {};
     for (const { date, logType, totalAmount } of results) {
-      pivoted[date] ??= { date };
+      if (!pivoted[date]) {
+        pivoted[date] = { date };
+      }
       pivoted[date][logType] = parseInt(totalAmount, 10);
     }
+
     return Object.values(pivoted);
   }
 }
