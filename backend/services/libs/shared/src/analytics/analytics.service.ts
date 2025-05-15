@@ -423,41 +423,37 @@ export class AnalyticsService {
       .addSelect("MAX(sub_audit.createdTime)", "latestTime")
       .groupBy("sub_audit.refId");
 
+    if (filters?.startDate) {
+      subQuery.andWhere("sub_audit.createdTime >= :startDate", {
+        startDate: filters.startDate,
+      });
+    }
+    if (filters?.endDate) {
+      subQuery.andWhere("sub_audit.createdTime <= :endDate", {
+        endDate: filters.endDate,
+      });
+    }
+
     const qb = this.auditRepository
       .createQueryBuilder("audit")
       .innerJoin(
         `(${subQuery.getQuery()})`,
         "latest",
-        'latest."projectId" = audit.refId AND latest."latestTime" = audit.createdTime'
+        `latest."projectId" = audit.refId AND latest."latestTime" = audit.createdTime`
       )
       .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
       .select("project.sector", "sector")
       .addSelect("COUNT(DISTINCT project.refId)", "count")
-      .groupBy("project.sector");
-
-    if (filters?.startDate) {
-      qb.andWhere("audit.createdTime >= :startDate", {
-        startDate: filters.startDate,
-      });
-    }
-
-    if (filters?.endDate) {
-      qb.andWhere("audit.createdTime <= :endDate", {
-        endDate: filters.endDate,
-      });
-    }
+      .groupBy("project.sector")
+      .setParameters(subQuery.getParameters());
 
     if (filters?.sector) {
-      qb.andWhere("project.sector = :sector", {
-        sector: filters.sector,
-      });
+      qb.andWhere("project.sector = :sector", { sector: filters.sector });
     }
 
     if (filters?.isMine) {
       if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
-        qb.andWhere("project.companyId = :orgId", {
-          orgId: user.companyId,
-        });
+        qb.andWhere("project.companyId = :orgId", { orgId: user.companyId });
       } else if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
         qb.andWhere(":orgId = ANY(project.independentCertifiers)", {
           orgId: user.companyId,
@@ -465,21 +461,21 @@ export class AnalyticsService {
       }
     }
 
-    const result = await qb.getRawMany();
+    const rows = await qb.getRawMany();
 
     const response: Record<string, number> = {};
-    for (const sectorKey in InfSectorEnum) {
-      const sectorName = InfSectorEnum[sectorKey];
-      response[sectorName] = 0;
+    for (const key in InfSectorEnum) {
+      response[InfSectorEnum[key]] = 0;
     }
 
-    for (const row of result) {
-      const sector = row.sector ?? "Unknown";
-      response[InfSectorEnum[sector]] = parseInt(row.count, 10);
+    for (const row of rows) {
+      const sectorKey = row.sector ?? "Unknown";
+      response[InfSectorEnum[sectorKey]] = parseInt(row.count, 10);
     }
 
     return response;
   }
+
   async getProjectCountBySectorScope(
     filters: ProjectDataRequestDTO,
     user: User
@@ -487,44 +483,41 @@ export class AnalyticsService {
     const subQuery = this.auditRepository
       .createQueryBuilder("sub_audit")
       .select("sub_audit.refId", "projectId")
-      .addSelect("MAX(sub_audit.createdTime)", "latestTime")
-      .groupBy("sub_audit.refId");
+      .addSelect("MAX(sub_audit.createdTime)", "latestTime");
+
+    if (filters?.startDate) {
+      subQuery.andWhere("sub_audit.createdTime >= :startDate", {
+        startDate: filters.startDate,
+      });
+    }
+    if (filters?.endDate) {
+      subQuery.andWhere("sub_audit.createdTime <= :endDate", {
+        endDate: filters.endDate,
+      });
+    }
+
+    subQuery.groupBy("sub_audit.refId");
 
     const qb = this.auditRepository
       .createQueryBuilder("audit")
       .innerJoin(
         `(${subQuery.getQuery()})`,
         "latest",
-        'latest."projectId" = audit.refId AND latest."latestTime" = audit.createdTime'
+        `latest."projectId" = audit.refId AND latest."latestTime" = audit.createdTime`
       )
       .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
       .select("project.sectoralScope", "sector")
       .addSelect("COUNT(DISTINCT project.refId)", "count")
-      .groupBy("project.sectoralScope");
-
-    if (filters?.startDate) {
-      qb.andWhere("audit.createdTime >= :startDate", {
-        startDate: filters.startDate,
-      });
-    }
-
-    if (filters?.endDate) {
-      qb.andWhere("audit.createdTime <= :endDate", {
-        endDate: filters.endDate,
-      });
-    }
+      .groupBy("project.sectoralScope")
+      .setParameters(subQuery.getParameters());
 
     if (filters?.sector) {
-      qb.andWhere("project.sector = :sector", {
-        sector: filters.sector,
-      });
+      qb.andWhere("project.sector = :sector", { sector: filters.sector });
     }
 
     if (filters?.isMine) {
       if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
-        qb.andWhere("project.companyId = :orgId", {
-          orgId: user.companyId,
-        });
+        qb.andWhere("project.companyId = :orgId", { orgId: user.companyId });
       } else if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
         qb.andWhere(":orgId = ANY(project.independentCertifiers)", {
           orgId: user.companyId,
@@ -532,244 +525,20 @@ export class AnalyticsService {
       }
     }
 
-    const result = await qb.getRawMany();
+    const rows = await qb.getRawMany();
 
     const response: Record<string, number> = {};
-    for (const sectorKey in InfSectoralScopeEnum) {
-      const sectorName = InfSectoralScopeEnum[sectorKey];
-      response[sectorName] = 0;
+    for (const key in InfSectoralScopeEnum) {
+      response[InfSectoralScopeEnum[key]] = 0;
     }
 
-    for (const row of result) {
-      const sector = row.sector ?? "Unknown";
-      response[InfSectoralScopeEnum[sector]] = parseInt(row.count, 10);
+    for (const row of rows) {
+      const scopeKey = row.sector ?? "Unknown";
+      response[InfSectoralScopeEnum[scopeKey]] = parseInt(row.count, 10);
     }
 
     return response;
   }
-
-  // async getCreditSummary(filters: ProjectDataRequestDTO, user: User): Promise<any> {
-  //   const orgId = user.companyId;
-  //   const isMine = !!(filters?.isMine && user.companyRole === CompanyRole.PROJECT_DEVELOPER);
-
-  //   const qb = this.auditRepository
-  //     .createQueryBuilder("audit")
-  //     .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
-  //     .select(
-  //       `
-  //       SUM(
-  //         CASE
-  //           WHEN audit."logType" = :creditsAuth
-  //            AND (
-  //              :isMine = false
-  //              OR (audit.data->>'toCompanyId')::int = :orgId
-  //            )
-  //           THEN (audit.data->>'amount')::int
-  //           ELSE 0
-  //         END
-  //       )`,
-  //       "authorisedAmount"
-  //     )
-  //     .addSelect(
-  //       `
-  //       MAX(
-  //         CASE
-  //           WHEN audit."logType" = :creditsAuth
-  //            AND (
-  //              :isMine = false
-  //              OR (audit.data->>'toCompanyId')::int = :orgId
-  //            )
-  //           THEN audit."createdTime"
-  //         END
-  //       )`,
-  //       "lastAuthorisedTime"
-  //     )
-  //     .addSelect(
-  //       `
-  //       SUM(
-  //         CASE
-  //           WHEN audit."logType" = :creditIssued
-  //            AND (
-  //              :isMine = false
-  //              OR (audit.data->>'toCompanyId')::int = :orgId
-  //            )
-  //           THEN (audit.data->>'amount')::int
-  //           ELSE 0
-  //         END
-  //       )`,
-  //       "issuedAmount"
-  //     )
-  //     .addSelect(
-  //       `
-  //       MAX(
-  //         CASE
-  //           WHEN audit."logType" = :creditIssued
-  //            AND (
-  //              :isMine = false
-  //              OR (audit.data->>'toCompanyId')::int = :orgId
-  //            )
-  //           THEN audit."createdTime"
-  //         END
-  //       )`,
-  //       "lastIssuedTime"
-  //     )
-  //     .addSelect(
-  //       `
-  //       SUM(
-  //         CASE
-  //           WHEN audit."logType" = :creditTransferred
-  //            AND (
-  //              (:isMine = true  AND (audit.data->>'toCompanyId')::int = :orgId)
-  //              OR :isMine = false
-  //            )
-  //           THEN (audit.data->>'amount')::int
-  //           ELSE 0
-  //         END
-  //       )`,
-  //       "transferredAmount"
-  //     )
-  //     .addSelect(
-  //       `
-  //       MAX(
-  //         CASE
-  //           WHEN audit."logType" = :creditTransferred
-  //            AND (
-  //              (:isMine = true  AND (audit.data->>'toCompanyId')::int = :orgId)
-  //              OR :isMine = false
-  //            )
-  //           THEN audit."createdTime"
-  //         END
-  //       )`,
-  //       "lastTransferredTime"
-  //     )
-  //     .addSelect(
-  //       `
-  //       SUM(
-  //         CASE
-  //           WHEN audit."logType" = :retireApproved
-  //            AND (
-  //              :isMine = false
-  //              OR (audit.data->>'fromCompanyId')::int = :orgId
-  //            )
-  //           THEN (audit.data->>'amount')::int
-  //           ELSE 0
-  //         END
-  //       )`,
-  //       "retiredAmount"
-  //     )
-  //     .addSelect(
-  //       `
-  //       MAX(
-  //         CASE
-  //           WHEN audit."logType" = :retireApproved
-  //            AND (
-  //              :isMine = false
-  //              OR (audit.data->>'fromCompanyId')::int = :orgId
-  //            )
-  //           THEN audit."createdTime"
-  //         END
-  //       )`,
-  //       "lastRetiredTime"
-  //     )
-  //     .where(filters?.startDate ? "audit.createdTime >= :startDate" : "1=1", {
-  //       startDate: filters?.startDate,
-  //     })
-  //     .andWhere(filters?.endDate ? "audit.createdTime <= :endDate" : "1=1", {
-  //       endDate: filters?.endDate,
-  //     })
-  //     .andWhere(filters?.sector ? "project.sector = :sector" : "1=1", {
-  //       sector: filters?.sector,
-  //     })
-  //     .setParameters({
-  //       creditsAuth: ProjectAuditLogType.CREDITS_AUTHORISED,
-  //       creditIssued: ProjectAuditLogType.CREDIT_ISSUED,
-  //       creditTransferred: ProjectAuditLogType.CREDIT_TRANSFERED,
-  //       retireApproved: ProjectAuditLogType.RETIRE_APPROVED,
-  //       orgId,
-  //       isMine,
-  //     });
-
-  //   const result = await qb.getRawOne();
-
-  //   return {
-  //     authorisedAmount: parseInt(result.authorisedAmount, 10),
-  //     lastAuthorisedTime: result.lastAuthorisedTime ? Number(result.lastAuthorisedTime) : null,
-  //     issuedAmount: parseInt(result.issuedAmount, 10),
-  //     lastIssuedTime: result.lastIssuedTime ? Number(result.lastIssuedTime) : null,
-  //     transferredAmount: parseInt(result.transferredAmount, 10),
-  //     lastTransferredTime: result.lastTransferredTime ? Number(result.lastTransferredTime) : null,
-  //     retiredAmount: parseInt(result.retiredAmount, 10),
-  //     lastRetiredTime: result.lastRetiredTime ? Number(result.lastRetiredTime) : null,
-  //   };
-  // }
-
-  // async creditsSummaryByDate(filters: ProjectDataRequestDTO, user: User) {
-  //   const orgId = user.companyId;
-  //   const isPD = filters?.isMine && user.companyRole === CompanyRole.PROJECT_DEVELOPER;
-
-  //   const inboundTypes = [
-  //     ProjectAuditLogType.CREDITS_AUTHORISED,
-  //     ProjectAuditLogType.CREDIT_ISSUED,
-  //   ];
-  //   const outboundTypes = [
-  //     ProjectAuditLogType.CREDIT_TRANSFERED,
-  //     ProjectAuditLogType.RETIRE_APPROVED,
-  //   ];
-
-  //   if (isPD) {
-  //     inboundTypes.push(ProjectAuditLogType.CREDIT_TRANSFERED);
-  //     const idx = outboundTypes.indexOf(ProjectAuditLogType.CREDIT_TRANSFERED);
-  //     if (idx > -1) outboundTypes.splice(idx, 1);
-  //   }
-
-  //   const qb = this.auditRepository
-  //     .createQueryBuilder("audit")
-  //     .select(`to_char(to_timestamp(audit."createdTime" / 1000), 'YYYY-MM-DD')`, "date")
-  //     .addSelect('audit."logType"', "logType")
-  //     .addSelect(`SUM(CAST(audit."data"->>'amount' AS INTEGER))`, "totalAmount")
-  //     .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
-  //     .where('audit."logType" IN (:...allTypes)', {
-  //       allTypes: [...inboundTypes, ...outboundTypes],
-  //     });
-
-  //   if (filters?.startDate) {
-  //     qb.andWhere('audit."createdTime" >= :startDate', { startDate: filters.startDate });
-  //   }
-  //   if (filters?.endDate) {
-  //     qb.andWhere('audit."createdTime" <= :endDate', { endDate: filters.endDate });
-  //   }
-  //   if (filters?.sector) {
-  //     qb.andWhere("project.sector = :sector", { sector: filters.sector });
-  //   }
-
-  //   if (isPD) {
-  //     qb.andWhere(
-  //       new Brackets((qb1) => {
-  //         qb1
-  //           .where(
-  //             `(audit."data"->>'toCompanyId')::int = :orgId
-  //            AND audit."logType" IN (:...inboundTypes)`,
-  //             { orgId, inboundTypes }
-  //           )
-  //           .orWhere(
-  //             `(audit."data"->>'fromCompanyId')::int = :orgId
-  //            AND audit."logType" IN (:...outboundTypes)`,
-  //             { orgId, outboundTypes }
-  //           );
-  //       })
-  //     );
-  //   }
-
-  //   qb.groupBy("date").addGroupBy('audit."logType"').orderBy("date", "DESC");
-
-  //   const results = await qb.getRawMany();
-  //   const pivoted: Record<string, any> = {};
-  //   for (const { date, logType, totalAmount } of results) {
-  //     pivoted[date] ??= { date };
-  //     pivoted[date][logType] = parseInt(totalAmount, 10);
-  //   }
-  //   return Object.values(pivoted);
-  // }
 
   async getCreditSummary(filters: ProjectDataRequestDTO, user: User): Promise<any> {
     const orgId = String(user.companyId);
