@@ -419,17 +419,17 @@ export class AnalyticsService {
   ): Promise<Record<string, number>> {
     const subQuery = this.auditRepository
       .createQueryBuilder("sub_audit")
-      .select("sub_audit.refId", "projectId")
-      .addSelect("MAX(sub_audit.createdTime)", "latestTime")
-      .groupBy("sub_audit.refId");
+      .select('sub_audit."refId"', "projectId")
+      .addSelect('MAX(sub_audit."createdTime")', "latestTime")
+      .groupBy('sub_audit."refId"');
 
     if (filters?.startDate) {
-      subQuery.andWhere("sub_audit.createdTime >= :startDate", {
+      subQuery.andWhere('sub_audit."createdTime" >= :startDate', {
         startDate: filters.startDate,
       });
     }
     if (filters?.endDate) {
-      subQuery.andWhere("sub_audit.createdTime <= :endDate", {
+      subQuery.andWhere('sub_audit."createdTime" <= :endDate', {
         endDate: filters.endDate,
       });
     }
@@ -439,12 +439,12 @@ export class AnalyticsService {
       .innerJoin(
         `(${subQuery.getQuery()})`,
         "latest",
-        `latest."projectId" = audit.refId
-         AND latest."latestTime" = audit.createdTime`
+        `latest."projectId" = audit."refId"
+         AND latest."latestTime" = audit."createdTime"`
       )
-      .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
+      .innerJoin(ProjectEntity, "project", 'project."refId" = audit."refId"')
       .select("project.sector", "sector")
-      .addSelect("COUNT(DISTINCT project.refId)", "count")
+      .addSelect('COUNT(DISTINCT project."refId")', "count")
       .groupBy("project.sector")
       .setParameters(subQuery.getParameters());
 
