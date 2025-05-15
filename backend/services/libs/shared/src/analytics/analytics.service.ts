@@ -439,7 +439,8 @@ export class AnalyticsService {
       .innerJoin(
         `(${subQuery.getQuery()})`,
         "latest",
-        `latest."projectId" = audit.refId AND latest."latestTime" = audit.createdTime`
+        `latest."projectId" = audit.refId
+         AND latest."latestTime" = audit.createdTime`
       )
       .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
       .select("project.sector", "sector")
