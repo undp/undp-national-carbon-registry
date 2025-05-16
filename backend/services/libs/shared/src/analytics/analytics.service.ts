@@ -472,16 +472,13 @@ export class AnalyticsService {
 
     if (filters?.isMine) {
       if (jwtData.companyRole === CompanyRole.PROJECT_DEVELOPER) {
-        qb.andWhere("project.organization.id = :orgId", {
+        qb.andWhere("project.companyId = :orgId", {
           orgId: jwtData.companyId,
         });
       } else if (jwtData.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
-        qb.innerJoin(
-          "project_assignees",
-          "pa",
-          "pa.project_id = project.refId AND pa.organization_id = :orgId",
-          { orgId: jwtData.companyId }
-        );
+        qb.andWhere(":orgId = ANY(project.independentCertifiers)", {
+          orgId: jwtData.companyId,
+        });
       }
     }
 
@@ -559,17 +556,15 @@ export class AnalyticsService {
 
     if (filters?.isMine) {
       if (jwtData.companyRole === CompanyRole.PROJECT_DEVELOPER) {
-        qb.andWhere("project.organization.id = :orgId", {
-          orgId: jwtData.companyId,
-        });
-      } else if (jwtData.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
-        qb.innerJoin(
-          "project_assignees",
-          "pa",
-          "pa.project_id = project.refId AND pa.organization_id = :orgId",
-          { orgId: jwtData.companyId }
-        );
-      }
+        if (jwtData.companyRole === CompanyRole.PROJECT_DEVELOPER) {
+          qb.andWhere("project.companyId = :orgId", {
+            orgId: jwtData.companyId,
+          });
+        } else if (jwtData.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
+          qb.andWhere(":orgId = ANY(project.independentCertifiers)", {
+            orgId: jwtData.companyId,
+          });
+        }
     }
 
     const rows = await qb.getRawMany();
