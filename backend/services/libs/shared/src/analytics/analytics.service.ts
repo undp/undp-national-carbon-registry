@@ -565,6 +565,7 @@ export class AnalyticsService {
             orgId: jwtData.companyId,
           });
         }
+      }
     }
 
     const rows = await qb.getRawMany();
