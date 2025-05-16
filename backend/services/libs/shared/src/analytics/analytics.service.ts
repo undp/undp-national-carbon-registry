@@ -463,7 +463,7 @@ export class AnalyticsService {
         lifecycle: lifecycleLogTypes,
       })
       .select("project.sector", "sector")
-      .addSelect("COUNT(DISTINCT project.id)", "count")
+      .addSelect("COUNT(DISTINCT project.refId)", "count")
       .groupBy("project.sector")
       .setParameters(subQuery.getParameters());
     if (filters?.sector) {
@@ -479,7 +479,7 @@ export class AnalyticsService {
         qb.innerJoin(
           "project_assignees",
           "pa",
-          "pa.project_id = project.id AND pa.organization_id = :orgId",
+          "pa.project_id = project.refId AND pa.organization_id = :orgId",
           { orgId: jwtData.companyId }
         );
       }
@@ -566,7 +566,7 @@ export class AnalyticsService {
         qb.innerJoin(
           "project_assignees",
           "pa",
-          "pa.project_id = project.id AND pa.organization_id = :orgId",
+          "pa.project_id = project.refId AND pa.organization_id = :orgId",
           { orgId: jwtData.companyId }
         );
       }
