@@ -415,21 +415,38 @@ export class AnalyticsService {
 
   async getProjectCountBySector(
     filters: ProjectDataRequestDTO,
-    user: User
+    jwtData: User
   ): Promise<Record<string, number>> {
+    const lifecycleLogTypes = [
+      ProjectAuditLogType.PENDING,
+      ProjectAuditLogType.REJECTED,
+      ProjectAuditLogType.APPROVED,
+      ProjectAuditLogType.PDD_SUBMITTED,
+      ProjectAuditLogType.PDD_REJECTED_BY_CERTIFIER,
+      ProjectAuditLogType.PDD_APPROVED_BY_CERTIFIER,
+      ProjectAuditLogType.PDD_REJECTED_BY_DNA,
+      ProjectAuditLogType.PDD_APPROVED_BY_DNA,
+      ProjectAuditLogType.VALIDATION_REPORT_SUBMITTED,
+      ProjectAuditLogType.VALIDATION_DNA_REJECTED,
+      ProjectAuditLogType.AUTHORISED,
+    ];
+
     const subQuery = this.auditRepository
       .createQueryBuilder("sub_audit")
-      .select('sub_audit."refId"', "projectId")
-      .addSelect('MAX(sub_audit."createdTime")', "latestTime")
-      .groupBy('sub_audit."refId"');
+      .select("sub_audit.refId", "projectId")
+      .addSelect("MAX(sub_audit.createdTime)", "latestTime")
+      .where("sub_audit.logType IN (:...lifecycle)", {
+        lifecycle: lifecycleLogTypes,
+      })
+      .groupBy("sub_audit.refId");
 
     if (filters?.startDate) {
-      subQuery.andWhere('sub_audit."createdTime" >= :startDate', {
+      subQuery.andWhere("sub_audit.createdTime >= :startDate", {
         startDate: filters.startDate,
       });
     }
     if (filters?.endDate) {
-      subQuery.andWhere('sub_audit."createdTime" <= :endDate', {
+      subQuery.andWhere("sub_audit.createdTime <= :endDate", {
         endDate: filters.endDate,
       });
     }
@@ -439,26 +456,32 @@ export class AnalyticsService {
       .innerJoin(
         `(${subQuery.getQuery()})`,
         "latest",
-        `latest."projectId" = audit."refId"
-         AND latest."latestTime" = audit."createdTime"`
+        'latest."projectId" = audit.refId AND latest."latestTime" = audit.createdTime'
       )
-      .innerJoin(ProjectEntity, "project", 'project."refId" = audit."refId"')
+      .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
+      .where("audit.logType IN (:...lifecycle)", {
+        lifecycle: lifecycleLogTypes,
+      })
       .select("project.sector", "sector")
-      .addSelect('COUNT(DISTINCT project."refId")', "count")
+      .addSelect("COUNT(DISTINCT project.id)", "count")
       .groupBy("project.sector")
       .setParameters(subQuery.getParameters());
-
     if (filters?.sector) {
       qb.andWhere("project.sector = :sector", { sector: filters.sector });
     }
 
     if (filters?.isMine) {
-      if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
-        qb.andWhere("project.companyId = :orgId", { orgId: user.companyId });
-      } else if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
-        qb.andWhere(":orgId = ANY(project.independentCertifiers)", {
-          orgId: user.companyId,
+      if (jwtData.companyRole === CompanyRole.PROJECT_DEVELOPER) {
+        qb.andWhere("project.organization.id = :orgId", {
+          orgId: jwtData.companyId,
         });
+      } else if (jwtData.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
+        qb.innerJoin(
+          "project_assignees",
+          "pa",
+          "pa.project_id = project.id AND pa.organization_id = :orgId",
+          { orgId: jwtData.companyId }
+        );
       }
     }
 
@@ -479,12 +502,30 @@ export class AnalyticsService {
 
   async getProjectCountBySectorScope(
     filters: ProjectDataRequestDTO,
-    user: User
+    jwtData: User
   ): Promise<Record<string, number>> {
+    const lifecycleLogTypes = [
+      ProjectAuditLogType.PENDING,
+      ProjectAuditLogType.REJECTED,
+      ProjectAuditLogType.APPROVED,
+      ProjectAuditLogType.PDD_SUBMITTED,
+      ProjectAuditLogType.PDD_REJECTED_BY_CERTIFIER,
+      ProjectAuditLogType.PDD_APPROVED_BY_CERTIFIER,
+      ProjectAuditLogType.PDD_REJECTED_BY_DNA,
+      ProjectAuditLogType.PDD_APPROVED_BY_DNA,
+      ProjectAuditLogType.VALIDATION_REPORT_SUBMITTED,
+      ProjectAuditLogType.VALIDATION_DNA_REJECTED,
+      ProjectAuditLogType.AUTHORISED,
+    ];
+
     const subQuery = this.auditRepository
       .createQueryBuilder("sub_audit")
       .select("sub_audit.refId", "projectId")
-      .addSelect("MAX(sub_audit.createdTime)", "latestTime");
+      .addSelect("MAX(sub_audit.createdTime)", "latestTime")
+      .where("sub_audit.logType IN (:...lifecycle)", {
+        lifecycle: lifecycleLogTypes,
+      })
+      .groupBy("sub_audit.refId");
 
     if (filters?.startDate) {
       subQuery.andWhere("sub_audit.createdTime >= :startDate", {
@@ -497,32 +538,37 @@ export class AnalyticsService {
       });
     }
 
-    subQuery.groupBy("sub_audit.refId");
-
     const qb = this.auditRepository
       .createQueryBuilder("audit")
       .innerJoin(
         `(${subQuery.getQuery()})`,
         "latest",
-        `latest."projectId" = audit.refId AND latest."latestTime" = audit.createdTime`
+        'latest."projectId" = audit.refId AND latest."latestTime" = audit.createdTime'
       )
       .innerJoin(ProjectEntity, "project", "project.refId = audit.refId")
+      .where("audit.logType IN (:...lifecycle)", {
+        lifecycle: lifecycleLogTypes,
+      })
       .select("project.sectoralScope", "sector")
       .addSelect("COUNT(DISTINCT project.refId)", "count")
       .groupBy("project.sectoralScope")
       .setParameters(subQuery.getParameters());
-
     if (filters?.sector) {
       qb.andWhere("project.sector = :sector", { sector: filters.sector });
     }
 
     if (filters?.isMine) {
-      if (user.companyRole === CompanyRole.PROJECT_DEVELOPER) {
-        qb.andWhere("project.companyId = :orgId", { orgId: user.companyId });
-      } else if (user.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
-        qb.andWhere(":orgId = ANY(project.independentCertifiers)", {
-          orgId: user.companyId,
+      if (jwtData.companyRole === CompanyRole.PROJECT_DEVELOPER) {
+        qb.andWhere("project.organization.id = :orgId", {
+          orgId: jwtData.companyId,
         });
+      } else if (jwtData.companyRole === CompanyRole.INDEPENDENT_CERTIFIER) {
+        qb.innerJoin(
+          "project_assignees",
+          "pa",
+          "pa.project_id = project.id AND pa.organization_id = :orgId",
+          { orgId: jwtData.companyId }
+        );
       }
     }
 
