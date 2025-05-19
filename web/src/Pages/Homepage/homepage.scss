@@ -1,5 +1,5 @@
-@use '../../Assets/Fonts/fonts.scss';
-@use '../../Styles/variables.scss';
+@use "../../Assets/Fonts/fonts.scss";
+@use "../../Styles/variables.scss";
 
 $max-pagewidth: 1600px;
 $title-color: #3a8ab5;
@@ -29,7 +29,7 @@ $title-color: #3a8ab5;
     }
 
     .title {
-      font-family: 'MuseoSans';
+      font-family: "MuseoSans";
       font-size: 1.2rem;
       color: variables.$logo-text-color;
       font-weight: 700;
@@ -39,7 +39,7 @@ $title-color: #3a8ab5;
 
     .title-sub {
       font-weight: 100 !important;
-      font-family: 'MuseoSans';
+      font-family: "MuseoSans";
       font-size: 1.2rem;
       color: variables.$logo-text-color;
     }
@@ -59,7 +59,7 @@ $title-color: #3a8ab5;
       font-size: 0.65rem;
       color: variables.$logo-text-color;
       margin-top: -5px;
-      font-family: 'MuseoSans';
+      font-family: "MuseoSans";
       margin-left: 6px;
     }
   }
@@ -82,31 +82,39 @@ $title-color: #3a8ab5;
     }
 
     .ant-btn-primary {
-      background: linear-gradient(to right, #1890ff, variables.$gradient-background-end);
+      background: linear-gradient(
+        to right,
+        #1890ff,
+        variables.$gradient-background-end
+      );
       color: variables.$dark-text-color;
       border: none;
     }
 
     .ant-btn-primary:hover {
-      background: linear-gradient(to right, variables.$gradient-background-end, #1890ff);
+      background: linear-gradient(
+        to right,
+        variables.$gradient-background-end,
+        #1890ff
+      );
     }
   }
 
   .image-container {
     background-image: linear-gradient(
         to bottom,
-        rgba(255, 255, 255, 0.3) 10%,
-        rgba(4, 105, 177, 0.24) 40%
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(4, 105, 177, 0.24) 0%
       ),
-      url('../../Assets/Images/home_image.jpg');
+      url("../../Assets/Images/sigiriya.jpg");
     background-image: linear-gradient(
         to bottom,
-        rgba(255, 255, 255, 0.3) 10%,
-        rgba(4, 105, 177, 0.24) 40%
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(4, 105, 177, 0.24) 0%
       ),
       image-set(
-        '../../Assets/Images/home_image.jpg' type('image/jpg'),
-        '../../Assets/Images/home_image.webp' type('image/webp')
+        "../../Assets/Images/sigiriya.jpg" type("image/jpg"),
+        "../../Assets/Images/sigiriya.webp" type("image/webp")
       );
     background-size: cover;
     background-position: top !important;
@@ -391,7 +399,11 @@ $title-color: #3a8ab5;
       min-height: 20rem;
       max-width: 26rem;
       justify-content: center;
-      background: linear-gradient(to right, variables.$gradient-background-start, variables.$gradient-background-end);
+      background: linear-gradient(
+        to right,
+        variables.$gradient-background-start,
+        variables.$gradient-background-end
+      );
       border-radius: 0.625rem;
       padding: 50px 25px 25px 25px;
       margin: 10px;
@@ -641,7 +653,7 @@ $title-color: #3a8ab5;
 
       .homepage_accordian {
         border-radius: 5px;
-        font-family: 'Inter';
+        font-family: "Inter";
         margin-bottom: 80px;
 
         .homepage_collapsepanel {
