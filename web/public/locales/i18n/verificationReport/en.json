@@ -417,7 +417,7 @@
   "addFinding": "Add Finding",
   "confirmModalMessage": "Are you sure you want to submit ?",
   "confirmModalSubMessage": "You can't undo this action",
-  "approveMessage": "Are you sure you want to approve this Verification Report ?",
+  "approveMessage": "Are you sure you want to approve this Verification Report?",
   "declineMessage": "Are you sure you want to decline this Verification Report?",
   "checkboxMessage": "I understand that this action cannot be undone",
   "interviews": "Interviews",

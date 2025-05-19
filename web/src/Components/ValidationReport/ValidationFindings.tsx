@@ -223,6 +223,10 @@ const ValidationFindings = (props: ValidationStepsProps) => {
               <h3 className="validation-findings-heading">
                 {t('validationReport:applicationMethodologiesSectionHeading')}
               </h3>
+              
+              <h4 className="validation-findings-subHeading">
+                  {t('validationReport:applicationMethodologiesBaselines')}
+                </h4>
               {/* Application and selection of methodologies and standardized baselines start */}
               <>
                 {/* <h4 className="validation-findings-subHeading">
