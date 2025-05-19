@@ -194,7 +194,7 @@ export const SLCFDashboardComponent = (props: any) => {
 
   // Chart Components Width
   const [statusBarchartWidth, setStatusBarChartWidth] = useState(
-    window.innerWidth > 1600 ? "300%" : "180%"
+    window.innerWidth > 1600 ? "280%" : "180%"
   );
   const [scopeBarchartWidth, setScopeBarChartWidth] = useState(
     window.innerWidth > 1600 ? "270%" : "220%"
@@ -940,7 +940,7 @@ export const SLCFDashboardComponent = (props: any) => {
     const handleResize = () => {
       if (window.innerWidth > 1600) {
         setScopeBarChartWidth("270%");
-        setStatusBarChartWidth("300%");
+        setStatusBarChartWidth("280%");
         setCreditChartsWidth("510%");
         setSectorPieChartWidth("150%");
       } else if (window.innerWidth > 1200) {
