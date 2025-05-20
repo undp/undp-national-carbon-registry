@@ -327,6 +327,12 @@ export const AddNewCompanyComponent = (props: any) => {
       setLoading(false);
     }
   };
+  const companyRoleMap: Record<string, string> = {
+  PD: 'Project Developer',
+  IC: 'Independent Certifier',
+
+};
+
 
   const onUpdateCompany = async () => {
     setLoading(true);
@@ -797,7 +803,7 @@ export const AddNewCompanyComponent = (props: any) => {
                             ) : (
                               <BankOutlined className="role-icons" />
                             )}
-                            {t('addCompany:' + companyRole)}
+                            {t(companyRoleMap[companyRole])}
                           </Radio.Button>
                         </div>
                       ) : (
