@@ -351,57 +351,72 @@ export const ProgrammeCreationComponent = (props: any) => {
 
   const t = translator.t;
 
-  useEffect(() => {
-    const getViewData = async () => {
-      setLoading(true);
-      let documentData: any;
-      let projectData: any;
-      try {
-        const res = await post(API_PATHS.QUERY_DOCUMENT, {
-          refId: state?.documentId,
-          documentType: DocumentEnum.INF,
-        });
+ useEffect(() => {
+  const getViewData = async () => {
+    setLoading(true);
+    let documentData: any;
+    let projectData: any;
 
-        if (res?.statusText === "SUCCESS") {
-          documentData = res?.data?.data;
-        }
-      } catch (error) {
-        console.log("----------error-----------");
-      } finally {
-        setLoading(false);
+    try {
+      const res = await post(API_PATHS.QUERY_DOCUMENT, {
+        refId: state?.documentId,
+        documentType: DocumentEnum.INF,
+      });
+
+      if (res?.statusText === "SUCCESS") {
+        documentData = res?.data?.data;
       }
+    } catch (error) {
+      console.log("----------error-----------", error);
+    } finally {
+      setLoading(false);
+    }
 
-      try {
-        const res = await post(API_PATHS.PROGRAMME_BY_ID, {
-          programmeId: id,
-        });
+    try {
+      const res = await post(API_PATHS.PROGRAMME_BY_ID, {
+        programmeId: id,
+      });
 
-        if (res?.statusText === "SUCCESS") {
-          projectData = res?.data;
-          console.log("----------projectData----------", projectData.independentCertifiers, projectData.independentCertifiers.join(","));
-        }
-      } catch (error) {}
-
-      if (documentData && projectData) {
-        const viewData = {
-          ...documentData,
-          briefProjectDescription: documentData.projectDescription,
-          optionalDocuments: mapBase64ToFields(
-            documentData?.additionalDocuments
-          ),
-          projectLocation: documentData.geographicalLocationCoordinates,
-          startTime: toMoment(documentData?.startDate),
-          independentCertifiers: projectData?.independentCertifiers?.join(","),
-        };
-        form.setFieldsValue(viewData);
+      if (res?.statusText === "SUCCESS") {
+        projectData = res?.data;
+        console.log("----------projectData----------", projectData.independentCertifiers, projectData.independentCertifiers.join(","));
       }
+    } catch (error) {
+      console.log("----------error project data-----------", error);
+    }
+
+    // ✅ Format sectoral scope string from "ENERGY_DEMAND" to "Energy Demand"
+    const formatScope = (value: string | undefined): string => {
+      if (!value) return "";
+      return value
+        .toLowerCase()
+        .split("_")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
     };
 
-    if (state?.mode === FormMode.VIEW && state?.documentId) {
-      setDisableFields(true);
-      getViewData();
+    if (documentData && projectData) {
+      const viewData = {
+        ...documentData,
+        briefProjectDescription: documentData.projectDescription,
+        optionalDocuments: mapBase64ToFields(documentData?.additionalDocuments),
+        projectLocation: documentData.geographicalLocationCoordinates,
+        startTime: toMoment(documentData?.startDate),
+        independentCertifiers: projectData?.independentCertifiers?.join(","),
+        sectoralScope: formatScope(documentData?.sectoralScope),
+      };
+
+      form.setFieldsValue(viewData);
     }
-  }, []);
+  };
+
+  if (state?.mode === FormMode.VIEW && state?.documentId) {
+    setDisableFields(true);
+    getViewData();
+  }
+}, []);
+
+
 
   const submitForm = async (values: any) => {
     const base64Docs: string[] = [];
