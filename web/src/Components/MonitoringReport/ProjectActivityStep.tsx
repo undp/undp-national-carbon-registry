@@ -310,7 +310,7 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
                     </Form.Item>
 
                     <Form.Item
-                      label={t("monitoringReport:siteNo")}
+                      label={t("monitoringReport:pa_siteNo")}
                       name="siteNo"
                       rules={[
                         {
@@ -326,7 +326,7 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
                               value === undefined
                             ) {
                               throw new Error(
-                                `${t("monitoringReport:siteNo")} ${t(
+                                `${t("monitoringReport:pa_siteNo")} ${t(
                                   "isRequired"
                                 )}`
                               );

@@ -42,7 +42,7 @@
   "verificationSubmitted": "Verification Report is submitted successfully",
   "verificationApproved": "Verfication Report is approved successfully",
   "verificationRejected": "Verfication Report is rejected",
-  "greaterThanRemainingEstimatedCredits": "Activity credits are greater than remaining estimated credits",
+  "greaterThanRemainingEstimatedCredits": "Project has reached maximum allowed credit limit",
   "invlaidCreditVerifed": "Credit amounts to verify are invalid",
   "greaterThanCurrentVintage": "Activity vintage is greater than current vintage",
   "invalidSectoralScopeForSector": "Invalid sectoral scope for the sector",
