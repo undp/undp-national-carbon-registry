@@ -507,8 +507,14 @@ export const optionSideBar: any = {
   },
   colors: [],
   xaxis: {
-    categories: [],
+  categories: [],
+  labels: {
+    formatter: function (val: number) {
+      return Number.isInteger(val) ? val.toString() : "";
+    },
   },
+},
+
   yaxis: {
     labels: {
       show: false,
