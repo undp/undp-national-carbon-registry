@@ -526,15 +526,16 @@ export const optionSideBar: any = {
     verticalAlign: "middle",
     style: { fontSize: "16px", color: "#999" },
   },
-  tooltip: {
+ tooltip: {
   theme: "dark",
+  followCursor: true, // Make tooltip follow the mouse pointer
   x: { show: false },
+  fixed: {
+    enabled: false, // Disable fixed positioning
+  },
   custom: function({ series, seriesIndex, dataPointIndex, w }) {
-
     const sectoralScope = w.globals.labels[dataPointIndex];
-
     const value = series[seriesIndex][dataPointIndex];
-
 
     let formattedValue = value;
     if (value >= 1000) {
