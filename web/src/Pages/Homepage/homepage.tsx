@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Trans, useTranslation } from "react-i18next";
 import i18next from "i18next";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 import sliderLogo from "../../Assets/Images/logo-slider.png";
 import undpLogo from "../../Assets/Images/undp1.webp";
 import EBRD from "../../Assets/Images/EBRD.webp";
@@ -18,6 +20,10 @@ import WBANKff from "../../Assets/Images/WBANK.png";
 import forestfall from "../../Assets/Images/forestnew.png";
 import resources from "../../Assets/Images/resources.webp";
 import resourcesfall from "../../Assets/Images/resources.png";
+import Government from "../../Assets/Images/gov.svg";
+import Projdev from "../../Assets/Images/projdev.svg";
+import Certifier from "../../Assets/Images/certif.svg";
+import Buyer from "../../Assets/Images/buyer.svg";
 import LayoutFooter from "../../Components/Footer/layout.footer";
 // import { ImgWithFallback } from '@undp/carbon-library';
 import "./homepage.scss";
@@ -56,6 +62,8 @@ const Homepage = () => {
       element.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
 
   useEffect(() => {
     if (localStorage.getItem("i18nextLng")!.length > 2) {
@@ -116,7 +124,7 @@ const Homepage = () => {
                 <div className="subhome">{t("homepage:subHeading")}</div>
               </div>
             </Row>
-            <Row>
+            <Row className="arrow-ctn">
               {Visible && (
                 <nav className={"arrows"}>
                   <svg onClick={handleClickScroll}>
@@ -128,6 +136,84 @@ const Homepage = () => {
               )}
             </Row>
           </div>
+        </Col>
+      </Row>
+      <Row className="vision">
+        <Col>
+        <section className="vision-section" ref={ref}>
+      <motion.div
+        className="vision-container"
+        initial={{ opacity: 0, y: 40 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <h2 className="vision-title">Vision</h2>
+        <p className="vision-description">
+          UNDP's Open-Source National Carbon Registry Enables Countries to Implement and Manage Carbon Markets by Issuing, Managing, and Tracking Carbon Credits with Confidence, Achieving National Climate Commitments.
+        </p>
+        <h3 className="vision-subtitle">The Platform Supports:</h3>
+
+        <div className="vision-grid">
+          <motion.div
+            className="vision-card"
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.2, duration: 0.6 }}
+          >
+            <div className="vision-icon">
+            <Government className="vislogo" />
+             </div>
+            <p className="vision-role">Governments</p>
+            <p className="vision-text">
+              Launching Carbon Markets Aligned with the Paris Agreement
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="vision-card"
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            <div className="vision-icon">
+            <Projdev className="vislogo" />
+             </div>
+            <p className="vision-role">Project Developers</p>
+            <p className="vision-text">
+              Accessing Climate Finance for Emissions-Reducing Projects
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="vision-card"
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.6, duration: 0.6 }}
+          >
+            <div className="vision-icon">
+            <Certifier className="vislogo" />
+             </div>
+            <p className="vision-role">Certifiers</p>
+            <p className="vision-text">Verifying Climate Action Efficiently</p>
+          </motion.div>
+
+          <motion.div
+            className="vision-card"
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.8, duration: 0.6 }}
+          >
+            <div className="vision-icon">
+            <Buyer className="vislogo" />
+             </div>
+            <p className="vision-role">Buyers</p>
+            <p className="vision-text">
+              Navigating a Trusted Marketplace for Carbon Credits
+            </p>
+          </motion.div>
+        </div>
+      </motion.div>
+    </section>
         </Col>
       </Row>
       {/* <Row gutter={[8, 8]}>
