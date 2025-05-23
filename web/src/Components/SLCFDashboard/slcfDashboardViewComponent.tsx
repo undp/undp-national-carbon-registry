@@ -386,7 +386,7 @@ export const SLCFDashboardComponent = (props: any) => {
 
       // Calculate the maximum value from statusCount for Y-axis scaling
       const rawMaxValue = Math.max(...statusCount, 1); // Use 1 as fallback if array is empty
-      const computedMax = parseInt((rawMaxValue * 1.2).toString(), 10);
+      const computedMax = parseInt((rawMaxValue * 1).toString(), 10);
       const tickAmount = rawMaxValue > 5 ? 5 : Math.ceil(rawMaxValue);
 
       // Update the options with calculated values
@@ -656,7 +656,7 @@ const getProjectCountBySectoralScope = async (
 
       // Calculate the maximum value from sectoralCount for Y-axis scaling
       const rawMaxValue = Math.max(...sectoralCount, 1); // Use 1 as fallback if array is empty
-      const computedMax = parseInt((rawMaxValue * 1.2).toString(), 10);
+      const computedMax = parseInt((rawMaxValue * 1).toString(), 10);
       const tickAmount = rawMaxValue > 5 ? 5 : Math.ceil(rawMaxValue);
 
       setProjectCountBySectoralScope([
