@@ -239,16 +239,17 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                               ]}
                             >
                               <Radio.Group
-                                className="radio-btn-grp"
-                                disabled={disableFields}
-                              >
-                                <Radio value="IR">
+                                 className="radio-btn-grp"
+                                  disabled={disableFields}
+                                  >
+                              <Radio value="IR" style={{ paddingLeft: '18px' }}>
                                   {t("validationReport:IR")}
-                                </Radio>
-                                <Radio value="ER">
-                                  {t("validationReport:ER")}
-                                </Radio>
+                             </Radio>
+                              <Radio value="ER">
+                                {t("validationReport:ER")}
+                              </Radio>
                               </Radio.Group>
+
                             </Form.Item>
                           </Col>
                           <Col xl={3} className="other-cols col">

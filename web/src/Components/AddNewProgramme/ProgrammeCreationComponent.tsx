@@ -386,14 +386,11 @@ export const ProgrammeCreationComponent = (props: any) => {
     }
 
     // ✅ Format sectoral scope string from "ENERGY_DEMAND" to "Energy Demand"
-    const formatScope = (value: string | undefined): string => {
-      if (!value) return "";
-      return value
-        .toLowerCase()
-        .split("_")
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-    };
+ const formatScope = (value: string | undefined): string => {
+  if (!value) return "";
+  if (value.toUpperCase() === "N/A") return "NA";
+  return INF_SECTORAL_SCOPE[value.toUpperCase()] || value; // Fallback to original value if key not found
+};
 
     if (documentData && projectData) {
       const viewData = {

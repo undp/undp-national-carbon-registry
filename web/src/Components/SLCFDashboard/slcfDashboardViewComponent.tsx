@@ -35,6 +35,8 @@ import { ProjectSectorEnum } from "../../Definitions/Enums/projectSector.enum";
 import { PendingActionsComponent } from "./pendingActionsComponent";
 import { SectorPieChart } from "./SectorPieChart";
 import { SECTOR_TO_SCOPES_MAP } from "../AddNewProgramme/ProgrammeCreationComponent";
+
+
 const { RangePicker } = DatePicker;
 
 export const SLCFDashboardComponent = (props: any) => {
@@ -47,6 +49,7 @@ export const SLCFDashboardComponent = (props: any) => {
   } = props;
   const { post, get } = useConnection();
   const { userInfoState } = useUserContext();
+  const isAdminOrManager = userInfoState?.userRole === 'Admin' || userInfoState?.userRole === 'Root';
 
   // Dashboard Endpoint Data
   const [pendingActions, setPendingActions] =
@@ -1120,12 +1123,14 @@ useEffect(() => {
               className="statistic-card-col retirements-by-date-chart-col"
               style={{ width: "100%" }}
             >
-              <PendingActionsComponent
-                pendingActionData={pendingActions}
-                loading={loadingPendingActions}
-                toolTipText={t("pendingTaskTooltip")}
-                t={t}
-              />
+              {isAdminOrManager && (
+          <PendingActionsComponent
+            pendingActionData={pendingActions}
+            loading={loadingPendingActions}
+            toolTipText={t('pendingTaskTooltip')}
+            t={t}
+          />
+        )}
             </Col>
           </Row>
         </div>
