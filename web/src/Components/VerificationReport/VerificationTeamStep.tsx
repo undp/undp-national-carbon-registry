@@ -208,7 +208,7 @@ export const VerificationTeamStep = (props: VerificationStepProps) => {
                                   ]}
                                 >
                                   <Radio.Group className="radio-btn-grp" disabled={disableFields}>
-                                    <Radio value="IR">{t('verificationReport:IR')}</Radio>
+                                    <Radio value="IR" style={{ paddingLeft: '18px' }}>{t('verificationReport:IR')}</Radio>
                                     <Radio value="ER">{t('verificationReport:ER')}</Radio>
                                   </Radio.Group>
                                 </Form.Item>
