@@ -27,6 +27,8 @@ import Buyer from "../../Assets/Images/buyer.svg";
 import LayoutFooter from "../../Components/Footer/layout.footer";
 // import { ImgWithFallback } from '@undp/carbon-library';
 import "./homepage.scss";
+import ProcessFlow from "../../Components/Homepage/Howdoesitwork";
+import PartnershipBanner from "../../Components/Homepage/Partners";
 import {
   GlobeAmericas,
   ShieldCheck,
@@ -36,12 +38,15 @@ import {
 import { ImgWithFallback } from "../../Components/ImgwithFallback/imgWithFallback";
 import CollapsePanel from "antd/lib/collapse/CollapsePanel";
 import { ROUTES } from "../../Config/uiRoutingConfig";
+import CarbonDashboard from "../../Components/Homepage/CarbonDashboard";
+import DigitalPublicGood from "../../Components/Homepage/DigitalPublic";
 
 const Homepage = () => {
   const { i18n, t } = useTranslation(["common", "homepage"]);
   const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
   const navigate = useNavigate();
   const [Visible, setVisible] = useState(true);
+
 
   const controlDownArrow = () => {
     if (window.scrollY > 150) {
@@ -579,6 +584,10 @@ const Homepage = () => {
           </div>
         </Col>
       </Row> */}
+      <CarbonDashboard/>
+      <DigitalPublicGood/>
+      <ProcessFlow/>
+      <PartnershipBanner/>
       <LayoutFooter />
     </div>
   );
