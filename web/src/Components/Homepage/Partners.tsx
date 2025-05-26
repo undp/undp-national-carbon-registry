@@ -27,7 +27,7 @@ const PartnershipBanner = () => {
       <div className="logos-container">
         <div className="logo-item">
           <div className="logo">
-            <img src={EBRD} alt="European Bank for Reconstruction and Development" className="logo-img" />
+            <img src={EBRD} alt="European Bank for Reconstruction and Development" className="logo-img ebrd" />
           </div>
         </div>
 
