@@ -1023,7 +1023,7 @@
 /* PartnershipBanner */
 .partnership-banner {
   max-width: 1360px;
-  margin: -3rem auto 2rem auto;
+  margin: -2.5rem auto 2rem auto;
   padding: 20px;
   border-radius: 8px;
   font-family: Arial, sans-serif;
@@ -1037,27 +1037,28 @@
   color: #00252B;
   font-size: 18px;
   font-weight: bold;
-  margin: 0 0 12px 0;
+  margin: 0 0 12px 24px;
 }
 
 .banner-description {
   color: #3A3541CC;
   font-size: 13px;
   line-height: 1.5;
-  margin: 0;
+  margin: 0 0 0 24px;
 }
 
 .banner-description strong {
   font-weight: 600;
-  color: #0063AC;
+  color:#003257 ;
   text-decoration: underline;
-  text-decoration-color: #4a90e2;
+  text-decoration-color: #0063AC;
   text-underline-offset: 2px;
 }
 .logos-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin: 0 0 0 24px;
   flex-wrap: wrap;
   gap: 20px;
 }
@@ -1085,17 +1086,11 @@
   max-height: 100px;
   max-width: 160px;
   object-fit: contain;
-  filter: brightness(0.8);
-  transition: filter 0.3s ease;
 }
 
-.logo-img:hover {
-  filter: brightness(1);
-}
-
-.logo-text {
-  font-size: 11px;
-  line-height: 1.2;
+.ebrd{
+    max-height: 150px;
+    max-width: 240px;
 }
 
 .logo-main {
@@ -1107,14 +1102,6 @@
   color: #718096;
   font-size: 10px;
 }
-
-.logo-subtitle {
-  font-size: 9px;
-  color: #718096;
-  margin-top: 5px;
-  line-height: 1.2;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .logos-container {
@@ -1127,8 +1114,8 @@
   }
   
   .logo-img {
-    max-height: 40px;
-    max-width: 70px;
+    max-height: 80px;
+    max-width: 140px;
   }
   
   .banner-description {
@@ -1152,5 +1139,135 @@
   .logo-img {
     max-height: 45px;
     max-width: 75px;
+  }
+}
+/* FAQ styles*/
+
+.faq-container {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.faq-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 24px;
+  padding-bottom: 8px;
+  margin-left: 24px;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-left: 24px;
+}
+
+.faq-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+  background: white;
+  margin-bottom: 8px;
+}
+
+.faq-question {
+  width: 100%;
+  padding: 16px 20px 0 20px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.faq-question:hover {
+  background-color: #f9fafb;
+}
+
+.faq-question.active {
+  background-color: #f3f4f6;
+}
+
+.question-text {
+  flex: 1;
+  margin-left: 12px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.chevron {
+  font-size: 12px;
+  color: #6b7280;
+  transition: transform 0.2s ease;
+  user-select: none;
+   margin-bottom: 10px;
+}
+
+.chevron.rotated {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  padding: 0 20px 20px 20px;
+  border-top: 1px solid #f3f4f6;
+  background-color: #fafafa;
+}
+
+.faq-answer p {
+  margin: 0;
+  padding-top: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .faq-container {
+    padding: 16px;
+  }
+  
+  .faq-question {
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+  
+  .faq-answer {
+    padding: 0 16px 16px 16px;
+  }
+  
+  .question-text {
+    margin-right: 8px;
+  }
+}
+
+/* Focus styles for accessibility */
+.faq-question:focus {
+  outline-offset: 2px;
+}
+
+/* Animation for smooth opening/closing */
+.faq-answer {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

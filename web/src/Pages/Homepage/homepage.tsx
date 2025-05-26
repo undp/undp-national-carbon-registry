@@ -29,6 +29,7 @@ import LayoutFooter from "../../Components/Footer/layout.footer";
 import "./homepage.scss";
 import ProcessFlow from "../../Components/Homepage/Howdoesitwork";
 import PartnershipBanner from "../../Components/Homepage/Partners";
+import FAQ from "../../Components/Homepage/Faq";
 import {
   GlobeAmericas,
   ShieldCheck,
@@ -588,6 +589,7 @@ const Homepage = () => {
       <DigitalPublicGood/>
       <ProcessFlow/>
       <PartnershipBanner/>
+      <FAQ/>
       <LayoutFooter />
     </div>
   );
