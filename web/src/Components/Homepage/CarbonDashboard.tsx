@@ -1,43 +1,68 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import './Dashboard.scss';
 
 const CarbonDashboard = () => {
   const [projectCount, setProjectCount] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const statsRef = useRef(null);
 
-  useEffect(() => {
+  const animateCounter = useCallback(() => {
     const targetCount = 228;
-    const duration = 4000; 
+    const duration = 1500;
     const startTime = Date.now();
     
-    const animateCounter = () => {
-      const elapsed = Date.now() - startTime;
+    const updateCounter = () => {
+      const now = Date.now();
+      const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
-
+      
       const easeOutQuart = 1 - Math.pow(1 - progress, 4);
       const currentCount = Math.floor(easeOutQuart * targetCount);
       
       setProjectCount(currentCount);
-      setIsAnimating(true);
       
-      setTimeout(() => {
-        setIsAnimating(false);
-      }, 100);
+      setIsAnimating(progress < 1);
       
       if (progress < 1) {
-        requestAnimationFrame(animateCounter);
+        requestAnimationFrame(updateCounter);
       } else {
+        // Animation complete
         setProjectCount(targetCount);
+        setIsAnimating(false);
       }
     };
 
-    // Start animation after a short delay
-    const timer = setTimeout(() => {
-      animateCounter();
-    }, 500);
+    requestAnimationFrame(updateCounter);
+  }, []); 
 
-    return () => clearTimeout(timer);
-  }, []);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasAnimated) {
+            setHasAnimated(true);
+            animateCounter();
+          }
+        });
+      },
+      {
+        threshold: 0.5,
+        rootMargin: '0px 0px -50px 0px'
+      }
+    );
+
+    if (statsRef.current) {
+      observer.observe(statsRef.current);
+    }
+
+    return () => {
+      if (statsRef.current) {
+        observer.unobserve(statsRef.current);
+      }
+    };
+  }, [animateCounter, hasAnimated]); 
 
   const projectData = [
     { value: 150, title: 'Authorised' },
@@ -70,7 +95,7 @@ const CarbonDashboard = () => {
                 All in One Carbon Management Platform and Dashboard for Countries
               </h1>
             </div>
-            <div className="stats-container">
+            <div className="stats-container" ref={statsRef}>
               <div className="stats-wrapper">
                 <div className="main-statistic procount">
                   <div className={`statistic-value ${isAnimating ? 'counting' : ''}`}>
@@ -98,7 +123,13 @@ const CarbonDashboard = () => {
           <h3 className="section-title">
             Project Distribution by Status
           </h3>
-          <div className="cards-grid cards-grid-3">
+          <motion.div
+          className='cards-grid cards-grid-3'
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 0.8, y: 0 }}
+          transition={{ duration: 1.5, ease: 'easeOut' }}
+          viewport={{ once: true }}
+          >
             {projectData.map((item, index) => (
               <div key={index} className="project-card">
                 <div className="project-statistic">
@@ -111,7 +142,7 @@ const CarbonDashboard = () => {
                 </div>
               </div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
         {/* Carbon Credit Distribution Section */}
@@ -119,7 +150,13 @@ const CarbonDashboard = () => {
           <h3 className="section-title">
             Carbon Credit Distribution by Status
           </h3>
-          <div className="cards-grid cards-grid-4">
+          <motion.div
+          className='cards-grid cards-grid-4'
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 0.8, y: 0 }}
+          transition={{ duration: 1.5, ease: 'easeOut' }}
+          viewport={{ once: true }}
+          >
             {creditData.map((item, index) => (
               <div key={index} className="credit-card">
                 <div className="credit-statistic">
@@ -131,14 +168,13 @@ const CarbonDashboard = () => {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+            ))}</motion.div>
         </div>
 
         {/* Footer Text */}
         <div className="footer-section">
           <p className="footer-text">
-            The Paris Agreement is an international treaty on climate change aiming to limit global warming to below 2°C, with efforts to keep it to 1.5°C by 2100. Article 6 introduces mechanisms for countries to cooperate on climate goals through market-based (Articles 6.2 and 6.4) and non-market approaches (Article 6.8). All countries must account for any carbon credits used or transferred within their Nationally Determined Contributions (NDCs).<b> Digital carbon registries are essential for countries to track and manage carbon credits, ensuring data integrity and enabling consistent reporting.</b>
+            The Paris Agreement is an international treaty on climate change aiming to limit global warming to below 2°C, with efforts to keep it to 1.5°C by 2100. Article 6 introduces mechanisms for countries to cooperate on climate goals through market-based (Articles 6.2 and 6.4) and non-market approaches (Article 6.8). All countries must account for any carbon credits used or transferred within their Nationally Determined Contributions (NDCs).<b> Digital carbon registries are essential for countries to track and manage carbon credits, ensuring data integrity and enable consistent reporting.</b>
           </p>
         </div>
       </div>

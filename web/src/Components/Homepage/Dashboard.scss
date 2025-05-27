@@ -5,6 +5,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: inter;
 }
 
 /* Main Dashboard Container */
@@ -38,6 +39,7 @@
 }
 
 /* Main Card Styles */
+
 .main-card {
   background: #F1FBFF;
   border-radius: 20px;
@@ -65,7 +67,7 @@
   background-image: linear-gradient(to right, #0063AC, #003257);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-family: Inter, sans-serif;
+  font-family: Inter;
   font-size: 32px;
   font-weight: 700;
   line-height: 1.2;
@@ -91,6 +93,7 @@
 .main-statistic {
   text-align: center;
   margin-right: -3rem;
+  font-family:inter;
 }
 .procount{
     padding-right: 90px;
@@ -100,7 +103,7 @@
   background-image: linear-gradient(to right, #0063AC, #003257);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-family: 'Bebas Neue';
+  font-family:inter;
   font-size: 48px;
   font-weight: 600;
   line-height: 100%;
@@ -177,6 +180,7 @@
 .project-value {
   color: #16B1FF;
   font-size: 2.5rem;
+  font-family: inter;
   font-weight: 700;
   line-height: 1;
   margin-bottom: 0.5rem;
@@ -197,345 +201,7 @@
 .credit-value {
   color: #16B1FF;
   font-size: 2.5rem;
-  font-weight: 700;
-  line-height: 1;
-  margin-bottom: 0.5rem;
-}
-
-.credit-title {
-  color: #3A3541CC;
-  font-size: 1rem;
-  font-weight: 500;
-  opacity: 0.9;
-}
-
-/* Footer Styles */
-.footer-section {
-  margin-top: 3rem;
-}
-
-.footer-text {
-  color: #3A3541CC;
-  font-size: 0.875rem;
-  line-height: 1.6;
-  text-align: justify;
-  margin: 0;
-}
-
-/* Responsive Design */
-@media (max-width: 1440px) {
-  .dashboard-container {
-    max-width: 1200px;
-    width: 90%;
-  }
-}
-
-@media (max-width: 1024px) {
-  .dashboard-container {
-    padding: 2rem;
-    width: 85%;
-  }
-  
-  .main-title-container {
-    flex: 0 0 55%;
-    min-width: 350px;
-  }
-  
-  .stats-container {
-    flex: 0 0 40%;
-    min-width: 250px;
-    padding-right: 1rem;
-  }
-  
-  .main-title {
-    font-size: 28px;
-  }
-  
-  .statistic-value {
-    font-size: 56px;
-  }
-}
-
-@media (max-width: 768px) {
-  .dashboard-container {
-    padding: 1.5rem;
-    width: 90%;
-  }
-  
-  .main-card {
-    padding: 2rem;
-  }
-  
-  .main-card-content {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .main-title-container {
-    flex: none;
-    min-width: auto;
-    max-width: none;
-    width: 100%;
-  }
-  
-  .stats-container {
-    flex: none;
-    min-width: auto;
-    width: 100%;
-    justify-content: center;
-    padding-right: 0;
-  }
-  
-  .main-title {
-    font-size: 24px;
-    text-align: center;
-    margin-bottom: 2rem;
-    margin-left: 0;
-  }
-  
-  .stats-wrapper {
-    gap: 2rem;
-    justify-content: center;
-  }
-  
-  .statistic-value {
-    font-size: 48px;
-  }
-}
-
-@media (max-width: 480px) {
-  .project-card,
-  .credit-card {
-    padding: 1.5rem;
-  }
-  
-  .main-title-container {
-    min-width: auto;
-  }
-  
-  .main-title {
-    font-size: 20px;
-  }
-  
-  .statistic-value {
-    font-size: 40px;
-  }
-  
-  .project-value {
-    font-size: 2rem;
-  }
-  
-  .credit-value {
-    font-size: 1.75rem;
-  }
-  
-  .stats-wrapper {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-}
-
-/* Public Good - Aligned with Dashboard Container */
-/*
-/* Dashboard.css - External Stylesheet */
-
-/* Reset and Base Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* Main Dashboard Container */
-.carbon-dashboard {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: white;
-  min-height: 100vh;
-  padding: 2rem;
-}
-
-.dashboard-container {
-  max-width: 1360px;
-  margin: 0 auto;
-  padding: 3rem;
-  width: 95%;
-}
-
-/* Header Styles */
-.dashboard-header {
-  margin-bottom: 2rem;
-}
-
-.header-title {
-  background-image: linear-gradient(to right, #0063AC, #003257);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  margin: 0;
-}
-
-/* Main Card Styles */
-.main-card {
-  background: #F1FBFF;
-  border-radius: 20px;
-  margin-bottom: 3rem;
-  border: none;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
-  padding: 3rem;
-}
-
-.main-card-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.main-title-container {
-  flex: 0 0 60%;
-  min-width: 400px;
-  max-width: 600px;
-}
-
-.main-title {
-  background-image: linear-gradient(to right, #0063AC, #003257);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-family: Inter, sans-serif;
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1.2;
-  margin: 0 0 0 -1rem;
-}
-
-.stats-container {
-  flex: 0 0 35%;
-  min-width: 280px;
-  display: flex;
-  justify-content: flex-end;
-  padding-right: 2rem;
-}
-
-.stats-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  gap: 3rem;
-  flex-wrap: wrap;
-}
-
-/* Statistics Styles */
-.main-statistic {
-  text-align: center;
-  margin-right: -3rem;
-}
-.procount{
-    padding-right: 90px;
-}
-
-.statistic-value {
-  background-image: linear-gradient(to right, #0063AC, #003257);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-family: 'Bebas Neue';
-  font-size: 48px;
-  font-weight: 600;
-  line-height: 100%;
-  margin-bottom: 0.5rem;
-}
-
-.statistic-title {
-  color: #3A3541CC;
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.counting .statistic-value {
-  animation: pulse 0.1s ease-in-out;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-/* Section Styles */
-.section {
-  margin-bottom: 3rem;
-}
-
-.section-title {
-  color: #00252B;
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  margin: 0 0 1.5rem 0;
-}
-
-/* Card Grid Styles */
-.cards-grid {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.cards-grid-3 {
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-}
-
-.cards-grid-4 {
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-}
-
-/* Project and Credit Card Styles */
-.project-card,
-.credit-card {
-  background: #F1FBFF;
-  border-radius: 16px;
-  text-align: center;
-  border: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
-  padding: 2rem;
-  cursor: pointer;
-}
-
-.project-card:hover,
-.credit-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
-}
-
-/* Project Statistics */
-.project-statistic {
-  text-align: center;
-}
-
-.project-value {
-  color: #16B1FF;
-  font-size: 2.5rem;
-  font-weight: 700;
-  line-height: 1;
-  margin-bottom: 0.5rem;
-}
-
-.project-title {
-  color: #3A3541CC;
-  font-size: 1rem;
-  font-weight: 500;
-  opacity: 0.9;
-}
-
-/* Credit Statistics */
-.credit-statistic {
-  text-align: center;
-}
-
-.credit-value {
-  color: #16B1FF;
-  font-size: 2.5rem;
+  font-family: inter;
   font-weight: 700;
   line-height: 1;
   margin-bottom: 0.5rem;
@@ -773,238 +439,216 @@
 // Dashboard.scss
 .process-flow-container {
   max-width: 1360px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  
+  margin: 10px auto 30px;
+  padding: 20px;
+
 }
 
 .process-flow-title {
-   background-image: linear-gradient(to right, #0063AC, #003257);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  padding-left: 24px;
-  font-size: 28px;
+  color: #0EA5E9;
+  font-size: 24px;
+  margin-left: 24px;
   font-weight: 600;
-  margin-bottom: 60px;
+  margin-bottom: 40px;
   text-align: left;
 }
 
 .process-flow {
-  position: relative;
-  padding-left: 32px;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  min-height: 450px;
-  
-  // The continuous blue line that flows alongside the cards at different heights
-  &::before {
-    content: '';
-    position: absolute;
-    width: calc(100% - 60px);
-    height: 350px;
-    left: 30px;
-    top: 20px;
-    z-index: 1;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 350'%3E%3Cpath d='M0 40 L250 40 L250 160 L500 160 L500 160 L750 160 L750 280 L1000 280' stroke='%230EA5E9' stroke-width='3' fill='none'/%3E%3C/svg%3E");
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-  }
+  align-items: stretch;
+  justify-content: center;
+  gap: 0;
 }
 
 .step-card {
   background: white;
-  border-radius: 15px;
-  padding: 25px 20px 30px;
+
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
   width: 280px;
   position: relative;
-  z-index: 2;
-  
-  // Position cards at different heights
-  &:nth-child(1) {
-    margin-top: 0;
-    
-    &::after {
-      content: '1';
-      position: absolute;
-      top: -16px;
-      right: 30px;
-      background: #0EA5E9;
-      color: white;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 16px;
-      border: 3px solid white;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-  }
-  
-  &:nth-child(2) {
-    margin-top: 120px;
-    
-    &::after {
-      content: '2';
-      position: absolute;
-      top: 50%;
-      right: -16px;
-      transform: translateY(-50%);
-      background: #0EA5E9;
-      color: white;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 16px;
-      border: 3px solid white;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-  }
-  
-  &:nth-child(3) {
-    margin-top: 120px;
-    
-    &::after {
-      content: '3';
-      position: absolute;
-      top: 50%;
-      right: -16px;
-      transform: translateY(-50%);
-      background: #0EA5E9;
-      color: white;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 16px;
-      border: 3px solid white;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-  }
-  
-  &:nth-child(4) {
-    margin-top: 240px;
-    
-    &::after {
-      content: '4';
-      position: absolute;
-      bottom: -16px;
-      right: 30px;
-      background: #0EA5E9;
-      color: white;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 16px;
-      border: 3px solid white;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-  }
+  display: flex;
+  flex-direction: column;
+
 }
+.card1 {
+    position: relative;
+    /* Remove the direct borders since we'll create them with pseudo-elements */
+}
+
+.card1::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 6px;
+    z-index: 1;
+    width: 100%;
+    height: 50%;
+    border-top: 6px solid #0EA5E9;
+    border-left: 6px solid #0EA5E9;
+    border-right: 6px solid #0EA5E9;;
+    box-sizing: border-box;
+    border-top-left-radius: 12px;
+    border-top-right-radius:12px;
+}
+
+.card2 {
+    position: relative;
+    /* Remove the direct borders since we'll create them with pseudo-elements */
+}
+
+.card2::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+     /* Start from middle (50%) */
+    left: 0;
+    width: 100%;
+    height: 50%; /* From middle to bottom */
+    border-bottom: 6px solid #0EA5E9;
+    border-left: 6px solid #0EA5E9;
+    border-right: 6px solid #0EA5E9;
+    box-sizing: border-box;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+.card3 {
+    position: relative;
+    padding-left: 12px;
+    /* Remove the direct borders since we'll create them with pseudo-elements */
+}
+
+.card3::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -6px;
+    width: 100%;
+    height: 50%;
+    border-top: 6px solid #0EA5E9;
+    border-left: 6px solid #0EA5E9;
+    border-right: 6px solid #0EA5E9;;
+    box-sizing: border-box;
+    border-top-left-radius: 12px;
+    border-top-right-radius:12px;
+}
+
+.card4 {
+    position: relative;
+    padding-left: 8px;
+    /* Remove the direct borders since we'll create them with pseudo-elements */
+}
+
+.card4::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+     /* Start from middle (50%) */
+    left: -12px;
+    width: 100%;
+    height: 50%; /* From middle to bottom */
+    border-bottom: 6px solid #0EA5E9;
+    border-left: 6px solid #0EA5E9;
+    border-right: 6px solid #0EA5E9;
+    box-sizing: border-box;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+/* Alternative approach using clip-path for cleaner L-shape */
 
 .step-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
+  justify-content: space-between;
+  margin-bottom: 16px;
 }
 
 .step-icon {
-  color: #0EA5E9;
+  background-image: linear-gradient(to right, #0063AC, #003257);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  padding-left: 70px;
+  line-height: 1;
+  display: inline-block; /* Required for background clip */
+}
+
+
+.step-number {
+  background: #0EA5E9;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
 }
 
 .step-title {
   color: #1e293b;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
-  margin: 0 0 15px 0;
+  margin: 0 0 12px 0;
+  text-align: left;
+  line-height: 1.4;
   text-align: center;
-  line-height: 1.3;
 }
 
 .step-description {
   color: #64748b;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.5;
   text-align: center;
   margin: 0;
 }
 
-.arrow-connector {
-  display: none; // Hide arrows since we have the flowing line
-}
 
-// Responsive Design
+/* Responsive Design */
 @media (max-width: 1200px) {
   .process-flow {
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
-    min-height: auto;
-    
-    &::before,
-    &::after {
-      display: none;
-    }
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .arrow-connector {
+    display: none;
   }
   
   .step-card {
-    margin-top: 0 !important;
-    
-    &::after {
-      top: -16px !important;
-      right: 30px !important;
-      bottom: auto !important;
-      transform: none !important;
-    }
+    margin-bottom: 20px;
   }
 }
 
 @media (max-width: 768px) {
   .process-flow-container {
-    padding: 20px 15px;
+    padding: 15px;
   }
   
   .process-flow-title {
-    font-size: 24px;
+    font-size: 20px;
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 25px;
+  }
+  
+  .process-flow {
+    flex-direction: column;
+    align-items: center;
   }
   
   .step-card {
     width: 100%;
     max-width: 350px;
-    padding: 20px;
   }
 }
 
 @media (max-width: 480px) {
   .step-card {
-    padding: 18px 15px;
-    
-    &::after {
-      width: 28px;
-      height: 28px;
-      font-size: 14px;
-    }
+    width: 100%;
+    padding: 20px;
   }
   
   .step-icon svg {
@@ -1012,12 +656,18 @@
     height: 32px;
   }
   
+  .step-number {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+  
   .step-title {
-    font-size: 16px;
+    font-size: 15px;
   }
   
   .step-description {
-    font-size: 13px;
+    font-size: 12px;
   }
 }
 /* PartnershipBanner */
