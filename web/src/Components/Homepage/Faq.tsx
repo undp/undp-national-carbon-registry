@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Dashboard.scss';
-
+import {ChevronDown} from 'react-bootstrap-icons';
 const FAQ = () => {
   const [openItems, setOpenItems] = useState({ 0: true }); 
 
@@ -61,7 +61,7 @@ const FAQ = () => {
               onClick={() => toggleItem(index)}
             >
                 <span className={`chevron ${openItems[index] ? 'rotated' : ''}`}>
-                ▼
+                <ChevronDown/>
               </span>
               <span className="question-text">{item.question}</span>
               
