@@ -29,6 +29,7 @@ import LabelWithTooltip, {
 import { API_PATHS } from "../../Config/apiConfig";
 import { CustomStepsProps } from "../MonitoringReport/StepProps";
 import { fileUploadValueExtract } from "../../Utils/utilityHelper";
+import "./MonitoringReport.scss"
 
 export const ProjectActivityStep = (props: CustomStepsProps) => {
   const {
@@ -41,6 +42,12 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
     handleValuesUpdate,
     disableFields,
   } = props;
+  const CustomLabel = ({ text, required }) => (
+  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '4px' }}>
+    {required && <span style={{ color: '#ff4d4f', fontSize: '14px', flexShrink: 0 }}>*</span>}
+    <span>{text}</span>
+  </div>
+);
 
   const { post } = useConnection();
   // const [contactNoInput] = useState<any>();
@@ -1217,19 +1224,23 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t("monitoringReport:pa_methodology")}
-                      name="pa_methodology"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t("monitoringReport:pa_methodology")} ${t(
-                            "isRequired"
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" disabled={disableFields} />
-                    </Form.Item>
+  label={
+    <div style={{ display: 'block', width: '100%' }}>
+      {t("monitoringReport:pa_methodology")}<span style={{ color: 'red' }}>*</span>
+    </div>
+  }
+  name="pa_methodology"
+  rules={[
+    {
+      required: true,
+      message: `${t("monitoringReport:pa_methodology")} ${t("isRequired")}`,
+    },
+  ]}
+  className="no-required-mark"
+>
+  <Input size="large" disabled={disableFields} />
+</Form.Item>
+
                   </div>
                   <LabelWithTooltip
                     label={t("monitoringReport:pa_projectCreditingPeriod")}
