@@ -30,6 +30,7 @@ import "./homepage.scss";
 import ProcessFlow from "../../Components/Homepage/Howdoesitwork";
 import PartnershipBanner from "../../Components/Homepage/Partners";
 import FAQ from "../../Components/Homepage/Faq";
+import MapAnimation from "../../Components/Homepage/MapAnimation";
 import {
   GlobeAmericas,
   ShieldCheck,
@@ -587,6 +588,7 @@ const Homepage = () => {
       </Row> */}
       <CarbonDashboard/>
       <DigitalPublicGood/>
+      <MapAnimation/>
       <ProcessFlow/>
       <PartnershipBanner/>
       <FAQ/>
