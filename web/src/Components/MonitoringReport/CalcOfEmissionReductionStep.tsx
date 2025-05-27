@@ -18,6 +18,7 @@ import { CustomStepsProps } from "./StepProps";
 import { toMoment } from "../../Utils/convertTime";
 import { disableYears } from "../../Utils/disableYears";
 import { ValidateStatus } from "antd/es/form/FormItem";
+import "./MonitoringReport.scss"
 
 const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
   baselineEmissionReductions: "avgBaselineEmissionReductions",
@@ -1609,7 +1610,11 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                           <Col xl={8} md={24}>
                             <div className="step-form-right-col">
                               <Form.Item
-                                label={t("monitoringReport:valueApplied")}
+                                label={
+    <div style={{ display: 'block', width: '100%' }}>
+      {t("monitoringReport:valueApplied")}<span style={{ color: 'red' }}>*</span>
+    </div>
+  }
                                 name="valueApplied"
                                 rules={[
                                   {
@@ -1619,6 +1624,7 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                                     )} ${t("isRequired")}`,
                                   },
                                 ]}
+                                className="no-required-mark"
                               >
                                 <Input size="large" disabled={disableFields} />
                               </Form.Item>
@@ -1628,7 +1634,11 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                           <Col xl={8} md={24}>
                             <div className="step-form-right-col">
                               <Form.Item
-                                label={t("monitoringReport:actualValues")}
+                                 label={
+    <div style={{ display: 'block', width: '100%' }}>
+      {t("monitoringReport:actualValues")}<span style={{ color: 'red' }}>*</span>
+    </div>
+  }
                                 name="actualValues"
                                 rules={[
                                   {
@@ -1638,6 +1648,7 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                                     )} ${t("isRequired")}`,
                                   },
                                 ]}
+                                className="no-required-mark"
                               >
                                 <Input size="large" disabled={disableFields} />
                               </Form.Item>

@@ -35,6 +35,8 @@ import { ProjectSectorEnum } from "../../Definitions/Enums/projectSector.enum";
 import { PendingActionsComponent } from "./pendingActionsComponent";
 import { SectorPieChart } from "./SectorPieChart";
 import { SECTOR_TO_SCOPES_MAP } from "../AddNewProgramme/ProgrammeCreationComponent";
+
+
 const { RangePicker } = DatePicker;
 
 export const SLCFDashboardComponent = (props: any) => {
@@ -47,6 +49,7 @@ export const SLCFDashboardComponent = (props: any) => {
   } = props;
   const { post, get } = useConnection();
   const { userInfoState } = useUserContext();
+  const isAdminOrManager = userInfoState?.userRole === 'Admin' || userInfoState?.userRole === 'Root';
 
   // Dashboard Endpoint Data
   const [pendingActions, setPendingActions] =
@@ -386,7 +389,7 @@ export const SLCFDashboardComponent = (props: any) => {
 
       // Calculate the maximum value from statusCount for Y-axis scaling
       const rawMaxValue = Math.max(...statusCount, 1); // Use 1 as fallback if array is empty
-      const computedMax = parseInt((rawMaxValue * 1.2).toString(), 10);
+      const computedMax = parseInt((rawMaxValue * 1).toString(), 10);
       const tickAmount = rawMaxValue > 5 ? 5 : Math.ceil(rawMaxValue);
 
       // Update the options with calculated values
@@ -656,7 +659,7 @@ const getProjectCountBySectoralScope = async (
 
       // Calculate the maximum value from sectoralCount for Y-axis scaling
       const rawMaxValue = Math.max(...sectoralCount, 1); // Use 1 as fallback if array is empty
-      const computedMax = parseInt((rawMaxValue * 1.2).toString(), 10);
+      const computedMax = parseInt((rawMaxValue * 1).toString(), 10);
       const tickAmount = rawMaxValue > 5 ? 5 : Math.ceil(rawMaxValue);
 
       setProjectCountBySectoralScope([
@@ -1120,12 +1123,14 @@ useEffect(() => {
               className="statistic-card-col retirements-by-date-chart-col"
               style={{ width: "100%" }}
             >
-              <PendingActionsComponent
-                pendingActionData={pendingActions}
-                loading={loadingPendingActions}
-                toolTipText={t("pendingTaskTooltip")}
-                t={t}
-              />
+              {isAdminOrManager && (
+          <PendingActionsComponent
+            pendingActionData={pendingActions}
+            loading={loadingPendingActions}
+            toolTipText={t('pendingTaskTooltip')}
+            t={t}
+          />
+        )}
             </Col>
           </Row>
         </div>
