@@ -49,11 +49,11 @@ const MapAnimation = () => {
   }, [hasAnimated]);
 
   return (
-    <div ref={containerRef} className={styles.mapContainer}>
+    <div>
       <div className="global-impact-container">
-      <div className="global-impact-content">
+      
         <h2 className="global-impact-title">Global Impact</h2>
-        
+        <div className="global-impact-content">
         <p className="global-impact-description">
           The following are some of the countries currently working with UNDP to adapt and scale the open-source carbon 
           registry to their national contexts. UNDP welcomes partners worldwide to collaborate in adopting, scaling, and 
@@ -70,9 +70,11 @@ const MapAnimation = () => {
         </div>
       </div>
     </div>
+    <div  ref={containerRef} className={styles.mapContainer}>
 
 
       <MapSVG ref={mapRef} className={styles.animatedMap} />
+      </div>
     </div>
   );
 };

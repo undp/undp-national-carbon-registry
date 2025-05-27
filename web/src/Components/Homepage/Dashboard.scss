@@ -1215,3 +1215,135 @@
     transform: translateY(0);
   }
 }
+/* Global Impact Section Styles */
+.global-impact-container {
+  width: 1360px;
+  margin: 0 auto;
+  padding: 60px 20px 40px;
+}
+
+.global-impact-content {
+  display: grid;
+  padding-left: 24px;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+  position: relative;
+}
+
+.global-impact-content::before {
+  content: '';
+  position: absolute;
+  left: calc(50% + 4px);
+  top: -10px;
+  bottom: 10px;
+  width: 3px;
+  height: 100px;
+  background-color: #d1d5db;
+}
+
+.global-impact-title {
+  font-weight: 700;
+  font-family: Inter;
+  color: #3A3541CC;
+  font-size: 1.5rem;
+  margin: 0 0 24px 0;
+  padding-left: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.global-impact-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4a5568;
+  margin: 0;
+  max-width: 600px;
+}
+
+.countries-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px 30px;
+  align-items: center;
+}
+
+.country-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1rem;
+  color: #2d3748;
+  line-height: 1.4;
+}
+
+.country-bullet {
+  color: #0066cc;
+  font-weight: 700;
+  font-size: 1.2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.country-name {
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .global-impact-container {
+    padding: 40px 16px 30px;
+  }
+  
+  .global-impact-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .global-impact-content::before {
+    display: none;
+  }
+  
+  .global-impact-title {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .global-impact-description {
+    font-size: 0.95rem;
+    max-width: none;
+  }
+  
+  .countries-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .country-item {
+    gap: 10px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .global-impact-container {
+    padding: 30px 12px 20px;
+  }
+  
+  .global-impact-title {
+    font-size: 1.75rem;
+  }
+  
+  .global-impact-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
+  .countries-grid {
+    gap: 10px;
+  }
+  
+  .country-item {
+    font-size: 0.9rem;
+  }
+}
