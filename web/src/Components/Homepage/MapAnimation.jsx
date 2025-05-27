@@ -6,6 +6,14 @@ const MapAnimation = () => {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const countries = [
+    { name: 'Namibia', id: 'namibia' },
+    { name: 'Vietnam', id: 'vietnam' },
+    { name: 'Sri Lanka', id: 'sri-lanka' },
+    { name: "Côte D'Ivoire", id: 'cote-divoire' },
+    { name: 'Nigeria', id: 'nigeria' },
+    { name: 'Zimbabwe', id: 'zimbabwe' }
+  ];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -42,6 +50,28 @@ const MapAnimation = () => {
 
   return (
     <div ref={containerRef} className={styles.mapContainer}>
+      <div className="global-impact-container">
+      <div className="global-impact-content">
+        <h2 className="global-impact-title">Global Impact</h2>
+        
+        <p className="global-impact-description">
+          The following are some of the countries currently working with UNDP to adapt and scale the open-source carbon 
+          registry to their national contexts. UNDP welcomes partners worldwide to collaborate in adopting, scaling, and 
+          enhancing the platform.
+        </p>
+        
+        <div className="countries-grid">
+          {countries.map((country, index) => (
+            <div key={country.id} className="country-item">
+              <span className="country-bullet">•</span>
+              <span className="country-name">{country.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+
       <MapSVG ref={mapRef} className={styles.animatedMap} />
     </div>
   );
