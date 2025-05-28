@@ -967,7 +967,7 @@
 /* PartnershipBanner */
 .partnership-banner {
   max-width: 1360px;
-  margin: -2.5rem auto 2rem auto;
+  margin: 2.5rem auto 2rem auto;
   padding: 20px;
   border-radius: 8px;
   font-family: Arial, sans-serif;
@@ -1126,7 +1126,7 @@
   text-align: left;
   font-size: 14px;
   font-weight: 500;
-  color: #374151;
+  color: #605C66;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -1143,6 +1143,8 @@
 }
 
 .question-text {
+  font-weight: 700;
+  font-size: 16px;
   flex: 1;
   margin-left: 12px;
   margin-bottom: 10px;
@@ -1151,7 +1153,8 @@
 
 .chevron {
   font-size: 12px;
-  color: #6b7280;
+  font-weight: 700;
+  color: #0c0c0c;
   transition: transform 0.2s ease;
   user-select: none;
    margin-bottom: 10px;
@@ -1162,7 +1165,7 @@
 }
 
 .faq-answer {
-  padding: 0 20px 20px 20px;
+  padding: 0 20px 20px 45px;
   border-top: 1px solid #f3f4f6;
   background-color: #fafafa;
 }
@@ -1173,6 +1176,12 @@
   font-size: 14px;
   line-height: 1.6;
   color: #4b5563;
+}
+.faqList{
+  padding-left:40px;
+  .faqSubList{
+    padding-left: 20px;
+  }
 }
 
 /* Responsive design */
@@ -1187,7 +1196,7 @@
   }
   
   .faq-answer {
-    padding: 0 16px 16px 16px;
+    padding: 0 16px 16px 40px;
   }
   
   .question-text {

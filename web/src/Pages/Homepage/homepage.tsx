@@ -592,6 +592,9 @@ const Homepage = () => {
       <ProcessFlow/>
       <PartnershipBanner/>
       <FAQ/>
+      <div className="resources">
+        
+      </div>
       <LayoutFooter />
     </div>
   );
