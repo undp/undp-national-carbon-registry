@@ -42,6 +42,8 @@ import CollapsePanel from "antd/lib/collapse/CollapsePanel";
 import { ROUTES } from "../../Config/uiRoutingConfig";
 import CarbonDashboard from "../../Components/Homepage/CarbonDashboard";
 import DigitalPublicGood from "../../Components/Homepage/DigitalPublic";
+import DemoSite from "../../Components/Homepage/DemoSite";
+import FeatureCards from "../../Components/Homepage/Keyfeatures";
 
 const Homepage = () => {
   const { i18n, t } = useTranslation(["common", "homepage"]);
@@ -589,7 +591,9 @@ const Homepage = () => {
       <CarbonDashboard/>
       <DigitalPublicGood/>
       <MapAnimation/>
+      <DemoSite/>
       <ProcessFlow/>
+      <FeatureCards/>
       <PartnershipBanner/>
       <FAQ/>
       <LayoutFooter />
