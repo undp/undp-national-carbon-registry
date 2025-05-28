@@ -16,41 +16,41 @@ const PartnershipBanner = () => {
   return (
     <div className="partnership-banner">
       <div className="banner-content">
-        <h2 className="banner-title">Developed in Partnership with Digital for Climate (D4C)</h2>
+        <h2 className="header-title">Developed in Partnership with Digital for Climate (D4C)</h2>
         <p className="banner-description">
           This software has been developed in partnership with{' '}
           <strong>
-            <a href="" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.theclimatewarehouse.org/work/digital-4-climate" target="_blank" rel="noopener noreferrer">
               Digital For Climate (D4C)
             </a>
           </strong>. D4C is a collaboration between the{' '}
           <strong>
-            <a href="" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.ebrd.com/" target="_blank" rel="noopener noreferrer">
               European Bank for Reconstruction and Development (EBRD)
             </a>
           </strong>,{' '}
           <strong>
-            <a href="" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.undp.org/" target="_blank" rel="noopener noreferrer">
               United Nations Development Program (UNDP)
             </a>
           </strong>,{' '}
           <strong>
-            <a href="" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.unfccc.int/" target="_blank" rel="noopener noreferrer">
               United Nations Framework Convention on Climate Change (UNFCCC)
             </a>
           </strong>,{' '}
           <strong>
-            <a href="" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.ieta.org/" target="_blank" rel="noopener noreferrer">
               International Emissions Trading Association (IETA)
             </a>
           </strong>,{' '}
           <strong>
-            <a href="" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.esa.int/" target="_blank" rel="noopener noreferrer">
               European Space Agency (ESA)
             </a>
           </strong>, and{' '}
           <strong>
-            <a href="" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.worldbank.org/" target="_blank" rel="noopener noreferrer">
               World Bank Group
             </a>
           </strong>{' '}

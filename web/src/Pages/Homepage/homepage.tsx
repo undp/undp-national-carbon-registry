@@ -596,9 +596,34 @@ const Homepage = () => {
       <FeatureCards/>
       <PartnershipBanner/>
       <FAQ/>
-      <div className="resources">
-        
-      </div>
+
+<Row className="developer-resources-row">
+  <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
+    <div className="resource-item">
+      <b>Developer Resources:</b>
+    </div>
+  </Col>
+  <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
+    <u><a href=""><div className="resource-item connects">
+      Guidance to serial number
+    </div></a></u>
+  </Col>
+  <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
+   <u><a href=""> <div className="resource-item connects">
+      GitHub site
+    </div></a></u>
+  </Col>
+  <Col xs={12} sm={6} md={4} lg={3} xl={3} className="Devresources">
+    <u><a href=""><div className="resource-item connects">
+      Guidance for AEF reporting
+    </div></a></u>
+  </Col>
+  <Col xs={12} sm={6} md={8} lg={3} xl={3} className="Devresources">
+    <u><a href=""><div className="resource-item connects">
+      Cad Trust data model
+    </div></a></u>
+  </Col>
+</Row>
       <LayoutFooter />
     </div>
   );

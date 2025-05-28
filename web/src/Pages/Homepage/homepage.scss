@@ -794,22 +794,22 @@ $title-color: #3a8ab5;
     text-align: center;
 
     .vision-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #1f2937;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #16b1ff;
       margin-bottom: 1rem;
       text-align: left;
     }
 
     .vision-description {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       font-weight: bold;
       color: #1e3a8a;
-      margin-bottom: 2rem;
+      margin: 2rem;
     }
 
     .vision-subtitle {
-      font-size: 1rem;
+      font-size: 1.2rem;
       font-weight: 600;
       color: #1f2937;
       margin-bottom: 2rem;
@@ -836,7 +836,8 @@ $title-color: #3a8ab5;
         }
 
         .vision-role {
-          font-weight: 600;
+          font-weight: 700;
+          font-size: 16px;
           color: #0063AC;
         }
 
@@ -848,4 +849,74 @@ $title-color: #3a8ab5;
     }
   }
 }
+}
+.developer-resources-row {
+  margin-bottom: 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding-left: 36px;
+  white-space: nowrap;
+  gap: 140px;
+}
+
+.resource-item {
+  padding: 1rem 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+}
+.connects{
+  color:#6c757d ;
+}
+
+.resource-label {
+  font-weight: bold;
+  color: #6c757d;
+}
+
+.Devresources {
+  margin-bottom: 1rem;
+}
+@media (max-width: 972px) {
+  .developer-resources-row {
+    gap:70px;
+  }
+  .resource-item {
+    text-align: center;
+    justify-content: center;
+  }
+  
+  .Devresources {
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .developer-resources-row {
+    gap:1px;
+    justify-content: center;
+  }
+  .resource-item {
+    text-align: center;
+    justify-content: center;
+  }
+  
+  .Devresources {
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .developer-resources-row {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .resource-item {
+    padding: 0.75rem 0;
+    font-size: 0.9rem;
+  }
 }
