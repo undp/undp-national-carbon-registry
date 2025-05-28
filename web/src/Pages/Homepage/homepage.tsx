@@ -63,14 +63,16 @@ const Homepage = () => {
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
   };
+const handleClickScroll = () => {
+  const element = document.getElementById("vision");
+  if (element) {
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "start", // ensures it scrolls the element to the top of the viewport
+    });
+  }
+};
 
-  const handleClickScroll = () => {
-    const element = document.getElementById("scrollhome");
-    if (element) {
-      // 👇 Will scroll smoothly to the top of the next section
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
 
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
 
@@ -147,7 +149,7 @@ const Homepage = () => {
           </div>
         </Col>
       </Row>
-      <Row className="vision">
+      <Row className="vision" id="vision">
         <Col>
         <section className="vision-section" ref={ref}>
       <motion.div
