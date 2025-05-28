@@ -2,11 +2,13 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import './Dashboard.scss';
 import publicGoodImage from "../../Assets/Images/public-good.jpg";
+import { Trans, useTranslation } from "react-i18next";
 
 const DigitalPublicGood = () => {
+  const { i18n, t } = useTranslation(["common", "homepage"]);
   return (
     <div className="digital-public-good">
-      <h2 className="section-title">A Digital Public Good</h2>
+      <h2 className="header-title">{t("homepage:digitalPublicTitle")}</h2>
       
       <div className="image-containers">
         <img src={publicGoodImage} alt="A Digital Public Good" className="main-image" />
@@ -18,7 +20,7 @@ const DigitalPublicGood = () => {
           transition={{ duration: 1, ease: 'easeOut' }}
           viewport={{ once: true }}
         >
-          In response to countries’ need for support, UNDP has created the National Carbon Credit Registry as an open-source toolkit that follows the Digital Public Goods Standard. Countries can access the free, open-source code and installation instructions from UNDP’s managed Github to customize a Registry according to their national needs. This approach helps save time, reduce costs, and avoids duplication of effort.
+          {t("homepage:digitalPublicBody")}
         </motion.div>
       </div>
     </div>

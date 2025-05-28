@@ -30,10 +30,8 @@
 }
 
 .header-title {
-  background-image: linear-gradient(to right, #0063AC, #003257);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-size: 32px;
+  color: #16b1ff;
+  font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 2rem;
   margin: 0;
@@ -69,7 +67,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-family: Inter;
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 700;
   line-height: 1.2;
   margin: 0 0 0 -1rem;
@@ -222,7 +220,7 @@
 
 .footer-text {
   color: #3A3541CC;
-  font-size: 0.875rem;
+  font-size: 16px;
   line-height: 1.6;
   text-align: justify;
   margin: 0;
@@ -307,6 +305,11 @@
   .statistic-value {
     font-size: 48px;
   }
+  .footer-text {
+
+  font-size: 14px;
+
+}
 }
 
 @media (max-width: 480px) {
@@ -348,6 +351,11 @@
   margin: auto;
   padding: 0 2.5rem 2.5rem 2.5rem; 
   width: 95%;
+  .header-title{
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+     margin: 0 0 1.5rem 0;
+  }
 }
 
 .image-containers {
@@ -390,13 +398,12 @@
 .image-caption {
   position: absolute;
   font-family: Inter;
-  font-size: 18px;
+  font-size: 16px;
   bottom: 16px;
   left: 40px;
   right: 40px;
   padding: 16px;
   text-align: left;
-  font-size: 0.75rem;
   color: white;
   z-index: 2; // Above the gradient
 }
@@ -456,11 +463,12 @@
 
 .process-flow-title {
   color: #0EA5E9;
-  font-size: 24px;
   margin-left: 24px;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 40px;
   text-align: left;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
 }
 
 .process-flow {
@@ -612,7 +620,7 @@
 
 .step-description {
   color: #64748b;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.5;
   text-align: center;
   margin: 0;
@@ -960,7 +968,7 @@
   }
   
   .step-description {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 /* PartnershipBanner */
@@ -969,23 +977,23 @@
   margin: 2.5rem auto 2rem auto;
   padding: 20px;
   border-radius: 8px;
+  .header-title{
+     font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  margin: 0 0 12px 24px;
+  }
 }
 
 .banner-content {
   margin-bottom: 25px;
 }
 
-.banner-title {
-  color: #00252B;
-  font-size: 18px;
-  font-weight: bold;
-  margin: 0 0 12px 24px;
-}
 
 .banner-description {
   color: #3A3541CC;
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 16px;
+  line-height: 1.8;
   margin: 0 0 50px 24px;
 }
 
@@ -1091,16 +1099,14 @@
   max-width: 1360px;
   margin: 0 auto;
   padding: 20px;
+  .header-title{
+     font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  margin-left: 24px;
+  }
 }
 
-.faq-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 24px;
-  padding-bottom: 8px;
-  margin-left: 24px;
-}
 
 .faq-list {
   display: flex;
@@ -1165,8 +1171,6 @@
 
 .faq-answer {
   padding: 0 20px 20px 45px;
-  border-top: 1px solid #f3f4f6;
-  background-color: #fafafa;
 }
 
 .faq-answer p {
@@ -1362,7 +1366,11 @@
   max-width: 1360px;
   margin: 0 auto;
   padding: 60px 20px 40px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  .header-title{
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+     margin: 0 0 1.5rem 24px;
+  }
 }
 
 .demo-site-card {
@@ -1405,7 +1413,7 @@
 }
 
 .secondary-description {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   margin-top: 16px;
 }
 
@@ -1441,15 +1449,10 @@
   margin: 0 auto;
   padding: 60px 20px 40px;
 
-  .feature-cards-title {
-    font-weight: 700;
-    font-family: Inter;
-    color: #16b1ff;
-    font-size: 1.5rem;
-    margin: 0 0 24px 0;
-    padding-left: 24px;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
+  .header-title{
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+     margin: 0 0 1.5rem 24px;
   }
 }
 
@@ -1463,7 +1466,8 @@
 }
 
 .feature-cards-item {
-    background: linear-gradient(160deg, #001529 0%, #003a6b 25%, #0066cc 75%, #4da6ff 100%);
+  background: linear-gradient(160deg, #001529 0%, #003a6b 25%, #000000 75%, #002b27 100%);
+ 
   border-radius: 20px;
   padding: 2.5rem;
   color: white;
@@ -1567,7 +1571,7 @@
 }
 
 .feature-cards-item:hover {
-  transform: scale(1.10);
+  transform: scale(1.05);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   z-index: 10;
 

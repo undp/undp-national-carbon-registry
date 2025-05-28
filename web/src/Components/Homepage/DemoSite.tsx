@@ -1,10 +1,13 @@
 import React from 'react';
 import './Dashboard.scss';
+import i18next from "i18next";
+import { Trans, useTranslation } from "react-i18next";
 
 const DemoSite = () => {
+      const { i18n, t } = useTranslation(["common", "homepage"]);
   return (
     <div className="demo-site-container">
-                <h1 className="demo-site-title">Demo Site</h1>
+                <h1 className="header-title">{t("homepage:demoSiteTitle")}</h1>
       <div className="demo-site-card"></div>
 
         

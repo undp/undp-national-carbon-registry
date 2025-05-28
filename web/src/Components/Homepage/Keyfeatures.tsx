@@ -5,7 +5,7 @@ import { LayoutDashboard,Notebook,ArrowRightLeftIcon,ChartColumnBig} from 'lucid
 const FeatureCards = () => {
   return (
     <div className="feature-cards-container">
-      <h2 className="feature-cards-title">Key Features Of The Carbon Registry</h2>
+      <h2 className="header-title">Key Features Of The Carbon Registry</h2>
       
       <div className="feature-cards-grid">
         {/* First Row - 2 Large Cards */}

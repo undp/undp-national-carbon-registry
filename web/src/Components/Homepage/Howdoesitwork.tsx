@@ -1,5 +1,6 @@
 import React from 'react';
 import { Mail, CheckCircle, Hammer, Wallet } from 'lucide-react';
+import { Trans, useTranslation } from "react-i18next";
 
 // Invisible SVG that defines the linear gradient
 const GradientDefs = () => (
@@ -14,6 +15,7 @@ const GradientDefs = () => (
 );
 
 const ProcessFlow = () => {
+  const { i18n, t } = useTranslation(["common", "homepage"]);
   return (
     <div className="process-flow-container">
       {/* Inject the gradient definition once */}
@@ -29,9 +31,9 @@ const ProcessFlow = () => {
               <Mail size={80} stroke="url(#iconGradient)" />
             </div>
           </div>
-          <h3 className="step-title">Initial Request Phase</h3>
+          <h3 className="step-title">{t("homepage:feature1Title")}</h3>
           <p className="step-description">
-            Projects Aimed At Reducing Or Removing Carbon Emissions Sign Up To The Registry And Are Assigned An Independent Certifier.
+            {t("homepage:feature1Description")}
           </p>
         </div>
 
@@ -42,9 +44,9 @@ const ProcessFlow = () => {
               <CheckCircle size={80} stroke="url(#iconGradient)" />
             </div>
           </div>
-          <h3 className="step-title">Project Authorisation</h3>
+          <h3 className="step-title">{t("homepage:feature2Title")}</h3>
           <p className="step-description">
-            After The Project Design Document (PDD) Is Reviewed, The Project Is Officially Authorised And Recorded On The Registry's Ledger.
+            {t("homepage:feature2Description")}
           </p>
         </div>
 
@@ -55,9 +57,9 @@ const ProcessFlow = () => {
               <Hammer size={80} stroke="url(#iconGradient)" />
             </div>
           </div>
-          <h3 className="step-title">Implementation Phase</h3>
+          <h3 className="step-title">{t("homepage:feature3Title")}</h3>
           <p className="step-description">
-            Once Implemented, Projects Are Monitored, And Emission Reductions Are Reported. Carbon Credits Can Be Issued And Serialised Following Verification.
+           {t("homepage:feature3Description")}
           </p>
         </div>
 
@@ -68,9 +70,9 @@ const ProcessFlow = () => {
               <Wallet size={80} stroke="url(#iconGradient)" />
             </div>
           </div>
-          <h3 className="step-title">Credit Transfer & Retirement</h3>
+          <h3 className="step-title">{t("homepage:feature4Title")}</h3>
           <p className="step-description">
-            Issued Credits Can Be Traded Domestically Or Internationally. Credits Can Be Tracked, Retired Or Cancelled Within The Registry, Ensuring Proper Ownership Transfer And Preventing Double Counting.
+            {t("homepage:feature4Description")}
           </p>
         </div>
 

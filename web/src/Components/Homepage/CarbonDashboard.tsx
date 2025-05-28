@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
+import { Trans, useTranslation } from "react-i18next";
 import './Dashboard.scss';
 
 const CarbonDashboard = () => {
+  const { i18n, t } = useTranslation(["common", "homepage"]);
   const [projectCount, setProjectCount] = useState(0);
   const [creditCount, setCreditCount] = useState(300000);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -74,16 +76,16 @@ const CarbonDashboard = () => {
   }, [animateCounters, hasAnimated]); 
 
   const projectData = [
-    { value: 150, title: 'Authorised' },
-    { value: 50, title: 'Pending' },
-    { value: 28, title: 'Rejected' }
+    { value: 150, title: t('homepage:authorised') },
+    { value: 50, title: t('homepage:pending') },
+    { value: 28, title: t('homepage:rejected') }
   ];
 
   const creditData = [
-    { value: 345890, title: 'Authorised' },
-    { value: 200890, title: 'Issued' },
-    { value: 100890, title: 'Transferred' },
-    { value: 120890, title: 'Retired' }
+    { value: 345890, title: t('homepage:authorised') },
+    { value: 200890, title: t('homepage:issued') },
+    { value: 100890, title: t('homepage:transferred')},
+    { value: 120890, title: t('homepage:retired') }
   ];
 
   return (
@@ -92,7 +94,7 @@ const CarbonDashboard = () => {
         {/* Header */}
         <div className="dashboard-header">
           <h2 className="header-title">
-            Why Carbon Registries?
+            {t("homepage:dashboardtitle")}
           </h2>
         </div>
 
@@ -101,7 +103,7 @@ const CarbonDashboard = () => {
           <div className="main-card-content">
             <div className="main-title-container">
               <h1 className="main-title">
-                All in One Carbon Management Platform and Dashboard for Countries
+                {t("homepage:allinoneplatform")}
               </h1>
             </div>
             <div className="stats-container" ref={statsRef}>
@@ -111,7 +113,7 @@ const CarbonDashboard = () => {
                     {projectCount.toLocaleString()}
                   </div>
                   <div className="statistic-title">
-                    Total Projects
+                    {t("homepage:totprojects")}
                   </div>
                 </div>
                 <div className="main-statistic">
@@ -119,7 +121,7 @@ const CarbonDashboard = () => {
                     {creditCount.toLocaleString()}
                   </div>
                   <div className="statistic-title">
-                    Total Credits
+                    {t("homepage:totcredits")}
                   </div>
                 </div>
               </div>
@@ -130,7 +132,7 @@ const CarbonDashboard = () => {
         {/* Project Distribution Section */}
         <div className="section">
           <h3 className="section-title">
-            Project Distribution by Status
+            {t("homepage:projectdistribution")}
           </h3>
           <motion.div
           className='cards-grid cards-grid-3'
@@ -157,7 +159,7 @@ const CarbonDashboard = () => {
         {/* Carbon Credit Distribution Section */}
         <div className="section">
           <h3 className="section-title">
-            Carbon Credit Distribution by Status
+            {t("homepage:distributionbystatus")}
           </h3>
           <motion.div
           className='cards-grid cards-grid-4'
@@ -183,7 +185,7 @@ const CarbonDashboard = () => {
         {/* Footer Text */}
         <div className="footer-section">
           <p className="footer-text">
-            The Paris Agreement is an international treaty on climate change aiming to limit global warming to below 2°C, with efforts to keep it to 1.5°C by 2100. Article 6 introduces mechanisms for countries to cooperate on climate goals through market-based (Articles 6.2 and 6.4) and non-market approaches (Article 6.8). All countries must account for any carbon credits used or transferred within their Nationally Determined Contributions (NDCs).<b> Digital carbon registries are essential for countries to track and manage carbon credits, ensuring data integrity and enable consistent reporting.</b>
+            {t("homepage:policyContextBody")}<b> {t("homepage:policyContextBody2")}</b>
           </p>
         </div>
       </div>
