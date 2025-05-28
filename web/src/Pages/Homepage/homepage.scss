@@ -29,7 +29,6 @@ $title-color: #3a8ab5;
     }
 
     .title {
-      font-family: "MuseoSans";
       font-size: 1.2rem;
       color: variables.$logo-text-color;
       font-weight: 700;
@@ -39,7 +38,6 @@ $title-color: #3a8ab5;
 
     .title-sub {
       font-weight: 100 !important;
-      font-family: "MuseoSans";
       font-size: 1.2rem;
       color: variables.$logo-text-color;
     }
@@ -59,7 +57,6 @@ $title-color: #3a8ab5;
       font-size: 0.65rem;
       color: variables.$logo-text-color;
       margin-top: -5px;
-      font-family: "MuseoSans";
       margin-left: 6px;
     }
   }
@@ -219,7 +216,7 @@ $title-color: #3a8ab5;
   align-items: flex-start; // or "center" if you want horizontal center too
   height: 75vh; // full viewport height
   margin-left: 5vw;
-  font-family: variables.$secondary-font-family;
+  font-family: variables.$secondary-font-family !important;
   font-size: 4rem;
   color: variables.$outside-background-color;
   line-height: 1.2em;
