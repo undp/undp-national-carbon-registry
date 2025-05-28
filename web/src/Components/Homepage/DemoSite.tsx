@@ -1,0 +1,40 @@
+import React from 'react';
+import './Dashboard.scss';
+
+const DemoSite = () => {
+  return (
+    <div className="demo-site-container">
+                <h1 className="demo-site-title">Demo Site</h1>
+      <div className="demo-site-card"></div>
+
+        
+        <div className="demo-site-content">
+          
+          <div className="demo-site-text">
+            <p className="main-description">
+              This demo site showcases core features developed. The demo site is available by invitation to governments and potential partners working with UNDP. For inquiries and to request a demo, please contact{' '}
+              <a href="#" className="link">UNDP Digital For Planet</a> via your country office or{' '}
+              <a href="mailto:digital4planet@undp.org" className="link">digital4planet@undp.org</a>
+            </p>
+            
+            <p className="secondary-description">
+              Through UNDP country offices, governments can:
+            </p>
+            
+            <ul className="feature-list">
+              <li>Request access to the demo site.</li>
+              <li>Schedule a live demonstration.</li>
+              <li>Explore potential collaboration and support.</li>
+            </ul>
+            
+            <p className="footer-text">
+              More technical information can be found on our{' '}
+              <a href="#" className="link">Github</a> page.
+            </p>
+          </div>
+        </div>
+      </div>
+  );
+};
+
+export default DemoSite;
