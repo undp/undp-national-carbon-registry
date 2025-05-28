@@ -596,6 +596,9 @@ const Homepage = () => {
       <FeatureCards/>
       <PartnershipBanner/>
       <FAQ/>
+      <div className="resources">
+        
+      </div>
       <LayoutFooter />
     </div>
   );
