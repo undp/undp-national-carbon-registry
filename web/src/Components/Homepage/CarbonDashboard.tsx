@@ -4,37 +4,46 @@ import './Dashboard.scss';
 
 const CarbonDashboard = () => {
   const [projectCount, setProjectCount] = useState(0);
+  const [creditCount, setCreditCount] = useState(300000);
   const [isAnimating, setIsAnimating] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
   const statsRef = useRef(null);
 
-  const animateCounter = useCallback(() => {
-    const targetCount = 228;
+  const animateCounters = useCallback(() => {
+    const targetProjectCount = 228;
+    const targetCreditCount = 345890;
+    const startingCreditCount = 300000;
     const duration = 1500;
     const startTime = Date.now();
     
-    const updateCounter = () => {
+    const updateCounters = () => {
       const now = Date.now();
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
       
       const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-      const currentCount = Math.floor(easeOutQuart * targetCount);
       
-      setProjectCount(currentCount);
+      // Update project count
+      const currentProjectCount = Math.floor(easeOutQuart * targetProjectCount);
+      setProjectCount(currentProjectCount);
+      
+      // Update credit count
+      const creditDifference = targetCreditCount - startingCreditCount;
+      const currentCreditCount = Math.floor(startingCreditCount + (easeOutQuart * creditDifference));
+      setCreditCount(currentCreditCount);
       
       setIsAnimating(progress < 1);
       
       if (progress < 1) {
-        requestAnimationFrame(updateCounter);
+        requestAnimationFrame(updateCounters);
       } else {
-        // Animation complete
-        setProjectCount(targetCount);
+        setProjectCount(targetProjectCount);
+        setCreditCount(targetCreditCount);
         setIsAnimating(false);
       }
     };
 
-    requestAnimationFrame(updateCounter);
+    requestAnimationFrame(updateCounters);
   }, []); 
 
   useEffect(() => {
@@ -43,7 +52,7 @@ const CarbonDashboard = () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !hasAnimated) {
             setHasAnimated(true);
-            animateCounter();
+            animateCounters();
           }
         });
       },
@@ -62,7 +71,7 @@ const CarbonDashboard = () => {
         observer.unobserve(statsRef.current);
       }
     };
-  }, [animateCounter, hasAnimated]); 
+  }, [animateCounters, hasAnimated]); 
 
   const projectData = [
     { value: 150, title: 'Authorised' },
@@ -106,8 +115,8 @@ const CarbonDashboard = () => {
                   </div>
                 </div>
                 <div className="main-statistic">
-                  <div className="statistic-value">
-                    {(345890).toLocaleString()}
+                  <div className={`statistic-value ${isAnimating ? 'counting' : ''}`}>
+                    {creditCount.toLocaleString()}
                   </div>
                   <div className="statistic-title">
                     Total Credits

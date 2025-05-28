@@ -1,5 +1,6 @@
 import React from 'react';
 import './Dashboard.scss';
+import { LayoutDashboard,Notebook,ArrowRightLeftIcon,ChartColumnBig} from 'lucide-react';
 
 const FeatureCards = () => {
   return (
@@ -22,7 +23,7 @@ const FeatureCards = () => {
 
         <div className="feature-cards-item feature-cards-large">
           <div className="feature-cards-icon">
-            📊
+            <ChartColumnBig/>
           </div>
           <h3 className="feature-cards-heading">Reporting (New!)</h3>
           <p className="feature-cards-text">
@@ -34,7 +35,7 @@ const FeatureCards = () => {
         {/* Second Row - 3 Small Cards */}
         <div className="feature-cards-item feature-cards-small">
           <div className="feature-cards-icon">
-            📋
+                <Notebook/>
           </div>
           <h3 className="feature-cards-heading">Ledger</h3>
           <p className="feature-cards-text">
@@ -45,7 +46,7 @@ const FeatureCards = () => {
 
         <div className="feature-cards-item feature-cards-small">
           <div className="feature-cards-icon">
-            📈
+            <LayoutDashboard/>
           </div>
           <h3 className="feature-cards-heading">Dashboard & Insights (New!)</h3>
           <p className="feature-cards-text">
@@ -56,7 +57,7 @@ const FeatureCards = () => {
 
         <div className="feature-cards-item feature-cards-small">
           <div className="feature-cards-icon">
-            🔄
+            <ArrowRightLeftIcon/>
           </div>
           <h3 className="feature-cards-heading">Interoperable & Exportable Data</h3>
           <p className="feature-cards-text">
