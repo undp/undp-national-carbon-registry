@@ -1,6 +1,6 @@
 import React from 'react';
 import './Dashboard.scss';
-import { LayoutDashboard,Notebook,ArrowRightLeftIcon,ChartColumnBig} from 'lucide-react';
+import { LayoutDashboard,NotebookText,ArrowRightLeftIcon,ChartColumnBig} from 'lucide-react';
 
 const FeatureCards = () => {
   return (
@@ -35,7 +35,7 @@ const FeatureCards = () => {
         {/* Second Row - 3 Small Cards */}
         <div className="feature-cards-item feature-cards-small">
           <div className="feature-cards-icon">
-                <Notebook/>
+                <NotebookText/>
           </div>
           <h3 className="feature-cards-heading">Ledger</h3>
           <p className="feature-cards-text">

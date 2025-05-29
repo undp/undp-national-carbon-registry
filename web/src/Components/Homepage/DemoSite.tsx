@@ -16,8 +16,8 @@ const DemoSite = () => {
           <div className="demo-site-text">
             <p className="main-description">
               This demo site showcases core features developed. The demo site is available by invitation to governments and potential partners working with UNDP. For inquiries and to request a demo, please contact{' '}
-              <a href="#" className="link">UNDP Digital For Planet</a> via your country office or{' '}
-              <a href="mailto:digital4planet@undp.org" className="link">digital4planet@undp.org</a>
+              <b><a href="#" className="link">UNDP Digital For Planet</a> </b>via your country office or{' '}
+              <u><a href="mailto:digital4planet@undp.org" className="link">digital4planet@undp.org</a></u>
             </p>
             
             <p className="secondary-description">
@@ -32,7 +32,7 @@ const DemoSite = () => {
             
             <p className="footer-text">
               More technical information can be found on our{' '}
-              <a href="#" className="link">Github</a> page.
+              <u><a href="#" className="link">Github</a></u> page.
             </p>
           </div>
         </div>

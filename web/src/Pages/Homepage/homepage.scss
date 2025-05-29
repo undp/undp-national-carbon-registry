@@ -856,7 +856,8 @@ $title-color: #3a8ab5;
   margin: 0 auto;
   padding-left: 36px;
   white-space: nowrap;
-  gap: 140px;
+  gap: 150px;
+  margin-top: 20px;
 }
 
 .resource-item {
@@ -880,9 +881,9 @@ $title-color: #3a8ab5;
 .Devresources {
   margin-bottom: 1rem;
 }
-@media (max-width: 972px) {
+@media (max-width: 1000px) {
   .developer-resources-row {
-    gap:70px;
+    gap:10px;
   }
   .resource-item {
     text-align: center;

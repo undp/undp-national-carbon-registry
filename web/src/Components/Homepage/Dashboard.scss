@@ -1257,8 +1257,8 @@
 .global-impact-title {
   font-weight: 700;
   font-family: Inter;
-  color: #3A3541CC;
-  font-size: 1.5rem;
+  color: #16B1FF;
+  font-size: 1.8rem;
   margin: 0 0 24px 0;
   padding-left: 24px;
   line-height: 1.2;
@@ -1285,16 +1285,18 @@
   align-items: center;
   gap: 12px;
   font-size: 1rem;
-  color: #2d3748;
+  color: #3A3541;
+  opacity: 80%;
   line-height: 1.4;
 }
 .country-name{
   white-space: nowrap;
 }
 .country-bullet {
-  color: #0066cc;
+  color: #3A3541;
   font-weight: 700;
   font-size: 1.2rem;
+  opacity: 80%;
   line-height: 1;
   flex-shrink: 0;
 }
@@ -1377,8 +1379,6 @@
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-  width: 100%;
   height: 40vh;
   margin-left:24px;
 }
