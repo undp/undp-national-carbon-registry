@@ -8,7 +8,7 @@ const DemoSite = () => {
   return (
     <div className="demo-site-container">
                 <h1 className="header-title">{t("homepage:demoSiteTitle")}</h1>
-      <div className="demo-site-card"></div>
+      {/*<div className="demo-site-card"></div>*/}
 
         
         <div className="demo-site-content">
