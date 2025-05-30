@@ -611,7 +611,7 @@ const handleClickScroll = () => {
     </div></a></u>
   </Col>
   <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
-   <u><a href=""> <div className="resource-item connects">
+   <u><a href="https://github.com/undp/carbon-registry"> <div className="resource-item connects">
       GitHub site
     </div></a></u>
   </Col>
