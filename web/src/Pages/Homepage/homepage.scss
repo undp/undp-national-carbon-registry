@@ -29,7 +29,6 @@ $title-color: #3a8ab5;
     }
 
     .title {
-      font-family: "MuseoSans";
       font-size: 1.2rem;
       color: variables.$logo-text-color;
       font-weight: 700;
@@ -39,7 +38,6 @@ $title-color: #3a8ab5;
 
     .title-sub {
       font-weight: 100 !important;
-      font-family: "MuseoSans";
       font-size: 1.2rem;
       color: variables.$logo-text-color;
     }
@@ -59,7 +57,6 @@ $title-color: #3a8ab5;
       font-size: 0.65rem;
       color: variables.$logo-text-color;
       margin-top: -5px;
-      font-family: "MuseoSans";
       margin-left: 6px;
     }
   }
@@ -101,27 +98,19 @@ $title-color: #3a8ab5;
   }
 
   .image-container {
-    background-image: linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.3) 0%,
-        rgba(4, 105, 177, 0.24) 0%
-      ),
-      url("../../Assets/Images/sigiriya.jpg");
-    background-image: linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.3) 0%,
-        rgba(4, 105, 177, 0.24) 0%
-      ),
+    background-image:
+      url("../../Assets/Images/homepage_img.png");
+    background-image:
       image-set(
-        "../../Assets/Images/sigiriya.jpg" type("image/jpg"),
-        "../../Assets/Images/sigiriya.webp" type("image/webp")
+        "../../Assets/Images/homepage_img.png" type("image/png"),
+        "../../Assets/Images/homepage_img.webp" type("image/webp")
       );
     background-size: cover;
     background-position: top !important;
   }
 
   .homepage-img-container {
-    height: 100vh;
+    height: 120vh;
     background-position-x: 100%;
     background-position-y: 100%;
     flex-direction: column;
@@ -135,14 +124,18 @@ $title-color: #3a8ab5;
         flex-flow: row;
       }
     }
-
+    .arrow-ctn{
+      display: flex;
+      align-items:center;
+      justify-content: center;
+    }
     .arrows {
       width: 60px;
       height: 72px;
-      position: absolute;
-      left: 50%;
-      margin-left: -30px;
-      bottom: 20px;
+      // position: absolute;
+      // left: 50%;
+      // margin-left: -30px;
+      // bottom: 200px;
 
       @media (max-width: variables.$lg-size) {
         stroke-width: 2px;
@@ -216,43 +209,40 @@ $title-color: #3a8ab5;
       -webkit-animation-delay: 0s;
     }
 
-    .text-ctn {
-      margin-left: 5vw;
-      bottom: 50px;
-      font-family: variables.$secondary-font-family;
-      font-size: 4rem;
-      color: variables.$outside-background-color;
-      line-height: 1.2em;
-      text-transform: uppercase;
-      position: relative;
-      padding-top: 60vh;
+.text-ctn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start; // or "center" if you want horizontal center too
+  height: 75vh; // full viewport height
+  margin-left: 5vw;
+  font-family: variables.$secondary-font-family !important;
+  font-size: 4rem;
+  color: variables.$outside-background-color;
+  line-height: 1.2em;
+  text-transform: uppercase;
+  padding-top: 80px;  
+  @media (max-width: 1800px) {
+    font-size: 3rem;
+  }
 
-      @media (max-width: 1800px) {
-        font-size: 3rem;
-        margin-top: 1rem;
-        margin-bottom: unset;
-        line-height: 1.5em;
-        padding-top: 50vh;
-      }
+  @media (max-width: 579px) {
+    font-size: 2.2rem;
+    align-items: flex-start;
+  }
 
-      @media (max-width: 579px) {
-        font-size: 2.2rem;
-        padding-top: 30vh;
-        text-align: left;
-      }
+  @media (max-width: 427px) {
+    font-size: 2.2rem;
+    align-items: center;
+    text-align: center;
+  }
 
-      @media (max-width: 427px) {
-        font-size: 2.2rem;
-        padding-top: 30vh;
-        text-align: center;
-      }
-
-      @media (max-width: 380px) {
-        font-size: 2rem;
-        padding-top: 30vh;
-        text-align: center;
-      }
-    }
+  @media (max-width: 380px) {
+    font-size: 2rem;
+    align-items: center;
+    text-align: center;
+  }
+}
 
     .subhome {
       text-align: left;
@@ -782,5 +772,152 @@ $title-color: #3a8ab5;
         margin: 20px 30px 20px -40px;
       }
     }
+  }
+}
+.vision{
+  justify-content: center;
+
+.vision-section {
+  background: #f3f4f6;
+  position: relative;
+  margin-top: -8rem;
+  z-index: 10;
+  border-radius: 2rem;
+
+  .vision-container {
+    max-width: 1365px;
+    margin: 0 auto;
+    background: white;
+    padding: 3rem 3rem;
+    border-radius: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+
+    .vision-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #16b1ff;
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    .vision-description {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #1e3a8a;
+      margin: 2rem;
+    }
+
+    .vision-subtitle {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+
+    .vision-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+
+      .vision-card {
+        text-align: center;
+
+        .vision-icon {
+          font-size: 2.5rem;
+          color: #2563eb;
+          margin-bottom: 0.5rem;
+
+          .vislogo{
+            height: 100px;
+          }
+          
+        }
+
+        .vision-role {
+          font-weight: 700;
+          font-size: 16px;
+          color: #0063AC;
+        }
+
+        .vision-text {
+          font-size: 0.875rem;
+          color: #0063AC;
+        }
+      }
+    }
+  }
+}
+}
+.developer-resources-row {
+  margin-bottom: 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding-left: 36px;
+  white-space: nowrap;
+  gap: 150px;
+  margin-top: 20px;
+}
+
+.resource-item {
+  padding: 1rem 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+}
+.connects{
+  color:#6c757d ;
+}
+
+.resource-label {
+  font-weight: bold;
+  color: #6c757d;
+}
+
+.Devresources {
+  margin-bottom: 1rem;
+}
+@media (max-width: 1000px) {
+  .developer-resources-row {
+    gap:10px;
+  }
+  .resource-item {
+    text-align: center;
+    justify-content: center;
+  }
+  
+  .Devresources {
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .developer-resources-row {
+    gap:1px;
+    justify-content: center;
+  }
+  .resource-item {
+    text-align: center;
+    justify-content: center;
+  }
+  
+  .Devresources {
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .developer-resources-row {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .resource-item {
+    padding: 0.75rem 0;
+    font-size: 0.9rem;
   }
 }
