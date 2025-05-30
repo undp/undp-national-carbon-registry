@@ -151,14 +151,14 @@ const handleClickScroll = () => {
       </Row>
       <Row className="vision" >
         <Col>
-        <section className="vision-section" ref={ref}>
+        <section className="vision-section" id="vision" ref={ref}>
       <motion.div
         className="vision-container"
         initial={{ opacity: 0, y: 40 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <h2 className="vision-title" id="vision">Vision</h2>
+        <h2 className="vision-title">Vision</h2>
         <p className="vision-description">
           UNDP's Open-Source National Carbon Registry Enables Countries to Implement and Manage Carbon Markets by Issuing, Managing, and Tracking Carbon Credits with Confidence, Achieving National Climate Commitments.
         </p>
