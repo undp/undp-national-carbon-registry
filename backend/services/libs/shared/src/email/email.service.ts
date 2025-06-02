@@ -39,7 +39,9 @@ export class EmailService {
             text: emailDataObj?.emailBody,
             html: emailDataObj?.emailBody,
             attachments: emailDataObj?.attachments,
-            ConfigurationSetName: "email-bounce-config",
+            headers: {
+              "X-SES-CONFIGURATION-SET": this.configService.get<string>("email.configSet") || "",
+            },
           },
           function (error, info) {
             console.log("SendEmail Response", error, info);
