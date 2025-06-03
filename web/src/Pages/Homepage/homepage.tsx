@@ -115,7 +115,7 @@ const Homepage = () => {
               backgroundImage: `url(${heroImages[currentSlide]})`,
               backgroundSize: 'cover',
               backgroundPosition: 'top',
-              transition: ' 1s linear'
+              transition: 'background-image 1s ease-in-out'
             }}>
             <Row>
               <Col md={18} lg={21} xs={17} flex="auto">
@@ -200,7 +200,7 @@ const Homepage = () => {
         <p className="vision-description">
           UNDP's Open-Source National Carbon Registry Enables Countries to Implement and Manage Carbon Markets by Issuing, Managing, and Tracking Carbon Credits with Confidence, Achieving National Climate Commitments.
         </p>
-        <h3 className="vision-subtitle">The Platform Supports:</h3>
+        <h3 className="vision-subtitle">Our Platform Supports:</h3>
 
         <div className="vision-grid">
           <motion.div
@@ -644,22 +644,22 @@ const Homepage = () => {
     </div>
   </Col>
   <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
-    <u><a href=""><div className="resource-item connects">
+    <u><a href="" target="_blank"><div className="resource-item connects">
       Guidance to serial number
     </div></a></u>
   </Col>
   <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
-   <u><a href="https://github.com/undp/carbon-registry"> <div className="resource-item connects">
+   <u><a href="https://github.com/undp/carbon-registry" target="_blank"> <div className="resource-item connects">
       GitHub site
     </div></a></u>
   </Col>
   <Col xs={12} sm={6} md={4} lg={3} xl={3} className="Devresources">
-    <u><a href=""><div className="resource-item connects">
+    <u><a href="" target="_blank"><div className="resource-item connects">
       Guidance for AEF reporting
     </div></a></u>
   </Col>
   <Col xs={12} sm={6} md={8} lg={3} xl={3} className="Devresources">
-    <u><a href=""><div className="resource-item connects">
+    <u><a href="" target="_blank"><div className="resource-item connects">
       Cad Trust data model
     </div></a></u>
   </Col>
