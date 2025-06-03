@@ -32,7 +32,7 @@ const DemoSite = () => {
             
             <p className="footer-text">
               More technical information can be found on our{' '}
-              <u><a href="https://github.com/undp/carbon-registry" className="link">Github</a></u> page.
+              <u><a href="https://github.com/undp/carbon-registry" target="_blank" className="link">Github</a></u> page.
             </p>
           </div>
         </div>
