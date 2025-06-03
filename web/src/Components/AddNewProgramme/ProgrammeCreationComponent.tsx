@@ -46,6 +46,7 @@ import { FormMode } from "../../Definitions/Enums/formMode.enum";
 import { mapBase64ToFields } from "../../Utils/mapBase64ToFields";
 import validator from "validator";
 import { toMoment } from "../../Utils/convertTime";
+import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 
 type SizeType = Parameters<typeof Form>[0]["size"];
 
@@ -77,7 +78,7 @@ export const PURPOSE_CREDIT_DEVELOPMENT: { [key: string]: string } = {
   TRACK_2: "Track 2",
 };
 
-const INF_SECTOR: { [key: string]: string } = {
+export const INF_SECTOR: { [key: string]: string } = {
   ENERGY: 'Energy',
   AGRICULTURE: 'Agriculture',
   HEALTH: 'Health',
@@ -109,7 +110,7 @@ export const INF_SECTORAL_SCOPE: { [key: string]: string } = {
   SOLVENT_USE: 'Solvent Use',
 };
 
-const SECTOR_TO_SCOPES_MAP: { [key: string]: string[] } = {
+export const SECTOR_TO_SCOPES_MAP: { [key: string]: string[] } = {
   ENERGY: ['ENERGY_INDUSTRIES', 'ENERGY_DISTRIBUTION', 'ENERGY_DEMAND'],
   AGRICULTURE: ['AGRICULTURE'],
   FORESTRY: ['AFFORESTATION_AND_REFORESTATION'],
@@ -350,57 +351,69 @@ export const ProgrammeCreationComponent = (props: any) => {
 
   const t = translator.t;
 
-  useEffect(() => {
-    const getViewData = async () => {
-      setLoading(true);
-      let documentData: any;
-      let projectData: any;
-      try {
-        const res = await post(API_PATHS.QUERY_DOCUMENT, {
-          refId: state?.documentId,
-          documentType: DocumentEnum.INF,
-        });
+ useEffect(() => {
+  const getViewData = async () => {
+    setLoading(true);
+    let documentData: any;
+    let projectData: any;
 
-        if (res?.statusText === "SUCCESS") {
-          documentData = res?.data?.data;
-        }
-      } catch (error) {
-        console.log("----------error-----------");
-      } finally {
-        setLoading(false);
+    try {
+      const res = await post(API_PATHS.QUERY_DOCUMENT, {
+        refId: state?.documentId,
+        documentType: DocumentEnum.INF,
+      });
+
+      if (res?.statusText === "SUCCESS") {
+        documentData = res?.data?.data;
       }
-
-      try {
-        const res = await post(API_PATHS.PROGRAMME_BY_ID, {
-          programmeId: id,
-        });
-
-        if (res?.statusText === "SUCCESS") {
-          projectData = res?.data;
-          console.log("----------projectData----------", projectData.independentCertifiers, projectData.independentCertifiers.join(","));
-        }
-      } catch (error) {}
-
-      if (documentData && projectData) {
-        const viewData = {
-          ...documentData,
-          briefProjectDescription: documentData.projectDescription,
-          optionalDocuments: mapBase64ToFields(
-            documentData?.additionalDocuments
-          ),
-          projectLocation: documentData.geographicalLocationCoordinates,
-          startTime: toMoment(documentData?.startDate),
-          independentCertifiers: projectData?.independentCertifiers?.join(","),
-        };
-        form.setFieldsValue(viewData);
-      }
-    };
-
-    if (state?.mode === FormMode.VIEW && state?.documentId) {
-      setDisableFields(true);
-      getViewData();
+    } catch (error) {
+      console.log("----------error-----------", error);
+    } finally {
+      setLoading(false);
     }
-  }, []);
+
+    try {
+      const res = await post(API_PATHS.PROGRAMME_BY_ID, {
+        programmeId: id,
+      });
+
+      if (res?.statusText === "SUCCESS") {
+        projectData = res?.data;
+        console.log("----------projectData----------", projectData.independentCertifiers, projectData.independentCertifiers.join(","));
+      }
+    } catch (error) {
+      console.log("----------error project data-----------", error);
+    }
+
+    // ✅ Format sectoral scope string from "ENERGY_DEMAND" to "Energy Demand"
+ const formatScope = (value: string | undefined): string => {
+  if (!value) return "";
+  if (value.toUpperCase() === "N/A") return "NA";
+  return INF_SECTORAL_SCOPE[value.toUpperCase()] || value; // Fallback to original value if key not found
+};
+
+    if (documentData && projectData) {
+      const viewData = {
+        ...documentData,
+        briefProjectDescription: documentData.projectDescription,
+        optionalDocuments: mapBase64ToFields(documentData?.additionalDocuments),
+        projectLocation: documentData.geographicalLocationCoordinates,
+        startTime: toMoment(documentData?.startDate),
+        independentCertifiers: projectData?.independentCertifiers?.join(","),
+        sectoralScope: formatScope(documentData?.sectoralScope),
+      };
+
+      form.setFieldsValue(viewData);
+    }
+  };
+
+  if (state?.mode === FormMode.VIEW && state?.documentId) {
+    setDisableFields(true);
+    getViewData();
+  }
+}, []);
+
+
 
   const submitForm = async (values: any) => {
     const base64Docs: string[] = [];
@@ -417,7 +430,7 @@ export const ProgrammeCreationComponent = (props: any) => {
     const body: any = {
       title: values?.title,
       sector: values?.sector,
-      sectoralScope: values?.sectoralScope,
+      sectoralScope: values?.sectoralScope === 'NA' ? 'N/A' : values?.sectoralScope,
       province: values?.province || "test",
       district: values?.district || "test",
       city: values?.city || "test",
@@ -454,16 +467,19 @@ export const ProgrammeCreationComponent = (props: any) => {
           ...body,
         },
       };
-      console.log('-------------temp vals INF-----------', tempValues);
       const res = await post(API_PATHS.ADD_DOCUMENT, tempValues);
       if (res?.statusText === "SUCCESS") {
+        console.log("-------timeout-----------")
         message.open({
           type: "success",
           content: t("addProgramme:programmeCreationSuccess"),
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-        navigate(ROUTES.VIEW_PROGRAMMES);
+        setTimeout(() => {
+          navigate(ROUTES.VIEW_PROGRAMMES);
+          setLoading(false);
+        }, defaultTimeout);
       }
     } catch (error: any) {
       if (error && error.errors && error.errors.length > 0) {
@@ -485,9 +501,8 @@ export const ProgrammeCreationComponent = (props: any) => {
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
+        setLoading(false)
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -611,7 +626,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                     setSelectedSector(value);
                                     const hasScopes = SECTOR_TO_SCOPES_MAP[value]?.length > 0;
                                     form.setFieldsValue({
-                                      sectoralScope: hasScopes ? undefined : 'N/A',
+                                      sectoralScope: hasScopes ? undefined : 'NA',
                                     });
                                   }}
                                 >
@@ -1555,7 +1570,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      value.trim().length > 0 &&
+                                      value && value.trim().length > 0 &&
                                       !validator.isURL(value)
                                     )
                                       throw new Error(

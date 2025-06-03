@@ -146,6 +146,7 @@ import { DocumentStateEnum } from "../../Definitions/Definitions/documentState.e
 import { DocumentEnum } from "../../Definitions/Enums/document.enum";
 import VerificationPhaseForms from "./projectForms/VerificationPhaseForms";
 import VerificationPhaseStatus from "./verificationPhaseStatus/verificationPhaseStatus";
+import { defaultTimeout, defaultTimeoutForInfApprove } from "../../Definitions/Constants/defaultTimeout";
 
 const SLCFProjectDetailsViewComponent = (props: any) => {
   const { onNavigateToProgrammeView, translator } = props;
@@ -556,17 +557,19 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-        getProgrammeById();
+        setTimeout(() => {
+          getProgrammeById();
+          setSlcfActionModalVisible(false);
+        }, defaultTimeout)
       }
     } catch (error: any) {
+      setSlcfActionModalVisible(false);
       message.open({
         type: "error",
         content: t("projectDetailsView:somethingWentWrong"),
         duration: 3,
         style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
-    } finally {
-      setSlcfActionModalVisible(false);
     }
   };
 
@@ -646,7 +649,10 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-        getProgrammeById();
+        setTimeout(() => {
+          getProgrammeById();
+          setSlcfActionModalVisible(false);
+        }, defaultTimeoutForInfApprove);
       }
     } catch (error: any) {
       message.open({
@@ -655,10 +661,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
-    } finally {
-      setSlcfActionModalVisible(false);
-      setLoadingAll(false);
-    }
+    } 
   };
 
   const rejectProposal = async (remark: string) => {

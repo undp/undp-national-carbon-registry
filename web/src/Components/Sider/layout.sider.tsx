@@ -75,11 +75,22 @@ const LayoutSider = (props: LayoutSiderProps) => {
     // getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),
     // getItem(t('nav:investments'), 'investmentManagement/viewAll', <Icon.Cash />),
     // getItem(t('nav:transfers'), 'creditTransfers/viewAll', <Icon.ArrowLeftRight />),
-    getItem(t("nav:reports"), "reports", <Icon.ClipboardData />),
     getItem(t("nav:companies"), "companyManagement/viewAll", <ShopOutlined />),
     getItem(t("nav:users"), "userManagement/viewAll", <UserOutlined />),
   ];
 
+  if (
+    userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
+    (userInfoState?.userRole === Role.Admin ||
+      userInfoState?.userRole === Role.Root)
+  ) {
+    items.splice(
+      3,
+      0,
+      getItem(t("nav:reports"), "reports", <Icon.ClipboardData />)
+    );
+  }
+  
   if (
     userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
     userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER

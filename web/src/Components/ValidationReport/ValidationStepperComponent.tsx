@@ -37,6 +37,9 @@ import {
 } from "./viewDataMap";
 import { mapBase64ToFields } from "../../Utils/mapBase64ToFields";
 import { INF_SECTORAL_SCOPE } from "../AddNewProgramme/ProgrammeCreationComponent";
+import { toMoment } from "../../Utils/convertTime";
+import { safeClone } from "../../Utils/deepCopy";
+import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 
 export enum ProcessSteps {
   VR_PROJECT_DETAILS = "VR_PROJECT_DETAILS",
@@ -97,9 +100,9 @@ const StepperComponent = (props: any) => {
     setLoading(true);
 
     const tempValues = {
-      ...existingFormValues,
+      ...safeClone(existingFormValues),
       data: {
-        ...existingFormValues.data,
+        ...safeClone(existingFormValues.data),
         appendix: appendixVals,
       },
     };
@@ -110,11 +113,15 @@ const StepperComponent = (props: any) => {
       if (res?.statusText === "SUCCESS") {
         message.open({
           type: "success",
-          content: "Validation report has been submitted successfully",
+          content: "Validation report submitted successfully",
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-        navigateToDetailsPage();
+
+        setTimeout(() => {
+          navigateToDetailsPage();
+          setLoading(false);
+        }, defaultTimeout);
       }
     } catch (error: any) {
       console.log("----------error----------", error);
@@ -124,9 +131,8 @@ const StepperComponent = (props: any) => {
         duration: 4,
         style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
-    } finally {
-      setLoading(false);
-    }
+      setLoading(true)
+    } 
   };
 
   const next = () => {
@@ -215,7 +221,7 @@ const StepperComponent = (props: any) => {
       form1.setFieldsValue({
         titleOfTheProjectActivity: programmeData?.title,
         mandatarySectoralScopes:
-          INF_SECTORAL_SCOPE[programmeData?.sectoralScope],
+          INF_SECTORAL_SCOPE[programmeData?.sectoralScope] || 'NA',
         projectDeveloper: programmeData?.projectParticipant,
         versionNumberPDD: pddData?.data?.projectDetails?.versionNumber,
         hostParty: pddData?.data?.projectDetails?.hostParty,
@@ -268,24 +274,13 @@ const StepperComponent = (props: any) => {
 
       const netGHGEmissionReductions =
         pddData?.data?.applicationOfMethodology?.netGHGEmissionReductions;
-      let totalNumberOfCreditingYears = 0;
-
-      netGHGEmissionReductions?.yearlyGHGEmissionReductions.forEach(
-        (emissionData: any) => {
-          const startDate = moment.unix(emissionData.startDate);
-          const endDate = moment.unix(emissionData.endDate);
-
-          const duration = moment.duration(endDate.diff(startDate));
-
-          totalNumberOfCreditingYears += Math.floor(duration.asMonths()) / 12;
-        }
-      );
+      
+      
       form2.setFieldsValue({
         estimatedNetEmissionReductions:
           netGHGEmissionReductions.yearlyGHGEmissionReductions?.map(
             (emissionData: any) => ({
-              startDate: moment.unix(emissionData.startDate),
-              endDate: moment.unix(emissionData.endDate),
+              vintage: toMoment(emissionData.vintage),
             })
           ),
         totalNumberOfCreditingYears: netGHGEmissionReductions?.totalNumberOfCredingYears,
@@ -318,6 +313,7 @@ const StepperComponent = (props: any) => {
   // };
 
   const handleValuesUpdate = (val: any) => {
+    console.log("---------values--------", val);
     setExistingFormValues((prevVal: any) => {
       const tempContent = {
         ...prevVal.data,

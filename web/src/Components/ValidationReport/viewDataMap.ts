@@ -1,5 +1,6 @@
 import moment from 'moment';
 import { mapBase64ToFields } from '../../Utils/mapBase64ToFields';
+import { toMoment } from '../../Utils/convertTime';
 
 export const basicInformationMapDataToFields = (vals: any) => {
   console.log('----------vals----------', vals);
@@ -7,22 +8,15 @@ export const basicInformationMapDataToFields = (vals: any) => {
     return;
   }
 
-  // const firstLocation =
-  //   vals?.locationsOfProjectActivity && vals?.locationsOfProjectActivity?.length > 0
-  //     ? vals?.locationsOfProjectActivity.shift()
-  //     : undefined;
+  const firstLocation =
+    vals?.locationsOfProjectActivity && vals?.locationsOfProjectActivity?.length > 0
+      ? vals?.locationsOfProjectActivity.shift()
+      : undefined;
 
   const tempVals = {
     ...vals,
-    locationOfProjectActivity: vals?.locationOfProjectActivity,
-    province: vals?.province,
-    siteNo: vals?.siteNo,
-    district: vals?.district,
-    dsDivision: vals?.dsDivision,
-    city: vals?.city,
-    community: vals?.community,
-    location: vals?.location,
-    optionalImages: mapBase64ToFields(vals?.additionalDocuments),
+    ...firstLocation,
+    optionalImages: mapBase64ToFields(firstLocation?.additionalDocuments),
     extraLocations: (function () {
       const locations = vals?.locationsOfProjectActivity;
       let tempExtraLocations: any[] = [];
@@ -70,8 +64,7 @@ export const ghgProjectDescriptionMapDataToFields = (vals: any) => {
     estimatedNetEmissionReductions: vals?.estimatedNetEmissionReductions.map((item: any) => {
       return {
         ...item,
-        startDate: item?.startDate ? moment.unix(item?.startDate) : undefined,
-        endDate: item?.endDate ? moment.unix(item?.endDate) : undefined,
+        vintage: item?.vintage ? toMoment(item?.vintage) : undefined,
       };
     }),
   };

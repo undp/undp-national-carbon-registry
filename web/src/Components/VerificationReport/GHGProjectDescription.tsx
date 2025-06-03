@@ -29,8 +29,7 @@ export const GHGProjectDescriptionStep = (props: VerificationStepProps) => {
         estimatedNetEmissionReductions: values?.estimatedNetEmissionReductions.map((item: any) => {
           const temp = {
             ...item,
-            startDate: item?.startDate ? moment(item?.startDate).startOf('day').valueOf() : undefined,
-            endDate: item?.endDate ? moment(item?.endDate).startOf('day').valueOf() : undefined,
+            vintage: moment({ year: moment(item?.vintage).year(), month: 1, day: 1 }).startOf('day').valueOf(),
           };
           return temp;
         }),
@@ -111,6 +110,7 @@ export const GHGProjectDescriptionStep = (props: VerificationStepProps) => {
                   projectCategory={null}
                   disabled={disableFields}
                   maxNetGHGReduction={maxNetGHGReduction}
+                  disableFutureYears={true}
                 ></NetEmissionReduction>
               </>
 

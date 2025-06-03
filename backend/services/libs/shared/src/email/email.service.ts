@@ -38,10 +38,13 @@ export class EmailService {
             subject: emailDataObj?.subject,
             text: emailDataObj?.emailBody,
             html: emailDataObj?.emailBody,
-            attachments: emailDataObj?.attachments
+            attachments: emailDataObj?.attachments,
+            headers: {
+              "X-SES-CONFIGURATION-SET": this.configService.get<string>("email.configSet") || "",
+            },
           },
           function (error, info) {
-            console.log('SendEmail Response', error, info);
+            console.log("SendEmail Response", error, info);
             if (error) {
               reject(error);
             } else {

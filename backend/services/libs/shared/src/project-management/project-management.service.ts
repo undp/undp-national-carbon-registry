@@ -32,6 +32,7 @@ import { DocumentManagementService } from "../document-management/document-manag
 import { Role } from "../casl/role.enum";
 import { DataResponseMessageDto } from "../dto/data.response.message";
 import { ActivityViewEntity } from "../view-entities/activity.view.entity";
+import { FilterEntry } from "../dto/filter.entry";
 
 @Injectable()
 export class ProjectManagementService {
@@ -60,8 +61,30 @@ export class ProjectManagementService {
 
   async query(
     query: QueryDto,
-    abilityCondition: string
+    abilityCondition: string,
+    user: User
   ): Promise<DataListResponseDto> {
+    let permissionFilter: FilterEntry;
+    if (user.companyRole == CompanyRole.PROJECT_DEVELOPER) {
+      permissionFilter = {
+        key: "companyId",
+        operation: "=",
+        value: user.companyId,
+      };
+    } else if (user.companyRole == CompanyRole.INDEPENDENT_CERTIFIER) {
+      permissionFilter = {
+        key: "independentCertifiers",
+        operation: "@>",
+        value: `{${user.companyId}}`, // PostgreSQL array containment syntax
+      };
+    }
+    if (permissionFilter) {
+      if (query.filterAnd) {
+        query.filterAnd.push(permissionFilter);
+      } else {
+        query.filterAnd = [permissionFilter];
+      }
+    }
     const skip = query.size * query.page - query.size;
     let resp = await this.projectViewRepo
       .createQueryBuilder("document_entity")
@@ -108,7 +131,7 @@ export class ProjectManagementService {
     );
   }
 
-  async getProjectById(programmeId: string): Promise<any> {
+  async getProjectById(programmeId: string, user: User): Promise<any> {
     if (!programmeId)
       throw new HttpException(
         this.helperService.formatReqMessagesString(
@@ -127,6 +150,28 @@ export class ProjectManagementService {
         this.helperService.formatReqMessagesString("Project not found", []),
         HttpStatus.NOT_FOUND
       );
+    if (user.companyRole == CompanyRole.PROJECT_DEVELOPER) {
+      if (project.company.companyId != user.companyId) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.unauthorized",
+            []
+          ),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+    } else if (user.companyRole == CompanyRole.INDEPENDENT_CERTIFIER) {
+      const numberArray = project.certifierId.map((item) => Number(item));
+      if (!numberArray.includes(user.companyId)) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.unauthorized",
+            []
+          ),
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+    }
 
     const allDocuments = await this.documentManagementService.queryAll(
       programmeId

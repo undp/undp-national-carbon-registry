@@ -1,3 +1,5 @@
+import { IssuedOrReceivedOptions } from "../Enums/creditEventEnum";
+
 export interface CreditBalanceInterface {
   id: number;
   serialNumber: string;
@@ -11,5 +13,5 @@ export interface CreditBalanceInterface {
   senderId: number | null;
   senderName: string | null;
   senderLogo: string | null;
-  eventType: 'Issued' | 'Received';
+  type: IssuedOrReceivedOptions;
 }

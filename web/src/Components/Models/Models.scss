@@ -47,6 +47,7 @@
     text-transform: uppercase;
     font-weight: 500;
   }
+  
 }
 
 .model-subText {
@@ -54,4 +55,7 @@
   font-size: 12px;
   padding-top: 10px;
   font-weight: 600;
+}
+.icon{
+  filter: brightness(0) saturate(100%) invert(45%) sepia(99%) saturate(2067%) hue-rotate(170deg) brightness(98%) contrast(99%);
 }

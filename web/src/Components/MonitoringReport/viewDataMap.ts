@@ -19,19 +19,42 @@ export const basicInformationMapDataToFields = (vals: any) => {
 };
 
 export const projectActivityMapDataToFields = (vals: any) => {
-  console.log("--------vals---------", vals);
+  //console.log('--------vals---------', vals);
   if (vals === undefined) return;
 
+  const firstLocation =
+    vals?.locationDetailsOfProjectActivity &&
+    vals?.locationDetailsOfProjectActivity?.length > 0
+      ? vals?.locationDetailsOfProjectActivity.shift()
+      : undefined;
+  //console.log('------first location-----------', firstLocation);
   const tempVals = {
     ...vals,
-    locationDetails:
-      vals?.locationofProjectActivity &&
-      vals.locationofProjectActivity.map((item: any) => {
-        return {
-          ...item,
-          pa_uploadImages: mapBase64ToFields(item?.pa_uploadImages),
-        };
-      }),
+    ...firstLocation,
+    optionalImages: mapBase64ToFields(firstLocation?.additionalDocuments),
+    extraLocations: (function () {
+      const locations = vals?.locationDetailsOfProjectActivity;
+      let tempExtraLocations: any[] = [];
+      if (locations !== 0 && locations.length > 0) {
+        tempExtraLocations = locations.map((location: any) => {
+          const tempObj = {
+            ...location,
+            optionalImages: mapBase64ToFields(location?.additionalDocuments),
+          };
+          return tempObj;
+        });
+      }
+      return tempExtraLocations;
+    })(),
+    // locationDetails:
+    //   vals?.locationofProjectActivity &&
+    //   vals.locationofProjectActivity.map((item: any) => {
+    //     return {
+    //       ...item,
+    //       pa_uploadImages: mapBase64ToFields(item?.pa_uploadImages),
+    //     };
+    //   }),
+
     pa_projectCreditingPeriod: vals?.pa_projectCreditingPeriod
       ? moment.unix(vals?.pa_projectCreditingPeriod)
       : undefined,
@@ -87,11 +110,8 @@ export const calcEmissionReductionMapDataToFields = (vals: any) => {
   const tempVals = {
     ...vals,
     ce_documentUpload: mapBase64ToFields(vals?.ce_documentUpload),
-    emissionsPeriodStart: firstYearlyReductions?.startDate
-      ? toMoment(firstYearlyReductions?.startDate)
-      : undefined,
-    emissionsPeriodEnd: firstYearlyReductions?.endDate
-      ? toMoment(firstYearlyReductions?.endDate)
+    vintage: firstYearlyReductions?.vintage
+      ? toMoment(firstYearlyReductions?.vintage)
       : undefined,
     baselineEmissionReductions: String(
       firstYearlyReductions?.baselineEmissionReductions
@@ -109,11 +129,8 @@ export const calcEmissionReductionMapDataToFields = (vals: any) => {
       if (yearlyReductions !== undefined && yearlyReductions?.length > 0) {
         tempExtraReductions = yearlyReductions.map((reductions: any) => {
           return {
-            emissionsPeriodStart: reductions?.startDate
-              ? toMoment(reductions?.startDate)
-              : undefined,
-            emissionsPeriodEnd: reductions?.endDate
-              ? toMoment(reductions?.endDate)
+            vintage: reductions?.vintage
+              ? toMoment(reductions?.vintage)
               : undefined,
             baselineEmissionReductions: String(
               reductions?.baselineEmissionReductions

@@ -33,7 +33,11 @@ export class ProjectManagementController {
   )
   @Post("query")
   async getAll(@Body() query: QueryDto, @Request() req) {
-    return this.projectManagementService.query(query, req.abilityCondition);
+    return this.projectManagementService.query(
+      query,
+      req.abilityCondition,
+      req.user
+    );
   }
 
   @ApiBearerAuth()
@@ -42,8 +46,11 @@ export class ProjectManagementController {
     ability.can(Action.Read, ProjectEntity)
   )
   @Post("getProjectById")
-  async getProjectById(@Body("programmeId") programmeId: string) {
-    return this.projectManagementService.getProjectById(programmeId);
+  async getProjectById(
+    @Body("programmeId") programmeId: string,
+    @Request() req
+  ) {
+    return this.projectManagementService.getProjectById(programmeId, req.user);
   }
 
   @CheckPolicies((ability: AppAbility) =>

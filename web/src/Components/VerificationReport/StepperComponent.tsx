@@ -47,6 +47,8 @@ import {
 import { Loading } from "../Loading/loading";
 import { INF_SECTORAL_SCOPE } from "../AddNewProgramme/ProgrammeCreationComponent";
 import { toMoment } from "../../Utils/convertTime";
+import { safeClone } from "../../Utils/deepCopy";
+import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 
 const StepperComponent = (props: VerificationStepProps) => {
   const { translator, t } = props;
@@ -193,7 +195,10 @@ const StepperComponent = (props: VerificationStepProps) => {
 
     if (programmeData && pddData && validationData && monitoringData) {
       const tempNetGHGEmisisionReduction =
-        validationData?.ghgProjectDescription?.totalNetEmissionReductions;
+        Number(programmeData?.creditEst) -
+        (Number(programmeData?.creditBalance) +
+          Number(programmeData?.creditRetired) +
+          Number(programmeData?.creditTransferred));
 
       console.log(
         "-----------temp netGHG---------",
@@ -234,8 +239,7 @@ const StepperComponent = (props: VerificationStepProps) => {
         estimatedNetEmissionReductions: emReduction.map((item: any) => {
           return {
             ...item,
-            startDate: item?.startDate ? toMoment(item?.startDate) : undefined,
-            endDate: item?.endDate ? toMoment(item?.endDate) : undefined,
+            vintage: item?.vintage ? toMoment(item?.vintage) : undefined,
           };
         }),
         totalBaselineEmissionReductions: Number(
@@ -301,17 +305,26 @@ const StepperComponent = (props: VerificationStepProps) => {
     try {
       console.log(
         "---------------activityRefId-------------",
-        state?.activityRefId
+        state?.activityId
       );
 
       const tempValues = {
-        ...values,
+        ...safeClone(values),
         activityRefId: state?.activityId,
         data: {
-          ...values.data,
+          ...safeClone(values.data),
           appendix: appendixVals,
         },
       };
+
+      // const tempValues = {
+      //   values,
+      //   activityRefId: state?.activityId,
+      //   data: {
+      //     ...values.data,
+      //     appendix: appendixVals,
+      //   },
+      // };
       const res = await post(API_PATHS.ADD_DOCUMENT, tempValues);
       console.log(res);
       if (res?.statusText === "SUCCESS") {
@@ -321,16 +334,29 @@ const StepperComponent = (props: VerificationStepProps) => {
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-        navigateToDetailsPage();
+
+        setTimeout(() => {
+          navigateToDetailsPage();
+          setLoading(false);
+        }, defaultTimeout);
       }
     } catch (error: any) {
-      message.open({
-        type: "error",
-        content: "Something went wrong",
-        duration: 4,
-        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
-      });
-    } finally {
+      console.log("---------verification report submit---------", error);
+      if (error.status === 400) {
+        message.open({
+          type: "error",
+          content: error.message,
+          duration: 4,
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+        });
+      } else {
+        message.open({
+          type: "error",
+          content: "Something went wrong",
+          duration: 4,
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+        });
+      }
       setLoading(false);
     }
   };

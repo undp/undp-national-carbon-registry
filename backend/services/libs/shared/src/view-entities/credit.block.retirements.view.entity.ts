@@ -12,6 +12,9 @@ import { CreditTransactionStatusEnum } from "../enum/credit.transaction.status.e
         ct."retirementType" AS "retirementType",
         ct."status" AS "status",
         ct."projectRefId" AS "projectId",
+        country."name" AS "country",
+        ct."organizationName",
+        ct."remarks",
         p."title" AS "projectName",
         ct."senderId" AS "senderId",
         s."name" AS "senderName",
@@ -19,6 +22,7 @@ import { CreditTransactionStatusEnum } from "../enum/credit.transaction.status.e
       FROM "credit_transactions_entity" ct
       LEFT JOIN project_entity p ON ct."projectRefId" = p."refId"
       LEFT JOIN company s ON ct."senderId" = s."companyId"
+      LEFT JOIN country ON ct."country" = country."alpha2"
       WHERE ct."type" = 'Retired'
     `,
 })
@@ -55,4 +59,13 @@ export class CreditBlockRetirementsViewEntity {
 
   @ViewColumn()
   senderLogo: string;
+
+  @ViewColumn()
+  country?: string;
+
+  @ViewColumn()
+  organizationName?: string;
+
+  @ViewColumn()
+  remarks?: string;
 }

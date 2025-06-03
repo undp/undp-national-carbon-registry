@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
-import { CreditActionType } from '../Enums/creditActionType.enum';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useRef, useState } from "react";
+import { CreditActionType } from "../Enums/creditActionType.enum";
 import {
   Button,
   Checkbox,
@@ -10,22 +11,21 @@ import {
   message,
   Modal,
   Radio,
-  RadioChangeEvent,
   Row,
   Select,
-} from 'antd';
-import { CreditBalanceInterface } from '../Interfaces/creditBalance.interface';
-import { addCommSep } from '../../../Definitions/Definitions/programme.definitions';
-import { API_PATHS } from '../../../Config/apiConfig';
-import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
-import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
-import { CreditRetirementInterface } from '../Interfaces/creditRetirement.interface';
+} from "antd";
+import { CreditBalanceInterface } from "../Interfaces/creditBalance.interface";
+import { addCommSep } from "../../../Definitions/Definitions/programme.definitions";
+import { API_PATHS } from "../../../Config/apiConfig";
+import { useConnection } from "../../../Context/ConnectionContext/connectionContext";
+import { useUserContext } from "../../../Context/UserInformationContext/userInformationContext";
+import { CreditRetirementInterface } from "../Interfaces/creditRetirement.interface";
 import {
   CreditRetirementProceedAction,
   RetirementActionEnum,
-} from '../Enums/creditRetirementProceedType.enum';
-import { CreditRetirementTypeEmnum } from '../Enums/creditRetirementType.enum';
-import { COLOR_CONFIGS } from '../../../Config/colorConfigs';
+} from "../Enums/creditRetirementProceedType.enum";
+import { CreditRetirementTypeEmnum } from "../Enums/creditRetirementType.enum";
+import { COLOR_CONFIGS } from "../../../Config/colorConfigs";
 
 interface CreditActionModalProps {
   icon?: any;
@@ -44,8 +44,8 @@ interface CreditActionModalProps {
 }
 
 enum RetirementType {
-  CROSS_BORDER = 'crossBoarderTransaction',
-  VOLUNTARY_CANCELLATION = 'voluntaryCancellations',
+  CROSS_BORDER = "crossBoarderTransaction",
+  VOLUNTARY_CANCELLATION = "voluntaryCancellations",
 }
 
 export const CreditActionModal = (props: CreditActionModalProps) => {
@@ -66,16 +66,19 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
   } = props;
   const { get, post } = useConnection();
   const { userInfoState } = useUserContext();
-  const [remark, setRemark] = useState<string>('');
-  const [actionDisable, setActionDisable] = useState<boolean>(true);
-  const [retirementType, setRetirementType] = useState<RetirementType>(RetirementType.CROSS_BORDER);
-  const [creditAmount, setCreditAmount] = useState<number>();
-  const [checked, setChecked] = useState<boolean>(
-    type === CreditActionType.TRANSFER ? true : false
+  const [form] = Form.useForm();
+  const [retirementType, setRetirementType] = useState<RetirementType>(
+    RetirementType.CROSS_BORDER
   );
+  const creditAmountRef = useRef<number | undefined>(undefined);
+  const recivePartyRef = useRef<any>(undefined);
+  const remarkRef = useRef<string>("");
+  const checkedRef = useRef<boolean>(type === CreditActionType.TRANSFER);
+  const [actionDisable, setActionDisable] = useState<boolean>(true);
   const [listLoading, setListLoading] = useState<boolean>(true);
-  const [dropDownList, setDropDownList] = useState<{ value: string; label: string }[]>([]);
-  const [reciveParty, setReciveParty] = useState<any>();
+  const [dropDownList, setDropDownList] = useState<
+    { value: string; label: string }[]
+  >([]);
 
   const getDropDownList = async () => {
     setListLoading(true);
@@ -97,76 +100,160 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
         );
       }
     } catch (error: any) {
-      console.log('Error in getting List for the Action', error);
+      console.log("Error in getting List for the Action", error);
       message.open({
-        type: 'error',
+        type: "error",
         content: error.message,
         duration: 3,
-        style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
     } finally {
       setListLoading(false);
     }
   };
 
-  useEffect(() => {
+  // eslint-disable-next-line no-unused-vars
+  const handleValuesChange = (_: any, allValues: any) => {
+    creditAmountRef.current = allValues.creditAmount;
+    recivePartyRef.current =
+      type === CreditActionType.TRANSFER
+        ? allValues.toCompanyId
+        : type === CreditActionType.RETIREMENT &&
+          allValues.retirementType === RetirementType.CROSS_BORDER
+        ? {
+            country: allValues.toCountry,
+            organization: allValues.toOrganization,
+          }
+        : undefined;
+
+    remarkRef.current = allValues.comment || "";
+    checkedRef.current = allValues.confirm || false;
+
     let valid = true;
-    if (type !== CreditActionType.TRANSFER && !checked) {
+    if (allValues.retirementType) {
+      if (
+        type === CreditActionType.RETIREMENT &&
+        allValues.retirementType !== retirementType
+      ) {
+        form.setFieldValue("confirm", false);
+        valid = false;
+      }
+      setRetirementType(allValues.retirementType);
+    }
+    if (type !== CreditActionType.TRANSFER && !checkedRef.current) {
       valid = false;
     }
     if (isProceed) {
-      if (remarkRequired && (!remark || remark.trim() === '')) {
+      if (remarkRequired && !remarkRef.current.trim()) {
         valid = false;
       }
     } else {
       if (
-        type === CreditActionType.TRANSFER ||
-        (type === CreditActionType.RETIREMENT && retirementType === RetirementType.CROSS_BORDER)
+        (type === CreditActionType.TRANSFER && !recivePartyRef.current) ||
+        (type === CreditActionType.RETIREMENT &&
+          allValues.retirementType === RetirementType.CROSS_BORDER &&
+          !recivePartyRef.current.country &&
+          !recivePartyRef.current.organization)
       ) {
-        if (!reciveParty) {
-          valid = false;
-        }
-      }
-      if (!Number.isInteger(Number(creditAmount))) {
         valid = false;
       }
-      if (data?.creditAmount && Number(creditAmount) > data?.creditAmount) {
+
+      const amountNum = Number(creditAmountRef.current);
+      if (
+        !Number.isInteger(amountNum) ||
+        amountNum <= 0 ||
+        !data?.creditAmount
+      ) {
+        valid = false;
+      } else if (amountNum > data.creditAmount) {
         valid = false;
       }
-      if (creditAmount === undefined || creditAmount === null) {
-        valid = false;
-      }
-      if (remarkRequired && (!remark || remark.trim() === '')) {
+      if (remarkRequired && !remarkRef.current.trim()) {
         valid = false;
       }
     }
     setActionDisable(!valid);
-  }, [remark, retirementType, creditAmount, reciveParty, checked, isProceed, type]);
+  };
 
-  useEffect(() => {
-    setCreditAmount(undefined);
-    setChecked(type === CreditActionType.TRANSFER ? true : false);
-    setActionDisable(true);
-    setRemark('');
-    setReciveParty(undefined);
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  const handleSubmit = (_: any) => {
     if (isProceed) {
-      setRetirementType(
-        data &&
-          'retirementType' in data &&
-          data.retirementType.trim() === CreditRetirementTypeEmnum.VOLUNTARY_CANCELLATIONS
-          ? RetirementType.VOLUNTARY_CANCELLATION
-          : RetirementType.CROSS_BORDER
+      onFinish(
+        data?.id,
+        proceedAction === CreditRetirementProceedAction.ACCEPT
+          ? RetirementActionEnum.ACCEPT
+          : proceedAction === CreditRetirementProceedAction.REJECT
+          ? RetirementActionEnum.REJECT
+          : RetirementActionEnum.CANCEL,
+        remarkRef.current
+      );
+      return;
+    }
+
+    if (type === CreditActionType.TRANSFER) {
+      onFinish(
+        recivePartyRef.current,
+        data?.id,
+        creditAmountRef.current,
+        remarkRef.current,
+        undefined
+      );
+    } else if (type === CreditActionType.RETIREMENT) {
+      const retType =
+        retirementType === RetirementType.CROSS_BORDER
+          ? CreditRetirementTypeEmnum.CROSS_BORDER_TRANSACTIONS
+          : CreditRetirementTypeEmnum.VOLUNTARY_CANCELLATIONS;
+
+      onFinish(
+        recivePartyRef.current,
+        data?.id,
+        creditAmountRef.current,
+        remarkRef.current,
+        retType
       );
     }
-    if (
-      !(
-        type === CreditActionType.RETIREMENT &&
-        retirementType === RetirementType.VOLUNTARY_CANCELLATION
-      )
-    ) {
-      getDropDownList();
+  };
+
+  useEffect(() => {
+    if (openModal) {
+      form.resetFields();
+      let retirementTypeRef: RetirementType;
+      if (isProceed && data && "retirementType" in data) {
+        retirementTypeRef =
+          data.retirementType.trim() ===
+          CreditRetirementTypeEmnum.VOLUNTARY_CANCELLATIONS
+            ? RetirementType.VOLUNTARY_CANCELLATION
+            : RetirementType.CROSS_BORDER;
+      } else {
+        retirementTypeRef = RetirementType.CROSS_BORDER;
+      }
+
+      if (
+        !isProceed &&
+        !(
+          type === CreditActionType.RETIREMENT &&
+          retirementType === RetirementType.VOLUNTARY_CANCELLATION
+        )
+      ) {
+        getDropDownList();
+      }
+
+      form.setFieldsValue({
+        project: data?.projectName,
+        retirementType: retirementTypeRef,
+        comment: "",
+        confirm: type === CreditActionType.TRANSFER,
+      });
+
+      remarkRef.current = "";
+      creditAmountRef.current = undefined;
+      recivePartyRef.current = undefined;
+      checkedRef.current = type === CreditActionType.TRANSFER ? true : false;
+
+      setRetirementType(retirementTypeRef);
+      setActionDisable(true);
     }
-  }, [type, retirementType, openModal]);
+  }, [openModal]);
 
   return (
     <Modal
@@ -176,48 +263,28 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
           <div>{title}</div>
         </div>
       }
-      className={'popup-' + type}
+      className={`popup-${type}`}
       open={openModal}
       width={Math.min(430, window.innerWidth)}
-      centered={true}
+      centered
       footer={null}
       onCancel={onCancel}
-      destroyOnClose={true}
+      destroyOnClose
     >
       {data && (
         <div className="credit-action-model">
           <Form
+            form={form}
             name="credit-action-model-form"
             layout="vertical"
-            onFinish={() =>
-              !isProceed && type === CreditActionType.TRANSFER
-                ? onFinish(reciveParty, data.id, creditAmount, remark, undefined)
-                : !isProceed && type === CreditActionType.RETIREMENT
-                ? onFinish(
-                    reciveParty,
-                    data.id,
-                    creditAmount,
-                    remark,
-                    retirementType === RetirementType.CROSS_BORDER
-                      ? CreditRetirementTypeEmnum.CROSS_BORDER_TRANSACTIONS
-                      : CreditRetirementTypeEmnum.VOLUNTARY_CANCELLATIONS
-                  )
-                : onFinish(
-                    data.id,
-                    proceedAction === CreditRetirementProceedAction.ACCEPT
-                      ? RetirementActionEnum.ACCEPT
-                      : proceedAction === CreditRetirementProceedAction.REJECT
-                      ? RetirementActionEnum.REJECT
-                      : RetirementActionEnum.CANCEL,
-                    remark
-                  )
-            }
+            onValuesChange={handleValuesChange}
+            onFinish={handleSubmit}
           >
             <Row>
               <Col span={24}>
                 <Form.Item
                   className="credit-action-project-name"
-                  label={t('project')}
+                  label={t("project")}
                   name="project"
                 >
                   <Input placeholder={data.projectName} disabled />
@@ -230,21 +297,29 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                 <Col span={24}>
                   <Form.Item
                     className="credit-action-company-select"
-                    label={t('to')}
+                    label={t("to")}
                     name="toCompanyId"
-                    required
+                    rules={[
+                      {
+                        required: !isProceed,
+                        message: t("required"),
+                      },
+                    ]}
                   >
                     <Select
                       showSearch
                       loading={listLoading}
-                      placeholder={t('searchOrganizationByName')}
-                      showArrow={true}
+                      placeholder={t("searchOrganizationByName")}
+                      showArrow
                       autoClearSearchValue
                       filterOption={(input, option: any) => {
-                        const optionLabel = option?.label?.props?.children || '';
-                        const optionValue = option?.label ? option?.label : '';
+                        const optionLabel =
+                          option?.label?.props?.children || "";
+                        const optionValue = option?.label ? option?.label : "";
                         const label =
-                          typeof optionLabel === 'string' ? optionLabel : optionLabel.join('');
+                          typeof optionLabel === "string"
+                            ? optionLabel
+                            : optionLabel.join("");
                         const value = optionValue.toString().toLowerCase();
 
                         return (
@@ -257,7 +332,6 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                         value: item.value,
                       }))}
                       disabled={isProceed}
-                      onChange={(val) => setReciveParty(val)}
                     />
                   </Form.Item>
                 </Col>
@@ -267,20 +341,21 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
             {type === CreditActionType.RETIREMENT && (
               <Form.Item
                 label={
-                  <span style={{ color: '#666', fontWeight: 500 }}>{t('retirementType')}</span>
+                  <span
+                    style={{ color: `${COLOR_CONFIGS.PRIMARY_FONT_COLOR}` }}
+                  >
+                    {t("retirementType")}
+                  </span>
                 }
-                labelCol={{ span: 24 }}
-                wrapperCol={{ span: 24 }}
-                required
+                name="retirementType"
+                rules={[
+                  {
+                    required: !isProceed,
+                    message: t("required"),
+                  },
+                ]}
               >
-                <Radio.Group
-                  onChange={(e: RadioChangeEvent) => setRetirementType(e.target.value)}
-                  value={retirementType}
-                  style={{
-                    textAlign: 'left',
-                  }}
-                  disabled={isProceed}
-                >
+                <Radio.Group disabled={isProceed}>
                   <Radio value={RetirementType.CROSS_BORDER}>
                     {t(RetirementType.CROSS_BORDER)}
                   </Radio>
@@ -297,25 +372,38 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                   <Col span={24}>
                     <Form.Item
                       className="credit-action-country-select"
-                      label={t('country')}
+                      label={t("country")}
                       name="toCountry"
-                      required
+                      rules={[
+                        {
+                          required: !isProceed,
+                          message: t("required"),
+                        },
+                      ]}
                     >
                       {!isProceed ? (
                         <Select
                           showSearch
-                          placeholder={t('selectCountry')}
-                          showArrow={true}
+                          placeholder={t("selectCountry")}
+                          showArrow
                           autoClearSearchValue
+                          loading={listLoading}
                           filterOption={(input, option: any) => {
-                            const optionLabel = option?.label?.props?.children || '';
-                            const optionValue = option?.label ? option?.label : '';
+                            const optionLabel =
+                              option?.label?.props?.children || "";
+                            const optionValue = option?.label
+                              ? option?.label
+                              : "";
                             const label =
-                              typeof optionLabel === 'string' ? optionLabel : optionLabel.join('');
+                              typeof optionLabel === "string"
+                                ? optionLabel
+                                : optionLabel.join("");
                             const value = optionValue.toString().toLowerCase();
 
                             return (
-                              label.toLowerCase().includes(input.toLowerCase()) ||
+                              label
+                                .toLowerCase()
+                                .includes(input.toLowerCase()) ||
                               value.includes(input.toLowerCase())
                             );
                           }}
@@ -324,92 +412,122 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                             value: item.value,
                           }))}
                           disabled={isProceed}
-                          onChange={(val) => setReciveParty(val)}
                         />
                       ) : (
                         <Input
-                          placeholder={'receiverName' in data ? data.receiverName : data.senderName}
+                          placeholder={"country" in data ? data.country : "N/A"}
                           disabled
                         />
                       )}
                     </Form.Item>
                     <Form.Item
                       className="credit-action-organization-name"
-                      label={t('organizationName')}
-                      name="company"
+                      label={t("organizationName")}
+                      name="toOrganization"
+                      rules={[
+                        {
+                          required: !isProceed,
+                          message: t("required"),
+                        },
+                      ]}
                     >
                       <Input
-                        placeholder={'receiverName' in data ? data.receiverName : data.senderName}
-                        disabled
+                        disabled={isProceed}
+                        placeholder={
+                          "organizationName" in data
+                            ? data.organizationName
+                            : ""
+                        }
                       />
                     </Form.Item>
                   </Col>
                 </Row>
               )}
 
-            <Row gutter={8} justify={'space-between'}>
+            <Row gutter={8} justify="space-between">
               <Col>
                 <label>
-                  <span style={{ color: '#666', fontWeight: 500 }}>
-                    {t('creditAmount')}
-                    <span style={{ color: 'red' }}>*</span>
+                  <span
+                    style={{ color: `${COLOR_CONFIGS.PRIMARY_FONT_COLOR}` }}
+                  >
+                    {t("creditAmount")}
+                    {!isProceed && (
+                      <span
+                        style={{
+                          color: `${COLOR_CONFIGS.PRIMARY_RED_COLOR}`,
+                          position: "relative",
+                          top: "2px",
+                          marginLeft: 2,
+                        }}
+                      >
+                        *
+                      </span>
+                    )}
                   </span>
                 </label>
               </Col>
 
               <Col lg={12} md={10}>
-                <Row justify={'end'}>
+                <Row justify="end">
                   <Col span={isProceed ? 12 : 24}>
                     <Form.Item
                       className="credit-action-credit-input"
-                      label=""
                       name="creditAmount"
                       rules={[
                         {
+                          // eslint-disable-next-line no-unused-vars
                           validator: (_, value) => {
                             if (isProceed) return Promise.resolve();
                             if (
                               value === undefined ||
                               value === null ||
-                              value.toString().trim() === ''
+                              value.toString().trim() === ""
                             ) {
-                              setActionDisable(true);
-                              return Promise.reject(new Error(t('required')));
+                              return Promise.reject(new Error(t("required")));
                             }
                             if (value <= 0 || isNaN(value)) {
-                              setActionDisable(true);
-                              return Promise.reject(new Error(t('wrongInput')));
+                              return Promise.reject(new Error(t("wrongInput")));
                             }
                             if (!Number.isInteger(Number(value))) {
-                              setActionDisable(true);
-                              return Promise.reject(new Error(t('shouldBeInterger')));
+                              return Promise.reject(
+                                new Error(t("shouldBeInterger"))
+                              );
                             }
                             if (Number(value) > data.creditAmount) {
-                              setActionDisable(true);
-                              return Promise.reject(new Error(t('insufficientBalance')));
+                              return Promise.reject(
+                                new Error(t("insufficientBalance"))
+                              );
                             }
                             return Promise.resolve();
                           },
                         },
                       ]}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <div style={{ display: "flex", alignItems: "center" }}>
                         {!isProceed && (
                           <>
                             <InputNumber
-                              onChange={(value) => setCreditAmount(Number(value))}
-                              placeholder={addCommSep(data.creditAmount)}
+                              placeholder={
+                                data?.creditAmount
+                                  ? addCommSep(data.creditAmount)
+                                  : ""
+                              }
                               style={{ flex: 1, marginRight: 8 }}
                               disabled={isProceed}
-                              value={creditAmount}
                             />
-                            <span style={{ margin: '0 8px' }}>/</span>
+                            <span style={{ margin: "0 8px" }}>/</span>
                           </>
                         )}
+
                         <InputNumber
-                          placeholder={addCommSep(data.creditAmount)}
+                          placeholder={
+                            data?.creditAmount
+                              ? addCommSep(data.creditAmount)
+                              : ""
+                          }
                           disabled
                           style={{ flex: 1 }}
+                          value={data?.creditAmount ?? ""}
                         />
                       </div>
                     </Form.Item>
@@ -422,24 +540,25 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
               <Col span={24}>
                 <Form.Item
                   className="remarks-label"
-                  label={t('remark')}
+                  label={t("remark")}
                   name="comment"
                   rules={[
                     {
                       required: remarkRequired,
-                      message: t('required'),
+                      message: t("required"),
                     },
                     {
-                      validator: (_, v) => {
-                        if (remarkRequired && v !== undefined && v !== '' && v.trim() === '') {
-                          return Promise.reject(t('required'));
+                      // eslint-disable-next-line no-unused-vars
+                      validator: (_, val) => {
+                        if (remarkRequired && val && val.trim() === "") {
+                          return Promise.reject(t("required"));
                         }
                         return Promise.resolve();
                       },
                     },
                   ]}
                 >
-                  <Input.TextArea onChange={(e) => setRemark(e.target.value)} placeholder="" />
+                  <Input.TextArea placeholder="" />
                 </Form.Item>
               </Col>
             </Row>
@@ -447,18 +566,22 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
             {type === CreditActionType.RETIREMENT && (
               <Row>
                 <Col span={24}>
-                  <Form.Item className="text-left" valuePropName="checked" label="" name="confirm">
+                  <Form.Item
+                    className="text-left"
+                    name="confirm"
+                    valuePropName="checked"
+                  >
                     <Checkbox
                       className={
                         proceedAction === CreditRetirementProceedAction.ACCEPT
-                          ? 'checkbox-accept'
-                          : proceedAction === CreditRetirementProceedAction.REJECT
-                          ? 'checkbox-reject'
-                          : 'checkbox-process'
+                          ? "checkbox-accept"
+                          : proceedAction ===
+                            CreditRetirementProceedAction.REJECT
+                          ? "checkbox-reject"
+                          : "checkbox-process"
                       }
-                      onChange={(e) => setChecked(e.target.checked)}
                     >
-                      {t(!isProceed ? 'checkBoxCreate' : 'checkBoxProceed')}
+                      {t(!isProceed ? "checkBoxCreate" : "checkBoxProceed")}
                     </Checkbox>
                   </Form.Item>
                 </Col>
@@ -467,7 +590,7 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
 
             <Form.Item className="footer">
               <Button htmlType="button" onClick={onCancel}>
-                {t('view:cancel')}
+                {t("view:cancel")}
               </Button>
               <Button
                 style={
@@ -476,13 +599,15 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                         backgroundColor:
                           proceedAction === CreditRetirementProceedAction.ACCEPT
                             ? COLOR_CONFIGS.PRIMARY_THEME_COLOR
-                            : proceedAction === CreditRetirementProceedAction.REJECT
+                            : proceedAction ===
+                              CreditRetirementProceedAction.REJECT
                             ? COLOR_CONFIGS.FAILED_RESPONSE_COLOR
                             : COLOR_CONFIGS.FAILED_RESPONSE_COLOR,
                         borderColor:
                           proceedAction === CreditRetirementProceedAction.ACCEPT
                             ? COLOR_CONFIGS.PRIMARY_THEME_COLOR
-                            : proceedAction === CreditRetirementProceedAction.REJECT
+                            : proceedAction ===
+                              CreditRetirementProceedAction.REJECT
                             ? COLOR_CONFIGS.FAILED_RESPONSE_COLOR
                             : COLOR_CONFIGS.FAILED_RESPONSE_COLOR,
                       }

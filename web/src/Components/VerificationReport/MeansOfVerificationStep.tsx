@@ -148,7 +148,9 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
         .unix(),
       onSiteInspection: values?.onSiteInspection.map((item: any) => {
         return {
-          ...item,
+          activity: item?.activity,
+          siteLocation: item?.siteLocation,
+          teamMember: item?.teamMember,
           activityPerformedDate: moment(item?.activityPerformedDate)
             .startOf("day")
             .unix(),
@@ -156,8 +158,12 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
       }),
       interviewees: values?.interviewees.map((item: any) => {
         return {
-          ...item,
-          date: moment.unix(item?.date).startOf("day").unix(),
+          lastName: item?.lastName,
+          firstName: item?.firstName,
+          affliationName: item?.affliationName,
+          subject: item?.subject,
+          teamMember: item?.teamMember,
+          date: moment(item?.date).startOf("day").unix(),
         };
       }),
     };
@@ -269,9 +275,19 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                             >
                               <DatePicker
                                 size="small"
-                                disabledDate={(currentDate: any) =>
-                                  currentDate < moment().startOf("day")
-                                }
+                                disabledDate={(currentDate: any) => {
+                                  const siteInspectionDurationStart =
+                                    form.getFieldValue(
+                                      "siteInspectionDurationStart"
+                                    );
+                                  return (
+                                    currentDate &&
+                                    currentDate <
+                                      moment(siteInspectionDurationStart).endOf(
+                                        "day"
+                                      )
+                                  );
+                                }}
                                 disabled={disableFields}
                               />
                             </Form.Item>
@@ -656,7 +672,7 @@ export const MeansOfVerificationStep = (props: VerificationStepProps) => {
                                     </Col>
                                     <Col xl={3} className="other-cols col">
                                       <Form.Item
-                                        name={[name, "subject "]}
+                                        name={[name, "subject"]}
                                         rules={[
                                           {
                                             required: true,

@@ -1,13 +1,12 @@
-name: Carbon Registry ZIM Test Deployment
+name: Carbon Registry Test Deployment
 on:
   push:
     branches:
-      - develop
+      - '*'
     paths:
       - web/**
       - backend/**
       - .github/workflows/deployment*
-      - docker-compose*
 
 jobs:
   changes:
@@ -65,7 +64,7 @@ jobs:
           fi
 
   deploy_frontend:
-    name: Carbon Registry ZIM Frontend Deploy
+    name: Carbon Registry Frontend Deploy
     needs: changes
     if: needs.changes.outputs.frontend-changes == 'true' || needs.changes.outputs.workflows-changes == 'true' || needs.changes.outputs.all-changes == 'true'
     runs-on: ubuntu-latest
@@ -97,40 +96,18 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      # - name: Install dependencies
-      #   working-directory: ./web
-      #   run: CI=false yarn install
-      # - name: Build
-      #   working-directory: ./web
-      #   run: CI=false yarn build
-      # - name: Deploy
-      #   run: aws s3 sync ./web/build s3://carbon-www-dev
-      # - name: Deploy Test
-      #   run: aws s3 sync ./web/build s3://www-test-carbon
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-      # - name: Build, tag, and push the image to Amazon ECR
-      #   id: build-image
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     ECR_REPOSITORY: carbon-web
-      #     IMAGE_TAG: unified
-      #   run: |
-      #     # Build a docker container and push it to ECR
-      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg REACT_APP_BACKEND=http://3.232.219.197:3000 --build-arg REACT_APP_STAT_URL=http://3.232.219.197:3100 --build-arg REACT_APP_COUNTRY_NAME="CountryX" --build-arg COUNTRY_FLAG_URL="https://carbon-common-dev.s3.amazonaws.com/flag.png" --build-arg COUNTRY_CODE="NG" --build-arg REACT_APP_MAP_TYPE="Mapbox" --build-arg REACT_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }}
-      #     echo "Pushing image to ECR...."
-      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-      #     echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
       - name: Build, tag, and push the image to Amazon ECR
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: carbon-registry-zim-web
+          ECR_REPOSITORY: carbon-web
           IMAGE_TAG: ${{ github.head_ref || github.ref_name }}
         run: |
           # Build a docker container and push it to ECR 
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg VITE_APP_BACKEND=http://localhost:3000 --build-arg VITE_APP_STAT_URL=http://localhost:3100 --build-arg COUNTRY_NAME="United Nations" --build-arg VITE_APP_REGISTRY_NAME="UNDP Demo Carbon Registry" --build-arg COUNTRY_CODE="NG" --build-arg VITE_APP_MAP_TYPE="Mapbox" --build-arg VITE_APP_GOVERNMENT_MINISTRY:"Ministry Of Environment" --build-arg VITE_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }} --build-arg VITE_APP_MAXIMUM_FILE_SIZE=1048576 --build-arg COUNTRY_FLAG_URL="https://carbon-common-dev.s3.amazonaws.com/flag.png" 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg VITE_APP_BACKEND=http://localhost:3000 --build-arg VITE_APP_COUNTRY_NAME="CountryX" --build-arg VITE_APP_REGISTRY_NAME="CountryXRegistry" --build-arg VITE_APP_MAP_TYPE="Mapbox" --build-arg VITE_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }} --build-arg VITE_APP_MAXIMUM_FILE_SIZE=5242880 --build-arg COUNTRY_FLAG_URL="https://carbon-common-dev.s3.amazonaws.com/flag.png" 
           echo "Pushing image to ECR..."
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
@@ -138,7 +115,7 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: carbon-registry-zim-web
+          ECR_REPOSITORY: carbon-web
           IMAGE_TAG: ${{ github.head_ref || github.ref_name }}
           PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_TEST }}
           HOSTNAME: ${{secrets.HOST_IP_TEST }}
@@ -146,10 +123,10 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-            carbon-zim/zim_frontend_deploy.sh '
+            carbon/dev_frontend_deploy.sh '
 
   deploy_backend:
-    name: Carbon Registry ZIM Backend Deploy
+    name: Carbon Registry Backend Deploy
     needs: changes
     if: needs.changes.outputs.backend-changes == 'true' || needs.changes.outputs.workflows-changes == 'true' || needs.changes.outputs.all-changes == 'true'
     runs-on: ubuntu-latest
@@ -177,12 +154,11 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-      - name: Build, tag, and push the development image to Amazon ECR
-        if: github.ref == 'refs/heads/develop'
+      - name: Build, tag, and push the image to Amazon ECR
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: carbon-registry-zim-services
+          ECR_REPOSITORY: carbon-services
           IMAGE_TAG: ${{ github.head_ref || github.ref_name }}
         run: |
           # Build a docker container and push it to ECR 
@@ -190,7 +166,7 @@ jobs:
           echo "Pushing image to ECR..."
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-      - name: Deploy development docker image to Amazon EC2
+      - name: Deploy docker image to Amazon EC2
         if: github.ref == 'refs/heads/develop'
         env:
           PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_TEST }}
@@ -199,4 +175,4 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-            carbon-zim/zim_backend_deploy.sh '
+            carbon/dev_backend_deploy.sh '

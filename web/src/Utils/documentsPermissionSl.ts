@@ -30,7 +30,7 @@ export const formPermissions = (
     userInfoState,
     docType,
     projectProposalStage,
-    documents
+    documents,
   );
 
   //PDD: Permissions pending and rejected stage for all users
@@ -148,7 +148,7 @@ export const formPermissions = (
     docType === DocType.PDD &&
     projectProposalStage === ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER &&
     userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-    (userInfoState?.userRole !== Role.ViewOnly || userInfoState?.userRole !== Role.Manager)
+    (![Role.ViewOnly, Role.Manager].includes(userInfoState?.userRole))
   ) {
     return {
       mode: FormMode.VERIFY,
@@ -161,7 +161,7 @@ export const formPermissions = (
     docType === DocType.PDD &&
     projectProposalStage === ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER &&
     userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-    (userInfoState?.userRole === Role.ViewOnly || userInfoState?.userRole === Role.Manager)
+    ([Role.ViewOnly, Role.Manager].includes(userInfoState?.userRole))
   ) {
     return {
       mode: FormMode.VIEW,

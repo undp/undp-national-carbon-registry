@@ -19,7 +19,7 @@ export class NoObjectionLetterGenerateService {
       "docGenerate.ministerNameAndDesignation"
     );
     const ministry = this.configService.get("docGenerate.ministryName");
-    const country = this.configService.get("country");
+    const country = this.configService.get("systemCountryName");
     const capital = this.configService.get("docGenerate.countryCapital");
 
     const fileName = `NO_OBJECTION_LETTER_${projectId}.pdf`;
@@ -39,7 +39,7 @@ export class NoObjectionLetterGenerateService {
     doc.fontSize(9);
     doc
       .font("fonts/Inter-Bold.ttf")
-      .text(`\n\nRe: Programme Design Document by ${orgName} `);
+      .text(`\n\nRe: Initial Notification Form by ${orgName} `);
 
     doc.text("\n\nNo Objection Letter", {
       align: "center",

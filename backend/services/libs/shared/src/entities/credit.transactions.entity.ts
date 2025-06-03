@@ -47,6 +47,9 @@ export class CreditTransactionsEntity {
   @Column({ type: "text", nullable: true })
   country?: string;
 
+  @Column({ type: "text", nullable: true })
+  organizationName?: string;
+
   @Column({ type: "bigint" })
   createTime: number;
 

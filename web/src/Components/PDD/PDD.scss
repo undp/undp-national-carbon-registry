@@ -389,10 +389,15 @@
       align-items: center;
     }
     .datepicker {
-      width: 46%;
+      width: 90%;
 
-      .ant-picker-large .ant-picker-input > input {
+      .ant-picker-middle {
+        width: 80%;
+      }
+
+      .ant-picker-middle .ant-picker-input > input {
         font-size: 13px;
+        text-align: center;
       }
     }
   }
