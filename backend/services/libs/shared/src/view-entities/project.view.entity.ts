@@ -13,6 +13,7 @@ import { ViewColumn, ViewEntity } from "typeorm";
       p."sector",
       p."sectoralScope",
       p."authorizationId",
+      p."independentCertifiers",
       c."companyId", 
       c."name", 
       c."logo",
@@ -51,6 +52,9 @@ export class ProjectViewEntity {
 
   @ViewColumn()
   authorizationId: string;
+
+  @ViewColumn()
+  independentCertifiers: number[];
 
   @ViewColumn()
   companyId: number;

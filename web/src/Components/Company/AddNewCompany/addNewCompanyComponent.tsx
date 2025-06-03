@@ -327,6 +327,12 @@ export const AddNewCompanyComponent = (props: any) => {
       setLoading(false);
     }
   };
+  const companyRoleMap: Record<string, string> = {
+  PD: 'Project Developer',
+  IC: 'Independent Certifier',
+
+};
+
 
   const onUpdateCompany = async () => {
     setLoading(true);
@@ -708,102 +714,6 @@ export const AddNewCompanyComponent = (props: any) => {
                     <Input addonBefore="https://" size="large" />
                   </Form.Item>
 
-                  {companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-                    systemType !== CarbonSystemType.MRV && (
-                      <div className="space-container" style={{ width: '100%' }}>
-                        <Space
-                          wrap={true}
-                          style={{
-                            display: 'flex',
-                            marginBottom: 8,
-                          }}
-                          align="center"
-                          size={'large'}
-                        >
-                          <Form.Item
-                            style={{ width: '100%' }}
-                            name="omgePercentage"
-                            label={t('addCompany:omgePercentage')}
-                            initialValue={state?.record?.omgePercentage}
-                            rules={[
-                              { required: false, message: '' },
-                              // {
-                              //   validator: async (rule, value) => {
-                              //     if (
-                              //       String(value).trim() === '' ||
-                              //       String(value).trim() === undefined ||
-                              //       value === null ||
-                              //       value === undefined
-                              //     ) {
-                              //       throw new Error(
-                              //         `${t('addCompany:omgePercentage')}  ${t('isRequired')}`
-                              //       );
-                              //     }
-                              //   },
-                              // },
-                            ]}
-                          >
-                            <InputNumber
-                              style={{ width: '100%' }}
-                              size="large"
-                              min={0}
-                              max={99}
-                              formatter={(value) => `${value ? Math.round(value) : ''}%`}
-                              parser={(value: any) => value.replace('%', '')}
-                            />
-                          </Form.Item>
-                        </Space>
-                      </div>
-                    )}
-                  {companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY && (
-                    <div className="space-container" style={{ width: '100%' }}>
-                      <Space
-                        wrap={true}
-                        style={{
-                          display: 'flex',
-                          marginBottom: 8,
-                        }}
-                        align="center"
-                        size={'large'}
-                      >
-                        <Form.Item
-                          style={{ width: '100%' }}
-                          name="nationalSopValue"
-                          label={t('addCompany:nationalSopValue')}
-                          initialValue={state?.record?.nationalSopValue}
-                          rules={[
-                            { required: false, message: '' },
-                            // {
-                            //   validator: async (rule, value) => {
-                            //     if (
-                            //       String(value).trim() === '' ||
-                            //       String(value).trim() === undefined ||
-                            //       value === null ||
-                            //       value === undefined
-                            //     ) {
-                            //       throw new Error(
-                            //         `${t('addCompany:nationalSopValue')} s${t('isRequired')}`
-                            //       );
-                            //     }
-                            //   },
-                            // },
-                          ]}
-                        >
-                          <InputNumber
-                            style={{ width: '100%' }}
-                            size="large"
-                            min={0}
-                            max={99}
-                            formatter={(value) => `${value}%`}
-                            parser={(value: any) => value.replace('%', '')}
-                            // eslint-disable-next-line eqeqeq
-                            disabled={systemType == CarbonSystemType.REGISTRY}
-                          />
-                        </Form.Item>
-                      </Space>
-                    </div>
-                  )}
-
                   <Form.Item
                     name="logo"
                     label={t('addCompany:companyLogoWithType')}
@@ -893,7 +803,7 @@ export const AddNewCompanyComponent = (props: any) => {
                             ) : (
                               <BankOutlined className="role-icons" />
                             )}
-                            {t('addCompany:' + companyRole)}
+                            {t(companyRoleMap[companyRole])}
                           </Radio.Button>
                         </div>
                       ) : (

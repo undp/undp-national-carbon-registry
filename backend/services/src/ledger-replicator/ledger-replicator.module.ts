@@ -14,6 +14,7 @@ import { LedgerReplicatorInterface } from "./replicator-interface.service";
 import { ProjectEntity } from "@app/shared/entities/projects.entity";
 import { DataImporterModule } from "src/data-importer/data-importer.module";
 import { CreditBlocksEntity } from "@app/shared/entities/credit.blocks.entity";
+import { Province } from "@app/shared/entities/province.entity";
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { CreditBlocksEntity } from "@app/shared/entities/credit.blocks.entity";
       Programme,
       Company,
       Counter,
+      Province,
       ProgrammeSl,
       ProjectEntity,
       CreditBlocksEntity,

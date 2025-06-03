@@ -37,6 +37,9 @@ import Monitoring from './Monitoring';
 import { DocumentEnum } from '../../Definitions/Enums/document.enum';
 import { ROUTES } from '../../Config/uiRoutingConfig';
 import { INF_SECTORAL_SCOPE } from '../AddNewProgramme/ProgrammeCreationComponent';
+import { toMoment } from '../../Utils/convertTime';
+import { safeClone } from '../../Utils/deepCopy';
+import { defaultTimeout } from '../../Definitions/Constants/defaultTimeout';
 
 const CMA_STEPS = {};
 
@@ -142,10 +145,10 @@ const StepperComponent = (props: any) => {
           projectTitle: data?.title,
           versionNumber: 1,
           projectProponent: data?.company?.name,
-          sectoralScope: INF_SECTORAL_SCOPE[data?.sectoralScope],
+          sectoralScope: INF_SECTORAL_SCOPE[data?.sectoralScope] || 'NA',
         });
         form4.setFieldsValue({
-          projectActivityStartDate: moment(data?.startDate * 1000).format('YYYY-MM-DD'),
+          projectActivityStartDate: toMoment(data?.startDate).format('YYYY-MM-DD'),
         });
       }
       //.log('----------running form values--------', form4.getFieldsValue());
@@ -268,9 +271,9 @@ const StepperComponent = (props: any) => {
 
   const submitForm = async (appendixVals: any) => {
     const tempValues = {
-      ...values,
+      ...safeClone(values),
       data: {
-        ...values.data,
+        ...safeClone(values.data),
         appendix: appendixVals,
       },
     };
@@ -289,7 +292,11 @@ const StepperComponent = (props: any) => {
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
-        navigateToDetailsPage();
+        
+        setTimeout(() => {
+          navigateToDetailsPage();
+          setLoading(false);
+        }, defaultTimeout)
       }
     } catch (error: any) {
       message.open({
@@ -298,7 +305,6 @@ const StepperComponent = (props: any) => {
         duration: 4,
         style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
       });
-    } finally {
       setLoading(false);
     }
   };

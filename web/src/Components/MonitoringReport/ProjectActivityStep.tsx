@@ -29,6 +29,7 @@ import LabelWithTooltip, {
 import { API_PATHS } from "../../Config/apiConfig";
 import { CustomStepsProps } from "../MonitoringReport/StepProps";
 import { fileUploadValueExtract } from "../../Utils/utilityHelper";
+import "./MonitoringReport.scss"
 
 export const ProjectActivityStep = (props: CustomStepsProps) => {
   const {
@@ -41,6 +42,12 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
     handleValuesUpdate,
     disableFields,
   } = props;
+  const CustomLabel = ({ text, required }) => (
+  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '4px' }}>
+    {required && <span style={{ color: '#ff4d4f', fontSize: '14px', flexShrink: 0 }}>*</span>}
+    <span>{text}</span>
+  </div>
+);
 
   const { post } = useConnection();
   // const [contactNoInput] = useState<any>();
@@ -127,65 +134,11 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
     // console.log('onFinish triggered');
     // console.log('-----------temp Values before-------');
 
-    // const firstObj = {
-    //   locationOfProjectActivity: values?.locationOfProjectActivity,
-    //   siteNo: values?.pa_siteNo,
-    //   province: values?.province,
-    //   district: values?.district,
-    //   city: values?.pa_city,
-    //   community: values?.community,
-    //   geographicalLocationCoordinates: values?.location,
-    //   uploadImages: await async function () {
-    //     const base64Docs: string[] = [];
-
-    //     if (values?.optionalImages && values?.optionalImages.length > 0) {
-    //       const docs = values.optionalImages;
-    //       for (let i = 0; i < docs.length; i++) {
-    //         if (docs[i]?.originFileObj === undefined) {
-    //           base64Docs.push(docs[i]?.url);
-    //         } else {
-    //           const temp = await getBase64(docs[i]?.originFileObj as RcFile);
-    //           base64Docs.push(temp); // No need for Promise.resolve
-    //         }
-    //       }
-    //     }
-
-    //     return base64Docs;
-    //   },
-    // };
-    // tempList.push(firstObj);
     // console.log(firstObj);
-
-    const locationDetailsOfProjectActivity = await (async function () {
-      const tempList: any[] = [];
-
-      if (values?.extraLocations) {
-        for (const item of values.extraLocations) {
-          const tempObj = {
-            locationOfProjectActivity: item.locationOfProjectActivity, // Use item, not values
-            siteNo: item.siteNo,
-            province: item.province,
-            district: item.district,
-            city: item.city,
-            community: item.community,
-            geographicalLocationCoordinates:
-              item.geographicalLocationCoordinates, // Use item, not values
-            pa_uploadImages: await fileUploadValueExtract(
-              item?.pa_uploadImages,
-              "pa_uploadImages"
-            ),
-          };
-          tempList.push(tempObj);
-        }
-      }
-      // console.log('Final tempList:', tempList);
-      return tempList;
-    })();
 
     const tempValues: any = {
       projectActivityDetails: {
         pa_monitoringPurpose: values?.pa_monitoringPurpose,
-        locationOfProjectActivity: locationDetailsOfProjectActivity,
         projectParticipants: values?.projectParticipants,
         pa_methodology: values?.pa_methodology,
         pa_creditingPeriodType: values?.pa_creditingPeriodType,
@@ -197,9 +150,82 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
         )
           .startOf("day")
           .unix(),
+        locationDetailsOfProjectActivity: await (async function () {
+          const tempList: any[] = [];
+          const firstObj = {
+            locationOfProjectActivity: values?.locationOfProjectActivity,
+            siteNo: values?.siteNo,
+            province: values?.province,
+            district: values?.district,
+            city: values?.city,
+            community: values?.community,
+            geographicalLocationCoordinates:
+              values?.geographicalLocationCoordinates,
+            additionalDocuments: await (async function () {
+              const base64Docs: string[] = [];
+
+              if (values?.optionalImages && values?.optionalImages.length > 0) {
+                const docs = values.optionalImages;
+                for (let i = 0; i < docs.length; i++) {
+                  if (docs[i]?.originFileObj === undefined) {
+                    base64Docs.push(docs[i]?.url);
+                  } else {
+                    const temp = await getBase64(
+                      docs[i]?.originFileObj as RcFile
+                    );
+                    base64Docs.push(temp); // No need for Promise.resolve
+                  }
+                }
+              }
+
+              return base64Docs;
+            })(),
+          };
+          tempList.push(firstObj);
+          //console.log(firstObj);
+
+          if (values?.extraLocations) {
+            for (const item of values.extraLocations) {
+              const tempObj = {
+                locationOfProjectActivity: item.locationOfProjectActivity, // Use item, not values
+                siteNo: item.siteNo,
+                province: item.province,
+                district: item.district,
+                city: item.city,
+                community: item.community,
+                geographicalLocationCoordinates:
+                  item.geographicalLocationCoordinates, // Use item, not values
+                additionalDocuments: await (async function () {
+                  const base64Docs: string[] = [];
+
+                  if (
+                    values?.optionalImages &&
+                    values?.optionalImages.length > 0
+                  ) {
+                    const docs = values.optionalImages;
+                    for (let i = 0; i < docs.length; i++) {
+                      if (docs[i]?.originFileObj === undefined) {
+                        base64Docs.push(docs[i]?.url);
+                      } else {
+                        const temp = await getBase64(
+                          docs[i]?.originFileObj as RcFile
+                        );
+                        base64Docs.push(temp); // No need for Promise.resolve
+                      }
+                    }
+                  }
+
+                  return base64Docs;
+                })(),
+              };
+              tempList.push(tempObj);
+            }
+          }
+          //console.log('Final tempList:', tempList);
+          return tempList;
+        })(),
       },
     };
-    console.log(tempValues);
     handleValuesUpdate(tempValues);
   };
 
@@ -291,7 +317,7 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
                     </Form.Item>
 
                     <Form.Item
-                      label={t("monitoringReport:siteNo")}
+                      label={t("monitoringReport:pa_siteNo")}
                       name="siteNo"
                       rules={[
                         {
@@ -307,7 +333,7 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
                               value === undefined
                             ) {
                               throw new Error(
-                                `${t("monitoringReport:siteNo")} ${t(
+                                `${t("monitoringReport:pa_siteNo")} ${t(
                                   "isRequired"
                                 )}`
                               );
@@ -517,7 +543,7 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
 
                   <Col xl={24} md={24}>
                     <div className="custom-label-monitoring">
-                      {t('monitoringReport:pa_uploadImages')}
+                      {t("monitoringReport:pa_uploadImages")}
                     </div>
                     <Form.Item
                       //label={t('monitoringReport:pa_uploadImages')}
@@ -879,12 +905,12 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
 
                             <Col xl={24} md={24}>
                               <div className="custom-label-monitoring">
-                                {t('monitoringReport:pa_uploadImages')}
+                                {t("monitoringReport:pa_uploadImages")}
                               </div>
 
                               <Form.Item
                                 //label={t('monitoringReport:pa_uploadImages')}
-                                name={[name, 'uploadImages']}
+                                name={[name, "uploadImages"]}
                                 valuePropName="fileList"
                                 getValueFromEvent={normFile}
                                 required={false}
@@ -1198,19 +1224,23 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
                 <Col xl={12} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={t("monitoringReport:pa_methodology")}
-                      name="pa_methodology"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t("monitoringReport:pa_methodology")} ${t(
-                            "isRequired"
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <Input size="large" disabled={disableFields} />
-                    </Form.Item>
+  label={
+    <div style={{ display: 'block', width: '100%' }}>
+      {t("monitoringReport:pa_methodology")}<span style={{ color: 'red' }}>*</span>
+    </div>
+  }
+  name="pa_methodology"
+  rules={[
+    {
+      required: true,
+      message: `${t("monitoringReport:pa_methodology")} ${t("isRequired")}`,
+    },
+  ]}
+  className="no-required-mark"
+>
+  <Input size="large" disabled={disableFields} />
+</Form.Item>
+
                   </div>
                   <LabelWithTooltip
                     label={t("monitoringReport:pa_projectCreditingPeriod")}
@@ -1240,7 +1270,7 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
                               ) {
                                 throw new Error(
                                   `${t(
-                                    "monitoringReport:pa_projectCreditingPeriod"
+                                    "monitoringReport:pa_projectCreditingPeriodStartDate"
                                   )} ${t("isRequired")}`
                                 );
                               }
@@ -1290,9 +1320,10 @@ export const ProjectActivityStep = (props: CustomStepsProps) => {
                       >
                         <DatePicker
                           size="large"
-                          disabledDate={(currentDate: any) =>
-                            currentDate < moment().startOf("day")
-                          }
+                          disabledDate={(currentDate: any) => {
+                            const startDate = form.getFieldValue('pa_projectCreditingPeriod')
+                            return currentDate && currentDate < moment(startDate).endOf("day");
+                          }}
                           disabled={disableFields}
                           // onChange={() => updateCreditingPeriodDuration()}
                         />

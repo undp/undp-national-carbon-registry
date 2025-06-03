@@ -143,6 +143,7 @@ export const API_PATHS = {
   GET_PROJECT_STATUS_SUMMARY: "national/analytics/getProjectStatusSummary",
   GET_PROJECTS_BY_STATUS_DETAIL: "national/analytics/getProjectsByStatusDetail",
   GET_PROJECT_COUNT_BY_SECTOR: "national/analytics/getProjectCountBySector",
+  GET_PROJECT_COUNT_BY_SECTORAL_SCOPE: "national/analytics/getProjectCountBySectorScope",
   GET_CREDIT_SUMMARY: "national/analytics/getCreditSummary",
   GET_CREDIT_SUMMARY_BY_DATE: "national/analytics/creditsSummaryByDate",
   //UNUSED APIS
@@ -167,4 +168,7 @@ export const API_PATHS = {
   REJECT_VALIDATION: "national/programmeSl/validation/reject",
   APPROVE_VALIDATION: "national/programmeSl/validation/approve",
   POPUP_ACTION: (endpoint: string) => `national/programme/${endpoint}`,
+  // AEF RECORDS:
+  QUERY_AEF_RECORDS: `national/reportsManagement/queryAefRecords`,
+  DOWNLOAD_AEF_RECORDS: `national/reportsManagement/downloadAefReport`
 };

@@ -139,11 +139,21 @@ export class UserService {
     return users && users.length > 0 ? users[0] : undefined;
   }
 
-  async getUserProfileDetails(id: number) {
+  async getUserProfileDetails(
+    id: number,
+    includeCreditBlockBalance: boolean = false
+  ) {
     const userProfileDetails = await this.findById(id);
     const organisationDetails = await this.companyService.findByCompanyId(
       userProfileDetails.companyId
     );
+    if (includeCreditBlockBalance) {
+      const creditBlockBalance =
+        await this.companyService.getCompanyAvailableCreditBlockBalance(
+          userProfileDetails.companyId
+        );
+      organisationDetails.creditBalance = creditBlockBalance;
+    }
     return {
       user: userProfileDetails,
       Organisation: organisationDetails,
@@ -163,7 +173,7 @@ export class UserService {
   ): Promise<DataResponseDto | undefined> {
     this.logger.verbose("User update received", abilityCondition);
 
-    if (user.role !== Role.Admin) {
+    if (![Role.Admin, Role.Root].includes(user.role)) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "user.noUserEditPermission",
@@ -1013,7 +1023,11 @@ export class UserService {
     return response;
   }
 
-  async query(query: QueryDto, abilityCondition: string): Promise<any> {
+  async query(
+    query: QueryDto,
+    abilityCondition: string,
+    user: User
+  ): Promise<any> {
     if (query.filterAnd) {
       if (!query.filterAnd.some((filter) => filter.key === "isPending")) {
         query.filterAnd.push({
@@ -1030,6 +1044,13 @@ export class UserService {
         value: false,
       });
       query.filterAnd = filterAnd;
+    }
+    if (user.companyRole == CompanyRole.INDEPENDENT_CERTIFIER) {
+      query.filterAnd.push({
+        key: "companyId",
+        operation: "=",
+        value: user.companyId,
+      });
     }
 
     const resp = await this.userRepo
@@ -1172,7 +1193,7 @@ export class UserService {
       userId
     );
 
-    if (user.role !== Role.Admin) {
+    if (![Role.Admin, Role.Root].includes(user.role)) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "user.noUserDeletePermission",

@@ -5,20 +5,20 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   IsUrl,
   MaxLength,
   ValidateIf,
+  IsPhoneNumber,
 } from "class-validator";
-import { Role } from "../casl/role.enum";
 import { CompanyRole } from "../enum/company.role.enum";
 import { IsValidCountry } from "../decorators/validcountry.decorator";
 import { SectoralScope } from "@undp/serial-number-gen";
 import { CompanyState } from "../enum/company.state.enum";
 import { GovDepartment } from "../enum/govDep.enum";
 import { Ministry } from "../enum/ministry.enum";
+import { IsValidProvince } from "../decorators/validProvince.decorator";
 
 export class OrganisationDto {
   companyId: number;
@@ -75,10 +75,10 @@ export class OrganisationDto {
 
   @ApiPropertyOptional()
   @IsArray()
-  @ArrayMinSize(1)
   @MaxLength(100, { each: true })
   @IsNotEmpty({ each: true })
   @IsOptional()
+  @IsValidProvince()
   provinces: string[];
 
   @ValidateIf(
@@ -87,10 +87,18 @@ export class OrganisationDto {
         c.companyRole
       )
   )
+  @IsPhoneNumber(null)
   @IsNotEmpty()
   @IsString()
   @ApiPropertyOptional()
   phoneNo: string;
+
+  @IsString()
+  @ApiPropertyOptional()
+  @IsNotEmpty()
+  @IsOptional()
+  @IsPhoneNumber(null)
+  faxNo: string;
 
   @ValidateIf(
     (c) =>

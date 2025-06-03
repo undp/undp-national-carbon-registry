@@ -17,7 +17,7 @@ export const EmailTemplates = {
     html: `
         Welcome,<br><br>
 
-        A new {{organisationRole}} organisation has been created for the {countryName} Carbon Registry. Please review and approve it by clicking
+        A new {{organisationRole}} organisation has been created for the {{countryName}} Carbon Registry. Please review and approve it by clicking
         <a href="{{organisationPageLink}}">here</a>.
 
         <br><br>
@@ -85,10 +85,10 @@ export const EmailTemplates = {
   },
   CHANGE_PASSOWRD: {
     id: "CHANGE_PASSOWRD",
-    subject: "Your {CountryName} Carbon Registry Account Password is Changed",
+    subject: "Your {{countryName}} Carbon Registry Account Password is Changed",
     html: `
         Hi, <br><br>
-        The password of your {CountryName} Carbon Registry account was changed successfully. 
+        The password of your {{countryName}} Carbon Registry account was changed successfully. 
 
         <br><br>
         Sincerely, <br>
@@ -277,9 +277,9 @@ export const EmailTemplates = {
     html: `
         Hi,<br><br>
 
-        A new Validation Report has been submitted by {{organizationName}} Independant Certifier for the project {{programmeName}} owned by your {{pdOrganizationName}}. <br><br>
+        A new Validation Report has been submitted by {{icOrganisationName}} Independant Certifier for the project {{programmeName}} owned by your {{pdOrganizationName}}. <br><br>
 
-        Designated National Authority can review and approve by clicking <a href="{{programmePageLink}}>"here</a>.
+        Designated National Authority can review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
 
         Sincerely,  <br>
@@ -292,7 +292,7 @@ export const EmailTemplates = {
     html: `
         Hi,<br><br>
 
-        A new Validation Report has been submitted by {{icOrganizationName}} Independant Certifier for the project {{programmeName}} owned by the {{pdOrganizationName}}. <br><br>
+        A new Validation Report has been submitted by {{icOrganisationName}} Independant Certifier for the project {{programmeName}} owned by the {{pdOrganizationName}}. <br><br>
 
         Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -338,7 +338,7 @@ export const EmailTemplates = {
     html: `
         Hi, <br><br>
 
-        Validation Report submitted by {{icOrganizationName}} Independant Certifier organisation for the project {{programmeName}} owned by {{pdOrganizationName}} has been approved by the Designated National Authority.<br><br>
+        Validation Report submitted by {{icOrganisationName}} Independant Certifier organisation for the project {{programmeName}} owned by {{pdOrganisationName}} has been approved by the Designated National Authority.<br><br>
 
         Sincerely,  <br>
         The {{countryName}} Carbon Registry Team
@@ -381,7 +381,7 @@ export const EmailTemplates = {
     html: `
         Hi, <br><br>
 
-        Validation Report submitted by your {{icOrganizationName}} Independant Certifier organisation for the project {{programmeName}} owned by {{pdOrganizationName}} has been rejected by the Designated National Authority. <br><br>
+        Validation Report submitted by your {{icOrganisationName}} Independant Certifier organisation for the project {{programmeName}} owned by {{pdOrganisationName}} has been rejected by the Designated National Authority. <br><br>
 
         You can re-submit the Validation Report by clicking <a href={{programmePageLink}}>here</a>.
         <br><br>
@@ -458,7 +458,7 @@ export const EmailTemplates = {
         Hi, <br><br>
 
         A new Verfication Report has been submitted by {{organizationNameIC}}.<br>
-        Independant Certifier for the project {{projectName}} owned by your {{organizationNamePD}}. <br><br>
+        Independant Certifier for the project {{programmeName}} owned by your {{organizationNamePD}}. <br><br>
 
         Designated National Authority can review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -474,7 +474,7 @@ export const EmailTemplates = {
         Hi, <br><br>
 
         A new Verfication Report has been submitted by {{organizationNameIC}}.<br>
-        Independant Certifier for the project {{projectName}} owned by the {{organizationNamePD}}.<br><br>
+        Independant Certifier for the project {{programmeName}} owned by the {{organizationNamePD}}.<br><br>
 
         Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
@@ -946,11 +946,11 @@ export const EmailTemplates = {
   },
   PROGRAMME_DEVELOPER_ORG_DEACTIVATION: {
     id: "PROGRAMME_DEVELOPER_ORG_DEACTIVATION",
-    subject: "Your {CountryName} Carbon Registry Organisation is Deactivated",
+    subject: "Your {{countryName}} Carbon Registry Organisation is Deactivated",
     html: `
         Hi,<br><br>
 
-        Your organisation in the {CountryName} Carbon Registry has been deactivated. <br><br>
+        Your organisation in the {{countryName}} Carbon Registry has been deactivated. <br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Registry Team
@@ -1061,11 +1061,11 @@ export const EmailTemplates = {
   },
   ORG_REACTIVATION: {
     id: "ORG_REACTIVATION",
-    subject: "Your {CountryName} Carbon Registry Organisation is Reactivated",
+    subject: "Your {{countryName}} Carbon Registry Organisation is Reactivated",
     html: `
         Hi <br><br>
 
-        Your organization in the {CountryName} Carbon Registry has been reactivated. {Home} to login to the system.  <br><br>
+        Your organization in the {{countryName}} Carbon Registry has been reactivated. Click <a href="{{home}}">here</a> to login to the system.  <br><br>
 
         Sincerely, <br>
         The {{countryName}} Carbon Registry Team
@@ -1263,7 +1263,7 @@ export const EmailTemplates = {
     html: `
         Hi,<br><br> 
         
-        Initial Notification has been submitted, by {{organisationName}} organisation.<br> 
+        Initial Notification has been submitted by {{organisationName}} organisation.<br> 
 
         Please review and approve by clicking <a href={{programmePageLink}}>here</a>.<br> 
         <br>
@@ -1297,7 +1297,7 @@ export const EmailTemplates = {
         Hi,<br>
         <br>
         Your Initial Notification has been approved by {{countryName}} Designated National Authority and the Letter of No Objection was generated.<br><br>
-        Click <a href={{programmePageLink}}>here</a> for more details of the project.<br>
+        Click <a href={{programmePageLink}}>here</a> for more project details.<br>
         <br>
         Sincerely,<br>
         The {{countryName}} Carbon Credit Registry Team
@@ -1458,7 +1458,7 @@ export const EmailTemplates = {
         {{remarks}}
         <br><br>
 
-        Please re-submit the Project Design Document by clicking  {{programmePageLink}} here. <br><br>
+        Please re-submit the Project Design Document by clicking <a href={{programmePageLink}}>here</a>. <br><br>
 
         Sincerely,<br>
         The {{countryName}} Carbon Registry Team.

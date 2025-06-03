@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
 import { VerificationStepProps } from './StepProps';
+import { safeClone } from '../../Utils/deepCopy';
 
 export const VerificationTeamStep = (props: VerificationStepProps) => {
   const { t, current, form, formMode, next, prev, handleValuesUpdate, disableFields } = props;
@@ -18,7 +19,37 @@ export const VerificationTeamStep = (props: VerificationStepProps) => {
 
   const onFinish = (values: any) => {
     console.log('--------values-----------', values);
-    const body = { ...values };
+
+    const body = { 
+      ...values,
+      verificationTeamMembers: values?.verificationTeamMembers?.map((item: any) => {
+        return (
+          {
+            role: item?.role,
+            typeOfResource: item?.typeOfResource,
+            lastName: item?.lastName,
+            firstName: item?.firstName,
+            affliation: item?.affliation,
+            documentReview: item?.documentReview,
+            onsiteInspections: item?.onsiteInspections,
+            interviews: item?.interviews,
+            verificationFindings: item?.verificationFindings,
+          }
+        )
+      }),
+      technicalReviews: values?.technicalReviews?.map((item: any) => {
+        return (
+          {
+            role: item?.role,
+            typeOfResource: item?.typeOfResource,
+            lastName: item?.lastName,
+            firstName: item?.firstName,
+            affliation: item?.affliation,
+          }
+        )
+      }),
+     };
+
     handleValuesUpdate({
       verificationTeam: body,
     });
@@ -177,7 +208,7 @@ export const VerificationTeamStep = (props: VerificationStepProps) => {
                                   ]}
                                 >
                                   <Radio.Group className="radio-btn-grp" disabled={disableFields}>
-                                    <Radio value="IR">{t('verificationReport:IR')}</Radio>
+                                    <Radio value="IR" style={{ paddingLeft: '18px' }}>{t('verificationReport:IR')}</Radio>
                                     <Radio value="ER">{t('verificationReport:ER')}</Radio>
                                   </Radio.Group>
                                 </Form.Item>

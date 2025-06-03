@@ -67,6 +67,7 @@ export class ProjectDetailsViewEntity {
     companyRole: string;
     state: CompanyState;
     email: string;
+    companyId: number;
   };
 
   @ViewColumn()

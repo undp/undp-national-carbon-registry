@@ -1,4 +1,6 @@
 import moment from 'moment';
+import { toMoment } from '../../Utils/convertTime';
+import { mapBase64ToFields } from '../../Utils/mapBase64ToFields';
 
 export const BasicInformationDataMapToFields = (vals: any) => {
   if (vals === undefined) return;
@@ -9,26 +11,6 @@ export const BasicInformationDataMapToFields = (vals: any) => {
   };
 
   return tempValues;
-};
-
-const mapBase64ToFields = (fileUrls: string[]) => {
-  let fileObjs: any[] = [];
-
-  if (fileUrls !== undefined && fileUrls.length > 0) {
-    fileObjs = fileUrls.map((item: any, index) => {
-      const nameParts = item.split('/');
-      const name = nameParts[nameParts.length - 1];
-      const tempObj = {
-        uid: name,
-        name: name,
-        status: 'done',
-        url: item,
-      };
-      return tempObj;
-    });
-  }
-
-  return fileObjs;
 };
 
 export const descriptionOfProjectActivityDataMapToFields = (vals: any) => {
@@ -211,14 +193,13 @@ export const applicationOfMethodologyDataMapToFields = (vals: any) => {
     unit: vals?.dataAndParametersExAnte?.unit,
     description: vals?.dataAndParametersExAnte?.description,
     source: vals?.dataAndParametersExAnte?.source,
+    valueApplied: vals?.dataAndParametersExAnte?.valueApplied,
     descriptionOfMeasurementMethods: vals?.dataAndParametersExAnte?.descriptionOfMeasurementMethods,
     purpose: vals?.dataAndParametersExAnte?.purpose,
+
     comments: vals?.dataAndParametersExAnte?.comments,
-    emissionsPeriodStart: firstYearlyReductions?.startDate
-      ? moment.unix(firstYearlyReductions?.startDate)
-      : undefined,
-    emissionsPeriodEnd: firstYearlyReductions?.endDate
-      ? moment.unix(firstYearlyReductions?.endDate)
+    vintage: firstYearlyReductions?.vintage
+      ? toMoment(firstYearlyReductions?.vintage)
       : undefined,
     baselineEmissionReductions: String(firstYearlyReductions?.baselineEmissionReductions),
     projectEmissionReductions: String(firstYearlyReductions?.projectEmissionReductions),
@@ -230,10 +211,9 @@ export const applicationOfMethodologyDataMapToFields = (vals: any) => {
       if (yearlyReductions !== undefined && yearlyReductions?.length > 0) {
         tempExtraReductions = yearlyReductions.map((reductions: any) => {
           return {
-            emissionsPeriodStart: reductions?.startDate
-              ? moment.unix(reductions?.startDate)
+            vintage: reductions?.vintage
+              ? toMoment(reductions?.vintage)
               : undefined,
-            emissionsPeriodEnd: reductions?.endDate ? moment.unix(reductions?.endDate) : undefined,
             baselineEmissionReductions: String(reductions?.baselineEmissionReductions),
             projectEmissionReductions: String(reductions?.projectEmissionReductions),
             leakageEmissionReductions: String(reductions?.leakageEmissionReductions),
@@ -269,9 +249,7 @@ export const startDateCreditingPeriodDataMapToFields = (vals: any) => {
     creditingPeriodStart: vals?.creditingPeriodStart
       ? moment.unix(vals?.creditingPeriodStart)
       : undefined,
-    projectActivityStartDate: vals?.projectActivityStartDate
-      ? moment.unix(vals?.projectActivityStartDate)
-      : undefined,
+    projectActivityStartDate: toMoment(vals?.projectActivityStartDate).format("YYYY-MM-DD"),
   };
   return tempValues;
 };

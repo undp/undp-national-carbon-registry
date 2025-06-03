@@ -1,5 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsEnum, IsNotEmpty, IsString } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsEnum, IsNotEmpty, IsString, ValidateIf } from "class-validator";
 import { RetirementACtionEnum } from "../enum/retirement.action.enum";
 
 export class CreditRetireActionDto {
@@ -13,8 +13,13 @@ export class CreditRetireActionDto {
   @IsNotEmpty()
   action: RetirementACtionEnum;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @ValidateIf(
+    (o) =>
+      o.action === RetirementACtionEnum.CANCEL ||
+      o.action === RetirementACtionEnum.REJECT
+  )
   @IsString()
   @IsNotEmpty()
-  remarks: string;
+  remarks?: string;
 }

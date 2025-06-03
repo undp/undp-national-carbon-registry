@@ -37,6 +37,7 @@ import { API_PATHS } from "../../Config/apiConfig";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
 import { DocumentStateEnum } from "../../Definitions/Definitions/documentState.enum";
 import { DocumentEnum } from "../../Definitions/Enums/document.enum";
+import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 
 // import { countries } from 'react-circle-flags';
 
@@ -248,9 +249,14 @@ const Step08 = (props: CustomStepsProps) => {
               style: { textAlign: "right", marginRight: 15, marginTop: 10 },
             });
 
-            if (next) {
-              next();
-            }
+            setTimeout(() => {
+              if (next) {
+                next();
+              }
+              if (handleLoading) {
+                handleLoading(false);
+              }
+            }, defaultTimeout);
           }
         } catch (error) {
           message.open({
@@ -259,7 +265,6 @@ const Step08 = (props: CustomStepsProps) => {
             duration: 4,
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
-        } finally {
           if (handleLoading) {
             handleLoading(false);
           }
@@ -285,9 +290,14 @@ const Step08 = (props: CustomStepsProps) => {
               style: { textAlign: "right", marginRight: 15, marginTop: 10 },
             });
 
-            if (next) {
-              next();
-            }
+            setTimeout(() => {
+              if (next) {
+                next();
+              }
+              if (handleLoading) {
+                handleLoading(false);
+              }
+            }, defaultTimeout);
           }
         } catch (error) {
           message.open({
@@ -296,11 +306,7 @@ const Step08 = (props: CustomStepsProps) => {
             duration: 4,
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
-        } finally {
-          if (handleLoading) {
-            handleLoading(false);
-          }
-        }
+        } 
       }
     }
   };
@@ -327,9 +333,14 @@ const Step08 = (props: CustomStepsProps) => {
               style: { textAlign: "right", marginRight: 15, marginTop: 10 },
             });
 
-            if (next) {
-              next();
-            }
+            setTimeout(() => {
+              if (next) {
+                next();
+              }
+              if (handleLoading) {
+                handleLoading(false);
+              }
+            }, defaultTimeout);
           }
         } catch (error) {
           message.open({
@@ -338,11 +349,7 @@ const Step08 = (props: CustomStepsProps) => {
             duration: 4,
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
-        } finally {
-          if (handleLoading) {
-            handleLoading(false);
-          }
-        }
+        } 
       }
 
       if (
@@ -364,21 +371,25 @@ const Step08 = (props: CustomStepsProps) => {
               style: { textAlign: "right", marginRight: 15, marginTop: 10 },
             });
 
-            if (next) {
-              next();
-            }
+            setTimeout(() => {
+              if (next) {
+                next();
+              }
+              if (handleLoading) {
+                handleLoading(false);
+              }
+            }, defaultTimeout);
           }
         } catch (error) {
+          if (handleLoading) {
+            handleLoading(false);
+          }
           message.open({
             type: "error",
             content: t("common:somethingWentWrong"),
             duration: 4,
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
-        } finally {
-          if (handleLoading) {
-            handleLoading(false);
-          }
         }
       }
     }
@@ -650,38 +661,20 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 1 end */}
 
               {/* appendix 2 start */}
-              <h4 className="appendix-title custom-required">
+              <h4 className="appendix-title">
                 <i>{`${t("PDD:appendix2")}`}</i> : {t("PDD:appendix2Title")}
               </h4>
               <Form.Item
                 className='className="full-width-form-item'
                 // label={`${t('PDD:additionalComments')}`}
                 name="appendix2Comments"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === "" ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(
-                          `${t("PDD:additionalComments")} ${t("isRequired")}`
-                        );
-                      }
-                    },
-                  },
-                ]}
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
-              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
+              <div className="custom-label-pdd">
+                {t("PDD:uploadDocsAppendix")}
+              </div>
               <Form.Item
                 //label={t('PDD:uploadDocsAppendix')}
                 name="appendix2Documents"
@@ -728,37 +721,19 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 2 end */}
 
               {/* appendix 3 start */}
-              <h4 className="appendix-title custom-required">
+              <h4 className="appendix-title">
                 <i>{`${t("PDD:appendix3")}`}</i> : {t("PDD:appendix3Title")}
               </h4>
               <Form.Item
                 className='className="full-width-form-item'
                 // label={`${t('PDD:additionalComments')}`}
                 name="appendix3Comments"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === "" ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(
-                          `${t("PDD:additionalComments")} ${t("isRequired")}`
-                        );
-                      }
-                    },
-                  },
-                ]}
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
-              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
+              <div className="custom-label-pdd">
+                {t("PDD:uploadDocsAppendix")}
+              </div>
               <Form.Item
                 //label={t('PDD:uploadDocsAppendix')}
                 name="appendix3Documents"
@@ -805,38 +780,20 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 3 end */}
 
               {/* appendix 4 start */}
-              <h4 className="appendix-title custom-required">
+              <h4 className="appendix-title">
                 <i>{`${t("PDD:appendix4")}`}</i> : {t("PDD:appendix4Title")}
               </h4>
               <Form.Item
                 className='className="full-width-form-item'
                 // label={`${t('PDD:additionalComments')}`}
                 name="appendix4Comments"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === "" ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(
-                          `${t("PDD:additionalComments")} ${t("isRequired")}`
-                        );
-                      }
-                    },
-                  },
-                ]}
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
-              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
+              <div className="custom-label-pdd">
+                {t("PDD:uploadDocsAppendix")}
+              </div>
               <Form.Item
                 //label={t('PDD:uploadDocsAppendix')}
                 name="appendix4Documents"
@@ -883,7 +840,7 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 4 end */}
 
               {/* appendix 5 start */}
-              <h4 className="appendix-title custom-required">
+              <h4 className="appendix-title">
                 <i>{`${t("PDD:appendix5")}`}</i> : {t("PDD:appendix5Title")}
               </h4>
 
@@ -891,30 +848,12 @@ const Step08 = (props: CustomStepsProps) => {
                 className='className="full-width-form-item'
                 // label={`${t('PDD:additionalComments')}`}
                 name="appendix5Comments"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === "" ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(
-                          `${t("PDD:additionalComments")} ${t("isRequired")}`
-                        );
-                      }
-                    },
-                  },
-                ]}
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
-              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
+              <div className="custom-label-pdd">
+                {t("PDD:uploadDocsAppendix")}
+              </div>
               <Form.Item
                 //label={t('PDD:uploadDocsAppendix')}
                 name="appendix5Documents"
@@ -961,7 +900,7 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 5 end */}
 
               {/* appendix 6 start */}
-              <h4 className="appendix-title custom-required">
+              <h4 className="appendix-title">
                 <i>{`${t("PDD:appendix6")}`}</i> : {t("PDD:appendix6Title")}
               </h4>
 
@@ -969,31 +908,13 @@ const Step08 = (props: CustomStepsProps) => {
                 className='className="full-width-form-item'
                 // label={`${t('PDD:additionalComments')}`}
                 name="appendix6Comments"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === "" ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(
-                          `${t("PDD:additionalComments")} ${t("isRequired")}`
-                        );
-                      }
-                    },
-                  },
-                ]}
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
-              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
+              <div className="custom-label-pdd">
+                {t("PDD:uploadDocsAppendix")}
+              </div>
               <Form.Item
                 //label={t('PDD:uploadDocsAppendix')}
                 name="appendix6Documents"
@@ -1040,7 +961,7 @@ const Step08 = (props: CustomStepsProps) => {
               {/* appendix 6 end */}
 
               {/* appendix 7 start */}
-              <h4 className="appendix-title custom-required">
+              <h4 className="appendix-title">
                 <i>{`${t("PDD:appendix7")}`}</i> : {t("PDD:appendix7Title")}
               </h4>
 
@@ -1048,31 +969,13 @@ const Step08 = (props: CustomStepsProps) => {
                 className='className="full-width-form-item'
                 // label={`${t('PDD:additionalComments')}`}
                 name="appendix7Comments"
-                rules={[
-                  {
-                    required: true,
-                    message: ``,
-                  },
-                  {
-                    validator: async (rule, value) => {
-                      if (
-                        String(value).trim() === "" ||
-                        String(value).trim() === undefined ||
-                        value === null ||
-                        value === undefined
-                      ) {
-                        throw new Error(
-                          `${t("PDD:additionalComments")} ${t("isRequired")}`
-                        );
-                      }
-                    },
-                  },
-                ]}
               >
                 <TextArea rows={4} disabled={disableFields} />
               </Form.Item>
 
-              <div className="custom-label-pdd">{t('PDD:uploadDocsAppendix')}</div>
+              <div className="custom-label-pdd">
+                {t("PDD:uploadDocsAppendix")}
+              </div>
               <Form.Item
                 //label={t('PDD:uploadDocsAppendix')}
                 name="appendix7Documents"

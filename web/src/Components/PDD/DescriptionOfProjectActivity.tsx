@@ -753,11 +753,11 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                               if (
                                 value &&
                                 value.some(
-                                  (file: any) => file?.size / 1024 / 1024 >= 2
+                                  (file: any) => file?.size > maximumImageSize
                                 )
                               ) {
                                 return Promise.reject(
-                                  "Maximum upload file size is 2MB"
+                                  "Maximum upload file size is 5MB"
                                 );
                               }
                               return Promise.resolve();
@@ -1163,7 +1163,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
                                           value &&
                                           value.some(
                                             (file: any) =>
-                                              file?.size / 1024 / 1024 >= 2
+                                              file?.size > maximumImageSize
                                           )
                                         ) {
                                           return Promise.reject(
@@ -1573,7 +1573,7 @@ const DescriptionOfProjectActivity = (props: CustomStepsProps) => {
 
               {/* project participant table start */}
               {/* need to check again */}
-              <h4 className="form-section-title">
+              <h4 className="form-section-title custom-required">
                 {t("PDD:projectParticipantTable")}
               </h4>
               <div className="projectParticipantsTable">
