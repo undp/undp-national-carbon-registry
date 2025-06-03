@@ -55,14 +55,14 @@ const Homepage = () => {
   const [Visible, setVisible] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Hero slider images - using imported images
+
   const heroImages = [
     heroImage1,
     heroImage2,
     heroImage3
   ];
 
-  // Hero slider auto-slide functionality
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length);
