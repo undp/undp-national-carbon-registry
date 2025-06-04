@@ -25,6 +25,7 @@ Additionally, the system supports Agreed Electronic Format (AEF) reports, allowi
 ## Index
 * [About](#about)
 * [Standards](#standards)
+* [Changelog](#changelog)
 * [Architecture](#architecture)
 * [Project Structure](#structure)
 * [Run as Containers](#container)
@@ -43,6 +44,12 @@ This codebase aims to fullfill the digital public goods standard:
 https://digitalpublicgoods.net/standard/
 It is built according to the Principles for Digital Development:
 https://digitalprinciples.org/ 
+
+
+<a name="changelog"></a>
+## Changelog
+[Learn about the latest improvements.](./CHANGES.md)
+
 
 <a name="architecture"></a>
 ## System Architecture
@@ -423,6 +430,7 @@ Open source code available at https://github.com/undp/carbon-registry-status
 
 <a name="support"></a>
 ### Governance and Support
-[Digital For Climate (D4C)](https://www.theclimatewarehouse.org/work/digital-4-climate) is responsible for managing the application. D4C is a collaboration between the [European Bank for Reconstruction and Development (EBRD)](https://www.ebrd.com), [United Nations Development Program (UNDP)](https://www.undp.org), [United Nations Framework Convention on Climate Change (UNFCCC)](https://www.unfccc.int), [International Emissions Trading Association (IETA)](https://www.ieta.org), [European Space Agency (ESA)](https://www.esa.int), and [World Bank Group](https://www.worldbank.org) that aims to coordinate respective workflows and create a modular and interoperable end-to-end digital ecosystem for the carbon market. The overarching goal is to support a transparent, high integrity global carbon market that can channel capital for impactful climate action and low-carbon development. 
 
-This code is managed by [United Nations Development Programme](https://www.undp.org) as custodian. For any questions, contact us at digital@undp.org .
+The United Nations Development Program (UNDP) is responsible for managing the application. To ensure alignment with international demand, Digital For Climate (D4C) will act as an advisory body to the Digital Public Good Carbon Registry codebase. D4C is a collaboration between [European Bank for Reconstruction and Development (EBRD)](https://www.ebrd.com), [United Nations Development Program (UNDP)](https://www.undp.org), [United Nations Framework Convention on Climate Change (UNFCCC)](https://www.unfccc.int), [International Emissions Trading Association (IETA)](https://www.ieta.org), [European Space Agency (ESA)](https://www.esa.int), and [World Bank Group](https://www.worldbank.org)  that aims to coordinate respective workflows and create a modular and interoperable end-to-end digital ecosystem for the carbon market. The overarching goal is to support a transparent, high integrity global carbon market that can channel capital for impactful climate action and low-carbon development.
+
+This code is managed by [United Nations Development Programme](https://www.undp.org) as custodian, detailed in the press release. For technical questions, please visit the community of practice [‘Keeping Track of the Paris Agreement’](https://unfccc.int/news/paris-agreement-progress-tracker](https://www.sparkblue.org/group/keeping-track-digital-public-goods-paris-agreement/content/fourth-community-practice-meeting)) or submit through the [open forum](https://github.com/undp/carbon-registry/discussions). For any other questions, contact us at digital4planet@undp.org. 
