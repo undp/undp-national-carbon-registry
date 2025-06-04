@@ -214,6 +214,7 @@ const FAQ = () => {
                 <li>User roles and permissions</li>
                 <li>Approval authorities</li>
                 <li>Documentation requirements and forms</li>
+                <li>Data requirements (data fields)</li>
                 <li>Serial number formatting</li>
                 <li>API Integration</li>
                 <li>Types of carbon market mechanisms supported</li>
