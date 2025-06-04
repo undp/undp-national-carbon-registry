@@ -16,7 +16,7 @@ const DemoSite = () => {
           <div className="demo-site-text">
             <p className="main-description">
               This demo site showcases core features developed. The demo site is available by invitation to governments and potential partners working with UNDP. For inquiries and to request a demo, please contact{' '}
-              <b>UNDP Digital For Planet  </b>via your country office or{' '}
+              <b>UNDP Digital For Planet  </b>via your country office at{' '}
               <u><a href="mailto:digital4planet@undp.org" className="link">digital4planet@undp.org</a></u>
             </p>
             

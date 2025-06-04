@@ -15,9 +15,7 @@ const FeatureCards = () => {
           </div>
           <h3 className="feature-cards-heading">Serial Number (New!)</h3>
           <p className="feature-cards-text">
-            Each Carbon Credit Document has a Serial Number (ID). The Demo Carbon 
-            Registry is Aligned to UNFCCC's Article 6.4 Guidance Decision 5/CMA.4 (not 
-            Limited to) Other Types of Carbon Credits.
+            Each carbon Credit Receives a Unique Serial Number (ID). The Demo Carbon Registry is Aligned to UNFCCC’s Article 6.2 Guidance (Decision 6/CMA.4) but Can be Adapted to Other Types of Carbon Credits.
           </p>
         </div>
 
@@ -27,8 +25,7 @@ const FeatureCards = () => {
           </div>
           <h3 className="feature-cards-heading">Reporting (New!)</h3>
           <p className="feature-cards-text">
-            The Registry Automatically Generates Reports in the Agreed Electronic 
-            Format (AEF) for Article 6.2 of the Paris Agreement.
+            The Registry Automatically Generates Reports in the Agreed Electronic Format (AEF) for Article 6.2 of the Paris Agreement.
           </p>
         </div>
 
@@ -39,8 +36,7 @@ const FeatureCards = () => {
           </div>
           <h3 className="feature-cards-heading">Ledger</h3>
           <p className="feature-cards-text">
-            All Transfers, Retirements, and Cancellations are Immutably Recorded 
-            Onto a Ledger.
+            All transfers, Retirements, and Cancellations are Immutably Recorded Onto a Ledger.
           </p>
         </div>
 
@@ -50,8 +46,7 @@ const FeatureCards = () => {
           </div>
           <h3 className="feature-cards-heading">Dashboard & Insights (New!)</h3>
           <p className="feature-cards-text">
-            An Interactive Dashboard Visualizes the History of Credits Issued, 
-            Transferred, And Active Projects — by Country, Geography, and Organizations.
+            An Interactive Dashboard Visualizes the History of Credits Issued, Retired, and Active Projects — By Country, Geography, and Organisation.
           </p>
         </div>
 
@@ -61,9 +56,8 @@ const FeatureCards = () => {
           </div>
           <h3 className="feature-cards-heading">Interoperable & Exportable Data</h3>
           <p className="feature-cards-text">
-            The Data Model is Aligned with the CAD Trust Data Standard and the ITMN 
-            Registry Standard Connection Platform. An Open RESTful API Allows for 
-            Additional Integrations and Innovation.
+            The Data Model is Aligned with the CAD Trust Data Model and the ITMO Voluntary Bilateral Cooperation
+Platform. An Open RESTful API Allows for Additional Integrations and Innovation.
           </p>
         </div>
       </div>
