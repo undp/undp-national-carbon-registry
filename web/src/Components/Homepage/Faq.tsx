@@ -317,6 +317,38 @@ const FAQ = () => {
             </div>
           )}
         </div>
+        <div className="faq-item">
+          <button
+            className={`faq-question ${openIndex === 8 ? "active" : ""}`}
+            onClick={() => toggleItem(8)}
+          >
+            <span className={`chevron ${openIndex === 8 ? "rotated" : ""}`}>
+              <ChevronDown />
+            </span>
+            <span className="question-text">
+              Will contributing code back to GitHub risk the National Registry’s cybersecurity?
+            </span>
+          </button>
+          {openIndex === 8 && (
+            <div className="faq-answer">
+              <p>
+                No. Project teams can share new feature improvements without disclosing sensitive details, such as by removing or anonymising all sensitive information including: 
+              </p>
+              <ul className="faqList">
+                <li>Domain names</li>
+                <li>
+                  Port numbers
+                </li>
+                <li>API endpoints</li>
+                <li>Database names, locations</li>
+                <li>And any other sensitive informatio</li>
+              </ul>
+              <span>
+                This ensures transparency in software development while protecting national infrastructure.
+              </span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
