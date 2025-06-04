@@ -1519,7 +1519,10 @@ export class DocumentManagementService {
               project.refId,
               ProjectAuditLogType.MONITORING_REPORT_REJECTED,
               user.id,
-              em
+              undefined,
+              {
+               remarks: requestData.remarks,
+              }
             );
           })
           .catch((error: any) => {
@@ -1622,7 +1625,10 @@ export class DocumentManagementService {
               project.refId,
               ProjectAuditLogType.VERIFICATION_REPORT_REJECTED,
               user.id,
-              em
+              undefined,
+              {
+               remarks: requestData.remarks,
+              }
             );
           })
           .catch((error: any) => {
