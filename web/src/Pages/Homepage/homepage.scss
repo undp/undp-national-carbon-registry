@@ -97,17 +97,63 @@ $title-color: #3a8ab5;
     }
   }
 
-  .image-container {
-    background-image:
-      url("../../Assets/Images/homepage_img.png");
-    background-image:
-      image-set(
-        "../../Assets/Images/homepage_img.png" type("image/png"),
-        "../../Assets/Images/homepage_img.webp" type("image/webp")
-      );
-    background-size: cover;
-    background-position: top !important;
+
+
+.hero-slider-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 70px;
+  width: 100%; 
+
+  .hero-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid rgba(128, 128, 128, 0.737);
+    background: rgba(128, 128, 128, 0.737);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0; // Prevent dots from shrinking
+
+    &:hover {
+
+      transform: scale(1.1);
+    }
+
+    &.active {
+      background: white;
+      border-color: white;
+      transform: scale(1.2);
+    }
   }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .hero-slider-dots {
+    gap: 10px;
+    margin-top: 15px;
+    
+    .hero-dot {
+      width: 10px;
+      height: 10px;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-slider-dots {
+    gap: 8px;
+    margin-top: 12px;
+    
+    .hero-dot {
+      width: 8px;
+      height: 8px;
+    }
+  }
+}
 
   .homepage-img-container {
     height: 120vh;
