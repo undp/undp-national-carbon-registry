@@ -30,6 +30,11 @@ export class EmailService {
   async sendEmail(emailDataObj: any): Promise<any> {
     if (emailDataObj?.sender && !this.emailDisabled) {
       return new Promise((resolve, reject) => {
+        const headers = {};
+        const configSet = this.configService.get<string>("email.configSet");
+        if (configSet) {
+          headers["X-SES-CONFIGURATION-SET"] = configSet;
+        }
         this.transporter.sendMail(
           {
             from: this.sourceEmail,
@@ -39,6 +44,7 @@ export class EmailService {
             text: emailDataObj?.emailBody,
             html: emailDataObj?.emailBody,
             attachments: emailDataObj?.attachments,
+            headers,
           },
           function (error, info) {
             console.log("SendEmail Response", error, info);

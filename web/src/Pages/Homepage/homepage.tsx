@@ -6,6 +6,9 @@ import i18next from "i18next";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import sliderLogo from "../../Assets/Images/logo-slider.png";
+import heroImage1 from "../../Assets/Images/homepage_img.png";
+import heroImage2 from "../../Assets/Images/homepage_img2.png"; // Add your second image
+import heroImage3 from "../../Assets/Images/homepage_img3.png"; // Add your third image
 import undpLogo from "../../Assets/Images/undp1.webp";
 import EBRD from "../../Assets/Images/EBRD.webp";
 import EBRDff from "../../Assets/Images/EBRD.png";
@@ -50,7 +53,23 @@ const Homepage = () => {
   const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
   const navigate = useNavigate();
   const [Visible, setVisible] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
+
+  const heroImages = [
+    heroImage1,
+    heroImage2,
+    heroImage3
+  ];
+
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+    }, 5000); 
+
+    return () => clearInterval(interval);
+  }, [heroImages.length]);
 
   const controlDownArrow = () => {
     if (window.scrollY > 150) {
@@ -63,16 +82,16 @@ const Homepage = () => {
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
   };
-const handleClickScroll = () => {
-  const element = document.getElementById("vision");
-  if (element) {
-    element.scrollIntoView({
-      behavior: "smooth",
-      block: "start", // ensures it scrolls the element to the top of the viewport
-    });
-  }
-};
 
+  const handleClickScroll = () => {
+    const element = document.getElementById("vision");
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
 
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
 
@@ -85,11 +104,19 @@ const handleClickScroll = () => {
       window.removeEventListener("scroll", controlDownArrow);
     };
   }, []);
+
   return (
     <div className="homepage-container">
       <Row>
         <Col md={24} lg={24} flex="auto">
-          <div className="homepage-img-container image-container">
+          <div 
+            className="homepage-img-container"
+            style={{
+              backgroundImage: `url(${heroImages[currentSlide]})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'top',
+              transition: 'background-image 1s ease-in-out'
+            }}>
             <Row>
               <Col md={18} lg={21} xs={17} flex="auto">
                 <div className="homepage-header-container">
@@ -101,7 +128,6 @@ const handleClickScroll = () => {
                       <div className="title">
                         {"CARBON MARKET DIGITAL PLATFORM"}
                       </div>
-                      {/* <div className="title-sub">{'REGISTRY'}</div> */}
                     </div>
                     <div className="country-name">
                       {import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX"}
@@ -145,20 +171,32 @@ const handleClickScroll = () => {
                   </svg>
                 </nav>
               )}
+              
+              {/* Dot Indicators below the arrow */}
+              <div className="hero-slider-dots">
+                {heroImages.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`hero-dot ${index === currentSlide ? 'active' : ''}`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
             </Row>
           </div>
         </Col>
       </Row>
       <Row className="vision" >
         <Col>
-        <section className="vision-section" ref={ref}>
+        <section className="vision-section" id="vision" ref={ref}>
       <motion.div
         className="vision-container"
         initial={{ opacity: 0, y: 40 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <h2 className="vision-title" id="vision">Vision</h2>
+        <h2 className="vision-title">Vision</h2>
         <p className="vision-description">
           UNDP's Open-Source National Carbon Registry Enables Countries to Implement and Manage Carbon Markets by Issuing, Managing, and Tracking Carbon Credits with Confidence, Achieving National Climate Commitments.
         </p>
@@ -606,24 +644,25 @@ const handleClickScroll = () => {
     </div>
   </Col>
   <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
-    <u><a href=""><div className="resource-item connects">
-      Guidance to serial number
-    </div></a></u>
-  </Col>
-  <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
-   <u><a href=""> <div className="resource-item connects">
+  <u><a href="https://github.com/undp/carbon-registry" target="_blank"> <div className="resource-item connects">
       GitHub site
     </div></a></u>
+    
+  </Col>
+  <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
+   <div className="resource-item connects">
+      Guidance to serial number
+    </div>
   </Col>
   <Col xs={12} sm={6} md={4} lg={3} xl={3} className="Devresources">
-    <u><a href=""><div className="resource-item connects">
+    <div className="resource-item connects">
       Guidance for AEF reporting
-    </div></a></u>
+    </div>
   </Col>
   <Col xs={12} sm={6} md={8} lg={3} xl={3} className="Devresources">
-    <u><a href=""><div className="resource-item connects">
+    <div className="resource-item connects">
       Cad Trust data model
-    </div></a></u>
+    </div>
   </Col>
 </Row>
       <LayoutFooter />
