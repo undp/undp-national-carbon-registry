@@ -644,24 +644,25 @@ const Homepage = () => {
     </div>
   </Col>
   <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
-    <u><a href="" target="_blank"><div className="resource-item connects">
-      Guidance to serial number
-    </div></a></u>
-  </Col>
-  <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
-   <u><a href="https://github.com/undp/carbon-registry" target="_blank"> <div className="resource-item connects">
+  <u><a href="https://github.com/undp/carbon-registry" target="_blank"> <div className="resource-item connects">
       GitHub site
     </div></a></u>
+    
+  </Col>
+  <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
+   <div className="resource-item connects">
+      Guidance to serial number
+    </div>
   </Col>
   <Col xs={12} sm={6} md={4} lg={3} xl={3} className="Devresources">
-    <u><a href="" target="_blank"><div className="resource-item connects">
+    <div className="resource-item connects">
       Guidance for AEF reporting
-    </div></a></u>
+    </div>
   </Col>
   <Col xs={12} sm={6} md={8} lg={3} xl={3} className="Devresources">
-    <u><a href="" target="_blank"><div className="resource-item connects">
+    <div className="resource-item connects">
       Cad Trust data model
-    </div></a></u>
+    </div>
   </Col>
 </Row>
       <LayoutFooter />
