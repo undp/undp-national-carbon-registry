@@ -200,7 +200,7 @@ const Homepage = () => {
         <p className="vision-description">
           UNDP's Open-Source National Carbon Registry Enables Countries to Implement and Manage Carbon Markets by Issuing, Managing, and Tracking Carbon Credits with Confidence, Achieving National Climate Commitments.
         </p>
-        <h3 className="vision-subtitle">Our Platform Supports:</h3>
+        <h3 className="vision-subtitle">The Platform Supports:</h3>
 
         <div className="vision-grid">
           <motion.div
