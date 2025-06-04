@@ -341,8 +341,9 @@ const FAQ = () => {
                   Port numbers
                 </li>
                 <li>API endpoints</li>
+                <li>Usernames</li>
                 <li>Database names, locations</li>
-                <li>And any other sensitive informatio</li>
+                <li>And any other sensitive information</li>
               </ul>
               <span>
                 This ensures transparency in software development while protecting national infrastructure.
