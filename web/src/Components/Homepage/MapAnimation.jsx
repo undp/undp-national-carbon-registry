@@ -10,7 +10,7 @@ const MapAnimation = () => {
     { name: 'Namibia', id: 'namibia' },
     { name: 'Vietnam', id: 'vietnam' },
     { name: 'Sri Lanka', id: 'sri-lanka' },
-    { name: "Côte D'Ivoire", id: 'cote-divoire' },
+    { name: "Cote D'ivoire", id: 'cote-divoire' },
     { name: 'Nigeria', id: 'nigeria' },
     { name: 'Zimbabwe', id: 'zimbabwe' }
   ];
