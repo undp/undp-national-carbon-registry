@@ -707,7 +707,7 @@ export class CompanyService {
     });
 
     if (res) {
-      return res.map((org) => new IDNameResponse(org.companyId, org.name));
+      return res.map((org) => new IDNameResponse(org.companyId, org.name, org.state));
     }
 
     return [];

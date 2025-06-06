@@ -81,36 +81,43 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
   >([]);
 
   const getDropDownList = async () => {
-    setListLoading(true);
-    try {
-      setDropDownList([]);
-      const response =
+  setListLoading(true);
+  try {
+    setDropDownList([]);
+    const response =
+      type === CreditActionType.TRANSFER
+        ? await post(API_PATHS.TRANSFER_ORGANIZATIONS, {
+            type: userInfoState?.companyRole,
+            filterOwn: true,
+          })
+        : await get(API_PATHS.CB_RETIRE_COINTRY_QUERY);
+
+    if (response && response.data && response.data.length > 0) {
+      const filteredData =
         type === CreditActionType.TRANSFER
-          ? await post(API_PATHS.TRANSFER_ORGANIZATIONS, {
-              type: userInfoState?.companyRole,
-              filterOwn: true,
-            })
-          : await get(API_PATHS.CB_RETIRE_COINTRY_QUERY);
-      if (response && response.data && response.data.length > 0) {
-        setDropDownList(
-          response.data.map((item: any) => ({
-            value: type === CreditActionType.TRANSFER ? item.id : item.alpha2,
-            label: item.name,
-          }))
-        );
-      }
-    } catch (error: any) {
-      console.log("Error in getting List for the Action", error);
-      message.open({
-        type: "error",
-        content: error.message,
-        duration: 3,
-        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
-      });
-    } finally {
-      setListLoading(false);
+          ? response.data.filter((item: any) => item.state === "1")
+          : response.data;
+
+      setDropDownList(
+        filteredData.map((item: any) => ({
+          value: type === CreditActionType.TRANSFER ? item.id : item.alpha2,
+          label: item.name,
+        }))
+      );
     }
-  };
+  } catch (error: any) {
+    console.log("Error in getting List for the Action", error);
+    message.open({
+      type: "error",
+      content: error.message,
+      duration: 3,
+      style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+    });
+  } finally {
+    setListLoading(false);
+  }
+};
+
 
   // eslint-disable-next-line no-unused-vars
   const handleValuesChange = (_: any, allValues: any) => {
