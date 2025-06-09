@@ -23,6 +23,7 @@ import { CreditRetirementInterface } from "../Interfaces/creditRetirement.interf
 import {
   CreditRetirementProceedAction,
   RetirementActionEnum,
+  
 } from "../Enums/creditRetirementProceedType.enum";
 import { CreditRetirementTypeEmnum } from "../Enums/creditRetirementType.enum";
 import { COLOR_CONFIGS } from "../../../Config/colorConfigs";
@@ -246,6 +247,7 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
       }
 
       form.setFieldsValue({
+        owner: data?.senderName,
         project: data?.projectName,
         retirementType: retirementTypeRef,
         comment: "",
@@ -287,6 +289,17 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
             onValuesChange={handleValuesChange}
             onFinish={handleSubmit}
           >
+            <Row>
+              <Col span={24}>
+                {type === CreditActionType.RETIREMENT &&(<Form.Item
+                  className="credit-action-project-name"
+                  label={t("Owner")}
+                  name="Owner"
+                >
+                  <Input placeholder={data.senderName} disabled />
+                </Form.Item>)}
+              </Col>
+            </Row>
             <Row>
               <Col span={24}>
                 <Form.Item
