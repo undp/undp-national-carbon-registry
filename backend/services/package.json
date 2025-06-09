@@ -45,6 +45,7 @@
     "aws-lambda": "^1.0.7",
     "aws-serverless-express": "^3.4.0",
     "axios": "^1.2.4",
+    "bcrypt": "^6.0.0",
     "cache-manager": "5.2.1",
     "cheerio": "^1.0.0-rc.12",
     "class-transformer": "^0.5.1",
