@@ -16,7 +16,9 @@ export class MapboxLocationService implements LocationInterface {
     console.log("addresses passed to forwardGeocoding function -> ", regions);
     let geoCodinates: any[] = [];
     const ACCESS_TOKEN = this.configService.get("mapbox.key");
-
+    if (!Array.isArray(regions)) {
+      throw new Error("Invalid input: regions must be an array.");
+    }
     for (let index = 0; index < regions.length; index++) {
       const url =
         "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
