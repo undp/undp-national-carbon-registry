@@ -1,0 +1,325 @@
+@use '../../Styles/colors.addProgramme.scss';
+@use '../../Styles/colors.role.scss' as colors2;
+@use '../../Styles/variables.scss';
+
+.proposal-form-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  padding: 0 50px;
+
+  .title-container {
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+
+    .main {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: variables.$primary-color;
+    }
+
+    .sub {
+      font-size: 0.8rem;
+      color: colors.$title-sub;
+    }
+  }
+
+  .forms-container {
+    display: flex;
+    flex-direction: column;
+    background-color: colors.$common-form-white;
+    margin: 1rem 0 1rem 0;
+    border-radius: 10px;
+    padding: 2.5rem;
+    .ant-input-group-addon {
+      border: 1px solid #d9d9d9 !important;
+      border-radius: 5px;
+      color: rgba(0, 0, 0, 0.85);
+    }
+  }
+
+  .stepper-container {
+    display: flex;
+    margin-bottom: 2rem;
+  }
+}
+
+.proposal-form {
+  width: 100%;
+
+  .full-width {
+    width: 100%;
+  }
+
+  .capitalize {
+    text-transform: capitalize;
+  }
+
+  .text-transform-none {
+    text-transform: none;
+  }
+
+  .step-actions {
+    &-end {
+      button:not(:last-child) {
+        margin-right: 10px;
+      }
+    }
+  }
+
+  .margin-0 {
+    margin-bottom: 0 !important;
+  }
+  .duration-of-service {
+    margin-bottom: 40px;
+  }
+
+  .highlight-label {
+    label {
+      color: #3a3541cc;
+      font-weight: 600;
+    }
+  }
+
+  .ant-picker-large {
+    height: 40px !important;
+    width: 100%;
+  }
+
+  .ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input,
+  .ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input:hover {
+    border-color: #ff4d4f !important;
+  }
+
+  .ant-upload-list-item-name {
+    color: variables.$primary-color;
+  }
+
+  .section-sub-title {
+    color: #3a3541cc;
+    margin: 10px 0px;
+  }
+
+  .section-title {
+    color: #3a3541cc;
+    font-weight: 600;
+  }
+
+  .section-description-title {
+    color: black;
+    font-weight: 400;
+  }
+  .section-description {
+    color: #615d67;
+  }
+
+  .objectives-list {
+    list-style-position: outside;
+    li {
+      margin-left: -23px;
+    }
+  }
+
+  .equation {
+    display: flex;
+    width: 350px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    color: #615d67;
+    i:first-child {
+      font-size: 24px;
+    }
+    sub {
+      font-size: 16px;
+    }
+
+    span {
+      font-weight: 400;
+      margin-bottom: 0 !important;
+      i {
+        font-size: 14px !important;
+      }
+    }
+  }
+
+  .reductions-table {
+    color: #3a3541cc;
+    .header {
+      text-align: center;
+      padding: 16px 0px;
+      font-weight: 600;
+      background-color: #f9fafc;
+    }
+
+    .data-row {
+      text-align: left;
+      padding: 16px 0;
+
+      .ant-form-item {
+        margin-bottom: 0 !important;
+      }
+    }
+  }
+
+  .text-color {
+    color: #615d67;
+  }
+
+  .avg-credit-gen-row {
+    color: #615d67;
+    .ant-form-item {
+      margin-bottom: 8px !important;
+    }
+  }
+
+  .scope-table {
+    color: #615d67;
+    .header {
+      background-color: #cceeff;
+
+      div {
+        // for cols inside header row
+        border: 1px solid #16b1ff;
+      }
+    }
+
+    .data-col {
+      border: 1px solid #d8d8d8;
+      .ant-form-item {
+        margin-bottom: 0 !important;
+      }
+    }
+
+    .col-1 {
+      text-align: right;
+      padding: 10px 16px;
+    }
+    .col-2 {
+      text-align: left;
+      padding: 10px 16px;
+    }
+  }
+
+  .project-timeline-table {
+    color: #615d67;
+    margin-bottom: 16px;
+    .ant-form-item {
+      margin-bottom: 0 !important;
+    }
+
+    .header {
+      background-color: #f9fafc;
+      color: #3a3541cc;
+      font-weight: 600;
+    }
+
+    .col-1 {
+      padding: 10px 16px;
+      text-align: center;
+    }
+    .col-2 {
+      padding: 10px 16px;
+    }
+
+    .col-3 {
+      padding: 10px 16px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      p {
+        margin-top: 8px;
+        color: rgba(58, 53, 65, 0.5);
+      }
+
+      .datepicker {
+        width: 46%;
+
+        .ant-picker-large .ant-picker-input > input {
+          font-size: 13px;
+        }
+      }
+    }
+
+    .col-4 {
+      padding: 10px 16px;
+    }
+
+    .addBtn {
+      margin-left: 40px;
+    }
+  }
+
+  .team-members-table {
+    width: 70%;
+    margin-bottom: 8px;
+    @media (max-width: 760px) {
+      width: 100%;
+    }
+
+
+    .header {
+      font-weight: 600;
+    }
+
+    .col-1 {
+      border: 1px solid #d9d9d999;
+      padding: 10px 12px;
+
+      &:first {
+        border-top-left-radius: 4px;
+      }
+    }
+    .col-2 {
+      border: 1px solid #d9d9d999;
+      padding: 10px 12px;
+    }
+    .ant-form-item {
+      margin-bottom: 0px !important;
+    }
+
+    .addBtn {
+      margin-top: 16px;
+      margin-bottom: 16px;
+    }
+
+    .minusBtn {
+      margin-left: 8px;
+    }
+
+    .ant-input {
+      border: none;
+    }
+  }
+
+  .costing-table {
+    width: 100%;
+
+    .header {
+      background-color: #fafafa;
+      padding: 10px 20px;
+      text-align: left;
+      margin-bottom: 10px;
+    }
+    .ant-form-item {
+      margin-bottom: 0px !important;
+    }
+    .data-rows {
+      padding: 10px 20px;
+      border-bottom: 1px solid #0000000f;
+    }
+
+    .addMinusBtn {
+      margin-left: 0px;
+    }
+    .ant-input-number-input {
+      text-align: left;
+    }
+  }
+
+  .executive-board-members-table {
+    width: 50%;
+  }
+}

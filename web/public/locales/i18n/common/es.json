@@ -1,0 +1,21 @@
+{
+  "submit": "Enviar",
+  "name": "Nombre",
+  "email": "Correo Electrónico",
+  "pwd": "Contraseña",
+  "login": "Iniciar Sesión",
+  "signUp": "Registrarse",
+  "language": "Idioma",
+  "company": "Organizaciones",
+  "edit": "EDITAR",
+  "isRequired": "es obligatorio!",
+  "isInvalid": "es inválido!",
+  "sessionExpiredErrorMsg": "Su sesión ha caducado. Por favor, inicie sesión nuevamente para continuar trabajando.",
+  "backto": "Volver a",
+  "signIn": "Iniciar Sesión",
+  "loginFailed": "Inicio de sesión fallido",
+  "networkError": "Error de red. Por favor, verifique su conexión a internet y vuelva a intentarlo.",
+  "systemError": "Algo salió mal. Por favor, inténtelo de nuevo.",
+  "approve": "APROBAR",
+  "reject": "RECHAZAR"
+}

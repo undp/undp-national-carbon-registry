@@ -1,0 +1,8 @@
+{
+  "reset-pwd-title": "Restablecer Contraseña",
+  "submit": "Enviar",
+  "newPwd": "Nueva Contraseña",
+  "confirmNewPwd": "Confirmar Nueva Contraseña",
+  "passwordNotMatch": "¡Las contraseñas no coinciden!",
+  "passwordResetNotWorked": "El enlace de restablecimiento de contraseña ha caducado o ya ha sido utilizado"
+}

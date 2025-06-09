@@ -1,0 +1,17 @@
+export enum DocumentTypeEnum {
+  MONITORING_REPORT = "monitoringReport",
+  VERIFICATION_REPORT = "verificationReport",
+  CMA = "cma",
+  COST_QUOTATION = "costQuotation",
+  PROJECT_PROPOSAL = "projectProposal",
+  VALIDATION_AGREEMENT = "validationAgreement",
+  ENVIRONMENTAL_IMPACT_ASSESSMENT = "environmentalImpactAssesment",
+  VALIDATION_REPORT = "validationReport",
+  SITE_VISIT_CHECKLIST = "siteVisitChecklist",
+  CARBON_NEUTRAL_CERTIFICATE = "carbonNeutralCertificate",
+  INITIAL_NOTIFICATION_FORM = "INF",
+  PROJECT_DESIGN_DOCUMENT = "PDD",
+  VALIDATION = "VALIDATION",
+  MONITORING = "MONITORING",
+  VERIFICATION = "VERIFICATION",
+}

@@ -1,0 +1,76 @@
+{
+  "reportsTitle": "Reports",
+
+  "ACTIONS": "Actions Report",
+
+  "HOLDINGS": "Holdings Report",
+
+  "recordId": "ARTICLE 6 DATABASE RECORD ID",
+
+  "cooperativeApproach": "COOPERATIVE APPROACH",
+
+  "itmo": "ITMO",
+
+  "uniqueIdentifier": "UNIQUE IDENTIFIER",
+
+  "firstUniqueIdentifier": "FIRST UNIQUE IDENTIFIER",
+
+  "lastUniqueIdentifier": "LAST UNIQUE IDENTIFIER",
+
+  "underlyingUnitBlockStartId": "UNDERLYING UNIT BLOCK START ID",
+
+  "underlyingUnitLastBlockId": "UNDERLYING UNIT BLOCK LAST ID",
+
+  "metricAndQuantity": "METRIC AND QUANTITY",
+
+  "metric": "METRIC",
+
+  "quantity": "QUANTITY (EXPRESSED IN METRIC)",
+
+  "quantity2": "QUANTITY (tCO2eq)",
+
+  "conversionFactor": "CONVERSION FACTOR (REPORTING PARTY)",
+
+  "itmoDetails": "ITMO DETAILS",
+
+  "firstTransferParty": "FIRST TRANSFERRING PARTICIPATING PARTY",
+
+  "vintage": "VINTAGE",
+
+  "sector": "SECTOR",
+
+  "activityType": "ACTIVITY TYPE",
+
+  "authorizationTitle": "AUTHORIZATION",
+
+  "dateOfAuthorization": "DATE OF AUTHORIZATION",
+
+  "authorizationId": "AUTHORIZATION ID",
+
+  "authorizationPurposes": "PURPOSES FOR AUTHORIZATION",
+
+  "oimpAuthorized": "OIMP AUTHORIZED BY THE PARTY",
+
+  "firstTransferDefinition": "FIRST TRANSFER DEFINITION",
+
+  "actions": "ACTIONS",
+
+  "actionDetails": "ACTION DETAILS",
+
+  "actionDate": "ACTION DATE",
+
+  "actionType": "ACTION TYPE",
+
+  "transferParty": "TRANSFERRING PARTICIPATING PARTY",
+
+  "aquiringParty": "ACQUIRING PARTICIPATING PARTY",
+
+  "purposesForCancellation": "PURPOSES FOR CANCELLATION",
+
+  "usingParticipating": "USING PARTICIPATING PARTY OR AUTHORIZED ENTITY OR ENTITIES",
+
+  "firstTransfer": "FIRST TRANSFER",
+  "authorization": "Authorization",
+  "transfer": "Transfer",
+  "crossBoarderTransfer": "Cross Boarder Transfer"
+}

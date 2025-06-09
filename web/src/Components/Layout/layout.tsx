@@ -4,15 +4,13 @@ import { useTranslation } from 'react-i18next';
 const { Header, Sider, Content } = Layout;
 import { Outlet } from 'react-router-dom';
 import LayoutHeader from '../Header/layout.header';
-import {
-  ConfigurationSettingsType,
-  Loading,
-  useConnection,
-  useSettingsContext,
-} from '@undp/carbon-library';
 import LayoutSider from '../Sider/layout.sider';
 import './layout.scss';
 import { PauseCircleFill } from 'react-bootstrap-icons';
+import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
+import { ConfigurationSettingsType } from '../../Definitions/Definitions/settings.definitions';
+import { Loading } from '../Loading/loading';
 
 const CustomLayout = (props: any) => {
   const { selectedKey } = props;
@@ -21,19 +19,19 @@ const CustomLayout = (props: any) => {
   const { isTransferFrozen, setTransferFrozen } = useSettingsContext();
   const { t } = useTranslation(['creditTransfer']);
 
-  const getTranferFrozenStatus = async () => {
-    const response = await get(
-      `national/Settings/query?id=${ConfigurationSettingsType.isTransferFrozen}`
-    );
-    if (response && response.data) {
-      setTransferFrozen(response.data);
-    } else {
-      setTransferFrozen(false);
-    }
-  };
+  // const getTransferFrozenStatus = async () => {
+  //   const response = await get(
+  //     API_PATHS.TRANSFER_FORZEN_STATUS(ConfigurationSettingsType.isTransferFrozen)
+  //   );
+  //   if (response && response.data) {
+  //     setTransferFrozen(response.data);
+  //   } else {
+  //     setTransferFrozen(false);
+  //   }
+  // };
 
   useEffect(() => {
-    getTranferFrozenStatus();
+    // getTransferFrozenStatus();
   }, []);
 
   return (

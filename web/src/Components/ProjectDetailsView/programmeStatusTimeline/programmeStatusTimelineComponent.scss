@@ -1,0 +1,365 @@
+.programme-status-timeline {
+  .info-view {
+    .ant-steps-item-icon {
+      width: 26px;
+      height: 26px;
+      margin: 8px 8px 0 0;
+      font-size: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+        'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+      line-height: 24px;
+      text-align: center;
+      // border: 1px solid rgba(0, 0, 0, 0.25);
+      border-radius: 32px;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
+      color: rgba(93, 195, 128, 1);
+    }
+
+    .ant-steps-item-process
+      > .ant-steps-item-container
+      > .ant-steps-item-content
+      > .ant-steps-item-title {
+      color: rgba(0, 0, 0, 0.85);
+      font-weight: 600;
+    }
+
+    .ant-steps-item-title {
+      color: rgba(0, 0, 0, 0.85);
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .ant-steps-item-subtitle {
+      display: block;
+      margin-left: 0px;
+      font-size: 0.77rem;
+      color: rgba(0, 0, 0, 0.85);
+      margin-top: -12px;
+      font-weight: 300;
+    }
+
+    .ant-steps-item-wait
+      > .ant-steps-item-container
+      > .ant-steps-item-content
+      > .ant-steps-item-title
+      > .ant-steps-item-subtitle {
+      color: rgba(0, 0, 0, 0.45);
+    }
+
+    
+
+    .timeline-description-item-complete {
+      color: #5dc380;
+      font-weight: 600;
+      font-size: 0.75rem;
+      margin-left: -2px;
+      padding-right: 4px;
+    }
+
+    .timeline-description-item-rejected {
+      color: #ff4141;
+      font-weight: 600;
+      font-size: 0.75rem;
+      margin-left: -2px;
+      padding-right: 4px;
+    }
+
+    .timeline-description-item-pending {
+      color: rgba(7, 7, 7, 0.5);
+      font-weight: bold;
+      font-size: 0.55rem;
+      margin-left: -11px;
+      padding-right: 5px;
+      padding-top: 3.5px;
+
+      svg {
+        stroke-width: '2px';
+        stroke: 'black';
+        fill: 'none';
+      }
+  }
+
+    .timeline-description {
+      padding-left: 0 !important;
+      list-style: none;
+      margin-left: -14px;
+      display: flex;
+      list-style: circle;
+    }
+
+    .timeline-description-approved-true,
+    .timeline-description-rejected-true {
+      padding-left: 0 !important;
+      list-style: none;
+      margin-left: -14px;
+    }
+
+   
+    .timeline-description-pending-true {
+      list-style: circle;
+    }
+    .timeline-description-accepted-true,
+    .timeline-description-submitted-true,
+    .timeline-description-rejected-true {
+      padding-left: 0 !important;
+      list-style: none;
+      margin-left: -14px;
+      display: flex;
+    }
+
+    .timeline-description-approved-true {
+      display: flex;
+    }
+    
+    .timeline-description-pending-false,
+    .timeline-description-submitted-false,
+    .timeline-description--false {
+      list-style: circle;
+    }
+
+
+    .list-style-none {
+      padding-left: 0 !important;
+      list-style: none;
+      margin-left: -14px;
+      display: flex;
+    }
+
+    .list-style-circle {
+      // padding-left: 0 !important;
+      list-style: circle;
+      // margin-left: -14px;
+      // display: flex;
+    }
+
+    .list-style-next {
+      color: #16B1FF;
+    }
+    // .timeline-description-pending-false::before,
+    // .timeline-description-submitted-false::before,
+    // .timeline-description--false::before {
+    //   // list-style: circle;
+    //   content:"o";
+    //       font-size:10px;
+    //       vertical-align:middle;
+    //       line-height:20px;
+    //       padding-left: 0 !important;
+    //   list-style: none;
+    //   margin-left: -14px;
+    // }
+
+
+    .pdd-title {
+      line-height: 1.5;
+      margin-bottom: 6px;
+      margin-top: 6px;
+    }
+    .item-description {
+      width: 200px;
+      ul {
+        padding-left: 3px;
+        font-size: 0.7rem;
+        font-weight: 500;
+
+      //   li {
+      //     list-style: none;
+      //     // font-size: 20px;
+      // }
+      
+      // li:before {
+      //     content:"o";
+      //     font-size:10px;
+      //     vertical-align:middle;
+      //     line-height:20px;
+      // }
+      }
+    }
+
+    .no-objection-letter-pending-wait {
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+   
+
+    .inf-submitted-process {
+      background-color: #1890ff;
+      color: #fff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .inf-rejected-process {
+      color: #ff4141;
+      margin-top: -4px;
+    }
+
+    .inf-submitted-process {
+      background-color: #1890ff;
+      color: #fff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .proposal-pending-wait {
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .proposal-pending-process {
+      background-color: #fff;
+      color: #1890ff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .proposal-submitted-process {
+      background-color: #1890ff;
+      color: #fff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .proposal-rejected-process {
+      color: #ff4141;
+      margin-top: -3px;
+    }
+
+    .pdd-pending-wait {
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .pdd-pending-process {
+      background-color: #fff;
+      color: #1890ff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .pdd-submitted-process {
+      background-color: #1890ff;
+      color: #fff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .pdd-rejected-process {
+      color: #ff4141;
+      margin-top: -3px;
+    }
+
+    .validation-pending-wait {
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5.3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .validation-pending-process {
+      background-color: #fff;
+      color: #1890ff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5.3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .validation-submitted-process {
+      background-color: #1890ff;
+      color: #fff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5.3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    .validation-rejected-process {
+      color: #ff4141;
+      margin-top: -3px;
+    }
+
+    .auth-pending-wait {
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 5.3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.8;
+    }
+
+    
+  }
+}

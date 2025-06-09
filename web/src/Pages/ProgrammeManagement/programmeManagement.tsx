@@ -1,36 +1,43 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ProgrammeManagementComponent, ProgrammeManagementColumns } from '@undp/carbon-library';
 import { useAbilityContext } from '../../Casl/Can';
+import { ProgrammeManagementColumns } from '../../Definitions/Enums/programme.management.columns.enum';
+import { ProgrammeManagementSlColumns } from '../../Definitions/Enums/programme.management.sl.columns.enum';
+import { ProgrammeManagementComponent } from '../../Components/ProgrammeManagement/ProgrammeManagementComponent';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const ProgrammeManagement = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['common', 'programme']);
+  const { t } = useTranslation(['common', 'projectList']);
 
   const visibleColumns = [
-    ProgrammeManagementColumns.title,
-    ProgrammeManagementColumns.company,
-    ProgrammeManagementColumns.sector,
-    ProgrammeManagementColumns.currentStage,
-    ProgrammeManagementColumns.creditBalance,
-    ProgrammeManagementColumns.creditTransferred,
-    ProgrammeManagementColumns.certifierId,
-    ProgrammeManagementColumns.serialNo,
-    ProgrammeManagementColumns.emissionReductionExpected,
-    ProgrammeManagementColumns.emissionReductionAchievedandCreditIssued,
-    ProgrammeManagementColumns.action,
+    ProgrammeManagementSlColumns.title,
+    ProgrammeManagementSlColumns.company,
+    ProgrammeManagementSlColumns.sector,
+    ProgrammeManagementSlColumns.sectoralScope,
+    ProgrammeManagementSlColumns.projectProposalStage,
+    ProgrammeManagementSlColumns.authorizationId,
+    ProgrammeManagementSlColumns.projectCreatedDate,
+    // ProgrammeManagementSlColumns.projectStatus,
+    ProgrammeManagementSlColumns.creditBalance,
+    ProgrammeManagementSlColumns.purposeOfCreditDevelopment,
+    ProgrammeManagementSlColumns.creditRetired,
+    ProgrammeManagementSlColumns.projectId,
+    // ProgrammeManagementSlColumns.certifierId,
+    // ProgrammeManagementSlColumns.serialNo,
+    ProgrammeManagementSlColumns.action,
   ];
 
   const onNavigateToProgrammeView = (record: any) => {
-    navigate(`/programmeManagement/view/${record.programmeId}`, { state: { record } });
+    navigate(ROUTES.PROGRAMME_DETAILS_BY_ID(record.refId), { state: { record } });
   };
 
   const onClickAddProgramme = () => {
-    navigate('/programmeManagement/addProgramme');
+    navigate(ROUTES.ADD_PROGRAMME);
   };
 
   const onClickAddInvestment = () => {
-    navigate('/programmeManagement/addInvestment');
+    navigate(ROUTES.ADD_INVESTMENT_TO_PROGRAMME);
   };
 
   return (

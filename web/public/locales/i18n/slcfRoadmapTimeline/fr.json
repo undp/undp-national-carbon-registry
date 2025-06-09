@@ -1,0 +1,20 @@
+{
+  "pending": "En attente",
+  "submitted": "Soumis",
+  "approved": "Approuvé",
+  "accepted": "Accepté",
+  "rejected": "Rejeté",
+  "completed": "Terminé",
+  "infTitle": "Notification initiale",
+  "submissionByPP": "Soumission par le participant au projet",
+  "approveBySLCF": "Approbation par le SLCF",
+  "projectProposal": "Proposition de projet",
+  "subCostQuoteBySLCF": "Soumission du devis, de la proposition et de l'accord de validation par le SLCF",
+  "acceptByPP": "Acceptation par le participant au projet",
+  "cmaTitlePart1": "Gestion du carbone",
+  "cmaTitlePart2": "Évaluation",
+  "validationTitle": "Rapport de validation",
+  "submissionBySLCF": "Soumission par le SLCF",
+  "approveByExCom": "Approbation par le comité exécutif",
+  "authorisedTitle": "Autorisation du projet"
+}
