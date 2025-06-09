@@ -1,0 +1,50 @@
+.organisation-status-active {
+    border-radius: 20px;
+    background-color: rgba(#b9e2f4, 0.4);
+    padding: 4px 15px;
+    height: 28px;
+    color: #16b1ff;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90px;
+    text-align: center;
+  }
+  
+  .organisation-status-deauthorised {
+    border-radius: 20px;
+    background-color: rgba(#ffa6a6, 0.4);
+    padding: 4px 15px;
+    height: 28px;
+    color: #ff4d4f;
+    margin-left: auto;
+    margin-right: auto;
+    width: 110px;
+    text-align: center;
+  }
+
+  .organisation-status-pending {
+    border-radius: 20px;
+    background-color: rgba(#b089f4, 0.4);
+    padding: 4px 15px;
+    height: 28px;
+    color: #976ed7;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90px;
+    text-align: center;
+  }
+
+  .organisation-status-rejected {
+    border-radius: 20px;
+    background-color: rgba(#fff7e6, 0.4);
+    padding: 4px 15px;
+    height: 28px;
+    color: #ff8f56;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90px;
+    text-align: center;
+    background: #fff7e6;
+    border-color: #ffd591;
+  }
+  

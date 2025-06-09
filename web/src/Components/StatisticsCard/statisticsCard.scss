@@ -1,0 +1,117 @@
+@import '../../Styles/colors.dashboard.scss';
+
+.stastic-card-main-container {
+  display: flex;
+  flex-direction: column;
+  // align-items: center;
+  // justify-content: space-between;
+  width: 100%;
+  height: 11.2rem;
+  background-color: white;
+  border-radius: 0.625rem;
+  padding: 1rem 1.875rem 0 1.875rem;
+
+  .title-section {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    height: 3.3rem;
+
+    .title {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: flex-start;
+      font-family: 'Inter';
+      font-size: 1.15rem;
+      font-weight: 600;
+      width: 95%;
+      color: rgba(58, 53, 65, 0.8);
+    }
+
+    .info-container {
+      display: flex;
+      flex-direction: row;
+      width: 5%;
+      align-items: center;
+      justify-content: flex-end;
+    }
+  }
+
+  .values-section {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: space-between;
+    height: 5rem;
+    // margin-right: 1rem;
+
+    .values-and-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      width: 60%;
+
+      .value {
+        font-family: 'Inter';
+        font-size: 2rem;
+        font-weight: 600;
+        width: 100%;
+        color: $primary-blue;
+        padding: 0;
+      }
+
+      .unit {
+        margin-bottom: -0.6rem;
+        margin-left: 0.2rem;
+        margin-top: -0.66rem;
+        font-family: 'Inter';
+        font-size: 0.875rem;
+        font-weight: 500;
+        width: 100%;
+        color: rgba(58, 53, 65, 0.5);
+      }
+    }
+
+    .icon-section {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      width: 40%;
+      justify-content: flex-start;
+
+      img {
+        height: 80px;
+      }
+    }
+
+    .updated-on-null {
+      display: flex;
+      flex-direction: row;
+      font-size: 0.813rem;
+      border-radius: 3.125rem;
+      padding: 0 0.5rem 0 0.5rem;
+      margin-top: 1rem;
+      color: transparent;
+      background-color: transparent;
+    }
+  }
+
+  .updated-on {
+    display: flex;
+    flex-direction: row;
+    font-size: 0.75rem;
+    border-radius: 3.125rem;
+    padding: 0.05rem 0.8rem 0.05rem 0.8rem;
+    width: max-content;
+    color: $primary-blue;
+    background-color: rgba($color: #b9e2f4, $alpha: 0.4);
+  }
+}
+
+.stastic-card-main-container:hover {
+  box-shadow: rgba(0, 5, 18, 0.2) 0px 8px 24px;
+}

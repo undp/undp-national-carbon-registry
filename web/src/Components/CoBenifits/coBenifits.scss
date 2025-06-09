@@ -1,0 +1,649 @@
+@import "../../Styles/variables.scss";
+
+.co-benifits-container {
+  //display: flex;
+  width: 100%;
+
+  .ant-form-item-label > label::after {
+    content: none;
+  }
+
+  .ant-radio-button-wrapper {
+    border-radius: 4px !important;
+    color: rgba(140, 140, 140, 0.7) !important;
+  }
+
+  .view-section {
+    .ant-radio-button-wrapper-disabled:first-child,
+    .ant-radio-button-wrapper-disabled:hover {
+      color: rgba(140, 140, 140, 0.7);
+      background-color: #ffffff;
+      border-color: rgba(140, 140, 140, 0.7);
+    }
+
+    .ant-input[disabled] {
+      color: rgba(140, 140, 140, 0.7) !important;
+      background-color: #ffffff !important;
+      border-color: rgba(140, 140, 140, 0.7) !important;
+    }
+  }
+
+  .steps-actions {
+    display: flex;
+    flex-direction: row-reverse;
+    .mg-left-1 {
+      margin-left: 1rem;
+    }
+  }
+
+  .co-sub-title-text {
+    color: rgba(58, 53, 65, 0.5);
+    font-size: 14px;
+    font-family: Inter;
+    font-weight: 600;
+    line-height: 22px;
+  }
+
+  .co-sub-header-text {
+    color: rgba(58, 53, 65, 0.5);
+    font-size: 16px;
+    font-family: Inter;
+    font-weight: 600;
+    line-height: 22px;
+  }
+
+  .co-view-label-text {
+    color: rgba(58, 53, 65, 0.5);
+    font-size: 14px;
+    font-family: Inter;
+    font-weight: 400;
+    line-height: 18.5px;
+  }
+
+  .benifits-tabs {
+    width: 100%;
+
+    .unfcccSdTool-section-title {
+      text-align: center;
+      margin-bottom: 5px;
+      margin-top: 10px;
+      font-weight: 700;
+      color: rgba(58, 53, 65, 0.5);
+
+      a {
+        color: rgba(58, 53, 65, 0.5);
+      }
+    }
+
+    .unfccSdTool-section-wrapper { 
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+    }
+    .unfccSdTool-section-divider { 
+      border-bottom: 1px solid rgba(58, 53, 65, 0.5) !important;
+      width: 100% !important;
+    }
+
+    .undpSesp-section-title {
+      text-align: center;
+      margin-bottom: 5px;
+      margin-top: 5px;
+      font-weight: 700;
+      color: rgba(58, 53, 65, 0.5);
+    }
+
+    .undpSesp-section-wrapper { 
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+    }
+
+    .undpSesp-section-divider { 
+      border-bottom: 1px solid rgba(58, 53, 65, 0.5) !important ;
+      width: 100% !important;
+      margin-bottom: 20px;
+    }
+
+    
+
+
+    .co-benifits-tab-item {
+      width: 100%;
+      // align-items: center;
+      // justify-content: center;
+      margin-left: 3rem;
+
+      .benifits-details-gender-parity {
+        width: 95%;
+
+        .part-one {
+          width: 100%;
+          .form-item {
+            width: 100%;
+            .ant-form-item-label {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              text-align: left;
+              justify-content: flex-start;
+              white-space: initial;
+            }
+
+            .ant-radio-group {
+              width: 95%;
+              text-align: center;
+              align-items: center;
+              justify-content: flex-end;
+
+              .yes-no-radio-container:first-child {
+                margin-right: 1rem;
+              }
+            }
+
+            .yes-no-radio-container {
+              width: 35%;
+              text-align: center;
+              max-width: 90px;
+              .ant-radio-button-wrapper-checked:not(
+                  .ant-radio-button-wrapper-disabled
+                ) {
+                color: $dark-text-color !important;
+                border-color: $primary-purple;
+                box-shadow: none;
+              }
+            }
+            .ant-radio-button-wrapper::before {
+              background-color: transparent;
+            }
+            .ant-radio-button-wrapper {
+              border: 1px solid $common-form-input-border;
+            }
+
+            .anticon {
+              margin-right: 0.5rem;
+            }
+            .yes-no-radio {
+              width: 100%;
+              .ant-radio-button-checked {
+                background: $primary-purple;
+                color: #ffffff;
+              }
+            }
+          }
+        }
+      }
+
+      .benifits-details-sdg-goals {
+        width: 95%;
+
+        .row {
+          width: 100%;
+          .col {
+            width: 100%;
+
+            .img-container {
+              display: flex;
+              width: 88%;
+              align-items: center;
+              justify-content: center;
+              padding-top: 1.5rem;
+
+              .images {
+                display: flex;
+                border: 1px solid black;
+                width: 100%;
+                align-items: center;
+                justify-content: center;
+              }
+              img {
+                width: 100%;
+                height: auto;
+                border: 1px solid rgb(228, 228, 228);
+                border-radius: 5px;
+              }
+
+              img:hover {
+                box-shadow: 0 0 11px rgba(33, 33, 33, 0.2);
+              }
+            }
+
+            .img-container-data {
+              display: flex;
+              width: 88%;
+              align-items: center;
+              justify-content: center;
+              padding-top: 1.5rem;
+
+              .images {
+                display: flex;
+                border: 1px solid black;
+                width: 100%;
+                align-items: center;
+                justify-content: center;
+              }
+              img {
+                width: 100%;
+                height: auto;
+                border: 1px solid rgb(228, 228, 228);
+                border-radius: 5px;
+              }
+            }
+          }
+        }
+      }
+
+      .benifits-details-environmental {
+        width: 95%;
+
+        .section {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+
+          .title {
+            width: 100%;
+            color: rgba(58, 53, 65, 0.5);
+            font-weight: 600;
+          }
+
+          .field-margin {
+            padding-left: 2rem;
+          }
+
+          .form-item {
+            width: 100%;
+            padding-left: 2rem;
+            .ant-form-item-label {
+              width: 100%;
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              text-align: left;
+              justify-content: flex-start;
+              white-space: initial;
+            }
+
+            .ant-radio-group {
+              width: 95%;
+              text-align: center;
+              align-items: center;
+              justify-content: flex-end;
+
+              .yes-no-radio-container:first-child {
+                margin-right: 1rem;
+              }
+
+              .yes-no-radio-container:last-child {
+                margin-left: 1rem;
+              }
+            }
+
+            .yes-no-radio-container {
+              width: 25%;
+              text-align: center;
+              max-width: 90px;
+              .ant-radio-button-wrapper-checked:not(
+                  .ant-radio-button-wrapper-disabled
+                ) {
+                color: $dark-text-color !important;
+                border-color: $primary-purple;
+                box-shadow: none;
+              }
+            }
+            .ant-radio-button-wrapper::before {
+              background-color: transparent;
+            }
+            .ant-radio-button-wrapper {
+              border: 1px solid $common-form-input-border;
+            }
+
+            .anticon {
+              margin-right: 0.5rem;
+            }
+            .yes-no-radio {
+              width: 100%;
+              .ant-radio-button-checked {
+                background: $primary-purple;
+                color: #ffffff;
+              }
+            }
+          }
+        }
+      }
+
+      .benifits-details-economic {
+        width: 95%;
+
+        .section {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+
+          .title {
+            width: 100%;
+            color: rgba(58, 53, 65, 0.5);
+            font-weight: 600;
+          }
+
+          .field-margin {
+            padding-left: 2rem;
+          }
+
+          .form-item {
+            width: 100%;
+            padding-left: 2rem;
+            .ant-form-item-label {
+              width: 100%;
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              text-align: left;
+              justify-content: flex-start;
+              white-space: initial;
+            }
+
+            .ant-radio-group {
+              width: 95%;
+              text-align: center;
+              align-items: center;
+              justify-content: flex-end;
+
+              .yes-no-radio-container:first-child {
+                margin-right: 1rem;
+              }
+
+              .yes-no-radio-container:last-child {
+                margin-left: 1rem;
+              }
+            }
+
+            .yes-no-radio-container {
+              width: 25%;
+              text-align: center;
+              max-width: 90px;
+              .ant-radio-button-wrapper-checked:not(
+                  .ant-radio-button-wrapper-disabled
+                ) {
+                color: $dark-text-color !important;
+                border-color: $primary-purple;
+                box-shadow: none;
+              }
+            }
+            .ant-radio-button-wrapper::before {
+              background-color: transparent;
+            }
+            .ant-radio-button-wrapper {
+              border: 1px solid $common-form-input-border;
+            }
+
+            .anticon {
+              margin-right: 0.5rem;
+            }
+            .yes-no-radio {
+              width: 100%;
+              .ant-radio-button-checked {
+                background: $primary-purple;
+                color: #ffffff;
+              }
+            }
+          }
+        }
+      }
+
+      .row {
+        .col {
+          display: flex;
+          flex-direction: column !important;
+        }
+      }
+    }
+
+    .assesment-tab-item {
+      width: 95%;
+      margin-left: 3rem;
+      .ant-radio-group {
+        text-align: center;
+        align-items: center;
+        justify-content: flex-end;
+
+        .radio-container {
+          margin-right: 1rem;
+          width: 35%;
+          max-width: 90px;
+          text-align: center;
+          .ant-radio-button-wrapper-checked:not(
+              .ant-radio-button-wrapper-disabled
+            ) {
+            color: $dark-text-color !important;
+            border-color: $primary-purple;
+            box-shadow: none;
+          }
+        }
+
+        .radio {
+          width: 100%;
+          .ant-radio-button-checked {
+            background: $primary-purple;
+            color: #ffffff;
+          }
+        }
+      }
+
+      Input {
+        height: 40px;
+      }
+
+      .design-upload-section {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: start;
+        width: 100%;
+
+        .icon-color {
+          color: $primary-color !important;
+        }
+
+        .ant-upload-list {
+          align-items: center;
+          justify-content: center;
+          max-width: 500px;
+          margin-left: 5px;
+
+          .ant-upload-list-item {
+            margin-top: 0;
+          }
+        }
+      }
+
+      .upload-doc {
+        height: 40px !important;
+        margin-right: 240px;
+      }
+
+      .ant-upload-list-item {
+        border-radius: 5px !important;
+        height: 40px !important;
+      }
+
+      .ant-form-item-label-left {
+        padding-right: 5px;
+      }
+    }
+
+    .safeguard-tab-item {
+      width: 95%;
+      margin-left: 3rem;
+      .ant-radio-group {
+        text-align: center;
+        align-items: center;
+        justify-content: flex-end;
+
+        .radio-container {
+          margin-right: 1rem;
+          width: 35%;
+          max-width: 90px;
+          text-align: center;
+          .ant-radio-button-wrapper-checked:not(
+              .ant-radio-button-wrapper-disabled
+            ) {
+            color: $dark-text-color !important;
+            border-color: $primary-purple;
+            box-shadow: none;
+          }
+        }
+
+        .radio {
+          width: 100%;
+          .ant-radio-button-checked {
+            background: $primary-purple;
+            color: #ffffff;
+          }
+        }
+      }
+
+      Input {
+        height: 40px;
+      }
+
+      .ant-form-item-label-left {
+        padding-right: 5px;
+      }
+    }
+
+    .social-tab-item {
+      width: 95%;
+      margin-left: 3rem;
+      .ant-radio-group {
+        text-align: center;
+        align-items: center;
+        justify-content: flex-end;
+
+        .radio-container {
+          margin-right: 1rem;
+          width: 35%;
+          max-width: 90px;
+          text-align: center;
+          .ant-radio-button-wrapper-checked:not(
+              .ant-radio-button-wrapper-disabled
+            ) {
+            color: $dark-text-color !important;
+            border-color: $primary-purple;
+            box-shadow: none;
+          }
+          .ant-radio-button-wrapper {
+            border: 1px solid $common-form-input-border;
+          }
+        }
+
+        .radio-container-view {
+          margin-right: 2rem;
+          width: 35%;
+          max-width: 90px;
+          text-align: center;
+          .ant-radio-button-wrapper-checked:not(
+              .ant-radio-button-wrapper-disabled
+            ) {
+            color: $dark-text-color !important;
+            border-color: $primary-purple;
+            box-shadow: none;
+          }
+          .ant-radio-button-wrapper {
+            border: 1px solid $common-form-input-border;
+          }
+        }
+
+        .radio-container-view-child {
+          margin-right: 2rem;
+          width: 28%;
+          max-width: 90px;
+          text-align: center;
+          .ant-radio-button-wrapper-checked:not(
+              .ant-radio-button-wrapper-disabled
+            ) {
+            color: $dark-text-color !important;
+            border-color: $primary-purple;
+            box-shadow: none;
+          }
+          .ant-radio-button-wrapper {
+            border: 1px solid $common-form-input-border;
+          }
+
+        }
+
+        .radio {
+          width: 100%;
+          .ant-radio-button-checked {
+            background: $primary-purple;
+            color: #ffffff;
+          }
+        }
+      }
+
+      Input {
+        height: 40px;
+      }
+    }
+
+    .social-environment-tab-item {
+      width: 95%;
+      margin-left: 3rem;
+      .ant-radio-group {
+        text-align: center;
+        align-items: center;
+        justify-content: flex-end;
+
+        .radio-container {
+          margin-right: 1rem;
+          width: 35%;
+          max-width: 90px;
+          text-align: center;
+          .ant-radio-button-wrapper-checked:not(
+              .ant-radio-button-wrapper-disabled
+            ) {
+            color: $dark-text-color !important;
+            border-color: $primary-purple;
+            box-shadow: none;
+          }
+        }
+
+        .radio {
+          width: 100%;
+          .ant-radio-button-checked {
+            background: $primary-purple;
+            color: #ffffff;
+          }
+        }
+      }
+
+      .social-environment-risk-title-section{
+        display: flex; 
+        justify-content: center; 
+        align-items: center;
+        margin-bottom: 15px;
+        margin-top: 5px;
+      }
+
+      .social-environment-risk-title-section:not(:first-child){
+        border-top: 1px solid rgba(58, 53, 65, 0.5) !important;
+      }
+
+      .social-environment-risk-title-section:first-child {
+        border-bottom: 1px solid rgba(58, 53, 65, 0.5) !important;
+      }
+  
+      .social-environment-risk-title {
+        text-align: center;
+        margin-bottom: 5px;
+        margin-top: 10px;
+        font-weight: 700;
+        color: rgba(58, 53, 65, 0.5);
+      }
+
+      .ant-form-item-label > label {
+        height: auto;
+      }
+    }
+  }
+}

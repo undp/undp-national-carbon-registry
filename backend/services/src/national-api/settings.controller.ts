@@ -1,24 +1,17 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Query,
-  Request,
-  UseGuards,
-} from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, Request, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { JwtAuthGuard ,Action,PoliciesGuardEx,ConfigurationSettingsService} from "@undp/carbon-services-lib";;
-import { SettingsDto } from "@undp/carbon-services-lib";
-import { ConfigurationSettings } from "@undp/carbon-services-lib";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { Action } from "../casl/action.enum";
+import { PoliciesGuardEx } from "../casl/policy.guard";
+import { SettingsDto } from "../dto/settings.dto";
+import { ConfigurationSettings } from "../entities/configuration.settings";
+import { ConfigurationSettingsService } from "../util/configurationSettings.service";
 
 @ApiTags("Settings")
 @Controller("Settings")
 @ApiBearerAuth()
 export class SettingsController {
-  constructor(
-    private readonly configurationSettingsService: ConfigurationSettingsService
-  ) {}
+  constructor(private readonly configurationSettingsService: ConfigurationSettingsService) {}
 
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Update, ConfigurationSettings))
   @Post("update")

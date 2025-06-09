@@ -1,0 +1,103 @@
+@import "../../../Styles/variables.scss";
+
+.programme-management {
+  .programme-title-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0px 0px 0px 0px;
+
+    .title {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .actions {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+    }
+
+    .flex-display {
+      margin-left: 15px;
+    }
+  }
+  .certify-list {
+    width: 88px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .profile-icon {
+      margin-bottom: 4px;
+      margin-right: 4px;
+    }
+  }
+  .org-list {
+    width: 88px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .profile-icon {
+      margin-bottom: 4px;
+      margin-right: 4px;
+    }
+  }
+  .table-actions-section {
+    margin-bottom: 0px;
+
+    input {
+      font-family: $primary-font-family;
+      font-size: 0.8rem;
+    }
+  }
+
+  .all-check {
+    .ant-checkbox-inner::after {
+      background-color: rgba(#3a3541, 0.5);
+    }
+
+    .ant-checkbox-checked .ant-checkbox-inner::after {
+      background-color: transparent;
+    }
+    .ant-checkbox-checked .ant-checkbox-inner {
+      background-color: rgba(#3a3541, 0.5);
+      border: none;
+    }
+    margin-right: 10px;
+  }
+
+  .ant-checkbox-checked {
+    .ant-checkbox-input[value="Retired"] + .ant-checkbox-inner {
+      background-color: rgba(#3a3541, 0.4);
+      border: none;
+    }
+
+    .ant-checkbox-input[value="AwaitingAuthorization"] + .ant-checkbox-inner {
+      background-color: rgba(#ed4d47, 0.6);
+      border: none;
+    }
+
+    .ant-checkbox-input[value="Rejected"] + .ant-checkbox-inner {
+      background-color: rgba(#3a3541, 0.4);
+      border: none;
+    }
+
+    .ant-checkbox-input[value="Authorised"] + .ant-checkbox-inner {
+      background-color: rgba(#16b1ff, 1);
+      border: none;
+    }
+
+    .ant-checkbox-input[value="Approved"] + .ant-checkbox-inner {
+      background-color: rgba(145, 85, 253, 0.6);
+      border: none;
+    }
+
+    .ant-checkbox-input[value="Transferred"] + .ant-checkbox-inner {
+      background-color: rgba(#76c327, 0.6);
+      border: none;
+    }
+  }
+}

@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import { useNavigate } from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { userForgotPasswordProps, useConnection } from '@undp/carbon-library';
+import { userForgotPasswordProps } from '../../Definitions/Definitions/userForgotPassword.definitions';
+import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 
 const ForgotPassword = () => {
   const { post } = useConnection();

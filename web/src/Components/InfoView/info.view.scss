@@ -1,0 +1,55 @@
+@import '../../Styles/variables.scss';
+
+.info-view {
+  .title-icon {
+    padding-right: 10px;
+  }
+
+  .title-text {
+    color: $title-text-color;
+    font-weight: 600;
+  }
+
+  .title {
+    margin-bottom: 5px;
+  }
+
+  .field-key {
+    color: $body-text-color;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .field-value {
+    color: $body-text-color;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    .row {
+      display: flex;
+      width: 40%;
+      align-items: center;
+      justify-content: space-between;
+
+      .key {
+        display: flex;
+        width: 50%;
+        align-items: center;
+        justify-content: flex-start;
+      }
+
+      .data {
+        display: flex;
+        width: 50%;
+        align-items: center;
+        justify-content: flex-start;
+      }
+    }
+  }
+
+  .field {
+    margin: 15px 25px;
+    font-size: 0.8rem;
+  }
+}

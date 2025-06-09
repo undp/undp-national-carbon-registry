@@ -1,0 +1,209 @@
+@import "../../../Styles/colors.addUser.scss";
+@import "../../../Styles/colors.addCompany.scss";
+@import "../../../Styles/variables.scss";
+@import "../../../Styles/colors.role.scss";
+
+.mg-left-1 {
+  margin-left: 1rem;
+}
+
+.add-user-main-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+  padding: 0 50px;
+
+  .title-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    border-radius: 5px;
+
+    .titles {
+      display: flex;
+      flex-direction: column;
+      width: 50%;
+      .main {
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: $title-main;
+      }
+
+      .sub {
+        font-size: 0.8rem;
+        color: $title-sub;
+      }
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: row;
+      align-items: end;
+      justify-content: end;
+      width: 50%;
+
+      .btn-danger {
+        color: $danger-btn !important;
+        border-color: $danger-btn-border !important;
+      }
+    }
+  }
+}
+
+.user-content-card {
+  width: 100%;
+  padding: 2.5rem 2rem 1rem 2rem;
+  margin-top: 1rem;
+}
+
+.content-card {
+  .PhoneInputInput .input {
+    border-radius: 5px !important;
+  }
+
+  .user-details-form {
+    .actions {
+      display: flex;
+      flex-direction: row-reverse;
+    }
+    .row {
+      .details-part-one {
+      }
+      .details-part-two {
+        .role-group {
+          .admin-radio-container {
+            width: 30%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: $admin-color !important;
+              border-color: $admin-color !important;
+              box-shadow: none;
+              .anticon {
+                background: $anticon-roles-bg;
+                border-radius: 50px;
+                padding: 0.2rem;
+                color: $admin-color;
+              }
+            }
+          }
+          .manager-radio-container {
+            width: 30%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: $manager-color !important;
+              border-color: $manager-color !important;
+              box-shadow: none;
+
+              .anticon {
+                background: $anticon-roles-bg;
+                border-radius: 50px;
+                padding: 0.2rem;
+                color: $manager-color;
+              }
+            }
+          }
+          .view-only-radio-container {
+            width: 30%;
+            .ant-radio-button-wrapper-checked:not(
+                .ant-radio-button-wrapper-disabled
+              ) {
+              color: $view-color !important;
+              border-color: $view-color !important;
+              box-shadow: none;
+            }
+
+            .anticon {
+              background: $anticon-roles-bg;
+              border-radius: 50px;
+              padding: 0.2rem;
+              color: $view-color;
+            }
+          }
+          .ant-radio-button-wrapper::before {
+            background-color: transparent;
+          }
+          .ant-radio-button-wrapper {
+            border: 1px solid $common-form-input-border;
+          }
+          .role-icons {
+            margin-right: 5px;
+          }
+
+          .anticon {
+            margin-right: 0.5rem;
+          }
+
+          .admin {
+            width: 100%;
+            .ant-radio-button-checked {
+              background: $admin-bg-color;
+            }
+          }
+          .manager {
+            width: 100%;
+            .ant-radio-button-checked {
+              background: $manager-bg-color;
+            }
+          }
+          .view-only {
+            width: 100%;
+            .ant-radio-button-checked {
+              background: $view-bg-color;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .create-user-container {
+    padding: 30px 10px;
+    background-color: $common-form-white;
+    .ant-row {
+      margin-bottom: 0.5vw;
+    }
+    .create-user-btn-container {
+      margin-top: 1.5vw;
+      margin-bottom: 0;
+      .ant-btn-primary {
+        background-color: $common-form-red;
+        color: $common-form-white;
+        font-family: "Inter-Regular";
+        border: none;
+        height: 40px;
+        font-size: 0.9rem;
+        border-radius: 0.3rem;
+        box-shadow: 0px 8px 16px $box-shadow-v1;
+        min-width: 170px;
+      }
+    }
+    .create-user-image-upload {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      .create-user-image-upload-label {
+        margin-right: 2vw;
+        .create-user-image-upload-txt {
+          font-family: "Inter-Regular";
+          font-size: 1.1rem;
+        }
+      }
+      .create-user-image-upload-btn-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        .create-user-image-upload-btn {
+          margin-right: 1vw;
+        }
+        .create-user-image-upload-error-txt {
+          font-family: "Inter-Regular";
+          font-size: 1rem;
+          color: $error-color;
+        }
+      }
+    }
+  }
+}

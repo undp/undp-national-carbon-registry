@@ -5,6 +5,7 @@ on:
     branches:
       - 'CARBON-Sprint-*'
       - 'hotfix-*'
+      - 'CARBON-*'
     paths:
       - backend/**
       - web/**

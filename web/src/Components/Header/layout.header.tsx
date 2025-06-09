@@ -4,7 +4,9 @@ import './layout.header.scss';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import thumbnail from '../../Assets/Images/thumbnail.png';
-import { HeaderProps, useConnection, useUserContext } from '@undp/carbon-library';
+import { HeaderProps } from '../../Definitions/Definitions/layout.header';
+import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 
 const LayoutHeader = (props: HeaderProps) => {
   const navigate = useNavigate();

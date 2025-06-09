@@ -1,0 +1,164 @@
+@import "../../Styles/variables.scss";
+
+.steps-actions {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-right: 1rem;
+  justify-content: flex-start;
+}
+.details-part-two {
+  .ant-input-number {
+    width: 50%;
+    margin-left: 15px;
+  }
+}
+
+.investment-title-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0px 0px 0px 0px;
+
+  .title {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .actions {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+
+  .flex-display {
+    margin-left: 15px;
+  }
+}
+
+.ownership-container {
+  padding: 15px 0px;
+
+  .label {
+    color: rgba(58, 53, 65, 0.5);
+  }
+}
+.separator {
+  padding: 5px;
+  color: #d8d8d8;
+}
+.role-group {
+  .ant-col-13 {
+    max-width: 320px;
+  }
+
+  .condition-radio-container {
+    width: 48%;
+    text-align: center;
+    .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+      color: $dark-text-color !important;
+      border-color: $primary-purple;
+      box-shadow: none;
+      max-width: 200px;
+    }
+  }
+  .ant-radio-button-wrapper::before {
+    background-color: transparent;
+  }
+
+  .anticon {
+    margin-right: 0.5rem;
+  }
+
+  .ant-radio-button-wrapper {
+    border: 1px solid $common-form-input-border;
+    color: rgba(#8c8c8c, 0.7) !important;
+    width: 100% !important;
+  }
+  .condition-radio {
+    width: 100%;
+    text-transform: uppercase;
+    .ant-radio-button-checked {
+      background: $primary-purple;
+      color: #ffffff;
+    }
+  }
+  .role-icons {
+    margin-right: 5px;
+  }
+}
+.investment-management {
+  .role-icon {
+    padding: 0.5rem 0.6rem;
+  }
+
+  .ant-tag {
+    border: none;
+  }
+  .ant-checkbox-checked {
+    .ant-checkbox-input[value="Rejected"] + .ant-checkbox-inner {
+      background-color: rgba(#ed4d47, 0.6);
+      border: none;
+    }
+
+    .ant-checkbox-input[value="Cancelled"] + .ant-checkbox-inner {
+      background-color: rgba(#3a3541, 0.4);
+      border: none;
+    }
+
+    .ant-checkbox-input[value="Accepted"] + .ant-checkbox-inner {
+      background-color: rgba(#16b1ff, 1);
+      border: none;
+    }
+
+    .ant-checkbox-input[value="Pending"] + .ant-checkbox-inner {
+      background-color: rgba(#76c327, 0.6);
+      border: none;
+    }
+
+    .ant-checkbox-input[value="Recognised"] + .ant-checkbox-inner {
+      background-color: rgba(#976ed7, 1);
+      border: none;
+    }
+
+    .ant-checkbox-input[value="NotRecognised"] + .ant-checkbox-inner {
+      background-color: rgba(#ffa070, 1);
+      border: none;
+    }
+
+    .ant-checkbox-input[value='Approved'] + .ant-checkbox-inner {
+      background-color: rgba(#16b1ff, 1);
+      border: none;
+    }
+  }
+}
+
+.add-programme-main-container{
+  .adding-section{
+    .form-section{
+      .investment-sought-form-container{
+        .investment-sought-form{
+          .investment-radio-button{
+            .ant-radio-group {
+              display: flex;
+              flex-direction: row;
+              align-items: flex-start;
+              justify-content: space-between;
+              width: fit-content;
+            }
+            
+          }
+          .details-part-two{
+            .row{
+              .ant-picker-large {
+                height: 40px !important;
+                width: 100%;
+              }
+            }
+            
+          }
+        }
+      }
+    }
+  }
+}

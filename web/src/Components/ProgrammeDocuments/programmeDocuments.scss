@@ -1,0 +1,60 @@
+@import '../../Styles/variables.scss';
+
+.info-view {
+  .title-icon {
+    padding-right: 10px;
+  }
+
+  .title-text {
+    color: $title-text-color;
+    font-weight: 600;
+  }
+
+  .title {
+    margin-bottom: 5px;
+  }
+
+  .field-key {
+    color: $body-text-color;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    .label-container {
+      display: flex;
+      flex-direction: row;
+      align-items: start;
+    }
+
+    .label {
+      width: 70%;
+    }
+
+    .label-uploaded {
+      color: $common-filter-color;
+      width: 70%;
+    }
+
+    .time {
+    }
+  }
+
+  .field-value {
+    color: $body-text-color;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    .link {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 20px;
+    }
+  }
+
+  .field {
+    margin: 15px 25px;
+    font-size: 0.8rem;
+  }
+}

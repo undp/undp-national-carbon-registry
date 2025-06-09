@@ -43,59 +43,57 @@ import { DateTime } from 'luxon';
 import Geocoding from '@mapbox/mapbox-sdk/services/geocoding';
 import TextArea from 'antd/lib/input/TextArea';
 import { ShieldCheck } from 'react-bootstrap-icons';
+import { useConnection } from '../../Context/ConnectionContext/connectionContext';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
 import {
-  ProgrammeIssueForm,
-  ProgrammeRetireForm,
-  ProgrammeRevokeForm,
-  ProgrammeStageUnified,
-  ProgrammeTransferForm,
   addCommSep,
-  addSpaces,
-  CompanyRole,
-  CreditTransferStage,
+  addCommSepRound,
   getFinancialFields,
   getGeneralFields,
   getRetirementTypeString,
   getStageEnumVal,
   getStageTagType,
-  RetireType,
-  sumArray,
-  TxType,
-  TypeOfMitigation,
-  UnitField,
-  InfoView,
-  ProgrammeTransfer,
-  MapComponent,
-  Loading,
-  InvestmentBody,
   ProgrammeU,
-  NdcActionBody,
-  OrganisationStatus,
-  isBase64,
-  ProgrammeDocuments,
-  RoleIcon,
-  addCommSepRound,
-  TimelineBody,
+  sumArray,
+  UnitField,
+} from '../../Definitions/Definitions/programme.definitions';
+import {
+  MapSourceData,
   MapTypes,
   MarkerData,
-  CompanyState,
-  dateTimeFormat,
+} from '../../Definitions/Definitions/mapComponent.definitions';
+import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
+import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
+import { Role } from '../../Definitions/Enums/role.enum';
+import { InvestmentBody } from '../../Components/Investment/investmentBody';
+import { isBase64 } from '../../Components/IconComponents/ProfileIcon/profile.icon';
+import { ProgrammeTransfer } from '../../Definitions/Entities/programmeTransfer';
+import {
   creditUnit,
-  DocType,
-  DocumentStatus,
   dateFormat,
-  DevBGColor,
-  DevColor,
-  Role,
-  CarbonSystemType,
-  TooltipColor,
-  getValidNdcActions,
-  addNdcDesc,
-  mitigationTypeList,
-  useConnection,
-  useSettingsContext,
-  useUserContext,
-} from '@undp/carbon-library';
+  dateTimeFormat,
+} from '../../Definitions/Definitions/common.definitions';
+import { addNdcDesc, TimelineBody } from '../../Components/TimelineBody/timelineBody';
+import { RetireType } from '../../Definitions/Enums/retireType.enum';
+import { CreditTransferStage } from '../../Definitions/Enums/creditTransferStage.enum';
+import { ProgrammeStageUnified } from '../../Definitions/Enums/programmeStage.enum';
+import { TxType } from '../../Definitions/Enums/TxType.enum';
+import { DocType } from '../../Definitions/Enums/document.type';
+import { DocumentStatus } from '../../Definitions/Enums/document.status';
+import { CompanyState } from '../../Definitions/Enums/company.state.enum';
+import { NdcActionBody } from '../../Components/NdcActions/NdcActionBody/ndcActionBody';
+import { Loading } from '../../Components/Loading/loading';
+import { OrganisationStatus } from '../../Components/OrganisationStatus/organisationStatus';
+import { DevBGColor, DevColor, TooltipColor } from '../../Styles/role.color.constants';
+import { getValidNdcActions, ProgrammeIssueForm } from '../../Components/Models/programmeIssueForm';
+import { ProgrammeRevokeForm } from '../../Components/Models/programmeRevokeForm';
+import { CarbonSystemType } from '../../Definitions/Enums/carbonSystemType.enum';
+import { RoleIcon } from '../../Components/IconComponents/RoleIcon/role.icon';
+import { ProgrammeRetireForm } from '../../Components/Models/programmeRetireForm';
+import { ProgrammeTransferForm } from '../../Components/Models/programmeTransferForm';
+import { InfoView } from '../../Components/InfoView/info.view';
+import { ProgrammeDocuments } from '../../Components/ProgrammeDocuments/programmeDocuments';
+import { MapComponent } from '../../Components/Maps/mapComponent';
 
 const ProgrammeView = () => {
   const { get, put, post } = useConnection();
@@ -141,6 +139,10 @@ const ProgrammeView = () => {
   const [upcomingTimeLineVerificationVisible, setUpcomingTimeLineVerificationVisible] =
     useState(false);
   const [activityTimelineKey, setActivityTimelineKey] = useState(0);
+  const [projectLocationMapSource, setProjectLocationMapSource] = useState<any>();
+  const [projectLocationMapLayer, setProjectLocationMapLayer] = useState<any>();
+  const [projectLocationMapOutlineLayer, setProjectLocationMapOutlineLayer] = useState<any>();
+  const [projectLocationMapCenter, setProjectLocationMapCenter] = useState<number[]>([]);
 
   const accessToken = process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
     ? process.env.REACT_APP_MAPBOXGL_ACCESS_TOKEN
@@ -262,6 +264,9 @@ const ProgrammeView = () => {
             value: programmeId,
           },
         ],
+        extendedProperties: {
+          isGetInvestmentHistory: true,
+        },
       });
       const investmentHisData = response?.data?.map((item: any) => {
         const investmentData: any = {
@@ -308,55 +313,47 @@ const ProgrammeView = () => {
 
   const drawMap = () => {
     setTimeout(async () => {
-      if (data?.geographicalLocationCordintes && data?.geographicalLocationCordintes.length > 0) {
-        setCenterPoint(getCenter(data?.geographicalLocationCordintes));
-        const markerList = [];
-        for (const iloc in data?.geographicalLocationCordintes) {
-          if (data?.geographicalLocationCordintes[iloc] !== null) {
-            const markerData: MarkerData = {
-              color: locationColors[(Number(iloc) + 1) % locationColors.length],
-              location: data?.geographicalLocationCordintes[iloc],
-            };
+      if (data?.projectLocation && data.projectLocation.length > 0) {
+        setProjectLocationMapCenter(getCenter(data.projectLocation));
+        const mapSource: MapSourceData = {
+          key: 'projectLocation',
+          data: {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              geometry: {
+                type: 'Polygon',
+                // These coordinates outline Maine.
+                coordinates: [data.projectLocation],
+              },
+              properties: null,
+            },
+          },
+        };
 
-            markerList.push(markerData);
-          }
-        }
+        setProjectLocationMapSource(mapSource);
 
-        setMarkers(markerList);
-      } else {
-        if (!accessToken || !data!.programmeProperties.geographicalLocation) return;
-        const locMarkers: MarkerData[] = [];
-        for (const address in data!.programmeProperties.geographicalLocation) {
-          const response = await Geocoding({ accessToken: accessToken })
-            .forwardGeocode({
-              query: data!.programmeProperties.geographicalLocation[address],
-              autocomplete: false,
-              limit: 1,
-              types: ['region', 'district'],
-              countries: [process.env.REACT_APP_COUNTRY_CODE || 'NG'],
-            })
-            .send();
+        setProjectLocationMapLayer({
+          id: 'projectLocation',
+          type: 'fill',
+          source: 'projectLocation',
+          layout: {},
+          paint: {
+            'fill-color': '#0080ff',
+            'fill-opacity': 0.5,
+          },
+        });
 
-          if (
-            !response ||
-            !response.body ||
-            !response.body.features ||
-            !response.body.features.length
-          ) {
-            console.error('Invalid response:');
-            console.error(response);
-            return;
-          }
-          const feature = response.body.features[0];
-          setCenterPoint(feature.center);
-
-          const marker: MarkerData = {
-            color: locationColors[(Number(address) + 1) % locationColors.length],
-            location: feature.center,
-          };
-          locMarkers.push(marker);
-        }
-        setMarkers(locMarkers);
+        setProjectLocationMapOutlineLayer({
+          id: 'projectLocationOutline',
+          type: 'line',
+          source: 'projectLocation',
+          layout: {},
+          paint: {
+            'line-color': '#000',
+            'line-width': 1,
+          },
+        });
       }
     }, 1000);
   };
@@ -987,18 +984,28 @@ const ProgrammeView = () => {
             ),
           };
         } else if (activity.data.txType === TxType.FREEZE) {
+          let text;
+          if (getTxRefValues(activity.data.txRef, 1)) {
+            text = formatString('view:tlFrozenDesc', [
+              addCommSep(activity.data.creditChange),
+              creditUnit,
+              getTxRefValues(activity.data.txRef, 4),
+              getTxRefValues(activity.data.txRef, 1),
+            ]);
+          } else {
+            text = formatString('view:tlFrozenDescWithoutUser', [
+              addCommSep(activity.data.creditChange),
+              creditUnit,
+              getTxRefValues(activity.data.txRef, 4),
+            ]);
+          }
           el = {
             status: 'process',
             title: t('view:tlFrozen'),
             subTitle: DateTime.fromMillis(activity.data.txTime).toFormat(dateTimeFormat),
             description: (
               <TimelineBody
-                text={formatString('view:tlFrozenDesc', [
-                  addCommSep(activity.data.creditChange),
-                  creditUnit,
-                  getTxRefValues(activity.data.txRef, 4),
-                  getTxRefValues(activity.data.txRef, 1),
-                ])}
+                text={text}
                 remark={getTxRefValues(activity.data.txRef, 3)}
                 via={activity.data.userName}
                 t={t}
@@ -1346,6 +1353,7 @@ const ProgrammeView = () => {
   const getUserDetails = async () => {
     setLoadingAll(true);
     try {
+      const userId = userInfoState?.id ? parseInt(userInfoState.id) : userInfoState?.id;
       const response: any = await post('national/user/query', {
         page: 1,
         size: 10,
@@ -1353,7 +1361,7 @@ const ProgrammeView = () => {
           {
             key: 'id',
             operation: '=',
-            value: userInfoState?.id,
+            value: userId,
           },
         ],
       });
@@ -1399,6 +1407,7 @@ const ProgrammeView = () => {
   useEffect(() => {
     if (data) {
       getInvestmentHistory(data?.programmeId);
+      getProgrammeHistory(data.programmeId);
       getDocuments(data?.programmeId);
       setEmissionsReductionExpected(
         data?.emissionReductionExpected !== null &&
@@ -1414,24 +1423,6 @@ const ProgrammeView = () => {
           ? Number(data?.emissionReductionAchieved)
           : 0
       );
-      drawMap();
-      for (const company of data.company) {
-        if (
-          parseInt(company.state) === CompanyState.ACTIVE.valueOf() &&
-          company.companyId !== userInfoState?.companyId
-        ) {
-          setIsAllOwnersDeactivated(false);
-          break;
-        }
-      }
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (data) {
-      getInvestmentHistory(data?.programmeId);
-      getProgrammeHistory(data.programmeId);
-      getDocuments(data?.programmeId);
       drawMap();
       for (const company of data.company) {
         if (
@@ -1925,7 +1916,9 @@ const ProgrammeView = () => {
           <div className="body-sub-title">{t('view:desc')}</div>
         </div>
         <div className="flex-display action-btns">
-          {userInfoState?.userRole !== 'ViewOnly' && actionBtns}
+          {userInfoState?.userRole !== 'ViewOnly' &&
+            userInfoState?.companyState !== 0 &&
+            actionBtns}
         </div>
       </div>
       <div className="content-body">
@@ -2371,43 +2364,27 @@ const ProgrammeView = () => {
                 <InfoView data={generalInfo} title={t('view:general')} icon={<BulbOutlined />} />
               </div>
             </Card>
-            {mapType !== MapTypes.None ? (
+            {data.projectLocation &&
+            data.projectLocation.length > 0 &&
+            mapType !== MapTypes.None ? (
               <Card className="card-container">
                 <div className="info-view">
                   <div className="title">
                     <span className="title-icon">{<Icon.PinMap />}</span>
-                    <span className="title-text">{t('view:location')}</span>
+                    <span className="title-text">{t('view:projectLocation')}</span>
                   </div>
                   <div className="map-content">
                     <MapComponent
                       mapType={mapType}
-                      center={centerPoint}
+                      center={projectLocationMapCenter}
                       zoom={4}
-                      markers={markers}
                       height={250}
-                      style="mapbox://styles/mapbox/streets-v11"
+                      style="mapbox://styles/mapbox/light-v11"
                       accessToken={accessToken}
+                      mapSource={projectLocationMapSource}
+                      layer={projectLocationMapLayer}
+                      outlineLayer={projectLocationMapOutlineLayer}
                     ></MapComponent>
-                    <Row className="region-list">
-                      {data.programmeProperties.geographicalLocation &&
-                        data.programmeProperties.geographicalLocation.map((e: any, idx: number) => (
-                          <Col className="loc-tag">
-                            {data.geographicalLocationCordintes &&
-                              data.geographicalLocationCordintes[idx] !== null &&
-                              data.geographicalLocationCordintes[idx] !== undefined && (
-                                <span
-                                  style={{
-                                    color: locationColors[(idx + 1) % locationColors.length],
-                                  }}
-                                  className="loc-icon"
-                                >
-                                  {<Icon.GeoAltFill />}
-                                </span>
-                              )}
-                            <span className="loc-text">{e}</span>
-                          </Col>
-                        ))}
-                    </Row>
                   </div>
                 </div>
               </Card>

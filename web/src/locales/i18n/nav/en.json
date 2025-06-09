@@ -1,0 +1,18 @@
+{
+  "dashboard": "Dashboard",
+  "ghgInventory": "GHG Inventory",
+  "emissions" : "Emissions",
+  "projections" : "Projections",
+  "programmes": "Projects",
+  "transfers": "Transfers",
+  "companies": "Organisations",
+  "users": "Users",
+  "viewAll": "View All",
+  "addNew": "Add New",
+  "investments": "Project Financing",
+  "ndcActions": "Project Activities",
+  "ndcDetails": "NDC Actions",
+  "reports": "Reports",
+  "support": "Financing",
+  "nationalAccounting": "National Accounting"
+}

@@ -1,10 +1,8 @@
-import {
-  InvestmentManagementComponent,
-  useSettingsContext,
-  useUserContext,
-} from '@undp/carbon-library';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { InvestmentManagementComponent } from '../../Components/Investment/InvestmentManagement/investmentManagementComponent';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
 
 const InvestmentManagement = () => {
   const navigate = useNavigate();

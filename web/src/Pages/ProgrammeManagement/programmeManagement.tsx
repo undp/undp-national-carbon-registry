@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ProgrammeManagementComponent, ProgrammeManagementColumns } from '@undp/carbon-library';
 import { useAbilityContext } from '../../Casl/Can';
+import { ProgrammeManagementColumns } from '../../Definitions/Enums/programme.management.columns.enum';
+import { ProgrammeManagementComponent } from '../../Components/Programme/ProgrammeManagement/programmeManagementComponent';
 
 const ProgrammeManagement = () => {
   const navigate = useNavigate();

@@ -8,7 +8,6 @@ import SignUp from './Pages/Signup/signup';
 import CustomLayout from './Components/Layout/layout';
 import AddUser from './Pages/AddUser/addUser';
 import UserManagement from './Pages/UserManagement/userManagement';
-import MRVDashboard from './Pages/Dashboard/mrv/mrvdashboard';
 import RegistryDashboard from './Pages/Dashboard/registry/registrydashboard';
 import AddNewCompany from './Pages/Company/addNewCompany';
 import CompanyManagement from './Pages/CompanyManagement/companyManagement';
@@ -35,21 +34,12 @@ import AddProgramme from './Pages/ProgrammeManagement/addProgramme';
 import AddNDCAction from './Pages/NdcActionManagement/addNDCAction';
 import NdcActionView from './Pages/NdcActionManagement/ndcActionView';
 import RegisterNewCompany from './Pages/Company/registerNewCompany';
-import {
-  Loading,
-  ConnectionContextProvider,
-  UserInformationContextProvider,
-  SettingsContextProvider,
-} from '@undp/carbon-library';
 import { useTranslation } from 'react-i18next';
-import NdcDetails from './Pages/NdcDetails/ndcDetails';
-import GhgEmissions from './Pages/GhgInventory/emissions';
-import GhgProjections from './Pages/GhgInventory/projections';
-import GHGDashboardComponent from './Pages/GhgInventory/ghg.dashboard';
-
-// message.config({
-//   duration: 60,
-// });
+import { ConnectionContextProvider } from './Context/ConnectionContext/connectionContext';
+import { UserInformationContextProvider } from './Context/UserInformationContext/userInformationContext';
+import { SettingsContextProvider } from './Context/SettingsContext/settingsContext';
+import { Loading } from './Components/Loading/loading';
+import NationalAccountingDashboard from './Pages/NationalAccounting/nationalAccounting';
 
 const App = () => {
   const ability = defineAbility();
@@ -74,15 +64,11 @@ const App = () => {
     <AbilityContext.Provider value={ability}>
       <ConnectionContextProvider
         serverURL={
-          process.env.REACT_APP_BACKEND
-            ? process.env.REACT_APP_BACKEND
-            : 'http://localhost:3000/local'
+          process.env.REACT_APP_BACKEND ? process.env.REACT_APP_BACKEND : 'http://localhost:3000'
         }
         t={t}
         statServerUrl={
-          process.env.REACT_APP_STAT_URL
-            ? process.env.REACT_APP_STAT_URL
-            : 'http://localhost:3100/local'
+          process.env.REACT_APP_STAT_URL ? process.env.REACT_APP_STAT_URL : 'http://localhost:3100'
         }
       >
         <UserInformationContextProvider>
@@ -102,8 +88,12 @@ const App = () => {
                 <Route path="/" element={<PrivateRoute />}>
                   <Route path="/dashboard" element={<CustomLayout selectedKey="dashboard" />}>
                     <Route path="/dashboard" element={<RegistryDashboard />} />
-                    {/* <Route path="/dashboard/mrv" element={<MRVDashboard />} />
-                    <Route path="/dashboard/ghg" element={<GHGDashboardComponent />} /> */}
+                  </Route>
+                  <Route
+                    path="/nationalAccounting"
+                    element={<CustomLayout selectedKey="nationalAccounting" />}
+                  >
+                    <Route path="/nationalAccounting" element={<NationalAccountingDashboard />} />
                   </Route>
                   <Route
                     path="/programmeManagement"
@@ -127,12 +117,6 @@ const App = () => {
                   >
                     <Route path="viewAll" element={<NdcActionManagement />} />
                     <Route path="view" element={<NdcActionView />} />
-                  </Route>
-                  <Route
-                    path="/ndcDetails"
-                    element={<CustomLayout selectedKey="ndcDetails/viewAll" />}
-                  >
-                    <Route path="viewAll" element={<NdcDetails />} />
                   </Route>
                   <Route
                     path="/companyManagement"
@@ -168,23 +152,6 @@ const App = () => {
                     element={<CustomLayout selectedKey="companyManagement/viewAll" />}
                   >
                     <Route path="view" element={<CompanyProfile />} />
-                  </Route>
-                  {/* <Route
-                      path="/userManagement"
-                      element={<CustomLayout selectedKey="userManagement" />}
-                    >
-                      <Route index element={<UserManagement />} />
-                      <Route path="addUser" element={<AddUser />} />
-                      <Route path="updateUser" element={<UpdateUser />} />
-                    </Route> */}
-                  <Route path="/emissions" element={<CustomLayout selectedKey="emissions/view" />}>
-                    <Route path="view" element={<GhgEmissions />} />
-                  </Route>
-                  <Route
-                    path="/projections"
-                    element={<CustomLayout selectedKey="projections/view" />}
-                  >
-                    <Route path="view" element={<GhgProjections />} />
                   </Route>
                 </Route>
                 {enableRegistration === 'true' && (

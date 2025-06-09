@@ -1,0 +1,21 @@
+{
+    "organisationDetailsHeading": "Organisation Details",
+    "name" : "Name",
+    "taxId" : "VAT Registration #",
+    "paymentId" : "Registration Payment ID",
+    "companyRole": "Role",
+    "email" : "Email",
+    "phoneNo" : "Phone",
+    "website" : "Website",
+    "address" : "Address",
+    "creditBalance":"Credit Balance",
+    "programmeCount":"Number of Projects",
+    "remarks": "Remarks",
+    "region": "Region",
+    "ministerName": "Name of the Minister",
+    "sectoralScope": "Sectoral Scope",
+    "nationalSopValue": "National Share of Proceeds",
+    "omgePercentage":"Overall Mitigation in Global Emissions (OMGE) Account",
+    "govDep": "Department",
+    "ministry": "Ministry"
+}

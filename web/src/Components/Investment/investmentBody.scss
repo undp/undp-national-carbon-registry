@@ -1,0 +1,67 @@
+@import "../../Styles/variables.scss";
+
+.margin-left-1 {
+  margin-left: 1rem;
+}
+
+.investment-body {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  height: 3rem;
+
+  .invester {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    .name-and-progress {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      .name {
+        font-weight: 600;
+        color: $common-filter-color;
+        margin-bottom: 0.3rem;
+      }
+      .progress {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        margin-top: 0.2rem;
+        margin-left: 1rem;
+      }
+    }
+  }
+  .amount {
+    display: flex;
+    flex-direction: row;
+    font-weight: 500;
+    align-items: center;
+    justify-content: center;
+    color: $common-filter-color;
+    width: 32%;
+  }
+  .actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 18%;
+    .actions-icon-container {
+      display: flex;
+      height: 30px;
+      width: 30px;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(151, 110, 215, 0.3);
+      border-radius: 50px;
+
+      .action-icons {
+        color: $primary-color;
+        font-size: 16px;
+      }
+    }
+  }
+}

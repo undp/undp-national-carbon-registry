@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useAbilityContext } from '../../Casl/Can';
-import { UserManagementComponent, UserManagementColumns } from '@undp/carbon-library';
 import { useTranslation } from 'react-i18next';
+import { UserManagementColumns } from '../../Definitions/Enums/user.management.columns.enum';
+import { UserManagementComponent } from '../../Components/User/UserManagement/userManagementComponent';
 
 const UserManagement = () => {
   const navigate = useNavigate();

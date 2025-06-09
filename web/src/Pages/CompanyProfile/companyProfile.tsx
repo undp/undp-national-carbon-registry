@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CompanyProfileComponent } from '@undp/carbon-library';
 import { useAbilityContext } from '../../Casl/Can';
+import { CompanyProfileComponent } from '../../Components/Company/CompanyProfile/companyProfileComponent';
 
 const CompanyProfile = () => {
   const navigate = useNavigate();

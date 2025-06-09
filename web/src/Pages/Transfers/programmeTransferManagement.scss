@@ -1,0 +1,147 @@
+@import '../../Styles/variables.scss';
+
+.credit-transfer-management {
+  .certify-list {
+    width: 110px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .profile-icon {
+      margin-bottom: 4px;
+    }
+  }
+
+  .table-actions-section {
+    margin-bottom: 0px;
+
+    input {
+      font-family: $primary-font-family;
+      font-size: 0.8rem;
+    }
+  }
+
+  .all-check {
+    .ant-checkbox-inner::after {
+      background-color: rgba(#3a3541, 0.5);
+    }
+
+    .ant-checkbox-checked .ant-checkbox-inner::after {
+      background-color: transparent;
+    }
+    .ant-checkbox-checked .ant-checkbox-inner {
+      background-color: rgba(#3a3541, 0.5);
+      border: none;
+    }
+    margin-right: 10px;
+  }
+
+  .ant-checkbox-checked {
+    .ant-checkbox-input[value='Retired'] + .ant-checkbox-inner {
+      background-color: rgba(#3a3541, 0.4);
+      border: none;
+    }
+
+    .ant-checkbox-input[value='AwaitingAuthorization'] + .ant-checkbox-inner {
+      background-color: rgba(#ed4d47, 0.6);
+      border: none;
+    }
+
+    .ant-checkbox-input[value='Rejected'] + .ant-checkbox-inner {
+      background-color: rgba(#3a3541, 0.4);
+      border: none;
+    }
+
+    .ant-checkbox-input[value='Issued'] + .ant-checkbox-inner {
+      background-color: rgba(#16b1ff, 1);
+      border: none;
+    }
+
+    .ant-checkbox-input[value='Transferred'] + .ant-checkbox-inner {
+      background-color: rgba(#76c327, 0.6);
+      border: none;
+    }
+  }
+}
+
+.credit-transfer-modal-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem 0 0 0;
+  width: 100%;
+  .icon-credit {
+    margin-bottom: 15px;
+  }
+  .credit-transfer-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+    .content-credit-transfer {
+      font-family: 'Inter' !important;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 0.9rem;
+      line-height: 1.3rem;
+      padding: 0 1rem 0 1rem;
+      text-align: center;
+      color: $common-filter-color !important;
+    }
+
+    .sub-content-credit-transfer {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 600;
+      font-size: 0.8rem;
+      line-height: 1.375rem;
+      text-align: center;
+      color: rgba(58, 53, 65, 0.5);
+    }
+  }
+  .remarks-credit-transfer {
+    flex-direction: row;
+    width: 100%;
+    padding: 0.5rem 1rem 0 1rem;
+    .modal-form {
+      .ant-form-item-explain-error {
+        display: flex;
+        flex-direction: row;
+      }
+
+      .ant-form {
+        width: 100%;
+        .ant-form-item-label > label {
+          font-size: 0.8rem;
+        }
+      }
+
+      .modal-credit-transfer-btns {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        margin-top: 1rem;
+
+        .center {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .width-60 {
+          width: 60%;
+        }
+      }
+    }
+  }
+}
+
+.common-table-class .ant-table .ant-table-thead .ant-table-cell {
+  font-size: 0.75rem;
+  font-weight: 600;
+}

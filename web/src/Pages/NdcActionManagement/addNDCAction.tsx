@@ -1,11 +1,7 @@
-import {
-  AddNdcActionComponent,
-  NdcActionManagementComponent,
-  ProgrammeCreationComponent,
-} from '@undp/carbon-library';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getSdgGoalImages } from '../../Definitions/InterfacesAndType/ndcAction.definitions';
+import { AddNdcActionComponent } from '../../Components/NdcActions/AddNdcAction/addNdcActionComponent';
 
 const AddNDCAction = () => {
   const navigate = useNavigate();

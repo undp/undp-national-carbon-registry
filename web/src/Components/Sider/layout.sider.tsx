@@ -4,19 +4,12 @@ import sliderLogo from '../../Assets/Images/logo-slider.png';
 import { Link, useNavigate } from 'react-router-dom';
 import './layout.sider.scss';
 import * as Icon from 'react-bootstrap-icons';
-import {
-  AppstoreOutlined,
-  CompassOutlined,
-  DashboardOutlined,
-  HomeOutlined,
-  ShopOutlined,
-  UnorderedListOutlined,
-  UserOutlined,
-  FallOutlined,
-  CloudOutlined,
-} from '@ant-design/icons';
+import { AppstoreOutlined, DashboardOutlined, ShopOutlined, UserOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import { LayoutSiderProps } from '@undp/carbon-library';
+import { LayoutSiderProps } from '../../Definitions/Definitions/layout.sider.definitions';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { CompanyRole } from '../../Definitions/Enums/company.role.enum';
+import { Role } from '../../Definitions/Enums/role.enum';
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -44,6 +37,7 @@ function getItem(
 const LayoutSider = (props: LayoutSiderProps) => {
   const { selectedKey } = props;
   const navigate = useNavigate();
+  const { userInfoState } = useUserContext();
   const [collapsed, setCollapsed] = useState(false);
   const { i18n, t } = useTranslation(['nav']);
 
@@ -57,8 +51,19 @@ const LayoutSider = (props: LayoutSiderProps) => {
     getItem(t('nav:users'), 'userManagement/viewAll', <UserOutlined />),
   ];
 
+  // if (
+  //   userInfoState?.userRole === Role.Root ||
+  //   (userInfoState?.companyRole === CompanyRole.GOVERNMENT &&
+  //     userInfoState?.userRole === Role.Admin)
+  // ) {
+  //   items.splice(
+  //     1,
+  //     0,
+  //     getItem(t('nav:nationalAccounting'), 'nationalAccounting', <Icon.GraphUpArrow />)
+  //   );
+  // }
+
   const onClick: MenuProps['onClick'] = (e) => {
-    console.log('click', e);
     navigate('/' + e.key);
   };
 

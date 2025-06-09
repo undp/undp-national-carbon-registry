@@ -1,0 +1,58 @@
+@import "../../Styles/variables.scss";
+
+.national-accounting-dashboard {
+  .national-accounting-title-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0px 0px 0px 0px;
+
+    .title {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .actions {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+    }
+
+    .flex-display {
+      margin-left: 15px;
+    }
+  }
+
+  .ant-checkbox-checked {
+    .ant-checkbox-input[value="CREDIT_AUTHORIZED"]+.ant-checkbox-inner {
+      background-color: rgba(#16b1ff, 1);
+      border: none;
+    }
+
+    .ant-checkbox-input[value="CREDIT_ISSUED"]+.ant-checkbox-inner {
+      background-color: rgba(#76c327, 0.6);
+      border: none;
+    }
+
+    .ant-checkbox-input[value="CREDIT_RETIRED"]+.ant-checkbox-inner {
+      background-color: rgba(#ed4d47, 0.6);
+      border: none;
+    }
+
+  }
+
+  .country-record-management {
+    .title-bar-transfer-country {
+      padding-top: 40px !important;
+      padding-bottom: 20px !important;
+    }
+  }
+
+  .national-transfer-record-management {
+    .title-bar-transfer-records {
+      padding-top: 40px !important;
+      padding-bottom: 20px !important;
+    }
+  }
+}

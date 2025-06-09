@@ -1,0 +1,62 @@
+@import '../../../Styles/variables.scss';
+
+.ndc-action-body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .report-details {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    .report-type {
+      display: flex;
+      flex-direction: row;
+      width: 60%;
+      align-items: flex-start;
+
+      .name-time-container {
+        display: flex;
+        flex-direction: column;
+        width: 70%;
+        margin-bottom: 0.5rem;
+      }
+
+      .name {
+        font-weight: 600;
+        color: $common-filter-color;
+      }
+
+      .icon {
+        display: flex;
+        width: 30%;
+      }
+
+      .empty {
+        font-weight: 600;
+        color: #cacaca;
+      }
+    }
+
+    .report-link {
+      display: flex;
+      flex-direction: row;
+      width: 40%;
+      justify-content: flex-start;
+      gap: 20px;
+      align-items: center;
+
+      .version {
+        font-weight: 600;
+        color: #cacaca;
+      }
+
+      .link {
+        margin-left: 1rem;
+      }
+    }
+  }
+}

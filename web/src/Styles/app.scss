@@ -340,6 +340,10 @@ body {
   }
 }
 
+.ant-popover-placement-bottomRight {
+  z-index: 999;
+}
+
 .ant-tag {
   border-radius: 20px;
 }
@@ -798,4 +802,8 @@ body {
 
 .programme-details-form-container .programme-details-form .selection-details-row .in-ndc-row .included-val .yes-no-radio-container .ant-radio-button-wrapper-checked:not( .ant-radio-button-wrapper-disabled ){
   border-color: $primary-color !important;
+}
+
+.download-data-btn {
+  padding-left: 15px;
 }
