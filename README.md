@@ -13,7 +13,7 @@
 
 
 # About
-The National Carbon Credit Registry is an open-source toolkit developed by UNDP to help countries develop a national registry to fulfil the requirements of Article 6 (Paris Agreement). 
+The National Carbon Credit Registry (v2.0) is an open-source toolkit developed by UNDP to help countries develop a national registry to fulfil the requirements of Article 6 (Paris Agreement). 
 
 It allows countries to track, record, issue, monitor, and trade credits from various mitigation activities, all while ensuring data integrity through a secure ledger. The system tracks the entire process of carbon credits, from issuance to retirement, and makes the data publicly available to enhance transparency. 
 
