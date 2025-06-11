@@ -584,22 +584,13 @@ export const ProgrammeManagementComponent = (props: any) => {
         <Row className="table-actions-section">
           <Col lg={{ span: 15 }} md={{ span: 14 }}>
             <div className="action-bar">
-              <Search
-                value={searchText}
-                onPressEnter={onSearch}
-                placeholder={`${t("projectList:searchByName")}`}
+              <Select
+                className="application-stage-selector"
+                options={applicationStageOptions}
+                onChange={onSelectedApplicationStageChange}
+                placeholder={t('projectList:proposalStage')}
                 allowClear
-                onChange={(e) => setSearchText(e.target.value)}
-                onSearch={(value: string) => {
-                  console.log("----------value-----------", value);
-                  if (value) {
-                    setSearch(value.toLowerCase());
-                  } else {
-                    setSearch(""); // or setSearch(undefined) to show all
-                  }
-                }}
-                style={{ width: 265 }}
-              />
+                />
               {/* <Checkbox
                 className="all-check"
                 disabled={loading}
@@ -623,17 +614,21 @@ export const ProgrammeManagementComponent = (props: any) => {
             <div className="filter-section">
               <div className="search-bar">
                 <Search
-                  value={searchText}
-                  onPressEnter={onSearch}
-                  placeholder={`${t("projectList:searchByName")}`}
-                  allowClear
-                  onChange={(e) => setSearchText(e.target.value)}
-                  onSearch={(value: string) => {
-                    console.log("----------value-----------", value);
+                value={searchText}
+                onPressEnter={onSearch}
+                placeholder={`${t("projectList:searchByName")}`}
+                allowClear
+                onChange={(e) => setSearchText(e.target.value)}
+                onSearch={(value: string) => {
+                  console.log("----------value-----------", value);
+                  if (value) {
                     setSearch(value.toLowerCase());
-                  }}
-                  style={{ width: 265 }}
-                />
+                  } else {
+                    setSearch(""); // or setSearch(undefined) to show all
+                  }
+                }}
+                style={{ width: 265 }}
+              />
               </div>
               <div className="download-icon" onClick={downloadData}>
                 <DownloadOutlined />
