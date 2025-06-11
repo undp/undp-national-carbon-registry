@@ -86,7 +86,7 @@ export class FileLocationService implements LocationInterface {
     const headers = rawData
       .slice(0, rawData.indexOf("\n"))
       .split(",")
-      .map((header) => header.trim().replace("\r", ""));
+      .map((header) => header.trim().replace(/\r/g, ""));
     const dataIndexes = {
       nameIndex: headers.indexOf("Name"),
       latitudeIndex: headers.indexOf("Latitude"),
@@ -132,7 +132,7 @@ export class FileLocationService implements LocationInterface {
     indexes: any,
     type: LocationDataType
   ): Region | Province | District | DSDivision | null | City | PostalCode {
-    const columns = row.replace("\r", "").split(",");
+    const columns = row.replace(/\r/g, "").split(",");
     if (columns.length !== Object.keys(indexes).length) return null;
 
     const EntityClass = this.config[type].entity;

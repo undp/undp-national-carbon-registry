@@ -20,7 +20,8 @@ const DigitalPublicGood = () => {
           transition={{ duration: 1, ease: 'easeOut' }}
           viewport={{ once: true }}
         >
-          {t("homepage:digitalPublicBody")}
+          In response to countries’ need for support, UNDP has created the National Carbon Credit Registry as an open-source toolkit that follows the <a href="https://digitalpublicgoods.net/digital-public-goods/" target="_blank">Digital Public Goods Standard.</a> Countries can access the free, open-source code and installation instructions <a href ='https://github.com/undp/carbon-registry' target="_blank">from UNDP’s managed Github</a> to customize a Registry according to their national needs. This approach helps save time, reduce costs, and avoids duplication of effort.
+
         </motion.div>
       </div>
     </div>

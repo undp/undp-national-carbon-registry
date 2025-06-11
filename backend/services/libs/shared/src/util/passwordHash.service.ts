@@ -1,20 +1,19 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { createHash } from "crypto";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class PasswordHashService {
-    constructor(
-        private configService: ConfigService
-    ) { }
+  constructor(private configService: ConfigService) {}
 
-    getPasswordHash(password) {
-        let encodedPassword = password;
-        const encodePassword = this.configService.get("jwt.encodePassword");
-        if (encodePassword === 'true') {
-            encodedPassword = createHash('sha256').update(password).digest('hex');
-        }
-
-        return encodedPassword;
+  getPasswordHash(password) {
+    let encodedPassword = password;
+    const encodePassword = this.configService.get("jwt.encodePassword");
+    if (encodePassword === "true") {
+      const saltRounds = this.configService.get<number>("jwt.saltRounds");
+      encodedPassword = bcrypt.hashSync(password, saltRounds);
     }
+
+    return encodedPassword;
+  }
 }
