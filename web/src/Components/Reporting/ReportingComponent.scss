@@ -106,24 +106,28 @@
 .table {
   margin-top: 32px;
 
-  font-size: 14px;
-
-  font-weight: 600;
-
-  .ant-table-fixed {
-    table-layout: fixed;
+  .ant-table {
+    font-size: 13px; 
+    font-weight: 400;
   }
 
-  // .ant-table-tbody > tr > td {
-  //   word-wrap: break-word;
+  .ant-table-thead > tr > th {
+    font-size: 13px; 
+    font-weight: 600;
+    color: #595959;
+  }
 
-  //   word-break: break-all;
-  // }
+  .ant-table-tbody > tr > td {
+    font-size: 13px; 
+    font-weight: 400;
+    color: #333333;
+  }
 
-  td {
-    font-weight: 400 !important;
+  .ant-table-tbody > tr:hover > td {
+    background-color: #fafafa;
   }
 }
+
 
 .no-reports {
   background-color: white;
