@@ -31,7 +31,7 @@ const FAQ = () => {
               <p>
                 A National Carbon Registry is a secure digital platform used by
                 governments to track, manage, and regulate carbon credits within
-                their national carbon markets
+                their national carbon markets.
               </p>
             </div>
           )}
@@ -341,8 +341,9 @@ const FAQ = () => {
                   Port numbers
                 </li>
                 <li>API endpoints</li>
+                <li>Usernames</li>
                 <li>Database names, locations</li>
-                <li>And any other sensitive informatio</li>
+                <li>And any other sensitive information</li>
               </ul>
               <span>
                 This ensures transparency in software development while protecting national infrastructure.

@@ -96,7 +96,7 @@ const ReportCard = (props: IReportCard) => {
           scroll={{ x: 1000 }}
           pagination={{
             ...pagination,
-            style: { textAlign: "center" },
+            style: { textAlign: "center"},
             position: ["bottomLeft"],
             showQuickJumper: true,
             showSizeChanger: true,

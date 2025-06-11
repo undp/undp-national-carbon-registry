@@ -26,6 +26,7 @@ import {
 } from "../Enums/creditRetirementProceedType.enum";
 import { CreditRetirementTypeEmnum } from "../Enums/creditRetirementType.enum";
 import { COLOR_CONFIGS } from "../../../Config/colorConfigs";
+import { CreditEventStatusEnum } from "../Enums/creditEventEnum";
 
 interface CreditActionModalProps {
   icon?: any;
@@ -91,9 +92,15 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
               filterOwn: true,
             })
           : await get(API_PATHS.CB_RETIRE_COINTRY_QUERY);
+
       if (response && response.data && response.data.length > 0) {
+        const filteredData =
+          type === CreditActionType.TRANSFER
+            ? response.data.filter((item: any) => item.state === "1")
+            : response.data;
+
         setDropDownList(
-          response.data.map((item: any) => ({
+          filteredData.map((item: any) => ({
             value: type === CreditActionType.TRANSFER ? item.id : item.alpha2,
             label: item.name,
           }))
@@ -239,6 +246,7 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
       }
 
       form.setFieldsValue({
+        owner: data?.senderName,
         project: data?.projectName,
         retirementType: retirementTypeRef,
         comment: "",
@@ -280,6 +288,21 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
             onValuesChange={handleValuesChange}
             onFinish={handleSubmit}
           >
+            <Row>
+              <Col span={24}>
+                {type === CreditActionType.RETIREMENT &&
+                  "status" in data &&
+                  data.status === CreditEventStatusEnum.PENDING && (
+                    <Form.Item
+                      className="credit-action-project-name"
+                      label={t("Owner")}
+                      name="Owner"
+                    >
+                      <Input placeholder={data.senderName} disabled />
+                    </Form.Item>
+                  )}
+              </Col>
+            </Row>
             <Row>
               <Col span={24}>
                 <Form.Item

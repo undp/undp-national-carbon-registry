@@ -62,6 +62,33 @@ export const BasicInformationStep = (props: VerificationStepProps) => {
   // useEffect (()=>{
   //   fetchValidationData();
   // },[])
+  const validatePositiveInteger = async (rule, value) => {
+  const valStr = String(value).trim();
+
+
+  if (valStr === "" || value === null || value === undefined) {
+    throw new Error(`${t("validationReport:required")}`);
+  }
+
+  // Check if it's a valid number
+  if (isNaN(value)) {
+    throw new Error("Should be a number");
+  }
+
+  const numValue = Number(value);
+
+  // Check if it's an integer
+  if (!Number.isInteger(numValue)) {
+    throw new Error("Value must be an integer");
+  }
+
+  // Check if it's a positive integer (0 or more)
+  if (numValue <= 0) {
+    throw new Error("Value must be a positive integer");
+  }
+
+  return Promise.resolve();
+};
 
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
@@ -422,6 +449,7 @@ export const BasicInformationStep = (props: VerificationStepProps) => {
                             "verificationReport:b_certfiedGHGReductions"
                           )} ${t("isRequired")}`,
                         },
+                        {validator:validatePositiveInteger}
                       ]}
                     >
                       <Input size="large" disabled={disableFields} />

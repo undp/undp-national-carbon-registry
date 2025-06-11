@@ -1985,27 +1985,12 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
               )}
             </Col>
             <Col xl={18} md={18}>
-              <div className="text-left programme-name">
+              <div className="text-right programme-name">
                 {ele.company.name}
-
                 <OrganisationSlStatus
                   organisationStatus={parseInt(ele.company.state)}
                   t={companyProfileTranslations}
-                ></OrganisationSlStatus>
-              </div>
-              <div className="progress-bar">
-                <Progress
-                  percent={ele.percentage}
-                  strokeWidth={7}
-                  status="active"
-                  showInfo={false}
-                />
-                <div>
-                  <div className="float-left">
-                    {t("projectDetailsView:ownership")}
-                  </div>
-                  <div className="float-right">{ele.percentage}%</div>
-                </div>
+                  ></OrganisationSlStatus>
               </div>
             </Col>
           </Row>
@@ -2616,20 +2601,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 />
               </div>
             </Card>
-            {data.contactName && (
-              <Card className="card-container">
-                <div>
-                  <InfoView
-                    data={getContactPersonInfo()}
-                    title={t("projectDetailsView:contactPerson")}
-                    icon={<Icon.Headset />}
-                  />
-                </div>
-              </Card>
-            )}
-          </Col>
-          <Col md={24} lg={14}>
-            <Card className="card-container">
+             <Card className="card-container">
               <div className="info-view ">
                 <div className="title">
                   <span className="title-icon">
@@ -2646,6 +2618,19 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 <div className="centered-card">{elements}</div>
               </div>
             </Card>
+            {data.contactName && (
+              <Card className="card-container">
+                <div>
+                  <InfoView
+                    data={getContactPersonInfo()}
+                    title={t("projectDetailsView:contactPerson")}
+                    icon={<Icon.Headset />}
+                  />
+                </div>
+              </Card>
+            )}
+          </Col>
+          <Col md={24} lg={14}>
             <Card className="card-container">
               <div>
                 <InfoView
