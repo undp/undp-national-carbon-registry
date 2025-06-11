@@ -79,49 +79,53 @@ export const PURPOSE_CREDIT_DEVELOPMENT: { [key: string]: string } = {
 };
 
 export const INF_SECTOR: { [key: string]: string } = {
-  ENERGY: 'Energy',
-  AGRICULTURE: 'Agriculture',
-  HEALTH: 'Health',
-  EDUCATION: 'Education',
-  TRANSPORT: 'Transport',
-  MANUFACTURING: 'Manufacturing',
-  HOSPITALITY: 'Hospitality',
-  FORESTRY: 'Forestry',
-  WASTE: 'Waste',
-  OTHER: 'Other',
+  ENERGY: "Energy",
+  AGRICULTURE: "Agriculture",
+  HEALTH: "Health",
+  EDUCATION: "Education",
+  TRANSPORT: "Transport",
+  MANUFACTURING: "Manufacturing",
+  HOSPITALITY: "Hospitality",
+  FORESTRY: "Forestry",
+  WASTE: "Waste",
+  OTHER: "Other",
 };
 
 export const INF_SECTORAL_SCOPE: { [key: string]: string } = {
-  ENERGY_INDUSTRIES: 'Energy Industries (Renewable – / Non-Renewable Sources) ',
-  ENERGY_DISTRIBUTION: 'Energy Distribution',
-  ENERGY_DEMAND: 'Energy Demand',
-  AGRICULTURE: 'Agriculture',
-  AFFORESTATION_AND_REFORESTATION: 'Afforestation and Reforestation',
-  MANUFACTURING_INDUSTRIES: 'Manufacturing Industries',
-  CHEMICAL_INDUSTRIES: 'Chemical Industries',
-  METAL_PRODUCTION: 'Metal Production',
-  TRANSPORT: 'Transport',
-  WASTE_FROM_FUELS: 'Fugitive Emissions from Fuels (Solid, Oil and Gas) ',
-  WASTE_HANDLING_AND_DISPOSAL: 'Waste Handling and Disposal',
-  CONSTRUCTION: 'Construction',
-  MINING_MINERAL_PRODUCTION: 'Mining/Mineral Production',
+  ENERGY_INDUSTRIES: "Energy Industries (Renewable – / Non-Renewable Sources) ",
+  ENERGY_DISTRIBUTION: "Energy Distribution",
+  ENERGY_DEMAND: "Energy Demand",
+  AGRICULTURE: "Agriculture",
+  AFFORESTATION_AND_REFORESTATION: "Afforestation and Reforestation",
+  MANUFACTURING_INDUSTRIES: "Manufacturing Industries",
+  CHEMICAL_INDUSTRIES: "Chemical Industries",
+  METAL_PRODUCTION: "Metal Production",
+  TRANSPORT: "Transport",
+  WASTE_FROM_FUELS: "Fugitive Emissions from Fuels (Solid, Oil and Gas) ",
+  WASTE_HANDLING_AND_DISPOSAL: "Waste Handling and Disposal",
+  CONSTRUCTION: "Construction",
+  MINING_MINERAL_PRODUCTION: "Mining/Mineral Production",
   FUGITIVE_EMISSIONS_PRODUCTION:
-    'Fugitive Emissions from Production and Consumption of Halocarbons and Sulphur Hexafluoride',
-  SOLVENT_USE: 'Solvent Use',
+    "Fugitive Emissions from Production and Consumption of Halocarbons and Sulphur Hexafluoride",
+  SOLVENT_USE: "Solvent Use",
 };
 
 export const SECTOR_TO_SCOPES_MAP: { [key: string]: string[] } = {
-  ENERGY: ['ENERGY_INDUSTRIES', 'ENERGY_DISTRIBUTION', 'ENERGY_DEMAND'],
-  AGRICULTURE: ['AGRICULTURE'],
-  FORESTRY: ['AFFORESTATION_AND_REFORESTATION'],
-  MANUFACTURING: ['MANUFACTURING_INDUSTRIES', 'CHEMICAL_INDUSTRIES', 'METAL_PRODUCTION'],
-  TRANSPORT: ['TRANSPORT'],
-  WASTE: ['WASTE_HANDLING_AND_DISPOSAL', 'WASTE_FROM_FUELS'],
+  ENERGY: ["ENERGY_INDUSTRIES", "ENERGY_DISTRIBUTION", "ENERGY_DEMAND"],
+  AGRICULTURE: ["AGRICULTURE"],
+  FORESTRY: ["AFFORESTATION_AND_REFORESTATION"],
+  MANUFACTURING: [
+    "MANUFACTURING_INDUSTRIES",
+    "CHEMICAL_INDUSTRIES",
+    "METAL_PRODUCTION",
+  ],
+  TRANSPORT: ["TRANSPORT"],
+  WASTE: ["WASTE_HANDLING_AND_DISPOSAL", "WASTE_FROM_FUELS"],
   OTHER: [
-    'CONSTRUCTION',
-    'MINING_MINERAL_PRODUCTION',
-    'FUGITIVE_EMISSIONS_PRODUCTION',
-    'SOLVENT_USE',
+    "CONSTRUCTION",
+    "MINING_MINERAL_PRODUCTION",
+    "FUGITIVE_EMISSIONS_PRODUCTION",
+    "SOLVENT_USE",
   ],
 };
 
@@ -260,7 +264,10 @@ export const ProgrammeCreationComponent = (props: any) => {
         companyRole: CompanyRole.INDEPENDENT_CERTIFIER,
       });
       if (response.data) {
-        setIndependentCertifiers(response.data);
+        const activeCertifiers = response.data.filter(
+          (item: any) => item.state === "1"
+        );
+        setIndependentCertifiers(activeCertifiers);
       }
     } catch (error: any) {
       console.log("Error in getCountryList", error);
@@ -351,69 +358,73 @@ export const ProgrammeCreationComponent = (props: any) => {
 
   const t = translator.t;
 
- useEffect(() => {
-  const getViewData = async () => {
-    setLoading(true);
-    let documentData: any;
-    let projectData: any;
+  useEffect(() => {
+    const getViewData = async () => {
+      setLoading(true);
+      let documentData: any;
+      let projectData: any;
 
-    try {
-      const res = await post(API_PATHS.QUERY_DOCUMENT, {
-        refId: state?.documentId,
-        documentType: DocumentEnum.INF,
-      });
+      try {
+        const res = await post(API_PATHS.QUERY_DOCUMENT, {
+          refId: state?.documentId,
+          documentType: DocumentEnum.INF,
+        });
 
-      if (res?.statusText === "SUCCESS") {
-        documentData = res?.data?.data;
+        if (res?.statusText === "SUCCESS") {
+          documentData = res?.data?.data;
+        }
+      } catch (error) {
+        console.log("----------error-----------", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.log("----------error-----------", error);
-    } finally {
-      setLoading(false);
-    }
 
-    try {
-      const res = await post(API_PATHS.PROGRAMME_BY_ID, {
-        programmeId: id,
-      });
+      try {
+        const res = await post(API_PATHS.PROGRAMME_BY_ID, {
+          programmeId: id,
+        });
 
-      if (res?.statusText === "SUCCESS") {
-        projectData = res?.data;
-        console.log("----------projectData----------", projectData.independentCertifiers, projectData.independentCertifiers.join(","));
+        if (res?.statusText === "SUCCESS") {
+          projectData = res?.data;
+          console.log(
+            "----------projectData----------",
+            projectData.independentCertifiers,
+            projectData.independentCertifiers.join(",")
+          );
+        }
+      } catch (error) {
+        console.log("----------error project data-----------", error);
       }
-    } catch (error) {
-      console.log("----------error project data-----------", error);
-    }
 
-    // ✅ Format sectoral scope string from "ENERGY_DEMAND" to "Energy Demand"
- const formatScope = (value: string | undefined): string => {
-  if (!value) return "";
-  if (value.toUpperCase() === "N/A") return "NA";
-  return INF_SECTORAL_SCOPE[value.toUpperCase()] || value; // Fallback to original value if key not found
-};
-
-    if (documentData && projectData) {
-      const viewData = {
-        ...documentData,
-        briefProjectDescription: documentData.projectDescription,
-        optionalDocuments: mapBase64ToFields(documentData?.additionalDocuments),
-        projectLocation: documentData.geographicalLocationCoordinates,
-        startTime: toMoment(documentData?.startDate),
-        independentCertifiers: projectData?.independentCertifiers?.join(","),
-        sectoralScope: formatScope(documentData?.sectoralScope),
+      // ✅ Format sectoral scope string from "ENERGY_DEMAND" to "Energy Demand"
+      const formatScope = (value: string | undefined): string => {
+        if (!value) return "";
+        if (value.toUpperCase() === "N/A") return "NA";
+        return INF_SECTORAL_SCOPE[value.toUpperCase()] || value; // Fallback to original value if key not found
       };
 
-      form.setFieldsValue(viewData);
+      if (documentData && projectData) {
+        const viewData = {
+          ...documentData,
+          briefProjectDescription: documentData.projectDescription,
+          optionalDocuments: mapBase64ToFields(
+            documentData?.additionalDocuments
+          ),
+          projectLocation: documentData.geographicalLocationCoordinates,
+          startTime: toMoment(documentData?.startDate),
+          independentCertifiers: projectData?.independentCertifiers?.join(","),
+          sectoralScope: formatScope(documentData?.sectoralScope),
+        };
+
+        form.setFieldsValue(viewData);
+      }
+    };
+
+    if (state?.mode === FormMode.VIEW && state?.documentId) {
+      setDisableFields(true);
+      getViewData();
     }
-  };
-
-  if (state?.mode === FormMode.VIEW && state?.documentId) {
-    setDisableFields(true);
-    getViewData();
-  }
-}, []);
-
-
+  }, []);
 
   const submitForm = async (values: any) => {
     const base64Docs: string[] = [];
@@ -430,7 +441,8 @@ export const ProgrammeCreationComponent = (props: any) => {
     const body: any = {
       title: values?.title,
       sector: values?.sector,
-      sectoralScope: values?.sectoralScope === 'NA' ? 'N/A' : values?.sectoralScope,
+      sectoralScope:
+        values?.sectoralScope === "NA" ? "N/A" : values?.sectoralScope,
       province: values?.province || "test",
       district: values?.district || "test",
       city: values?.city || "test",
@@ -469,7 +481,7 @@ export const ProgrammeCreationComponent = (props: any) => {
       };
       const res = await post(API_PATHS.ADD_DOCUMENT, tempValues);
       if (res?.statusText === "SUCCESS") {
-        console.log("-------timeout-----------")
+        console.log("-------timeout-----------");
         message.open({
           type: "success",
           content: t("addProgramme:programmeCreationSuccess"),
@@ -501,7 +513,7 @@ export const ProgrammeCreationComponent = (props: any) => {
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-        setLoading(false)
+        setLoading(false);
       }
     }
   };
@@ -595,23 +607,25 @@ export const ProgrammeCreationComponent = (props: any) => {
                               </Form.Item>
 
                               <Form.Item
-                                label={t('addProgramme:sector')}
+                                label={t("addProgramme:sector")}
                                 name="sector"
                                 rules={[
                                   {
                                     required: true,
-                                    message: '',
+                                    message: "",
                                   },
                                   {
                                     validator: async (rule, value) => {
                                       if (
-                                        String(value).trim() === '' ||
+                                        String(value).trim() === "" ||
                                         String(value).trim() === undefined ||
                                         value === null ||
                                         value === undefined
                                       ) {
                                         throw new Error(
-                                          `${t('addProgramme:sector')} ${t('isRequired')}`
+                                          `${t("addProgramme:sector")} ${t(
+                                            "isRequired"
+                                          )}`
                                         );
                                       }
                                     },
@@ -620,13 +634,18 @@ export const ProgrammeCreationComponent = (props: any) => {
                               >
                                 <Select
                                   size="large"
-                                  placeholder={t('addProgramme:sectorPlaceholder')}
+                                  placeholder={t(
+                                    "addProgramme:sectorPlaceholder"
+                                  )}
                                   disabled={disableFields}
                                   onChange={(value) => {
                                     setSelectedSector(value);
-                                    const hasScopes = SECTOR_TO_SCOPES_MAP[value]?.length > 0;
+                                    const hasScopes =
+                                      SECTOR_TO_SCOPES_MAP[value]?.length > 0;
                                     form.setFieldsValue({
-                                      sectoralScope: hasScopes ? undefined : 'NA',
+                                      sectoralScope: hasScopes
+                                        ? undefined
+                                        : "NA",
                                     });
                                   }}
                                 >
@@ -666,16 +685,19 @@ export const ProgrammeCreationComponent = (props: any) => {
                               >
                                 <Select
                                   size="large"
-                                  placeholder={t('addProgramme:sectoralScopePlaceholder')}
+                                  placeholder={t(
+                                    "addProgramme:sectoralScopePlaceholder"
+                                  )}
                                   disabled={disableFields || !hasValidScopes}
                                 >
-                                  {(hasValidScopes ? SECTOR_TO_SCOPES_MAP[selectedSector] : []).map(
-                                    (key) => (
-                                      <Select.Option key={key} value={key}>
-                                        {INF_SECTORAL_SCOPE[key]}
-                                      </Select.Option>
-                                    )
-                                  )}
+                                  {(hasValidScopes
+                                    ? SECTOR_TO_SCOPES_MAP[selectedSector]
+                                    : []
+                                  ).map((key) => (
+                                    <Select.Option key={key} value={key}>
+                                      {INF_SECTORAL_SCOPE[key]}
+                                    </Select.Option>
+                                  ))}
                                 </Select>
                               </Form.Item>
 
@@ -1282,7 +1304,9 @@ export const ProgrammeCreationComponent = (props: any) => {
                                 />
                               </Form.Item>
 
-                              <div className="custom-label">{t('addProgramme:documentUpload')}</div>
+                              <div className="custom-label">
+                                {t("addProgramme:documentUpload")}
+                              </div>
                               <Form.Item
                                 // label={t('addProgramme:documentUpload')}
                                 name="optionalDocuments"
@@ -1299,8 +1323,14 @@ export const ProgrammeCreationComponent = (props: any) => {
                                             DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
                                           )
                                         ) {
-                                          throw new Error(`${t('addProgramme:invalidFileFormat')}`);
-                                        } else if (file[i]?.size > maximumImageSize) {
+                                          throw new Error(
+                                            `${t(
+                                              "addProgramme:invalidFileFormat"
+                                            )}`
+                                          );
+                                        } else if (
+                                          file[i]?.size > maximumImageSize
+                                        ) {
                                           // default size format of files would be in bytes -> 1MB = 1000000bytes
                                           throw new Error(
                                             `${t("common:maxSizeVal")}`
@@ -1570,7 +1600,8 @@ export const ProgrammeCreationComponent = (props: any) => {
                                 {
                                   validator: async (rule, value) => {
                                     if (
-                                      value && value.trim().length > 0 &&
+                                      value &&
+                                      value.trim().length > 0 &&
                                       !validator.isURL(value)
                                     )
                                       throw new Error(

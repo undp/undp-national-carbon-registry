@@ -53,10 +53,8 @@ export const VerificationFindingStep = (props: VerificationStepProps) => {
                 }
               }}
             >
-              <h4 className="verificationReport-findings-subHeading">
-                {t("verificationReport:remainingFARsFromValidation")}
-              </h4>
               <Form.Item
+                label={`${t("verificationReport:remainingFARsFromValidation")}`}
                 className="full-width-form-item"
                 name="remainingFARsFromValidation"
                 rules={[
