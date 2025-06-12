@@ -66,7 +66,7 @@ const NetEmissionReduction = (props: any) => {
           },
         ]);
       }
-      form.setFieldValue("netEmissionReductions", String(netGHGEmissions));
+      form.setFieldValue("netEmissionReductions", netGHGEmissions);
     } else {
       const listVals = form.getFieldValue("estimatedNetEmissionReductions");
 
