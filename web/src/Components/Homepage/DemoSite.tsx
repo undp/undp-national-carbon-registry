@@ -14,6 +14,7 @@ const DemoSite = () => {
           width: "100%",
           height: 0,
           paddingTop: "56.2500%",
+          marginLeft: "24px",
           paddingBottom: 0,
           boxShadow: "0 2px 8px 0 rgba(63,69,81,0.16)",
           marginTop: "1.6em",
@@ -38,15 +39,22 @@ const DemoSite = () => {
           src="https://www.canva.com/design/DAGp5iEx29Q/yCCaXj1wkWWl-QHPT3yejQ/watch?embed"
           allowFullScreen={true}
           allow="fullscreen"
-        />
+          title="Carbon Registry Demonstration Video"
+        >
+          {/* Fallback content - shows only if iframe fails to load */}
+          <div>
+            <div>
+              <a
+                href="https://www.canva.com/design/DAGp5iEx29Q/yCCaXj1wkWWl-QHPT3yejQ/watch?utm_content=DAGp5iEx29Q&utm_campaign=designshare&utm_medium=embeds&utm_source=link"
+                target="_blank"
+                rel="noopener"
+              >
+                View Carbon Registry Demonstration Video
+              </a>
+            </div>
+          </div>
+        </iframe>
       </div>
-      <a
-        href="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAGp5iEx29Q&#x2F;yCCaXj1wkWWl-QHPT3yejQ&#x2F;watch?utm_content=DAGp5iEx29Q&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link"
-        target="_blank"
-        rel="noopener"
-      >
-        Copy of Carbon Registry Demonstration Video
-      </a>
 
       <div className="demo-site-content">
         <div className="demo-site-text">
