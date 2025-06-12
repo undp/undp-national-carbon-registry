@@ -28,7 +28,7 @@
   "rejected":"Rejected",
   "policyContextTitle": "Policy Context",
   "policyContextBody": "The Paris Agreement is an international treaty on climate change aiming to limit global warming to below 2°C, with efforts to keep it to 1.5°C by 2100. Article 6 introduces mechanisms for countries to cooperate on climate goals through market-based (Articles 6.2 and 6.4) and non-market approaches (Article 6.8). All countries must account for any carbon credits used or transferred within their Nationally Determined Contributions (NDCs).",
-  "policyContextBody2": "Digital carbon registries are essential for countries to track and manage carbon credits, ensuring data integrity and enable consistent reporting.",
+  "policyContextBody2": "Digital carbon registries are essential for countries to track and manage carbon credits, ensuring data integrity and enabling consistent reporting.",
   "digitalPublicTitle": "A Digital Public Good ",
   "digitalPublicBody": "In response to countries’ need for support, UNDP has created the National Carbon Credit Registry as an open-source toolkit that follows the Digital Public Goods Standard. Countries can access the free, open-source code and installation instructions from UNDP’s managed Github to customize a Registry according to their national needs. This approach helps save time, reduce costs, and avoids duplication of effort.",
   "demoSiteTitle": "Demo Site",
