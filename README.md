@@ -129,8 +129,6 @@ When credits are Tranferred or Retired, it can be a transaction of a full block 
   Before transaction: CA0004-VU-CH-356-1-3000-2023 : Owner 1<br>
   After transaction: CA0004-VU-CH-356-1-2000-2023 : Owner 1 and CA0004-VU-CH-356-2001-3000-2023 : Owner 2
 
-When transferring credit amount from multiple blocks, the current owner retains the first serial number blocks and gives away the last serial number blocks.
-
 ### **Deployment**
 
 System services can deploy in 2 ways.
