@@ -304,5 +304,6 @@
   "HOSPITALITY": "Hospitality",
   "FORESTRY": "Forestry",
   "WASTE": "Waste",
-  "OTHER": "Other"
+  "OTHER": "Other",
+  "N/A": "NA"
 }

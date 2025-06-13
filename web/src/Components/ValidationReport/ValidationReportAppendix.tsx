@@ -74,7 +74,14 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
   const onFinish = async (values: any) => {
     const tempVals: any = {
       ...values,
-      documentsReviewed: values?.documentsReviewed,
+      documentsReviewed: values?.documentsReviewed?.map((item: any) => {
+        return {
+          author: item?.author,
+          title: item?.title,
+          referenceToTheDoc: item?.referenceToTheDoc,
+          provider: item?.provider,
+        };
+      }),
       appendix1Documents: await fileUploadValueExtract(
         values,
         "appendix1Documents"
@@ -149,23 +156,25 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
 
-          if (next) {
-            setTimeout(() => {
+          setTimeout(() => {
+            if (next) {
               next();
-            }, defaultTimeout);
-          }
+            }
+            if (handleLoading) {
+              handleLoading(false);
+            }
+          }, defaultTimeout);
         }
       } catch (error) {
+        if (handleLoading) {
+          handleLoading(false);
+        }
         message.open({
           type: "error",
           content: t("common:somethingWentWrong"),
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-      } finally {
-        if (handleLoading) {
-          handleLoading(false);
-        }
       }
     }
   };
@@ -191,23 +200,25 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
 
-          if (next) {
-            setTimeout(() => {
+          setTimeout(() => {
+            if (next) {
               next();
-            }, defaultTimeout)
-          }
+            }
+            if (handleLoading) {
+              handleLoading(false);
+            }
+          }, defaultTimeout);
         }
       } catch (error) {
+        if (handleLoading) {
+          handleLoading(false);
+        }
         message.open({
           type: "error",
           content: t("common:somethingWentWrong"),
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
         });
-      } finally {
-        if (handleLoading) {
-          handleLoading(false);
-        }
       }
     }
   };
@@ -622,7 +633,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input disabled={disableFields} />
+                        <Input disabled={disableFields} size="large" />
                       </Form.Item>
 
                       <Form.Item
@@ -687,7 +698,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input disabled={disableFields} />
+                        <Input disabled={disableFields} size="large" />
                       </Form.Item>
                     </Col>
 
@@ -928,7 +939,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input disabled={disableFields} />
+                        <Input disabled={disableFields} size="large" />
                       </Form.Item>
 
                       <Form.Item
@@ -993,7 +1004,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input disabled={disableFields} />
+                        <Input disabled={disableFields} size="large" />
                       </Form.Item>
                     </Col>
 
@@ -1234,7 +1245,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input disabled={disableFields} />
+                        <Input disabled={disableFields} size="large" />
                       </Form.Item>
 
                       <Form.Item
@@ -1299,7 +1310,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                           },
                         ]}
                       >
-                        <Input disabled={disableFields} />
+                        <Input disabled={disableFields} size="large" />
                       </Form.Item>
                     </Col>
 

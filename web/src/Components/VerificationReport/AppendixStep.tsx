@@ -1,13 +1,4 @@
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  Row,
-  Upload,
-  DatePicker,
-  message,
-} from "antd";
+import { Button, Col, Form, Input, Row, Upload, DatePicker, message } from "antd";
 import moment from "moment";
 import TextArea from "antd/lib/input/TextArea";
 import {
@@ -31,6 +22,8 @@ import { DocumentStateEnum } from "../../Definitions/Definitions/documentState.e
 import { SlcfFormActionModel } from "../Models/SlcfFormActionModel";
 import { useLocation } from "react-router-dom";
 import ConfirmSubmitSVG from "../../Assets/DialogIcons/ConfirmSubmit.svg";
+import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
+import { safeClone } from "../../Utils/deepCopy";
 
 export const AppendixStep = (props: VerificationStepProps) => {
   const {
@@ -63,7 +56,7 @@ export const AppendixStep = (props: VerificationStepProps) => {
 
   useEffect(() => {
     if (formMode === FormMode.CREATE) {
-      form.setFieldValue("documents-reviewed", [{ author: "" }]);
+      form.setFieldValue("documentsReviewed", [{ author: "" }]);
     }
   }, []);
 
@@ -95,10 +88,15 @@ export const AppendixStep = (props: VerificationStepProps) => {
   const onFinish = async (values: any) => {
     const appendixFormValues: any = {
       ...values,
-      appendix1Documents: await fileUploadValueExtract(
-        values,
-        "appendix1Documents"
-      ),
+      documentsReviewed: values?.documentsReviewed?.map((item: any) => {
+        return {
+          author: item?.author,
+          title: item?.title,
+          referenceToTheDoc: item?.referenceToTheDoc,
+          provider: item?.provider,
+        };
+      }),
+      appendix1Documents: await fileUploadValueExtract(values, "appendix1Documents"),
       farIdDate: moment(values?.farIdDate).startOf("day").unix(),
       responseDate: moment(values?.responseDate).startOf("day").unix(),
       doeDate: moment(values?.doeDate).startOf("day").unix(),
@@ -128,13 +126,21 @@ export const AppendixStep = (props: VerificationStepProps) => {
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
 
-          if (next) {
-            next();
-          }
+          setTimeout(() => {
+            if (next) {
+              next();
+            }
+            if (handleLoading) {
+              handleLoading(false);
+            }
+          }, defaultTimeout);
         }
       } catch (error: any) {
-        console.log("--------------error----------------", error);
-        if (error?.status === 401) {
+        // console.log("--------------error----------------", error);
+        if (handleLoading) {
+          handleLoading(false);
+        }
+        if (error?.status === 401 || error?.status === 400) {
           message.open({
             type: "error",
             content: error.message,
@@ -149,7 +155,6 @@ export const AppendixStep = (props: VerificationStepProps) => {
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
         }
-      } finally {
         if (handleLoading) {
           handleLoading(false);
         }
@@ -178,20 +183,34 @@ export const AppendixStep = (props: VerificationStepProps) => {
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
 
-          if (next) {
-            next();
-          }
+          setTimeout(() => {
+            if (next) {
+              next();
+            }
+            if (handleLoading) {
+              handleLoading(false);
+            }
+          }, defaultTimeout);
         }
       } catch (error) {
-        message.open({
-          type: "error",
-          content: t("common:somethingWentWrong"),
-          duration: 4,
-          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
-        });
-      } finally {
+        // console.log("--------------error----------------", error);
         if (handleLoading) {
           handleLoading(false);
+        }
+        if (error?.status === 401 || error?.status === 400) {
+          message.open({
+            type: "error",
+            content: error.message,
+            duration: 4,
+            style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+          });
+        } else {
+          message.open({
+            type: "error",
+            content: t("common:somethingWentWrong"),
+            duration: 4,
+            style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+          });
         }
       }
     }
@@ -202,8 +221,7 @@ export const AppendixStep = (props: VerificationStepProps) => {
       {current === 10 && (
         <div>
           <div className="step-form-container">
-            {(state?.mode === FormMode.CREATE ||
-              state?.mode === FormMode.EDIT) && (
+            {(state?.mode === FormMode.CREATE || state?.mode === FormMode.EDIT) && (
               <>
                 <SlcfFormActionModel
                   icon={<ConfirmSubmitSVG />}
@@ -294,9 +312,7 @@ export const AppendixStep = (props: VerificationStepProps) => {
                                 value === undefined
                               ) {
                                 throw new Error(
-                                  `${t(
-                                    "verificationReport:additionalComments"
-                                  )} ${t("isRequired")}`
+                                  `${t("verificationReport:additionalComments")} ${t("isRequired")}`
                                 );
                               }
                             },
@@ -307,7 +323,7 @@ export const AppendixStep = (props: VerificationStepProps) => {
                       </Form.Item>
 
                       <div className="custom-upload-verification">
-                        {t('verificationReport:appendix1Documents')}
+                        {t("verificationReport:appendix1Documents")}
                       </div>
                       <Form.Item
                         //label={t('verificationReport:appendix1Documents')}
@@ -382,7 +398,7 @@ export const AppendixStep = (props: VerificationStepProps) => {
                       </Row>
 
                       <Row className="body">
-                        <Form.List name="documents-reviewed">
+                        <Form.List name="documentsReviewed">
                           {(fields, { add, remove }) => (
                             <>
                               {fields.map(({ key, name, ...restFields }) => (
@@ -404,25 +420,19 @@ export const AppendixStep = (props: VerificationStepProps) => {
                                           validator: async (rule, value) => {
                                             if (
                                               String(value).trim() === "" ||
-                                              String(value).trim() ===
-                                                undefined ||
+                                              String(value).trim() === undefined ||
                                               value === null ||
                                               value === undefined
                                             ) {
                                               throw new Error(
-                                                `${t(
-                                                  "verificationReport:required"
-                                                )}`
+                                                `${t("verificationReport:required")}`
                                               );
                                             }
                                           },
                                         },
                                       ]}
                                     >
-                                      <Input
-                                        className="ant-input"
-                                        disabled={disableFields}
-                                      />
+                                      <Input className="ant-input" disabled={disableFields} />
                                     </Form.Item>
                                   </Col>
 
@@ -438,25 +448,19 @@ export const AppendixStep = (props: VerificationStepProps) => {
                                           validator: async (rule, value) => {
                                             if (
                                               String(value).trim() === "" ||
-                                              String(value).trim() ===
-                                                undefined ||
+                                              String(value).trim() === undefined ||
                                               value === null ||
                                               value === undefined
                                             ) {
                                               throw new Error(
-                                                `${t(
-                                                  "verificationReport:required"
-                                                )}`
+                                                `${t("verificationReport:required")}`
                                               );
                                             }
                                           },
                                         },
                                       ]}
                                     >
-                                      <Input
-                                        className="ant-input"
-                                        disabled={disableFields}
-                                      />
+                                      <Input className="ant-input" disabled={disableFields} />
                                     </Form.Item>
                                   </Col>
                                   <Col xl={5} className=" col other-cols">
@@ -471,25 +475,19 @@ export const AppendixStep = (props: VerificationStepProps) => {
                                           validator: async (rule, value) => {
                                             if (
                                               String(value).trim() === "" ||
-                                              String(value).trim() ===
-                                                undefined ||
+                                              String(value).trim() === undefined ||
                                               value === null ||
                                               value === undefined
                                             ) {
                                               throw new Error(
-                                                `${t(
-                                                  "verificationReport:required"
-                                                )}`
+                                                `${t("verificationReport:required")}`
                                               );
                                             }
                                           },
                                         },
                                       ]}
                                     >
-                                      <Input
-                                        className="ant-input"
-                                        disabled={disableFields}
-                                      />
+                                      <Input className="ant-input" disabled={disableFields} />
                                     </Form.Item>
                                   </Col>
 
@@ -505,25 +503,19 @@ export const AppendixStep = (props: VerificationStepProps) => {
                                           validator: async (rule, value) => {
                                             if (
                                               String(value).trim() === "" ||
-                                              String(value).trim() ===
-                                                undefined ||
+                                              String(value).trim() === undefined ||
                                               value === null ||
                                               value === undefined
                                             ) {
                                               throw new Error(
-                                                `${t(
-                                                  "verificationReport:required"
-                                                )}`
+                                                `${t("verificationReport:required")}`
                                               );
                                             }
                                           },
                                         },
                                       ]}
                                     >
-                                      <Input
-                                        className="ant-input"
-                                        disabled={disableFields}
-                                      />
+                                      <Input className="ant-input" disabled={disableFields} />
                                     </Form.Item>
                                   </Col>
                                   <Col xl={3} className="action-col">
@@ -576,9 +568,7 @@ export const AppendixStep = (props: VerificationStepProps) => {
                       {t("verificationReport:appendixTitle3")}
                     </h4>
 
-                    <h3 className="appendix-title">
-                      {t("verificationReport:appendixTitle3.1")}
-                    </h3>
+                    <h3 className="appendix-title">{t("verificationReport:appendixTitle3.1")}</h3>
 
                     <div className="form-section">
                       <Row className="row" gutter={[40, 16]}>
@@ -631,9 +621,7 @@ export const AppendixStep = (props: VerificationStepProps) => {
                         </Col>
                         <Col xl={24} md={24}>
                           <Form.Item
-                            label={`${t(
-                              "verificationReport:descriptionOfFAR"
-                            )}`}
+                            label={`${t("verificationReport:descriptionOfFAR")}`}
                             name="descriptionOfFAR"
                             // rules={[
                             //   {
@@ -647,9 +635,7 @@ export const AppendixStep = (props: VerificationStepProps) => {
                         </Col>
                         <Col xl={12} md={24}>
                           <Form.Item
-                            label={`${t(
-                              "verificationReport:projectParticipantResponse"
-                            )}`}
+                            label={`${t("verificationReport:projectParticipantResponse")}`}
                             name="projectParticipantResponse"
                             // rules={[
                             //   {
@@ -683,9 +669,7 @@ export const AppendixStep = (props: VerificationStepProps) => {
                         </Col>
                         <Col xl={24} md={24}>
                           <Form.Item
-                            label={`${t(
-                              "verificationReport:documentationProvided"
-                            )}`}
+                            label={`${t("verificationReport:documentationProvided")}`}
                             name="documentationProvided"
                             // rules={[
                             //   {
@@ -738,8 +722,7 @@ export const AppendixStep = (props: VerificationStepProps) => {
               </Row>
 
               <Row justify={"end"} className="step-actions-end">
-                {(state?.mode === FormMode.CREATE ||
-                  state?.mode === FormMode.EDIT) && (
+                {(state?.mode === FormMode.CREATE || state?.mode === FormMode.EDIT) && (
                   <>
                     <Button danger size={"large"} onClick={prev}>
                       {t("verificationReport:prev")}
@@ -764,18 +747,10 @@ export const AppendixStep = (props: VerificationStepProps) => {
                     <Button size={"large"} onClick={prev} type={"default"}>
                       {t("verificationReport:prev")}
                     </Button>
-                    <Button
-                      danger
-                      size={"large"}
-                      onClick={() => setShowDeclineDialog(true)}
-                    >
+                    <Button danger size={"large"} onClick={() => setShowDeclineDialog(true)}>
                       {t("verificationReport:reject")}
                     </Button>
-                    <Button
-                      size={"large"}
-                      onClick={() => setShowVerifyDialog(true)}
-                      type="primary"
-                    >
+                    <Button size={"large"} onClick={() => setShowVerifyDialog(true)} type="primary">
                       {t("verificationReport:approve")}
                     </Button>
                   </>

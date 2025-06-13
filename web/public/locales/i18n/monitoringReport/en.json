@@ -46,7 +46,7 @@
   "dp_descriptionPlaceholder": "Provide a brief description of the data/parameter",
   "dp_sourceOfData": "Source of Data",
   "dp_sourceOfDataPlaceholder": "Indicate the source(s) of data",
-  "dp_valueApplied": "Value(S) Applied",
+  "dp_valueApplied": "Value(s) Applied",
   "dp_valueAppliedPlaceholder": "Provide an estimated value for the data/parameter",
   "dp_choiceOfDataOrMeasurement": "Choice  of Data or measurement methods and procedures",
   "dp_choiceOfDataOrMeasurementPlaceholder": "Specify the measurement methods and procedures, any  standards or protocols to be followed, and the person/entity  responsible for the measurement. Include any relevant  information regarding the accuracy of the measurements  (e.g., accuracy associated with meter equipment or  laboratory tests)",
@@ -103,7 +103,7 @@
   "pa_methodology": "References to applied methodologies and standardized baselines",
   "pa_creditingPeriodType": "Crediting period type",
   "pa_projectCreditingPeriod": "Crediting period duration",
-  "pa_projectCreditingStartDate": "Crediting period start date",
+  "pa_projectCreditingPeriodStartDate": "Crediting period start date",
   "pa_projectCreditingPeriodEndDate": "Crediting period end date",
   "ce_baselineEmission": "Baseline Emissions",
   "ce_documentUpload": "Upload your Documents Here(Optional)",
@@ -119,7 +119,7 @@
   "q_leakagePlaceholder": "Quantify project emissions and/or removals providing sufficient information to allow the  reader to reproduce the calculation. This section shall include all formulae used and  description to calculate the project emissions applying actual values. Attach electronic  spreadsheets as an appendix or separate file to facilitate the verification of the results.",
   "q_projectEmissionsPlaceholder": "Quantify project emissions and/or removals providing sufficient information to allow the  reader to reproduce the calculation. This section shall include all formulae used and  description to calculate the project emissions applying actual values. Attach electronic  spreadsheets as an appendix or separate file to facilitate the verification of the results.",
   "a_appendix": "Appendix",
-  "a_uploadDoc": "Upload your images here(Optional)",
+  "a_uploadDoc": "Upload your additional documents",
   "contactPerson": "Contact Person",
   "telephone": "Telephone",
   "fax": "Fax",
@@ -202,5 +202,6 @@
   "confirmModalSubMessage": "You can't undo this action",
   "approveMessage": "Are you sure you want to approve this Monitoring Report?",
   "declineMessage": "Are you sure you want to decline this Monitoring Report?",
-  "checkboxMessage": "I understand that this action cannot be undone"
+  "checkboxMessage": "I understand that this action cannot be undone",
+  "required": "Required!"
 }

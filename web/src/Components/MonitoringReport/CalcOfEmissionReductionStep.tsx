@@ -17,6 +17,8 @@ import { RcFile } from "antd/lib/upload";
 import { CustomStepsProps } from "./StepProps";
 import { toMoment } from "../../Utils/convertTime";
 import { disableYears } from "../../Utils/disableYears";
+import { ValidateStatus } from "antd/es/form/FormItem";
+import "./MonitoringReport.scss"
 
 const EMISSION_CATEGORY_AVG_MAP: { [key: string]: string } = {
   baselineEmissionReductions: "avgBaselineEmissionReductions",
@@ -146,12 +148,13 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
     console.log(
       "---------maxNetGHGReduction---------",
       maxNetGHGReduction,
-      tempTotal
+      tempTotal,
+      tempTotal > maxNetGHGReduction
     );
 
     console.log("-----maxNetGHGReduction---------", maxNetGHGReduction);
 
-    if (maxNetGHGReduction && tempTotal >= maxNetGHGReduction) {
+    if (maxNetGHGReduction !== undefined && tempTotal > maxNetGHGReduction) {
       form.setFields([
         {
           name: "totalNetEmissionReductions",
@@ -212,7 +215,7 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
     } else if (
       value === null &&
       totalCreditingYears !== 0 &&
-      totalCreditingYears === fieldCounts
+      totalCreditingYears >= fieldCounts
     ) {
       totalCreditingYears -= 1;
     }
@@ -279,7 +282,13 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
           if (values?.extraEmissionReductions) {
             values.extraEmissionReductions.forEach((item: any) => {
               const tempObj = {
-                vintage:  moment({ year: moment(item?.vintage).year(), month: 1, day: 1 }).startOf('day').valueOf(),
+                vintage: moment({
+                  year: moment(item?.vintage).year(),
+                  month: 1,
+                  day: 1,
+                })
+                  .startOf("day")
+                  .valueOf(),
                 baselineEmissionReductions: Number(
                   item?.baselineEmissionReductions
                 ),
@@ -806,7 +815,10 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                                               picker="year"
                                               format="YYYY"
                                               onChange={(value: any) => {
-                                                onPeriodChange(value, name + 2);
+                                                onPeriodChange(
+                                                  value,
+                                                  fields?.length + 1
+                                                );
                                               }}
                                               disabledDate={(
                                                 currentDate: any
@@ -1108,7 +1120,10 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                                               onClick={() => {
                                                 // reduceTotalCreditingYears()
                                                 remove(name);
-                                                onPeriodChange(null, name + 2);
+                                                onPeriodChange(
+                                                  null,
+                                                  fields?.length + 1
+                                                );
                                                 calculateTotalEmissions(
                                                   null,
                                                   "projectEmissionReductions",
@@ -1595,7 +1610,11 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                           <Col xl={8} md={24}>
                             <div className="step-form-right-col">
                               <Form.Item
-                                label={t("monitoringReport:valueApplied")}
+                                label={
+    <div style={{ display: 'block', width: '100%' }}>
+      {t("monitoringReport:valueApplied")}<span style={{ color: 'red' }}>*</span>
+    </div>
+  }
                                 name="valueApplied"
                                 rules={[
                                   {
@@ -1605,6 +1624,7 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                                     )} ${t("isRequired")}`,
                                   },
                                 ]}
+                                className="no-required-mark"
                               >
                                 <Input size="large" disabled={disableFields} />
                               </Form.Item>
@@ -1614,7 +1634,11 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                           <Col xl={8} md={24}>
                             <div className="step-form-right-col">
                               <Form.Item
-                                label={t("monitoringReport:actualValues")}
+                                 label={
+    <div style={{ display: 'block', width: '100%' }}>
+      {t("monitoringReport:actualValues")}<span style={{ color: 'red' }}>*</span>
+    </div>
+  }
                                 name="actualValues"
                                 rules={[
                                   {
@@ -1624,6 +1648,7 @@ export const CalcEmissionReductionStep = (props: CustomStepsProps) => {
                                     )} ${t("isRequired")}`,
                                   },
                                 ]}
+                                className="no-required-mark"
                               >
                                 <Input size="large" disabled={disableFields} />
                               </Form.Item>

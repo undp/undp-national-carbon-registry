@@ -4,6 +4,7 @@
   width: 400px !important;
   .icon {
     width: 95px;
+    filter: brightness(0) saturate(100%) invert(45%) sepia(99%) saturate(2067%) hue-rotate(190deg) brightness(98%) contrast(99%);
   }
   .message {
     color: variables.$confirm-modal-message-color;

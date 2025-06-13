@@ -507,13 +507,13 @@ export const CreditRetirementsTableComponent = (props: any) => {
         });
       }
     } catch (error: any) {
-      message.error(error.message || t("somethingWentWrong"));
+      // message.error(error.message || t("somethingWentWrong"));
       setModalResponseData({
         type: ActionResponseType.FAILED,
         icon: (
           <Icon.ExclamationCircle color={COLOR_CONFIGS.FAILED_RESPONSE_COLOR} />
         ),
-        title: t("somethingWentWrong"),
+        title: error.message || t("somethingWentWrong"),
         buttonText: t("okay"),
       });
     } finally {

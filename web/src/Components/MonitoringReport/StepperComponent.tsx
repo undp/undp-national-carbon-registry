@@ -40,6 +40,7 @@ import {
 import { mapBase64ToFields } from "../../Utils/mapBase64ToFields";
 import { INF_SECTORAL_SCOPE } from "../AddNewProgramme/ProgrammeCreationComponent";
 import { safeClone } from "../../Utils/deepCopy";
+import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 
 const StepperComponent = (props: CustomStepsProps) => {
   const navigate = useNavigate();
@@ -190,10 +191,13 @@ const StepperComponent = (props: CustomStepsProps) => {
     } catch (error) {
       console.log("Error fetching data from validation report", error);
     }
-    
+
     if (programmeData && pddData && validationData) {
       const tempNetGHGEmisisionReduction =
-        validationData?.ghgProjectDescription?.totalNetEmissionReductions;
+        Number(programmeData?.creditEst) -
+        (Number(programmeData?.creditBalance) +
+          Number(programmeData?.creditRetired) +
+          Number(programmeData?.creditTransferred));
 
       console.log(
         "-----------tempNetGHG---------",
@@ -205,7 +209,8 @@ const StepperComponent = (props: CustomStepsProps) => {
         state?.documents?.[DocumentEnum.MONITORING as any]?.version;
       const latestVersion = docVersions ? docVersions + 1 : 1;
       basicInformationForm.setFieldsValue({
-        bi_sectoralScope: INF_SECTORAL_SCOPE[programmeData?.sectoralScope] || 'N/A',
+        bi_sectoralScope:
+          INF_SECTORAL_SCOPE[programmeData?.sectoralScope] || "NA",
         bi_projectTitle:
           validationData?.basicInformation?.titleOfTheProjectActivity,
         bi_applicablePDDVersionNo:
@@ -391,22 +396,31 @@ const StepperComponent = (props: CustomStepsProps) => {
         });
         setTimeout(() => {
           navigateToDetailsPage();
-          setLoading(false)
-        })
+          setLoading(false);
+        }, defaultTimeout);
       }
     } catch (error: any) {
-      message.open({
-        type: "error",
-        content: "Something went wrong",
-        duration: 4,
-        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
-      });
-      setLoading(true)
+      console.log("-----------error------", error);
+      if (error.status === 400) {
+        message.open({
+          type: "error",
+          content: error.message,
+          duration: 4,
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+        });
+      } else {
+        message.open({
+          content: "Something went wrong",
+          duration: 4,
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+        })
+      }
+      setLoading(false);
     }
   };
 
   const handleValuesUpdate = (val: any) => {
-    console.log('----------temp vals stepper-------------', val);
+    console.log("----------temp vals stepper-------------", val);
     setValues((prevVal: any) => {
       const tempContent = {
         ...prevVal.data,

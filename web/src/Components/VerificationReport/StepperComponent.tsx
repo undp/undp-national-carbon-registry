@@ -195,7 +195,10 @@ const StepperComponent = (props: VerificationStepProps) => {
 
     if (programmeData && pddData && validationData && monitoringData) {
       const tempNetGHGEmisisionReduction =
-        validationData?.ghgProjectDescription?.totalNetEmissionReductions;
+        Number(programmeData?.creditEst) -
+        (Number(programmeData?.creditBalance) +
+          Number(programmeData?.creditRetired) +
+          Number(programmeData?.creditTransferred));
 
       console.log(
         "-----------temp netGHG---------",
@@ -335,16 +338,25 @@ const StepperComponent = (props: VerificationStepProps) => {
         setTimeout(() => {
           navigateToDetailsPage();
           setLoading(false);
-        }, defaultTimeout)
+        }, defaultTimeout);
       }
     } catch (error: any) {
       console.log("---------verification report submit---------", error);
-      message.open({
-        type: "error",
-        content: "Something went wrong",
-        duration: 4,
-        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
-      });
+      if (error.status === 400) {
+        message.open({
+          type: "error",
+          content: error.message,
+          duration: 4,
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+        });
+      } else {
+        message.open({
+          type: "error",
+          content: "Something went wrong",
+          duration: 4,
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+        });
+      }
       setLoading(false);
     }
   };

@@ -30,6 +30,7 @@ import { CountryService } from "@app/shared/util/country.service";
 import { HelperService } from "@app/shared/util/helpers.service";
 import { ByTypeDto } from "@app/shared/dto/byType.dto";
 import { GetOrganizationsRequest } from "@app/shared/dto/organizations-request.dto";
+import { OrganisationRejectDto } from "@app/shared/dto/organisation.reject.dto";
 
 @ApiTags("Organisation")
 @ApiBearerAuth()
@@ -154,7 +155,7 @@ export class CompanyController {
   @Put("reject")
   reject(
     @Query("id") companyId: number,
-    @Body() body: OrganisationSuspendDto,
+    @Body() body: OrganisationRejectDto,
     @Request() req
   ) {
     return this.companyService.reject(

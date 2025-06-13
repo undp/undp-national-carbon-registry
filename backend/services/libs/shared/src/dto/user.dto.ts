@@ -6,10 +6,9 @@ import {
   IsNotEmpty,
   IsNotEmptyObject,
   IsNumber,
-  IsObject,
   IsOptional,
+  IsPhoneNumber,
   IsString,
-  ValidateIf,
   ValidateNested,
 } from "class-validator";
 import { Role } from "../casl/role.enum";
@@ -34,10 +33,10 @@ export class UserDto {
   @ApiProperty()
   name: string;
 
-  @IsString()
-  @ApiPropertyOptional()
-  @IsNotEmpty()
   @IsOptional()
+  @IsString()
+  @IsPhoneNumber(null)
+  @ApiPropertyOptional()
   phoneNo: string;
 
   @IsNotEmptyObject()

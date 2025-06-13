@@ -120,7 +120,11 @@ const StartDateCreditingPeriod = (props: CustomStepsProps) => {
                                 value === null ||
                                 value === undefined
                               ) {
-                                throw new Error(`${t("PDD:required")}`);
+                                throw new Error(
+                                  `${t(
+                                    "PDD:projectCreditingPeriodStartDate"
+                                  )} ${t("isRequired")}`
+                                );
                               }
                             },
                           },
@@ -169,8 +173,17 @@ const StartDateCreditingPeriod = (props: CustomStepsProps) => {
                         <DatePicker
                           size="large"
                           disabledDate={(currentDate: any) => {
-                            const projectCreditingPeriodStartDate = form.getFieldValue('projectCreditingPeriodStartDate');
-                            return currentDate && currentDate < moment(projectCreditingPeriodStartDate).endOf("day");
+                            const projectCreditingPeriodStartDate =
+                              form.getFieldValue(
+                                "projectCreditingPeriodStartDate"
+                              );
+                            return (
+                              currentDate &&
+                              currentDate <
+                                moment(projectCreditingPeriodStartDate).endOf(
+                                  "day"
+                                )
+                            );
                           }}
                           onChange={() => updateCreditingPeriodDuration()}
                           disabled={disableFields}

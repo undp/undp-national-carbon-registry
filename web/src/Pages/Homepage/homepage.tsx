@@ -3,7 +3,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Trans, useTranslation } from "react-i18next";
 import i18next from "i18next";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 import sliderLogo from "../../Assets/Images/logo-slider.png";
+import heroImage1 from "../../Assets/Images/homepage_img.png";
+import heroImage2 from "../../Assets/Images/homepage_img2.png"; // Add your second image
+import heroImage3 from "../../Assets/Images/homepage_img3.png"; // Add your third image
 import undpLogo from "../../Assets/Images/undp1.webp";
 import EBRD from "../../Assets/Images/EBRD.webp";
 import EBRDff from "../../Assets/Images/EBRD.png";
@@ -18,9 +23,17 @@ import WBANKff from "../../Assets/Images/WBANK.png";
 import forestfall from "../../Assets/Images/forestnew.png";
 import resources from "../../Assets/Images/resources.webp";
 import resourcesfall from "../../Assets/Images/resources.png";
+import Government from "../../Assets/Images/gov.svg";
+import Projdev from "../../Assets/Images/projdev.svg";
+import Certifier from "../../Assets/Images/certif.svg";
+import Buyer from "../../Assets/Images/buyer.svg";
 import LayoutFooter from "../../Components/Footer/layout.footer";
 // import { ImgWithFallback } from '@undp/carbon-library';
 import "./homepage.scss";
+import ProcessFlow from "../../Components/Homepage/Howdoesitwork";
+import PartnershipBanner from "../../Components/Homepage/Partners";
+import FAQ from "../../Components/Homepage/Faq";
+import MapAnimation from "../../Components/Homepage/MapAnimation";
 import {
   GlobeAmericas,
   ShieldCheck,
@@ -30,12 +43,33 @@ import {
 import { ImgWithFallback } from "../../Components/ImgwithFallback/imgWithFallback";
 import CollapsePanel from "antd/lib/collapse/CollapsePanel";
 import { ROUTES } from "../../Config/uiRoutingConfig";
+import CarbonDashboard from "../../Components/Homepage/CarbonDashboard";
+import DigitalPublicGood from "../../Components/Homepage/DigitalPublic";
+import DemoSite from "../../Components/Homepage/DemoSite";
+import FeatureCards from "../../Components/Homepage/Keyfeatures";
 
 const Homepage = () => {
   const { i18n, t } = useTranslation(["common", "homepage"]);
   const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
   const navigate = useNavigate();
   const [Visible, setVisible] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+
+  const heroImages = [
+    heroImage1,
+    heroImage2,
+    heroImage3
+  ];
+
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+    }, 5000); 
+
+    return () => clearInterval(interval);
+  }, [heroImages.length]);
 
   const controlDownArrow = () => {
     if (window.scrollY > 150) {
@@ -50,12 +84,16 @@ const Homepage = () => {
   };
 
   const handleClickScroll = () => {
-    const element = document.getElementById("scrollhome");
+    const element = document.getElementById("vision");
     if (element) {
-      // 👇 Will scroll smoothly to the top of the next section
-      element.scrollIntoView({ behavior: "smooth" });
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }
   };
+
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
 
   useEffect(() => {
     if (localStorage.getItem("i18nextLng")!.length > 2) {
@@ -66,11 +104,19 @@ const Homepage = () => {
       window.removeEventListener("scroll", controlDownArrow);
     };
   }, []);
+
   return (
     <div className="homepage-container">
       <Row>
         <Col md={24} lg={24} flex="auto">
-          <div className="homepage-img-container image-container">
+          <div 
+            className="homepage-img-container"
+            style={{
+              backgroundImage: `url(${heroImages[currentSlide]})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'top',
+              transition: 'background-image 1s ease-in-out'
+            }}>
             <Row>
               <Col md={18} lg={21} xs={17} flex="auto">
                 <div className="homepage-header-container">
@@ -82,7 +128,6 @@ const Homepage = () => {
                       <div className="title">
                         {"CARBON MARKET DIGITAL PLATFORM"}
                       </div>
-                      {/* <div className="title-sub">{'REGISTRY'}</div> */}
                     </div>
                     <div className="country-name">
                       {import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX"}
@@ -116,7 +161,7 @@ const Homepage = () => {
                 <div className="subhome">{t("homepage:subHeading")}</div>
               </div>
             </Row>
-            <Row>
+            <Row className="arrow-ctn">
               {Visible && (
                 <nav className={"arrows"}>
                   <svg onClick={handleClickScroll}>
@@ -126,8 +171,98 @@ const Homepage = () => {
                   </svg>
                 </nav>
               )}
+              
+              {/* Dot Indicators below the arrow */}
+              <div className="hero-slider-dots">
+                {heroImages.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`hero-dot ${index === currentSlide ? 'active' : ''}`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
             </Row>
           </div>
+        </Col>
+      </Row>
+      <Row className="vision" >
+        <Col>
+        <section className="vision-section" id="vision" ref={ref}>
+      <motion.div
+        className="vision-container"
+        initial={{ opacity: 0, y: 40 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <h2 className="vision-title">Vision</h2>
+        <p className="vision-description">
+          UNDP's Open-Source National Carbon Registry Enables Countries to Implement and Manage Carbon Markets by Issuing, Managing, and Tracking Carbon Credits with Confidence, Achieving National Climate Commitments.
+        </p>
+        <h3 className="vision-subtitle">The Platform Supports:</h3>
+
+        <div className="vision-grid">
+          <motion.div
+            className="vision-card"
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.2, duration: 0.6 }}
+          >
+            <div className="vision-icon">
+            <Government className="vislogo" />
+             </div>
+            <p className="vision-role">Governments</p>
+            <p className="vision-text">
+              Launching Carbon Markets Aligned with the Paris Agreement
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="vision-card"
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            <div className="vision-icon">
+            <Projdev className="vislogo" />
+             </div>
+            <p className="vision-role">Project Developers</p>
+            <p className="vision-text">
+              Accessing Climate Finance for Emissions-Reducing Projects
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="vision-card"
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.6, duration: 0.6 }}
+          >
+            <div className="vision-icon">
+            <Certifier className="vislogo" />
+             </div>
+            <p className="vision-role">Certifiers</p>
+            <p className="vision-text">Verifying Climate Action Efficiently</p>
+          </motion.div>
+
+          <motion.div
+            className="vision-card"
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.8, duration: 0.6 }}
+          >
+            <div className="vision-icon">
+            <Buyer className="vislogo" />
+             </div>
+            <p className="vision-role">Buyers</p>
+            <p className="vision-text">
+              Navigating a Trusted Marketplace for Carbon Credits
+            </p>
+          </motion.div>
+        </div>
+      </motion.div>
+    </section>
         </Col>
       </Row>
       {/* <Row gutter={[8, 8]}>
@@ -493,6 +628,43 @@ const Homepage = () => {
           </div>
         </Col>
       </Row> */}
+      <CarbonDashboard/>
+      <DigitalPublicGood/>
+      <MapAnimation/>
+      <DemoSite/>
+      <ProcessFlow/>
+      <FeatureCards/>
+      <PartnershipBanner/>
+      <FAQ/>
+
+<Row className="developer-resources-row">
+  <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
+    <div className="resource-item">
+      <b>Developer Resources:</b>
+    </div>
+  </Col>
+  <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
+  <u><a href="https://github.com/undp/carbon-registry" target="_blank"> <div className="resource-item connects">
+      GitHub site
+    </div></a></u>
+    
+  </Col>
+  <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
+   <div className="resource-item connects">
+      Guidance to serial number
+    </div>
+  </Col>
+  <Col xs={12} sm={6} md={4} lg={3} xl={3} className="Devresources">
+    <div className="resource-item connects">
+      Guidance for AEF reporting
+    </div>
+  </Col>
+  <Col xs={12} sm={6} md={8} lg={3} xl={3} className="Devresources">
+    <div className="resource-item connects">
+      Cad Trust data model
+    </div>
+  </Col>
+</Row>
       <LayoutFooter />
     </div>
   );

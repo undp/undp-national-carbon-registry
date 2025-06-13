@@ -74,5 +74,5 @@
   "retirementCancelledDescription": "{} request to retire {} credits from {} was cancelled",
 
   "retirementRejectedTitle": "Credit Retirement Rejected",
-  "retirementRejectedDescription": "{} request to retire {} credits from {} was accepted."
+  "retirementRejectedDescription": "{} request to retire {} credits from {} was rejected."
 }

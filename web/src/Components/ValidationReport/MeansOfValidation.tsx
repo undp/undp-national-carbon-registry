@@ -108,6 +108,33 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
     }
     return e?.fileList;
   };
+  const validatePositiveNumber = async (rule, value) => {
+  const valStr = String(value).trim();
+
+  // Check for empty/null/undefined values
+  if (valStr === "" || value === null || value === undefined) {
+    throw new Error(`${t("validationReport:required")}`);
+  }
+
+  // Check if it's a valid number
+  if (isNaN(value)) {
+    throw new Error("Should be a number");
+  }
+
+  const numValue = Number(value);
+
+  // Check if it's an integer
+  if (!Number.isInteger(numValue)) {
+    throw new Error("Value must be an integer");
+  }
+
+  // Check if it's a positive integer (0 or more)
+  if (numValue < 0) {
+    throw new Error("Value must be a positive integer");
+  }
+
+  return Promise.resolve();
+};
 
   const onFinish = async (values: any) => {
     const body: any = {
@@ -120,7 +147,9 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
         .unix(),
       onSiteInspection: values?.onSiteInspection.map((item: any) => {
         const temp = {
-          ...item,
+          activity: item?.activity,
+          siteLocation: item?.siteLocation,
+          teamMember: item?.teamMember,
           date: moment(item?.date).startOf("day").unix(),
         };
         return temp;
@@ -128,6 +157,11 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
       interviewees: values?.interviewees.map((item: any) => {
         const temp = {
           ...item,
+          lastName: item?.lastName,
+          firstName: item?.firstName,
+          affliationName: item?.affliationName,
+          subject: item?.subject,
+          teamMember: item?.teamMember,
           date: moment(item?.date).startOf("day").unix(),
         };
         return temp;
@@ -267,8 +301,13 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                         <DatePicker
                           size="small"
                           disabledDate={(currentDate: any) => {
-                            const siteInspectionDurationStart = form.getFieldValue('siteInspectionDurationStart');
-                            return currentDate && currentDate < moment(siteInspectionDurationStart).endOf('day');
+                            const siteInspectionDurationStart =
+                              form.getFieldValue("siteInspectionDurationStart");
+                            return (
+                              currentDate &&
+                              currentDate <
+                                moment(siteInspectionDurationStart).endOf("day")
+                            );
                           }}
                           disabled={disableFields}
                         />
@@ -462,7 +501,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
               {/* Interviews table start */}
               <>
                 <h4 className="form-section-heading">
-                  {t("verificationReport:interviews")}
+                  {t("validationReport:interviews")}
                 </h4>
                 <div className="interviews-table">
                   <Row className="header">
@@ -764,26 +803,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -804,26 +824,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -844,26 +845,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -890,26 +872,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -930,26 +893,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -970,26 +914,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1016,26 +941,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1056,26 +962,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1096,26 +983,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1153,26 +1021,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1193,26 +1042,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1233,26 +1063,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1279,26 +1090,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1319,26 +1111,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1359,26 +1132,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1405,26 +1159,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1445,26 +1180,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1485,26 +1201,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1531,26 +1228,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1571,26 +1249,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1611,26 +1270,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1657,26 +1297,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1697,26 +1318,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1737,26 +1339,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1783,26 +1366,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1823,26 +1387,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1863,26 +1408,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1909,26 +1435,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1949,26 +1456,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1989,26 +1477,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2035,26 +1504,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2075,26 +1525,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2115,26 +1546,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2161,26 +1573,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2201,26 +1594,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2241,26 +1615,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2287,26 +1642,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2327,26 +1663,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2367,26 +1684,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2413,26 +1711,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2453,26 +1732,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2493,26 +1753,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2538,26 +1779,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2578,26 +1800,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2618,26 +1821,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2664,26 +1848,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2704,26 +1869,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2744,26 +1890,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2790,26 +1917,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2830,26 +1938,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2870,26 +1959,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2916,26 +1986,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2956,26 +2007,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2996,26 +2028,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -3042,26 +2055,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -3082,26 +2076,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -3122,26 +2097,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -3163,21 +2119,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           {
                             required: true,
                             message: "",
-                          },
-                          {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-                            },
-                          },
+                          }
                         ]}
                       >
                         <Input
@@ -3195,26 +2137,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -3235,26 +2158,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -3275,26 +2179,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -3321,26 +2206,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -3356,26 +2222,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
@@ -3391,26 +2238,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator: async (rule, value) => {
-                              if (
-                                String(value).trim() === "" ||
-                                String(value).trim() === undefined ||
-                                value === null ||
-                                value === undefined
-                              ) {
-                                throw new Error(
-                                  `${t("validationReport:required")}`
-                                );
-                              }
-
-                              if (isNaN(value)) {
-                                return Promise.reject(
-                                  new Error("Should be a number")
-                                );
-                              }
-
-                              return Promise.resolve();
-                            },
+                            validator:validatePositiveNumber,
                           },
                         ]}
                       >
