@@ -76,12 +76,15 @@ export const BasicInformationStep = (props: CustomStepsProps) => {
                           },
                         },
                       ]}
+
                     >
                       <Input size="large" disabled />
                     </Form.Item>
 
                     <Form.Item
-                      label={t('monitoringReport:bi_applicablePDDVersionNo')}
+                      label={<div style={{ display: 'block', width: '97%',marginLeft:"0" }}>
+      {t("monitoringReport:bi_applicablePDDVersionNo")} <span style={{ color: 'red' }}>*</span>
+    </div>}
                       name="bi_applicablePDDVersionNo"
                       rules={[
                         {
@@ -105,6 +108,7 @@ export const BasicInformationStep = (props: CustomStepsProps) => {
                           },
                         },
                       ]}
+                        className="no-required-mark"
                     >
                       <Input size="large" disabled />
                     </Form.Item>

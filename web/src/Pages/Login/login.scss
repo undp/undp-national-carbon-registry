@@ -1,5 +1,5 @@
-@use '../../Assets/Fonts/fonts.scss';
-@use '../../Styles/variables.scss';
+@use "../../Assets/Fonts/fonts.scss";
+@use "../../Styles/variables.scss";
 
 .login-container {
   height: 100vh;
@@ -8,7 +8,7 @@
   background-color: variables.$outside-background-color;
 
   .title {
-    font-family: 'MuseoSans';
+    font-family: "MuseoSans";
     font-size: 0.7rem;
     color: variables.$logo-text-color;
     font-weight: 700;
@@ -18,7 +18,7 @@
 
   .title-sub {
     font-weight: 700;
-    font-family: 'MuseoSans';
+    font-family: "MuseoSans";
     font-size: 0.7rem;
     color: variables.$logo-text-color;
     margin-top: -8px;
@@ -26,7 +26,7 @@
 
   .country-name {
     font-size: 0.6rem;
-    font-family: 'MuseoSans';
+    font-family: "MuseoSans";
     margin-top: -3px;
   }
 
@@ -69,18 +69,18 @@
   .container-image {
     background-image: linear-gradient(
         to bottom,
-        rgba(255, 255, 255, 0.3) 10%,
-        rgba(4, 105, 177, 0.24) 40%
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(4, 105, 177, 0.24) 0%
       ),
-      url('../../Assets/Images/home_image.jpg');
+      url("../../Assets/Images/sigiriya.jpg");
     background-image: linear-gradient(
         to bottom,
-        rgba(255, 255, 255, 0.3) 10%,
-        rgba(4, 105, 177, 0.24) 40%
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(4, 105, 177, 0.24) 0%
       ),
       image-set(
-        '../../Assets/Images/home_image.jpg' type('image/jpg'),
-        '../../Assets/Images/home_image.webp' type('image/webp')
+        "../../Assets/Images/sigiriya.jpg" type("image/jpg"),
+        "../../Assets/Images/sigiriya.webp" type("image/webp")
       );
     background-size: cover;
     background-position: top !important;
@@ -351,9 +351,9 @@
         color: variables.$title-text-color;
       }
 
-      input[type='username']:-webkit-autofill,
-      input[type='username']:-webkit-autofill:hover,
-      input[type='username']:-webkit-autofill:focus {
+      input[type="username"]:-webkit-autofill,
+      input[type="username"]:-webkit-autofill:hover,
+      input[type="username"]:-webkit-autofill:focus {
         -webkit-text-fill-color: variables.$title-text-color;
         -webkit-box-shadow: 0 0 0 30px variables.$outside-background-color inset !important;
       }
@@ -380,9 +380,9 @@
         padding: 0px 11px;
       }
 
-      input[type='password']:-webkit-autofill,
-      input[type='password']:-webkit-autofill:hover,
-      input[type='password']:-webkit-autofill:focus {
+      input[type="password"]:-webkit-autofill,
+      input[type="password"]:-webkit-autofill:hover,
+      input[type="password"]:-webkit-autofill:focus {
         -webkit-text-fill-color: variables.$title-text-color;
         -webkit-box-shadow: 0 0 0 30px variables.$outside-background-color inset !important;
       }
@@ -395,7 +395,11 @@
   }
 
   .ant-btn-primary {
-    background: linear-gradient(to right, variables.$gradient-background-start, variables.$gradient-background-end);
+    background: linear-gradient(
+      to right,
+      variables.$gradient-background-start,
+      variables.$gradient-background-end
+    );
     border: none;
     height: 2.4rem;
     font-size: 1rem;

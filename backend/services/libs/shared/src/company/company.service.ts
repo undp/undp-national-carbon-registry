@@ -707,7 +707,7 @@ export class CompanyService {
     });
 
     if (res) {
-      return res.map((org) => new IDNameResponse(org.companyId, org.name));
+      return res.map((org) => new IDNameResponse(org.companyId, org.name, org.state));
     }
 
     return [];
@@ -1111,7 +1111,7 @@ export class CompanyService {
       );
     }
 
-    if (companyUpdateDto.logo) {
+    if (companyUpdateDto.logo && this.helperService.isBase64(companyUpdateDto.logo)) {
       const response: any = await this.fileHandler.uploadFile(
         `profile_images/${
           companyUpdateDto.companyId

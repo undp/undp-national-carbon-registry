@@ -15,16 +15,20 @@ As an online database, the National Carbon Registry uses national and internatio
 
 The National Carbon Registry enables carbon credit tracking transactions from mitigation activities, as the digital implementation of the Paris Agreement. Any country can customize and deploy a local version of the registry then connect it to other national & international registries, MRV systems, and more.
 
-The system has 3 key features:
+The system continues to offer the below key features:
 
-- **Analytics Dashboard:** Enabling governments, companies, and certification bodies to operate transparently and function on an immutable blockchain.
-- **Serial Number Generator:** Standardizing the technical format to allow for easy cross-border collaboration between carbon trading systems.
-- **Serial Number Tracking:** Track the exact credit blocks with serial numbers which transfer through internal or external transactions.
+- **User and Organization Management:** The system supports roles like Designated National Authority (DNA), Project Developers (PD), and Independant Certifiers (IC), each with Admin, Manager, or Viewer access. Users can register, log in, and reset passwords. Organizations are created and approved by DNA admins or the root user, with status management.
+- **Project Lifecycle:** Projects go through phases: Initial Notification form submission, Project Design Document submission, Validation Report submission, and final Authorization. Each step requires approvals from DNA or IC, with clear statuses and automated notifications. With the Monitoring and Verification reports submissions and approvals, the carbon credits are issued for the project for the amount that was approved when the project was authorized.
+- **Credit Transfers and Retirements:** Issued credits can be transferred to other approved organizations or retired voluntarily or through cross-border processes. Transfers and retirements require approval from the DNA. All actions are tracked in detailed tables with status updates.
+- **Dashboard and Reporting:**  
+  The dashboard displays overall system statistics, including all relevant projects and credit details. Users can also access comprehensive project information on the project detail overview page. This includes an activity timeline, which provides a clear audit trail of all actions performed by stakeholders, ensuring transparency and traceability throughout the project lifecycle.  
+  Additionally, the system supports Agreed Electronic Format (AEF) reports, allowing structured reporting of data such as, authorizations, issuances, transfers, and retirements ensuring international compliance and data standardization.
 
 ## Index
 
 - [About](#about)
 - [Standards](#standards)
+- [Changelog](#changelog)
 - [Architecture](#architecture)
 - [Project Structure](#structure)
 - [Run as Containers](#container)
@@ -45,6 +49,12 @@ This codebase aims to fullfill the digital public goods standard:
 https://digitalpublicgoods.net/standard/
 It is built according to the Principles for Digital Development:
 https://digitalprinciples.org/
+
+<a name="changelog"></a>
+
+## Changelog
+
+[Learn about the latest improvements.](./CHANGES.md)
 
 <a name="architecture"></a>
 
@@ -493,6 +503,6 @@ Open source code available at https://github.com/undp/carbon-registry-status
 
 ### Governance and Support
 
-[Digital For Climate (D4C)](https://www.theclimatewarehouse.org/work/digital-4-climate) is responsible for managing the application. D4C is a collaboration between the [European Bank for Reconstruction and Development (EBRD)](https://www.ebrd.com), [United Nations Development Program (UNDP)](https://www.undp.org), [United Nations Framework Convention on Climate Change (UNFCCC)](https://www.unfccc.int), [International Emissions Trading Association (IETA)](https://www.ieta.org), [European Space Agency (ESA)](https://www.esa.int), and [World Bank Group](https://www.worldbank.org) that aims to coordinate respective workflows and create a modular and interoperable end-to-end digital ecosystem for the carbon market. The overarching goal is to support a transparent, high integrity global carbon market that can channel capital for impactful climate action and low-carbon development.
+The United Nations Development Program (UNDP) is responsible for managing the application. To ensure alignment with international demand, Digital For Climate (D4C) will act as an advisory body to the Digital Public Good Carbon Registry codebase. D4C is a collaboration between [European Bank for Reconstruction and Development (EBRD)](https://www.ebrd.com), [United Nations Development Program (UNDP)](https://www.undp.org), [United Nations Framework Convention on Climate Change (UNFCCC)](https://www.unfccc.int), [International Emissions Trading Association (IETA)](https://www.ieta.org), [European Space Agency (ESA)](https://www.esa.int), and [World Bank Group](https://www.worldbank.org)  that aims to coordinate respective workflows and create a modular and interoperable end-to-end digital ecosystem for the carbon market. The overarching goal is to support a transparent, high integrity global carbon market that can channel capital for impactful climate action and low-carbon development.
 
-This code is managed by [United Nations Development Programme](https://www.undp.org) as custodian. For any questions, contact us at digital@undp.org .
+This code is managed by [United Nations Development Programme](https://www.undp.org) as custodian, detailed in the press release. For technical questions, please visit the community of practice [‘Keeping Track of the Paris Agreement’](<https://unfccc.int/news/paris-agreement-progress-tracker](https://www.sparkblue.org/group/keeping-track-digital-public-goods-paris-agreement/content/fourth-community-practice-meeting)>) or submit through the [open forum](https://github.com/undp/carbon-registry/discussions). For any other questions, contact us at digital4planet@undp.org.

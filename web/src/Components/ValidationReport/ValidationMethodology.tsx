@@ -45,7 +45,35 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
 
   const onFinish = async (values: any) => {
     console.log("--------values-----------", values);
-    const body = { ...values };
+    const body = { 
+      ...values,
+      validationTeamMembers: values?.validationTeamMembers?.map((item: any) => {
+        return (
+          {
+            role: item?.role,
+            typeOfResource: item?.typeOfResource,
+            lastName: item?.lastName,
+            firstName: item?.firstName,
+            affliation: item?.affliation,
+            documentReview: item?.documentReview,
+            onsiteInspections: item?.onsiteInspections,
+            interviews: item?.interviews,
+            verificationFindings: item?.verificationFindings,
+          }
+        )
+      }),
+      technicalReviews: values?.technicalReviews?.map((item: any) => {
+        return (
+          {
+            role: item?.role,
+            typeOfResource: item?.typeOfResource,
+            lastName: item?.lastName,
+            firstName: item?.firstName,
+            affliation: item?.affliation,
+          }
+        )
+      }),
+     };
 
     console.log(ProcessSteps.VR_VALIDATION_METHODOLOGY, body);
     handleValuesUpdate({
@@ -211,16 +239,17 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                               ]}
                             >
                               <Radio.Group
-                                className="radio-btn-grp"
-                                disabled={disableFields}
-                              >
-                                <Radio value="IR">
+                                 className="radio-btn-grp"
+                                  disabled={disableFields}
+                                  >
+                              <Radio value="IR" style={{ paddingLeft: '18px' }}>
                                   {t("validationReport:IR")}
-                                </Radio>
-                                <Radio value="ER">
-                                  {t("validationReport:ER")}
-                                </Radio>
+                             </Radio>
+                              <Radio value="ER">
+                                {t("validationReport:ER")}
+                              </Radio>
                               </Radio.Group>
+
                             </Form.Item>
                           </Col>
                           <Col xl={3} className="other-cols col">

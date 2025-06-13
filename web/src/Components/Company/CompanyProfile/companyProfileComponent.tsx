@@ -81,9 +81,9 @@ export const CompanyProfileComponent = (props: any) => {
             value: companyId,
           },
           {
-            key: 'user"."isActive',
+            key: 'isPending',
             operation: '=',
-            value: false,
+            value: true,
           },
         ],
       });

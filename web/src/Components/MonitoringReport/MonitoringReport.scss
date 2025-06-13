@@ -276,3 +276,7 @@
 //     }
 //   }
 // }
+/* Hides the default required asterisk in Ant Design Form.Item */
+.no-required-mark .ant-form-item-required::before {
+  display: none !important;
+}

@@ -133,7 +133,7 @@ const NetEmissionReduction = (props: any) => {
     }
 
     console.log("----------netGHG reduction", maxNetGHGReduction);
-    if (maxNetGHGReduction && tempTotal >= maxNetGHGReduction) {
+    if (maxNetGHGReduction !== undefined && tempTotal > maxNetGHGReduction) {
       form.setFields([
         {
           name: "totalNetEmissionReductions",
@@ -224,13 +224,13 @@ const NetEmissionReduction = (props: any) => {
   };
 
   const onPeriodChange = (value: any, fieldCounts: number) => {
-    let totalCreditingYears = form.getFieldValue("totalCreditingYears") || 0;
-    if (value && totalCreditingYears < fieldCounts) {
-      totalCreditingYears += 1;
-    } else if (value === null && totalCreditingYears !== 0 && totalCreditingYears === fieldCounts) {
-      totalCreditingYears -= 1;
+    let totalNumberOfCreditingYears = form.getFieldValue("totalNumberOfCreditingYears") || 0;
+    if (value && totalNumberOfCreditingYears < fieldCounts) {
+      totalNumberOfCreditingYears += 1;
+    } else if (value === null && totalNumberOfCreditingYears !== 0 && totalNumberOfCreditingYears === fieldCounts) {
+      totalNumberOfCreditingYears -= 1;
     }
-    form.setFieldValue("totalCreditingYears", totalCreditingYears);
+    form.setFieldValue("totalNumberOfCreditingYears", totalNumberOfCreditingYears);
   };
 
   return (
@@ -305,7 +305,7 @@ const NetEmissionReduction = (props: any) => {
                         >
                           <DatePicker
                             size="large"
-                            placeholder="Start Date"
+                            placeholder="Year"
                             picker="year"
                             format="YYYY"
                             disabled={disabled}
@@ -318,7 +318,7 @@ const NetEmissionReduction = (props: any) => {
                               );
                             }}
                             onChange={(value) =>
-                              onPeriodChange(value, name + 1)
+                              onPeriodChange(value, fields?.length + 1)
                             }
                           />
                         </Form.Item>
@@ -568,7 +568,7 @@ const NetEmissionReduction = (props: any) => {
                             onClick={() => {
                               // reduceTotalCreditingYears()
                               remove(name);
-                              onPeriodChange(null, name + 1);
+                              onPeriodChange(null, fields?.length);
                               calculateTotalEmissions(
                                 null,
                                 "projectEmissionReductions",

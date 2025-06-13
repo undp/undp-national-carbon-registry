@@ -148,6 +148,33 @@ const BasicInformation = (props: ValidationStepsProps) => {
       approverSignature: approverSignature,
       locationsOfProjectActivity: await (async function () {
         const tempList: any[] = [];
+        const firstObj = {
+          locationOfProjectActivity: values?.locationOfProjectActivity,
+          siteNo: values?.siteNo,
+          province: values?.province,
+          district: values?.district,
+          // dsDivision: values?.dsDivision,
+          city: values?.city,
+          community: values?.community,
+          geographicalLocationCoordinates: values?.geographicalLocationCoordinates,
+          additionalDocuments: await (async function () {
+            const base64Docs: string[] = [];
+            if (values?.optionalImages && values?.optionalImages.length > 0) {
+              const docs = values.optionalImages;
+              for (let i = 0; i < docs.length; i++) {
+                if (docs[i]?.originFileObj === undefined) {
+                  base64Docs.push(docs[i]?.url);
+                } else {
+                  const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+                  base64Docs.push(temp); // No need for Promise.resolve
+                }
+              }
+            }
+
+            return base64Docs;
+          })(),
+        };
+        tempList.push(firstObj);
         if (values?.extraLocations) {
           values?.extraLocations.forEach(async (item: any) => {
             const tempObj = {
@@ -162,7 +189,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                 item?.geographicalLocationCoordinates,
               additionalDocuments: await (async function () {
                 const base64Docs: string[] = [];
-
+                
                 if (item?.optionalImages && item?.optionalImages.length > 0) {
                   const docs = item.optionalImages;
                   for (let i = 0; i < docs.length; i++) {
@@ -413,7 +440,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       </Form.Item>
 
                       <Form.Item
-                        label={t("validationReport:hostParty")}
+                        label={t("validationReport:hostParty") }
                         name="hostParty"
                         rules={[
                           {
@@ -560,9 +587,6 @@ const BasicInformation = (props: ValidationStepsProps) => {
 
                 <h4 className="list-item-title">Location 1</h4>
                 <div className="form-section">
-                  <h4 className="form-section-title">{`${t(
-                    "validationReport:locationOfProjectActivity"
-                  )}`}</h4>
 
                   <Row
                     // justify={'space-between'}

@@ -50,6 +50,7 @@ export default () => ({
       process.env.DISABLE_LOW_PRIORITY_EMAIL === "true" ? true : false,
     getemailprefix: process.env.EMAILPREFIX || "🏬📐 🇦🇶",
     adresss: process.env.HOST_ADDRESS || "Address <br>Region, Country Zipcode",
+    configSet: process.env.EMAIL_CONFIG_SET || "",
   },
   s3CommonBucket: {
     name: process.env.S3_COMMON_BUCKET || "carbon-common-dev",

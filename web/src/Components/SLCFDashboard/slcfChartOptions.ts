@@ -80,7 +80,7 @@ export const totalProgrammesOptions: any = {
         fontSize: "12px",
       },
     },
-    tickAmount: 5,
+    tickAmount: undefined,
   },
   noData: {
     text: "No data available",
@@ -507,8 +507,14 @@ export const optionSideBar: any = {
   },
   colors: [],
   xaxis: {
-    categories: [],
+  categories: [],
+  labels: {
+    formatter: function (val: number) {
+      return Number.isInteger(val) ? val.toString() : "";
+    },
   },
+},
+
   yaxis: {
     labels: {
       show: false,
@@ -520,17 +526,29 @@ export const optionSideBar: any = {
     verticalAlign: "middle",
     style: { fontSize: "16px", color: "#999" },
   },
-  tooltip: {
-    theme: "dark",
-    x: { show: false },
-    y: {
-      title: {
-        formatter: function () {
-          return "";
-        },
-      },
-    },
+ tooltip: {
+  theme: "dark",
+  followCursor: true, // Make tooltip follow the mouse pointer
+  x: { show: false },
+  fixed: {
+    enabled: false, // Disable fixed positioning
   },
+  custom: function({ series, seriesIndex, dataPointIndex, w }) {
+    const sectoralScope = w.globals.labels[dataPointIndex];
+    const value = series[seriesIndex][dataPointIndex];
+
+    let formattedValue = value;
+    if (value >= 1000) {
+      formattedValue = `${(value / 1000).toFixed(1)}k`;
+    } else {
+      formattedValue = value.toFixed(0);
+    }
+
+    return `<div class="apexcharts-tooltip-box" style="padding: 8px;">
+      <span>${sectoralScope}: ${formattedValue}</span>
+    </div>`;
+  }
+},
   grid: {
     show: false,
     padding: {

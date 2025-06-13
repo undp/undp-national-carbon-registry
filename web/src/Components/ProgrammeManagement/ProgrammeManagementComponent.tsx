@@ -224,7 +224,7 @@ export const ProgrammeManagementComponent = (props: any) => {
       sorter: true,
       align: 'center' as const,
       render: (item: any) => {
-        return <>{item ? t(`projectList:${item}`): t('projectList:na')}</>;
+        return <>{t(`projectList:${item}`)}</>;
       },
     },
     {
