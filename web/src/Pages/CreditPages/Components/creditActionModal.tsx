@@ -28,7 +28,6 @@ import { CreditRetirementTypeEmnum } from "../Enums/creditRetirementType.enum";
 import { COLOR_CONFIGS } from "../../../Config/colorConfigs";
 import { CreditEventStatusEnum } from "../Enums/creditEventEnum";
 
-
 interface CreditActionModalProps {
   icon?: any;
   title?: string;
@@ -296,8 +295,8 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                   data.status === CreditEventStatusEnum.PENDING && (
                     <Form.Item
                       className="credit-action-project-name"
-                      label={t("From")}
-                      name="From"
+                      label={t("Owner")}
+                      name="Owner"
                     >
                       <Input placeholder={data.senderName} disabled />
                     </Form.Item>
