@@ -1,0 +1,196 @@
+@use '../../Styles/variables.scss';
+
+.programme-management {
+  .programme-title-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0px 0px 0px 0px;
+
+    .title {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .actions {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+    }
+
+    .flex-display {
+      margin-left: 15px;
+    }
+  }
+
+  .application-stage-selector {
+    width: 300px;
+  }
+
+  .certify-list {
+    width: 88px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .profile-icon {
+      margin-bottom: 4px;
+      margin-right: 4px;
+    }
+  }
+  .org-list {
+    width: 88px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .profile-icon {
+      margin-bottom: 4px;
+      margin-right: 4px;
+    }
+  }
+  .table-actions-section {
+    margin-bottom: 0px;
+
+    input {
+      font-family: variables.$primary-font-family;
+      font-size: 0.8rem;
+    }
+
+    .filter-section {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+
+      .download-icon {
+        color: #3a354180;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .all-check {
+    .ant-checkbox-inner::after {
+      background-color: rgba(#3a3541, 0.5);
+    }
+
+    .ant-checkbox-checked .ant-checkbox-inner::after {
+      background-color: transparent;
+    }
+    .ant-checkbox-checked .ant-checkbox-inner {
+      background-color: rgba(#3a3541, 0.5);
+      border: none;
+    }
+    margin-right: 10px;
+  }
+
+  .ant-checkbox-checked {
+    .ant-checkbox-input[value='Retired'] + .ant-checkbox-inner {
+      background-color: rgba(#3a3541, 0.4);
+      border: none;
+    }
+
+    .ant-checkbox-input[value='AwaitingAuthorization'] + .ant-checkbox-inner {
+      background-color: rgba(#ed4d47, 0.6);
+      border: none;
+    }
+
+    .ant-checkbox-input[value='Rejected'] + .ant-checkbox-inner {
+      background-color: rgba(#3a3541, 0.4);
+      border: none;
+    }
+
+    .ant-checkbox-input[value='Authorised'] + .ant-checkbox-inner {
+      background-color: rgba(#16b1ff, 1);
+      border: none;
+    }
+
+    .ant-checkbox-input[value='Approved'] + .ant-checkbox-inner {
+      background-color: rgba(145, 85, 253, 0.6);
+      border: none;
+    }
+
+    .ant-checkbox-input[value='Transferred'] + .ant-checkbox-inner {
+      background-color: rgba(#76c327, 0.6);
+      border: none;
+    }
+  }
+}
+
+.programmeManagement-table-container {
+  // padding: 0px 20px;
+  padding: 0px;
+
+  .ant-tag-success {
+    color: #2ecc71;
+    background: #effbf4;
+    border-color: #2ecc71;
+  }
+
+  .ant-tag-processing {
+    color: #3498db;
+    background: #f3f8fd;
+    border-color: #3498db;
+  }
+
+  .ant-tag-error {
+    color: #ff694f;
+    background: #fff2f0;
+    border-color: #ff694f;
+  }
+
+  .ant-tag-orange {
+    color: #E67E22;
+    background: #fdf5ee;
+    border-color: #E67E22;
+  }
+
+  .ant-tag-default {
+    color: #5D6D7E;
+    background: #f2f4f5;
+    border-color: #5D6D7E;
+  }
+
+  .ant-tag-warning {
+    color: #f1c40f;
+    background: #fefbee;
+    border-color: #f1c40f;
+  }
+
+  .ant-tag-volcano {
+    color: #D35400;
+    background: #fcf2eb;
+    border-color: #D35400;
+  }
+
+  .ant-tag-green {
+    color: #2ECC71;
+    background: #effbf4;
+    border-color: #2ECC71;
+  }
+
+  .ant-tag-lime {
+    color: #28B463;
+    background: #effbf4;
+    border-color: #28B463;
+  }
+
+  .ant-tag-cyan {
+    color: #1ABC9C;
+    background: #edfaf7;
+    border-color: #1ABC9C;
+  }
+
+  .ant-tag-magenta {
+    color: #C0392B;
+    background: #faf0ee;
+    border-color: #C0392B;
+  }
+
+  .ant-tag-geekblue {
+    color: #2E86C1;
+    background: #eff6fa;
+    border-color: #2E86C1;
+  }
+}

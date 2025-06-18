@@ -1,0 +1,13 @@
+.ndc-management {
+    .ant-checkbox-checked {
+      .ant-checkbox-input[value='Pending'] + .ant-checkbox-inner {
+        background-color: rgba(#76c327, 0.6);
+        border: none;
+      }
+      .ant-checkbox-input[value='Approved'] + .ant-checkbox-inner {
+        background-color: rgba(#16b1ff, 1);
+        border: none;
+      }
+    }
+  }
+  

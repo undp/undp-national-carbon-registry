@@ -1,0 +1,16 @@
+{
+  "name": "NOMBRE",
+  "email": "CORREO ELECTRÓNICO",
+  "phone": "TELÉFONO",
+  "company": "ORGANIZACIÓN",
+  "companyRole": "TIPO DE ORGANIZACIÓN",
+  "role": "ROL",
+  "addUser": "Agregar Usuario",
+  "viewUsers": "Ver Usuarios",
+  "viewDesc": "Ver los usuarios registrados en el Registro de Carbono basado en sus permisos",
+  "deleteConfirmHeaderText": "¿Está seguro de que desea eliminar permanentemente a este usuario?",
+  "deleteConfirmText": "No puedes deshacer esta acción",
+  "searchBy": "Buscar por",
+  "filterByRole": "Filtrar por Rol",
+  "filterByCompanyRole": "Filtrar por Tipo de Organización"
+}

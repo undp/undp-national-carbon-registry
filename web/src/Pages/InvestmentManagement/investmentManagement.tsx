@@ -1,20 +1,19 @@
-import {
-  InvestmentManagementComponent,
-  useSettingsContext,
-  useUserContext,
-} from '@undp/carbon-library';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { InvestmentManagementComponent } from '../../Components/Investment/InvestmentManagement/investmentManagementComponent';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { useSettingsContext } from '../../Context/SettingsContext/settingsContext';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const InvestmentManagement = () => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation(['common', 'programme', 'creditTransfer', 'view']);
 
   const onNavigateToProgrammeView = (programmeId: any) => {
-    navigate('/programmeManagement/view/' + programmeId);
+    navigate(ROUTES.VIEW_PROGRAMME + programmeId);
   };
   const onNavigateToInvestmentCreation = () => {
-    navigate('/investmentManagement/addInvestment', { state: { ownership: true } });
+    navigate(ROUTES.ADD_INVESTMENT, { state: { ownership: true } });
   };
   return (
     <InvestmentManagementComponent

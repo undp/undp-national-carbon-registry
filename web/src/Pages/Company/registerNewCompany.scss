@@ -1,5 +1,5 @@
-@import '../../Assets/Fonts/fonts.scss';
-@import '../../Styles/variables.scss';
+@use '../../Assets/Fonts/fonts.scss';
+@use '../../Styles/variables.scss';
 
 .register-company-container {
     .homepage-header-container {
@@ -27,7 +27,7 @@
           .title {
             font-family: 'MuseoSans';
             font-size: 1.2rem;
-            color: $logo-text-color;
+            color: variables.$logo-text-color;
             font-weight: 700;
             margin-right: 0.5rem;
             padding-left: 5px;
@@ -37,7 +37,7 @@
             font-weight: 100 !important;
             font-family: 'MuseoSans';
             font-size: 1.2rem;
-            color: $logo-text-color;
+            color: variables.$logo-text-color;
           }
       
           .logo {
@@ -53,7 +53,7 @@
       
           .country-name {
             font-size: 0.65rem;
-            color: $logo-text-color;
+            color: variables.$logo-text-color;
             margin-top: -5px;
             font-family: 'MuseoSans';
             margin-left: 6px;
@@ -79,13 +79,13 @@
         }
     
         .ant-btn-primary {
-          background: linear-gradient(to right, #1890ff, $gradient-background-end);
-          color: $dark-text-color;
+          background: linear-gradient(to right, #1890ff, variables.$gradient-background-end);
+          color: variables.$dark-text-color;
           border: none;
         }
     
         .ant-btn-primary:hover {
-          background: linear-gradient(to right, $gradient-background-end, #1890ff);
+          background: linear-gradient(to right, variables.$gradient-background-end, #1890ff);
         }
       }
       .image-container {

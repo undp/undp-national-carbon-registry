@@ -1,0 +1,14 @@
+.legend-item-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 400;
+    margin-left: 0.75rem;
+  
+    .text {
+      margin-left: 0.2rem;
+    }
+  }
+  

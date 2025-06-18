@@ -1,0 +1,63 @@
+.verification-phase-section {
+  height: 100%;
+}
+
+.verification-title-section {
+  display: flex;
+  color: #3a3541cc;
+  gap: 8px;
+  flex-direction: row;
+  align-items: center;
+  font-weight: 400;
+
+  p {
+    margin-top: 8px;
+  }
+}
+
+.verification-activities {
+  margin-top: 16px;
+  font-size: 11px;
+  line-height: 1.6rem;
+  align-self: stretch;
+
+  .list {
+    margin-left: -20px;
+  }
+
+  .style-disk {
+    list-style: disc;
+  }
+
+  .style-none {
+    list-style: none;
+  }
+
+  .rejected-icon {
+    color: #ff4141;
+    font-weight: 600;
+    font-size: 0.75rem;
+    margin-left: -14px;
+    padding-right: 4px;
+  }
+
+  .verified-icon {
+    color: #5dc380;
+    font-weight: 600;
+    font-size: 0.75rem;
+    margin-left: -14px;
+    padding-right: 4px;
+  }
+
+  .active {
+    color: #3a3541cc;
+  }
+
+  .disable {
+    color: #3a354180;
+  }
+
+  .next {
+    color: #16b1ff;
+  }
+}

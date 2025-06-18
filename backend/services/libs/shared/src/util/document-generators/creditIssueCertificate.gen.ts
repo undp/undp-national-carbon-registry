@@ -1,0 +1,342 @@
+import { Injectable } from "@nestjs/common";
+import { FileHandlerInterface } from "../../file-handler/filehandler.interface";
+import { CreditType } from "../../enum/creditType.enum";
+import { ConfigService } from "@nestjs/config";
+const PDFDocument = require("pdfkit");
+const fs = require("fs");
+
+export interface CreditIssueCertificateData {
+  projectName: string;
+  companyName: string;
+  creditType: string;
+  certificateNo: string;
+  issueDate: string;
+  monitoringStartDate: string;
+  monitoringEndDate: string;
+  issuedCredits: number;
+  startCreditSerialNo: string;
+  endCreditSerialNo: string;
+}
+
+@Injectable()
+export class CreditIssueCertificateGenerator {
+  constructor(
+    private fileHandler: FileHandlerInterface,
+    private configService: ConfigService
+  ) {}
+
+  async generateCreditIssueCertificate(
+    data: CreditIssueCertificateData,
+    isPreview?: boolean
+  ) {
+    const doc = new PDFDocument({
+      margin: 50,
+    });
+
+    const refFileName = data.certificateNo.replace(/\//g, "_");
+    const filepath = `CREDIT_ISSUANCE_CERTIFICATE_${refFileName}.pdf`;
+    const country = this.configService.get("systemCountryName") || "CountryX";
+
+    // Define the output file path
+    const stream = fs.createWriteStream("/tmp/" + filepath);
+    doc.pipe(stream);
+
+    const track =
+      data.creditType === CreditType.TRACK_1 ? "Track I" : "Track II";
+
+    // Add logo
+    const image1Width = 45;
+    // const image2Width = 60;
+    const image2Width = 130;
+
+    const imageHeight = 60;
+    const image2Height = 65;
+
+    const spaceBetweenImages = 15;
+
+    const totalImageWidth = image1Width + image2Width + 2 * spaceBetweenImages;
+
+    // Start position for the first image (centering all images on the page)
+    const startImageX = (doc.page.width - totalImageWidth) / 2;
+    const startImageY = 50; // vertical position where images will be placed
+
+    doc.registerFont("Inter", "fonts/Inter-Regular.ttf");
+    doc.registerFont("Inter-Bold", "fonts/Inter-Bold.ttf");
+
+    // Draw each image
+    doc.image("images/sri-lanka-emblem.png", startImageX, startImageY, {
+      width: image1Width,
+      height: imageHeight,
+    });
+    doc.image(
+      "images/SLCCS_logo.png",
+      startImageX + image1Width + spaceBetweenImages,
+      startImageY,
+      {
+        width: image2Width,
+        height: image2Height,
+      }
+    );
+    doc.moveDown(2);
+
+    // Title
+    doc
+      .fontSize(30)
+      .font("Inter-Bold")
+      .fillColor("#1f4e79")
+      .text("Credit Issuance Certificate", { align: "center" });
+
+    if (isPreview) {
+      this.addPreviewWatermark(doc);
+    }
+
+    doc.moveDown(2).fontSize(16).fillColor("black");
+
+    doc
+      .font("Inter-Bold")
+      .fontSize(14)
+      .text(`CountryX Climate Fund (Pvt) Ltd`, 70, 180, { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc.font("Inter").fontSize(12).text("Issues", { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter")
+      .fontSize(12)
+      .text("CountryX Certified Emission Reductions (SCER)", {
+        align: "center",
+      });
+
+    doc.moveDown(0.5);
+
+    doc.font("Inter").fontSize(12).text("for", { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter-Bold")
+      .fontSize(14)
+      .text(`${data.projectName}`, { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc.font("Inter").fontSize(12).text("of", { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter")
+      .fontSize(14)
+      .text(`${data.companyName}`, { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter")
+      .fontSize(12)
+      .text("registered under", { align: "center" });
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter-Bold")
+      .fontSize(14)
+      .text(`${track} of ${country} Carbon Crediting Scheme`, {
+        align: "center",
+      });
+
+    doc.moveDown(0.5);
+
+    doc
+      .font("Inter")
+      .fontSize(12)
+      .text("In accordance with the SLCCS eligibility criteria and", {
+        align: "center",
+      });
+
+    doc.moveDown(0.4);
+
+    doc
+      .font("Inter")
+      .fontSize(12)
+      .text("Approved CDM methodology (AMS I.D Version 18.0)", {
+        align: "center",
+      });
+
+    doc.moveDown(1);
+
+    doc
+      .fontSize(11)
+      .font("Inter-Bold")
+      .text("Certificate No ", 180, 440, {
+        continued: true,
+      })
+      .text(`: ${data.certificateNo}`, 229, 440, {
+        continued: false,
+      })
+      .moveDown(0.4)
+      .text("Date of issuance ", 180, doc.y, {
+        continued: true,
+      })
+      .text(`: ${data.issueDate}`, 214, doc.y, {
+        continued: false,
+      })
+      .moveDown(0.4)
+      .text("Monitoring Period ", 180, doc.y, {
+        continued: true,
+      })
+      .text(
+        `: ${data.monitoringStartDate} - ${data.monitoringEndDate}`,
+        207.5,
+        doc.y,
+        {
+          continued: false,
+        }
+      )
+      .moveDown(1);
+
+    doc
+      .font("Inter-Bold")
+      .fontSize(16)
+      .text(
+        `${country} Credit Emission Reductions: ${data.issuedCredits} (tCO₂eq)`,
+        100,
+        doc.y
+      )
+      .moveDown(1.5);
+
+    doc
+      .fontSize(11)
+      .font("Inter")
+      .text("Serial Range ", 180, doc.y, {
+        continued: true,
+      })
+      .text(": Block start ", 185, doc.y, {
+        continued: true,
+      })
+      .text(`: ${data.startCreditSerialNo}`, 195, doc.y, {
+        continued: false,
+      })
+      .moveDown(0.4)
+      .text(": Block end ", 252.5, doc.y, {
+        continued: true,
+      })
+      .text(`: ${data.endCreditSerialNo}`, 267.5, doc.y, {
+        continued: false,
+      })
+      .moveDown(1);
+
+    // Chairman Signature
+    const chairmanSignatureImagePath = "public/signatures/chairman.jpg";
+
+    if (fs.existsSync(chairmanSignatureImagePath)) {
+      doc.image(chairmanSignatureImagePath, 110, 579, {
+        width: 120,
+        height: 100,
+      });
+    } else {
+      console.log(
+        "Chairmans Signature does not exist in:",
+        chairmanSignatureImagePath
+      );
+    }
+
+    doc
+      .font("Inter")
+      .fontSize(10)
+      .text("...............................", 135, 660, { align: "left" });
+
+    doc.font("Inter").fontSize(10).text("Chairman", 154, 675);
+
+    doc
+      .font("Inter")
+      .fontSize(10)
+      .text("CountryX Climate Fund (Pvt) Ltd.", 100, 690, { align: "left" });
+
+    doc.image("images/SLCF_logo.jpg", 260, 600, {
+      width: 110,
+      height: 100,
+    });
+
+    // CEO Signature
+
+    // Define image paths
+    const ceoSignatureImagePath = "public/signatures/ceo.jpg";
+
+    if (fs.existsSync(ceoSignatureImagePath)) {
+      doc.image(ceoSignatureImagePath, 410, 579, {
+        width: 120,
+        height: 100,
+      });
+    } else {
+      console.log("CEO Signature does not exist in:", ceoSignatureImagePath);
+    }
+
+    doc
+      .font("Inter")
+      .fontSize(10)
+      .text("...............................", 415, 660, { align: "left" });
+
+    doc.font("Inter").fontSize(11).text("Chief Executive Officer", 400, 675);
+
+    doc
+      .font("Inter")
+      .fontSize(10)
+      .text("CountryX Climate Fund (Pvt) Ltd.", 378, 690, { align: "left" });
+
+    doc
+      .font("Inter")
+      .fontSize(9)
+      .text(
+        "CountryX Climate Fund (Pvt) Ltd, 'Sobadam Piyasa', No. 416/C/1, Robert Gunawardana Mawatha, Battaramulla.",
+        70,
+        720,
+        { align: "center" }
+      );
+
+    doc
+      .font("Inter")
+      .fontSize(9)
+      .text("Phone: 011 2053065  E-mail: info@climatefund.lk", 70, 730, {
+        align: "center",
+      });
+
+    // End and save the document
+    doc.end();
+
+    const content = await new Promise<string>((resolve) => {
+      stream.on("finish", function () {
+        const contents = fs.readFileSync("/tmp/" + filepath, {
+          encoding: "base64",
+        });
+        resolve(contents);
+      });
+    });
+
+    const url = await this.fileHandler.uploadFile(
+      "documents/" + filepath,
+      content
+    );
+
+    return url;
+  }
+
+  // Function to add a preview watermark
+  addPreviewWatermark(doc) {
+    doc.save(); // Save the current state
+    doc
+      .fontSize(160) // Set a large font size for visibility
+      .font("Helvetica-Bold") // Use a standard, bold font
+      .opacity(0.1) // Set low opacity for the watermark
+      .fillColor("grey") // Grey color for the watermark text
+      .rotate(35, { origin: [doc.page.width / 2, doc.page.height / 2] }) // Rotate the text by 45 degrees around the center
+      .text("Preview", 0, doc.page.height / 2 - 100, {
+        width: doc.page.width,
+        align: "center",
+      });
+    doc.restore(); // Restore the original state for further additions
+  }
+}
