@@ -22,13 +22,6 @@ const GHGProjectDescription = (props: ValidationStepsProps) => {
   // }, []);
 
   const onFinish = (values: any) => {
-  // Helper function to convert string to number, preserving null/undefined
-  const toNumber = (value: any) => {
-    if (value === null || value === undefined || value === '') return null;
-    const num = Number(value);
-    return isNaN(num) ? value : num; // Return original value if conversion fails
-  };
-
   const body = {
     ...values,
     // Convert numerical fields to numbers
