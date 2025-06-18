@@ -1519,9 +1519,9 @@ export class DocumentManagementService {
               project.refId,
               ProjectAuditLogType.MONITORING_REPORT_REJECTED,
               user.id,
-              undefined,
+              em,
               {
-               remarks: requestData.remarks,
+                remarks: requestData.remarks,
               }
             );
           })
@@ -1627,7 +1627,7 @@ export class DocumentManagementService {
               user.id,
               undefined,
               {
-               remarks: requestData.remarks,
+                remarks: requestData.remarks,
               }
             );
           })
