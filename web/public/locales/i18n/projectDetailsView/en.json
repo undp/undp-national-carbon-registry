@@ -280,7 +280,7 @@
   "requestCarbonNeutralCert": "Request Carbon Neutral Certificate",
   "requestCarbonNeutralCertificateTitle": "Are you sure you want to request a Carbon Neutral Certificate?",
   "btnRequest": "Request",
-  "ENERGY_INDUSTRIES": "Energy Industries (Renewable)",
+  "ENERGY_INDUSTRIES": "Energy Industries (Renewable - / Non Renewable sources)",
   "ENERGY_DISTRIBUTION": "Energy Distribution",
   "ENERGY_DEMAND": "Energy Demand",
   "MANUFACTURING_INDUSTRIES": "Manufacturing Industries",
