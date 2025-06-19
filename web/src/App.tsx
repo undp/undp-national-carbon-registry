@@ -24,12 +24,8 @@ import UserProfile from "./Pages/UserProfile/UserProfile";
 import CompanyProfile from "./Pages/CompanyProfile/companyProfile";
 import { AbilityContext } from "./Casl/Can";
 import { defineAbility, updateUserAbility } from "./Casl/ability";
-import InvestmentManagement from "./Pages/InvestmentManagement/investmentManagement";
-import AddInvestmentComponent from "./Pages/InvestmentManagement/investmentCreation";
-import NdcActionManagement from "./Pages/NdcActionManagement/ndcActionManagement";
-// import AddProgramme from './Pages/Old_ProgrammeManagement/addProgramme';
-import AddNDCAction from "./Pages/NdcActionManagement/addNDCAction";
-import NdcActionView from "./Pages/NdcActionManagement/ndcActionView";
+
+
 import RegisterNewCompany from "./Pages/Company/registerNewCompany";
 import { useTranslation } from "react-i18next";
 import { ConnectionContextProvider } from "./Context/ConnectionContext/connectionContext";
@@ -43,9 +39,6 @@ import MonitoringReport from "./Pages/ProgrammeManagement/MonitoringReport";
 import ProjectDetailsView from "./Pages/ProgrammeManagement/ProjectDetailsView";
 import CMAFormPage from "./Pages/PDD/PDDPage";
 import ValidationReportPage from "./Pages/ValidationReportPage.tsx/ValidationReportPage";
-import ProjectProposalPage from "./Pages/ProjectProposalPage/ProjectProposalPage";
-import ValidationAgreementPage from "./Pages/ValidationAgreementPage/ValidationAgreementPage";
-import CostQuotationForm from "./Pages/ProgrammeManagement/CostQuotationForm";
 import SLCFRetirement from "./Pages/SLCFRetirementManagement/SLCFRetirement";
 import VerificationReport from "./Pages/ProgrammeManagement/VerificationReport";
 import SiteVisitCheckListPage from "./Pages/SiteVisitCheckListPage/SiteVisitCheckListPage";
@@ -119,10 +112,10 @@ const App = () => {
                       element={<CustomLayout selectedKey="dashboard" />}
                     >
                       <Route path="/dashboard" element={<SLCFDashboard />} />
-                      <Route
+                      {/* <Route
                         path="/dashboard/cr"
                         element={<RegistryDashboard />}
-                      />
+                      /> */}
                     </Route>
                     <Route
                       path="/nationalAccounting"
@@ -153,7 +146,6 @@ const App = () => {
                         path="addProgramme/:id"
                         element={<AddProgramme />}
                       />
-                      <Route path="addNdcAction" element={<AddNDCAction />} />
                       <Route
                         path="monitoringReport/:id"
                         element={<MonitoringReport />}
@@ -171,21 +163,9 @@ const App = () => {
                         element={<VerificationReport />}
                       />
                       <Route
-                        path="addCostQuotation/:id"
-                        element={<CostQuotationForm />}
-                      />
-                      <Route
-                        path="projectProposal/:id"
-                        element={<ProjectProposalPage />}
-                      />
-                      <Route
                         path="siteVisitCheckList/:id/"
                         element={<SiteVisitCheckListPage />}
                       />
-                      <Route
-                        path="validationAgreement/:id"
-                        element={<ValidationAgreementPage />}
-                      />{" "}
                       <Route path="pdd/:id/" element={<CMAFormPage />} />
                       <Route
                         path="validationReport/:id"
@@ -225,30 +205,7 @@ const App = () => {
                   </Route> */}
                     {/* ---------- old programme management routes end ------------ */}
 
-                    <Route
-                      path="/investmentManagement"
-                      element={
-                        <CustomLayout selectedKey="investmentManagement/viewAll" />
-                      }
-                    >
-                      <Route
-                        path="viewAll"
-                        element={<InvestmentManagement />}
-                      />
-                      <Route
-                        path="addInvestment"
-                        element={<AddInvestmentComponent />}
-                      />
-                    </Route>
-                    <Route
-                      path="/ndcManagement"
-                      element={
-                        <CustomLayout selectedKey="ndcManagement/viewAll" />
-                      }
-                    >
-                      <Route path="viewAll" element={<NdcActionManagement />} />
-                      <Route path="view" element={<NdcActionView />} />
-                    </Route>
+
                     <Route
                       path="/companyManagement"
                       element={
