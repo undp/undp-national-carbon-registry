@@ -18,7 +18,6 @@ import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.ser
 import { UserService } from "../user/user.service";
 import { HelperService } from "../util/helpers.service";
 import { EmailTemplates } from "./email.template";
-import { ProgrammeSl } from "../entities/programmeSl.entity";
 import { EmailTemplateDto } from "../dto/email.template.dto";
 import { ProjectEntity } from "../entities/projects.entity";
 

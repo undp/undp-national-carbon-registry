@@ -181,9 +181,6 @@ export const handler: Handler = async (event) => {
   try {
     const ledgerModule = app.get(LedgerDBInterface);
 
-    await ledgerModule.createTable("programmesl");
-    await ledgerModule.createIndex("txId", "programmesl");
-
     await ledgerModule.createTable("project");
     await ledgerModule.createIndex("txId", "project");
 
