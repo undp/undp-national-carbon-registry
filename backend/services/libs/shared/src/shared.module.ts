@@ -12,7 +12,6 @@ import { EmailHelperModule } from "./email-helper/email-helper.module";
 import { FileHandlerModule } from "./file-handler/filehandler.module";
 import { LedgerDbModule } from "./ledger-db/ledger-db.module";
 import { LocationModule } from "./location/location.module";
-import { ProgrammeAuditSlModule } from "./programme-audit-sl/programme-audit-sl.module";
 import { ProgrammeLedgerModule } from "./programme-ledger/programme-ledger.module";
 import { ProgrammeSlModule } from "./programme-sl/programme-sl.module";
 import { RegistryClientModule } from "./registry-client/registry-client.module";
@@ -43,7 +42,6 @@ import { AefReportManagementModule } from "./aef-report-management/aef-report-ma
     FileHandlerModule,
     LedgerDbModule,
     LocationModule,
-    ProgrammeAuditSlModule,
     ProgrammeLedgerModule,
     ProgrammeSlModule,
     RegistryClientModule,
@@ -75,7 +73,6 @@ import { AefReportManagementModule } from "./aef-report-management/aef-report-ma
     FileHandlerModule,
     LedgerDbModule,
     LocationModule,
-    ProgrammeAuditSlModule,
     ProgrammeLedgerModule,
     ProgrammeSlModule,
     RegistryClientModule,
