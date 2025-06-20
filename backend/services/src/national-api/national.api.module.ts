@@ -13,7 +13,6 @@ import { ProgrammeAuditSlController } from "./programmeAuditSl/programmeAuditSl.
 import { ProgrammeSlController } from "./programmeSl.controller";
 import { SettingsController } from "./settings.controller";
 import { UserController } from "./user.controller";
-import { VerificationController } from "./verification/verification.controller";
 import { ProjectManagementController } from "./project-management.controller";
 import { DocumentManagementController } from "./document.controller";
 import { AnalyticsController } from "./analytics.controller";
@@ -38,7 +37,6 @@ import { ReportsManagementController } from "./reports.management.controller";
     LocationController,
     ProgrammeSlController,
     CreditRetirementSlController,
-    VerificationController,
     ProgrammeAuditSlController,
     ProjectManagementController,
     DocumentManagementController,

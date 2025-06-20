@@ -19,7 +19,6 @@ import { RegistryClientModule } from "./registry-client/registry-client.module";
 import { UserModule } from "./user/user.module";
 import { UtilModule } from "./util/util.module";
 import { ValidationModule } from "./validation/validation.module";
-import { VerificationModule } from "./verification/verification.module";
 import { CaslModule } from "./casl/casl.module";
 import { ProjectManagementModule } from "./project-management/project-management.module";
 import { AuditLogsModule } from "./audit-logs/audit-logs.module";
@@ -51,7 +50,6 @@ import { AefReportManagementModule } from "./aef-report-management/aef-report-ma
     UserModule,
     UtilModule,
     ValidationModule,
-    VerificationModule,
     CaslModule,
     ProjectManagementModule,
     AuditLogsModule,
@@ -84,7 +82,6 @@ import { AefReportManagementModule } from "./aef-report-management/aef-report-ma
     UserModule,
     UtilModule,
     ValidationModule,
-    VerificationModule,
     CaslModule,
     ProjectManagementModule,
     AuditLogsModule,

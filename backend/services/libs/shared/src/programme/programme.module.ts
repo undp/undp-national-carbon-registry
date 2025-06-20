@@ -30,7 +30,6 @@ import { CreditAuditLog } from "../entities/credit.audit.log.entity";
 import { ProgrammeSl } from "../entities/programmeSl.entity";
 import { DocumentEntity } from "../entities/document.entity";
 import { VerificationRequestEntity } from "../entities/verification.request.entity";
-import { VerificationModule } from "../verification/verification.module";
 
 @Module({
   imports: [
@@ -65,7 +64,6 @@ import { VerificationModule } from "../verification/verification.module";
     LocationModule,
     AsyncOperationsModule,
     FileHandlerModule,
-    VerificationModule,
   ],
   providers: [Logger, ProgrammeService],
   exports: [ProgrammeService],
