@@ -59,11 +59,10 @@ const StepperComponent = (props: any) => {
 
   const navigate = useNavigate();
   const { id } = useParams();
-  const { get, post } = useConnection();
+  const { post } = useConnection();
   const navigationLocation = useLocation();
   const scrollSection = useRef({} as any);
   const { state } = useLocation();
-  console.log("----------state-------------", state);
   const isEdit = true;
   const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
   const registryName = import.meta.env.VITE_APP_COUNTRY_NAME || "RegistryX";
@@ -131,8 +130,8 @@ const StepperComponent = (props: any) => {
         duration: 4,
         style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
-      setLoading(true)
-    } 
+      setLoading(true);
+    }
   };
 
   const next = () => {
@@ -221,7 +220,7 @@ const StepperComponent = (props: any) => {
       form1.setFieldsValue({
         titleOfTheProjectActivity: programmeData?.title,
         mandatarySectoralScopes:
-          INF_SECTORAL_SCOPE[programmeData?.sectoralScope] || 'NA',
+          INF_SECTORAL_SCOPE[programmeData?.sectoralScope] || "NA",
         projectDeveloper: programmeData?.projectParticipant,
         versionNumberPDD: pddData?.data?.projectDetails?.versionNumber,
         hostParty: pddData?.data?.projectDetails?.hostParty,
@@ -243,8 +242,12 @@ const StepperComponent = (props: any) => {
                 ?.projectCreditingPeriodEndDate
             )
           : null,
-        locationOfProjectActivity: pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.locationOfProjectActivity,
-        siteNo: pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]?.siteNo,
+        locationOfProjectActivity:
+          pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]
+            ?.locationOfProjectActivity,
+        siteNo:
+          pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]
+            ?.siteNo,
         province:
           pddData?.data?.projectActivity?.locationsOfProjectActivity?.[0]
             ?.province,
@@ -274,8 +277,7 @@ const StepperComponent = (props: any) => {
 
       const netGHGEmissionReductions =
         pddData?.data?.applicationOfMethodology?.netGHGEmissionReductions;
-      
-      
+
       form2.setFieldsValue({
         estimatedNetEmissionReductions:
           netGHGEmissionReductions.yearlyGHGEmissionReductions?.map(
@@ -283,7 +285,8 @@ const StepperComponent = (props: any) => {
               vintage: toMoment(emissionData.vintage),
             })
           ),
-        totalNumberOfCreditingYears: netGHGEmissionReductions?.totalNumberOfCredingYears,
+        totalNumberOfCreditingYears:
+          netGHGEmissionReductions?.totalNumberOfCredingYears,
         baselineEmissionReductions: 0,
         baselineEmissions:
           pddData?.data?.projectActivity?.locationsOfProjectActivity?.map(

@@ -107,15 +107,7 @@ export const approvalAndAuthorizationDataMapToFields = (vals: any) => {
   return vals;
 };
 
-export const eligibilityCriteriaDataMapToFields = (vals: any) => {
-  if (vals === undefined) return;
 
-  const tempValues = {
-    ...vals,
-  };
-
-  return tempValues;
-};
 
 export const applicationOfMethodologyDataMapToFields = (vals: any) => {
   if (vals === undefined) return;
@@ -313,35 +305,6 @@ export const quantificationOfGHGDataMapToFields = (vals: any) => {
   return tempValues;
 };
 
-export const monitoringDataMapToFields = (vals: any) => {
-  if (vals === undefined) return;
-
-  const tempValues = {
-    dataAndParametersAvailable: vals?.dataAndParametersDescription,
-    parameter: vals?.validationParameters?.parameter,
-    unit: vals?.validationParameters?.unit,
-    description: vals?.validationParameters?.description,
-    source: vals?.validationParameters?.source,
-    purpose: vals?.validationParameters?.purpose,
-    valueApplied: vals?.validationParameters?.valueApplied,
-    justification: vals?.validationParameters?.justification,
-    monitoringParameter: vals?.monitoredParameters?.parameter,
-    monitoringUnit: vals?.monitoredParameters?.unit,
-    monitoringDescription: vals?.monitoredParameters?.description,
-    monitoringSource: vals?.monitoredParameters?.source,
-    monitoringMeasurementMethods: vals?.monitoredParameters?.measurementMethods,
-    monitoringFrequency: vals?.monitoredParameters?.frequency,
-    monitoringValueApplied: vals?.monitoredParameters?.valueApplied,
-    monitoringEquipment: vals?.monitoredParameters?.monitoringEquipment,
-    monitoringQAProcedures: vals?.monitoredParameters?.qaQCProcedures,
-    monitoringPurpose: vals?.monitoredParameters?.purpose,
-    monitoringCalculation: vals?.monitoredParameters?.calculationMethod,
-    monitoringComments: vals?.monitoredParameters?.comments,
-    monitoringPlan: vals?.monitoringPlan,
-  };
-
-  return tempValues;
-};
 
 export const appendixDataMapToFields = (vals: any) => {
   if (vals === undefined) return;

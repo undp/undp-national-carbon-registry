@@ -18,7 +18,7 @@ import {
   PlusOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import { ProcessSteps } from "./ValidationStepperComponent";
+import { ProcessSteps } from "./StepperComponent";
 import { fileUploadValueExtract } from "../../Utils/utilityHelper";
 import { FormMode } from "../../Definitions/Enums/formMode.enum";
 import moment from "moment";

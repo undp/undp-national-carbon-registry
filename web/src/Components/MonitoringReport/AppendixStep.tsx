@@ -293,12 +293,6 @@ export const AnnexureStep = (props: CustomStepsProps) => {
                   </div>
                 </Col>
               </Row>
-              {/* <Row className="step-actions-end"> */}
-              {/* <Col>
-                  <Button onClick={prev} disabled={false}>
-                    {t('monitoringReport:back')}
-                  </Button>
-                </Col> */}
               <Row justify={"end"} className="step-actions-end">
                 {(state?.mode === FormMode.CREATE ||
                   state?.mode === FormMode.EDIT) && (
@@ -342,38 +336,6 @@ export const AnnexureStep = (props: CustomStepsProps) => {
                     </Button>
                   </>
                 )}
-                {/* <Button danger size={'large'} onClick={prev}>
-                  {t('monitoringReport:prev')}
-                </Button>
-                {disableFields ? (
-                  <Button type="primary" onClick={next}>
-                    {t('monitoringReport:goBackProjectDetails')}
-                  </Button>
-                ) : (
-                  <Button type="primary" size={'large'} htmlType={'submit'}>
-                    {t('monitoringReport:submit')}
-                  </Button>
-                )} */}
-                {/* </Row> */}
-                {/* {userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
-                  FormMode.VIEW !== formMode && (
-                    <Button type="primary" htmlType="submit" disabled={loading}>
-                      <span>{t('monitoringReport:submit')}</span>
-                    </Button>
-                  )} */}
-
-                {/* {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
-                  status === DocumentStatus.PENDING && (
-                    <Button danger onClick={reject} disabled={false}>
-                      <span>{t('monitoringReport:reject')}</span>
-                    </Button>
-                  )}
-                {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
-                  status === DocumentStatus.PENDING && (
-                    <Button type="primary" onClick={approve} disabled={false}>
-                      <span>{t('monitoringReport:approve')}</span>
-                    </Button>
-                  )} */}
               </Row>
             </Form>
           </div>

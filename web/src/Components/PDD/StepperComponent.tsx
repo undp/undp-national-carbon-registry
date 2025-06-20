@@ -5,7 +5,6 @@ import './PDD.scss';
 
 import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import EligibilityCriteria from './EligibilityCriteria';
 import ApplicationOfMethodology from './ApplicationOfMethodology';
 import QuantificationOfEmissions from './QuantificationOfEmissions';
 
@@ -21,11 +20,8 @@ import {
   approvalAndAuthorizationDataMapToFields,
   BasicInformationDataMapToFields,
   descriptionOfProjectActivityDataMapToFields,
-  eligibilityCriteriaDataMapToFields,
   environmentImpactsDataMaptoFields,
   localStakeholderConsultationDataMaptoFields,
-  monitoringDataMapToFields,
-  quantificationOfGHGDataMapToFields,
   startDateCreditingPeriodDataMapToFields,
 } from './viewDataMap';
 import { Loading } from '../Loading/loading';
@@ -33,7 +29,6 @@ import { FormMode } from '../../Definitions/Enums/formMode.enum';
 import ApprovalAndAuthoriziation from './ApprovalAndAuthoriziation';
 import StartDateCreditingPeriod from './StartDateCreditingPeriod';
 import { API_PATHS } from '../../Config/apiConfig';
-import Monitoring from './Monitoring';
 import { DocumentEnum } from '../../Definitions/Enums/document.enum';
 import { ROUTES } from '../../Config/uiRoutingConfig';
 import { INF_SECTORAL_SCOPE } from '../AddNewProgramme/ProgrammeCreationComponent';
@@ -49,9 +44,7 @@ const StepperComponent = (props: any) => {
   const [documentId, setDocumentId] = useState<string>();
   const navigate = useNavigate();
   const { state } = useLocation();
-  //console.log('---state-----', state);
-  // const isView = !!state?.isView;
-  // const isEdit = !!state?.isEdit;
+
 
   const [loading, setLoading] = useState<boolean>(
     state?.mode === FormMode.VIEW ||
@@ -90,7 +83,6 @@ const StepperComponent = (props: any) => {
   });
 
   const handleValuesUpdate = (val: any) => {
-    //console.log('----------temp vals-------------', val);
 
     setValues((prevVal: any) => {
       const tempContent = {
@@ -102,7 +94,6 @@ const StepperComponent = (props: any) => {
   };
 
   const [countries, setCountries] = useState<[]>([]);
-  const [projectCategory, setProjectCategory] = useState<string>('');
 
   const { get, post } = useConnection();
 
@@ -137,9 +128,6 @@ const StepperComponent = (props: any) => {
       const { data } = await post(API_PATHS.PROGRAMME_BY_ID, {
         programmeId: programId,
       });
-      // const {
-      //   data: { user },
-      // } = await get(API_PATHS.USER_PROFILE);
       if (state?.mode === FormMode?.CREATE) {
         form1.setFieldsValue({
           projectTitle: data?.title,
@@ -151,10 +139,8 @@ const StepperComponent = (props: any) => {
           projectActivityStartDate: toMoment(data?.startDate).format('YYYY-MM-DD'),
         });
       }
-      //.log('----------running form values--------', form4.getFieldsValue());
       setValues((prevVal) => ({
         ...prevVal,
-        // companyId: data?.company?.companyId,
       }));
     } catch (error) {
       console.log('error', error);
@@ -167,7 +153,6 @@ const StepperComponent = (props: any) => {
     try {
       setLoading(true);
       const { data } = await get(API_PATHS.USER_PROFILE_DETAILS);
-      //console.log('----------data----------', data);
       if (state?.mode === FormMode?.CREATE) {
         form8.setFieldsValue({
           organizationName: data?.Organisation?.name,
@@ -281,7 +266,6 @@ const StepperComponent = (props: any) => {
     try {
       setLoading(true);
       const res = await post(API_PATHS.ADD_DOCUMENT, tempValues);
-      //console.log('------res------------', res);
       if (res?.statusText === 'SUCCESS') {
         message.open({
           type: 'success',
@@ -412,15 +396,6 @@ const StepperComponent = (props: any) => {
           handleValuesUpdate={handleValuesUpdate}
           disableFields={disableFields}
         />
-        // <Monitoring
-        //   next={next}
-        //   prev={prev}
-        //   form={form4}
-        //   current={current}
-        //   t={t}
-        //   handleValuesUpdate={handleValuesUpdate}
-        //   disableFields={disableFields}
-        // />
       ),
     },
     {
@@ -440,15 +415,6 @@ const StepperComponent = (props: any) => {
           handleValuesUpdate={handleValuesUpdate}
           disableFields={disableFields}
         />
-        // <EligibilityCriteria
-        //   next={next}
-        //   prev={prev}
-        //   form={form5}
-        //   current={current}
-        //   t={t}
-        //   handleValuesUpdate={handleValuesUpdate}
-        //   disableFields={disableFields}
-        // />
       ),
     },
     {
@@ -459,15 +425,6 @@ const StepperComponent = (props: any) => {
         </div>
       ),
       description: (
-        // <ApplicationOfMethodology
-        //   next={next}
-        //   prev={prev}
-        //   form={form6}
-        //   current={current}
-        //   t={t}
-        //   handleValuesUpdate={handleValuesUpdate}
-        //   disableFields={disableFields}
-        // />
         <LocalStakeholderConsultation
           next={next}
           prev={prev}
