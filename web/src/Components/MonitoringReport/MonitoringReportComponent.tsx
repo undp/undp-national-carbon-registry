@@ -9,27 +9,27 @@ import { i18n } from 'i18next';
 
 export const MonitoringReportComponent = (props: { translator: i18n }) => {
   const { state } = useLocation();
-  const [versions, setVersions] = useState<number[]>([]);
-  const [selectedVersion, setSelectedVersion] = useState<number>();
-  const [documentStatus, setDocumentStatus] = useState('');
+  // const [versions, setVersions] = useState<number[]>([]);
+  // const [selectedVersion, setSelectedVersion] = useState<number>();
+  // const [documentStatus, setDocumentStatus] = useState('');
   const mode = state?.mode;
   const [form] = Form.useForm();
   const { translator } = props;
   const t = translator.t;
 
-  const onVersionSelect = async (value: number) => {
-    setSelectedVersion(value);
-  };
+  // const onVersionSelect = async (value: number) => {
+  //   setSelectedVersion(value);
+  // };
 
-  const handleDocumentStatus = (value: string) => {
-    setDocumentStatus(value);
-  };
+  // const handleDocumentStatus = (value: string) => {
+  //   setDocumentStatus(value);
+  // };
 
-  useEffect(() => {
-    if (versions.length > 0) {
-      setSelectedVersion(versions[0]);
-    }
-  }, [versions]);
+  // useEffect(() => {
+  //   if (versions.length > 0) {
+  //     setSelectedVersion(versions[0]);
+  //   }
+  // }, [versions]);
 
 
   return (
@@ -39,7 +39,7 @@ export const MonitoringReportComponent = (props: { translator: i18n }) => {
           <Col xl={12} md={12}>
             <div className="main">{t('monitoringReport:monitoringReport')}</div>
           </Col>
-          {mode === FormMode.VIEW ? (
+          {/* {mode === FormMode.VIEW ? (
             <Col xl={12} md={12} style={{ textAlign: 'right' }}>
               <Select
                 size="large"
@@ -57,11 +57,11 @@ export const MonitoringReportComponent = (props: { translator: i18n }) => {
             </Col>
           ) : (
             ''
-          )}
+          )} */}
         </Row>
       </div>
       <div className="adding-section">
-        {mode === FormMode.VIEW ? (
+        {/* {mode === FormMode.VIEW ? (
           <Row className="row" justify={'space-between'}>
             <Col xl={12} md={12}></Col>
             <Col xl={12} md={12} style={{ textAlign: 'right' }}>
@@ -75,7 +75,7 @@ export const MonitoringReportComponent = (props: { translator: i18n }) => {
           </Row>
         ) : (
           ''
-        )}
+        )} */}
         <div className="form-section">
           <StepperComponent
             translator={translator}

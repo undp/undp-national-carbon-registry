@@ -48,7 +48,6 @@ import validator from "validator";
 import { toMoment } from "../../Utils/convertTime";
 import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 
-type SizeType = Parameters<typeof Form>[0]["size"];
 
 const maximumImageSize = import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE
   ? parseInt(import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE)
@@ -57,13 +56,6 @@ const maximumImageSize = import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE
 export const PROJECT_GEOGRAPHY: { [key: string]: string } = {
   SINGLE: "Single Location",
   MULTIPLE: "Scattered in multiple locations",
-};
-
-const PROJECT_CATEGORIES: { [key: string]: string } = {
-  RENEWABLE_ENERGY: "Renewable Energy",
-  AFFORESTATION: "Afforestation",
-  REFORESTATION: "Reforestation",
-  OTHER: "Other",
 };
 
 const PROJECT_STATUS: { [key: string]: string } = {
@@ -139,7 +131,6 @@ export const ProgrammeCreationComponent = (props: any) => {
 
   const { post, get } = useConnection();
   const [form] = Form.useForm();
-  // const [values, setValues] = useState<any>(undefined);
 
   const [disableFields, setDisableFields] = useState<boolean>(false);
 
@@ -340,10 +331,6 @@ export const ProgrammeCreationComponent = (props: any) => {
     }
   };
 
-  // const onProjectCategorySelect = (value: string) => {
-  //   setProjectCategory(value);
-  // };
-
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
       return e;
@@ -428,7 +415,6 @@ export const ProgrammeCreationComponent = (props: any) => {
 
   const submitForm = async (values: any) => {
     const base64Docs: string[] = [];
-    console.log("---------optional docs----------", values?.optionalDocuments);
 
     if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
       const docs = values.optionalDocuments;

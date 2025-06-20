@@ -225,5 +225,7 @@
   "reject": "REJECT",
   "certifyMessage": "Are you sure you want to certify this Project Design Document?",
   "approveMessage": "Are you sure you want to approve this Project Design Document?",
-  "approve": "approve"
+  "approve": "approve",
+  "pddSubmitSuccess": "Project Design Document has been edited successfully",
+  "pddEditSuccess": "Project Design Document has been submitted successfully"
 }
