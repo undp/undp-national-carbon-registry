@@ -14,7 +14,7 @@ export interface DetailsBarChartStatsProps {
   width: string;
 }
 
-export const SLCFDetailsBarChartsStatComponent: FC<
+export const DetailsBarChartsStatComponent: FC<
   DetailsBarChartStatsProps
 > = (props: DetailsBarChartStatsProps) => {
   const {

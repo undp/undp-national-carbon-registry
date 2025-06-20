@@ -17,16 +17,16 @@ import {
   retirementsByDateOptions,
   sectorPieChartOptions,
   totalProgrammesOptions,
-} from "./slcfChartOptions";
+} from "./ChartOptions";
 import { ProgrammeRejectAndTransferComponent } from "./programmeRejectAndTransferComponent";
-import { SLCFSideBarChartsStatComponent } from "./slcfPieChartStatComponent";
-import { SLCFBarChartsStatComponent } from "./slcfBarChartStatsComponent";
+import { SideBarChartsStatComponent } from "./PieChartStatComponent";
+import { SLCFBarChartsStatComponent } from "./BarChartStatsComponent";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
 import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
 import { addCommSep } from "../../Definitions/Definitions/programme.definitions";
 import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
-import { SLStatisticsCard } from "./SlStatisticsCard/slStatisticsCard";
-import { SLCFDetailsBarChartsStatComponent } from "./slcfDetailsBarChartStatsComponent";
+import { SLStatisticsCard } from "./StatisticsCard/StatisticsCard";
+import { DetailsBarChartsStatComponent } from "./DetailsBarChartStatsComponent";
 import { API_PATHS } from "../../Config/apiConfig";
 import { ROUTES } from "../../Config/uiRoutingConfig";
 import { OverallMineButtons } from "../../Definitions/Enums/overallMineButton.enum";
@@ -39,7 +39,7 @@ import { SECTOR_TO_SCOPES_MAP } from "../AddNewProgramme/ProgrammeCreationCompon
 
 const { RangePicker } = DatePicker;
 
-export const SLCFDashboardComponent = (props: any) => {
+export const DashboardComponent = (props: any) => {
   const {
     Chart,
     t,
@@ -1208,7 +1208,7 @@ useEffect(() => {
               className="statistic-card-col retirements-by-date-chart-col"
               style={{ width: "100%" }}
             >
-              <SLCFDetailsBarChartsStatComponent
+              <DetailsBarChartsStatComponent
                 id="total-programmes"
                 title={t("totalProgrammesByStatusSLCF")}
                 options={totalProgrammesOptions}
@@ -1244,7 +1244,7 @@ useEffect(() => {
               className="statistic-card-col"
               style={{ paddingRight: "0px" }}
             >
-              <SLCFDetailsBarChartsStatComponent
+              <DetailsBarChartsStatComponent
                 id="total-programmes"
                 title={t("totalProgrammesByStatusSLCF")}
                 options={totalProgrammesOptions}
@@ -1277,7 +1277,7 @@ useEffect(() => {
               className="statistic-card-col"
               style={{ paddingRight: "0px" }}
             >
-              <SLCFSideBarChartsStatComponent
+              <SideBarChartsStatComponent
                 id="credits"
                 title={t("projectsBySectoralScope")}
                 options={optionSideBar}

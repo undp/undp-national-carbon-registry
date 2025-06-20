@@ -1320,7 +1320,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                         if (
                                           !isValidateFileType(
                                             file[i]?.type,
-                                            DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
+                                            // DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
                                           )
                                         ) {
                                           throw new Error(
