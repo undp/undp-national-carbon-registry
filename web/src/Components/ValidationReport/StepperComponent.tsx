@@ -1,7 +1,6 @@
 import { Steps, message } from "antd";
 import { useEffect, useRef, useState } from "react";
 import "./ValidationReport.scss";
-// import './SLCFMonitoringReportComponent.scss';
 
 import { useForm } from "antd/lib/form/Form";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
@@ -60,12 +59,9 @@ const StepperComponent = (props: any) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { post } = useConnection();
-  const navigationLocation = useLocation();
   const scrollSection = useRef({} as any);
   const { state } = useLocation();
-  const isEdit = true;
-  const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
-  const registryName = import.meta.env.VITE_APP_COUNTRY_NAME || "RegistryX";
+ 
 
   const [documentId, setDocumentId] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -199,10 +195,6 @@ const StepperComponent = (props: any) => {
         refId: state?.documents?.PDD?.refId,
         documentType: DocumentEnum.PDD,
       });
-      console.log(
-        "-----------------PDD Response-----------------",
-        pddResponse
-      );
       if (pddResponse?.statusText === "SUCCESS") {
         pddData = pddResponse?.data;
       } else {
@@ -306,15 +298,6 @@ const StepperComponent = (props: any) => {
     setLoading(false);
   };
 
-  // const setLatestVersion = () => {
-  //   if (state?.mode === FormMode.CREATE || state?.mode === FormMode.EDIT) {
-  //     form1.setFieldsValue({
-  //       versionNumberValidationReport:
-  //         state?.documents?.[DocumentEnum.VALIDATION as any]?.version ?? 0 + 1,
-  //     });
-  //   }
-  // };
-
   const handleValuesUpdate = (val: any) => {
     console.log("---------values--------", val);
     setExistingFormValues((prevVal: any) => {
@@ -330,7 +313,6 @@ const StepperComponent = (props: any) => {
     if (state?.mode === FormMode?.CREATE) {
       fetchAndSetProgrammeData(id);
     }
-    //setLatestVersion();
   }, [id]);
 
   useEffect(() => {
@@ -356,11 +338,6 @@ const StepperComponent = (props: any) => {
           if (res?.statusText === "SUCCESS") {
             const data = res?.data;
             setDocumentId(data?.refId);
-            console.log(
-              "---------validation------------",
-              data?.data,
-              data?.data?.basicInformation
-            );
             let basicInformation = basicInformationMapDataToFields(
               data.data?.basicInformation
             );
@@ -414,7 +391,6 @@ const StepperComponent = (props: any) => {
             const appendix = validationReportAppendixMapDataToFields(
               data.data?.appendix
             );
-            console.log("---------appendix-----------", appendix);
             form9.setFieldsValue(appendix);
           }
         } catch (error) {
@@ -447,7 +423,6 @@ const StepperComponent = (props: any) => {
           t={t}
           countries={countries}
           handleValuesUpdate={handleValuesUpdate}
-          // existingFormValues={existingFormValues.content[ProcessSteps.VR_PROJECT_DETAILS]}
           formMode={state?.mode}
           disableFields={disableFields}
         />
@@ -469,7 +444,6 @@ const StepperComponent = (props: any) => {
           t={t}
           countries={countries}
           handleValuesUpdate={handleValuesUpdate}
-          // existingFormValues={existingFormValues.content[ProcessSteps.VR_INTRODUCTION]}
           formMode={state?.mode}
           disableFields={disableFields}
         />
@@ -490,7 +464,6 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
-          // existingFormValues={existingFormValues.content[ProcessSteps.VR_GHG_PROJECT_DESCRIPTION]}
           formMode={state?.mode}
           disableFields={disableFields}
         />
@@ -511,7 +484,6 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
-          // existingFormValues={existingFormValues.content[ProcessSteps.VR_VALIDATION_METHODOLOGY]}
           formMode={state?.mode}
           disableFields={disableFields}
         />
@@ -532,7 +504,6 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
-          // existingFormValues={existingFormValues.content[ProcessSteps.VR_VALIDATION_PROCESS]}
           projectCategory={projectCategory}
           disableFields={disableFields}
           formMode={state?.mode}
@@ -554,7 +525,6 @@ const StepperComponent = (props: any) => {
           current={current}
           t={t}
           handleValuesUpdate={handleValuesUpdate}
-          // existingFormValues={existingFormValues.content[ProcessSteps.VR_VALIDATION_PROCESS]}
           projectCategory={projectCategory}
           disableFields={disableFields}
           formMode={state?.mode}
@@ -577,7 +547,6 @@ const StepperComponent = (props: any) => {
           t={t}
           handleValuesUpdate={handleValuesUpdate}
           disableFields={disableFields}
-          // existingFormValues={existingFormValues.content[ProcessSteps.VR_REFERENCE]}
           formMode={state?.mode}
         />
       ),
@@ -598,19 +567,8 @@ const StepperComponent = (props: any) => {
           t={t}
           handleValuesUpdate={handleValuesUpdate}
           disableFields={disableFields}
-          // existingFormValues={existingFormValues.content[ProcessSteps.VR_VALIDATION_OPINION]}
           formMode={state?.mode}
         />
-        // <ValidationReportAppendix
-        //   next={next}
-        //   prev={prev}
-        //   form={form8}
-        //   current={current}
-        //   t={t}
-        //   handleValuesUpdate={handleValuesUpdate}
-        //   existingFormValues={existingFormValues.content[ProcessSteps.VR_APPENDIX]}
-        //   formMode={state?.mode}
-        // />
       ),
     },
     {
@@ -629,7 +587,6 @@ const StepperComponent = (props: any) => {
           documentId={documentId}
           t={t}
           handleValuesUpdate={submitForm}
-          // existingFormValues={existingFormValues.content[ProcessSteps.VR_APPENDIX]}
           disableFields={disableFields}
           formMode={state?.mode}
           handleLoading={handleLoading}

@@ -183,7 +183,6 @@ const StepperComponent = (props: any) => {
             refId: state?.documentRefId,
             documentType: DocumentEnum.PDD,
           });
-          console.log('------PDD data-----', res?.data);
           if (res?.statusText === 'SUCCESS') {
             const data = res?.data;
             setDocumentId(data?.refId);
@@ -269,8 +268,8 @@ const StepperComponent = (props: any) => {
           type: 'success',
           content:
             state?.mode === FormMode.EDIT
-              ? 'Project Design Document has been edited successfully'
-              : 'Project Design Document has been submitted successfully',
+              ? t('PDD:pddSubmitSuccess')
+              : t('PDD:pddEditSuccess'),
           duration: 4,
           style: { textAlign: 'right', marginRight: 15, marginTop: 10 },
         });
