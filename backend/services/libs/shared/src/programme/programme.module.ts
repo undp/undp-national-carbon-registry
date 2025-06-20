@@ -27,7 +27,6 @@ import { NdcDetailsAction } from "../entities/ndc.details.action.entity";
 import { EventLog } from "../entities/event.log.entity";
 import { Region } from "../entities/region.entity";
 import { CreditAuditLog } from "../entities/credit.audit.log.entity";
-import { ProgrammeSl } from "../entities/programmeSl.entity";
 import { DocumentEntity } from "../entities/document.entity";
 import { VerificationRequestEntity } from "../entities/verification.request.entity";
 
@@ -53,7 +52,6 @@ import { VerificationRequestEntity } from "../entities/verification.request.enti
       EventLog,
       Region,
       CreditAuditLog,
-      ProgrammeSl,
       DocumentEntity,
       VerificationRequestEntity,
     ]),

@@ -8,7 +8,6 @@ import { CreditRetireActionDto } from "@app/shared/dto/credit.retire.action.dto"
 import { CreditRetireRequestDto } from "@app/shared/dto/credit.retire.request.dto";
 import { CreditTransferDto } from "@app/shared/dto/credit.transfer.dto";
 import { QueryDto } from "@app/shared/dto/query.dto";
-import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
 import { ProjectEntity } from "@app/shared/entities/projects.entity";
 import { Body, Controller, Request, Post, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth } from "@nestjs/swagger";
