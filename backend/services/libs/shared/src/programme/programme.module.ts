@@ -28,7 +28,6 @@ import { EventLog } from "../entities/event.log.entity";
 import { Region } from "../entities/region.entity";
 import { CreditAuditLog } from "../entities/credit.audit.log.entity";
 import { DocumentEntity } from "../entities/document.entity";
-import { VerificationRequestEntity } from "../entities/verification.request.entity";
 
 @Module({
   imports: [
@@ -53,7 +52,6 @@ import { VerificationRequestEntity } from "../entities/verification.request.enti
       Region,
       CreditAuditLog,
       DocumentEntity,
-      VerificationRequestEntity,
     ]),
     UtilModule,
     CompanyModule,
