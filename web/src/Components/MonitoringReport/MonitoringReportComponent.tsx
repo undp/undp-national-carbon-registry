@@ -3,7 +3,6 @@ import './MonitoringReport.scss';
 import StepperComponent from './StepperComponent';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import { useParams, useLocation } from 'react-router-dom';
-import { DocumentTypeEnum } from '../../Definitions/Enums/document.type';
 import { Col, Row, Select, Tag, Form } from 'antd';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
 import { getDocumentStatusColor } from '../../Definitions/Definitions/programme.definitions';
@@ -11,9 +10,6 @@ import { API_PATHS } from '../../Config/apiConfig';
 import { i18n } from 'i18next';
 
 export const MonitoringReportComponent = (props: { translator: i18n }) => {
-  const [countries, setCountries] = useState<[]>([]);
-  const { put, get, post } = useConnection();
-  const { id, verificationRequestId } = useParams();
   const { state } = useLocation();
   const [versions, setVersions] = useState<number[]>([]);
   const [selectedVersion, setSelectedVersion] = useState<number>();
