@@ -9,7 +9,6 @@ import { LocationController } from "./location.controller";
 import { NationalAPIController } from "./national.api.controller";
 import { NationalAPIService } from "./national.api.service";
 import { ProgrammeController } from "./programme.controller";
-import { ProgrammeAuditSlController } from "./programmeAuditSl/programmeAuditSl.controller";
 import { ProgrammeSlController } from "./programmeSl.controller";
 import { SettingsController } from "./settings.controller";
 import { UserController } from "./user.controller";
@@ -37,7 +36,6 @@ import { ReportsManagementController } from "./reports.management.controller";
     LocationController,
     ProgrammeSlController,
     CreditRetirementSlController,
-    ProgrammeAuditSlController,
     ProjectManagementController,
     DocumentManagementController,
     AnalyticsController,
