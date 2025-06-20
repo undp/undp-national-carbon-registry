@@ -16,7 +16,7 @@ export interface SideBarChartStatsProps {
   sector: ProjectSectorEnum;
 }
 
-export const SLCFSideBarChartsStatComponent: FC<SideBarChartStatsProps> = (
+export const SideBarChartsStatComponent: FC<SideBarChartStatsProps> = (
   props: SideBarChartStatsProps
 ) => {
   const {

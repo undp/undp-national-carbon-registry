@@ -13,7 +13,6 @@ import AddNewCompany from "./Pages/Company/addNewCompany";
 import CompanyManagement from "./Pages/CompanyManagement/companyManagement";
 // import ProgrammeManagement from './Pages/Old_ProgrammeManagement/programmeManagement';
 import "mapbox-gl/dist/mapbox-gl.css";
-import CreditTransfers from "./Pages/Transfers/creditTransfers";
 import Homepage from "./Pages/Homepage/homepage";
 import PrivacyPolicy from "./Pages/PrivacyPolicy/privacyPolicy";
 import CodeOfConduct from "./Pages/CodeofConduct/codeofConduct";
@@ -39,7 +38,7 @@ import PDDFormPage from "./Pages/PDD/PDDPage";
 import ValidationReportPage from "./Pages/ValidationReportPage.tsx/ValidationReportPage";
 import VerificationReport from "./Pages/ProgrammeManagement/VerificationReport";
 import Settings from "./Pages/Settings/settings";
-import SLCFDashboard from "./Pages/Dashboard/slcf/slcfdashboard";
+import SLCFDashboard from "./Pages/Dashboard/slcf/Dashboard";
 import AddProgramme from "./Pages/ProgrammeManagement/addProgramme";
 import ProgrammeManagement from "./Pages/ProgrammeManagement/programmeManagement";
 import { CreditBalancePage } from "./Pages/CreditPages/creditBalancePage";
@@ -175,15 +174,6 @@ const App = () => {
                     <Route path="viewAll" element={<UserManagement />} />
                     <Route path="addUser" element={<AddUser />} />
                     <Route path="updateUser" element={<AddUser />} />
-                  </Route>
-                  <Route
-                    path="/creditTransfers"
-                    element={
-                      <CustomLayout selectedKey="creditTransfers/viewAll" />
-                    }
-                  >
-                    <Route path="viewAll" element={<CreditTransfers />} />
-                    {/* <Route path="view" element={<ProgrammeView />} /> */}
                   </Route>
                   <Route
                     path="/userProfile"

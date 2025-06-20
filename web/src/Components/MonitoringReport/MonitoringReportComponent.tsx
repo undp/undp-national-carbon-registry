@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import './MonitoringReport.scss';
 import StepperComponent from './StepperComponent';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { useParams, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Col, Row, Select, Tag, Form } from 'antd';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
 import { getDocumentStatusColor } from '../../Definitions/Definitions/programme.definitions';
-import { API_PATHS } from '../../Config/apiConfig';
 import { i18n } from 'i18next';
 
 export const MonitoringReportComponent = (props: { translator: i18n }) => {
@@ -22,8 +20,6 @@ export const MonitoringReportComponent = (props: { translator: i18n }) => {
   const onVersionSelect = async (value: number) => {
     setSelectedVersion(value);
   };
-
-
 
   const handleDocumentStatus = (value: string) => {
     setDocumentStatus(value);

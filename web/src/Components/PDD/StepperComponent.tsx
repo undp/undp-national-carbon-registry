@@ -6,13 +6,11 @@ import './PDD.scss';
 import { useForm } from 'antd/lib/form/Form';
 import { useConnection } from '../../Context/ConnectionContext/connectionContext';
 import ApplicationOfMethodology from './ApplicationOfMethodology';
-import QuantificationOfEmissions from './QuantificationOfEmissions';
 
 import DescriptionOfProjectActivity from './DescriptionOfProjectActivity';
 import EnvironmentImpacts from './EnvironmentImpacts';
 import Appendix from './Appendix';
 import LocalStakeholderConsultation from './LocalStakeholderConsultation';
-import moment from 'moment';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   appendixDataMapToFields,
