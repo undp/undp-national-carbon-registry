@@ -70,19 +70,6 @@ export const EmailTemplates = {
     `,
     text: "",
   },
-  RETIRE_REQUEST: {
-    subject: "Retire Request Received",
-    html: `
-        Hi {{name}},<br><br>
-
-        {{requestedCompany}} has requested to retire {{credits}} credits with the serial number {{serialNo}} from {{programmeName}}.
-
-        <br><br>
-        Sincerely,<br>
-        The Carbon Credit Registry Team
-        `,
-    text: "",
-  },
   CHANGE_PASSOWRD: {
     id: "CHANGE_PASSOWRD",
     subject: "Your {{countryName}} Carbon Registry Account Password is Changed",
@@ -132,145 +119,6 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Credit Registry Team
         `,
   },
-  PROGRAMME_SL_CREATE: {
-    id: "PROGRAMME_SL_CREATE",
-    subject: "New Initial Notification Submitted!",
-    html: `
-        Hi {{name}}, <br><br>
-
-        A new Initial Notification form has been submitted, by {{organisationName}} organisation. <br><br>
-
-        Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
-        <br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-  PROGRAMME_SL_APPROVED: {
-    id: "PROGRAMME_SL_APPROVED",
-    subject: "Initial Notification Approved",
-    html: `
-        Hi {{name}}, <br><br>
-
-        Your initial notification form has been approved by {{countryName}} Climate Fund. <br><br>
-
-        Click <a href="{{programmePageLink}}">here</a> for more details of the project.
-        <br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-  PROGRAMME_SL_REJECTED: {
-    id: "PROGRAMME_SL_REJECTED",
-    subject: "Initial Notification Rejected",
-    html: `
-        Hi {{name}}, <br><br>
-
-        Initial notification submitted by your {{organisationName}} organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
-        {{remark}} <br><br>
-
-        Please submit a new notification request.
-        <br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-  PROJECT_PROPOSAL_SUBMITTED: {
-    id: "PROJECT_PROPOSAL_SUBMITTED",
-    subject: "New Proposal Submitted!",
-    html: `
-        Hi {{name}}, <br><br>
-
-        Cost Quotation Form, Proposal Form and Validation Agreement for the project {{programmeName}} have been submitted by {{countryName}} Climate Fund. <br><br>
-
-        Please review and accept by clicking <a href="{{programmePageLink}}">here</a>.
-        <br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-  PROJECT_PROPOSAL_ACCEPTED: {
-    id: "PROJECT_PROPOSAL_ACCEPTED",
-    subject: "Proposal Accepted",
-    html: `
-        Hi {{name}}, <br><br>
-
-        Cost Quotation Form, Proposal Form and Validation Agreement submitted by {{countryName}} Climate Fund for the project {{programmeName}} owned by {{organisationName}} have been accepted by {{organisationName}}. <br><br>
-
-        Click <a href="{{programmePageLink}}">here</a> for more details of the project.
-        <br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-  PROJECT_PROPOSAL_REJECTED: {
-    id: "PROJECT_PROPOSAL_REJECTED",
-    subject: "Proposal Rejected",
-    html: `
-        Hi {{name}}, <br><br>
-
-        Cost Quotation Form, Proposal Form and Validation Agreement submitted by {{countryName}} Climate Fund for the project {{programmeName}} owned by {{organisationName}} have been rejected by {{organisationName}} due to the following reason/s:<br>
-        {{remark}}<br><br>
-
-
-        Click <a href="{{programmePageLink}}">here</a> for more details of the project.
-        <br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-  CMA_CREATE: {
-    id: "CMA_CREATE",
-    subject: "New Carbon Management Assessment Form Submitted",
-    html: `
-        Hi {{name}}, <br><br>
-
-        A new Carbon Management Assessment form has been submitted, for the project {{programmeName}}, by {{organisationName}} organisation. <br><br>
-
-        Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
-        <br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-  CMA_APPROVED: {
-    id: "CMA_APPROVED",
-    subject: "Carbon Management Assessment Approved",
-    html: `
-        Hi {{name}}, <br><br>
-
-        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} organisation has been approved by {{countryName}} Climate Fund. <br><br>
-
-        Click <a href="{{programmePageLink}}">here</a> for more details of the form.
-        <br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-  CMA_REJECTED: {
-    id: "CMA_REJECTED",
-    subject: "Carbon Management Assessment Rejected",
-    html: `
-        Hi {{name}}, <br><br>
-
-        Carbon Management Assessment submitted for the project {{programmeName}} by your {{organisationName}} organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
-        {{remark}} <br><br>
-
-        Please re-submit the Carbon Management Assessment form by clicking <a href="{{programmePageLink}}">here</a>.
-        <br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
   VALIDATION_SUBMITTED: {
     id: "VALIDATION_SUBMITTED",
     subject: "New Validation Report Submitted!",
@@ -301,25 +149,6 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Registry Team
         `,
   },
-  VALIDATION_APPROVED: {
-    id: "VALIDATION_APPROVED",
-    subject: "Validation Report Approved",
-    html: `
-        Hi {{name}}, <br><br>
-
-        Validation Report submitted for the project {{programmeName}} by {{countryName}} Climate Fund has been approved by Executive Board of {{countryName}} Climate Fund. <br><br>
-
-        Now the project has been authorised.
-
-        Please click <a href="{{programmePageLink}}">here</a> to download the issued Project Registration Certificate.
-        <br><br>
-
-        Please proceed to the next phase and submit the Monitoring Report.<br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
   VALIDATION_APPROVED_TO_PD: {
     id: "VALIDATION_APPROVED_TO_PD",
     subject: "Validation Report Accepted!",
@@ -339,22 +168,6 @@ export const EmailTemplates = {
         Hi, <br><br>
 
         Validation Report submitted by {{icOrganisationName}} Independant Certifier organisation for the project {{programmeName}} owned by {{pdOrganisationName}} has been approved by the Designated National Authority.<br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-  VALIDATION_REJECTED: {
-    id: "VALIDATION_REJECTED",
-    subject: "Validation Report Rejected",
-    html: `
-        Hi {{name}}, <br><br>
-
-        Validation report submitted for the project {{programmeName}} owned by {{organisationName}} organisation has been rejected by Executive Board of {{countryName}} Climate Fund due to the following reason/s:<br>
-        {{remark}} <br><br>
-
-        Please submit again by clicking <a href="{{programmePageLink}}">here</a>.
-        <br><br>
 
         Sincerely,  <br>
         The {{countryName}} Carbon Registry Team
@@ -384,67 +197,6 @@ export const EmailTemplates = {
         Validation Report submitted by your {{icOrganisationName}} Independant Certifier organisation for the project {{programmeName}} owned by {{pdOrganisationName}} has been rejected by the Designated National Authority. <br><br>
 
         You can re-submit the Validation Report by clicking <a href={{programmePageLink}}>here</a>.
-        <br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-  MONITORING_CREATE: {
-    id: "MONITORING_CREATE",
-    subject: "New Monitoring Report Submitted!",
-    html: `
-        Hi {{name}}, <br><br>
-
-        A new Monitoring Report has been submitted by {{organisationName}} for the project {{programmeName}}. <br><br>
-
-        Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
-        <br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-  MONITORING_APPROVED: {
-    id: "MONITORING_APPROVED",
-    subject: "Monitoring Report Approved",
-    html: `
-        Hi {{name}}, <br><br>
-
-        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} organisation has been approved by {{countryName}} Climate Fund. <br><br>
-
-        Click <a href="{{programmePageLink}}">here</a> to be directed to create the Verification Report.
-        <br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-  MONITORING_REJECTED: {
-    id: "MONITORING_REJECTED",
-    subject: "Monitoring Report Rejected",
-    html: `
-        Hi {{name}}, <br><br>
-
-        Monitoring Report submitted for the project {{programmeName}} by your {{organisationName}} organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
-        {{remark}} <br><br>
-
-        Please submit again by clicking <a href="{{programmePageLink}}">here</a>.
-        <br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-  VERIFICATION_CREATE: {
-    id: "VERIFICATION_CREATE",
-    subject: "New Verification Report Submitted!",
-    html: `
-        Hi {{name}}, <br><br>
-
-        A new Verification Report has been submitted, for the organisation {{organisationName}} for the project {{programmeName}}. <br><br>
-
-        Please review and approve by clicking <a href="{{programmePageLink}}">here</a>.
         <br><br>
 
         Sincerely,  <br>
@@ -483,21 +235,6 @@ export const EmailTemplates = {
         The {{countryName}} Carbon Registry Team
         `,
   },
-  VERIFICATION_APPROVED: {
-    id: "VERIFICATION_APPROVED",
-    subject: "Verification Report Approved",
-    html: `
-        Hi {{name}}, <br><br>
-
-        Verification Report submitted for the project {{programmeName}} by the {{countryName}} Climate Fund has been approved by Executive Board of {{countryName}} Climate Fund. <br><br>
-
-        Please request for the credits transfer or retirement accordingly. 
-        <br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
   VERIFICATION_APPROVED_TO_PD: {
     id: "VERIFICATION_APPROVED_TO_PD",
     subject: "Verification Report Accepted!",
@@ -521,22 +258,6 @@ export const EmailTemplates = {
         Verfication Report submitted by {{organisationNameIC}}
         Independant Certifier organisation for the project {{projectName}} owned by {{organisationNamePD}}
         has been approved by the Designated National Authority.<br><br>
-
-        Sincerely,  <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-  VERIFICATION_REJECTED: {
-    id: "VERIFICATION_REJECTED",
-    subject: "Verification Report Rejected",
-    html: `
-        Hi {{name}}, <br><br>
-
-        Verification Report submitted for the project {{programmeName}} by the {{countryName}} Climate Fund has been rejected by Executive Board of {{countryName}} Climate Fund due to the following reason/s:<br>
-        {{remark}} <br><br>
-
-        Please submit again if required by clicking <a href="{{programmePageLink}}">here</a>. 
-        <br><br>
 
         Sincerely,  <br>
         The {{countryName}} Carbon Registry Team
@@ -1069,191 +790,6 @@ export const EmailTemplates = {
 
         Sincerely, <br>
         The {{countryName}} Carbon Registry Team
-        `,
-  },
-  CREDIT_ISSUANCE_SL: {
-    id: "CREDIT_ISSUANCE",
-    subject: "Credits Issued",
-    html: `
-        Hi {{name}}, <br><br>
-
-        {{programmeName}} of your organisation with the serial number {{serialNumber}} has been issued with {{credits}} credits.<br><br>
-
-        Click <a href="{{pageLink}}">here</a> for more details of the project.<br><br>
-
-        Sincerely, <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-
-  CREDIT_TRANSFER_SL_REQUEST: {
-    id: "CREDIT_TRANSFER_SL_REQUEST",
-    subject: "Credit Transfer Request Received",
-    html: `
-        Hi {{name}}, <br><br>
-
-        {{organisationName}} has requested to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}.<br><br>
-        Please review and approve by clicking <a href="{{pageLink}}">here</a>.<br><br>
-
-        Sincerely, <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-
-  CREDIT_RETIRE_SL_REQUEST: {
-    id: "CREDIT_RETIRE_SL_REQUEST",
-    subject: "Credit Retirement Request Received",
-    html: `
-        Hi {{name}}, <br><br>
-
-        {{organisationName}} has requested to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}}.<br><br>
-        Please review and approve by clicking <a href="{{pageLink}}">here</a>.<br><br>
-
-        Sincerely, <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-
-  CREDIT_TRANSFER_SL_REQUEST_APPROVED: {
-    id: "CREDIT_TRANSFER_SL_REQUEST_APPROVED",
-    subject: "Credit Transfer Request Approved",
-    html: `
-        Hi {{name}},<br><br>
-
-        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your organisation has been approved by {{countryName}} Climate Fund. <br><br>
-        Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
-
-        Sincerely, <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-
-  CREDIT_RECEIVED_AND_RETIRED_SL: {
-    id: "CREDIT_RECEIVED_AND_RETIRED_SL",
-    subject: "Credit Received and Retired",
-    html: `
-        Hi {{name}},<br><br>
-
-        {{fromCompany}} has transferred {{credits}} credits from {{programmeName}} to your organisation. {{credits}} tCO2e emissions have been inset from your organisation. <br><br>
-
-        Sincerely, <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-
-  CREDIT_RETIRE_SL_REQUEST_APPROVED: {
-    id: "CREDIT_RETIRE_SL_REQUEST_APPROVED",
-    subject: "Credit Retirement Request Approved",
-    html: `
-        Hi {{name}},<br><br>
-
-        Request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your organisation has been approved by {{countryName}} Climate Fund. <br><br>
-        Click <a href="{{pageLink}}">here</a> for more details of the retirement request <br><br>
-
-        Sincerely, <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-
-  CREDIT_TRANSFER_SL_REQUEST_REJECTED: {
-    id: "CREDIT_TRANSFER_SL_REQUEST_REJECTED",
-    subject: "Credit Transfer Request Declined",
-    html: `
-        Hi {{name}},<br><br>
-
-        Request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
-        {{remark}} <br><br>
-        Click <a href="{{pageLink}}">here</a> for more details of the transfer request <br><br>
-
-        Sincerely, <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-
-  CREDIT_RETIRE_SL_REQUEST_REJECTED: {
-    id: "CREDIT_RETIRE_SL_REQUEST_REJECTED",
-    subject: "Credit Retirement Request Declined",
-    html: `
-        Hi {{name}},<br><br>
-
-        Request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} made by your organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
-        {{remark}} <br><br>
-        Click <a href="{{pageLink}}">here</a> for more details of the retirement request <br><br>
-
-        Sincerely, <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-
-  CREDIT_TRANSFER_SL_REQUEST_CANCELED: {
-    id: "CREDIT_TRANSFER_SL_REQUEST_CANCELED",
-    subject: "Credit Transfer Request Cancelled",
-    html: `
-        Hi {{name}}, <br><br>
-
-        {{organisationName}} has cancelled their request to transfer {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} due to the following reason/s:<br>
-        {{remark}}<br><br>
-        Click <a href="{{pageLink}}">here</a> for more details of the transfer request.<br><br>
-
-        Sincerely, <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-
-  CREDIT_RETIRE_SL_REQUEST_CANCELED: {
-    id: "CREDIT_RETIRE_SL_REQUEST_CANCELED",
-    subject: "Credit Retirement Request Cancelled",
-    html: `
-        Hi {{name}}, <br><br>
-
-        {{organisationName}} has cancelled their request to retire {{credits}} credits with the serial number {{serialNumber}} from {{programmeName}} due to the following reason/s:<br>
-        {{remark}}<br><br>
-        Click <a href="{{pageLink}}">here</a> for more details of the retirement request.<br><br>
-
-        Sincerely, <br>
-        The {{countryName}} Carbon Registry Team
-        `,
-  },
-
-  CARBON_NEUTRAL_SL_REQUESTED: {
-    id: "CARBON_NEUTRAL_SL_REQUESTED",
-    subject: "Carbon Neutral Certificate Requested",
-    html: `
-        Hi {{name}},<br><br>
-
-        The Carbon Neutral Certificate for the project {{programmeName}} has been requested by the organisation {{organisationName}}.<br>
-        This can be approved/rejected from the organisation details page<br><br>
-
-        Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
-        `,
-  },
-
-  CARBON_NEUTRAL_SL_REQUEST_APPROVED: {
-    id: "CARBON_NEUTRAL_SL_REQUEST_APPROVED",
-    subject: "Carbon Neutral Certificate Approved",
-    html: `
-        Hi {{name}},<br><br>
-
-        The Carbon Neutral Certificate for the project {{programmeName}} requested by your organisation has been approved by {{countryName}} Climate Fund.<br>
-        This can be downloaded from your organisation details page<br><br>
-
-        Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
-        `,
-  },
-
-  CARBON_NEUTRAL_SL_REQUEST_REJECTED: {
-    id: "CARBON_NEUTRAL_SL_REQUEST_REJECTED",
-    subject: "Carbon Neutral Certificate Declined",
-    html: `
-        Hi {{name}},<br><br>
-
-        The Carbon Neutral Certificate for the project {{programmeName}} requested by your organisation has been rejected by {{countryName}} Climate Fund due to the following reason/s:<br>
-        {{remark}} <br><br>
-
-        Sincerely, <br>
-        The {{countryName}} Carbon Credit Registry Team
         `,
   },
 

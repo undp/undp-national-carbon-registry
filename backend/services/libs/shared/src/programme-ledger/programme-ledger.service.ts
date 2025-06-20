@@ -3,7 +3,6 @@ import { InjectEntityManager } from "@nestjs/typeorm";
 import { PRECISION } from "@undp/carbon-credit-calculator/dist/esm/calculator";
 import { plainToClass } from "class-transformer";
 import { dom } from "ion-js";
-import axios from "axios";
 import { generateSerialNumber } from "@undp/serial-number-gen";
 import { EntityManager } from "typeorm";
 import { ProgrammeHistoryDto } from "../dto/programme.history.dto";
@@ -24,7 +23,6 @@ import { MitigationProperties } from "../dto/mitigation.properties";
 import { RetireType } from "../enum/retire.type.enum";
 import { GovernmentCreditAccounts } from "../enum/government.credit.accounts.enum";
 import { ProjectProposalStage } from "../enum/projectProposalStage.enum";
-import { SLCFSerialNumberGeneratorService } from "../util/slcfSerialNumberGenerator.service";
 import { ProjectEntity } from "../entities/projects.entity";
 import { ActivityStateEnum } from "../enum/activity.state.enum";
 import { ActivityEntity } from "../entities/activity.entity";
@@ -35,7 +33,6 @@ import { CreditBlocksManagementService } from "../credit-blocks-management/credi
 import { User } from "../entities/user.entity";
 import { CreditTransferDto } from "../dto/credit.transfer.dto";
 import { CreditRetireRequestDto } from "../dto/credit.retire.request.dto";
-import { CounterService } from "../util/counter.service";
 import { CreditTransactionTypesEnum } from "../enum/credit.transaction.types.enum";
 import { CreditTransactionStatusEnum } from "../enum/credit.transaction.status.enum";
 import { CreditTransactionsEntity } from "../entities/credit.transactions.entity";
@@ -50,9 +47,7 @@ export class ProgrammeLedgerService {
     @InjectEntityManager() private entityManger: EntityManager,
     private ledger: LedgerDBInterface,
     private helperService: HelperService,
-    private serialNumberGenerator: SLCFSerialNumberGeneratorService,
     private readonly creditBlocksManagementService: CreditBlocksManagementService,
-    private readonly counterService: CounterService,
     private readonly serialNumberManagementService: SerialNumberManagementService
   ) {}
 

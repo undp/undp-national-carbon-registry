@@ -26,7 +26,6 @@ import { PasswordHashService } from "./passwordHash.service";
 import { LetterSustainableDevSupportLetterGen } from "./document-generators/letter.sustainable.dev.support";
 import { DataExportService } from "./data.export.service";
 import { HttpUtilService } from "./http.util.service";
-import { SLCFSerialNumberGeneratorService } from "./slcfSerialNumberGenerator.service";
 import { VoluntarilyCancellationCertificateGenerator } from "./document-generators/voluntarilyCancellationCertificate.gen";
 import { ProjectRegistrationCertificateGenerator } from "./document-generators/projectRegistrationCertificate.gen";
 import { DateUtilService } from "./dateUtil.service";
@@ -81,7 +80,6 @@ import { IsValidProvinceConstraint } from "../decorators/validProvince.decorator
     LetterSustainableDevSupportLetterGen,
     DataExportService,
     HttpUtilService,
-    SLCFSerialNumberGeneratorService,
     VoluntarilyCancellationCertificateGenerator,
     ProjectRegistrationCertificateGenerator,
     CreditIssueCertificateGenerator,
@@ -105,7 +103,6 @@ import { IsValidProvinceConstraint } from "../decorators/validProvince.decorator
     LetterSustainableDevSupportLetterGen,
     DataExportService,
     HttpUtilService,
-    SLCFSerialNumberGeneratorService,
     VoluntarilyCancellationCertificateGenerator,
     ProjectRegistrationCertificateGenerator,
     CreditIssueCertificateGenerator,
