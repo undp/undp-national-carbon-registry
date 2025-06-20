@@ -59,11 +59,6 @@ const LayoutSider = (props: LayoutSiderProps) => {
   const items: MenuItem[] = [
     getItem(t("nav:dashboard"), "dashboard", <DashboardOutlined />),
     getItem(
-      t("nav:slcfprogrammes"),
-      "programmeManagement/viewAllProjects",
-      <AppstoreOutlined />
-    ),
-    getItem(
       t("nav:projectList"),
       "programmeManagement/viewAll",
       <UnorderedListOutlined />
@@ -218,7 +213,6 @@ const LayoutSider = (props: LayoutSiderProps) => {
                     item?.key === "ndcManagement/viewAll" ||
                     item?.key === "investmentManagement/viewAll" ||
                     item?.key === "retirementManagement/viewAll" ||
-                    item?.key === "programmeManagement/viewAll" ||
                     item?.key === "creditTransfers/viewAll"
                       ? "custom-padding-left"
                       : item?.key === "cdmManagement/viewAll"
