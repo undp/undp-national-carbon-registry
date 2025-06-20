@@ -100,10 +100,7 @@ import { DocumentStatus } from "../../Definitions/Enums/document.status";
 import { CompanyState } from "../../Definitions/Enums/company.state.enum";
 
 import { Loading } from "../Loading/loading";
-import {
-  DevBGColor,
-  DevColor,
-} from "../../Styles/role.color.constants";
+import { DevBGColor, DevColor } from "../../Styles/role.color.constants";
 import { CarbonSystemType } from "../../Definitions/Enums/carbonSystemType.enum";
 import { RoleIcon } from "../IconComponents/RoleIcon/role.icon";
 import { InfoView } from "../InfoView/info.view";
@@ -124,9 +121,12 @@ import { DocumentStateEnum } from "../../Definitions/Definitions/documentState.e
 import { DocumentEnum } from "../../Definitions/Enums/document.enum";
 import VerificationPhaseForms from "./projectForms/VerificationPhaseForms";
 import VerificationPhaseStatus from "./verificationPhaseStatus/verificationPhaseStatus";
-import { defaultTimeout, defaultTimeoutForInfApprove } from "../../Definitions/Constants/defaultTimeout";
+import {
+  defaultTimeout,
+  defaultTimeoutForInfApprove,
+} from "../../Definitions/Constants/defaultTimeout";
 
-const SLCFProjectDetailsViewComponent = (props: any) => {
+const ProjectDetailsViewComponent = (props: any) => {
   const { get, put, post } = useConnection();
 
   const { userInfoState } = useUserContext();
@@ -316,7 +316,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     return dt;
   };
 
-
   const drawMap = () => {
     setTimeout(async () => {
       if (
@@ -460,7 +459,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         setTimeout(() => {
           getProgrammeById();
           setSlcfActionModalVisible(false);
-        }, defaultTimeout)
+        }, defaultTimeout);
       }
     } catch (error: any) {
       setSlcfActionModalVisible(false);
@@ -473,7 +472,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
     }
   };
 
-  
   const approveNotificationForm = async () => {
     setLoadingAll(true);
     try {
@@ -504,14 +502,12 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         duration: 3,
         style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
-    } 
-  }; 
+    }
+  };
 
   useEffect(() => {
     setActivityTimelineKey((key) => key + 1);
   }, [historyData.length]);
-
-
 
   const updateCreditInfo = (response: any) => {
     if (!(response.data instanceof Array) && response.data && data) {
@@ -524,7 +520,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
       genPieData(response.data);
     }
   };
-
 
   const onCreditRetireTransferAction = async (
     body: any,
@@ -872,7 +867,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 <OrganisationSlStatus
                   organisationStatus={parseInt(ele.company.state)}
                   t={companyProfileTranslations}
-                  ></OrganisationSlStatus>
+                ></OrganisationSlStatus>
               </div>
             </Col>
           </Row>
@@ -974,7 +969,6 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         </Button>
       );
     }
-
   }
 
   const generalInfo: any = {};
@@ -1003,9 +997,8 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
         } else if (k === "sectoralScope") {
           generalInfo[text] = t(`projectDetailsView:${v}`);
         } else if (k === "sector") {
-          generalInfo[text] = t(`projectDetailsView:${v}`)
-        }
-        else if (k === "purposeOfCreditDevelopment") {
+          generalInfo[text] = t(`projectDetailsView:${v}`);
+        } else if (k === "purposeOfCreditDevelopment") {
           generalInfo[text] = (
             <Tag color={getCreditTypeTagType(v as CreditTypeSl)}>
               {addSpaces(getCreditTypeName(v as string))}
@@ -1409,7 +1402,7 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
                 />
               </div>
             </Card>
-             <Card className="card-container">
+            <Card className="card-container">
               <div className="info-view ">
                 <div className="title">
                   <span className="title-icon">
@@ -1588,4 +1581,4 @@ const SLCFProjectDetailsViewComponent = (props: any) => {
   );
 };
 
-export default SLCFProjectDetailsViewComponent;
+export default ProjectDetailsViewComponent;
