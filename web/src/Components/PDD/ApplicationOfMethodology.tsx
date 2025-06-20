@@ -61,7 +61,7 @@ const ApplicationOfMethodology = (props: CustomStepsProps) => {
           },
         ]);
       }
-      form.setFieldValue("netEmissionReductions", String(netGHGEmissions));
+      form.setFieldValue("netEmissionReductions", netGHGEmissions);
     } else {
       const listVals = form.getFieldValue("extraEmissionReductions");
 

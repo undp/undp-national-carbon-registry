@@ -15,7 +15,7 @@
   "buyersTitle": "Buyers",
   "buyersBody": "to access a trustworthy and transparent marketplace for carbon credits.",
   "dashboardtitle":"Why Carbon Registries?",
-  "allinoneplatform":"All in One Carbon Management Platform and Dashboard for Countries",
+  "allinoneplatform":"All in One Carbon Management Platform and Dashboard for National Governments",
   "totprojects":"Total Projects",
   "totcredits":"Total Credits",
   "issued":"Issued",
@@ -77,5 +77,6 @@
   "terms": "Terms of Use",
   "privacy": "Privacy Policy",
   "help": "Help",
-  "nationalNdc": "NATIONAL NDC"
+  "nationalNdc": "NATIONAL NDC",
+  "example": "(example)"
 }
