@@ -22,7 +22,7 @@ export class LocalFileHandlerService implements FileHandlerInterface {
       await fsAync.mkdirSync(folders, { recursive: true });
     }
     await fs.writeFile(resolvedPath, content, "base64");
-    return baseUrl + "/" + path;
+    return baseUrl + "/" + filePath;
   }
   public getUrl(path: string): Promise<string> {
     throw new Error("Method not implemented.");
