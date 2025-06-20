@@ -6,13 +6,10 @@ import { Company } from "@app/shared/entities/company.entity";
 import { Programme } from "@app/shared/entities/programme.entity";
 import { CreditOverall } from "@app/shared/entities/credit.overall.entity";
 import { LocationInterface } from "@app/shared/location/location.interface";
-import { CompanyRole } from "@app/shared/enum/company.role.enum";
 import { AsyncOperationsInterface } from "@app/shared/async-operations/async-operations.interface";
 import { AsyncActionType } from "@app/shared/enum/async.action.type.enum";
-import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
 import { OrganisationCreditAccounts } from "@app/shared/enum/organisation.credit.accounts.enum";
 import { ProjectEntity } from "@app/shared/entities/projects.entity";
-import { DocumentEntity } from "@app/shared/entities/document.entity";
 import { DocumentManagementService } from "@app/shared/document-management/document-management.service";
 import { CreditBlocksEntity } from "@app/shared/entities/credit.blocks.entity";
 import { CreditTransactionsManagementService } from "@app/shared/credit-transactions-management/credit-transactions-management.service";
@@ -23,8 +20,6 @@ export class ProcessEventService {
     private logger: Logger,
     @InjectRepository(Programme) private programmeRepo: Repository<Programme>,
     @InjectRepository(Company) private companyRepo: Repository<Company>,
-    @InjectRepository(ProgrammeSl)
-    private programmeSlRepo: Repository<ProgrammeSl>,
     @InjectRepository(ProjectEntity)
     private projectRepo: Repository<ProjectEntity>,
     @InjectRepository(CreditBlocksEntity)
@@ -266,61 +261,6 @@ export class ProcessEventService {
         this.logger.error(
           "Unexpected programme. Company does not found",
           companyId
-        );
-      }
-    }
-  }
-
-  async processProgrammeSl(programme: ProgrammeSl): Promise<any> {
-    this.logger.log(`Processing message ${programme}`);
-    if (programme) {
-      const previousProgramme = await this.programmeSlRepo.findOneBy({
-        programmeId: programme.programmeId,
-      });
-      if (
-        previousProgramme == null ||
-        programme.txTime == undefined ||
-        previousProgramme.txTime == undefined ||
-        previousProgramme.txTime <= programme.txTime
-      ) {
-        const columns =
-          this.programmeRepo.manager.connection.getMetadata(
-            "ProgrammeSl"
-          ).columns;
-
-        const columnNames = columns
-          .filter(function (item) {
-            return programme[item.propertyName] != undefined;
-          })
-          .map((e) => e.propertyName);
-
-        this.logger.debug(`${columnNames} ${JSON.stringify(programme)}`);
-        await this.entityManager.transaction(async (em) => {
-          await em
-            .getRepository(ProgrammeSl)
-            .createQueryBuilder()
-            .insert()
-            .values(programme)
-            .orUpdate(columnNames, ["programmeId"])
-            .execute();
-
-          if (!previousProgramme) {
-            await em
-              .getRepository(Company)
-              .createQueryBuilder()
-              .update(Company)
-              .set({
-                programmeCount: () => `COALESCE("programmeCount", 0) + 1`,
-              })
-              .where("companyId = :id", { id: programme.companyId })
-              .execute();
-          }
-        });
-      } else {
-        this.logger.error(
-          `Skipping the programme due to old record ${JSON.stringify(
-            programme
-          )} ${previousProgramme}`
         );
       }
     }
