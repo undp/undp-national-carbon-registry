@@ -8,7 +8,7 @@ import SignUp from "./Pages/Signup/signup";
 import CustomLayout from "./Components/Layout/layout";
 import AddUser from "./Pages/AddUser/addUser";
 import UserManagement from "./Pages/UserManagement/userManagement";
-import RegistryDashboard from "./Pages/Dashboard/registry/registrydashboard";
+// import RegistryDashboard from "./Pages/Dashboard/registry/registrydashboard";
 import AddNewCompany from "./Pages/Company/addNewCompany";
 import CompanyManagement from "./Pages/CompanyManagement/companyManagement";
 // import ProgrammeManagement from './Pages/Old_ProgrammeManagement/programmeManagement';
@@ -41,7 +41,6 @@ import CMAFormPage from "./Pages/PDD/PDDPage";
 import ValidationReportPage from "./Pages/ValidationReportPage.tsx/ValidationReportPage";
 import SLCFRetirement from "./Pages/SLCFRetirementManagement/SLCFRetirement";
 import VerificationReport from "./Pages/ProgrammeManagement/VerificationReport";
-import SiteVisitCheckListPage from "./Pages/SiteVisitCheckListPage/SiteVisitCheckListPage";
 import Settings from "./Pages/Settings/settings";
 import SLCFDashboard from "./Pages/Dashboard/slcf/slcfdashboard";
 import AddProgramme from "./Pages/ProgrammeManagement/addProgramme";
@@ -161,10 +160,6 @@ const App = () => {
                       <Route
                         path="verificationReport/:id/:verificationRequestId"
                         element={<VerificationReport />}
-                      />
-                      <Route
-                        path="siteVisitCheckList/:id/"
-                        element={<SiteVisitCheckListPage />}
                       />
                       <Route path="pdd/:id/" element={<CMAFormPage />} />
                       <Route
