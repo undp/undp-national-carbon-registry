@@ -90,69 +90,6 @@ export const AddNewCompanyComponent = (props: any) => {
 
   const [faxNumber, setFaxNumber] = useState(state?.record?.faxNo || '');
 
-  // let selectedGovDepatments = ministryOrgs[selectedMinistry];
-  // if (existgovDep && existgovDep.length > 0) {
-  //   selectedGovDepatments = selectedGovDepatments.filter((x: string) => !existgovDep.includes(x));
-  // }
-  // const onChangeMinistry = async (val: any) => {
-  //   const key = Object.keys(Ministry)[Object.values(Ministry).indexOf(val as Ministry)];
-  //   setSelectedMinistry(String(key));
-  //   if (isUpdate && val === initialMinistry) {
-  //     formOne.setFieldValue(
-  //       'govDep',
-  //       Object.keys(GovDepartment)[
-  //         Object.values(GovDepartment).indexOf(intialGovDep as GovDepartment)
-  //       ]
-  //     );
-  //   } else {
-  //     formOne.setFieldValue('govDep', '');
-  //   }
-  //   // eslint-disable-next-line no-use-before-define, @typescript-eslint/no-use-before-define
-  //   getGovDep(val);
-  // };
-
-  // const getMinistryList = async () => {
-  //   setLoadingList(true);
-  //   try {
-  //     let leftmins: string[] = [];
-  //     const excludingmin: string[] = [];
-  //     for (const min of ministries) {
-  //       const response: any = await post(API_PATHS.ORGANIZATION_DETAILS, {
-  //         page: 1,
-  //         size: 100,
-  //         filterAnd: [
-  //           {
-  //             key: 'ministry',
-  //             operation: '=',
-  //             value: min,
-  //           },
-  //         ],
-  //       });
-  //       const minkey = Object.keys(Ministry)[Object.values(Ministry).indexOf(min as Ministry)];
-  //       if (response.data.length === ministryOrgs[minkey].length) {
-  //         if (!isUpdate && min !== initialMinistry) {
-  //           excludingmin.push(min);
-  //         }
-  //       }
-  //     }
-  //     leftmins = ministries.filter((x: string) => !excludingmin.includes(x));
-  //     setMinistryDropdown(leftmins);
-  //   } catch (error: any) {
-  //     console.log('Error in getting min list', error);
-  //   } finally {
-  //     setLoadingList(false);
-  //   }
-  // };
-
-  // const getCountryList = async () => {
-  //   const response = await get('national/organisation/countries');
-  //   if (response.data) {
-  //     const alpha2Names = response.data.map((item: any) => {
-  //       return item.alpha2;
-  //     });
-  //     setCountries(alpha2Names);
-  //   }
-  // };
 
   const getRegionList = async () => {
     // setLoadingList(true);
@@ -165,49 +102,10 @@ export const AddNewCompanyComponent = (props: any) => {
     }
   };
 
-  // const getGovDep = async (val: any) => {
-  //   setLoadingList(true);
-  //   try {
-  //     const response: any = await post('national/organisation/query', {
-  //       page: 1,
-  //       size: 200,
-  //       filterAnd: [
-  //         {
-  //           key: 'ministry',
-  //           operation: '=',
-  //           value: val,
-  //         },
-  //       ],
-  //     });
-  //     if (response && response.data) {
-  //       const existDep: string[] = [];
-  //       for (const i in response.data) {
-  //         if (response.data[i].govDep && response.data[i].govDep.length > 0) {
-  //           const departName =
-  //             Object.keys(GovDepartment)[
-  //               Object.values(GovDepartment).indexOf(response.data[i].govDep as GovDepartment)
-  //             ];
-  //           if (response.data[i].govDep !== intialGovDep) {
-  //             existDep.push(departName);
-  //           } else {
-  //             continue;
-  //           }
-  //         }
-  //       }
-  //       setexistGovdep(existDep);
-  //     }
-  //   } catch (error: any) {
-  //     console.log('Error in getting exist Government Department list', error);
-  //   } finally {
-  //     setLoadingList(false);
-  //   }
-  // };
 
   useEffect(() => {
     setIsUpdate(state?.record ? true : false);
-    // getCountryList();
     getRegionList();
-    // getMinistryList();
     if (state?.record?.logo) {
       setFileList([
         {
@@ -219,12 +117,7 @@ export const AddNewCompanyComponent = (props: any) => {
         },
       ]);
     }
-    // if (state?.record?.ministry) {
-    //   const key =
-    //     Object.keys(Ministry)[Object.values(Ministry).indexOf(state?.record?.ministry as Ministry)];
-    //   setSelectedMinistry(key);
-    //   getGovDep(state?.record?.ministry);
-    // }
+
   }, []);
 
   const normFile = (e: any) => {
@@ -285,7 +178,6 @@ export const AddNewCompanyComponent = (props: any) => {
       if (companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
         requestData.company.name = 'Ministry of ' + requestData.company.ministry;
       }
-      console.log('--------------requestData---------------', requestData);
       if (isGuest) {
         const response = await post(API_PATHS.REGISTER_USER, requestData);
         if (response.status === 200 || response.status === 201) {
@@ -330,7 +222,7 @@ export const AddNewCompanyComponent = (props: any) => {
   const companyRoleMap: Record<string, string> = {
   PD: 'Project Developer',
   IC: 'Independent Certifier',
-
+  DNA: 'DNA'
 };
 
 
@@ -378,27 +270,6 @@ export const AddNewCompanyComponent = (props: any) => {
         values.paymentId = formOneValues.paymentId;
       }
 
-      if (state?.record?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
-        if (formOneValues.govDep in GovDepartment) {
-          const key = formOneValues.govDep as keyof typeof GovDepartment;
-          values.govDep = GovDepartment[key];
-        } else {
-          values.govDep = formOneValues.govDep;
-        }
-        values.ministry = formOneValues.ministry;
-      }
-      if (state?.record?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
-        values.sectoralScope = formOneValues.sectoralScope;
-        values.nameOfMinister = formOneValues.nameOfMinister;
-        // values.name = formOneValues.ministry;
-      }
-      if (state?.record?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
-        values.omgePercentage = Math.round(Number(formOneValues.omgePercentage));
-      }
-      if (state?.record?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
-        values.nationalSopValue = Math.floor(Number(formOneValues.nationalSopValue));
-      }
-
       if (formOneValues.website) {
         values.website = 'https://' + formOneValues.website;
       } else {
@@ -415,7 +286,6 @@ export const AddNewCompanyComponent = (props: any) => {
 
       console.log('--------------values---------------', values);
       const response = await put(API_PATHS.UPDATE_ORGANIZATION, values);
-      console.log('-------------------ORg update response-------------------', response);
       if (response.status === 200 || response.status === 201) {
         setUserInfo({
           companyLogo: response.data.logo,
@@ -599,29 +469,6 @@ export const AddNewCompanyComponent = (props: any) => {
                   )}
                   {companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY && (
                     <div className="space-container" style={{ width: '100%' }}>
-                      {/* <Form.Item
-                        label={t('addCompany:Ministry')}
-                        name="ministry"
-                        initialValue={state?.record?.ministry}
-                        rules={[
-                          {
-                            required: true,
-                            message: `${t('addCompany:Ministry')} ${t('isRequired')}`,
-                          },
-                        ]}
-                      >
-                        {companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-                        ministryDropdown &&
-                        ministryDropdown.length > 0 ? (
-                          <Select size="large" onChange={onChangeMinistry}>
-                            {ministryDropdown.map((ministry: any) => (
-                              <Select.Option value={ministry}>{ministry}</Select.Option>
-                            ))}
-                          </Select>
-                        ) : (
-                          <Select size="large" disabled={true}></Select>
-                        )}
-                      </Form.Item> */}
                       {
                         <Form.Item
                           label={t('addCompany:email')}
@@ -657,35 +504,7 @@ export const AddNewCompanyComponent = (props: any) => {
                           <Input size="large" />
                         </Form.Item>
                       }
-                      {/* {companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY && (
-                        <Form.Item
-                          label={t('addCompany:ministerName')}
-                          name="nameOfMinister"
-                          initialValue={state?.record?.nameOfMinister}
-                          rules={[
-                            {
-                              required: true,
-                              message: '',
-                            },
-                            {
-                              validator: async (rule, value) => {
-                                if (
-                                  String(value).trim() === '' ||
-                                  String(value).trim() === undefined ||
-                                  value === null ||
-                                  value === undefined
-                                ) {
-                                  throw new Error(
-                                    `${t('addCompany:ministerName')} ${t('isRequired')}`
-                                  );
-                                }
-                              },
-                            },
-                          ]}
-                        >
-                          <Input size="large" />
-                        </Form.Item>
-                      )} */}
+                     
                     </div>
                   )}
                   <Form.Item
@@ -850,106 +669,11 @@ export const AddNewCompanyComponent = (props: any) => {
                             </Tooltip>
                           </div>
 
-                          {/* {userInfoState?.companyRole !==
-                            CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-                            !isGuest && (
-                              <div className="minister-radio-container">
-                                {ministryDropdown.length > 0 ? (
-                                  <Tooltip placement="top" title={t('addCompany:ministryToolTip')}>
-                                    <Radio.Button className="minister" value="Ministry">
-                                      <AuditOutlined className="role-icons" />
-                                      {t('addCompany:Ministry')}
-                                    </Radio.Button>
-                                  </Tooltip>
-                                ) : (
-                                  <Tooltip placement="top" title={t('addCompany:allmincreated')}>
-                                    <Radio.Button className="minister" value="Ministry" disabled>
-                                      <AuditOutlined className="role-icons" />
-                                      {t('addCompany:Ministry')}
-                                    </Radio.Button>
-                                  </Tooltip>
-                                )}
-                              </div>
-                            )} */}
                         </>
                       )}
                     </Radio.Group>
                   </Form.Item>
 
-                  {/* {companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY && (
-                    <Form.Item
-                      label={t('addCompany:govdep')}
-                      name="govDep"
-                      initialValue={
-                        Object.keys(GovDepartment)[
-                          Object.values(GovDepartment).indexOf(intialGovDep as GovDepartment)
-                        ]
-                      }
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('addCompany:govdep')} ${t('isRequired')}`,
-                        },
-                        {
-                          validator: async (rule, value) => {
-                            const val =
-                              Object.keys(GovDepartment)[
-                                Object.values(GovDepartment).indexOf(value as GovDepartment)
-                              ];
-                            if (
-                              val &&
-                              val.length > 0 &&
-                              selectedGovDepatments &&
-                              !selectedGovDepatments.includes(val)
-                            ) {
-                              throw new Error(`${t('addCompany:govdepnotexist')}`);
-                            }
-                          },
-                        },
-                      ]}
-                    >
-                      {companyRole !== CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-                      selectedGovDepatments &&
-                      selectedGovDepatments.length > 0 ? (
-                        <Select size="large">
-                          {selectedGovDepatments?.map((val: any) => {
-                            if (val in GovDepartment) {
-                              const key = val as keyof typeof GovDepartment;
-                              return (
-                                <Select.Option key={GovDepartment[key]} value={GovDepartment[key]}>
-                                  {val}
-                                </Select.Option>
-                              );
-                            }
-                            return null;
-                          })}
-                        </Select>
-                      ) : (
-                        <Select size="large" disabled={true}></Select>
-                      )}
-                    </Form.Item>
-                  )} */}
-                  {/* {companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY && (
-                    <Form.Item
-                      label={t('addCompany:sectoralScope')}
-                      name="sectoralScope"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('addCompany:sectoralScope')} ${t('isRequired')}`,
-                        },
-                      ]}
-                      initialValue={state?.record?.sectoralScope}
-                    >
-                      <Select mode="multiple" size="large" maxTagCount={2} allowClear>
-                        {Object.entries(SectoralScope).map(([key, value]) => (
-                          <Select.Option key={value} value={value}>
-                            {key}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  )} */}
                   <Form.Item
                     name="phoneNo"
                     label={t('addCompany:phoneNo')}
@@ -1005,14 +729,6 @@ export const AddNewCompanyComponent = (props: any) => {
                       },
                       {
                         validator: async (rule: any, value: any) => {
-                          // if (
-                          //   String(value).trim() === '' ||
-                          //   String(value).trim() === undefined ||
-                          //   value === null ||
-                          //   value === undefined
-                          // ) {
-                          //   throw new Error(`${t('addCompany:phoneNo')} ${t('isRequired')}`);
-                          // } else
                           if (
                             String(value).trim() !== '' &&
                             String(value).trim() !== undefined &&

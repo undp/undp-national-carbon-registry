@@ -48,7 +48,6 @@ import validator from "validator";
 import { toMoment } from "../../Utils/convertTime";
 import { defaultTimeout } from "../../Definitions/Constants/defaultTimeout";
 
-type SizeType = Parameters<typeof Form>[0]["size"];
 
 const maximumImageSize = import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE
   ? parseInt(import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE)
@@ -57,13 +56,6 @@ const maximumImageSize = import.meta.env.VITE_APP_MAXIMUM_FILE_SIZE
 export const PROJECT_GEOGRAPHY: { [key: string]: string } = {
   SINGLE: "Single Location",
   MULTIPLE: "Scattered in multiple locations",
-};
-
-const PROJECT_CATEGORIES: { [key: string]: string } = {
-  RENEWABLE_ENERGY: "Renewable Energy",
-  AFFORESTATION: "Afforestation",
-  REFORESTATION: "Reforestation",
-  OTHER: "Other",
 };
 
 const PROJECT_STATUS: { [key: string]: string } = {
@@ -139,7 +131,6 @@ export const ProgrammeCreationComponent = (props: any) => {
 
   const { post, get } = useConnection();
   const [form] = Form.useForm();
-  // const [values, setValues] = useState<any>(undefined);
 
   const [disableFields, setDisableFields] = useState<boolean>(false);
 
@@ -340,10 +331,6 @@ export const ProgrammeCreationComponent = (props: any) => {
     }
   };
 
-  // const onProjectCategorySelect = (value: string) => {
-  //   setProjectCategory(value);
-  // };
-
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
       return e;
@@ -428,7 +415,6 @@ export const ProgrammeCreationComponent = (props: any) => {
 
   const submitForm = async (values: any) => {
     const base64Docs: string[] = [];
-    console.log("---------optional docs----------", values?.optionalDocuments);
 
     if (values?.optionalDocuments && values?.optionalDocuments.length > 0) {
       const docs = values.optionalDocuments;
@@ -701,201 +687,6 @@ export const ProgrammeCreationComponent = (props: any) => {
                                 </Select>
                               </Form.Item>
 
-                              {/* <Row justify="space-between">
-                                <Col span={24}>
-                                  <Form.Item
-                                    label={t('addProgramme:projectCategory')}
-                                    name="projectCategory"
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('addProgramme:projectCategory')}`,
-                                      },
-                                    ]}
-                                  >
-                                    <Select size="large" onChange={onProjectCategorySelect}>
-                                      {Object.keys(PROJECT_CATEGORIES).map((category: string) => (
-                                        <Select.Option value={category}>
-                                          {PROJECT_CATEGORIES[category]}
-                                        </Select.Option>
-                                      ))}
-                                    </Select>
-                                  </Form.Item>
-                                </Col>
-                                {projectCategory === 'OTHER' && (
-                                  <Col span={14}>
-                                    <Form.Item
-                                      label={t('addProgramme:otherCategory')}
-                                      name="otherCategory"
-                                      rules={[
-                                        {
-                                          required: true,
-                                          message: `${t('addProgramme:otherCategory')} ${t(
-                                            'isRequired'
-                                          )}`,
-                                        },
-                                      ]}
-                                    >
-                                      <Input size="large" />
-                                    </Form.Item>
-                                  </Col>
-                                )}
-                              </Row> */}
-
-                              {/* {(projectCategory === 'AFFORESTATION' ||
-                                projectCategory === 'REFORESTATION') && (
-                                <>
-                                  <Form.Item
-                                    label={t('addProgramme:landExtent')}
-                                    name="landExtent"
-                                    className="landList-input"
-                                    tooltip={{
-                                      title: `${t('addProgramme:landExtentAndSpeciesPlantedInfo')}`,
-                                      icon: (
-                                        <InfoCircleOutlined
-                                          style={{ color: 'rgba(58, 53, 65, 0.5)' }}
-                                        />
-                                      ),
-                                      placement: 'topLeft',
-                                    }}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('addProgramme:landExtent')} ${t(
-                                          'isRequired'
-                                        )}`,
-                                      },
-                                      {
-                                        validator(rule, value) {
-                                          if (!value) {
-                                            return Promise.resolve();
-                                          }
-
-                                          // eslint-disable-next-line no-restricted-globals
-                                          if (isNaN(value)) {
-                                            return Promise.reject(
-                                              new Error('Land Extent should be an number')
-                                            );
-                                          }
-
-                                          return Promise.resolve();
-                                        },
-                                      },
-                                    ]}
-                                  >
-                                    <Input size="large" addonAfter="ha" />
-                                  </Form.Item>
-                                  <p>{isMultipleLocations}</p>
-                                  {isMultipleLocations && (
-                                    <>
-                                      <Form.List name="landList">
-                                        {(fields, { add, remove }) => (
-                                          <>
-                                            {fields.map(({ key, name, ...restField }) => (
-                                              <div className="landList">
-                                                <Form.Item
-                                                  {...restField}
-                                                  name={[name, 'land']}
-                                                  label={t('addProgramme:landExtent')}
-                                                  // wrapperCol={{ span: 22 }}
-                                                  className="landList-input"
-                                                  tooltip={{
-                                                    title: `${t(
-                                                      'addProgramme:landExtentAndSpeciesPlantedInfo'
-                                                    )}`,
-                                                    icon: (
-                                                      <InfoCircleOutlined
-                                                        style={{ color: 'rgba(58, 53, 65, 0.5)' }}
-                                                      />
-                                                    ),
-                                                  }}
-                                                  rules={[
-                                                    {
-                                                      required: true,
-                                                      message: `${t('addProgramme:landExtent')} ${t(
-                                                        'isRequired'
-                                                      )}`,
-                                                    },
-                                                    {
-                                                      validator(rule, value) {
-                                                        if (!value) {
-                                                          return Promise.resolve();
-                                                        }
-
-                                                        // eslint-disable-next-line no-restricted-globals
-                                                        if (isNaN(value)) {
-                                                          return Promise.reject(
-                                                            new Error(
-                                                              'Land Extent should be an number'
-                                                            )
-                                                          );
-                                                        }
-
-                                                        return Promise.resolve();
-                                                      },
-                                                    },
-                                                  ]}
-                                                >
-                                                  <Input size="large" addonAfter="ha" />
-                                                </Form.Item>
-                                                <Form.Item>
-                                                  <Button
-                                                    type="dashed"
-                                                    onClick={() => remove(name)}
-                                                    className="addMinusBtn"
-                                                    icon={<MinusOutlined />}
-                                                  ></Button>
-                                                </Form.Item>
-                                              </div>
-                                            ))}
-                                            <Form.Item>
-                                              <Button
-                                                type="dashed"
-                                                onClick={() => {
-                                                  add();
-                                                }}
-                                                size="large"
-                                                className="addMinusBtn"
-                                                // block
-                                                icon={<PlusOutlined />}
-                                              ></Button>
-                                            </Form.Item>
-                                          </>
-                                        )}
-                                      </Form.List>
-                                    </>
-                                  )}
-                                </>
-                              )} */}
-
-                              {/* {(projectCategory === 'AFFORESTATION' ||
-                                projectCategory === 'REFORESTATION') && (
-                                <>
-                                  <Form.Item
-                                    label={t('addProgramme:speciesPlanted')}
-                                    name="speciesPlanted"
-                                    tooltip={{
-                                      title: `${t('addProgramme:landExtentAndSpeciesPlantedInfo')}`,
-                                      icon: (
-                                        <InfoCircleOutlined
-                                          style={{ color: 'rgba(58, 53, 65, 0.5)' }}
-                                        />
-                                      ),
-                                    }}
-                                    rules={[
-                                      {
-                                        required: true,
-                                        message: `${t('addProgramme:speciesPlanted')} ${t(
-                                          'isRequired'
-                                        )}`,
-                                      },
-                                    ]}
-                                  >
-                                    <Input size="large" />
-                                  </Form.Item>
-                                </>
-                              )} */}
-
                               <Form.Item
                                 label={t("addProgramme:province")}
                                 name="province"
@@ -955,26 +746,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                   )}
                                 </Select>
                               </Form.Item>
-                              {/* <Form.Item
-                                label={t('addProgramme:dsDivision')}
-                                name="dsDivision"
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: `${t('addProgramme:dsDivision')} ${t('isRequired')}`,
-                                  },
-                                ]}
-                              >
-                                <Select
-                                  size="large"
-                                  placeholder={t('addProgramme:dsDivisionPlaceholder')}
-                                  onSelect={onDivisionSelect}
-                                >
-                                  {dsDivisions.map((division: string) => (
-                                    <Select.Option value={division}>{division}</Select.Option>
-                                  ))}
-                                </Select>
-                              </Form.Item> */}
+                            
                               <Form.Item
                                 label={t("addProgramme:city")}
                                 name="city"
@@ -1320,7 +1092,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                         if (
                                           !isValidateFileType(
                                             file[i]?.type,
-                                            DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
+                                            // DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT
                                           )
                                         ) {
                                           throw new Error(

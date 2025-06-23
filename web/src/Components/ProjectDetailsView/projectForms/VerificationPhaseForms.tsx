@@ -6,7 +6,7 @@ import moment from "moment";
 import { FormMode } from "../../../Definitions/Enums/formMode.enum";
 import { CompanyRole } from "../../../Definitions/Enums/company.role.enum";
 import { useEffect, useState } from "react";
-import { activityPermissions } from "../../../Utils/documentsPermissionSl";
+import { activityPermissions } from "../../../Utils/documentsPermission";
 import { useUserContext } from "../../../Context/UserInformationContext/userInformationContext";
 import {
   DocType,
