@@ -38,7 +38,7 @@ import PDDFormPage from "./Pages/PDD/PDDPage";
 import ValidationReportPage from "./Pages/ValidationReportPage.tsx/ValidationReportPage";
 import VerificationReport from "./Pages/ProgrammeManagement/VerificationReport";
 import Settings from "./Pages/Settings/settings";
-import SLCFDashboard from "./Pages/Dashboard/slcf/Dashboard";
+import Dashboard from "./Pages/Dashboard/slcf/Dashboard";
 import AddProgramme from "./Pages/ProgrammeManagement/addProgramme";
 import ProgrammeManagement from "./Pages/ProgrammeManagement/programmeManagement";
 import { CreditBalancePage } from "./Pages/CreditPages/creditBalancePage";
@@ -108,7 +108,7 @@ const App = () => {
                     path="/dashboard"
                     element={<CustomLayout selectedKey="dashboard" />}
                   >
-                    <Route path="/dashboard" element={<SLCFDashboard />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
                   </Route>
 
                   <Route

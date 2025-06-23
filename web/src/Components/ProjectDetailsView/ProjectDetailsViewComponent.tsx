@@ -91,12 +91,10 @@ import {
   ActivityStateEnum,
   CreditType,
   ProgrammeStageUnified,
-  ProgrammeStatus,
-  ProjectActivityStage,
+
   ProjectProposalStage,
 } from "../../Definitions/Enums/programmeStage.enum";
-import { DocType } from "../../Definitions/Enums/document.type";
-import { DocumentStatus } from "../../Definitions/Enums/document.status";
+
 import { CompanyState } from "../../Definitions/Enums/company.state.enum";
 
 import { Loading } from "../Loading/loading";
@@ -106,13 +104,12 @@ import { RoleIcon } from "../IconComponents/RoleIcon/role.icon";
 import { InfoView } from "../InfoView/info.view";
 import { MapComponent } from "../Maps/mapComponent";
 import { CreditRetirementSlRequestForm } from "../Models/creditRetirementSlRequestForm";
-import { HttpStatusCode } from "axios";
 import { CreditTypeSl } from "../../Definitions/Enums/creditTypeSl.enum";
 import { FormMode } from "../../Definitions/Enums/formMode.enum";
 import ProgrammeHistoryStepsComponent from "./programmeHistory/programmeHistoryStepComponent";
 import ProgrammeStatusTimelineComponent from "./programmeStatusTimeline/programmeStatusTimelineComponent";
 import { OrganisationSlStatus } from "../OrganisationSlStatus/organisationSlStatus";
-import { SlcfFormActionModel } from "../Models/SlcfFormActionModel";
+import { FormActionModel } from "../Models/FormActionModel";
 import { PopupInfo } from "../../Definitions/Definitions/ndcDetails.definitions";
 import { API_PATHS } from "../../Config/apiConfig";
 import { ROUTES } from "../../Config/uiRoutingConfig";
@@ -1561,7 +1558,7 @@ const ProjectDetailsViewComponent = (props: any) => {
         )}
       </Modal>
       {popupInfo && (
-        <SlcfFormActionModel
+        <FormActionModel
           onCancel={() => {
             setSlcfActionModalVisible(false);
           }}
