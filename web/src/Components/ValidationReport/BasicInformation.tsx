@@ -20,7 +20,7 @@ import PhoneInput, {
   Country,
 } from "react-phone-number-input";
 import validator from "validator";
-import { ProcessSteps } from "./ValidationStepperComponent";
+import { ProcessSteps } from "./StepperComponent";
 import { FormMode } from "../../Definitions/Enums/formMode.enum";
 import { MinusOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { fileUploadValueExtract } from "../../Utils/utilityHelper";
@@ -156,7 +156,8 @@ const BasicInformation = (props: ValidationStepsProps) => {
           // dsDivision: values?.dsDivision,
           city: values?.city,
           community: values?.community,
-          geographicalLocationCoordinates: values?.geographicalLocationCoordinates,
+          geographicalLocationCoordinates:
+            values?.geographicalLocationCoordinates,
           additionalDocuments: await (async function () {
             const base64Docs: string[] = [];
             if (values?.optionalImages && values?.optionalImages.length > 0) {
@@ -165,7 +166,9 @@ const BasicInformation = (props: ValidationStepsProps) => {
                 if (docs[i]?.originFileObj === undefined) {
                   base64Docs.push(docs[i]?.url);
                 } else {
-                  const temp = await getBase64(docs[i]?.originFileObj as RcFile);
+                  const temp = await getBase64(
+                    docs[i]?.originFileObj as RcFile
+                  );
                   base64Docs.push(temp); // No need for Promise.resolve
                 }
               }
@@ -189,7 +192,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                 item?.geographicalLocationCoordinates,
               additionalDocuments: await (async function () {
                 const base64Docs: string[] = [];
-                
+
                 if (item?.optionalImages && item?.optionalImages.length > 0) {
                   const docs = item.optionalImages;
                   for (let i = 0; i < docs.length; i++) {
@@ -440,7 +443,7 @@ const BasicInformation = (props: ValidationStepsProps) => {
                       </Form.Item>
 
                       <Form.Item
-                        label={t("validationReport:hostParty") }
+                        label={t("validationReport:hostParty")}
                         name="hostParty"
                         rules={[
                           {
@@ -587,7 +590,6 @@ const BasicInformation = (props: ValidationStepsProps) => {
 
                 <h4 className="list-item-title">Location 1</h4>
                 <div className="form-section">
-
                   <Row
                     // justify={'space-between'}
                     gutter={[40, 16]}
@@ -883,7 +885,9 @@ const BasicInformation = (props: ValidationStepsProps) => {
                     </Col>
 
                     <Col xl={24} md={24}>
-                      <div className="custom-label-pdd">{t('validationReport:uploadImages')}</div>
+                      <div className="custom-label-pdd">
+                        {t("validationReport:uploadImages")}
+                      </div>
                       <Form.Item
                         //label={t('validationReport:uploadImages')}
                         name="optionalImages"
@@ -1293,11 +1297,11 @@ const BasicInformation = (props: ValidationStepsProps) => {
 
                               <Col xl={24} md={24}>
                                 <div className="custom-label-validation">
-                                  {t('validationReport:uploadImages')}
+                                  {t("validationReport:uploadImages")}
                                 </div>
                                 <Form.Item
                                   //label={t('validationReport:uploadImages')}
-                                  name={[name, 'optionalImages']}
+                                  name={[name, "optionalImages"]}
                                   valuePropName="fileList"
                                   getValueFromEvent={normFile}
                                   required={false}
@@ -1305,7 +1309,9 @@ const BasicInformation = (props: ValidationStepsProps) => {
                                     {
                                       validator: async (rule, file) => {
                                         for (let i = 0; i < file?.length; i++) {
-                                          if (file[i]?.size > maximumImageSize) {
+                                          if (
+                                            file[i]?.size > maximumImageSize
+                                          ) {
                                             // default size format of files would be in bytes -> 1MB = 1000000bytes
                                             throw new Error(
                                               `${t("common:maxSizeVal")}`

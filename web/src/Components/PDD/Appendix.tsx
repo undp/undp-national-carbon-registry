@@ -29,7 +29,7 @@ import PhoneInput, {
 import validator from "validator";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import ConfirmSubmitSVG from "../../Assets/DialogIcons/ConfirmSubmit.svg";
-import { SlcfFormActionModel } from "../Models/SlcfFormActionModel";
+import { FormActionModel } from "../Models/FormActionModel";
 import { useLocation, useNavigation } from "react-router-dom";
 import { FormMode } from "../../Definitions/Enums/formMode.enum";
 import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
@@ -306,7 +306,7 @@ const Step08 = (props: CustomStepsProps) => {
             duration: 4,
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
-        } 
+        }
       }
     }
   };
@@ -349,7 +349,7 @@ const Step08 = (props: CustomStepsProps) => {
             duration: 4,
             style: { textAlign: "right", marginRight: 15, marginTop: 10 },
           });
-        } 
+        }
       }
 
       if (
@@ -402,7 +402,7 @@ const Step08 = (props: CustomStepsProps) => {
           <div className="step-form-container">
             {state?.mode === FormMode.VERIFY && (
               <>
-                <SlcfFormActionModel
+                <FormActionModel
                   actionBtnText={
                     state?.userCompanyRole === CompanyRole.INDEPENDENT_CERTIFIER
                       ? t("pdd:decline")
@@ -428,7 +428,7 @@ const Step08 = (props: CustomStepsProps) => {
                   t={t}
                 />
 
-                <SlcfFormActionModel
+                <FormActionModel
                   actionBtnText={
                     state?.userCompanyRole === CompanyRole.INDEPENDENT_CERTIFIER
                       ? t("PDD:certify")
@@ -456,7 +456,7 @@ const Step08 = (props: CustomStepsProps) => {
             )}
             {(state?.mode === FormMode.CREATE ||
               state?.mode === FormMode.EDIT) && (
-              <SlcfFormActionModel
+              <FormActionModel
                 actionBtnText={t("common:yes")}
                 onCancel={closeDialog}
                 title={t("PDD:confirmModalMessage")}

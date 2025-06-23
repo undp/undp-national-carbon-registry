@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
-import { ValidationStepsProps } from './StepProps';
-import { Row, Button, Form, Col, Input } from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
-import moment from 'moment';
-import { ProcessSteps } from './ValidationStepperComponent';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
+import React, { useEffect } from "react";
+import { ValidationStepsProps } from "./StepProps";
+import { Row, Button, Form, Col, Input } from "antd";
+import TextArea from "antd/lib/input/TextArea";
+import moment from "moment";
+import { ProcessSteps } from "./StepperComponent";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
 
 const ValidationReportIntroduction = (props: ValidationStepsProps) => {
   const {
@@ -40,7 +40,9 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
 
     console.log(ProcessSteps.VR_INTRODUCTION, introductionFormValues);
 
-    handleValuesUpdate({ [ProcessSteps.VR_INTRODUCTION]: introductionFormValues });
+    handleValuesUpdate({
+      [ProcessSteps.VR_INTRODUCTION]: introductionFormValues,
+    });
   };
 
   return (
@@ -65,12 +67,14 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
             >
               <Form.Item
                 className="full-width-form-item"
-                label={`1.1 ${t('validationReport:objective')}`}
+                label={`1.1 ${t("validationReport:objective")}`}
                 name="objective"
                 rules={[
                   {
                     required: true,
-                    message: `${t('validationReport:objective')} ${t('isRequired')}`,
+                    message: `${t("validationReport:objective")} ${t(
+                      "isRequired"
+                    )}`,
                   },
                 ]}
               >
@@ -83,12 +87,14 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
 
               <Form.Item
                 className="full-width-form-item"
-                label={`1.2 ${t('validationReport:scopeAndCriteria')}`}
+                label={`1.2 ${t("validationReport:scopeAndCriteria")}`}
                 name="scopeAndCriteria"
                 rules={[
                   {
                     required: true,
-                    message: `${t('validationReport:scopeAndCriteria')} ${t('isRequired')}`,
+                    message: `${t("validationReport:scopeAndCriteria")} ${t(
+                      "isRequired"
+                    )}`,
                   },
                 ]}
               >
@@ -99,22 +105,22 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
                 />
               </Form.Item>
               <h4 className="custom-required">{`1.3 ${t(
-                'validationReport:involvedPartiesAndParticipeant'
+                "validationReport:involvedPartiesAndParticipeant"
               )}`}</h4>
 
               <div className="form-section mg-top-1">
-                <Row justify={'space-between'} gutter={[40, 16]}>
+                <Row justify={"space-between"} gutter={[40, 16]}>
                   <Col xl={24} md={24}>
                     <div className="step-form-right-col form-grid">
                       <Form.Item
-                        label={t('validationReport:titleOfTheProjectActivity')}
+                        label={t("validationReport:titleOfTheProjectActivity")}
                         name="titleOfProjectActivity"
                         rules={[
                           {
                             required: true,
-                            message: `${t('validationReport:titleOfTheProjectActivity')} ${t(
-                              'isRequired'
-                            )}`,
+                            message: `${t(
+                              "validationReport:titleOfTheProjectActivity"
+                            )} ${t("isRequired")}`,
                           },
                         ]}
                       >
@@ -122,14 +128,14 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
                       </Form.Item>
 
                       <Form.Item
-                        label={t('validationReport:projectParticipants')}
+                        label={t("validationReport:projectParticipants")}
                         name="projectParticipant"
                         rules={[
                           {
                             required: true,
-                            message: `${t('validationReport:projectParticipants')} ${t(
-                              'isRequired'
-                            )}`,
+                            message: `${t(
+                              "validationReport:projectParticipants"
+                            )} ${t("isRequired")}`,
                           },
                         ]}
                       >
@@ -137,12 +143,14 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
                       </Form.Item>
 
                       <Form.Item
-                        label={t('validationReport:hostParty')}
+                        label={t("validationReport:hostParty")}
                         name="hostParty"
                         rules={[
                           {
                             required: true,
-                            message: `${t('validationReport:hostParty')} ${t('isRequired')}`,
+                            message: `${t("validationReport:hostParty")} ${t(
+                              "isRequired"
+                            )}`,
                           },
                         ]}
                       >
@@ -150,14 +158,14 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
                       </Form.Item>
 
                       <Form.Item
-                        label={t('validationReport:consultantOfTheProject')}
+                        label={t("validationReport:consultantOfTheProject")}
                         name="consultant"
                         rules={[
                           {
                             required: true,
-                            message: `${t('validationReport:consultantOfTheProject')} ${t(
-                              'isRequired'
-                            )}`,
+                            message: `${t(
+                              "validationReport:consultantOfTheProject"
+                            )} ${t("isRequired")}`,
                           },
                         ]}
                       >
@@ -170,14 +178,16 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
 
               <Form.Item
                 className="full-width-form-item"
-                label={`1.4 ${t('validationReport:summaryDescriptionProject')} `}
+                label={`1.4 ${t(
+                  "validationReport:summaryDescriptionProject"
+                )} `}
                 name="summary"
                 rules={[
                   {
                     required: true,
-                    message: `${t('validationReport:summaryDescriptionProject')} ${t(
-                      'isRequired'
-                    )} `,
+                    message: `${t(
+                      "validationReport:summaryDescriptionProject"
+                    )} ${t("isRequired")} `,
                   },
                 ]}
               >
@@ -188,18 +198,18 @@ const ValidationReportIntroduction = (props: ValidationStepsProps) => {
                 />
               </Form.Item>
 
-              <Row justify={'end'} className="step-actions-end">
-                <Button danger size={'large'} onClick={prev} disabled={false}>
-                  {t('validationReport:prev')}
+              <Row justify={"end"} className="step-actions-end">
+                <Button danger size={"large"} onClick={prev} disabled={false}>
+                  {t("validationReport:prev")}
                 </Button>
                 <Button
                   type="primary"
-                  size={'large'}
+                  size={"large"}
                   // onClick={next}
                   disabled={false}
                   htmlType="submit"
                 >
-                  {t('validationReport:next')}
+                  {t("validationReport:next")}
                 </Button>
               </Row>
             </Form>

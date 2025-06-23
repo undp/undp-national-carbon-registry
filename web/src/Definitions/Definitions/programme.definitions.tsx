@@ -1,7 +1,11 @@
 /* eslint-disable prefer-const */
-import { DateTime } from 'luxon';
-import { ProgrammeTransfer } from '../Entities/programmeTransfer';
-import { GovBGColor, CertBGColor, DevBGColor } from '../../Styles/role.color.constants';
+import { DateTime } from "luxon";
+import { ProgrammeTransfer } from "../Entities/programmeTransfer";
+import {
+  GovBGColor,
+  CertBGColor,
+  DevBGColor,
+} from "../../Styles/role.color.constants";
 import {
   ProgrammeStageR,
   ProgrammeStageMRV,
@@ -10,13 +14,13 @@ import {
   ProgrammeCategory,
   ProjectProposalStage,
   getProjectCategory,
-} from '../Enums/programmeStage.enum';
-import { TypeOfMitigation } from '../Enums/typeOfMitigation.enum';
-import { CreditTransferStage } from '../Enums/creditTransferStage.enum';
-import { SectoralScope } from '../Enums/sectoralScope.enum';
-import { RcFile } from 'rc-upload/lib/interface';
-import { CarbonSystemType } from '../Enums/carbonSystemType.enum';
-import { CreditTypeSl } from '../Enums/creditTypeSl.enum';
+} from "../Enums/programmeStage.enum";
+import { TypeOfMitigation } from "../Enums/typeOfMitigation.enum";
+import { CreditTransferStage } from "../Enums/creditTransferStage.enum";
+import { SectoralScope } from "../Enums/sectoralScope.enum";
+import { RcFile } from "rc-upload/lib/interface";
+import { CarbonSystemType } from "../Enums/carbonSystemType.enum";
+import { CreditTypeSl } from "../Enums/creditTypeSl.enum";
 
 export const getStageEnumVal = (value: string) => {
   const index = Object.keys(ProgrammeStageUnified).indexOf(value);
@@ -49,7 +53,10 @@ export const getCreditStageVal = (value: string) => {
   return Object.values(CreditTransferStage)[index];
 };
 
-export const getStageTransferEnumVal = (value: string, transfer: ProgrammeTransfer) => {
+export const getStageTransferEnumVal = (
+  value: string,
+  transfer: ProgrammeTransfer
+) => {
   // if (transfer.isRetirement) {
   //   if (value === ProgrammeTransferStage.APPROVED) {
   //     return 'Recongnised';
@@ -66,70 +73,72 @@ export const getStageTransferEnumVal = (value: string, transfer: ProgrammeTransf
   return Object.values(CreditTransferStage)[index];
 };
 
-export const getStageTagType = (stage: ProgrammeStageR | ProgrammeStageUnified) => {
+export const getStageTagType = (
+  stage: ProgrammeStageR | ProgrammeStageUnified
+) => {
   switch (getStageEnumVal(stage)) {
     case ProgrammeStageR.AwaitingAuthorization:
-      return 'error';
+      return "error";
     case ProgrammeStageR.Authorised:
-      return 'processing';
+      return "processing";
     case ProgrammeStageR.Approved:
-      return 'purple';
+      return "purple";
     default:
-      return 'default';
+      return "default";
   }
 };
 export const getProgrammeStatus = (stage: ProgrammeStatus) => {
   switch (getStageEnumVal(stage)) {
     case ProgrammeStatus.CONSTRUCTION_STAGE:
-      return 'processing';
+      return "processing";
     case ProgrammeStatus.INSTALLATION_STAGE:
-      return 'processing';
+      return "processing";
     case ProgrammeStatus.PROCUREMENT_STAGE:
-      return 'purple';
+      return "purple";
     default:
-      return 'default';
+      return "default";
   }
 };
 
 export const getProjectProposalStage = (stage: ProjectProposalStage) => {
   switch (getProjectProposalStageEnumVal(stage)) {
     case ProjectProposalStage.PENDING:
-      return 'warning';
+      return "warning";
     case ProjectProposalStage.REJECTED:
-      return 'error';
+      return "error";
     case ProjectProposalStage.APPROVED:
-      return 'green';
+      return "green";
     case ProjectProposalStage.PDD_SUBMITTED:
-      return 'processing';
+      return "processing";
     case ProjectProposalStage.PDD_REJECTED_BY_CERTIFIER:
-      return 'orange';
+      return "orange";
     case ProjectProposalStage.PDD_APPROVED_BY_CERTIFIER:
-      return 'lime';
+      return "lime";
     case ProjectProposalStage.PDD_APPROVED_BY_DNA:
-      return 'cyan';
+      return "cyan";
     case ProjectProposalStage.PDD_REJECTED_BY_DNA:
-      return 'magenta';
+      return "magenta";
     case ProjectProposalStage.VALIDATION_REPORT_SUBMITTED:
-      return 'default';
+      return "default";
     case ProjectProposalStage.VALIDATION_REPORT_REJECTED:
-      return 'volcano';
+      return "volcano";
     case ProjectProposalStage.AUTHORISED:
-      return 'geekblue';
+      return "geekblue";
     default:
-      return 'default';
+      return "default";
   }
 };
 
 export const getDocumentStatusColor = (status: string) => {
   switch (status) {
-    case 'Accepted':
-      return 'purple';
-    case 'Rejected':
-      return 'error';
-    case 'Pending':
-      return 'processing';
+    case "Accepted":
+      return "purple";
+    case "Rejected":
+      return "error";
+    case "Pending":
+      return "processing";
     default:
-      return 'default';
+      return "default";
   }
 };
 
@@ -144,35 +153,35 @@ export const getCreditTypeVal = (value: string) => {
 export const getCreditTypeTagType = (stage: CreditTypeSl) => {
   switch (getCreditTypeVal(stage)) {
     case CreditTypeSl.TRACK_1:
-      return 'orange';
+      return "orange";
     case CreditTypeSl.TRACK_2:
-      return 'lime';
+      return "lime";
     default:
-      return 'default';
+      return "default";
   }
 };
 
 export const getCreditTypeName = (value: string) => {
   switch (getCreditTypeVal(value)) {
     case CreditTypeSl.TRACK_1:
-      return 'SLCER+';
+      return "SLCER+";
     case CreditTypeSl.TRACK_2:
-      return 'SLCER';
+      return "SLCER";
     default:
-      return 'SLCER';
+      return "SLCER";
   }
 };
 
 export const getStageTagTypeMRV = (stage: ProgrammeStageMRV) => {
   switch (getStageEnumVal(stage)) {
     case ProgrammeStageMRV.AwaitingAuthorization:
-      return 'error';
+      return "error";
     case ProgrammeStageMRV.Authorised:
-      return 'processing';
+      return "processing";
     case ProgrammeStageMRV.Approved:
-      return 'purple';
+      return "purple";
     default:
-      return 'default';
+      return "default";
   }
 };
 
@@ -190,17 +199,17 @@ export const getTransferStageTagType = (
   // }
   switch (getCreditStageVal(stage)) {
     case CreditTransferStage.Rejected:
-      return 'error';
+      return "error";
     case CreditTransferStage.Approved:
-      return 'processing';
+      return "processing";
     case CreditTransferStage.Pending:
-      return 'success';
+      return "success";
     case CreditTransferStage.Recognised:
-      return 'purple';
+      return "purple";
     case CreditTransferStage.NotRecognised:
-      return 'orange';
+      return "orange";
     default:
-      return 'default';
+      return "default";
   }
 };
 
@@ -352,7 +361,9 @@ export interface ProgrammeT extends Programme {
 }
 
 export interface ProgrammeSlU extends ProgrammeSl {
-  activities: { stage: string; documents: any[]; activityLastUpdatedDate: string }[] | undefined;
+  activities:
+    | { stage: string; documents: any[]; activityLastUpdatedDate: string }[]
+    | undefined;
   currentStage: ProgrammeStageUnified;
   projectProposalStage: ProjectProposalStage;
   programmeProperties: ProgrammePropertiesU;
@@ -380,21 +391,24 @@ export const getGeneralFields = (
     title: programme.title,
     serialNo: programme.serialNo,
     currentStatus: programme.currentStage,
-    applicationType: 'Project Developer',
+    applicationType: "Project Developer",
     sector: programme.sector,
     sectoralScope:
       Object.keys(SectoralScope)[
-        Object.values(SectoralScope).indexOf(programme.sectoralScope as SectoralScope)
+        Object.values(SectoralScope).indexOf(
+          programme.sectoralScope as SectoralScope
+        )
       ],
     location: programme.programmeProperties.geographicalLocation
-      ? programme.programmeProperties.geographicalLocation.join(', ')
-      : '-',
+      ? programme.programmeProperties.geographicalLocation.join(", ")
+      : "-",
     startDate: DateTime.fromSeconds(Number(programme.startTime)),
     endDate: DateTime.fromSeconds(Number(programme.endTime)),
     buyerCountry: programme.programmeProperties.buyerCountryEligibility
       ? programme.programmeProperties.buyerCountryEligibility
-      : '-',
-    environmentalAssessmentRegistrationNo: programme.environmentalAssessmentRegistrationNo,
+      : "-",
+    environmentalAssessmentRegistrationNo:
+      programme.environmentalAssessmentRegistrationNo,
   };
   if (system === CarbonSystemType.UNIFIED || system === CarbonSystemType.MRV) {
     let prog: any = programme;
@@ -409,7 +423,10 @@ const safeNumber = (value: any) => {
   return isNaN(num) ? 0 : num; // Return 0 if conversion results in NaN
 };
 
-export const getGeneralFieldsSl = (programme: ProgrammeSl, system?: CarbonSystemType) => {
+export const getGeneralFieldsSl = (
+  programme: ProgrammeSl,
+  system?: CarbonSystemType
+) => {
   let res: Record<string, any> = {
     title: programme.title,
     // tokenId: programme.tokenId,
@@ -447,20 +464,20 @@ export const addCommSep = (value: any) => {
     Number(value)
       // .toString()
       .toFixed(2)
-      .replace('.00', '')
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      .replace(".00", "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
   );
 };
 
 export const addCommSepRound = (value: any) => {
   return Number(value)
     .toFixed(2)
-    .replace('.00', '')
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    .replace(".00", "")
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
 export const addRoundNumber = (value: any) => {
-  return Number(value.toFixed(2).replace('.00', ''));
+  return Number(value.toFixed(2).replace(".00", ""));
 };
 
 export const addSpaces = (text: string) => {
@@ -470,19 +487,25 @@ export const addSpaces = (text: string) => {
   if (text === text.toUpperCase()) {
     return text;
   }
-  return text.replace(/([A-Z])/g, ' $1').trim();
+  return text.replace(/([A-Z])/g, " $1").trim();
 };
 
-export const getFinancialFields = (programme: ProgrammeU | ProgrammeR | ProgrammeT) => {
+export const getFinancialFields = (
+  programme: ProgrammeU | ProgrammeR | ProgrammeT
+) => {
   return {
-    estimatedProgrammeCostUSD: addCommSep(programme.programmeProperties.estimatedProgrammeCostUSD),
+    estimatedProgrammeCostUSD: addCommSep(
+      programme.programmeProperties.estimatedProgrammeCostUSD
+    ),
     creditEst: addCommSep(programme.creditEst),
     financingType: addSpaces(programme.programmeProperties.sourceOfFunding),
     grantEquivalent: new UnitField(
-      'USD',
+      "USD",
       addCommSep(programme.programmeProperties.grantEquivalentAmount)
     ),
-    carbonPriceUSDPerTon: addCommSep(programme.programmeProperties.carbonPriceUSDPerTon),
+    carbonPriceUSDPerTon: addCommSep(
+      programme.programmeProperties.carbonPriceUSDPerTon
+    ),
   };
 };
 
@@ -501,15 +524,15 @@ export const getFinancialFieldsSl = (programme: ProgrammeSlU) => {
   return {
     estimatedProgrammeCostUSD: programme.estimatedProjectCost
       ? programme.estimatedProjectCost
-      : '-',
-    creditEst: programme.creditEst ? programme.creditEst : '-',
+      : "-",
+    creditEst: programme.creditEst ? programme.creditEst : "-",
   };
 };
 
 export const getCompanyBgColor = (item: string) => {
-  if (item === 'Government') {
+  if (item === "Government") {
     return GovBGColor;
-  } else if (item === 'Certifier') {
+  } else if (item === "Certifier") {
     return CertBGColor;
   }
   return DevBGColor;
@@ -517,16 +540,16 @@ export const getCompanyBgColor = (item: string) => {
 
 export const getRetirementTypeString = (retirementType: string | null) => {
   if (retirementType === null) {
-    return '-';
+    return "-";
   }
 
   switch (retirementType) {
-    case '0':
-      return 'CROSS BORDER TRANSFER';
-    case '1':
-      return 'LEGAL ACTION';
-    case '2':
-      return 'OTHER';
+    case "0":
+      return "CROSS BORDER TRANSFER";
+    case "1":
+      return "LEGAL ACTION";
+    case "2":
+      return "OTHER";
   }
 };
 
@@ -538,19 +561,36 @@ export const sumArray = (arrList: any[]) => {
   return arrList.reduce((a, b) => Number(a) + Number(b), 0);
 };
 
-export const getBase64 = (file: RcFile): Promise<string> =>
-  new Promise((resolve, reject) => {
+export const getBase64 = (file: RcFile): Promise<string> => {
+  console.log("------return--------", file);
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
+};
+
+export const formatFilesToBase64 = async (files: any[]) => {
+  const base64Docs: string[] = [];
+  if (files && files.length > 0) {
+    for (let i = 0; i < files.length; i++) {
+      if (files[i]?.originFileObj === undefined) {
+        base64Docs.push(files[i]?.url);
+      } else {
+        const temp = await getBase64(files[i]?.originFileObj as RcFile);
+        base64Docs.push(temp);
+      }
+    }
+  }
+  return base64Docs;
+};
 
 export const getFileName = (fileUrl: string) => {
-  console.log('-------file url------', fileUrl);
-  if (fileUrl === '' || fileUrl === undefined) return undefined;
+  console.log("-------file url------", fileUrl);
+  if (fileUrl === "" || fileUrl === undefined) return undefined;
 
-  const fileUrlParts = fileUrl?.split('/');
+  const fileUrlParts = fileUrl?.split("/");
   const fileName = fileUrlParts[fileUrlParts.length - 1];
 
   return fileName;

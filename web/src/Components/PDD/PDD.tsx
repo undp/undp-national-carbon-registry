@@ -22,29 +22,29 @@ const PDD = (props: { translator: i18n }) => {
 
   const t = translator.t;
 
-  const onVersionSelect = async (value: number) => {
-    setSelectedVersion(value);
-  };
+  // const onVersionSelect = async (value: number) => {
+  //   setSelectedVersion(value);
+  // };
 
-  const getDocVersions = async () => {
-    try {
-      const { data } = await post(API_PATHS.LAST_DOC_VERSIONS, {
-        programmeId: id,
-        docType: DocumentTypeEnum.CMA,
-      });
-      setVersions(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getDocVersions = async () => {
+  //   try {
+  //     const { data } = await post(API_PATHS.LAST_DOC_VERSIONS, {
+  //       programmeId: id,
+  //       docType: DocumentTypeEnum.CMA,
+  //     });
+  //     setVersions(data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleDocumentStatus = (value: string) => {
     setDocumentStatus(value);
   };
 
-  useEffect(() => {
-    getDocVersions();
-  }, []);
+  // useEffect(() => {
+  //   getDocVersions();
+  // }, []);
 
   useEffect(() => {
     if (versions.length > 0) {
@@ -59,7 +59,7 @@ const PDD = (props: { translator: i18n }) => {
           <Col xl={12} md={12}>
             <div className="main">{t('PDD:pddFormTitle')}</div>
           </Col>
-          {isView ? (
+          {/* {isView ? (
             <Col xl={12} md={12} style={{ textAlign: 'right' }}>
               <Select
                 size="large"
@@ -77,7 +77,7 @@ const PDD = (props: { translator: i18n }) => {
             </Col>
           ) : (
             ''
-          )}
+          )} */}
         </Row>
       </div>
 
