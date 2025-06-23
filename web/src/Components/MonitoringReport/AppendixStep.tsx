@@ -9,7 +9,7 @@ import { FormMode } from "../../Definitions/Enums/formMode.enum";
 import { useState } from "react";
 import { CustomStepsProps } from "./StepProps";
 import { fileUploadValueExtract } from "../../Utils/utilityHelper";
-import { SlcfFormActionModel } from "../Models/SlcfFormActionModel";
+import { FormActionModel } from "../Models/FormActionModel";
 import ConfirmSubmitSVG from "../../Assets/DialogIcons/ConfirmSubmit.svg";
 import { useLocation } from "react-router-dom";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
@@ -168,7 +168,7 @@ export const AnnexureStep = (props: CustomStepsProps) => {
             {(state?.mode === FormMode.CREATE ||
               state?.mode === FormMode.EDIT) && (
               <>
-                <SlcfFormActionModel
+                <FormActionModel
                   icon={<ConfirmSubmitSVG />}
                   title={t("monitoringReport:confirmModalMessage")}
                   onCancel={closeDialog}
@@ -187,7 +187,7 @@ export const AnnexureStep = (props: CustomStepsProps) => {
 
             {state?.mode === FormMode.VERIFY && (
               <>
-                <SlcfFormActionModel
+                <FormActionModel
                   actionBtnText={t("monitoringReport:reject")}
                   onCancel={closeDeclineDialogBox}
                   icon={<CloseCircleOutlined />}
@@ -203,7 +203,7 @@ export const AnnexureStep = (props: CustomStepsProps) => {
                   t={t}
                 />
 
-                <SlcfFormActionModel
+                <FormActionModel
                   actionBtnText={t("monitoringReport:approve")}
                   onCancel={closeVerifyDialogBox}
                   icon={<CheckCircleOutlined />}
