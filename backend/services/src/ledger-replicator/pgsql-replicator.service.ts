@@ -11,7 +11,6 @@ import { CounterType } from "@app/shared/util/counter.type.enum";
 import { Programme } from "@app/shared/entities/programme.entity";
 import { CreditOverall } from "@app/shared/entities/credit.overall.entity";
 import { DataImporterService } from "../data-importer/data-importer.service";
-import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
 import { ProjectEntity } from "@app/shared/entities/projects.entity";
 import { CreditBlocksEntity } from "@app/shared/entities/credit.blocks.entity";
 
@@ -46,9 +45,6 @@ export class PgSqlReplicatorService implements LedgerReplicatorInterface {
       const tableName = this.configService.get<string>("ledger.table");
       const companyTableName = this.configService.get<string>(
         "ledger.companyTable"
-      );
-      const programmeSlTableName = this.configService.get<string>(
-        "ledger.programmeSlTable"
       );
       const projectTableName = this.configService.get<string>(
         "ledger.projectTable"
@@ -144,57 +140,6 @@ export class PgSqlReplicatorService implements LedgerReplicatorInterface {
           return;
         } else {
           retryCountCTable += 1; //ref
-          replicateActions;
-        }
-      }
-
-      try {
-        const seqObj = await this.counterRepo.findOneBy({
-          id: CounterType.REPLICATE_SEQ_PROGRAMME_SL,
-        });
-
-        let lastSeq = 0;
-        if (seqObj) {
-          lastSeq = seqObj.counter;
-        }
-
-        const sql = `select data, hash from ${programmeSlTableName} where hash > $1 order by hash`;
-        const results = await dbCon.query(sql, [lastSeq]);
-        this.logger.log(`Query for new data ${sql} ${lastSeq}`);
-        this.logger.log(
-          `Periodical replicate check - last seq:${lastSeq} new events: ${results?.rows?.length}`
-        );
-
-        if (results) {
-          let newSeq = 0;
-          for (const row of results.rows) {
-            const data = row.data;
-            console.log("replicator data:", data);
-            const programme: ProgrammeSl = plainToClass(
-              ProgrammeSl,
-              JSON.parse(JSON.stringify(data))
-            );
-
-            console.log("replicator data after conversion", programme);
-            await this.eventProcessor.processProgrammeSl(programme);
-            newSeq = row.hash;
-            await this.counterRepo.save({
-              id: CounterType.REPLICATE_SEQ_PROGRAMME_SL,
-              counter: newSeq,
-            });
-          }
-        }
-        retryCountTable = 0;
-      } catch (exception) {
-        this.logger.log(
-          `Failed Executing Ops for : ${programmeSlTableName}`,
-          exception
-        );
-        if (retryCountTable > retryLimit) {
-          this.logger.log("Ledger Replicator terminated");
-          return;
-        } else {
-          retryCountTable += 1; //ref
           replicateActions;
         }
       }

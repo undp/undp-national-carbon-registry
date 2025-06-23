@@ -26,7 +26,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
   public tableName: string;
   public overallTableName: string;
   public companyTableName: string;
-  public programmeSlTable: string;
   public creditBlocksTable: string;
   public projectTable: string;
   public ledgerName: string;
@@ -40,9 +39,6 @@ export class PgSqlLedgerService implements LedgerDBInterface {
     this.tableName = configService.get<string>("ledger.table");
     this.overallTableName = configService.get<string>("ledger.overallTable");
     this.companyTableName = configService.get<string>("ledger.companyTable");
-    this.programmeSlTable = configService.get<string>(
-      "ledger.programmeSlTable"
-    );
     this.projectTable = configService.get<string>("ledger.projectTable");
     this.creditBlocksTable = configService.get<string>(
       "ledger.creditBlocksTable"
@@ -147,7 +143,7 @@ export class PgSqlLedgerService implements LedgerDBInterface {
   }
 
   private getUniqueIndex(tableName: string) {
-    if (tableName === this.tableName || tableName === this.programmeSlTable) {
+    if (tableName === this.tableName) {
       return "data->>'programmeId'";
     } else if (tableName === this.projectTable) {
       return "data->>'refId'";
