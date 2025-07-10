@@ -1,0 +1,10 @@
+{
+    "changePassword": "Change Password",
+    "oldPassword": "Old Password",
+    "newPassword": "New Password",
+    "confirmNewPassword":"Confirm New Password",
+    "setPassword":"SET PASSWORD",
+    "cancel":"CANCEL",
+    "isRequired": "is required",
+    "passwordsNotMatchedErr":"Passwords do not match"
+  }

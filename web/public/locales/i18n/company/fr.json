@@ -1,0 +1,23 @@
+{
+  "developer": "Développeur",
+  "name": "NOM DE L'ORGANISATION",
+  "taxId": "IDENTIFIANT FISCAL",
+  "filterByOrgType": "Filtrer par Type d'Organisation",
+  "companyRole": "TYPE D'ORGANISATION",
+  "companyState": "STATUT",
+  "viewCompanies": "Voir les Organisations",
+  "viewDesc": "Voir toutes les organisations visibles dans le système en fonction de vos permissions",
+  "addCompany": "Ajouter une organisation",
+  "numberOfProgrammes": "NOMBRE DE PROGRAMMES",
+  "creditBalance": "SOLDE DE CRÉDITS",
+  "date": "Date",
+  "getCompanyError": "Erreur lors de l'obtention de l'entreprise",
+  "filterByCompany": "Filtrer par Type d'Organisation",
+  "gov": "Gouvernement",
+  "certifier": "Certifieur",
+  "all": "Tous",
+  "searchMail": "Rechercher par e-mail",
+  "searchName": "Rechercher par nom",
+  "min": "Ministère",
+  "nationalSopValue": "Part Nationale des Revenus"
+}

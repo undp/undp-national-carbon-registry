@@ -9,54 +9,49 @@ import {
   Request,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import {
-  ApiKeyJwtAuthGuard,
-  Action,
-  AppAbility,
-  CheckPolicies,
-  PoliciesGuard,
-  TransferFreezeGuard,
-  PoliciesGuardEx,
-  ConstantUpdateDto,
-  JwtAuthGuard,
-  Programme,
-  ProgrammeAcceptedDto,
-  ProgrammeApprove,
-  ProgrammeCertify,
-  ProgrammeDocumentDto,
-  ProgrammeDto,
-  ProgrammeIssue,
-  ProgrammeReject,
-  ProgrammeRetire,
-  ProgrammeRevoke,
-  ProgrammeService,
-  ProgrammeTransfer,
-  ProgrammeTransferApprove,
-  ProgrammeTransferCancel,
-  ProgrammeTransferReject,
-  ProgrammeTransferRequest,
-  QueryDto,
-  DocumentAction,
-  NDCActionDto,
-  NDCActionViewEntity,
-  ProgrammeDocumentViewEntity,
-  InvestmentRequestDto,
-  Investment,
-  InvestmentApprove,
-  InvestmentReject,
-  InvestmentCancel,
-  DataExportQueryDto,
-  ProgrammeMitigationIssue,
-  NdcDetailsActionDto,
-  NdcDetailsPeriodDto,
-  BaseIdDto
-} from "@undp/carbon-services-lib";
+import { JwtAuthGuard } from "@app/shared/auth/guards/jwt-auth.guard";
+import { TransferFreezeGuard } from "@app/shared/auth/guards/transfer-freeze.guard";
+import { Action } from "@app/shared/casl/action.enum";
+import { AppAbility } from "@app/shared/casl/casl-ability.factory";
+import { CheckPolicies } from "@app/shared/casl/policy.decorator";
+import { PoliciesGuard, PoliciesGuardEx } from "@app/shared/casl/policy.guard";
+import { BaseIdDto } from "@app/shared/dto/base.id.dto";
+import { ConstantUpdateDto } from "@app/shared/dto/constants.update.dto";
+import { DataExportQueryDto } from "@app/shared/dto/data.export.query.dto";
+import { DocumentAction } from "@app/shared/dto/document.action";
+import { InvestmentApprove } from "@app/shared/dto/investment.approve";
+import { InvestmentCancel } from "@app/shared/dto/investment.cancel";
+import { InvestmentReject } from "@app/shared/dto/investment.reject";
+import { InvestmentRequestDto } from "@app/shared/dto/investment.request.dto";
+import { NDCActionDto } from "@app/shared/dto/ndc.action.dto";
+import { NdcDetailsActionDto } from "@app/shared/dto/ndc.details.action.dto";
+import { NdcDetailsPeriodDto } from "@app/shared/dto/ndc.details.period.dto";
+import { ProgrammeApprove } from "@app/shared/dto/programme.approve";
+import { ProgrammeCertify } from "@app/shared/dto/programme.certify";
+import { ProgrammeDocumentDto } from "@app/shared/dto/programme.document.dto";
+import { ProgrammeDto } from "@app/shared/dto/programme.dto";
+import { ProgrammeMitigationIssue } from "@app/shared/dto/programme.mitigation.issue";
+import { ProgrammeReject } from "@app/shared/dto/programme.reject";
+import { ProgrammeRetire } from "@app/shared/dto/programme.retire";
+import { ProgrammeRevoke } from "@app/shared/dto/programme.revoke";
+import { ProgrammeTransferApprove } from "@app/shared/dto/programme.transfer.approve";
+import { ProgrammeTransferCancel } from "@app/shared/dto/programme.transfer.cancel";
+import { ProgrammeTransferReject } from "@app/shared/dto/programme.transfer.reject";
+import { ProgrammeTransferRequest } from "@app/shared/dto/programme.transfer.request";
+import { QueryDto } from "@app/shared/dto/query.dto";
+import { ProgrammeDocumentViewEntity } from "@app/shared/view-entities/document.view.entity";
+import { Investment } from "@app/shared/entities/investment.entity";
+import { NDCActionViewEntity } from "@app/shared/view-entities/ndc.view.entity";
+import { Programme } from "@app/shared/entities/programme.entity";
+import { ProgrammeTransfer } from "@app/shared/entities/programme.transfer";
+import { ApiKeyJwtAuthGuard } from "@app/shared/auth/guards/api-jwt-key.guard";
+import { ProgrammeService } from "@app/shared/programme/programme.service";
 
 @ApiTags("Programme")
 @ApiBearerAuth()
 @Controller("programme")
 export class ProgrammeController {
-  constructor(private programmeService: ProgrammeService) { }
+  constructor(private programmeService: ProgrammeService) {}
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuard)
@@ -97,34 +92,6 @@ export class ProgrammeController {
     return this.programmeService.docAction(docAction, req.user);
   }
 
-  // @ApiBearerAuth("api_key")
-  // @ApiBearerAuth()
-  // @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Programme))
-  // @Post("acceptProgramme")
-  // async acceptProgramme(@Body() acc: ProgrammeAcceptedDto) {
-  //   return this.programmeService.programmeAccept(acc);
-  // }
-
-  // @ApiBearerAuth('api_key')
-  // @ApiBearerAuth()
-  // @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Programme))
-  // @Post('addMitigation')
-  // async addMitigation(@Body()mitigation: MitigationAddDto) {
-  //   return this.programmeService.addMitigation(mitigation)
-  // }
-
-  // @ApiBearerAuth("api_key")
-  // @ApiBearerAuth()
-  // @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuard)
-  // @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Programme))
-  // @Post("updateOwnership")
-  // async updateOwnership(@Body() update: OwnershipUpdateDto) {
-  //   return this.programmeService.updateOwnership(update);
-  // }
-
-
   @ApiBearerAuth()
   @UseGuards(
     ApiKeyJwtAuthGuard,
@@ -148,11 +115,17 @@ export class ProgrammeController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, NDCActionViewEntity, true))
+  @UseGuards(
+    ApiKeyJwtAuthGuard,
+    PoliciesGuardEx(true, Action.Read, NDCActionViewEntity, true)
+  )
   // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
-  @Post('queryNdcActions/download')
-  async getNdcDownload(@Body()query: DataExportQueryDto, @Request() req) {
-    return this.programmeService.downloadNdcActions(query, req.abilityCondition); // Return the filePath as a JSON response
+  @Post("queryNdcActions/download")
+  async getNdcDownload(@Body() query: DataExportQueryDto, @Request() req) {
+    return this.programmeService.downloadNdcActions(
+      query,
+      req.abilityCondition
+    ); // Return the filePath as a JSON response
   }
 
   @ApiBearerAuth()
@@ -167,11 +140,17 @@ export class ProgrammeController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Programme, true))
+  @UseGuards(
+    ApiKeyJwtAuthGuard,
+    PoliciesGuardEx(true, Action.Read, Programme, true)
+  )
   // @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, User, true))
-  @Post('download')
-  async getDownload(@Body()query: DataExportQueryDto, @Request() req) {
-    return this.programmeService.downloadProgrammes(query, req.abilityCondition); // Return the filePath as a JSON response
+  @Post("download")
+  async getDownload(@Body() query: DataExportQueryDto, @Request() req) {
+    return this.programmeService.downloadProgrammes(
+      query,
+      req.abilityCondition
+    ); // Return the filePath as a JSON response
   }
 
   @ApiBearerAuth("api_key")
@@ -203,7 +182,7 @@ export class ProgrammeController {
   )
   @Put("authorize")
   async programmeApprove(@Body() body: ProgrammeApprove, @Request() req) {
-    return this.programmeService.approveProgramme(body, req.user);
+    return this.programmeService.authorizeProgramme(body, req.user);
   }
 
   @ApiBearerAuth()
@@ -314,7 +293,6 @@ export class ProgrammeController {
   )
   @Post("transferQuery")
   queryUser(@Body() query: QueryDto, @Request() req) {
-    console.log(req.abilityCondition);
     return this.programmeService.queryProgrammeTransfers(
       query,
       req.abilityCondition,
@@ -327,8 +305,15 @@ export class ProgrammeController {
     PoliciesGuardEx(true, Action.Read, ProgrammeTransfer, true)
   )
   @Post("transfers/download")
-  async getTransfersDownload(@Body()query: DataExportQueryDto, @Request() req) {
-    return this.programmeService.downloadTransfers(query, req.abilityCondition, req.user); // Return the filePath as a JSON response
+  async getTransfersDownload(
+    @Body() query: DataExportQueryDto,
+    @Request() req
+  ) {
+    return this.programmeService.downloadTransfers(
+      query,
+      req.abilityCondition,
+      req.user
+    ); // Return the filePath as a JSON response
   }
 
   @ApiBearerAuth()
@@ -341,7 +326,6 @@ export class ProgrammeController {
     @Query("programmeId") programmeId: string,
     @Request() req
   ) {
-    console.log(req.abilityCondition);
     return this.programmeService.getTransferByProgrammeId(
       programmeId,
       req.abilityCondition,
@@ -350,100 +334,167 @@ export class ProgrammeController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Update, Investment))
-  @Post('addInvestment')
-  async addInvestment(@Body() investment: InvestmentRequestDto, @Request() req) {
+  @UseGuards(
+    ApiKeyJwtAuthGuard,
+    PoliciesGuardEx(true, Action.Update, Investment)
+  )
+  @Post("addInvestment")
+  async addInvestment(
+    @Body() investment: InvestmentRequestDto,
+    @Request() req
+  ) {
     return this.programmeService.addInvestment(investment, req.user);
   }
 
   @ApiBearerAuth()
-  @UseGuards(ApiKeyJwtAuthGuard, ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Create, Investment))
-  @Post('investmentApprove')
+  @UseGuards(
+    ApiKeyJwtAuthGuard,
+    ApiKeyJwtAuthGuard,
+    PoliciesGuardEx(true, Action.Create, Investment)
+  )
+  @Post("investmentApprove")
   async investmentApprove(@Body() body: InvestmentApprove, @Request() req) {
-    return this.programmeService.investmentApprove(body, req.user)
+    return this.programmeService.investmentApprove(body, req.user);
   }
 
   @ApiBearerAuth()
-  @UseGuards(ApiKeyJwtAuthGuard, ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Delete, Investment))
-  @Post('investmentReject')
+  @UseGuards(
+    ApiKeyJwtAuthGuard,
+    ApiKeyJwtAuthGuard,
+    PoliciesGuardEx(true, Action.Delete, Investment)
+  )
+  @Post("investmentReject")
   async investmentReject(@Body() body: InvestmentReject, @Request() req) {
-    return this.programmeService.investmentReject(body, req.user)
+    return this.programmeService.investmentReject(body, req.user);
   }
 
   @ApiBearerAuth()
-  @UseGuards(ApiKeyJwtAuthGuard, ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Delete, Investment))
-  @Post('investmentCancel')
+  @UseGuards(
+    ApiKeyJwtAuthGuard,
+    ApiKeyJwtAuthGuard,
+    PoliciesGuardEx(true, Action.Delete, Investment)
+  )
+  @Post("investmentCancel")
   async investmentCancel(@Body() body: InvestmentCancel, @Request() req) {
-    return this.programmeService.investmentCancel(body, req.user)
+    return this.programmeService.investmentCancel(body, req.user);
   }
 
   @ApiBearerAuth()
-  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Investment, true))
-  @Post('investmentQuery')
+  @UseGuards(
+    ApiKeyJwtAuthGuard,
+    PoliciesGuardEx(true, Action.Read, Investment, true)
+  )
+  @Post("investmentQuery")
   queryInvestmentUser(@Body() query: QueryDto, @Request() req) {
-    console.log(req.abilityCondition)
-    return this.programmeService.queryInvestment(query, req.abilityCondition, req.user)
+    return this.programmeService.queryInvestment(
+      query,
+      req.abilityCondition,
+      req.user
+    );
   }
 
   @ApiBearerAuth()
-  @UseGuards(ApiKeyJwtAuthGuard, PoliciesGuardEx(true, Action.Read, Investment, true))
-  @Post('investments/download')
-  async getInvestmentsDownload(@Body()query: DataExportQueryDto, @Request() req) {
-    return this.programmeService.downloadInvestments(query, req.abilityCondition); // Return the filePath as a JSON response
+  @UseGuards(
+    ApiKeyJwtAuthGuard,
+    PoliciesGuardEx(true, Action.Read, Investment, true)
+  )
+  @Post("investments/download")
+  async getInvestmentsDownload(
+    @Body() query: DataExportQueryDto,
+    @Request() req
+  ) {
+    return this.programmeService.downloadInvestments(
+      query,
+      req.abilityCondition,
+      req.user
+    ); // Return the filePath as a JSON response
   }
 
   @UseGuards(JwtAuthGuard)
   @Get("queryNdcDetailsPeriod")
   getNdcDetailsPeriods(@Request() req) {
-    return this.programmeService.getNdcDetailsPeriods(req.abilityCondition, req.user)
+    return this.programmeService.getNdcDetailsPeriods(
+      req.abilityCondition,
+      req.user
+    );
   }
 
   @UseGuards(JwtAuthGuard)
   @Post("addNdcDetailsPeriod")
   addNdcDetailsPeriod(@Body() body: NdcDetailsPeriodDto, @Request() req) {
-    return this.programmeService.addNdcDetailsPeriod(body, req.abilityCondition, req.user)
+    return this.programmeService.addNdcDetailsPeriod(
+      body,
+      req.abilityCondition,
+      req.user
+    );
   }
 
   @UseGuards(JwtAuthGuard)
   @Post("deleteNdcDetailsPeriod")
   deleteNdcDetailsPeriod(@Body() id: number, @Request() req) {
-    return this.programmeService.deleteNdcDetailsPeriod(id, req.abilityCondition, req.user)
+    return this.programmeService.deleteNdcDetailsPeriod(
+      id,
+      req.abilityCondition,
+      req.user
+    );
   }
 
   @UseGuards(JwtAuthGuard)
   @Post("finalizeNdcDetailsPeriod")
   finalizeNdcDetailsPeriod(@Body() id: number, @Request() req) {
-    return this.programmeService.finalizeNdcDetailsPeriod(id, req.abilityCondition, req.user)
+    return this.programmeService.finalizeNdcDetailsPeriod(
+      id,
+      req.abilityCondition,
+      req.user
+    );
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('queryNdcDetailsAction')
+  @Get("queryNdcDetailsAction")
   getNdcDetailActions(@Request() req) {
-    return this.programmeService.getNdcDetailActions(req.abilityCondition, req.user);
+    return this.programmeService.getNdcDetailActions(
+      req.abilityCondition,
+      req.user
+    );
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('addNdcDetailsAction')
+  @Post("addNdcDetailsAction")
   addNdcDetailsAction(@Body() body: NdcDetailsActionDto, @Request() req) {
-    return this.programmeService.addNdcDetailAction(body, req.abilityCondition, req.user)
+    return this.programmeService.addNdcDetailAction(
+      body,
+      req.abilityCondition,
+      req.user
+    );
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put('updateNdcDetailsAction')
+  @Put("updateNdcDetailsAction")
   updateNdcDetailsAction(@Body() body: NdcDetailsActionDto, @Request() req) {
-    return this.programmeService.updateNdcDetailsAction(body, req.abilityCondition, req.user)
+    return this.programmeService.updateNdcDetailsAction(
+      body,
+      req.abilityCondition,
+      req.user
+    );
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('approveNdcDetailsAction')
+  @Post("approveNdcDetailsAction")
   approveNdcDetailsAction(@Body() baseIdDto: BaseIdDto, @Request() req) {
-    return this.programmeService.approveNdcDetailsAction(baseIdDto, req.abilityCondition, req.user)
+    return this.programmeService.approveNdcDetailsAction(
+      baseIdDto,
+      req.abilityCondition,
+      req.user
+    );
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('rejectNdcDetailsAction')
+  @Post("rejectNdcDetailsAction")
   rejectNdcDetailsAction(@Body() baseIdDto: BaseIdDto, @Request() req) {
-    return this.programmeService.rejectNdcDetailsAction(baseIdDto, req.abilityCondition, req.user)
+    return this.programmeService.rejectNdcDetailsAction(
+      baseIdDto,
+      req.abilityCondition,
+      req.user
+    );
   }
-
 }

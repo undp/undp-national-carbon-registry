@@ -1,0 +1,84 @@
+Name,Country,District,Latitude,Longitude,Language
+Colombo 1 (Fort),LK,Colombo,6.9271,79.8612,en
+Colombo 2 (Slave Island),LK,Colombo,6.9271,79.8612,en
+Colombo 3 (Kollupitiya),LK,Colombo,6.9271,79.8612,en
+Colombo 4 (Bambalapitiya),LK,Colombo,6.9271,79.8612,en
+Colombo 5 (Havelock Town),LK,Colombo,6.9271,79.8612,en
+Colombo 6 (Wellawatte),LK,Colombo,6.9271,79.8612,en
+Colombo 7 (Cinnamon Gardens),LK,Colombo,6.9271,79.8612,en
+Colombo 8 (Borella),LK,Colombo,6.9271,79.8612,en
+Colombo 9 (Dematagoda),LK,Colombo,6.9271,79.8612,en
+Colombo 10 (Maradana),LK,Colombo,6.9271,79.8612,en
+Colombo 11 (Pettah),LK,Colombo,6.9271,79.8612,en
+Colombo 12 (Hulftsdorp),LK,Colombo,6.9271,79.8612,en
+Colombo 13 (Kotahena),LK,Colombo,6.9271,79.8612,en
+Colombo 14 (Grandpass),LK,Colombo,6.9271,79.8612,en
+Colombo 15 (Mutwal),LK,Colombo,6.9271,79.8612,en
+Dehiwala,LK,Colombo,6.8444,79.8650,en
+Mount Lavinia,LK,Colombo,6.8283,79.8630,en
+Moratuwa,LK,Colombo,6.7730,79.8815,en
+Ratmalana,LK,Colombo,6.8194,79.8802,en
+Gampaha,LK,Gampaha,7.0902,79.9940,en
+Negombo,LK,Gampaha,7.2083,79.8358,en
+Kalutara,LK,Kalutara,6.5831,79.9607,en
+Horana,LK,Kalutara,6.7167,80.0667,en
+Kandy,LK,Kandy,7.2906,80.6337,en
+Peradeniya,LK,Kandy,7.2627,80.5981,en
+Gampola,LK,Kandy,7.1646,80.5706,en
+Kadugannawa,LK,Kandy,7.2546,80.5239,en
+Digana,LK,Kandy,7.3005,80.7558,en
+Matale,LK,Matale,7.4675,80.6234,en
+Dambulla,LK,Matale,7.8717,80.6520,en
+Galewela,LK,Matale,7.7833,80.5667,en
+Ukuwela,LK,Matale,7.4167,80.6833,en
+Nuwara Eliya,LK,Nuwara Eliya,6.9708,80.7829,en
+Hatton,LK,Nuwara Eliya,6.8994,80.5934,en
+Talawakele,LK,Nuwara Eliya,6.9340,80.6692,en
+Ginigathhena,LK,Nuwara Eliya,6.9633,80.5333,en
+Ampara,LK,Ampara,7.2964,81.6745,en
+Kalmunai,LK,Ampara,7.4167,81.8167,en
+Akkaraipattu,LK,Ampara,7.2167,81.8500,en
+Sammanthurai,LK,Ampara,7.3667,81.8333,en
+Batticaloa,LK,Batticaloa,7.7102,81.6924,en
+Kattankudy,LK,Batticaloa,7.6833,81.7333,en
+Eravur,LK,Batticaloa,7.7667,81.6000,en
+Valachchenai,LK,Batticaloa,7.8994,81.5661,en
+Trincomalee,LK,Trincomalee,8.5760,81.2330,en
+Kinniya,LK,Trincomalee,8.4833,81.1833,en
+Muttur,LK,Trincomalee,8.4500,81.2667,en
+Anuradhapura,LK,Anuradhapura,8.3114,80.4037,en
+Mihintale,LK,Anuradhapura,8.3752,80.5070,en
+Kekirawa,LK,Anuradhapura,8.0356,80.5950,en
+Polonnaruwa,LK,Polonnaruwa,7.9403,81.0188,en
+Hingurakgoda,LK,Polonnaruwa,8.0500,80.9500,en
+Medirigiriya,LK,Polonnaruwa,8.1833,80.9167,en
+Kurunegala,LK,Kurunegala,7.4863,80.3621,en
+Kuliyapitiya,LK,Kurunegala,7.4667,80.0333,en
+Pannala,LK,Kurunegala,7.3833,80.0333,en
+Puttalam,LK,Puttalam,8.0333,79.8333,en
+Chilaw,LK,Puttalam,7.5833,79.8000,en
+Wennappuwa,LK,Puttalam,7.3000,79.8500,en
+Jaffna,LK,Jaffna,9.6685,80.0074,en
+Point Pedro,LK,Jaffna,9.8167,80.2333,en
+Mannar,LK,Mannar,8.9833,79.9000,en
+Pesalai,LK,Mannar,9.0500,79.7333,en
+Mullaitivu,LK,Mullaitivu,9.2674,80.8128,en
+Puthukudiyiruppu,LK,Mullaitivu,9.3833,80.7667,en
+Vavuniya,LK,Vavuniya,8.7500,80.5000,en
+Omanthai,LK,Vavuniya,8.8500,80.4667,en
+Kilinochchi,LK,Kilinochchi,9.4000,80.4000,en
+Paranthan,LK,Kilinochchi,9.4333,80.4167,en
+Kegalle,LK,Kegalle,7.2514,80.3464,en
+Warakapola,LK,Kegalle,7.1500,80.2500,en
+Ratnapura,LK,Ratnapura,6.6828,80.3992,en
+Balangoda,LK,Ratnapura,6.6470,80.7042,en
+Galle,LK,Galle,6.0535,80.2210,en
+Ambalangoda,LK,Galle,6.2394,80.0533,en
+Matara,LK,Matara,5.9485,80.5353,en
+Weligama,LK,Matara,5.9736,80.4292,en
+Hambantota,LK,Hambantota,6.1240,81.1185,en
+Tangalle,LK,Hambantota,6.0228,80.7916,en
+Badulla,LK,Badulla,6.9896,81.0552,en
+Bandarawela,LK,Badulla,6.8316,80.9936,en
+Monaragala,LK,Monaragala,6.8804,81.3509,en
+Wellawaya,LK,Monaragala,6.7351,81.1015,en

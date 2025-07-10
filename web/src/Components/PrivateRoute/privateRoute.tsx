@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation, Outlet, Navigate } from 'react-router-dom';
-import { useUserContext } from '@undp/carbon-library';
+import { useUserContext } from '../../Context/UserInformationContext/userInformationContext';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const PrivateRoute = () => {
   const { IsAuthenticated } = useUserContext();
@@ -8,7 +9,7 @@ const PrivateRoute = () => {
   return IsAuthenticated() ? (
     <Outlet />
   ) : (
-    <Navigate to="/login" state={{ from: location }} replace />
+    <Navigate to={ROUTES.LOGIN} state={{ from: location }} replace />
   );
 };
 

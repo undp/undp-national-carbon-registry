@@ -1,0 +1,414 @@
+@use "../../../Styles/variables.scss";
+
+.projectDocuments {
+  .title-icon {
+    padding-right: 10px;
+  }
+
+  .title-text {
+    color: variables.$title-text-color;
+    font-weight: 600;
+  }
+
+  .title {
+    margin-bottom: 5px;
+  }
+
+  .document-info-row {
+    margin-top: 6px;
+    &-first {
+      margin-top: 16px;
+    }
+  }
+
+  .document-action-btn {
+    width: 100%;
+  }
+}
+
+.verification-forms {
+  .title-icon {
+    padding-right: 10px;
+    font-size: 16px;
+  }
+
+  .title-text {
+    color: variables.$title-text-color;
+    font-weight: 600;
+    margin-top: -2px;
+  }
+
+  .title {
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .document-info-row {
+    // &-first {
+    //   margin-top: 16px;
+    // }
+    margin-top: 4px;
+  }
+
+  .document-action-btn {
+    width: 100%;
+  }
+
+  .documentTitle-col {
+    font-size: 14px;
+  }
+
+  .tag-col {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .activity-container {
+    margin-top: 1rem;
+    width: 100%;
+
+    .ant-steps-item-container {
+      margin-bottom: 0.5rem;
+    }
+
+    .ant-steps-item-title {
+      width: 100% !important;
+    }
+  }
+  .stage-icon {
+    font-size: 14px;
+    margin-right: 8px;
+  }
+
+  .step-icon-completed {
+    font-size: 1.4rem;
+    color: white;
+    padding: 0.13rem 0.23rem 0rem 0.23rem;
+    border-radius: 100%;
+    background-color: #5dc380;
+  }
+  .step-icon-pending {
+    font-size: 14px;
+    color: #bfbfbf;
+    padding: 0.25rem 0.35rem 0.15rem 0.35rem;
+    border-radius: 100%;
+    border-color: #bfbfbf;
+    border-width: 1px;
+    border-style: solid;
+    background-color: white;
+  }
+  .step-icon-submitted {
+    font-size: 1rem;
+    color: #cfa42f;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+    border-radius: 100%;
+    background-color: #ffeec0;
+  }
+  .step-icon-rejected {
+    font-size: 1rem;
+    color: white;
+    padding: 0.15rem 0.3rem 0.25rem 0.3rem;
+    border-radius: 100%;
+    background-color: #ff4618;
+  }
+}
+
+.info-view {
+  .title-icon {
+    padding-right: 10px;
+  }
+
+  .title-text {
+    color: variables.$title-text-color;
+    font-weight: 600;
+  }
+
+  .title {
+    margin-bottom: 5px;
+  }
+
+  .field-key {
+    color: variables.$body-text-color;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    .label-container {
+      display: flex;
+      flex-direction: row;
+      align-items: start;
+    }
+
+    .label {
+      width: 70%;
+    }
+
+    .label-uploaded {
+      color: variables.$common-filter-color;
+      width: 70%;
+    }
+
+    .time {
+    }
+  }
+
+  .field-value {
+    color: variables.$body-text-color;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    .link {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 20px;
+    }
+  }
+
+  .field {
+    margin: 15px 25px;
+    font-size: 0.8rem;
+  }
+
+  .field-verification-title {
+    margin: 15px 0px;
+
+    .field-key {
+      font-weight: bold;
+    }
+  }
+
+  .verification-row {
+    .field {
+      margin: 0;
+      font-size: 0.8rem;
+    }
+
+    .ant-steps-item-title {
+      width: 100%;
+    }
+
+    .verification-title-main {
+      display: flex;
+      justify-content: flex-start;
+
+      .verification-title-icon {
+        padding: 0px 10px;
+      }
+
+      .verification-title-status-tag {
+        padding-left: 15px;
+        font-weight: 500;
+      }
+    }
+
+    .field-verification-title {
+      margin: 15px 0px;
+
+      .verification-req-status-col {
+        display: flex;
+        justify-content: center;
+      }
+
+      .field-key {
+        font-weight: bold;
+      }
+    }
+
+    .timeline-icon {
+      svg {
+        height: 20px;
+        width: 20px;
+      }
+    }
+
+    .ant-steps-vertical
+      > .ant-steps-item
+      > .ant-steps-item-container
+      > .ant-steps-item-tail {
+      left: 10px;
+    }
+
+    .ant-steps-vertical
+      > .ant-steps-item
+      > .ant-steps-item-container
+      > .ant-steps-item-tail::after {
+      background-color: #ffff !important;
+      border-left: 1px solid #d9d9d9;
+      border-style: solid;
+      border-width: 1px;
+      border-color: #d9d9d9;
+    }
+
+    .monitoring-submitted,
+    .verification-submitted {
+      background-color: #1890ff;
+      color: #fff;
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.5;
+      height: 20px;
+      width: 20px;
+
+      svg {
+        height: 14px;
+        width: 13px;
+      }
+    }
+    .verification-pending {
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.2;
+      height: 20px;
+      width: 20px;
+
+      svg {
+        height: 12px;
+        width: 12px;
+      }
+    }
+    .monitoring-rejected-verification {
+      line-height: 1.1;
+    }
+    .verification-current {
+      border: 1px solid #1890ff;
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1.2;
+      height: 20px;
+      width: 20px;
+
+      svg {
+        height: 12px;
+        width: 12px;
+      }
+    }
+    .issue-cert-pending {
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      border-radius: 100%;
+      /* margin-right: 10px; */
+      font-size: 14px;
+      padding-left: 3px;
+      padding-right: 5.5px;
+      padding-top: 0px;
+      line-height: 1;
+      height: 20px;
+      width: 20px;
+
+      svg {
+        height: 12px;
+        width: 12px;
+      }
+    }
+    .monitoring-approved,
+    .verification-approved,
+    .issue-cert-approved {
+      color: #5dc380;
+    }
+
+    .monitoring-rejected,
+    .verification-rejected {
+      color: #ff4141;
+    }
+
+    @media (min-width: 1600px) {
+      .verification-pending {
+        line-height: 1.4;
+      }
+
+      .monitoring-rejected-verification {
+        line-height: 1.3;
+      }
+
+      .issue-cert-pending {
+        line-height: 1.3;
+      }
+    }
+  }
+  .approve-cnc-title-col {
+    .approve-cnc-title-icon {
+      padding-left: 10px;
+    }
+  }
+  .ant-btn-sm {
+    height: 25px;
+    width: 80px;
+  }
+
+  // .ant-btn span {
+  //   text-transform: none;
+  //   color: rgba(58, 53, 65, 0.6);
+  // }
+
+  // .ant-btn-dangerous span {
+  //   text-transform: none;
+  //   color: #ff7875;
+  // }
+
+  // .ant-btn:hover span {
+  //   text-transform: none;
+  //   color: #40a9ff;
+  // }
+
+  // .ant-btn-dangerous:hover span {
+  //   text-transform: none;
+  //   color: #ff7875;
+  // }
+
+  .anticon-check-circle {
+    margin-top: 6.5px;
+    margin-left: 30px;
+  }
+
+  // .btnProjectForms {
+  //   height: 25px;
+  //   width: 80px;
+  // }
+
+  .btnProjectForms:not(:disabled) span {
+    text-transform: none;
+    color: #40a9ff;
+  }
+
+  .ant-btn-sm:disabled span {
+    text-transform: none;
+    color: rgba(58, 53, 65, 0.6) !important;
+  }
+
+  .btnProjectForms:not(:disabled) {
+    border-color: #40a9ff;
+  }
+
+  .btnDangerProjectForms span {
+    text-transform: none;
+    color: #ff7875;
+  }
+
+  .btnDangerProjectForms:hover span {
+    text-transform: none;
+    color: #ff7875;
+  }
+
+  .time {
+    color: rgba(58, 53, 65, 0.3);
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "changePassword": "Cambiar Contraseña",
+  "oldPassword": "Contraseña Antigua",
+  "newPassword": "Nueva Contraseña",
+  "confirmNewPassword":"Confirmar Nueva Contraseña",
+  "setPassword":"ESTABLECER CONTRASEÑA",
+  "cancel":"CANCELAR",
+  "isRequired": "es requerido",
+  "passwordsNotMatchedErr":"Las contraseñas no coinciden"
+}

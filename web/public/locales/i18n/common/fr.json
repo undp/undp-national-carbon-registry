@@ -1,0 +1,21 @@
+{
+  "submit": "Soumettre",
+  "name": "Nom",
+  "email": "E-mail",
+  "pwd": "Mot de passe",
+  "login": "Se Connecter",
+  "signUp": "S'Inscrire",
+  "language": "Langue",
+  "company": "Organisations",
+  "edit": "ÉDITER",
+  "isRequired": "est requis !",
+  "isInvalid": "est invalide !",
+  "sessionExpiredErrorMsg": "Votre session a expiré. Veuillez vous connecter à nouveau pour continuer à travailler.",
+  "backto": "Retour à",
+  "signIn": "Se Connecter",
+  "loginFailed": "Échec de la Connexion",
+  "networkError": "Erreur réseau. Veuillez vérifier votre connexion Internet et réessayer.",
+  "systemError": "Quelque chose s'est mal passé. Veuillez réessayer.",
+  "approve": "APPROUVER",
+  "reject": "REJETER"
+}

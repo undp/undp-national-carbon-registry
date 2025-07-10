@@ -1,8 +1,13 @@
+import React, { FC } from 'react';
 import { Select } from 'antd';
-import i18n from '../Internationalization/i18n';
 import './languageSelection.scss';
 
-const LanguageSelection = () => {
+export interface LanguageSelectionProps {
+  i18n: any;
+}
+
+const LanguageSelection: FC<LanguageSelectionProps> = (props: LanguageSelectionProps) => {
+  const { i18n } = props;
   const handleLanguageChange = (lang: string) => {
     i18n.changeLanguage(lang);
   };

@@ -1,0 +1,10 @@
+{
+  "changePassword": "Changer le Mot de Passe",
+  "oldPassword": "Ancien Mot de Passe",
+  "newPassword": "Nouveau Mot de Passe",
+  "confirmNewPassword": "Confirmer le Nouveau Mot de Passe",
+  "setPassword": "DÉFINIR LE MOT DE PASSE",
+  "cancel": "ANNULER",
+  "isRequired": "est requis",
+  "passwordsNotMatchedErr": "Les mots de passe ne correspondent pas"
+}

@@ -12,7 +12,7 @@ entrypoint_log() {
 if [ "$1" = "nginx" -o "$1" = "nginx-debug" ]; then
     if /usr/bin/find "/docker-entrypoint.d/" -mindepth 1 -maxdepth 1 -type f -print -quit 2>/dev/null | read v; then
         entrypoint_log "$0: /docker-entrypoint.d/ is not empty, will attempt to perform configuration"
-
+        
         entrypoint_log "$0: Looking for shell scripts in /docker-entrypoint.d/"
         find "/docker-entrypoint.d/" -follow -type f -print | sort -V | while read -r f; do
             case "$f" in
@@ -24,7 +24,7 @@ if [ "$1" = "nginx" -o "$1" = "nginx-debug" ]; then
                         # warn on shell scripts without exec bit
                         entrypoint_log "$0: Ignoring $f, not executable";
                     fi
-                    ;;
+                ;;
                 *.sh)
                     if [ -x "$f" ]; then
                         entrypoint_log "$0: Launching $f";
@@ -33,32 +33,48 @@ if [ "$1" = "nginx" -o "$1" = "nginx-debug" ]; then
                         # warn on shell scripts without exec bit
                         entrypoint_log "$0: Ignoring $f, not executable";
                     fi
-                    ;;
+                ;;
                 *) entrypoint_log "$0: Ignoring $f";;
             esac
         done
-
+        
         entrypoint_log "$0: Configuration complete; ready for start up"
     else
         entrypoint_log "$0: No files found in /docker-entrypoint.d/, skipping configuration"
     fi
 fi
 
-REACT_APP_BACKEND=$(env | grep REACT_APP_BACKEND= | cut -d'=' -f2-)
-REACT_APP_STAT_URL=$(env | grep REACT_APP_STAT_URL= | cut -d'=' -f2-)
-echo "REACT_APP_BACKEND value: $REACT_APP_BACKEND"
-echo "REACT_APP_STAT_URL value: $REACT_APP_STAT_URL"
+VITE_APP_BACKEND=$(env | grep VITE_APP_BACKEND= | cut -d'=' -f2-)
+VITE_APP_COUNTRY_NAME=$(env | grep VITE_APP_COUNTRY_NAME= | cut -d'=' -f2-)
+VITE_APP_REGISTRY_NAME=$(env | grep VITE_APP_REGISTRY_NAME= | cut -d'=' -f2-)
+VITE_APP_MAXIMUM_FILE_SIZE=$(env | grep VITE_APP_MAXIMUM_FILE_SIZE= | cut -d'=' -f2-)
+echo "VITE_APP_BACKEND value: $VITE_APP_BACKEND"
+echo "VITE_APP_COUNTRY_NAME value: $VITE_APP_COUNTRY_NAME"
+echo "VITE_APP_REGISTRY_NAME value: $VITE_APP_REGISTRY_NAME"
+echo "VITE_APP_MAXIMUM_FILE_SIZE value: $VITE_APP_MAXIMUM_FILE_SIZE"
 
-if [ -n "$REACT_APP_BACKEND" ]; then
-  sed -i "s|http://localhost:3000|$REACT_APP_BACKEND|g" /usr/share/nginx/html/static/js/*.js
+if [ -n "$VITE_APP_BACKEND" ]; then
+    sed -i "s|http://localhost:3000|$VITE_APP_BACKEND|g" /usr/share/nginx/html/assets/*.js
 else
-  echo "REACT_APP_BACKEND environment variable not found."
+    echo "VITE_APP_BACKEND environment variable not found."
 fi
 
-if [ -n "$REACT_APP_STAT_URL" ]; then
-  sed -i "s|http://localhost:3100|$REACT_APP_STAT_URL|g" /usr/share/nginx/html/static/js/*.js
+if [ -n "$VITE_APP_COUNTRY_NAME" ]; then
+    sed -i "s|CountryX|$VITE_APP_COUNTRY_NAME|g" /usr/share/nginx/html/assets/*.js
 else
-  echo "REACT_APP_STAT_URL environment variable not found."
+    echo "VITE_APP_COUNTRY_NAME environment variable not found."
+fi
+
+if [ -n "$VITE_APP_REGISTRY_NAME" ]; then
+    sed -i "s|CountryXRegistry|$VITE_APP_REGISTRY_NAME|g" /usr/share/nginx/html/assets/*.js
+else
+    echo "VITE_APP_REGISTRY_NAME environment variable not found."
+fi
+
+if [ -n "$VITE_APP_MAXIMUM_FILE_SIZE" ]; then
+    sed -i "s|5242880|$VITE_APP_MAXIMUM_FILE_SIZE|g" /usr/share/nginx/html/assets/*.js
+else
+    echo "VITE_APP_MAXIMUM_FILE_SIZE environment variable not found."
 fi
 
 echo "Enviroment Variable Injection Complete."

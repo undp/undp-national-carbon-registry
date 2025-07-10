@@ -1,26 +1,21 @@
 import {
   Controller,
-  Get,
   Post,
-  UseGuards,
   Request,
-  Logger,
   Body,
-  ValidationPipe,
-  UnauthorizedException,
-  Req,
   Put,
   Query,
   HttpException,
   HttpStatus,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { LoginDto } from "@undp/carbon-services-lib";
-import { AuthService } from "@undp/carbon-services-lib";
-import { ForgotPasswordDto } from "@undp/carbon-services-lib";
-import { PasswordResetDto } from "@undp/carbon-services-lib";
-import { PasswordResetService } from '@undp/carbon-services-lib';
-import { HelperService } from '@undp/carbon-services-lib';
+import { AuthService } from "@app/shared/auth/auth.service";
+import { ForgotPasswordDto } from "@app/shared/dto/forgotPassword.dto";
+import { LoginDto } from "@app/shared/dto/login.dto";
+import { PasswordResetDto } from "@app/shared/dto/passwordReset.dto";
+import { HelperService } from "@app/shared/util/helpers.service";
+import { PasswordResetService } from "@app/shared/util/passwordReset.service";
+import { RefreshLoginDto } from "@app/shared/dto/refreshLogin.dto";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -28,23 +23,19 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly passwordResetService: PasswordResetService,
-    private helperService: HelperService,
+    private helperService: HelperService
   ) {}
 
   @Post("login")
   async login(@Body() login: LoginDto, @Request() req) {
-    const user = await this.authService.validateUser(
-      login.username,
-      login.password
-    );
-    if (user != null) {
-      global.baseUrl = `${req.protocol}://${req.get("Host")}`;
-      return this.authService.login(user);
-    }
-    throw new HttpException(this.helperService.formatReqMessagesString(
-      "common.invalidLogin",
-      []
-    ), HttpStatus.UNAUTHORIZED);
+    global.baseUrl = `${req.protocol}://${req.get("Host")}`;
+    return this.authService.login(login);
+  }
+
+  @Post("login/refresh")
+  async refreshLogin(@Body() refreshLogin: RefreshLoginDto, @Request() req) {
+    global.baseUrl = `${req.protocol}://${req.get("Host")}`;
+    return this.authService.refreshToken(refreshLogin.refreshToken);
   }
 
   @Post("forgotPassword")

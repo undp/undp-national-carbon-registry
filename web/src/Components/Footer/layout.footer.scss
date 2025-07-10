@@ -1,8 +1,8 @@
-@import '../../Assets/Fonts/fonts.scss';
-@import '../../Styles/variables.scss';
+@use '../../Assets/Fonts/fonts.scss';
+@use '../../Styles/variables.scss';
 
 .homepage-footer-container {
-  background-color: $background-color-dark;
+  background-color: variables.$background-color-dark;
   min-height: 200px;
   height: 100%;
   align-items: center;
@@ -20,7 +20,7 @@
   }
 
   .footertext {
-    color: $dark-text-color;
+    color: variables.$dark-text-color;
     padding: 5px 60px 20px 60px;
     font-size: 0.875rem;
 
@@ -35,7 +35,7 @@
   }
 
   .footertext-bottom {
-    color: $dark-text-color;
+    color: variables.$dark-text-color;
     padding: 100px 60px 28px 60px;
     font-size: 0.875rem;
     font-family: 'MuseoSans';
@@ -56,7 +56,7 @@
 
   .footertext-link-container {
     display: flex;
-    color: $dark-text-color;
+    color: variables.$dark-text-color;
     padding: 100px 60px 20px 60px;
     font-size: 0.75rem;
     text-decoration: underline;
@@ -81,7 +81,7 @@
 
   .footertext-links {
     padding-right: 15px;
-    color: $dark-text-color;
+    color: variables.$dark-text-color;
 
     @media (max-width: 645px) {
       padding-left: 0;
@@ -110,7 +110,7 @@
     .title {
       font-family: 'MuseoSans';
       font-size: 2rem;
-      color: $dark-text-color;
+      color: variables.$dark-text-color;
       font-weight: 700;
       margin-right: 0.5rem;
       margin-left: 0.5rem;
@@ -124,7 +124,7 @@
       font-weight: 100 !important;
       font-family: 'MuseoSans';
       font-size: 2rem;
-      color: $dark-text-color;
+      color: variables.$dark-text-color;
 
       @media (max-width: 645px) {
         font-size: 1.8rem;
@@ -145,7 +145,7 @@
 
     .footer-country-name {
       font-size: 0.875rem;
-      color: $dark-text-color;
+      color: variables.$dark-text-color;
       font-family: 'MuseoSans';
       margin-left: 0.6rem;
     }

@@ -1,18 +1,19 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { AddNewUserComponent } from '@undp/carbon-library';
 import { useAbilityContext } from '../../Casl/Can';
+import { AddNewUserComponent } from '../../Components/User/AddNewUser/addNewUserComponent';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const AddUser = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(['addUser', 'passwordReset', 'userProfile']);
 
   const onNavigateToUserManagement = () => {
-    navigate('/userManagement/viewAll', { replace: true });
+    navigate(ROUTES.VIEW_USERS, { replace: true });
   };
 
   const onNavigateToLogin = () => {
-    navigate('/login', { replace: true });
+    navigate(ROUTES.LOGIN, { replace: true });
   };
 
   return (
