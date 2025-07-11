@@ -20,6 +20,7 @@
   "general": "General",
   "name": "Project Name",
   "programmeOwner": "Project Owner",
+  "organizationDetails": "Organization Details",
   "serialNo": "Credit Issuance Serial Number",
   "registrationSerialNo": "Registration Serial Number",
   "currentStatus": "Current Status",

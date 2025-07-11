@@ -860,7 +860,7 @@ const ProjectDetailsViewComponent = (props: any) => {
             </Col>
             <Col xl={18} md={18}>
               <div className="text-right programme-name">
-                {ele.company.name}
+                {ele.company.name} 
                 <OrganisationSlStatus
                   organisationStatus={parseInt(ele.company.state)}
                   t={companyProfileTranslations}
@@ -1410,7 +1410,7 @@ const ProjectDetailsViewComponent = (props: any) => {
                     }
                   </span>
                   <span className="title-text">
-                    {t("projectDetailsView:programmeOwner")}
+                    {t("projectDetailsView:organizationDetails")}
                   </span>
                 </div>
                 <div className="centered-card">{elements}</div>
