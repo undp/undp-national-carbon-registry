@@ -15,7 +15,7 @@ import {
   Tooltip,
   Select,
 } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import moment from "moment";
 import "./ProgrammeManagementComponent.scss";
 import "../../Styles/common.table.scss";
@@ -75,6 +75,7 @@ export const ProgrammeManagementComponent = (props: any) => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [search, setSearch] = useState<string>();
   const [searchText, setSearchText] = useState<string>();
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
   // const [statusFilter, setStatusFilter] = useState<any>();
   const [dataFilter, setDataFilter] = useState<any>();
   const [sortOrder, setSortOrder] = useState<string>();
@@ -454,13 +455,20 @@ export const ProgrammeManagementComponent = (props: any) => {
   //   }
   // };
 
-  const onSearch = async () => {
-  if (searchText) {
-    setSearch(searchText.toLowerCase());
-  } else {
-    setSearch(''); 
-  }
-};
+  // Debounced search effect
+  useEffect(() => {
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+    debounceTimeout.current = setTimeout(() => {
+      setSearch(searchText ? searchText.toLowerCase() : "");
+    }, 500);
+    return () => {
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+    };
+  }, [searchText]);
 
   useEffect(() => {
     if (currentPage !== 1) {
@@ -588,9 +596,9 @@ export const ProgrammeManagementComponent = (props: any) => {
                 className="application-stage-selector"
                 options={applicationStageOptions}
                 onChange={onSelectedApplicationStageChange}
-                placeholder={t('projectList:proposalStage')}
+                placeholder={t("projectList:proposalStage")}
                 allowClear
-                />
+              />
               {/* <Checkbox
                 className="all-check"
                 disabled={loading}
@@ -614,21 +622,12 @@ export const ProgrammeManagementComponent = (props: any) => {
             <div className="filter-section">
               <div className="search-bar">
                 <Search
-                value={searchText}
-                onPressEnter={onSearch}
-                placeholder={`${t("projectList:searchByName")}`}
-                allowClear
-                onChange={(e) => setSearchText(e.target.value)}
-                onSearch={(value: string) => {
-                  console.log("----------value-----------", value);
-                  if (value) {
-                    setSearch(value.toLowerCase());
-                  } else {
-                    setSearch(""); // or setSearch(undefined) to show all
-                  }
-                }}
-                style={{ width: 265 }}
-              />
+                  value={searchText}
+                  placeholder={`${t("projectList:searchByName")}`}
+                  allowClear
+                  onChange={(e) => setSearchText(e.target.value)}
+                  style={{ width: 265 }}
+                />
               </div>
               <div className="download-icon" onClick={downloadData}>
                 <DownloadOutlined />
