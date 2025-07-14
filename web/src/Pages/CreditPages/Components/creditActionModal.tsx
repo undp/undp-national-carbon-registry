@@ -452,6 +452,10 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                           required: !isProceed,
                           message: t("required"),
                         },
+                        {
+                          pattern: /^[^\s].*[^\s]$|^[^\s]+$/,
+                          message: t("invalidOrganizationName"), // or "Organization name cannot start with space or contain only spaces"
+                        },
                       ]}
                     >
                       <Input
