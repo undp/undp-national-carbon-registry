@@ -1,0 +1,20 @@
+{
+  "settingsTitle": "Settings",
+  "certificateSignatures": "Certificate Signatures",
+  "certificateSignaturesSub": "Upload current {{countryName}} Climate Fund Chairman and Chief Executive Officer's signatures.",
+  "upload": "Upload",
+  "chairmanSign": "Chairman's Signature",
+  "ceoSign": "Chief Executive Officer's Signature",
+  "save": "Upload & Save",
+  "currentSignatures": "Current Signatures",
+  "currentSignaturesSub": "Below are the active signatures of Chairman and Chief Executive Officer in the system.",
+  "previewCertificates": "Preview Certificates",
+  "previewCertificatesSub": "Use below preview certificates to verify the alignment and size of signatures uploaded.",
+  "previewRegCert": "Registration Certificate",
+  "previewCreditIssueCert": "Credit Issuance Certificate",
+  "previewCreditRetirementCert": "Voluntary Retirement Certificate",
+  "previewCarbonNeutralCert": "Carbon Neutral Certificate",
+  "signUploadSuccess": "Signature/s saved.",
+  "unsupportedFormat": "Only JPG image format is supported",
+  "maxUploadSize": "Maximum upload file size is 5MB!"
+}

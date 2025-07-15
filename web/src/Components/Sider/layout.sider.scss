@@ -1,17 +1,22 @@
-@import '../../Styles/variables.scss';
+@use '../../Styles/variables.scss';
 
 .layout-sider-container {
-  background-color: $background-color;
+  background-color: variables.$background-color;
   height: 100vh;
 
   .country-flag {
     margin-top: 27px;
     margin-left: -8px;
+
+    img {
+      width: 15px;
+      height: auto;
+    }
   }
 
   .country-name {
     font-size: 0.65rem;
-    color: $logo-text-color;
+    color: variables.$logo-text-color;
     margin-top: -5px;
     font-family: 'MuseoSans';
   }
@@ -22,8 +27,8 @@
     bottom: 15px;
     text-align: center;
     width: calc(100% - 20px);
-    border: 1px solid $primary-color;
-    color: $primary-color;
+    border: 1px solid variables.$primary-color;
+    color: variables.$primary-color;
     border-radius: 5px;
     height: 32px;
     vertical-align: middle;
@@ -34,7 +39,7 @@
   }
 
   .layout-sider-menu-container {
-    background-color: $background-color;
+    background-color: variables.$background-color;
     padding-top: 12px;
 
     .ant-menu-inline-collapsed {
@@ -56,22 +61,24 @@
 
       .title {
         font-family: 'MuseoSans';
-        font-size: 1.2rem;
-        color: $logo-text-color;
+        font-size: 0.9rem;
+        color: variables.$logo-text-color;
         font-weight: 700;
         margin-right: 0.5rem;
+        width: 9rem;
       }
 
       .title-sub {
-        font-weight: 100 !important;
+        font-weight: 700 !important;
         font-family: 'MuseoSans';
-        font-size: 1.2rem;
-        color: $logo-text-color;
+        font-size: 0.9rem;
+        color: variables.$logo-text-color;
+        margin-top: -8px;
       }
 
       .logo {
         height: 52px;
-        width: 80px;
+        width: 50px;
 
         img {
           object-fit: cover;
@@ -84,13 +91,13 @@
     }
 
     .ant-menu-item-selected {
-      background: linear-gradient(to right, $gradient-background-start, $gradient-background-end);
-      color: $dark-text-color;
+      background: linear-gradient(to right, variables.$gradient-background-start, variables.$gradient-background-end);
+      color: variables.$dark-text-color;
       border-top-right-radius: 22px;
       border-bottom-right-radius: 22px;
 
       a {
-        color: $dark-text-color;
+        color: variables.$dark-text-color;
       }
     }
 
@@ -100,21 +107,21 @@
 
     .ant-menu-submenu-selected {
       .ant-menu-item::after {
-        border-left: 2px solid $primary-color;
+        border-left: 2px solid variables.$primary-color;
       }
 
       .ant-menu-submenu-title {
-        background: linear-gradient(to right, $gradient-background-start, $gradient-background-end);
-        color: $dark-text-color;
+        background: linear-gradient(to right, variables.$gradient-background-start, variables.$gradient-background-end);
+        color: variables.$dark-text-color;
         border-top-right-radius: 22px;
         border-bottom-right-radius: 22px;
 
         .ant-menu-submenu-arrow {
-          color: $dark-text-color;
+          color: variables.$dark-text-color;
         }
 
         a {
-          color: $dark-text-color;
+          color: variables.$dark-text-color;
         }
       }
 
@@ -122,10 +129,10 @@
         background: none;
         border-top-right-radius: 0px;
         border-bottom-right-radius: 0px;
-        color: $primary-color !important;
+        color: variables.$primary-color !important;
 
         a {
-          color: $primary-color !important;
+          color: variables.$primary-color !important;
         }
       }
     }
@@ -139,17 +146,27 @@
     }
 
     .custom-padding-left {
-      padding-left: 3.0rem !important;
+      padding-left: 3rem !important;
+    }
+
+    .wrap-content-overflow {
+      white-space: normal;
+      word-wrap: break-word;
+      word-break: break-word;
+      overflow: hidden;
+      line-height: 1.8;
     }
   }
 }
 
 .ant-layout-sider-collapsed {
-  
   .layout-sider-div-container {
-
     .custom-padding-left {
       padding-left: 32px !important;
+    }
+
+    .wrap-content-overflow {
+      white-space: unset;
     }
   }
 }

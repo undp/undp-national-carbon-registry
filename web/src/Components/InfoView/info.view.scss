@@ -1,0 +1,127 @@
+@use '../../Styles/variables.scss';
+
+.info-view {
+  .title-icon {
+    padding-right: 10px;
+  }
+
+  .title-text {
+    color: variables.$title-text-color;
+    font-weight: 600;
+  }
+
+  .title {
+    margin-bottom: 5px;
+  }
+
+  .field-key {
+    color: variables.$body-text-color;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .field-value {
+    color: variables.$body-text-color;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    .row {
+      display: flex;
+      width: 40%;
+      align-items: center;
+      justify-content: space-between;
+
+      .key {
+        display: flex;
+        width: 50%;
+        align-items: center;
+        justify-content: flex-start;
+      }
+
+      .data {
+        display: flex;
+        width: 50%;
+        align-items: center;
+        justify-content: flex-start;
+      }
+    }
+  }
+
+  .field {
+    margin: 15px 25px;
+    font-size: 0.8rem;
+  }
+
+  .ant-tag-success {
+    color: #2ecc71;
+    background: #effbf4;
+    border-color: #2ecc71;
+  }
+
+  .ant-tag-processing {
+    color: #3498db;
+    background: #f3f8fd;
+    border-color: #3498db;
+  }
+
+  .ant-tag-error {
+    color: #ff694f;
+    background: #fff2f0;
+    border-color: #ff694f;
+  }
+
+  .ant-tag-orange {
+    color: #e67e22;
+    background: #fdf5ee;
+    border-color: #e67e22;
+  }
+
+  .ant-tag-default {
+    color: #5d6d7e;
+    background: #f2f4f5;
+    border-color: #5d6d7e;
+  }
+
+  .ant-tag-warning {
+    color: #f1c40f;
+    background: #fefbee;
+    border-color: #f1c40f;
+  }
+
+  .ant-tag-volcano {
+    color: #d35400;
+    background: #fcf2eb;
+    border-color: #d35400;
+  }
+
+  .ant-tag-green {
+    color: #2ecc71;
+    background: #effbf4;
+    border-color: #2ecc71;
+  }
+
+  .ant-tag-lime {
+    color: #28b463;
+    background: #effbf4;
+    border-color: #28b463;
+  }
+
+  .ant-tag-cyan {
+    color: #1abc9c;
+    background: #edfaf7;
+    border-color: #1abc9c;
+  }
+
+  .ant-tag-magenta {
+    color: #C0392B;
+    background: #faf0ee;
+    border-color: #C0392B;
+  }
+
+  .ant-tag-geekblue {
+    color: #2e86c1;
+    background: #eff6fa;
+    border-color: #2e86c1;
+  }
+}

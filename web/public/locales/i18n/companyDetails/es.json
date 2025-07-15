@@ -1,0 +1,18 @@
+{
+  "organisationDetailsHeading": "Detalles de la Organización",
+  "name": "Nombre",
+  "taxId": "ID Fiscal",
+  "paymentId": "ID de Pago de Registro",
+  "companyRole": "Rol",
+  "email": "Correo Electrónico",
+  "phoneNo": "Teléfono",
+  "website": "Sitio Web",
+  "address": "Dirección",
+  "creditBalance": "Saldo de Créditos",
+  "programmeCount": "Número de Programas",
+  "remarks": "Observaciones",
+  "ministerName": "Nombre del Ministro",
+  "sectoralScope": "Ámbito Sectorial",
+  "govDep": "Departamento",
+  "ministry": "Ministerio"
+}

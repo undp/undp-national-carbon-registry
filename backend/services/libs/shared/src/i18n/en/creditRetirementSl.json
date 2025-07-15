@@ -1,0 +1,16 @@
+{
+  "cannotRetireForOthers": "Can only make retirement requests for own organisation",
+  "toCompanyIdRequired": "toCompanyId field is required",
+  "programmeNotExist": "Project does not exist with id {}",
+  "programmeNotInCreditIssuedState": "Project is not in credit issued state",
+  "creditTypeMismatch": "Credit type does not match the credit type of the project",
+  "insufficientCredit": "Insufficient project credits",
+  "companyDoesNotExist": "Organisation with id {} does not exist",
+  "insufficientCompanyCredit": "Organisation with id {} does not have sufficient {} credits",
+  "requestNotExist": "Credit transfer/retirement request with id {} does not exist",
+  "notPendingRequest": "Credit transfer/retirement request with id {} is not in pending state",
+  "retirementReqApproveFailed": "Failed to approve the credit transfer/retirement request",
+  "retirementReqApproveSuccess": "Credit transfer/retirement request approved successfully",
+  "retirementReqRejectSuccess": "Credit transfer/retirement request rejected successfully",
+  "retirementReqCancelSuccess": "Credit transfer/retirement request cancelled successfully"
+}

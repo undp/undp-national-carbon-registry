@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { useAbilityContext } from '../../Casl/Can';
-import { UserManagementComponent, UserManagementColumns } from '@undp/carbon-library';
 import { useTranslation } from 'react-i18next';
+import { UserManagementColumns } from '../../Definitions/Enums/user.management.columns.enum';
+import { UserManagementComponent } from '../../Components/User/UserManagement/userManagementComponent';
+import { ROUTES } from '../../Config/uiRoutingConfig';
 
 const UserManagement = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation(['company']);
+  const { t } = useTranslation(['company', 'companyRoles']);
 
   const visibleColumns = [
     UserManagementColumns.logo,
@@ -19,11 +21,11 @@ const UserManagement = () => {
   ];
 
   const navigateToUpdateUser = (record: any) => {
-    navigate('/userManagement/updateUser', { state: { record } });
+    navigate(ROUTES.UPDATE_USER, { state: { record } });
   };
 
   const navigateToAddNewUser = () => {
-    navigate('/userManagement/addUSer');
+    navigate(ROUTES.ADD_NEW_USER);
   };
 
   return (

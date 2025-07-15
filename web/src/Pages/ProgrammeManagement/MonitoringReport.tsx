@@ -1,0 +1,23 @@
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { MonitoringReportComponent } from '../../Components/MonitoringReport/MonitoringReportComponent';
+import { ROUTES } from '../../Config/uiRoutingConfig';
+
+const MonitoringReport = () => {
+  const navigate = useNavigate();
+  const { i18n } = useTranslation(['common', 'monitoringReport']);
+
+  const onNavigateToProgrammeManagementView = () => {
+    navigate(ROUTES.VIEW_PROGRAMMES);
+  };
+
+  return (
+    <MonitoringReportComponent
+      translator={i18n}
+      // useLocation={useLocation}
+      // onNavigateToProgrammeView={onNavigateToProgrammeManagementView}
+    ></MonitoringReportComponent>
+  );
+};
+
+export default MonitoringReport;

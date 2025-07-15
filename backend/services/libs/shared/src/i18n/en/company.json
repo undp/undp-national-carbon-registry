@@ -1,0 +1,23 @@
+{
+    "companyDeactivation": "The organisation has been deactivated successfully",
+    "companyReactivationSuccess": "The organisation has been reactivated successfully",
+    "noActiveCompany": "No active company found",
+    "suspendCompanySuccess": "Successfully suspended company",
+    "suspendFailed": "Company suspend failed. Please try again",
+    "noSuspendedCompany": "No suspended company found",
+    "companyActivationSuccess": "Successfully activated company",
+    "companyActivationFailed": "Company activate failed. Please try again",
+    "companyTaxIdExist": "This Company Tax ID already exists",
+    "companyUpdateFailed": "Company update failed. Please try again",
+    "cantSuspendUrOwn": "Can not suspend your own company",
+    "cantActivateUrOwn": "Can not activate your own company",
+    "noPendingCompany": "No pending company found",
+    "companyApprovalFailed": "Company approval failed. Please try again",
+    "companyApprovalSuccess": "Successfully approved the company",
+    "companyRejectionFailed": "Company rejection failed. Please try again",
+    "companyRejectionSuccess": "Successfully rejected the company",
+    "nationalSopValue": "National Share of Proceeds",
+    "companyTaxIdCannotUpdate": "Company Tax ID cannot be updated",
+    "wrongMinistryAndGovDep": "Invalid Government Department Selected",
+    "MinistryDepartmentAlreadyExist": "Government Department Already Exist"
+}
