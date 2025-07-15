@@ -36,7 +36,6 @@ import { PendingActionsComponent } from "./pendingActionsComponent";
 import { SectorPieChart } from "./SectorPieChart";
 import { SECTOR_TO_SCOPES_MAP } from "../AddNewProgramme/ProgrammeCreationComponent";
 
-
 const { RangePicker } = DatePicker;
 
 export const DashboardComponent = (props: any) => {
@@ -49,7 +48,8 @@ export const DashboardComponent = (props: any) => {
   } = props;
   const { post, get } = useConnection();
   const { userInfoState } = useUserContext();
-  const isAdminOrManager = userInfoState?.userRole === 'Admin' || userInfoState?.userRole === 'Root';
+  const isAdminOrManager =
+    userInfoState?.userRole === "Admin" || userInfoState?.userRole === "Root";
 
   // Dashboard Endpoint Data
   const [pendingActions, setPendingActions] =
@@ -301,123 +301,123 @@ export const DashboardComponent = (props: any) => {
   };
 
   const getProjectsByStatusDetail = async (
-  isMine?: boolean,
-  startDate?: number,
-  endDate?: number,
-  sector?: ProjectSectorEnum
-) => {
-  setLoadingProjectsByStatusDetail(true);
-  try {
-    const response = await post(API_PATHS.GET_PROJECTS_BY_STATUS_DETAIL, {
-      isMine: isMine || undefined,
-      startDate: startDate || undefined,
-      endDate: endDate || undefined,
-      sector: sector || undefined,
-    });
-    if (response && response.data) {
-      const projectStatusWithColor = [
-        {
-          key: "PENDING",
-          name: "Pending",
-          statusColor: "rgba(22, 177, 255, 1)",
-        },
-        {
-          key: "REJECTED",
-          name: "Rejected",
-          statusColor: "rgba(255, 99, 97, 1)",
-        },
-        {
-          key: "APPROVED",
-          name: "Approved",
-          statusColor: "rgba(22, 177, 255, 1)",
-        },
-        {
-          key: "PDD_SUBMITTED",
-          name: "PDD Submitted",
-          statusColor: "rgba(22, 177, 255, 1)",
-        },
-        {
-          key: "PDD_REJECTED_BY_CERTIFIER",
-          name: "PDD Rejected by Certifier",
-          statusColor: "rgba(255, 99, 97, 1)",
-        },
-        {
-          key: "PDD_APPROVED_BY_CERTIFIER",
-          name: "PDD Approved by Certifier",
-          statusColor: "rgba(22, 177, 255, 1)",
-        },
-        {
-          key: "PDD_REJECTED_BY_DNA",
-          name: "PDD Rejected by DNA",
-          statusColor: "rgba(255, 99, 97, 1)",
-        },
-        {
-          key: "PDD_APPROVED_BY_DNA",
-          name: "PDD Approved by DNA",
-          statusColor: "rgba(22, 177, 255, 1)",
-        },
-        {
-          key: "VALIDATION_REPORT_SUBMITTED",
-          name: "Validation Report Submitted",
-          statusColor: "rgba(22, 177, 255, 1)",
-        },
-        {
-          key: "VALIDATION_REPORT_REJECTED",
-          name: "Validation Report Rejected",
-          statusColor: "rgba(255, 99, 97, 1)",
-        },
-        {
-          key: "AUTHORISED",
-          name: "Authorised",
-          statusColor: "rgba(22, 200, 199, 1)",
-        },
-      ];
-
-      const statusCount: number[] = [];
-      const statusColorMap: string[] = [];
-      const xAxis: string[] = [];
-
-      projectStatusWithColor.forEach(({ key, name, statusColor }) => {
-        const data = response?.data;
-
-        if (data && key in data) {
-          statusCount.push(data[key as keyof typeof data]);
-          statusColorMap.push(statusColor);
-          xAxis.push(name);
-        }
+    isMine?: boolean,
+    startDate?: number,
+    endDate?: number,
+    sector?: ProjectSectorEnum
+  ) => {
+    setLoadingProjectsByStatusDetail(true);
+    try {
+      const response = await post(API_PATHS.GET_PROJECTS_BY_STATUS_DETAIL, {
+        isMine: isMine || undefined,
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
+        sector: sector || undefined,
       });
+      if (response && response.data) {
+        const projectStatusWithColor = [
+          {
+            key: "PENDING",
+            name: "Pending",
+            statusColor: "rgba(22, 177, 255, 1)",
+          },
+          {
+            key: "REJECTED",
+            name: "Rejected",
+            statusColor: "rgba(255, 99, 97, 1)",
+          },
+          {
+            key: "APPROVED",
+            name: "Approved",
+            statusColor: "rgba(22, 177, 255, 1)",
+          },
+          {
+            key: "PDD_SUBMITTED",
+            name: "PDD Submitted",
+            statusColor: "rgba(22, 177, 255, 1)",
+          },
+          {
+            key: "PDD_REJECTED_BY_CERTIFIER",
+            name: "PDD Rejected by Certifier",
+            statusColor: "rgba(255, 99, 97, 1)",
+          },
+          {
+            key: "PDD_APPROVED_BY_CERTIFIER",
+            name: "PDD Approved by Certifier",
+            statusColor: "rgba(22, 177, 255, 1)",
+          },
+          {
+            key: "PDD_REJECTED_BY_DNA",
+            name: "PDD Rejected by DNA",
+            statusColor: "rgba(255, 99, 97, 1)",
+          },
+          {
+            key: "PDD_APPROVED_BY_DNA",
+            name: "PDD Approved by DNA",
+            statusColor: "rgba(22, 177, 255, 1)",
+          },
+          {
+            key: "VALIDATION_REPORT_SUBMITTED",
+            name: "Validation Report Submitted",
+            statusColor: "rgba(22, 177, 255, 1)",
+          },
+          {
+            key: "VALIDATION_REPORT_REJECTED",
+            name: "Validation Report Rejected",
+            statusColor: "rgba(255, 99, 97, 1)",
+          },
+          {
+            key: "AUTHORISED",
+            name: "Authorised",
+            statusColor: "rgba(22, 200, 199, 1)",
+          },
+        ];
 
-      // Calculate the maximum value from statusCount for Y-axis scaling
-      const rawMaxValue = Math.max(...statusCount, 1); // Use 1 as fallback if array is empty
-      const computedMax = parseInt((rawMaxValue * 1).toString(), 10);
-      const tickAmount = rawMaxValue > 5 ? 5 : Math.ceil(rawMaxValue);
+        const statusCount: number[] = [];
+        const statusColorMap: string[] = [];
+        const xAxis: string[] = [];
 
-      // Update the options with calculated values
-      totalProgrammesOptions.xaxis.categories = xAxis;
-      totalProgrammesOptions.fill.colors = statusColorMap;
-      totalProgrammesOptions.legend.markers.fillColors = statusColorMap;
-      totalProgrammesOptions.yaxis.max = computedMax;
-      totalProgrammesOptions.yaxis.tickAmount = tickAmount;
+        projectStatusWithColor.forEach(({ key, name, statusColor }) => {
+          const data = response?.data;
 
-      setProjectsByStatusDetail([
-        {
-          name: "Projects",
-          data: statusCount,
-        },
-      ]);
+          if (data && key in data) {
+            statusCount.push(data[key as keyof typeof data]);
+            statusColorMap.push(statusColor);
+            xAxis.push(name);
+          }
+        });
+
+        // Calculate the maximum value from statusCount for Y-axis scaling
+        const rawMaxValue = Math.max(...statusCount, 1); // Use 1 as fallback if array is empty
+        const computedMax = parseInt((rawMaxValue * 1).toString(), 10);
+        const tickAmount = rawMaxValue > 5 ? 5 : Math.ceil(rawMaxValue);
+
+        // Update the options with calculated values
+        totalProgrammesOptions.xaxis.categories = xAxis;
+        totalProgrammesOptions.fill.colors = statusColorMap;
+        totalProgrammesOptions.legend.markers.fillColors = statusColorMap;
+        totalProgrammesOptions.yaxis.max = computedMax;
+        totalProgrammesOptions.yaxis.tickAmount = tickAmount;
+
+        setProjectsByStatusDetail([
+          {
+            name: "Projects",
+            data: statusCount,
+          },
+        ]);
+      }
+    } catch (error: any) {
+      console.log("Error in getting Project Count by Status", error);
+      message.open({
+        type: "error",
+        content: error.message,
+        duration: 3,
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+      });
+    } finally {
+      setLoadingProjectsByStatusDetail(false);
     }
-  } catch (error: any) {
-    console.log("Error in getting Project Count by Status", error);
-    message.open({
-      type: "error",
-      content: error.message,
-      duration: 3,
-      style: { textAlign: "right", marginRight: 15, marginTop: 10 },
-    });
-  } finally {
-    setLoadingProjectsByStatusDetail(false);
-  }
-};
+  };
 
   const getProjectCountBySector = async (
     isMine?: boolean,
@@ -523,173 +523,173 @@ export const DashboardComponent = (props: any) => {
     }
   };
 
-const getProjectCountBySectoralScope = async (
-  isMine?: boolean,
-  startDate?: number,
-  endDate?: number,
-  sector?: ProjectSectorEnum
-) => {
-  setLoadingProjectCountBySectoralScope(true);
-  try {
-    const response = await post(
-      API_PATHS.GET_PROJECT_COUNT_BY_SECTORAL_SCOPE,
-      {
-        isMine: isMine || undefined,
-        startDate: startDate || undefined,
-        endDate: endDate || undefined,
-        sector: sector || undefined,
-      }
-    );
-    if (response && response.data) {
-      const sectorMap = SECTOR_TO_SCOPES_MAP[sector];
-
-      const sectoralScopeWithColor = [
+  const getProjectCountBySectoralScope = async (
+    isMine?: boolean,
+    startDate?: number,
+    endDate?: number,
+    sector?: ProjectSectorEnum
+  ) => {
+    setLoadingProjectCountBySectoralScope(true);
+    try {
+      const response = await post(
+        API_PATHS.GET_PROJECT_COUNT_BY_SECTORAL_SCOPE,
         {
-          key: "ENERGY_INDUSTRIES",
-          name: "Energy Industries (Renewable, Non-Renewable Sources)",
-          statusColor: "rgba(35, 43, 184, 1)",
-        },
-        {
-          key: "ENERGY_DISTRIBUTION",
-          name: "Energy Distribution",
-          statusColor: "rgba(77, 85, 249, 1)",
-        },
-        {
-          key: "ENERGY_DEMAND",
-          name: "Energy Demand",
-          statusColor: "rgba(156, 160, 217, 1)",
-        },
-        {
-          key: "MANUFACTURING_INDUSTRIES",
-          name: "Manufacturing Industries",
-          statusColor: "rgba(175, 134, 0, 1)",
-        },
-        {
-          key: "CHEMICAL_INDUSTRIES",
-          name: "Chemical Industries",
-          statusColor: "rgba(167, 151, 99, 1)",
-        },
-        {
-          key: "CONSTRUCTION",
-          name: "Construction",
-          statusColor: "rgba(131, 62, 63, 1)",
-        },
-        {
-          key: "TRANSPORT",
-          name: "Transport",
-          statusColor: "rgba(46, 139, 87, 1)",
-        },
-        {
-          key: "MINING_MINERAL_PRODUCTION",
-          name: "Mining/Mineral Production",
-          statusColor: "rgba(130, 62, 131, 1)",
-        },
-        {
-          key: "METAL_PRODUCTION",
-          name: "Metal Production",
-          statusColor: "rgba(229, 217, 126, 1)",
-        },
-        {
-          key: "WASTE_FROM_FUELS",
-          name: "Fugitive Emissions from fuels (Solid, Oil and Gas)",
-          statusColor: "rgba(27, 79, 114, 1)",
-        },
-        {
-          key: "FUGITIVE_EMISSIONS_PRODUCTION",
-          name: "Fugitive Emissions (Halocarbons & SF6)",
-          statusColor: "rgba(244, 72, 135, 1)",
-        },
-        {
-          key: "SOLVENT_USE",
-          name: "Solvent Use",
-          statusColor: "rgba(63, 32, 64, 1)",
-        },
-        {
-          key: "WASTE_HANDLING_AND_DISPOSAL",
-          name: "Waste Handling and Disposal",
-          statusColor: "rgba(255, 164, 198, 1)",
-        },
-        {
-          key: "AFFORESTATION_AND_REFORESTATION",
-          name: "Afforestation and Reforestation",
-          statusColor: "rgba(65, 131, 57, 1)",
-        },
-        {
-          key: "AGRICULTURE",
-          name: "Agriculture",
-          statusColor: "rgba(115, 41, 134, 1)",
-        },
-        {
-          key: undefined,
-          name: "Other",
-          statusColor: "rgba(87, 85, 81, 1)",
-        },
-      ].filter((item: any) => {
-        if (sectorMap) {
-          console.log(
-            "-------sectorMap----------",
-            sectorMap.includes(String(item?.key)),
-            item?.key
-          );
-          return sectorMap.includes(item?.key);
-        } else if (sector) {
-          return false;
-        } else {
-          return true;
+          isMine: isMine || undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
+          sector: sector || undefined,
         }
-      });
-
-      const sectoralCount: number[] = [];
-      const sectoralColor: string[] = [];
-      const sectoralXAxis: string[] = [];
-
-      const sectorData = response?.data;
-
-      console.log(
-        "---------sectoralScopeWithColor-------",
-        sectoralScopeWithColor
       );
-      sectoralScopeWithColor.forEach(({ key, name, statusColor }) => {
-        if (sectorData && key in sectorData) {
-          sectoralCount.push(sectorData[key as keyof typeof sectorData]);
-          sectoralColor.push(statusColor);
-          sectoralXAxis.push(name);
-        }
+      if (response && response.data) {
+        const sectorMap = SECTOR_TO_SCOPES_MAP[sector];
+
+        const sectoralScopeWithColor = [
+          {
+            key: "ENERGY_INDUSTRIES",
+            name: "Energy Industries (Renewable, Non-Renewable Sources)",
+            statusColor: "rgba(35, 43, 184, 1)",
+          },
+          {
+            key: "ENERGY_DISTRIBUTION",
+            name: "Energy Distribution",
+            statusColor: "rgba(77, 85, 249, 1)",
+          },
+          {
+            key: "ENERGY_DEMAND",
+            name: "Energy Demand",
+            statusColor: "rgba(156, 160, 217, 1)",
+          },
+          {
+            key: "MANUFACTURING_INDUSTRIES",
+            name: "Manufacturing Industries",
+            statusColor: "rgba(175, 134, 0, 1)",
+          },
+          {
+            key: "CHEMICAL_INDUSTRIES",
+            name: "Chemical Industries",
+            statusColor: "rgba(167, 151, 99, 1)",
+          },
+          {
+            key: "CONSTRUCTION",
+            name: "Construction",
+            statusColor: "rgba(131, 62, 63, 1)",
+          },
+          {
+            key: "TRANSPORT",
+            name: "Transport",
+            statusColor: "rgba(46, 139, 87, 1)",
+          },
+          {
+            key: "MINING_MINERAL_PRODUCTION",
+            name: "Mining/Mineral Production",
+            statusColor: "rgba(130, 62, 131, 1)",
+          },
+          {
+            key: "METAL_PRODUCTION",
+            name: "Metal Production",
+            statusColor: "rgba(229, 217, 126, 1)",
+          },
+          {
+            key: "WASTE_FROM_FUELS",
+            name: "Fugitive Emissions from fuels (Solid, Oil and Gas)",
+            statusColor: "rgba(27, 79, 114, 1)",
+          },
+          {
+            key: "FUGITIVE_EMISSIONS_PRODUCTION",
+            name: "Fugitive Emissions (Halocarbons & SF6)",
+            statusColor: "rgba(244, 72, 135, 1)",
+          },
+          {
+            key: "SOLVENT_USE",
+            name: "Solvent Use",
+            statusColor: "rgba(63, 32, 64, 1)",
+          },
+          {
+            key: "WASTE_HANDLING_AND_DISPOSAL",
+            name: "Waste Handling and Disposal",
+            statusColor: "rgba(255, 164, 198, 1)",
+          },
+          {
+            key: "AFFORESTATION_AND_REFORESTATION",
+            name: "Afforestation and Reforestation",
+            statusColor: "rgba(65, 131, 57, 1)",
+          },
+          {
+            key: "AGRICULTURE",
+            name: "Agriculture",
+            statusColor: "rgba(115, 41, 134, 1)",
+          },
+          // {
+          //   key: undefined,
+          //   name: "Other",
+          //   statusColor: "rgba(87, 85, 81, 1)",
+          // },
+        ].filter((item: any) => {
+          if (sectorMap) {
+            console.log(
+              "-------sectorMap----------",
+              sectorMap.includes(String(item?.key)),
+              item?.key
+            );
+            return sectorMap.includes(item?.key);
+          } else if (sector) {
+            return false;
+          } else {
+            return true;
+          }
+        });
+
+        const sectoralCount: number[] = [];
+        const sectoralColor: string[] = [];
+        const sectoralXAxis: string[] = [];
+
+        const sectorData = response?.data;
+
+        console.log(
+          "---------sectoralScopeWithColor-------",
+          sectoralScopeWithColor
+        );
+        sectoralScopeWithColor.forEach(({ key, name, statusColor }) => {
+          if (sectorData && key in sectorData) {
+            sectoralCount.push(sectorData[key as keyof typeof sectorData]);
+            sectoralColor.push(statusColor);
+            sectoralXAxis.push(name);
+          }
+        });
+
+        // Calculate the maximum value from sectoralCount for Y-axis scaling
+        const rawMaxValue = Math.max(...sectoralCount, 1); // Use 1 as fallback if array is empty
+        const computedMax = parseInt((rawMaxValue * 1).toString(), 10);
+        const tickAmount = rawMaxValue > 5 ? 5 : Math.ceil(rawMaxValue);
+
+        setProjectCountBySectoralScope([
+          {
+            name: "Projects",
+            data: sectoralCount,
+          },
+        ]);
+
+        optionSideBar.xaxis.categories = sectoralXAxis;
+        optionSideBar.colors = sectoralColor;
+        optionSideBar.legend.markers.fillColors = sectoralColor;
+
+        // Update X-axis options with calculated values for horizontal bar chart
+        // For horizontal charts, the max value applies to the X-axis instead of Y-axis
+        optionSideBar.xaxis.max = computedMax;
+        optionSideBar.xaxis.tickAmount = tickAmount;
+      }
+    } catch (error: any) {
+      console.log("Error in getting Project Count By Sector", error);
+      message.open({
+        type: "error",
+        content: error.message,
+        duration: 3,
+        style: { textAlign: "right", marginRight: 15, marginTop: 10 },
       });
-
-      // Calculate the maximum value from sectoralCount for Y-axis scaling
-      const rawMaxValue = Math.max(...sectoralCount, 1); // Use 1 as fallback if array is empty
-      const computedMax = parseInt((rawMaxValue * 1).toString(), 10);
-      const tickAmount = rawMaxValue > 5 ? 5 : Math.ceil(rawMaxValue);
-
-      setProjectCountBySectoralScope([
-        {
-          name: "Projects",
-          data: sectoralCount,
-        },
-      ]);
-
-      optionSideBar.xaxis.categories = sectoralXAxis;
-      optionSideBar.colors = sectoralColor;
-      optionSideBar.legend.markers.fillColors = sectoralColor;
-      
-      // Update X-axis options with calculated values for horizontal bar chart
-      // For horizontal charts, the max value applies to the X-axis instead of Y-axis
-      optionSideBar.xaxis.max = computedMax;
-      optionSideBar.xaxis.tickAmount = tickAmount;
+    } finally {
+      setLoadingProjectCountBySectoralScope(false);
     }
-  } catch (error: any) {
-    console.log("Error in getting Project Count By Sector", error);
-    message.open({
-      type: "error",
-      content: error.message,
-      duration: 3,
-      style: { textAlign: "right", marginRight: 15, marginTop: 10 },
-    });
-  } finally {
-    setLoadingProjectCountBySectoralScope(false);
-  }
-};
+  };
   const getCreditSummary = async (
     isMine?: boolean,
     startDate?: number,
@@ -985,55 +985,61 @@ const getProjectCountBySectoralScope = async (
     };
   }, [window.innerWidth]);
 
-useEffect(() => {
-  const updateTimestamps = () => {
-    setProjectSummaryLastUpdated((prev) => ({
-      last_pending_project_time:
-        projectSummaryLastUpdatedEpoch.last_pending_project_time
-          ? moment(projectSummaryLastUpdatedEpoch.last_pending_project_time).fromNow()
-          : prev.last_pending_project_time,
-      last_credit_issued_time:
-        projectSummaryLastUpdatedEpoch.last_credit_issued_time
-          ? moment(projectSummaryLastUpdatedEpoch.last_credit_issued_time).fromNow()
-          : prev.last_credit_issued_time,
-      last_retire_approved_time:
-        projectSummaryLastUpdatedEpoch.last_retire_approved_time
-          ? moment(projectSummaryLastUpdatedEpoch.last_retire_approved_time).fromNow()
-          : prev.last_retire_approved_time,
-    }));
+  useEffect(() => {
+    const updateTimestamps = () => {
+      setProjectSummaryLastUpdated((prev) => ({
+        last_pending_project_time:
+          projectSummaryLastUpdatedEpoch.last_pending_project_time
+            ? moment(
+                projectSummaryLastUpdatedEpoch.last_pending_project_time
+              ).fromNow()
+            : prev.last_pending_project_time,
+        last_credit_issued_time:
+          projectSummaryLastUpdatedEpoch.last_credit_issued_time
+            ? moment(
+                projectSummaryLastUpdatedEpoch.last_credit_issued_time
+              ).fromNow()
+            : prev.last_credit_issued_time,
+        last_retire_approved_time:
+          projectSummaryLastUpdatedEpoch.last_retire_approved_time
+            ? moment(
+                projectSummaryLastUpdatedEpoch.last_retire_approved_time
+              ).fromNow()
+            : prev.last_retire_approved_time,
+      }));
 
-    if (projectStatusSummaryLastUpdatedEpoch) {
-      setProjectStatusSummaryLastUpdated(
-        moment(projectStatusSummaryLastUpdatedEpoch).fromNow()
-      );
-    }
+      if (projectStatusSummaryLastUpdatedEpoch) {
+        setProjectStatusSummaryLastUpdated(
+          moment(projectStatusSummaryLastUpdatedEpoch).fromNow()
+        );
+      }
 
-    setCreditSummaryLastUpdated((prev) => ({
-      lastAuthorisedTime: creditSummaryLastUpdatedEpoch.lastAuthorisedTime
-        ? moment(creditSummaryLastUpdatedEpoch.lastAuthorisedTime).fromNow()
-        : prev.lastAuthorisedTime,
-      lastIssuedTime: creditSummaryLastUpdatedEpoch.lastIssuedTime
-        ? moment(creditSummaryLastUpdatedEpoch.lastIssuedTime).fromNow()
-        : prev.lastIssuedTime,
-      lastTransferredTime: creditSummaryLastUpdatedEpoch.lastTransferredTime
-        ? moment(creditSummaryLastUpdatedEpoch.lastTransferredTime).fromNow()
-        : prev.lastTransferredTime,
-      lastRetiredTime: creditSummaryLastUpdatedEpoch.lastRetiredTime
-        ? moment(creditSummaryLastUpdatedEpoch.lastRetiredTime).fromNow()
-        : prev.lastRetiredTime,
-    }));
-  };
+      setCreditSummaryLastUpdated((prev) => ({
+        lastAuthorisedTime: creditSummaryLastUpdatedEpoch.lastAuthorisedTime
+          ? moment(creditSummaryLastUpdatedEpoch.lastAuthorisedTime).fromNow()
+          : prev.lastAuthorisedTime,
+        lastIssuedTime: creditSummaryLastUpdatedEpoch.lastIssuedTime
+          ? moment(creditSummaryLastUpdatedEpoch.lastIssuedTime).fromNow()
+          : prev.lastIssuedTime,
+        lastTransferredTime: creditSummaryLastUpdatedEpoch.lastTransferredTime
+          ? moment(creditSummaryLastUpdatedEpoch.lastTransferredTime).fromNow()
+          : prev.lastTransferredTime,
+        lastRetiredTime: creditSummaryLastUpdatedEpoch.lastRetiredTime
+          ? moment(creditSummaryLastUpdatedEpoch.lastRetiredTime).fromNow()
+          : prev.lastRetiredTime,
+      }));
+    };
 
-  updateTimestamps(); // initial run
+    updateTimestamps(); // initial run
 
-  const timer = setInterval(updateTimestamps, 60 * 1000); // run every minute
+    const timer = setInterval(updateTimestamps, 60 * 1000); // run every minute
 
-  return () => clearInterval(timer);
-}, [
-  projectSummaryLastUpdatedEpoch,
-  projectStatusSummaryLastUpdatedEpoch,
-  creditSummaryLastUpdatedEpoch,
-]);
+    return () => clearInterval(timer);
+  }, [
+    projectSummaryLastUpdatedEpoch,
+    projectStatusSummaryLastUpdatedEpoch,
+    creditSummaryLastUpdatedEpoch,
+  ]);
 
   useEffect(() => {
     getPendingActions();
@@ -1124,13 +1130,13 @@ useEffect(() => {
               style={{ width: "100%" }}
             >
               {isAdminOrManager && (
-          <PendingActionsComponent
-            pendingActionData={pendingActions}
-            loading={loadingPendingActions}
-            toolTipText={t('pendingTaskTooltip')}
-            t={t}
-          />
-        )}
+                <PendingActionsComponent
+                  pendingActionData={pendingActions}
+                  loading={loadingPendingActions}
+                  toolTipText={t("pendingTaskTooltip")}
+                  t={t}
+                />
+              )}
             </Col>
           </Row>
         </div>
