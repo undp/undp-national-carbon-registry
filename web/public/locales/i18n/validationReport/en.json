@@ -371,5 +371,6 @@
   "approve": "Approve",
   "reject": "Reject",
   "approveMessage": "Are you sure you want to approve this Validation report?",
-  "declineMessage": "Are you sure you want to reject this Validation report?"
+  "declineMessage": "Are you sure you want to reject this Validation report?",
+  "atLeastOneInvolvementRequired":"At least one involvement must be selected"
 }
