@@ -121,6 +121,9 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
 
   // eslint-disable-next-line no-unused-vars
   const handleValuesChange = (_: any, allValues: any) => {
+    console.log("-------handleValuesChange func running-----------", allValues);
+    const keys = Object.keys(allValues);
+
     creditAmountRef.current = allValues.creditAmount;
     recivePartyRef.current =
       type === CreditActionType.TRANSFER
@@ -147,6 +150,14 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
       }
       setRetirementType(allValues.retirementType);
     }
+
+    // if (keys.includes('toOrganization') && allValues['toOrganization']) {
+    //   valid = true
+    // }
+    // else if (keys.includes('toOrganization') && !allValues['toOrganization']) {
+    //   valid = false
+    // }
+
     if (type !== CreditActionType.TRANSFER && !checkedRef.current) {
       valid = false;
     }
@@ -178,6 +189,10 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
       if (remarkRequired && !remarkRef.current.trim()) {
         valid = false;
       }
+    }
+
+    if (keys.includes("toOrganization") && !allValues['toOrganization']) {
+      valid = false;
     }
     setActionDisable(!valid);
   };
@@ -541,6 +556,9 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                               }
                               style={{ flex: 1, marginRight: 8 }}
                               disabled={isProceed}
+                              // onChange={(value) => {
+                              //   form.setFieldsValue({ creditAmount: value });
+                              // }}
                             />
                             <span style={{ margin: "0 8px" }}>/</span>
                           </>
