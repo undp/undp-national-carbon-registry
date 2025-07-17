@@ -931,18 +931,28 @@ export class DocumentManagementService {
     }
   }
 
-  public async uploadDocument(type: DocType, id: string, data: string) {
+public async uploadDocument(type: DocType, id: string, data: string) {
   let filetype: string | undefined;
-  let fileData: string = data;
+  let fileData: string;
 
   try {
     filetype = this.getFileExtension(data);
 
     if (data.startsWith("data:")) {
-      fileData = data.split(",")[1];
+      fileData = data.split(",")[1]; 
+    } else if (data.startsWith("http://") || data.startsWith("https://")) {
+      const response = await fetch(data);
+      if (!response.ok) {
+        throw new Error("Failed to fetch file from URL");
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      fileData = Buffer.from(arrayBuffer).toString("base64");
+    } else {
+      throw new Error("Unsupported data format");
     }
 
-    if (!filetype) {
+    if (!filetype || !fileData) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("project.invalidDocumentUpload", []),
         HttpStatus.INTERNAL_SERVER_ERROR
@@ -954,24 +964,21 @@ export class DocumentManagementService {
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
-    const response: any = await this.fileHandler.uploadFile(
-      `documents/${this.helperService.enumToString(DocType, type)}${
-        id ? "_" + id : ""
-      }_${Date.now()}.${filetype}`,
-      data
+
+  const response: any = await this.fileHandler.uploadFile(
+    `documents/${this.helperService.enumToString(DocType, type)}${id ? "_" + id : ""}_${Date.now()}.${filetype}`,
+    fileData // base64 content without header
+  );
+
+  if (response) {
+    return response;
+  } else {
+    throw new HttpException(
+      this.helperService.formatReqMessagesString("project.docUploadFailed", []),
+      HttpStatus.INTERNAL_SERVER_ERROR
     );
-    if (response) {
-      return response;
-    } else {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "project.docUploadFailed",
-          []
-        ),
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
   }
+}
 
   private async uploadDocuments(
     type: DocType,
@@ -991,14 +998,13 @@ private getFileExtension = (file: string): string | undefined => {
     const mimeType = file.split(";")[0].split("/")[1];
     return this.fileExtensionMap.get(mimeType);
   } else if (file.startsWith("http://") || file.startsWith("https://")) {
-    const cleanUrl = file.split("?")[0]; 
+    const cleanUrl = file.split("?")[0];
     const match = cleanUrl.match(/\.([a-zA-Z0-9]+)$/);
-    if (match) {
-      return match[1].toLowerCase();
-    }
+    return match?.[1]?.toLowerCase();
   }
   return undefined;
 };
+
 
 
   private fileExtensionMap = new Map([
