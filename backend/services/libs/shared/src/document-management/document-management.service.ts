@@ -937,11 +937,9 @@ export class DocumentManagementService {
 
   try {
     filetype = this.getFileExtension(data);
-    console.log("file type:", filetype, data);
 
     if (data.startsWith("data:")) {
       fileData = data.split(",")[1];
-      console.log("Base64 content:", fileData);
     }
 
     if (!filetype) {
