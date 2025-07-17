@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { FormMode } from "../../Definitions/Enums/formMode.enum";
 import { VerificationStepProps } from "./StepProps";
 import { safeClone } from "../../Utils/deepCopy";
+import "./VerificationReport.scss";
 
 export const VerificationTeamStep = (props: VerificationStepProps) => {
   const {
@@ -382,33 +383,6 @@ export const VerificationTeamStep = (props: VerificationStepProps) => {
                                       name={[name, "onsiteInspections"]}
                                       valuePropName="checked"
                                       validateTrigger={["onChange", "onBlur"]}
-                                      rules={[
-                                        {
-                                          validator: async (rule, value) => {
-                                            const formValues =
-                                              form.getFieldsValue();
-                                            const verificationTeamMembers =
-                                              formValues.verificationTeamMembers ||
-                                              [];
-                                            const currentMember =
-                                              verificationTeamMembers[name];
-
-                                            if (currentMember) {
-                                              const hasAtLeastOne =
-                                                currentMember.documentReview ||
-                                                currentMember.onsiteInspections ||
-                                                currentMember.interviews ||
-                                                currentMember.verificationFindings;
-
-                                              if (!hasAtLeastOne) {
-                                                return Promise.reject(
-                                                  new Error()
-                                                );
-                                              }
-                                            }
-                                          },
-                                        },
-                                      ]}
                                     >
                                       <Checkbox disabled={disableFields} />
                                     </Form.Item>
@@ -460,33 +434,6 @@ export const VerificationTeamStep = (props: VerificationStepProps) => {
                                       name={[name, "verificationFindings"]}
                                       valuePropName="checked"
                                       validateTrigger={["onChange", "onBlur"]}
-                                      rules={[
-                                        {
-                                          validator: async (rule, value) => {
-                                            const formValues =
-                                              form.getFieldsValue();
-                                            const verificationTeamMembers =
-                                              formValues.verificationTeamMembers ||
-                                              [];
-                                            const currentMember =
-                                              verificationTeamMembers[name];
-
-                                            if (currentMember) {
-                                              const hasAtLeastOne =
-                                                currentMember.documentReview ||
-                                                currentMember.onsiteInspections ||
-                                                currentMember.interviews ||
-                                                currentMember.verificationFindings;
-
-                                              if (!hasAtLeastOne) {
-                                                return Promise.reject(
-                                                  new Error()
-                                                );
-                                              }
-                                            }
-                                          },
-                                        },
-                                      ]}
                                     >
                                       <Checkbox disabled={disableFields} />
                                     </Form.Item>
