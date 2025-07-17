@@ -589,6 +589,7 @@ export class DocumentManagementService {
               );
             })
             .catch((error: any) => {
+              console.log("error message :", error.message);
               throw new HttpException(
                 error.message,
                 HttpStatus.INTERNAL_SERVER_ERROR
@@ -931,29 +932,28 @@ export class DocumentManagementService {
   }
 
   public async uploadDocument(type: DocType, id: string, data: string) {
-    let filetype;
-    try {
-      filetype = this.getFileExtension(data);
-      data = data.split(",")[1];
-      if (filetype == undefined) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "project.invalidDocumentUpload",
-            []
-          ),
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-      }
-    } catch (Exception: any) {
+  let filetype: string | undefined;
+  let fileData: string = data;
+
+  try {
+    filetype = this.getFileExtension(data);
+
+    if (data.startsWith("data:")) {
+      fileData = data.split(",")[1];
+    }
+
+    if (!filetype) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "project.invalidDocumentUpload",
-          []
-        ),
+        this.helperService.formatReqMessagesString("project.invalidDocumentUpload", []),
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
-
+  } catch (error: any) {
+    throw new HttpException(
+      this.helperService.formatReqMessagesString("project.invalidDocumentUpload", []),
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
     const response: any = await this.fileHandler.uploadFile(
       `documents/${this.helperService.enumToString(DocType, type)}${
         id ? "_" + id : ""
@@ -986,11 +986,20 @@ export class DocumentManagementService {
     return docUrls;
   }
 
-  private getFileExtension = (file: string): string => {
-    let fileType = file.split(";")[0].split("/")[1];
-    fileType = this.fileExtensionMap.get(fileType);
-    return fileType;
-  };
+private getFileExtension = (file: string): string | undefined => {
+  if (file.startsWith("data:")) {
+    const mimeType = file.split(";")[0].split("/")[1];
+    return this.fileExtensionMap.get(mimeType);
+  } else if (file.startsWith("http://") || file.startsWith("https://")) {
+    const cleanUrl = file.split("?")[0]; 
+    const match = cleanUrl.match(/\.([a-zA-Z0-9]+)$/);
+    if (match) {
+      return match[1].toLowerCase();
+    }
+  }
+  return undefined;
+};
+
 
   private fileExtensionMap = new Map([
     ["pdf", "pdf"],
