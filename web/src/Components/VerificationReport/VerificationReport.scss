@@ -675,3 +675,6 @@
 //     }
 //   }
 // }
+.ant-form-item-has-error .custom-checkbox .ant-checkbox-inner {
+  border-color: red !important;
+}
