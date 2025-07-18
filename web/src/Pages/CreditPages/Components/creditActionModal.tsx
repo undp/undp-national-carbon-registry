@@ -205,8 +205,11 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
           valid = false;
         }
       } else {
-        if (['cancel', 'reject'].includes(proceedAction) && !allValues["comment"]) {
-          valid = false
+        if (
+          ["cancel", "reject"].includes(proceedAction) &&
+          !allValues["comment"]
+        ) {
+          valid = false;
         }
       }
     }
@@ -482,16 +485,15 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                       rules={[
                         {
                           required: !isProceed,
-                          message: t(""),
+                          message: t("invalidOrganizationName"),
                         },
                         {
                           validator: (_, value) => {
-                            if (!value || !value.trim()) {
+                            if (value && value.trim() === "") {
                               return Promise.reject(
                                 new Error(t("invalidOrganizationName"))
                               );
                             }
-
                             return Promise.resolve();
                           },
                         },
