@@ -932,53 +932,61 @@ export class DocumentManagementService {
   }
 
 public async uploadDocument(type: DocType, id: string, data: string) {
-  let filetype: string | undefined;
-  let fileData: string;
-
-  try {
-    filetype = this.getFileExtension(data);
-
-    if (data.startsWith("data:")) {
-      fileData = data.split(",")[1]; 
-    } else if (data.startsWith("http://") || data.startsWith("https://")) {
-      const response = await fetch(data);
-      if (!response.ok) {
-        throw new Error("Failed to fetch file from URL");
+    let filetype;
+    try {
+      if (!this.helperService.isValidPdfDataUri(data)) {
+        filetype = this.getUrlFileExtension(data);
+        if (filetype == undefined) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.invalidDocumentUpload",
+              []
+            ),
+            HttpStatus.INTERNAL_SERVER_ERROR
+          );
+        }
+        return data;
       }
-
-      const arrayBuffer = await response.arrayBuffer();
-      fileData = Buffer.from(arrayBuffer).toString("base64");
-    } else {
-      throw new Error("Unsupported data format");
-    }
-
-    if (!filetype || !fileData) {
+      filetype = this.getFileExtension(data);
+      data = data.split(",")[1];
+      if (filetype == undefined) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "project.invalidDocumentUpload",
+            []
+          ),
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
+    } catch (Exception: any) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("project.invalidDocumentUpload", []),
+        this.helperService.formatReqMessagesString(
+          "project.invalidDocumentUpload",
+          []
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
-  } catch (error: any) {
-    throw new HttpException(
-      this.helperService.formatReqMessagesString("project.invalidDocumentUpload", []),
-      HttpStatus.INTERNAL_SERVER_ERROR
+ 
+    const response: any = await this.fileHandler.uploadFile(
+      `documents/${this.helperService.enumToString(DocType, type)}${
+        id ? "_" + id : ""
+      }_${Date.now()}.${filetype}`,
+      data
     );
+    if (response) {
+      return response;
+    } else {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "project.docUploadFailed",
+          []
+        ),
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
-
-  const response: any = await this.fileHandler.uploadFile(
-    `documents/${this.helperService.enumToString(DocType, type)}${id ? "_" + id : ""}_${Date.now()}.${filetype}`,
-    fileData // base64 content without header
-  );
-
-  if (response) {
-    return response;
-  } else {
-    throw new HttpException(
-      this.helperService.formatReqMessagesString("project.docUploadFailed", []),
-      HttpStatus.INTERNAL_SERVER_ERROR
-    );
-  }
-}
+  
 
   private async uploadDocuments(
     type: DocType,
@@ -992,19 +1000,16 @@ public async uploadDocument(type: DocType, id: string, data: string) {
     }
     return docUrls;
   }
-
-private getFileExtension = (file: string): string | undefined => {
-  if (file.startsWith("data:")) {
-    const mimeType = file.split(";")[0].split("/")[1];
-    return this.fileExtensionMap.get(mimeType);
-  } else if (file.startsWith("http://") || file.startsWith("https://")) {
-    const cleanUrl = file.split("?")[0];
-    const match = cleanUrl.match(/\.([a-zA-Z0-9]+)$/);
-    return match?.[1]?.toLowerCase();
-  }
-  return undefined;
-};
-
+private getUrlFileExtension = (file: string): string => {
+    let fileType = file.split(".").at(-1);
+    fileType = this.fileExtensionMap.get(fileType);
+    return fileType;
+  };
+private getFileExtension = (file: string): string => {
+    let fileType = file.split(";")[0].split("/")[1];
+    fileType = this.fileExtensionMap.get(fileType);
+    return fileType;
+  };
 
 
   private fileExtensionMap = new Map([
