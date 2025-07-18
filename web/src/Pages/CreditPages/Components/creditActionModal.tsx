@@ -65,6 +65,8 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
     t,
     data,
   } = props;
+  console.log("-------------proceeed action----------", proceedAction);
+
   const { get, post } = useConnection();
   const { userInfoState } = useUserContext();
   const [form] = Form.useForm();
@@ -121,7 +123,13 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
 
   // eslint-disable-next-line no-unused-vars
   const handleValuesChange = (_: any, allValues: any) => {
-    console.log("-------handleValuesChange func running-----------", allValues);
+    console.log(
+      "-------handleValuesChange func running-----------",
+      allValues,
+      proceedAction,
+      type,
+      isProceed
+    );
     const keys = Object.keys(allValues);
 
     creditAmountRef.current = allValues.creditAmount;
@@ -191,9 +199,18 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
       }
     }
 
-    if (keys.includes("toOrganization") && !allValues['toOrganization']) {
-      valid = false;
+    if (type === CreditActionType.RETIREMENT) {
+      if (!isProceed) {
+        if (keys.includes("toOrganization") && !allValues["toOrganization"]) {
+          valid = false;
+        }
+      } else {
+        if (['cancel', 'reject'].includes(proceedAction) && !allValues["comment"]) {
+          valid = false
+        }
+      }
     }
+
     setActionDisable(!valid);
   };
 
