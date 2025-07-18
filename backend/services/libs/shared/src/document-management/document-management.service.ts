@@ -933,7 +933,6 @@ export class DocumentManagementService {
 
 public async uploadDocument(type: DocType, id: string, data: string) {
     let filetype;
-    console.log('file type :', filetype);
     try {
       if (!this.helperService.isValidDataUri(data)) {
         filetype = this.getUrlFileExtension(data);
@@ -1024,6 +1023,7 @@ private getFileExtension = (file: string): string => {
     ["csv", "csv"],
     ["png", "png"],
     ["jpeg", "jpg"],
+    ['jpg', 'jpg'],
   ]);
 
   async verify(requestData: DocumentActionRequestDto, user: User) {
