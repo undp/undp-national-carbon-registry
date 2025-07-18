@@ -23,10 +23,10 @@ const ValidationReport = (props: { translator: i18n }) => {
 
   const t = translator.t;
 
-  const onVersionSelect = async (value: number) => {
-    console.log("selected value", value);
-    setSelectedVersion(value);
-  };
+  // const onVersionSelect = async (value: number) => {
+  //   console.log("selected value", value);
+  //   setSelectedVersion(value);
+  // };
 
   // const getDocVersions = async () => {
   //   try {
@@ -40,19 +40,19 @@ const ValidationReport = (props: { translator: i18n }) => {
   //   }
   // };
 
-  const handleDocumentStatus = (value: string) => {
-    setDocumentStatus(value);
-  };
+  // const handleDocumentStatus = (value: string) => {
+  //   setDocumentStatus(value);
+  // };
 
   // useEffect(() => {
   //   getDocVersions();
   // }, []);
 
-  useEffect(() => {
-    if (versions.length > 0) {
-      setSelectedVersion(versions[0]);
-    }
-  }, [versions]);
+  // useEffect(() => {
+  //   if (versions.length > 0) {
+  //     setSelectedVersion(versions[0]);
+  //   }
+  // }, [versions]);
 
   return (
     <div className="validation-form-container ">
@@ -61,7 +61,7 @@ const ValidationReport = (props: { translator: i18n }) => {
           <Col xl={12} md={12}>
             <div className="main">{t("validationReport:validationTitle")}</div>
           </Col>
-          {mode === FormMode.VIEW ? (
+          {/* {mode === FormMode.VIEW ? (
             <Col xl={12} md={12} style={{ textAlign: "right" }}>
               <Select
                 size="large"
@@ -79,12 +79,12 @@ const ValidationReport = (props: { translator: i18n }) => {
             </Col>
           ) : (
             ""
-          )}
+          )} */}
         </Row>
       </div>
 
       <div className="forms-container">
-        {mode === FormMode.VIEW ? (
+        {/* {mode === FormMode.VIEW ? (
           <Row className="row" justify={"space-between"}>
             <Col xl={12} md={12}></Col>
             <Col xl={12} md={12} style={{ textAlign: "right" }}>
@@ -98,12 +98,12 @@ const ValidationReport = (props: { translator: i18n }) => {
           </Row>
         ) : (
           ""
-        )}
+        )} */}
         <div className="stepper-container">
           <StepperComponent
             t={t}
             selectedVersion={selectedVersion}
-            handleDocumentStatus={handleDocumentStatus}
+            // handleDocumentStatus={handleDocumentStatus}
           />
         </div>
       </div>
