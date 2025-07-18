@@ -1,4 +1,4 @@
-@use '../../Styles/variables.scss';
+@use "../../Styles/variables.scss";
 
 .transfer-form {
   .popup-credit-input {
@@ -47,15 +47,43 @@
     text-transform: uppercase;
     font-weight: 500;
   }
-  
 }
 
 .model-subText {
-  color: #3A354180;
+  color: #3a354180;
   font-size: 12px;
   padding-top: 10px;
   font-weight: 600;
 }
-.icon{
+// .icon{
+//   // filter: brightness(0) saturate(100%) invert(45%) sepia(99%) saturate(2067%) hue-rotate(170deg) brightness(98%) contrast(99%);
+// }
+
+.icon-danger {
+  color: #FF4D4F;
+}
+
+.checkbox-danger {
+  color: #ff4d4f;
+
+  // Change the border and background color of the checkbox itself
+  .ant-checkbox-inner {
+    border-color: #ff4d4f;
+  }
+
+  // Change the color when checked
+  .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #ff4d4f;
+    border-color: #ff4d4f;
+  }
+
+  // Optional: Change the checkmark color for contrast
+  .ant-checkbox-checked .ant-checkbox-inner::after {
+    border-color: #fff;
+  }
+}
+
+.response-icon{
   filter: brightness(0) saturate(100%) invert(45%) sepia(99%) saturate(2067%) hue-rotate(170deg) brightness(98%) contrast(99%);
 }
+

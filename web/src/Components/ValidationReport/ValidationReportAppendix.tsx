@@ -78,7 +78,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
         return {
           author: item?.author,
           title: item?.title,
-          referenceToTheDoc: item?.referenceToTheDoc,
+          referencesToDocument: item?.referencesToDocument,
           provider: item?.provider,
         };
       }),

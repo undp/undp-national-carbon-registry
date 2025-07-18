@@ -49,7 +49,8 @@ export const FormActionModel: FC<FormActionModelProps> = (
     <Modal
       title={
         <div className="popup-header">
-          <div className="icon">{icon}</div>
+          {/* class is written only for the reject */}
+          <div className={`icon icon-${type}`}>{icon}</div> 
           <div>{title}</div>
           {subText && <p className="model-subText">{subText}</p>}
         </div>
@@ -122,7 +123,7 @@ export const FormActionModel: FC<FormActionModelProps> = (
                 name="confirm"
               >
                 <Checkbox
-                  className="label"
+                  className={`label checkbox-${type}`}
                   onChange={(v) => setChecked(v.target.checked)}
                 >
                   {checkMessage ? checkMessage : t("view:confirmClosure")}
