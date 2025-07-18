@@ -91,7 +91,6 @@ import {
   ActivityStateEnum,
   CreditType,
   ProgrammeStageUnified,
-
   ProjectProposalStage,
 } from "../../Definitions/Enums/programmeStage.enum";
 
@@ -946,7 +945,12 @@ const ProjectDetailsViewComponent = (props: any) => {
       data.activities &&
       (data?.activities.length === 0 ||
         data?.activities[data?.activities.length - 1].stage ===
-          ActivityStateEnum.VERIFICATION_REPORT_VERIFIED)
+          ActivityStateEnum.VERIFICATION_REPORT_VERIFIED) &&
+      Number(data?.creditEst) -
+        (Number(data?.creditBalance) +
+          Number(data?.creditRetired) +
+          Number(data?.creditTransferred)) >
+        0
     ) {
       actionBtns.push(
         <Button
@@ -962,7 +966,7 @@ const ProjectDetailsViewComponent = (props: any) => {
             });
           }}
         >
-          Request Credit
+          {t("projectDetailsView:requestCredits")}
         </Button>
       );
     }
@@ -1410,7 +1414,7 @@ const ProjectDetailsViewComponent = (props: any) => {
                     }
                   </span>
                   <span className="title-text">
-                    {t("projectDetailsView:programmeOwner")}
+                    {t("projectDetailsView:organizationDetails")}
                   </span>
                 </div>
                 <div className="centered-card">{elements}</div>
