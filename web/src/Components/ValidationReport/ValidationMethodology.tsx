@@ -20,6 +20,7 @@ import { FormMode } from "../../Definitions/Enums/formMode.enum";
 import { useEffect, useState } from "react";
 import LabelWithTooltip from "../LabelWithTooltip/LabelWithTooltip";
 import { useLocation } from "react-router-dom";
+import "./ValidationReport.scss";
 
 const ValidationMethodology = (props: ValidationStepsProps) => {
   const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
@@ -342,6 +343,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                 <Form.Item
                                   name={[name, "documentReview"]}
                                   valuePropName="checked"
+                                  className="custom-checkbox"
                                   rules={[
                                     {
                                       validator: async (rule, value) => {
@@ -368,7 +370,10 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Checkbox disabled={disableFields} />
+                                  <Checkbox
+                                    disabled={disableFields}
+                                    className="custom-checkbox"
+                                  />
                                 </Form.Item>
                               </Col>
 
@@ -376,6 +381,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                 <Form.Item
                                   name={[name, "onsiteInspections"]}
                                   valuePropName="checked"
+                                  className="custom-checkbox"
                                   rules={[
                                     {
                                       validator: async (rule, value) => {
@@ -402,7 +408,10 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Checkbox disabled={disableFields} />
+                                  <Checkbox
+                                    disabled={disableFields}
+                                    className="custom-checkbox"
+                                  />
                                 </Form.Item>
                               </Col>
 
@@ -410,6 +419,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                 <Form.Item
                                   name={[name, "interviews"]}
                                   valuePropName="checked"
+                                  className="custom-checkbox"
                                   rules={[
                                     {
                                       validator: async (rule, value) => {
@@ -436,7 +446,10 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Checkbox disabled={disableFields} />
+                                  <Checkbox
+                                    disabled={disableFields}
+                                    className="custom-checkbox"
+                                  />
                                 </Form.Item>
                               </Col>
 
@@ -444,6 +457,7 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                 <Form.Item
                                   name={[name, "verificationFindings"]}
                                   valuePropName="checked"
+                                  className="custom-checkbox"
                                   rules={[
                                     {
                                       validator: async (rule, value) => {
@@ -470,7 +484,10 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                     },
                                   ]}
                                 >
-                                  <Checkbox disabled={disableFields} />
+                                  <Checkbox
+                                    disabled={disableFields}
+                                    className="custom-checkbox"
+                                  />
                                 </Form.Item>
                               </Col>
                             </Row>
