@@ -293,9 +293,7 @@ export const VerificationTeamStep = (props: VerificationStepProps) => {
                                           value === undefined
                                         ) {
                                           throw new Error(
-                                            `${t(
-                                              "verificationReport:provider"
-                                            )} ${t("isRequired")}`
+                                            t("verificationReport:required")
                                           );
                                         }
                                       },
@@ -322,9 +320,7 @@ export const VerificationTeamStep = (props: VerificationStepProps) => {
                                           value === undefined
                                         ) {
                                           throw new Error(
-                                            `${t(
-                                              "verificationReport:provider"
-                                            )} ${t("isRequired")}`
+                                            t("verificationReport:required")
                                           );
                                         }
                                       },
@@ -614,8 +610,8 @@ export const VerificationTeamStep = (props: VerificationStepProps) => {
                                     ]}
                                   >
                                     <Select disabled={disableFields}>
-                                      <Select.Option value="viewer">
-                                        {t("verificationReport:viewer")}
+                                      <Select.Option value="verifier">
+                                        {t("verificationReport:verifier")}
                                       </Select.Option>
                                       <Select.Option value="technicalExpert">
                                         {t(
