@@ -933,8 +933,9 @@ export class DocumentManagementService {
 
 public async uploadDocument(type: DocType, id: string, data: string) {
     let filetype;
+    console.log('file type :', filetype);
     try {
-      if (!this.helperService.isValidPdfDataUri(data)) {
+      if (!this.helperService.isValidDataUri(data)) {
         filetype = this.getUrlFileExtension(data);
         if (filetype == undefined) {
           throw new HttpException(
