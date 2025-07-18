@@ -505,18 +505,20 @@ export class HelperService {
       }
     }
   }
-  public isValidPdfDataUri(data: string): boolean {
-    const match = data.match(
-      /^data:application\/pdf;base64,([A-Za-z0-9+/=]+)$/
-    );
+ public isValidDataUri(data: string): boolean {
+    const dataUriRegex = /^data:([a-zA-Z0-9][a-zA-Z0-9\/+\-]*);base64,([A-Za-z0-9+/=]+)$/;
+    const match = data.match(dataUriRegex);
+    
     if (!match) {
       return false;
-    }
-    const payload = match[1];
+    }  
+    const payload = match[2];
+    // Validate base64 payload
     try {
       return this.isBase64(payload);
     } catch {
       return false;
     }
   }
+
 }
