@@ -312,6 +312,7 @@
   "title": "Title",
   "titlePlaceholder": "Provide the title",
   "address": "Address",
+  "required":"Required",
   "registrationDateOfTheActivity": "Registration date Of the project activity",
   "projectTrackAndCreditUse": "Project track and credit use",
   "otherEntitiesInProject": "Other Entities Involved in the Project",

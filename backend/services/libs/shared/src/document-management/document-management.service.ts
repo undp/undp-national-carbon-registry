@@ -1022,8 +1022,14 @@ private getFileExtension = (file: string): string => {
     ["vnd.openxmlformats-officedocument.wordprocessingml.document", "docx"],
     ["csv", "csv"],
     ["png", "png"],
+    ["docx","docx"],
+    ["pptx","pptx"],
+    ["doc", "doc"],
     ["jpeg", "jpg"],
     ['jpg', 'jpg'],
+    ["xls", "xls"],
+    ["xlsx","xlsx"],
+    ["ppt","ppt"]
   ]);
 
   async verify(requestData: DocumentActionRequestDto, user: User) {

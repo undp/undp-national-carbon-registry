@@ -264,9 +264,9 @@ export const VerificationTeamStep = (props: VerificationStepProps) => {
                                           value === undefined
                                         ) {
                                           throw new Error(
-                                            `${t(
-                                              "verificationReport:referencesToDocument"
-                                            )} ${t("isRequired")}`
+                                            ` ${t(
+                                              "verificationReport:required"
+                                            )}`
                                           );
                                         }
                                       },
@@ -344,6 +344,7 @@ export const VerificationTeamStep = (props: VerificationStepProps) => {
                                       name={[name, "documentReview"]}
                                       valuePropName="checked"
                                       validateTrigger={["onChange", "onBlur"]}
+                                      className="custom-checkbox"
                                       rules={[
                                         {
                                           validator: async (rule, value) => {
@@ -372,7 +373,10 @@ export const VerificationTeamStep = (props: VerificationStepProps) => {
                                         },
                                       ]}
                                     >
-                                      <Checkbox disabled={disableFields} />
+                                      <Checkbox
+                                        disabled={disableFields}
+                                        className="custom-checkbox"
+                                      />
                                     </Form.Item>
                                   </Col>
                                   <Col
@@ -383,18 +387,6 @@ export const VerificationTeamStep = (props: VerificationStepProps) => {
                                       name={[name, "onsiteInspections"]}
                                       valuePropName="checked"
                                       validateTrigger={["onChange", "onBlur"]}
-                                    >
-                                      <Checkbox disabled={disableFields} />
-                                    </Form.Item>
-                                  </Col>
-                                  <Col
-                                    xl={6}
-                                    className="other-cols checkbox-cols"
-                                  >
-                                    <Form.Item
-                                      name={[name, "interviews"]}
-                                      valuePropName="checked"
-                                      validateTrigger={["onChange", "onBlur"]}
                                       rules={[
                                         {
                                           validator: async (rule, value) => {
@@ -423,7 +415,53 @@ export const VerificationTeamStep = (props: VerificationStepProps) => {
                                         },
                                       ]}
                                     >
-                                      <Checkbox disabled={disableFields} />
+                                      <Checkbox
+                                        disabled={disableFields}
+                                        className="custom-checkbox"
+                                      />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col
+                                    xl={6}
+                                    className="other-cols checkbox-cols"
+                                  >
+                                    <Form.Item
+                                      name={[name, "interviews"]}
+                                      valuePropName="checked"
+                                      validateTrigger={["onChange", "onBlur"]}
+                                      className="custom-checkbox"
+                                      rules={[
+                                        {
+                                          validator: async (rule, value) => {
+                                            const formValues =
+                                              form.getFieldsValue();
+                                            const verificationTeamMembers =
+                                              formValues.verificationTeamMembers ||
+                                              [];
+                                            const currentMember =
+                                              verificationTeamMembers[name];
+
+                                            if (currentMember) {
+                                              const hasAtLeastOne =
+                                                currentMember.documentReview ||
+                                                currentMember.onsiteInspections ||
+                                                currentMember.interviews ||
+                                                currentMember.verificationFindings;
+
+                                              if (!hasAtLeastOne) {
+                                                return Promise.reject(
+                                                  new Error()
+                                                );
+                                              }
+                                            }
+                                          },
+                                        },
+                                      ]}
+                                    >
+                                      <Checkbox
+                                        disabled={disableFields}
+                                        className="custom-checkbox"
+                                      />
                                     </Form.Item>
                                   </Col>
                                   <Col
@@ -434,8 +472,39 @@ export const VerificationTeamStep = (props: VerificationStepProps) => {
                                       name={[name, "verificationFindings"]}
                                       valuePropName="checked"
                                       validateTrigger={["onChange", "onBlur"]}
+                                      className="custom-checkbox"
+                                      rules={[
+                                        {
+                                          validator: async (rule, value) => {
+                                            const formValues =
+                                              form.getFieldsValue();
+                                            const verificationTeamMembers =
+                                              formValues.verificationTeamMembers ||
+                                              [];
+                                            const currentMember =
+                                              verificationTeamMembers[name];
+
+                                            if (currentMember) {
+                                              const hasAtLeastOne =
+                                                currentMember.documentReview ||
+                                                currentMember.onsiteInspections ||
+                                                currentMember.interviews ||
+                                                currentMember.verificationFindings;
+
+                                              if (!hasAtLeastOne) {
+                                                return Promise.reject(
+                                                  new Error()
+                                                );
+                                              }
+                                            }
+                                          },
+                                        },
+                                      ]}
                                     >
-                                      <Checkbox disabled={disableFields} />
+                                      <Checkbox
+                                        disabled={disableFields}
+                                        className="custom-checkbox"
+                                      />
                                     </Form.Item>
                                   </Col>
                                 </Row>
