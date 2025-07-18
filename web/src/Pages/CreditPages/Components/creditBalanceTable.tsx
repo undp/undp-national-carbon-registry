@@ -447,7 +447,7 @@ export const CreditBalanceTableComponent = (props: any) => {
           CreditRetirementTypeEmnum.CROSS_BORDER_TRANSACTIONS
             ? {
                 country: reciveParty.country,
-                organizationName: reciveParty.organization?.trim(),
+                organizationName: reciveParty.organization,
               }
             : {}),
           amount: Number(creditAmount),
