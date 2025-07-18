@@ -482,11 +482,18 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                       rules={[
                         {
                           required: !isProceed,
-                          message: t("required"),
+                          message: t(""),
                         },
                         {
-                          pattern: /^[^\s].*[^\s]$|^[^\s]+$/,
-                          message: t("invalidOrganizationName"), // or "Organization name cannot start with space or contain only spaces"
+                          validator: (_, value) => {
+                            if (!value || !value.trim()) {
+                              return Promise.reject(
+                                new Error(t("invalidOrganizationName"))
+                              );
+                            }
+
+                            return Promise.resolve();
+                          },
                         },
                       ]}
                     >
