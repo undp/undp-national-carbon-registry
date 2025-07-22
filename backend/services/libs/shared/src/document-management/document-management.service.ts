@@ -1029,7 +1029,9 @@ private getFileExtension = (file: string): string => {
     ['jpg', 'jpg'],
     ["xls", "xls"],
     ["xlsx","xlsx"],
-    ["ppt","ppt"]
+    ["ppt","ppt"],
+    ["svg+xml", "svg"],
+    ["svg", "svg"]
   ]);
 
   async verify(requestData: DocumentActionRequestDto, user: User) {

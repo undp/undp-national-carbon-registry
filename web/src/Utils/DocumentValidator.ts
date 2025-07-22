@@ -11,6 +11,7 @@ const allowedFileTypes = [
   'text/csv',
   'image/png',
   'image/jpeg',
+  'image/svg+xml',
 ];
 
 const environmentalImpactAssessmentAllowedTypes = [
