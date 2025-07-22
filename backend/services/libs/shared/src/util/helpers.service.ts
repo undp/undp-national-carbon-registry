@@ -506,12 +506,12 @@ export class HelperService {
     }
   }
  public isValidDataUri(data: string): boolean {
-  console.log("isValidDataUri", data.slice(0, 100));
+  // console.log("isValidDataUri", data.slice(0, 100));
     const dataUriRegex = /^data:([a-zA-Z0-9+/.-]+\/[a-zA-Z0-9+.-]+);base64,([A-Za-z0-9+/=]+)$/
     
     const match = data.match(dataUriRegex);
     if (!match) {
-      console.log("Invalid data URI format");
+      // console.log("Invalid data URI format");
       return false;
     }  
     const payload = match[2];
