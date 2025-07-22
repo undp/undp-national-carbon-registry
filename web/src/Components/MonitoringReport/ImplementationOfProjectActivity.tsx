@@ -1,15 +1,24 @@
-import { Button, Col, Form, Row } from 'antd';
+import { Button, Col, Form, Row } from "antd";
 
-import TextArea from 'antd/lib/input/TextArea';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { CustomStepsProps } from './StepProps';
+import TextArea from "antd/lib/input/TextArea";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
+import { CustomStepsProps } from "./StepProps";
 
-export const ImplementationOfProjectActivityStep = (props: CustomStepsProps) => {
-  const { t, current, form, formMode, next, prev, handleValuesUpdate, disableFields } = props;
+export const ImplementationOfProjectActivityStep = (
+  props: CustomStepsProps
+) => {
+  const {
+    t,
+    current,
+    form,
+    formMode,
+    next,
+    prev,
+    handleValuesUpdate,
+    disableFields,
+  } = props;
 
   const onFinish = (values: any) => {
-    // console.log('onFinish triggered');
-    // console.log('-----------temp Values before-------');
     const implementationOfProjectActivityDetails: any = {
       implementationOfProjectActivityDetails: {
         io_descriptionOfPA: values?.io_descriptionOfPA,
@@ -24,7 +33,6 @@ export const ImplementationOfProjectActivityStep = (props: CustomStepsProps) => 
           values?.io_changesSpecificToAfforestrationOrReforestration,
       },
     };
-    // console.log('----------tempValues-------------', tempValues);
     handleValuesUpdate(implementationOfProjectActivityDetails);
   };
   return (
@@ -50,12 +58,14 @@ export const ImplementationOfProjectActivityStep = (props: CustomStepsProps) => 
                 <Col xl={24} md={24}>
                   <div className="step-form-left-col">
                     <Form.Item
-                      label={`${t('monitoringReport:io_descriptionOfPA')}`}
+                      label={`${t("monitoringReport:io_descriptionOfPA")}`}
                       name="io_descriptionOfPA"
                       rules={[
                         {
                           required: true,
-                          message: `${t('monitoringReport:io_descriptionOfPA')} ${t('isRequired')}`,
+                          message: `${t(
+                            "monitoringReport:io_descriptionOfPA"
+                          )} ${t("isRequired")}`,
                         },
                       ]}
                     >
@@ -63,14 +73,16 @@ export const ImplementationOfProjectActivityStep = (props: CustomStepsProps) => 
                     </Form.Item>
 
                     <Form.Item
-                      label={`${t('monitoringReport:io_postRegistrationChanges')}`}
+                      label={`${t(
+                        "monitoringReport:io_postRegistrationChanges"
+                      )}`}
                       name="io_postRegistrationChanges"
                       rules={[
                         {
                           required: true,
-                          message: `${t('monitoringReport:io_postRegistrationChanges')} ${t(
-                            'isRequired'
-                          )}`,
+                          message: `${t(
+                            "monitoringReport:io_postRegistrationChanges"
+                          )} ${t("isRequired")}`,
                         },
                       ]}
                     >
@@ -78,12 +90,14 @@ export const ImplementationOfProjectActivityStep = (props: CustomStepsProps) => 
                     </Form.Item>
 
                     <Form.Item
-                      label={`${t('monitoringReport:io_tempDeviations')}`}
+                      label={`${t("monitoringReport:io_tempDeviations")}`}
                       name="io_tempDeviations"
                       rules={[
                         {
                           required: true,
-                          message: `${t('monitoringReport:io_tempDeviations')} ${t('isRequired')}`,
+                          message: `${t(
+                            "monitoringReport:io_tempDeviations"
+                          )} ${t("isRequired")}`,
                         },
                       ]}
                     >
@@ -91,69 +105,13 @@ export const ImplementationOfProjectActivityStep = (props: CustomStepsProps) => 
                     </Form.Item>
 
                     <Form.Item
-                      label={`${t('monitoringReport:io_corrections')}`}
+                      label={`${t("monitoringReport:io_corrections")}`}
                       name="io_corrections"
                       rules={[
                         {
                           required: true,
-                          message: `${t('monitoringReport:io_corrections')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={5} disabled={disableFields} />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={`${t('monitoringReport:io_changesToTheStartDate')}`}
-                      name="io_changesToTheStartDate"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:io_changesToTheStartDate')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={5} disabled={disableFields} />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={`${t('monitoringReport:io_inclusionOfMP')}`}
-                      name="io_inclusionOfMP"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:io_inclusionOfMP')} ${t('isRequired')}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={5} disabled={disableFields} />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={`${t('monitoringReport:io_permanantMonitoringPlan')}`}
-                      name="io_permanantMonitoringPlan"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:io_permanantMonitoringPlan')} ${t(
-                            'isRequired'
-                          )}`,
-                        },
-                      ]}
-                    >
-                      <TextArea rows={5} disabled={disableFields} />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={`${t('monitoringReport:io_changesToProjectDesign')}`}
-                      name="io_changesToProjectDesign"
-                      rules={[
-                        {
-                          required: true,
-                          message: `${t('monitoringReport:io_changesToProjectDesign')} ${t(
-                            'isRequired'
+                          message: `${t("monitoringReport:io_corrections")} ${t(
+                            "isRequired"
                           )}`,
                         },
                       ]}
@@ -163,15 +121,81 @@ export const ImplementationOfProjectActivityStep = (props: CustomStepsProps) => 
 
                     <Form.Item
                       label={`${t(
-                        'monitoringReport:io_changesSpecificToAfforestrationOrReforestration'
+                        "monitoringReport:io_changesToTheStartDate"
+                      )}`}
+                      name="io_changesToTheStartDate"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t(
+                            "monitoringReport:io_changesToTheStartDate"
+                          )} ${t("isRequired")}`,
+                        },
+                      ]}
+                    >
+                      <TextArea rows={5} disabled={disableFields} />
+                    </Form.Item>
+
+                    <Form.Item
+                      label={`${t("monitoringReport:io_inclusionOfMP")}`}
+                      name="io_inclusionOfMP"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t(
+                            "monitoringReport:io_inclusionOfMP"
+                          )} ${t("isRequired")}`,
+                        },
+                      ]}
+                    >
+                      <TextArea rows={5} disabled={disableFields} />
+                    </Form.Item>
+
+                    <Form.Item
+                      label={`${t(
+                        "monitoringReport:io_permanantMonitoringPlan"
+                      )}`}
+                      name="io_permanantMonitoringPlan"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t(
+                            "monitoringReport:io_permanantMonitoringPlan"
+                          )} ${t("isRequired")}`,
+                        },
+                      ]}
+                    >
+                      <TextArea rows={5} disabled={disableFields} />
+                    </Form.Item>
+
+                    <Form.Item
+                      label={`${t(
+                        "monitoringReport:io_changesToProjectDesign"
+                      )}`}
+                      name="io_changesToProjectDesign"
+                      rules={[
+                        {
+                          required: true,
+                          message: `${t(
+                            "monitoringReport:io_changesToProjectDesign"
+                          )} ${t("isRequired")}`,
+                        },
+                      ]}
+                    >
+                      <TextArea rows={5} disabled={disableFields} />
+                    </Form.Item>
+
+                    <Form.Item
+                      label={`${t(
+                        "monitoringReport:io_changesSpecificToAfforestrationOrReforestration"
                       )}`}
                       name="io_changesSpecificToAfforestrationOrReforestration"
                       rules={[
                         {
                           required: true,
                           message: `${t(
-                            'monitoringReport:io_changesSpecificToAfforestrationOrReforestration'
-                          )} ${t('isRequired')}`,
+                            "monitoringReport:io_changesSpecificToAfforestrationOrReforestration"
+                          )} ${t("isRequired")}`,
                         },
                       ]}
                     >
@@ -180,22 +204,22 @@ export const ImplementationOfProjectActivityStep = (props: CustomStepsProps) => 
                   </div>
                 </Col>
               </Row>
-              <Row justify={'end'} className="step-actions-end">
+              <Row justify={"end"} className="step-actions-end">
                 <Button onClick={prev} disabled={false} danger>
-                  {t('monitoringReport:back')}
+                  {t("monitoringReport:back")}
                 </Button>
                 {disableFields ? (
                   <Button type="primary" onClick={next}>
-                    {t('monitoringReport:next')}
+                    {t("monitoringReport:next")}
                   </Button>
                 ) : (
                   <Button
                     type="primary"
-                    size={'large'}
-                    htmlType={'submit'}
+                    size={"large"}
+                    htmlType={"submit"}
                     // onClick={next}
                   >
-                    {t('monitoringReport:next')}
+                    {t("monitoringReport:next")}
                   </Button>
                 )}
               </Row>

@@ -18,14 +18,14 @@ import {
   PlusOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import { ProcessSteps } from "./ValidationStepperComponent";
+import { ProcessSteps } from "./StepperComponent";
 import { fileUploadValueExtract } from "../../Utils/utilityHelper";
 import { FormMode } from "../../Definitions/Enums/formMode.enum";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import ConfirmSubmitSVG from "../../Assets/DialogIcons/ConfirmSubmit.svg";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
-import { SlcfFormActionModel } from "../Models/SlcfFormActionModel";
+import { FormActionModel } from "../Models/FormActionModel";
 import { useLocation } from "react-router-dom";
 import { DocumentEnum } from "../../Definitions/Enums/document.enum";
 import { API_PATHS } from "../../Config/apiConfig";
@@ -78,7 +78,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
         return {
           author: item?.author,
           title: item?.title,
-          referenceToTheDoc: item?.referenceToTheDoc,
+          referencesToDocument: item?.referencesToDocument,
           provider: item?.provider,
         };
       }),
@@ -230,7 +230,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
           <div className="val-report-step-form-container">
             {state?.mode === FormMode.VERIFY && (
               <>
-                <SlcfFormActionModel
+                <FormActionModel
                   actionBtnText={t("validationReport:approve")}
                   onCancel={closeVerifyDialogBox}
                   icon={<CheckCircleOutlined />}
@@ -245,7 +245,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
                   t={t}
                 />
 
-                <SlcfFormActionModel
+                <FormActionModel
                   actionBtnText={t("validationReport:reject")}
                   onCancel={closeDeclineDialogBox}
                   icon={<CloseCircleOutlined />}
@@ -264,7 +264,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
 
             {(state?.mode === FormMode.CREATE ||
               state?.mode === FormMode.EDIT) && (
-              <SlcfFormActionModel
+              <FormActionModel
                 icon={<ConfirmSubmitSVG />}
                 title={t("validationReport:confirmModalMessage")}
                 onCancel={closeDialog}
@@ -293,7 +293,7 @@ const ValidationReportAppendix = (props: ValidationStepsProps) => {
               closeDialog={closeDialog}
               isReject={false}
             /> */}
-            {/* <SlcfFormActionModel 
+            {/* <FormActionModel 
               actionBtnText={t('common:yes')}
               onCancel={closeDialog}
               icon={ConfirmSubmitSVG}

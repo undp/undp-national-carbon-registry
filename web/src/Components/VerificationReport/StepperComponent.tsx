@@ -16,19 +16,11 @@ import { useForm } from "antd/lib/form/Form";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
-import { DocumentTypeEnum } from "../../Definitions/Enums/document.type.enum";
 import { FormMode } from "../../Definitions/Enums/formMode.enum";
-import {
-  extractFilePropertiesFromLink,
-  fileUploadValueExtract,
-} from "../../Utils/utilityHelper";
 import { PopupInfo } from "../../Definitions/Definitions/ndcDetails.definitions";
-import { SlcfFormActionModel } from "../Models/SlcfFormActionModel";
-import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { API_PATHS } from "../../Config/apiConfig";
 import { ROUTES } from "../../Config/uiRoutingConfig";
 import { VerificationStepProps } from "./StepProps";
-import { NULL } from "sass";
 import { DocumentEnum } from "../../Definitions/Enums/document.enum";
 // import { basicInformationMapDataToFields } from '../ValidationReport/viewDataMap';
 import {
@@ -500,211 +492,6 @@ const StepperComponent = (props: VerificationStepProps) => {
     getViewData();
   }, []);
 
-  // const getLatestReports = async (programId: any) => {
-  //   try {
-  //     if (mode === FormMode.VIEW || mode === FormMode.EDIT) {
-  //       const { data } =
-  //         mode === FormMode.VIEW && selectedVersion
-  //           ? await post(API_PATHS.VERIFICATION_DOC_BY_VERSION, {
-  //               programmeId: id,
-  //               docType: DocumentTypeEnum.VERIFICATION_REPORT,
-  //               version: selectedVersion,
-  //               verificationRequestId: Number(verificationRequestId),
-  //             })
-  //           : await post(API_PATHS.VERIFICATION_DOC_LAST_VERSION, {
-  //               programmeId: id,
-  //               docType: DocumentTypeEnum.VERIFICATION_REPORT,
-  //               verificationRequestId: Number(verificationRequestId),
-  //             });
-
-  //       if (mode === FormMode.VIEW) {
-  //         handleDocumentStatus(data.status);
-  //       }
-
-  //       if (data && data?.content) {
-  //         setReportId(data?.id);
-  //         setStatus(data?.status);
-  //         const content = data?.content;
-  //         basicInformationForm.setFieldsValue({
-  //           ...content?.projectDetails,
-  //           completionDate: moment(content?.projectDetails?.completionDate),
-  //           versionDate: moment(content?.projectDetails?.versionDate),
-  //           monitoringPeriodStart: moment(content?.projectDetails?.monitoringPeriodStart),
-  //           monitoringPeriodEnd: moment(content?.projectDetails?.monitoringPeriodEnd),
-  //           reportID: data?.content?.projectDetails?.reportID
-  //             ? data?.content?.projectDetails?.reportID
-  //             : data?.content?.projectDetails?.reportNo,
-  //         });
-  //         introductionForm.setFieldsValue({
-  //           ...content?.introduction,
-  //           creditionPeriodStart: moment(content?.introduction?.creditionPeriodStart),
-  //           creditionPeriodEnd: moment(content?.introduction?.creditionPeriodEnd),
-  //           periodVerifiedStart: moment(content?.introduction?.periodVerifiedStart),
-  //           periodVerifiedEnd: moment(content?.introduction?.periodVerifiedEnd),
-  //         });
-  //         methodologyForm.setFieldsValue({
-  //           ...content?.methodology,
-  //         });
-  //         verificationFindingForm.setFieldsValue({
-  //           ...content?.verificationFinding,
-  //           optionalDocuments: data?.content?.verificationFinding?.optionalDocuments?.map(
-  //             (document: string, index: number) => {
-  //               return {
-  //                 uid: index,
-  //                 name: extractFilePropertiesFromLink(document).fileName,
-  //                 status: 'done',
-  //                 url: document,
-  //               };
-  //             }
-  //           ),
-  //           siteLocations: content?.verificationFinding?.siteLocations?.map((val: any) => {
-  //             return {
-  //               ...val,
-  //               commissioningDate: moment(val?.commissioningDate),
-  //             };
-  //           }),
-  //         });
-
-  //         verificationOpinionForm.setFieldsValue({
-  //           ...content?.verificationOpinion,
-  //           dateOfSignature1: moment(content?.verificationOpinion?.dateOfSignature1),
-  //           dateOfSignature2: moment(content?.verificationOpinion?.dateOfSignature2),
-  //           signature1: data?.content?.verificationOpinion?.signature1?.map(
-  //             (document: string, index: number) => {
-  //               return {
-  //                 uid: index,
-  //                 name: extractFilePropertiesFromLink(document).fileName,
-  //                 status: 'done',
-  //                 url: document,
-  //               };
-  //             }
-  //           ),
-  //           signature2: data?.content?.verificationOpinion?.signature2?.map(
-  //             (document: string, index: number) => {
-  //               return {
-  //                 uid: index,
-  //                 name: extractFilePropertiesFromLink(document).fileName,
-  //                 status: 'done',
-  //                 url: document,
-  //               };
-  //             }
-  //           ),
-  //         });
-
-  //         referenceForm.setFieldsValue({
-  //           ...content?.reference,
-  //         });
-
-  //         appendixForm.setFieldsValue({
-  //           ...content?.annexures,
-  //           optionalDocuments: data?.content?.annexures?.optionalDocuments?.map(
-  //             (document: string, index: number) => {
-  //               return {
-  //                 uid: index,
-  //                 name: extractFilePropertiesFromLink(document).fileName,
-  //                 status: 'done',
-  //                 url: document,
-  //               };
-  //             }
-  //           ),
-  //         });
-  //       }
-  //     } else {
-  //       const { data } = await post(API_PATHS.LAST_DOC_VERSION, {
-  //         programmeId: programId,
-  //         docType: DocumentTypeEnum.CMA,
-  //       });
-
-  //       const { data: monitoringData } = await post(API_PATHS.VERIFICATION_DOC_LAST_VERSION, {
-  //         programmeId: programId,
-  //         docType: DocumentTypeEnum.MONITORING_REPORT,
-  //         verificationRequestId: verificationRequestId,
-  //       });
-
-  //       const cmaData = JSON.parse(data?.content);
-
-  //       basicInformationForm.setFieldsValue({
-  //         projectTitle: cmaData?.projectDetails?.title,
-  //         client: cmaData?.projectDetails?.projectProponent,
-  //         address: cmaData?.projectDetails?.physicalAddress,
-  //         email: cmaData?.projectDetails?.email,
-  //         telephone: cmaData?.projectDetails?.telephone,
-  //         contactPerson: cmaData?.projectActivity?.projectProponent?.contactPerson,
-  //         estimatedScer: monitoringData?.content?.quantifications?.totalNetEmissionReductions,
-  //         workCarriedOutBy: `Validation & Verification Division ${registryName}`,
-  //       });
-
-  //       introductionForm.setFieldsValue({
-  //         title: cmaData?.projectDetails?.title,
-  //         hostParty: `${countryName}`,
-  //         tiprojectParticipantstle: cmaData?.projectActivity?.projectProponent?.organizationName,
-  //         monitoringMethodology: monitoringData?.content?.projectActivity?.methodology,
-  //         creditionPeriodStart: moment(
-  //           monitoringData?.content?.projectActivity?.creditingPeriodFromDate
-  //         ),
-  //         creditionPeriodEnd: moment(
-  //           monitoringData?.content?.projectActivity?.creditingPeriodToDate
-  //         ),
-  //       });
-
-  //       methodologyForm.setFieldsValue({
-  //         verificationTeamList: [
-  //           {
-  //             name: '',
-  //             company: `${countryName} Climate Fund`,
-  //             function: [],
-  //             taskPerformed: [],
-  //           },
-  //         ],
-  //         inspectionsList: [
-  //           {
-  //             name: '',
-  //             designation: '',
-  //             organizationEntity: '',
-  //             method: '',
-  //             mainTopics: '',
-  //           },
-  //         ],
-  //       });
-  //       verificationFindingForm.setFieldsValue({
-  //         siteLocations: cmaData?.projectActivity.locationsOfProjectActivity.map(
-  //           (location: any) => {
-  //             console.log('location', location.locationOfProjectActivity);
-  //             return {
-  //               siteLocation: location?.locationOfProjectActivity,
-  //               commissioningDate: moment(location?.commissioningDate * 1000),
-  //             };
-  //           }
-  //         ),
-  //         complianceList: [
-  //           {
-  //             dataParameter: '',
-  //             sourceOfData: '',
-  //             reportedValue: '',
-  //           },
-  //         ],
-  //         resolutionOfFindings: [
-  //           {
-  //             type: [],
-  //             findingNo: '',
-  //             refToMR: '',
-  //             description: '',
-  //             summary: '',
-  //             assesment: '',
-  //             conclusion: [],
-  //           },
-  //         ],
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.log('error');
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getLatestReports(id);
-  //   getProjectById(id);
-  // }, [selectedVersion]);
 
   const steps = [
     {
@@ -723,8 +510,6 @@ const StepperComponent = (props: VerificationStepProps) => {
           next={next}
           prev={navigateToDetailsPage}
           disableFields={disableFields}
-          // countries={countries}
-          // verifiedScer={verifiedScer}
           handleValuesUpdate={handleValuesUpdate}
         />
       ),

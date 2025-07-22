@@ -2,14 +2,14 @@ import { ValidationStepsProps } from "./StepProps";
 import { Row, Button, Form, Input, Col, Upload, DatePicker } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
-import { ProcessSteps } from "./ValidationStepperComponent";
+import { ProcessSteps } from "./StepperComponent";
 import moment from "moment";
 import { fileUploadValueExtract } from "../../Utils/utilityHelper";
 import { FormMode } from "../../Definitions/Enums/formMode.enum";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const ExecutiveSummary = (props: ValidationStepsProps) => {
+const InternalQualityControl = (props: ValidationStepsProps) => {
   const {
     prev,
     next,
@@ -121,4 +121,4 @@ const ExecutiveSummary = (props: ValidationStepsProps) => {
   );
 };
 
-export default ExecutiveSummary;
+export default InternalQualityControl;

@@ -22,7 +22,6 @@ import { CompanyRole } from "../enum/company.role.enum";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { CompanyService } from "../company/company.service";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
-import { ValidationReportDto } from "../dto/validationReport.dto";
 import { plainToClass, plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { DocType } from "../enum/document.type";
@@ -78,11 +77,19 @@ export class DocumentManagementService {
       let project: ProjectEntity;
       let projectRefId: string;
       let projectCompanyId: number;
-      if (addDocumentDto.documentType == DocumentTypeEnum.INITIAL_NOTIFICATION_FORM) {
-        projectRefId = await this.counterService.incrementCount(CounterType.PROJECT, 4);
+      if (
+        addDocumentDto.documentType ==
+        DocumentTypeEnum.INITIAL_NOTIFICATION_FORM
+      ) {
+        projectRefId = await this.counterService.incrementCount(
+          CounterType.PROJECT,
+          4
+        );
         projectCompanyId = user.companyId;
       } else {
-        project = await this.programmeLedgerService.getProjectById(addDocumentDto.projectRefId);
+        project = await this.programmeLedgerService.getProjectById(
+          addDocumentDto.projectRefId
+        );
         if (!project) {
           throw new HttpException(
             this.helperService.formatReqMessagesString("project.notExists", []),
@@ -113,16 +120,27 @@ export class DocumentManagementService {
 
       switch (addDocumentDto.documentType) {
         case DocumentTypeEnum.INITIAL_NOTIFICATION_FORM: {
-          if (user.companyRole !== CompanyRole.PROJECT_DEVELOPER || user.role !== Role.Admin) {
+          if (
+            user.companyRole !== CompanyRole.PROJECT_DEVELOPER ||
+            user.role !== Role.Admin
+          ) {
             throw new HttpException(
-              this.helperService.formatReqMessagesString("project.noPermission", []),
+              this.helperService.formatReqMessagesString(
+                "project.noPermission",
+                []
+              ),
               HttpStatus.BAD_REQUEST
             );
           }
-          const projectCompany = await this.companyService.findByCompanyId(projectCompanyId);
+          const projectCompany = await this.companyService.findByCompanyId(
+            projectCompanyId
+          );
           if (!projectCompany) {
             throw new HttpException(
-              this.helperService.formatReqMessagesString("project.noCompanyExistingInSystem", []),
+              this.helperService.formatReqMessagesString(
+                "project.noCompanyExistingInSystem",
+                []
+              ),
               HttpStatus.BAD_REQUEST
             );
           }
@@ -136,7 +154,9 @@ export class DocumentManagementService {
             throw new HttpException(errors.toString(), HttpStatus.BAD_REQUEST);
           }
           if (
-            !SECTOR_TO_SCOPES_MAP[projectCreateDto.sector].includes(projectCreateDto.sectoralScope)
+            !SECTOR_TO_SCOPES_MAP[projectCreateDto.sector].includes(
+              projectCreateDto.sectoralScope
+            )
           ) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
@@ -148,10 +168,18 @@ export class DocumentManagementService {
           }
 
           for (const certifierId of projectCreateDto.independentCertifiers) {
-            const ICCompany = await this.companyService.findByCompanyId(certifierId);
-            if (!ICCompany || ICCompany.companyRole != CompanyRole.INDEPENDENT_CERTIFIER) {
+            const ICCompany = await this.companyService.findByCompanyId(
+              certifierId
+            );
+            if (
+              !ICCompany ||
+              ICCompany.companyRole != CompanyRole.INDEPENDENT_CERTIFIER
+            ) {
               throw new HttpException(
-                this.helperService.formatReqMessagesString("project.noICExistingInSystem", []),
+                this.helperService.formatReqMessagesString(
+                  "project.noICExistingInSystem",
+                  []
+                ),
                 HttpStatus.BAD_REQUEST
               );
             }
@@ -185,7 +213,9 @@ export class DocumentManagementService {
             DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
             infDoc.id
           );
-          let savedProgramme = await this.programmeLedgerService.createProject(project);
+          let savedProgramme = await this.programmeLedgerService.createProject(
+            project
+          );
 
           await this.emailHelperService.sendEmailToDNAAdmins(
             EmailTemplates.INF_CREATE,
@@ -198,7 +228,11 @@ export class DocumentManagementService {
             project.refId
           );
 
-          await this.logProjectStage(project.refId, ProjectAuditLogType.PENDING, user.id);
+          await this.logProjectStage(
+            project.refId,
+            ProjectAuditLogType.PENDING,
+            user.id
+          );
           return new DataResponseDto(HttpStatus.OK, {
             ...savedProgramme,
             createdTime: savedProgramme.createTime,
@@ -212,7 +246,10 @@ export class DocumentManagementService {
         case DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT: {
           if (user.companyId != project.companyId || user.role !== Role.Admin) {
             throw new HttpException(
-              this.helperService.formatReqMessagesString("project.noPddCreatePermission", []),
+              this.helperService.formatReqMessagesString(
+                "project.noPddCreatePermission",
+                []
+              ),
               HttpStatus.UNAUTHORIZED
             );
           }
@@ -233,18 +270,21 @@ export class DocumentManagementService {
           }
           const errors = await validate(
             plainToClass(PositiveIntegerValidationDto, {
-              positiveInteger: newDoc.content.applicationOfMethodology?.netGHGEmissionReductions
-                ?.totalNetEmissionReductions
+              positiveInteger: newDoc.content.applicationOfMethodology
+                ?.netGHGEmissionReductions?.totalNetEmissionReductions
                 ? Number(
-                    newDoc.content.applicationOfMethodology.netGHGEmissionReductions
-                      .totalNetEmissionReductions
+                    newDoc.content.applicationOfMethodology
+                      .netGHGEmissionReductions.totalNetEmissionReductions
                   )
                 : null,
             })
           );
           if (errors.length > 0) {
             throw new HttpException(
-              this.helperService.formatReqMessagesString("project.invalidUserEstimatedCredits", []),
+              this.helperService.formatReqMessagesString(
+                "project.invalidUserEstimatedCredits",
+                []
+              ),
               HttpStatus.BAD_REQUEST
             );
           }
@@ -257,9 +297,16 @@ export class DocumentManagementService {
           const updatedProgramme = await this.updateProposalStage(
             updateProjectProposalStage,
             user,
-            this.getDocumentTxRef(DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT, doc.id)
+            this.getDocumentTxRef(
+              DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT,
+              doc.id
+            )
           );
-          await this.logProjectStage(project.refId, ProjectAuditLogType.PDD_SUBMITTED, user.id);
+          await this.logProjectStage(
+            project.refId,
+            ProjectAuditLogType.PDD_SUBMITTED,
+            user.id
+          );
           await this.emailHelperService.sendEmailToICAdmins(
             EmailTemplates.PDD_CREATE,
             null,
@@ -268,7 +315,10 @@ export class DocumentManagementService {
           return new DataResponseDto(HttpStatus.OK, updatedProgramme);
         }
         case DocumentTypeEnum.VALIDATION: {
-          if (user.companyRole !== CompanyRole.INDEPENDENT_CERTIFIER || user.role !== Role.Admin) {
+          if (
+            user.companyRole !== CompanyRole.INDEPENDENT_CERTIFIER ||
+            user.role !== Role.Admin
+          ) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
                 "project.noValidationCreatePermission",
@@ -279,7 +329,10 @@ export class DocumentManagementService {
           }
           if (!project.independentCertifiers.includes(user.companyId)) {
             throw new HttpException(
-              this.helperService.formatReqMessagesString("project.icNotAssignedValidation", []),
+              this.helperService.formatReqMessagesString(
+                "project.icNotAssignedValidation",
+                []
+              ),
               HttpStatus.UNAUTHORIZED
             );
           }
@@ -300,14 +353,21 @@ export class DocumentManagementService {
           }
           const errors = await validate(
             plainToClass(PositiveIntegerValidationDto, {
-              positiveInteger: newDoc.content.ghgProjectDescription?.totalNetEmissionReductions
-                ? Number(newDoc.content.ghgProjectDescription.totalNetEmissionReductions)
+              positiveInteger: newDoc.content.ghgProjectDescription
+                ?.totalNetEmissionReductions
+                ? Number(
+                    newDoc.content.ghgProjectDescription
+                      .totalNetEmissionReductions
+                  )
                 : null,
             })
           );
           if (errors.length > 0) {
             throw new HttpException(
-              this.helperService.formatReqMessagesString("project.invalidUserEstimatedCredits", []),
+              this.helperService.formatReqMessagesString(
+                "project.invalidUserEstimatedCredits",
+                []
+              ),
               HttpStatus.BAD_REQUEST
             );
           }
@@ -324,7 +384,11 @@ export class DocumentManagementService {
           const updatedProgramme = await this.updateProposalStage(
             updateProjectProposalStage,
             user,
-            this.getDocumentTxRef(DocumentTypeEnum.VALIDATION, documentResponse.id, user.id)
+            this.getDocumentTxRef(
+              DocumentTypeEnum.VALIDATION,
+              documentResponse.id,
+              user.id
+            )
           );
 
           await this.logProjectStage(
@@ -371,7 +435,9 @@ export class DocumentManagementService {
               HttpStatus.BAD_REQUEST
             );
           }
-          lastActivity = await this.getLastActivity(addDocumentDto.projectRefId);
+          lastActivity = await this.getLastActivity(
+            addDocumentDto.projectRefId
+          );
           if (
             lastActivity &&
             addDocumentDto.activityRefId &&
@@ -418,10 +484,15 @@ export class DocumentManagementService {
           let amountToVerify = 0;
           newDoc.content.calcEmissionReductions?.netGHGEmissionReductions?.yearlyGHGEmissionReductions.map(
             (data: { vintage: string; netEmissionReductions: string }) => {
-              const creditBlockToVerify = plainToClass(ActivityVintageCreditsDto, {
-                vintage: new Date(parseInt(data.vintage)).getFullYear().toString(),
-                creditAmount: Number(data.netEmissionReductions),
-              });
+              const creditBlockToVerify = plainToClass(
+                ActivityVintageCreditsDto,
+                {
+                  vintage: new Date(parseInt(data.vintage))
+                    .getFullYear()
+                    .toString(),
+                  creditAmount: Number(data.netEmissionReductions),
+                }
+              );
               creditVerified.push(creditBlockToVerify);
               amountToVerify += creditBlockToVerify.creditAmount;
             }
@@ -433,20 +504,32 @@ export class DocumentManagementService {
           );
           if (creditVerified.length <= 0 || errors.length > 0) {
             throw new HttpException(
-              this.helperService.formatReqMessagesString("project.invlaidCreditVerifed", []),
+              this.helperService.formatReqMessagesString(
+                "project.invlaidCreditVerifed",
+                []
+              ),
               HttpStatus.BAD_REQUEST
             );
           }
           for (const creditBlockToVerify of creditVerified) {
-            if (Number(creditBlockToVerify.vintage) > new Date().getFullYear()) {
+            if (
+              Number(creditBlockToVerify.vintage) > new Date().getFullYear()
+            ) {
               throw new HttpException(
-                this.helperService.formatReqMessagesString("project.greaterThanCurrentVintage", []),
+                this.helperService.formatReqMessagesString(
+                  "project.greaterThanCurrentVintage",
+                  []
+                ),
                 HttpStatus.BAD_REQUEST
               );
             }
           }
-          const totalEstimatedCredits = project.creditEst ? Number(project.creditEst) : 0;
-          const alreadyIssuedCredits = project.creditIssued ? Number(project.creditIssued) : 0;
+          const totalEstimatedCredits = project.creditEst
+            ? Number(project.creditEst)
+            : 0;
+          const alreadyIssuedCredits = project.creditIssued
+            ? Number(project.creditIssued)
+            : 0;
           if (amountToVerify > totalEstimatedCredits - alreadyIssuedCredits) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
@@ -464,7 +547,8 @@ export class DocumentManagementService {
               let activityId;
               if (
                 !lastActivity ||
-                lastActivity.state == ActivityStateEnum.VERIFICATION_REPORT_VERIFIED
+                lastActivity.state ==
+                  ActivityStateEnum.VERIFICATION_REPORT_VERIFIED
               ) {
                 const activity = new ActivityEntity();
                 activity.projectRefId = project.refId;
@@ -505,7 +589,11 @@ export class DocumentManagementService {
               );
             })
             .catch((error: any) => {
-              throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+              console.log("error message :", error.message);
+              throw new HttpException(
+                error.message,
+                HttpStatus.INTERNAL_SERVER_ERROR
+              );
             });
           await this.emailHelperService.sendEmailToICAdmins(
             EmailTemplates.MONITORING_UPLOADED,
@@ -515,7 +603,10 @@ export class DocumentManagementService {
           return new DataResponseDto(HttpStatus.OK, savedDoc);
         }
         case DocumentTypeEnum.VERIFICATION: {
-          if (user.companyRole != CompanyRole.INDEPENDENT_CERTIFIER || user.role !== Role.Admin) {
+          if (
+            user.companyRole != CompanyRole.INDEPENDENT_CERTIFIER ||
+            user.role !== Role.Admin
+          ) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
                 "project.noVerificationCreatePermission",
@@ -526,7 +617,10 @@ export class DocumentManagementService {
           }
           if (!project.independentCertifiers.includes(user.companyId)) {
             throw new HttpException(
-              this.helperService.formatReqMessagesString("project.icNotAssignedVerification", []),
+              this.helperService.formatReqMessagesString(
+                "project.icNotAssignedVerification",
+                []
+              ),
               HttpStatus.UNAUTHORIZED
             );
           }
@@ -539,10 +633,15 @@ export class DocumentManagementService {
               HttpStatus.BAD_REQUEST
             );
           }
-          lastActivity = await this.getLastActivity(addDocumentDto.projectRefId);
+          lastActivity = await this.getLastActivity(
+            addDocumentDto.projectRefId
+          );
           if (!lastActivity) {
             throw new HttpException(
-              this.helperService.formatReqMessagesString("project.noActivity", []),
+              this.helperService.formatReqMessagesString(
+                "project.noActivity",
+                []
+              ),
               HttpStatus.BAD_REQUEST
             );
           }
@@ -574,8 +673,10 @@ export class DocumentManagementService {
             );
           }
           if (
-            !newDoc.content.ghgProjectDescription?.estimatedNetEmissionReductions ||
-            newDoc.content.ghgProjectDescription?.estimatedNetEmissionReductions.length <= 0
+            !newDoc.content.ghgProjectDescription
+              ?.estimatedNetEmissionReductions ||
+            newDoc.content.ghgProjectDescription?.estimatedNetEmissionReductions
+              .length <= 0
           ) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
@@ -589,10 +690,15 @@ export class DocumentManagementService {
           let amountToVerify = 0;
           newDoc.content.ghgProjectDescription?.estimatedNetEmissionReductions?.map(
             (data: { vintage: string; netEmissionReductions: string }) => {
-              const creditBlockToVerify = plainToClass(ActivityVintageCreditsDto, {
-                vintage: new Date(parseInt(data.vintage)).getFullYear().toString(),
-                creditAmount: Number(data.netEmissionReductions),
-              });
+              const creditBlockToVerify = plainToClass(
+                ActivityVintageCreditsDto,
+                {
+                  vintage: new Date(parseInt(data.vintage))
+                    .getFullYear()
+                    .toString(),
+                  creditAmount: Number(data.netEmissionReductions),
+                }
+              );
               creditVerified.push(creditBlockToVerify);
               amountToVerify += creditBlockToVerify.creditAmount;
             }
@@ -604,20 +710,32 @@ export class DocumentManagementService {
           );
           if (creditVerified.length <= 0 || errors.length > 0) {
             throw new HttpException(
-              this.helperService.formatReqMessagesString("project.invlaidCreditVerifed", []),
+              this.helperService.formatReqMessagesString(
+                "project.invlaidCreditVerifed",
+                []
+              ),
               HttpStatus.BAD_REQUEST
             );
           }
           for (const creditBlockToVerify of creditVerified) {
-            if (Number(creditBlockToVerify.vintage) > new Date().getFullYear()) {
+            if (
+              Number(creditBlockToVerify.vintage) > new Date().getFullYear()
+            ) {
               throw new HttpException(
-                this.helperService.formatReqMessagesString("project.greaterThanCurrentVintage", []),
+                this.helperService.formatReqMessagesString(
+                  "project.greaterThanCurrentVintage",
+                  []
+                ),
                 HttpStatus.BAD_REQUEST
               );
             }
           }
-          const totalEstimatedCredits = project.creditEst ? Number(project.creditEst) : 0;
-          const alreadyIssuedCredits = project.creditIssued ? Number(project.creditIssued) : 0;
+          const totalEstimatedCredits = project.creditEst
+            ? Number(project.creditEst)
+            : 0;
+          const alreadyIssuedCredits = project.creditIssued
+            ? Number(project.creditIssued)
+            : 0;
           if (amountToVerify > totalEstimatedCredits - alreadyIssuedCredits) {
             throw new HttpException(
               this.helperService.formatReqMessagesString(
@@ -658,7 +776,10 @@ export class DocumentManagementService {
               );
             })
             .catch((error: any) => {
-              throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+              throw new HttpException(
+                error.message,
+                HttpStatus.INTERNAL_SERVER_ERROR
+              );
             });
 
           ICCompany = await this.companyService.findByCompanyId(user.companyId);
@@ -712,7 +833,10 @@ export class DocumentManagementService {
 
     if (pddData.appendix) {
       for (const docField of additionalDocumentFields) {
-        if (pddData.appendix[docField.field] && pddData.appendix[docField.field].length > 0) {
+        if (
+          pddData.appendix[docField.field] &&
+          pddData.appendix[docField.field].length > 0
+        ) {
           const docUrls = await this.uploadDocuments(
             docField.type,
             projectRefId,
@@ -727,8 +851,12 @@ export class DocumentManagementService {
       pddData?.projectActivity?.locationsOfProjectActivity &&
       pddData.projectActivity.locationsOfProjectActivity.length > 0
     ) {
-      for (const location of pddData.projectActivity.locationsOfProjectActivity) {
-        if (location.additionalDocuments && location.additionalDocuments.length > 0) {
+      for (const location of pddData.projectActivity
+        .locationsOfProjectActivity) {
+        if (
+          location.additionalDocuments &&
+          location.additionalDocuments.length > 0
+        ) {
           const docUrls = await this.uploadDocuments(
             DocType.PDD_LOCATION_OF_PROJECT_ACTIVITY_ADDITIONAL_DOCUMENT,
             projectRefId,
@@ -740,7 +868,10 @@ export class DocumentManagementService {
     }
   }
 
-  private async createValidationReport(validationData: any, projectRefId: string): Promise<void> {
+  private async createValidationReport(
+    validationData: any,
+    projectRefId: string
+  ): Promise<void> {
     if (
       validationData?.appendix?.appendix1Documents &&
       validationData.appendix.appendix1Documents.length > 0
@@ -754,8 +885,14 @@ export class DocumentManagementService {
     }
   }
 
-  private async createMonitoringReport(monitoringData: any, projectRefId: string) {
-    if (monitoringData?.appendix?.a_uploadDoc && monitoringData.appendix.a_uploadDoc.length > 0) {
+  private async createMonitoringReport(
+    monitoringData: any,
+    projectRefId: string
+  ) {
+    if (
+      monitoringData?.appendix?.a_uploadDoc &&
+      monitoringData.appendix.a_uploadDoc.length > 0
+    ) {
       const docUrls = await this.uploadDocuments(
         DocType.MONITORING_REPORT_APPENDIX_ADDITIONAL_DOC,
         projectRefId,
@@ -794,24 +931,43 @@ export class DocumentManagementService {
     }
   }
 
-  public async uploadDocument(type: DocType, id: string, data: string) {
+public async uploadDocument(type: DocType, id: string, data: string) {
     let filetype;
     try {
+      if (!this.helperService.isValidDataUri(data)) {
+        filetype = this.getUrlFileExtension(data);
+        if (filetype == undefined) {
+          throw new HttpException(
+            this.helperService.formatReqMessagesString(
+              "project.invalidDocumentUpload",
+              []
+            ),
+            HttpStatus.INTERNAL_SERVER_ERROR
+          );
+        }
+        return data;
+      }
       filetype = this.getFileExtension(data);
       data = data.split(",")[1];
       if (filetype == undefined) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("project.invalidDocumentUpload", []),
+          this.helperService.formatReqMessagesString(
+            "project.invalidDocumentUpload",
+            []
+          ),
           HttpStatus.INTERNAL_SERVER_ERROR
         );
       }
     } catch (Exception: any) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("project.invalidDocumentUpload", []),
+        this.helperService.formatReqMessagesString(
+          "project.invalidDocumentUpload",
+          []
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
-
+ 
     const response: any = await this.fileHandler.uploadFile(
       `documents/${this.helperService.enumToString(DocType, type)}${
         id ? "_" + id : ""
@@ -822,13 +978,21 @@ export class DocumentManagementService {
       return response;
     } else {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("project.docUploadFailed", []),
+        this.helperService.formatReqMessagesString(
+          "project.docUploadFailed",
+          []
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }
+  
 
-  private async uploadDocuments(type: DocType, id: string, dataArray: string): Promise<string[]> {
+  private async uploadDocuments(
+    type: DocType,
+    id: string,
+    dataArray: string
+  ): Promise<string[]> {
     const docUrls: string[] = [];
     for (const data of dataArray) {
       const docUrl = await this.uploadDocument(type, id, data);
@@ -836,12 +1000,17 @@ export class DocumentManagementService {
     }
     return docUrls;
   }
-
-  private getFileExtension = (file: string): string => {
+private getUrlFileExtension = (file: string): string => {
+    let fileType = file.split(".").at(-1);
+    fileType = this.fileExtensionMap.get(fileType);
+    return fileType;
+  };
+private getFileExtension = (file: string): string => {
     let fileType = file.split(";")[0].split("/")[1];
     fileType = this.fileExtensionMap.get(fileType);
     return fileType;
   };
+
 
   private fileExtensionMap = new Map([
     ["pdf", "pdf"],
@@ -853,7 +1022,16 @@ export class DocumentManagementService {
     ["vnd.openxmlformats-officedocument.wordprocessingml.document", "docx"],
     ["csv", "csv"],
     ["png", "png"],
+    ["docx","docx"],
+    ["pptx","pptx"],
+    ["doc", "doc"],
     ["jpeg", "jpg"],
+    ['jpg', 'jpg'],
+    ["xls", "xls"],
+    ["xlsx","xlsx"],
+    ["ppt","ppt"],
+    ["svg+xml", "svg"],
+    ["svg", "svg"]
   ]);
 
   async verify(requestData: DocumentActionRequestDto, user: User) {
@@ -863,7 +1041,10 @@ export class DocumentManagementService {
       });
       if (!existingDocument) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("project.noValidDocument", []),
+          this.helperService.formatReqMessagesString(
+            "project.noValidDocument",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -879,17 +1060,29 @@ export class DocumentManagementService {
           break;
         case DocumentTypeEnum.VALIDATION:
           {
-            await this.performValidationReportAction(existingDocument, requestData, user);
+            await this.performValidationReportAction(
+              existingDocument,
+              requestData,
+              user
+            );
           }
           break;
         case DocumentTypeEnum.MONITORING:
           {
-            await this.performMonitoringAction(existingDocument, requestData, user);
+            await this.performMonitoringAction(
+              existingDocument,
+              requestData,
+              user
+            );
           }
           break;
         case DocumentTypeEnum.VERIFICATION:
           {
-            await this.performVerificationAction(existingDocument, requestData, user);
+            await this.performVerificationAction(
+              existingDocument,
+              requestData,
+              user
+            );
           }
           break;
       }
@@ -947,12 +1140,13 @@ export class DocumentManagementService {
     const data = updateProposalStageDto.data;
 
     //updating proposal stage in programme
-    const updatedProject = await this.programmeLedgerService.updateProjectProposalStage(
-      refId,
-      txType,
-      txRef,
-      data
-    );
+    const updatedProject =
+      await this.programmeLedgerService.updateProjectProposalStage(
+        refId,
+        txType,
+        txRef,
+        data
+      );
 
     return updatedProject;
   }
@@ -1030,7 +1224,9 @@ export class DocumentManagementService {
             refId: projectRefId,
           },
         });
-        const activity = project.activities.find((a) => a.id === verificationDoc.activityId);
+        const activity = project.activities.find(
+          (a) => a.id === verificationDoc.activityId
+        );
         await em.update(
           ActivityEntity,
           { id: verificationDoc.activityId },
@@ -1049,7 +1245,10 @@ export class DocumentManagementService {
       const documentId = parseInt(parts[1], 10);
       updateWhere = { id: documentId };
     } else {
-      let lastDocumentVersion = await this.getLastDocumentVersion(docType, projectRefId);
+      let lastDocumentVersion = await this.getLastDocumentVersion(
+        docType,
+        projectRefId
+      );
       updateWhere = {
         programmeId: projectRefId,
         type: docType,
@@ -1090,7 +1289,10 @@ export class DocumentManagementService {
   ) {
     if (document.status !== DocumentStatus.PENDING) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("project.documentNotInPendingState", []),
+        this.helperService.formatReqMessagesString(
+          "project.documentNotInPendingState",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -1099,12 +1301,17 @@ export class DocumentManagementService {
       (user.role !== Role.Admin && user.role !== Role.Root)
     ) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("project.noInfActionPermission", []),
+        this.helperService.formatReqMessagesString(
+          "project.noInfActionPermission",
+          []
+        ),
         HttpStatus.UNAUTHORIZED
       );
     }
 
-    const project = await this.programmeLedgerService.getProjectById(document.programmeId);
+    const project = await this.programmeLedgerService.getProjectById(
+      document.programmeId
+    );
     if (!project) {
       throw new HttpException(
         this.helperService.formatReqMessagesString("project.noProject", []),
@@ -1114,11 +1321,12 @@ export class DocumentManagementService {
     const companyId = project.companyId;
     const projectCompany = await this.companyService.findByCompanyId(companyId);
     if (requestData.action == DocumentStatus.DNA_APPROVED) {
-      const noObjectionLetterUrl = await this.noObjectionLetterGenerateService.generateReport(
-        projectCompany.name,
-        project.title,
-        project.refId
-      );
+      const noObjectionLetterUrl =
+        await this.noObjectionLetterGenerateService.generateReport(
+          projectCompany.name,
+          project.title,
+          project.refId
+        );
 
       const updateProjectroposalStage: UpdateProjectProposalStageDto = {
         programmeId: document.programmeId,
@@ -1128,7 +1336,11 @@ export class DocumentManagementService {
       const response = await this.updateProposalStage(
         updateProjectroposalStage,
         user,
-        this.getDocumentTxRef(DocumentTypeEnum.INITIAL_NOTIFICATION_FORM, document.id, user.id)
+        this.getDocumentTxRef(
+          DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
+          document.id,
+          user.id
+        )
       );
 
       await this.emailHelperService.sendEmailToPDAdmins(
@@ -1137,7 +1349,11 @@ export class DocumentManagementService {
         project.refId
       );
 
-      await this.logProjectStage(project.refId, ProjectAuditLogType.APPROVED, user.id);
+      await this.logProjectStage(
+        project.refId,
+        ProjectAuditLogType.APPROVED,
+        user.id
+      );
     } else if (requestData.action == DocumentStatus.DNA_REJECTED) {
       const updateProjectProposalStage = {
         programmeId: document.programmeId,
@@ -1147,7 +1363,11 @@ export class DocumentManagementService {
       await this.updateProposalStage(
         updateProjectProposalStage,
         user,
-        this.getDocumentTxRef(DocumentTypeEnum.INITIAL_NOTIFICATION_FORM, document.id, user.id)
+        this.getDocumentTxRef(
+          DocumentTypeEnum.INITIAL_NOTIFICATION_FORM,
+          document.id,
+          user.id
+        )
       );
 
       await this.emailHelperService.sendEmailToPDAdmins(
@@ -1156,12 +1376,21 @@ export class DocumentManagementService {
         project.refId
       );
 
-      await this.logProjectStage(project.refId, ProjectAuditLogType.REJECTED, user.id, undefined, {
-        remarks: requestData.remarks,
-      });
+      await this.logProjectStage(
+        project.refId,
+        ProjectAuditLogType.REJECTED,
+        user.id,
+        undefined,
+        {
+          remarks: requestData.remarks,
+        }
+      );
     } else {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("project.incorrectDocumentAction", []),
+        this.helperService.formatReqMessagesString(
+          "project.incorrectDocumentAction",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -1173,32 +1402,48 @@ export class DocumentManagementService {
     requestData: DocumentActionRequestDto,
     user: User
   ) {
-    const project = await this.programmeLedgerService.getProjectById(document.programmeId);
+    const project = await this.programmeLedgerService.getProjectById(
+      document.programmeId
+    );
     if (
       requestData.action === DocumentStatus.IC_APPROVED ||
       requestData.action === DocumentStatus.IC_REJECTED
     ) {
       if (document.status !== DocumentStatus.PENDING) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("project.documentNotInPendingState", []),
+          this.helperService.formatReqMessagesString(
+            "project.documentNotInPendingState",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
 
-      if (user.companyRole !== CompanyRole.INDEPENDENT_CERTIFIER || user.role !== Role.Admin) {
+      if (
+        user.companyRole !== CompanyRole.INDEPENDENT_CERTIFIER ||
+        user.role !== Role.Admin
+      ) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("project.noPddActionPermission", []),
+          this.helperService.formatReqMessagesString(
+            "project.noPddActionPermission",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
 
       if (!project.independentCertifiers.includes(user.companyId)) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("project.icNotAssigned", []),
+          this.helperService.formatReqMessagesString(
+            "project.icNotAssigned",
+            []
+          ),
           HttpStatus.UNAUTHORIZED
         );
       }
-      const ICCompany = await this.companyService.findByCompanyId(user.companyId);
+      const ICCompany = await this.companyService.findByCompanyId(
+        user.companyId
+      );
       if (requestData.action === DocumentStatus.IC_REJECTED) {
         const updateProjectProposalStage = {
           programmeId: project.refId,
@@ -1207,7 +1452,11 @@ export class DocumentManagementService {
         await this.updateProposalStage(
           updateProjectProposalStage,
           user,
-          this.getDocumentTxRef(DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT, document.id, user.id)
+          this.getDocumentTxRef(
+            DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT,
+            document.id,
+            user.id
+          )
         );
         await this.emailHelperService.sendEmailToPDAdmins(
           EmailTemplates.PDD_IC_REJECT,
@@ -1231,7 +1480,11 @@ export class DocumentManagementService {
         await this.updateProposalStage(
           updateProjectProposalStage,
           user,
-          this.getDocumentTxRef(DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT, document.id, user.id)
+          this.getDocumentTxRef(
+            DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT,
+            document.id,
+            user.id
+          )
         );
         await this.emailHelperService.sendEmailToPDAdmins(
           EmailTemplates.PDD_APPROVAL_IC_TO_PD,
@@ -1258,20 +1511,27 @@ export class DocumentManagementService {
         (user.role !== Role.Admin && user.role !== Role.Root)
       ) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("project.noPddActionPermissionDna", []),
+          this.helperService.formatReqMessagesString(
+            "project.noPddActionPermissionDna",
+            []
+          ),
           HttpStatus.UNAUTHORIZED
         );
       }
 
       if (document.status !== DocumentStatus.IC_APPROVED) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("project.documentNotInICApprovedState", []),
+          this.helperService.formatReqMessagesString(
+            "project.documentNotInICApprovedState",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
-      const certifiedByUserDetails = await this.userService.getUserProfileDetails(
-        document.lastActionByUserId
-      );
+      const certifiedByUserDetails =
+        await this.userService.getUserProfileDetails(
+          document.lastActionByUserId
+        );
 
       if (requestData.action === DocumentStatus.DNA_REJECTED) {
         const updateProjectProposalStage = {
@@ -1281,7 +1541,11 @@ export class DocumentManagementService {
         await this.updateProposalStage(
           updateProjectProposalStage,
           user,
-          this.getDocumentTxRef(DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT, document.id, user.id)
+          this.getDocumentTxRef(
+            DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT,
+            document.id,
+            user.id
+          )
         );
         await this.emailHelperService.sendEmailToPDAdmins(
           EmailTemplates.PDD_DNA_REJECT_TO_PD,
@@ -1310,7 +1574,11 @@ export class DocumentManagementService {
         await this.updateProposalStage(
           updateProjectProposalStage,
           user,
-          this.getDocumentTxRef(DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT, document.id, user.id)
+          this.getDocumentTxRef(
+            DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT,
+            document.id,
+            user.id
+          )
         );
         await this.emailHelperService.sendEmailToPDAdmins(
           EmailTemplates.PDD_APPROVAL_DNA_TO_PD,
@@ -1322,11 +1590,18 @@ export class DocumentManagementService {
           { icOrganisationName: certifiedByUserDetails.Organisation.name },
           project.refId
         );
-        await this.logProjectStage(project.refId, ProjectAuditLogType.PDD_APPROVED_BY_DNA, user.id);
+        await this.logProjectStage(
+          project.refId,
+          ProjectAuditLogType.PDD_APPROVED_BY_DNA,
+          user.id
+        );
       }
     } else {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("project.incorrectDocumentAction", []),
+        this.helperService.formatReqMessagesString(
+          "project.incorrectDocumentAction",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -1337,7 +1612,9 @@ export class DocumentManagementService {
     requestData: DocumentActionRequestDto,
     user: User
   ) {
-    const project = await this.programmeLedgerService.getProjectById(document.programmeId);
+    const project = await this.programmeLedgerService.getProjectById(
+      document.programmeId
+    );
 
     if (
       requestData.action === DocumentStatus.DNA_APPROVED ||
@@ -1345,7 +1622,10 @@ export class DocumentManagementService {
     ) {
       if (document.status !== DocumentStatus.PENDING) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("project.documentNotInPendingState", []),
+          this.helperService.formatReqMessagesString(
+            "project.documentNotInPendingState",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -1355,7 +1635,10 @@ export class DocumentManagementService {
         (user.role !== Role.Admin && user.role !== Role.Root)
       ) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("project.noValidationActionPermission", []),
+          this.helperService.formatReqMessagesString(
+            "project.noValidationActionPermission",
+            []
+          ),
           HttpStatus.UNAUTHORIZED
         );
       }
@@ -1370,7 +1653,11 @@ export class DocumentManagementService {
         await this.updateProposalStage(
           updateProjectProposalStage,
           user,
-          this.getDocumentTxRef(DocumentTypeEnum.VALIDATION, document.id, user.id)
+          this.getDocumentTxRef(
+            DocumentTypeEnum.VALIDATION,
+            document.id,
+            user.id
+          )
         );
         await this.emailHelperService.sendEmailToICAdmins(
           EmailTemplates.VALIDATION_REJECTED_TO_IC,
@@ -1392,7 +1679,9 @@ export class DocumentManagementService {
           }
         );
       } else if (requestData.action === DocumentStatus.DNA_APPROVED) {
-        const projectCompany = await this.companyService.findByCompanyId(project.companyId);
+        const projectCompany = await this.companyService.findByCompanyId(
+          project.companyId
+        );
 
         const letterOfAuthorizationUrl =
           await this.letterOfAuthorizationGenerateService.generateLetter(
@@ -1404,14 +1693,21 @@ export class DocumentManagementService {
           );
         const errors = await validate(
           plainToClass(PositiveIntegerValidationDto, {
-            positiveInteger: document.content.ghgProjectDescription?.totalNetEmissionReductions
-              ? Number(document.content.ghgProjectDescription?.totalNetEmissionReductions)
+            positiveInteger: document.content.ghgProjectDescription
+              ?.totalNetEmissionReductions
+              ? Number(
+                  document.content.ghgProjectDescription
+                    ?.totalNetEmissionReductions
+                )
               : null,
           })
         );
         if (errors.length > 0) {
           throw new HttpException(
-            this.helperService.formatReqMessagesString("project.invalidUserEstimatedCredits", []),
+            this.helperService.formatReqMessagesString(
+              "project.invalidUserEstimatedCredits",
+              []
+            ),
             HttpStatus.BAD_REQUEST
           );
         }
@@ -1424,15 +1720,20 @@ export class DocumentManagementService {
           data: {
             letterOfAuthorizationUrl: letterOfAuthorizationUrl,
             creditEst: creditEst,
-            serialNumber: this.serialNumberManagementService.getProjectSerialNumber(
-              Number(project.refId)
-            ),
+            serialNumber:
+              this.serialNumberManagementService.getProjectSerialNumber(
+                Number(project.refId)
+              ),
           },
         };
         await this.updateProposalStage(
           updateProjectProposalStage,
           user,
-          this.getDocumentTxRef(DocumentTypeEnum.VALIDATION, document.id, user.id)
+          this.getDocumentTxRef(
+            DocumentTypeEnum.VALIDATION,
+            document.id,
+            user.id
+          )
         );
         await this.emailHelperService.sendEmailToPDAdmins(
           EmailTemplates.VALIDATION_APPROVED_TO_PD,
@@ -1444,7 +1745,11 @@ export class DocumentManagementService {
           { icOrganisationName: vrSubmittedIC.Organisation.name },
           project.refId
         );
-        await this.logProjectStage(project.refId, ProjectAuditLogType.AUTHORISED, user.id);
+        await this.logProjectStage(
+          project.refId,
+          ProjectAuditLogType.AUTHORISED,
+          user.id
+        );
         await this.logProjectStage(
           project.refId,
           ProjectAuditLogType.CREDITS_AUTHORISED,
@@ -1458,7 +1763,10 @@ export class DocumentManagementService {
       }
     } else {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("project.incorrectDocumentAction", []),
+        this.helperService.formatReqMessagesString(
+          "project.incorrectDocumentAction",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -1469,32 +1777,48 @@ export class DocumentManagementService {
     requestData: DocumentActionRequestDto,
     user: User
   ) {
-    const project = await this.programmeLedgerService.getProjectById(document.programmeId);
+    const project = await this.programmeLedgerService.getProjectById(
+      document.programmeId
+    );
     if (
       requestData.action === DocumentStatus.IC_APPROVED ||
       requestData.action === DocumentStatus.IC_REJECTED
     ) {
       if (document.status !== DocumentStatus.PENDING) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("project.documentNotInPendingState", []),
+          this.helperService.formatReqMessagesString(
+            "project.documentNotInPendingState",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
 
-      if (user.companyRole !== CompanyRole.INDEPENDENT_CERTIFIER || user.role !== Role.Admin) {
+      if (
+        user.companyRole !== CompanyRole.INDEPENDENT_CERTIFIER ||
+        user.role !== Role.Admin
+      ) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("project.noMonitoringActionPermission", []),
+          this.helperService.formatReqMessagesString(
+            "project.noMonitoringActionPermission",
+            []
+          ),
           HttpStatus.UNAUTHORIZED
         );
       }
 
       if (!project.independentCertifiers.includes(user.companyId)) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("project.icNotAssignedMonitoring", []),
+          this.helperService.formatReqMessagesString(
+            "project.icNotAssignedMonitoring",
+            []
+          ),
           HttpStatus.UNAUTHORIZED
         );
       }
-      const ICCompany = await this.companyService.findByCompanyId(user.companyId);
+      const ICCompany = await this.companyService.findByCompanyId(
+        user.companyId
+      );
       const activity = await this.activityEntityRepository.findOne({
         where: { id: document.activityId },
       });
@@ -1526,7 +1850,10 @@ export class DocumentManagementService {
             );
           })
           .catch((error: any) => {
-            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException(
+              error.message,
+              HttpStatus.INTERNAL_SERVER_ERROR
+            );
           });
         await this.emailHelperService.sendEmailToPDAdmins(
           EmailTemplates.MONITORING_REJECT,
@@ -1543,7 +1870,11 @@ export class DocumentManagementService {
         await this.updateProposalStage(
           updateProjectProposalStage,
           user,
-          this.getDocumentTxRef(DocumentTypeEnum.MONITORING, document.id, user.id)
+          this.getDocumentTxRef(
+            DocumentTypeEnum.MONITORING,
+            document.id,
+            user.id
+          )
         );
         await this.emailHelperService.sendEmailToPDAdmins(
           EmailTemplates.MONITORING_APPROVE,
@@ -1558,7 +1889,10 @@ export class DocumentManagementService {
       }
     } else {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("project.incorrectDocumentAction", []),
+        this.helperService.formatReqMessagesString(
+          "project.incorrectDocumentAction",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -1569,12 +1903,19 @@ export class DocumentManagementService {
     requestData: DocumentActionRequestDto,
     user: User
   ) {
-    const project = await this.programmeLedgerService.getProjectById(document.programmeId);
+    const project = await this.programmeLedgerService.getProjectById(
+      document.programmeId
+    );
 
-    const projectCompany = await this.companyService.findByCompanyId(project.companyId);
+    const projectCompany = await this.companyService.findByCompanyId(
+      project.companyId
+    );
     if (projectCompany.state == CompanyState.SUSPENDED) {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("project.companyInDeactivatedState", []),
+        this.helperService.formatReqMessagesString(
+          "project.companyInDeactivatedState",
+          []
+        ),
         HttpStatus.UNAUTHORIZED
       );
     }
@@ -1588,14 +1929,20 @@ export class DocumentManagementService {
         (user.role !== Role.Admin && user.role !== Role.Root)
       ) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("project.noVerificationActionPermission", []),
+          this.helperService.formatReqMessagesString(
+            "project.noVerificationActionPermission",
+            []
+          ),
           HttpStatus.UNAUTHORIZED
         );
       }
 
       if (document.status !== DocumentStatus.PENDING) {
         throw new HttpException(
-          this.helperService.formatReqMessagesString("project.documentNotInPendingState", []),
+          this.helperService.formatReqMessagesString(
+            "project.documentNotInPendingState",
+            []
+          ),
           HttpStatus.BAD_REQUEST
         );
       }
@@ -1632,7 +1979,10 @@ export class DocumentManagementService {
             );
           })
           .catch((error: any) => {
-            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException(
+              error.message,
+              HttpStatus.INTERNAL_SERVER_ERROR
+            );
           });
 
         const ICCompany = await this.userCompanyViewEntityRepository.findOne({
@@ -1656,21 +2006,31 @@ export class DocumentManagementService {
         );
       } else if (requestData.action === DocumentStatus.DNA_APPROVED) {
         if (
-          !document.content.ghgProjectDescription?.estimatedNetEmissionReductions ||
-          document.content.ghgProjectDescription?.estimatedNetEmissionReductions.length <= 0
+          !document.content.ghgProjectDescription
+            ?.estimatedNetEmissionReductions ||
+          document.content.ghgProjectDescription?.estimatedNetEmissionReductions
+            .length <= 0
         ) {
           throw new HttpException(
-            this.helperService.formatReqMessagesString("project.invlaidCreditQuantityToIssue", []),
+            this.helperService.formatReqMessagesString(
+              "project.invlaidCreditQuantityToIssue",
+              []
+            ),
             HttpStatus.BAD_REQUEST
           );
         }
         const creditVerified: ActivityVintageCreditsDto[] = [];
         document.content.ghgProjectDescription?.estimatedNetEmissionReductions?.map(
           (data: { vintage: string; netEmissionReductions: string }) => {
-            const creditBlockToVerify = plainToClass(ActivityVintageCreditsDto, {
-              vintage: new Date(parseInt(data.vintage)).getFullYear().toString(),
-              creditAmount: Number(data.netEmissionReductions),
-            });
+            const creditBlockToVerify = plainToClass(
+              ActivityVintageCreditsDto,
+              {
+                vintage: new Date(parseInt(data.vintage))
+                  .getFullYear()
+                  .toString(),
+                creditAmount: Number(data.netEmissionReductions),
+              }
+            );
             creditVerified.push(creditBlockToVerify);
           }
         );
@@ -1681,7 +2041,10 @@ export class DocumentManagementService {
         );
         if (creditVerified.length <= 0 || errors.length > 0) {
           throw new HttpException(
-            this.helperService.formatReqMessagesString("project.invlaidCreditVerifed", []),
+            this.helperService.formatReqMessagesString(
+              "project.invlaidCreditVerifed",
+              []
+            ),
             HttpStatus.BAD_REQUEST
           );
         }
@@ -1690,7 +2053,11 @@ export class DocumentManagementService {
           creditVerified,
           project.companyId,
           document,
-          this.getDocumentTxRef(DocumentTypeEnum.VERIFICATION, document.id, user.id),
+          this.getDocumentTxRef(
+            DocumentTypeEnum.VERIFICATION,
+            document.id,
+            user.id
+          ),
           user
         );
         const ICCompany = await this.userCompanyViewEntityRepository.findOne({
@@ -1713,7 +2080,8 @@ export class DocumentManagementService {
         );
 
         const totalCredits = creditVerified.reduce(
-          (sum: number, item: ActivityVintageCreditsDto) => sum + item.creditAmount,
+          (sum: number, item: ActivityVintageCreditsDto) =>
+            sum + item.creditAmount,
           0
         );
 
@@ -1727,7 +2095,10 @@ export class DocumentManagementService {
       }
     } else {
       throw new HttpException(
-        this.helperService.formatReqMessagesString("project.incorrectDocumentAction", []),
+        this.helperService.formatReqMessagesString(
+          "project.incorrectDocumentAction",
+          []
+        ),
         HttpStatus.BAD_REQUEST
       );
     }
@@ -1738,7 +2109,9 @@ export class DocumentManagementService {
     documentId: number,
     lastActionByUserId?: number
   ) {
-    return `${docType}#${documentId}${lastActionByUserId ? `#${lastActionByUserId}` : ``}`;
+    return `${docType}#${documentId}${
+      lastActionByUserId ? `#${lastActionByUserId}` : ``
+    }`;
   }
 
   async query(query: DocumentQueryDto) {

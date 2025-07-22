@@ -2,20 +2,15 @@ import { i18n } from 'i18next';
 import { useEffect, useState } from 'react';
 import './VerificationReport.scss';
 import StepperComponent from './StepperComponent';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { useParams, useLocation } from 'react-router-dom';
-import { DocumentTypeEnum } from '../../Definitions/Enums/document.type';
-import { Col, Row, Select, Tag, Form } from 'antd';
+import { useLocation } from 'react-router-dom';
+import { Col, Row, Tag, Form } from 'antd';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
 import { getDocumentStatusColor } from '../../Definitions/Definitions/programme.definitions';
-import { API_PATHS } from '../../Config/apiConfig';
 
 export const VerificationReportComponent = (props: { translator: i18n }) => {
   const [countries, setCountries] = useState<[]>([]);
-  const { put, get, post } = useConnection();
   const [form] = Form.useForm();
   const { translator } = props;
-  const { id, verificationRequestId } = useParams();
   const { state } = useLocation();
   const [versions, setVersions] = useState<number[]>([]);
   const [selectedVersion, setSelectedVersion] = useState<number>();
@@ -25,33 +20,29 @@ export const VerificationReportComponent = (props: { translator: i18n }) => {
 
   const mode = state?.mode;
 
-  const onVersionSelect = async (value: number) => {
-    console.log('selected value', value);
-    setSelectedVersion(value);
-  };
+  // const onVersionSelect = async (value: number) => {
+  //   console.log('selected value', value);
+  //   setSelectedVersion(value);
+  // };
 
-  const getDocVersions = async () => {
-    try {
-      const { data } = await post(API_PATHS.VERIFICATION_DOC_VERSIONS, {
-        programmeId: id,
-        verificationRequestId: Number(verificationRequestId),
-        docType: DocumentTypeEnum.VERIFICATION_REPORT,
-      });
-      setVersions(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getDocVersions = async () => {
+  //   try {
+  //     const { data } = await post(API_PATHS.VERIFICATION_DOC_VERSIONS, {
+  //       programmeId: id,
+  //       verificationRequestId: Number(verificationRequestId),
+  //       docType: DocumentTypeEnum.VERIFICATION_REPORT,
+  //     });
+  //     setVersions(data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  const handleDocumentStatus = (value: string) => {
-    setDocumentStatus(value);
-  };
-
-  useEffect(() => {
-    if (mode === FormMode.VIEW || mode === FormMode.EDIT) {
-      getDocVersions();
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (mode === FormMode.VIEW || mode === FormMode.EDIT) {
+  //     getDocVersions();
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (versions.length > 0) {
@@ -59,19 +50,7 @@ export const VerificationReportComponent = (props: { translator: i18n }) => {
     }
   }, [versions]);
 
-  const getCountryList = async () => {
-    const response = await get(API_PATHS.COUNTRY_LIST);
-    if (response.data) {
-      const alpha2Names = response.data.map((item: any) => {
-        return item.alpha2;
-      });
-      setCountries(alpha2Names);
-    }
-  };
-
-  useEffect(() => {
-    // getCountryList();
-  }, []);
+ 
 
   return (
     <div className="add-programme-main-container">
@@ -80,7 +59,7 @@ export const VerificationReportComponent = (props: { translator: i18n }) => {
           <Col xl={12} md={12}>
             <div className="main">{t('verificationReport:verificationReport')}</div>
           </Col>
-          {mode === FormMode.VIEW ? (
+          {/* {mode === FormMode.VIEW ? (
             <Col xl={12} md={12} style={{ textAlign: 'right' }}>
               <Select
                 size="large"
@@ -98,7 +77,7 @@ export const VerificationReportComponent = (props: { translator: i18n }) => {
             </Col>
           ) : (
             ''
-          )}
+          )} */}
         </Row>
       </div>
       <div className="adding-section">
@@ -126,8 +105,6 @@ export const VerificationReportComponent = (props: { translator: i18n }) => {
             current={0}
             handleValuesUpdate={() => {}}
             form={form}
-            // selectedVersion={selectedVersion}
-            // handleDocumentStatus={handleDocumentStatus}
           />
         </div>
       </div>

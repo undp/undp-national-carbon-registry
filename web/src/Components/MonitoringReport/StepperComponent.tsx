@@ -11,21 +11,11 @@ import { AnnexureStep } from "./AppendixStep";
 import { useForm } from "antd/lib/form/Form";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import moment from "moment";
-import { DocumentTypeEnum } from "../../Definitions/Enums/document.type.enum";
 import { DocumentEnum } from "../../Definitions/Enums/document.enum";
 import { FormMode } from "../../Definitions/Enums/formMode.enum";
-import {
-  extractFilePropertiesFromLink,
-  fileUploadValueExtract,
-} from "../../Utils/utilityHelper";
-import { SlcfFormActionModel } from "../Models/SlcfFormActionModel";
 import { PopupInfo } from "../../Definitions/Definitions/ndcDetails.definitions";
-import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { API_PATHS } from "../../Config/apiConfig";
 import { ROUTES } from "../../Config/uiRoutingConfig";
-import { DocType } from "../../Definitions/Enums/document.type";
-import ProjectDetails from "../PDD/BasicInformation";
 import { CustomStepsProps } from "./StepProps";
 import { Loading } from "../Loading/loading";
 import {
@@ -46,17 +36,9 @@ const StepperComponent = (props: CustomStepsProps) => {
   const navigate = useNavigate();
   const { translator, t } = props;
   const [current, setCurrent] = useState(0);
-  const [reportId, setReportId] = useState(0);
-  const [status, setStatus] = useState(null);
-  const { get, post } = useConnection();
-  const { id, verificationRequestId } = useParams();
-  const [projectCategory, setProjectCategory] = useState<string>("");
-  const [popupInfo, setPopupInfo] = useState<PopupInfo>();
-  const [slcfActionModalVisible, setSlcfActioModalVisible] =
-    useState<boolean>(false);
-  const [versions, setVersions] = useState<number[]>([]);
-  const [selectedVersion, setSelectedVersion] = useState<number>();
-  const [documentStatus, setDocumentStatus] = useState("");
+ 
+  const { post } = useConnection();
+  const { id } = useParams();
   const [documentId, setDocumentId] = useState<string>();
 
   const [maxNetGHGReduction, setMaxNetGHGReduction] = useState<number>();
@@ -70,7 +52,6 @@ const StepperComponent = (props: CustomStepsProps) => {
   const [annexuresForm] = useForm();
 
   const { state } = useLocation();
-  console.log("----state-----------", state);
 
   const [loading, setLoading] = useState<boolean>(
     state?.mode === FormMode.VIEW ||
@@ -144,28 +125,13 @@ const StepperComponent = (props: CustomStepsProps) => {
       console.log("Error fetching programme data:", error);
     }
 
-    // try {
-    //   const orgDetailsResponse = await get(API_PATHS.USER_PROFILE_DETAILS);
-    //   console.log('---------org details------------', orgDetailsResponse);
-    //   if (orgDetailsResponse?.statusText === 'SUCCESS') {
-    //     orgData = orgDetailsResponse?.data?.Organisation;
-    //   } else {
-    //     console.log('Error: Org API fetch failed');
-    //   }
-    // } catch (error) {
-    //   console.log('Error fetching Org details', error);
-    // }
-
     try {
       // Fetch PDD Data
       const pddResponse = await post(API_PATHS.QUERY_DOCUMENT, {
         refId: state?.documents?.PDD?.refId,
         documentType: DocumentEnum.PDD,
       });
-      console.log(
-        "-----------------PDD Response-----------------",
-        pddResponse
-      );
+
       if (pddResponse?.statusText === "SUCCESS") {
         pddData = pddResponse?.data;
       } else {
@@ -280,14 +246,9 @@ const StepperComponent = (props: CustomStepsProps) => {
       ) {
         setLoading(true);
 
-        let res;
+        let res: any;
 
         if (state?.mode === FormMode.VIEW || state?.mode === FormMode.VERIFY) {
-          console.log(
-            "--------state?.mode 2---------",
-            state?.mode,
-            state?.mode === FormMode.VERIFY
-          );
           setDisableFields(true);
         }
 
@@ -297,7 +258,6 @@ const StepperComponent = (props: CustomStepsProps) => {
             documentType: DocumentEnum.MONITORING,
           });
 
-          console.log("--------mon res---------", res);
           if (res?.statusText === "SUCCESS") {
             const data = res?.data;
             setDocumentId(data?.refId);
@@ -373,7 +333,6 @@ const StepperComponent = (props: CustomStepsProps) => {
 
   const submitForm = async (appendixVals: any) => {
     try {
-      console.log("----form vals-----", appendixVals);
       setLoading(true);
       const tempValues = {
         ...safeClone(values),
@@ -400,7 +359,6 @@ const StepperComponent = (props: CustomStepsProps) => {
         }, defaultTimeout);
       }
     } catch (error: any) {
-      console.log("-----------error------", error);
       if (error.status === 400) {
         message.open({
           type: "error",
@@ -413,7 +371,7 @@ const StepperComponent = (props: CustomStepsProps) => {
           content: "Something went wrong",
           duration: 4,
           style: { textAlign: "right", marginRight: 15, marginTop: 10 },
-        })
+        });
       }
       setLoading(false);
     }
@@ -429,8 +387,6 @@ const StepperComponent = (props: CustomStepsProps) => {
       return { ...prevVal, data: tempContent };
     });
   };
-
-  console.log("----------state disableFields-------------", disableFields);
 
   useEffect(() => {
     if (state?.mode === FormMode?.CREATE) {
@@ -590,32 +546,6 @@ const StepperComponent = (props: CustomStepsProps) => {
           handleValuesUpdate={submitForm}
           documentId={documentId}
           handleLoading={handleLoading}
-          // approve={() => {
-          //   showModalOnAction({
-          //     actionBtnText: t('monitoringReport:btnApprove'),
-          //     icon: <CheckCircleOutlined />,
-          //     title: t('monitoringReport:approveMonitoringModalTitle'),
-          //     okAction: () => {
-          //       approveOrReject(true);
-          //     },
-          //     remarkRequired: false,
-          //     type: 'primary',
-          //   });
-          // }}
-          // reject={() => {
-          //   showModalOnAction({
-          //     actionBtnText: t('monitoringReport:btnReject'),
-          //     icon: <CloseCircleOutlined />,
-          //     title: t('monitoringReport:rejectMonitoringModalTitle'),
-          //     okAction: (remark: string) => {
-          //       approveOrReject(false, remark);
-          //     },
-          //     remarkRequired: true,
-          //     type: 'danger',
-          //   });
-          // }}
-          //submitForm={submitForm}
-          // onFinish={onFinish}
         />
       ),
     },
@@ -635,22 +565,6 @@ const StepperComponent = (props: CustomStepsProps) => {
           description: step.description,
         }))}
       />
-      {/* {popupInfo && (
-        <SlcfFormActionModel
-          onCancel={() => {
-            setSlcfActioModalVisible(false);
-          }}
-          actionBtnText={popupInfo!.actionBtnText}
-          onFinish={popupInfo!.okAction}
-          subText={''}
-          openModal={slcfActionModalVisible}
-          icon={popupInfo!.icon}
-          title={popupInfo!.title}
-          type={popupInfo!.type}
-          remarkRequired={popupInfo!.remarkRequired}
-          t={t}
-        />
-      )} */}
     </>
   );
 };

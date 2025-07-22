@@ -342,10 +342,6 @@ const NetEmissionReduction = (props: any) => {
                             message: `${t("common:required")}`,
                           },
                           {
-                            pattern: /^\d+$/,
-                            message: "Should be a positive integer",
-                          },
-                          {
                             validator(rule, value) {
                               if (!value) {
                                 return Promise.resolve();
@@ -388,10 +384,6 @@ const NetEmissionReduction = (props: any) => {
                           {
                             required: true,
                             message: `${t("common:required")}`,
-                          },
-                          {
-                            pattern: /^\d+$/,
-                            message: "Should be a positive integer",
                           },
                           {
                             validator(rule, value) {
@@ -437,10 +429,6 @@ const NetEmissionReduction = (props: any) => {
                           {
                             required: true,
                             message: `${t("common:required")}`,
-                          },
-                          {
-                            pattern: /^\d+$/,
-                            message: "Should be a positive integer",
                           },
                           {
                             validator(rule, value) {

@@ -1,73 +1,37 @@
 import { useEffect, useState } from 'react';
 import './MonitoringReport.scss';
 import StepperComponent from './StepperComponent';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { useParams, useLocation } from 'react-router-dom';
-import { DocumentTypeEnum } from '../../Definitions/Enums/document.type';
+import { useLocation } from 'react-router-dom';
 import { Col, Row, Select, Tag, Form } from 'antd';
 import { FormMode } from '../../Definitions/Enums/formMode.enum';
 import { getDocumentStatusColor } from '../../Definitions/Definitions/programme.definitions';
-import { API_PATHS } from '../../Config/apiConfig';
 import { i18n } from 'i18next';
 
 export const MonitoringReportComponent = (props: { translator: i18n }) => {
-  const [countries, setCountries] = useState<[]>([]);
-  const { put, get, post } = useConnection();
-  const { id, verificationRequestId } = useParams();
   const { state } = useLocation();
-  const [versions, setVersions] = useState<number[]>([]);
-  const [selectedVersion, setSelectedVersion] = useState<number>();
-  const [documentStatus, setDocumentStatus] = useState('');
+  // const [versions, setVersions] = useState<number[]>([]);
+  // const [selectedVersion, setSelectedVersion] = useState<number>();
+  // const [documentStatus, setDocumentStatus] = useState('');
   const mode = state?.mode;
   const [form] = Form.useForm();
   const { translator } = props;
   const t = translator.t;
 
-  const onVersionSelect = async (value: number) => {
-    setSelectedVersion(value);
-  };
-
-  // const getDocVersions = async () => {
-  //   try {
-  //     const { data } = await post(API_PATHS.VERIFICATION_DOC_VERSIONS, {
-  //       programmeId: id,
-  //       verificationRequestId: Number(verificationRequestId),
-  //       docType: DocumentTypeEnum.MONITORING_REPORT,
-  //     });
-  //     setVersions(data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
+  // const onVersionSelect = async (value: number) => {
+  //   setSelectedVersion(value);
   // };
 
-  const handleDocumentStatus = (value: string) => {
-    setDocumentStatus(value);
-  };
-
-  // useEffect(() => {
-  //   if (mode === FormMode.VIEW || mode === FormMode.EDIT) {
-  //     getDocVersions();
-  //   }
-  // }, []);
-
-  useEffect(() => {
-    if (versions.length > 0) {
-      setSelectedVersion(versions[0]);
-    }
-  }, [versions]);
-
-  // const getCountryList = async () => {
-  //   const response = await get(API_PATHS.COUNTRY_LIST);
-  //   if (response.data) {
-  //     const alpha2Names = response.data.map((item: any) => {
-  //       return item.alpha2;
-  //     });
-  //     setCountries(alpha2Names);
-  //   }
+  // const handleDocumentStatus = (value: string) => {
+  //   setDocumentStatus(value);
   // };
+
   // useEffect(() => {
-  //   getCountryList();
-  // }, []);
+  //   if (versions.length > 0) {
+  //     setSelectedVersion(versions[0]);
+  //   }
+  // }, [versions]);
+
+
   return (
     <div className="add-programme-main-container">
       <div className="title-container">
@@ -75,7 +39,7 @@ export const MonitoringReportComponent = (props: { translator: i18n }) => {
           <Col xl={12} md={12}>
             <div className="main">{t('monitoringReport:monitoringReport')}</div>
           </Col>
-          {mode === FormMode.VIEW ? (
+          {/* {mode === FormMode.VIEW ? (
             <Col xl={12} md={12} style={{ textAlign: 'right' }}>
               <Select
                 size="large"
@@ -93,11 +57,11 @@ export const MonitoringReportComponent = (props: { translator: i18n }) => {
             </Col>
           ) : (
             ''
-          )}
+          )} */}
         </Row>
       </div>
       <div className="adding-section">
-        {mode === FormMode.VIEW ? (
+        {/* {mode === FormMode.VIEW ? (
           <Row className="row" justify={'space-between'}>
             <Col xl={12} md={12}></Col>
             <Col xl={12} md={12} style={{ textAlign: 'right' }}>
@@ -111,7 +75,7 @@ export const MonitoringReportComponent = (props: { translator: i18n }) => {
           </Row>
         ) : (
           ''
-        )}
+        )} */}
         <div className="form-section">
           <StepperComponent
             translator={translator}

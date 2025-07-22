@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import ValidationStepperComponent from './ValidationStepperComponent';
-import { i18n } from 'i18next';
-import './ValidationReport.scss';
-import { useLocation, useParams } from 'react-router-dom';
-import { useConnection } from '../../Context/ConnectionContext/connectionContext';
-import { DocumentTypeEnum } from '../../Definitions/Enums/document.type';
-import { Col, Row, Select, Tag } from 'antd';
-import { FormMode } from '../../Definitions/Enums/formMode.enum';
-import { getDocumentStatusColor } from '../../Definitions/Definitions/programme.definitions';
-import { API_PATHS } from '../../Config/apiConfig';
+import React, { useEffect, useState } from "react";
+import StepperComponent from "./StepperComponent";
+import { i18n } from "i18next";
+import "./ValidationReport.scss";
+import { useLocation, useParams } from "react-router-dom";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { DocumentTypeEnum } from "../../Definitions/Enums/document.type";
+import { Col, Row, Select, Tag } from "antd";
+import { FormMode } from "../../Definitions/Enums/formMode.enum";
+import { getDocumentStatusColor } from "../../Definitions/Definitions/programme.definitions";
+import { API_PATHS } from "../../Config/apiConfig";
 
 const ValidationReport = (props: { translator: i18n }) => {
   const { translator } = props;
@@ -17,16 +17,16 @@ const ValidationReport = (props: { translator: i18n }) => {
   const { state } = useLocation();
   const [versions, setVersions] = useState<number[]>([]);
   const [selectedVersion, setSelectedVersion] = useState<number>();
-  const [documentStatus, setDocumentStatus] = useState('');
+  const [documentStatus, setDocumentStatus] = useState("");
 
   const mode = state?.mode;
 
   const t = translator.t;
 
-  const onVersionSelect = async (value: number) => {
-    console.log('selected value', value);
-    setSelectedVersion(value);
-  };
+  // const onVersionSelect = async (value: number) => {
+  //   console.log("selected value", value);
+  //   setSelectedVersion(value);
+  // };
 
   // const getDocVersions = async () => {
   //   try {
@@ -40,29 +40,29 @@ const ValidationReport = (props: { translator: i18n }) => {
   //   }
   // };
 
-  const handleDocumentStatus = (value: string) => {
-    setDocumentStatus(value);
-  };
+  // const handleDocumentStatus = (value: string) => {
+  //   setDocumentStatus(value);
+  // };
 
   // useEffect(() => {
   //   getDocVersions();
   // }, []);
 
-  useEffect(() => {
-    if (versions.length > 0) {
-      setSelectedVersion(versions[0]);
-    }
-  }, [versions]);
+  // useEffect(() => {
+  //   if (versions.length > 0) {
+  //     setSelectedVersion(versions[0]);
+  //   }
+  // }, [versions]);
 
   return (
     <div className="validation-form-container ">
       <div className="title-container">
-        <Row className="row" justify={'space-between'}>
+        <Row className="row" justify={"space-between"}>
           <Col xl={12} md={12}>
-            <div className="main">{t('validationReport:validationTitle')}</div>
+            <div className="main">{t("validationReport:validationTitle")}</div>
           </Col>
-          {mode === FormMode.VIEW ? (
-            <Col xl={12} md={12} style={{ textAlign: 'right' }}>
+          {/* {mode === FormMode.VIEW ? (
+            <Col xl={12} md={12} style={{ textAlign: "right" }}>
               <Select
                 size="large"
                 onChange={onVersionSelect}
@@ -72,24 +72,24 @@ const ValidationReport = (props: { translator: i18n }) => {
               >
                 {versions.map((version: number, index: number) => (
                   <Select.Option value={version} key={index}>
-                    {'Version ' + version}
+                    {"Version " + version}
                   </Select.Option>
                 ))}
               </Select>
             </Col>
           ) : (
-            ''
-          )}
+            ""
+          )} */}
         </Row>
       </div>
 
       <div className="forms-container">
-        {mode === FormMode.VIEW ? (
-          <Row className="row" justify={'space-between'}>
+        {/* {mode === FormMode.VIEW ? (
+          <Row className="row" justify={"space-between"}>
             <Col xl={12} md={12}></Col>
-            <Col xl={12} md={12} style={{ textAlign: 'right' }}>
+            <Col xl={12} md={12} style={{ textAlign: "right" }}>
               <Tag
-                style={{ fontSize: 14, fontWeight: 500, padding: '4px 22px' }}
+                style={{ fontSize: 14, fontWeight: 500, padding: "4px 22px" }}
                 color={getDocumentStatusColor(documentStatus)}
               >
                 {documentStatus}
@@ -97,13 +97,13 @@ const ValidationReport = (props: { translator: i18n }) => {
             </Col>
           </Row>
         ) : (
-          ''
-        )}
+          ""
+        )} */}
         <div className="stepper-container">
-          <ValidationStepperComponent
+          <StepperComponent
             t={t}
             selectedVersion={selectedVersion}
-            handleDocumentStatus={handleDocumentStatus}
+            // handleDocumentStatus={handleDocumentStatus}
           />
         </div>
       </div>

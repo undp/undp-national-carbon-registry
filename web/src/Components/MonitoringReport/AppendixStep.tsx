@@ -9,7 +9,7 @@ import { FormMode } from "../../Definitions/Enums/formMode.enum";
 import { useState } from "react";
 import { CustomStepsProps } from "./StepProps";
 import { fileUploadValueExtract } from "../../Utils/utilityHelper";
-import { SlcfFormActionModel } from "../Models/SlcfFormActionModel";
+import { FormActionModel } from "../Models/FormActionModel";
 import ConfirmSubmitSVG from "../../Assets/DialogIcons/ConfirmSubmit.svg";
 import { useLocation } from "react-router-dom";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
@@ -47,6 +47,7 @@ export const AnnexureStep = (props: CustomStepsProps) => {
   };
 
   const onFinish = async (values: any) => {
+    console.log("---------values---------", values);
     const appendixFormValues: any = {
       appendix: values?.a_appendix,
       a_uploadDoc: await fileUploadValueExtract(values, "a_uploadDoc"),
@@ -167,7 +168,7 @@ export const AnnexureStep = (props: CustomStepsProps) => {
             {(state?.mode === FormMode.CREATE ||
               state?.mode === FormMode.EDIT) && (
               <>
-                <SlcfFormActionModel
+                <FormActionModel
                   icon={<ConfirmSubmitSVG />}
                   title={t("monitoringReport:confirmModalMessage")}
                   onCancel={closeDialog}
@@ -186,7 +187,7 @@ export const AnnexureStep = (props: CustomStepsProps) => {
 
             {state?.mode === FormMode.VERIFY && (
               <>
-                <SlcfFormActionModel
+                <FormActionModel
                   actionBtnText={t("monitoringReport:reject")}
                   onCancel={closeDeclineDialogBox}
                   icon={<CloseCircleOutlined />}
@@ -202,7 +203,7 @@ export const AnnexureStep = (props: CustomStepsProps) => {
                   t={t}
                 />
 
-                <SlcfFormActionModel
+                <FormActionModel
                   actionBtnText={t("monitoringReport:approve")}
                   onCancel={closeVerifyDialogBox}
                   icon={<CheckCircleOutlined />}
@@ -293,12 +294,6 @@ export const AnnexureStep = (props: CustomStepsProps) => {
                   </div>
                 </Col>
               </Row>
-              {/* <Row className="step-actions-end"> */}
-              {/* <Col>
-                  <Button onClick={prev} disabled={false}>
-                    {t('monitoringReport:back')}
-                  </Button>
-                </Col> */}
               <Row justify={"end"} className="step-actions-end">
                 {(state?.mode === FormMode.CREATE ||
                   state?.mode === FormMode.EDIT) && (
@@ -342,38 +337,6 @@ export const AnnexureStep = (props: CustomStepsProps) => {
                     </Button>
                   </>
                 )}
-                {/* <Button danger size={'large'} onClick={prev}>
-                  {t('monitoringReport:prev')}
-                </Button>
-                {disableFields ? (
-                  <Button type="primary" onClick={next}>
-                    {t('monitoringReport:goBackProjectDetails')}
-                  </Button>
-                ) : (
-                  <Button type="primary" size={'large'} htmlType={'submit'}>
-                    {t('monitoringReport:submit')}
-                  </Button>
-                )} */}
-                {/* </Row> */}
-                {/* {userInfoState?.companyRole === CompanyRole.PROGRAMME_DEVELOPER &&
-                  FormMode.VIEW !== formMode && (
-                    <Button type="primary" htmlType="submit" disabled={loading}>
-                      <span>{t('monitoringReport:submit')}</span>
-                    </Button>
-                  )} */}
-
-                {/* {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
-                  status === DocumentStatus.PENDING && (
-                    <Button danger onClick={reject} disabled={false}>
-                      <span>{t('monitoringReport:reject')}</span>
-                    </Button>
-                  )}
-                {userInfoState?.companyRole === CompanyRole.CLIMATE_FUND &&
-                  status === DocumentStatus.PENDING && (
-                    <Button type="primary" onClick={approve} disabled={false}>
-                      <span>{t('monitoringReport:approve')}</span>
-                    </Button>
-                  )} */}
               </Row>
             </Form>
           </div>
