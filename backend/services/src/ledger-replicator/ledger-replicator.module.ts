@@ -3,7 +3,6 @@ import { SharedModule } from "@app/shared";
 import { Company } from "@app/shared/entities/company.entity";
 import { Counter } from "@app/shared/entities/counter.entity";
 import { Programme } from "@app/shared/entities/programme.entity";
-import { ProgrammeSl } from "@app/shared/entities/programmeSl.entity";
 import { LedgerType } from "@app/shared/enum/ledger.type";
 import { Logger, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -23,7 +22,6 @@ import { Province } from "@app/shared/entities/province.entity";
       Company,
       Counter,
       Province,
-      ProgrammeSl,
       ProjectEntity,
       CreditBlocksEntity,
     ]),

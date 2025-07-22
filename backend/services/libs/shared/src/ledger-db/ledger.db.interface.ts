@@ -20,7 +20,6 @@ export abstract class LedgerDBInterface {
   public overallTableName: string;
   public companyTableName: string;
   public ledgerName: string;
-  public programmeSlTable: string;
   public projectTable: string;
   public creditBlocksTable: string;
 

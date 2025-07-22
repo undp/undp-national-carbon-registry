@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import './projectForms.scss';
-import { FileDoneOutlined } from '@ant-design/icons';
-import { Row, Col, Button } from 'antd';
-import { useNavigate, useParams } from 'react-router-dom';
-import { ROUTES } from '../../../Config/uiRoutingConfig';
-import { formPermissions } from '../../../Utils/documentsPermissionSl';
-import { FormMode } from '../../../Definitions/Enums/formMode.enum';
-import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
-import { useUserContext } from '../../../Context/UserInformationContext/userInformationContext';
-import { ProjectProposalStage } from '../../../Definitions/Enums/programmeStage.enum';
-import { DocType } from '../../../Definitions/Enums/document.type';
-import { saveAs } from 'file-saver';
-import { DocumentEnum } from '../../../Definitions/Enums/document.enum';
+import React, { useEffect, useState } from "react";
+import "./projectForms.scss";
+import { FileDoneOutlined } from "@ant-design/icons";
+import { Row, Col, Button } from "antd";
+import { useNavigate, useParams } from "react-router-dom";
+import { ROUTES } from "../../../Config/uiRoutingConfig";
+import { formPermissions } from "../../../Utils/documentsPermission";
+import { FormMode } from "../../../Definitions/Enums/formMode.enum";
+import { CompanyRole } from "../../../Definitions/Enums/company.role.enum";
+import { useUserContext } from "../../../Context/UserInformationContext/userInformationContext";
+import { ProjectProposalStage } from "../../../Definitions/Enums/programmeStage.enum";
+import { DocType } from "../../../Definitions/Enums/document.type";
+import { saveAs } from "file-saver";
+import { DocumentEnum } from "../../../Definitions/Enums/document.enum";
 
 interface IPermissionsState {
   mode: FormMode;
@@ -33,9 +33,8 @@ const ProjectDocuments = (props: IProjectDetails) => {
   const [pddPermissions, setPDDPermissions] = useState<IPermissionsState>({
     mode: FormMode.DISABLED,
   });
-  const [validationReportPermissions, setValidationReportPermissions] = useState<IPermissionsState>(
-    { mode: FormMode.DISABLED }
-  );
+  const [validationReportPermissions, setValidationReportPermissions] =
+    useState<IPermissionsState>({ mode: FormMode.DISABLED });
 
   const navigate = useNavigate();
 
@@ -50,15 +49,25 @@ const ProjectDocuments = (props: IProjectDetails) => {
   };
 
   const navigateToInfView = () => {
-    console.log('----------inf_view_route____', id, ROUTES.INF_VIEW(id as string));
+    console.log(
+      "----------inf_view_route____",
+      id,
+      ROUTES.INF_VIEW(id as string)
+    );
     if (id) {
       navigate(ROUTES.INF_VIEW(id), {
-        state: { mode: FormMode.VIEW, documentId: documents[DocumentEnum.INF as string]?.refId },
+        state: {
+          mode: FormMode.VIEW,
+          documentId: documents[DocumentEnum.INF as string]?.refId,
+        },
       });
     }
   };
 
-  console.log('---------documents---------', documents[DocumentEnum.INF as string]?.refId);
+  console.log(
+    "---------documents---------",
+    documents[DocumentEnum.INF as string]?.refId
+  );
 
   useEffect(() => {
     const tempPddPermissions = formPermissions(
@@ -77,7 +86,7 @@ const ProjectDocuments = (props: IProjectDetails) => {
     setValidationReportPermissions(tempValidationReportPermissions);
 
     console.log(
-      '---------permissions----------',
+      "---------permissions----------",
       tempPddPermissions,
       tempValidationReportPermissions
     );
@@ -140,12 +149,12 @@ const ProjectDocuments = (props: IProjectDetails) => {
             disabled={pddPermissions.mode === FormMode.DISABLED}
           >
             {pddPermissions.mode === FormMode.CREATE
-              ? 'CREATE'
+              ? "CREATE"
               : pddPermissions.mode === FormMode.VERIFY
-              ? 'VERIFY'
+              ? "VERIFY"
               : pddPermissions.mode === FormMode.EDIT
-              ? 'EDIT'
-              : 'VIEW'}
+              ? "EDIT"
+              : "VIEW"}
           </Button>
         </Col>
       </Row>
@@ -156,16 +165,18 @@ const ProjectDocuments = (props: IProjectDetails) => {
         <Col md={6} className="documentAction-col">
           <Button
             className="document-action-btn"
-            onClick={() => navigateToValidationReport(validationReportPermissions)}
+            onClick={() =>
+              navigateToValidationReport(validationReportPermissions)
+            }
             disabled={validationReportPermissions.mode === FormMode.DISABLED}
           >
             {validationReportPermissions.mode === FormMode.CREATE
-              ? 'CREATE'
+              ? "CREATE"
               : validationReportPermissions.mode === FormMode.VERIFY
-              ? 'VERIFY'
+              ? "VERIFY"
               : validationReportPermissions.mode === FormMode.EDIT
-              ? 'EDIT'
-              : 'VIEW'}
+              ? "EDIT"
+              : "VIEW"}
           </Button>
         </Col>
       </Row>

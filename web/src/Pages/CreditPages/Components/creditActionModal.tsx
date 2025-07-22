@@ -65,6 +65,8 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
     t,
     data,
   } = props;
+  console.log("-------------proceeed action----------", proceedAction);
+
   const { get, post } = useConnection();
   const { userInfoState } = useUserContext();
   const [form] = Form.useForm();
@@ -121,6 +123,15 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
 
   // eslint-disable-next-line no-unused-vars
   const handleValuesChange = (_: any, allValues: any) => {
+    console.log(
+      "-------handleValuesChange func running-----------",
+      allValues,
+      proceedAction,
+      type,
+      isProceed
+    );
+    const keys = Object.keys(allValues);
+
     creditAmountRef.current = allValues.creditAmount;
     recivePartyRef.current =
       type === CreditActionType.TRANSFER
@@ -147,6 +158,14 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
       }
       setRetirementType(allValues.retirementType);
     }
+
+    // if (keys.includes('toOrganization') && allValues['toOrganization']) {
+    //   valid = true
+    // }
+    // else if (keys.includes('toOrganization') && !allValues['toOrganization']) {
+    //   valid = false
+    // }
+
     if (type !== CreditActionType.TRANSFER && !checkedRef.current) {
       valid = false;
     }
@@ -179,6 +198,22 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
         valid = false;
       }
     }
+
+    if (type === CreditActionType.RETIREMENT) {
+      if (!isProceed) {
+        if (keys.includes("toOrganization") && !allValues["toOrganization"]) {
+          valid = false;
+        }
+      } else {
+        if (
+          ["cancel", "reject"].includes(proceedAction) &&
+          !allValues["comment"]
+        ) {
+          valid = false;
+        }
+      }
+    }
+
     setActionDisable(!valid);
   };
 
@@ -295,8 +330,8 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                   data.status === CreditEventStatusEnum.PENDING && (
                     <Form.Item
                       className="credit-action-project-name"
-                      label={t("Owner")}
-                      name="Owner"
+                      label={t("From")}
+                      name="From"
                     >
                       <Input placeholder={data.senderName} disabled />
                     </Form.Item>
@@ -450,7 +485,17 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                       rules={[
                         {
                           required: !isProceed,
-                          message: t("required"),
+                          message: t("invalidOrganizationName"),
+                        },
+                        {
+                          validator: (_, value) => {
+                            if (value && value.trim() === "") {
+                              return Promise.reject(
+                                new Error(t("invalidOrganizationName"))
+                              );
+                            }
+                            return Promise.resolve();
+                          },
                         },
                       ]}
                     >
@@ -537,6 +582,9 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                               }
                               style={{ flex: 1, marginRight: 8 }}
                               disabled={isProceed}
+                              // onChange={(value) => {
+                              //   form.setFieldsValue({ creditAmount: value });
+                              // }}
                             />
                             <span style={{ margin: "0 8px" }}>/</span>
                           </>

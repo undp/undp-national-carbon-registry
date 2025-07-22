@@ -34,7 +34,6 @@ export default () => ({
     table: "programmes",
     overallTable: "overall",
     companyTable: "company",
-    programmeSlTable: "programmesl",
     projectTable: "project",
     creditBlocksTable: "credit_blocks",
   },

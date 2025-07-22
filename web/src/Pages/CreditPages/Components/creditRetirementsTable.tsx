@@ -111,6 +111,7 @@ export const CreditRetirementsTableComponent = (props: any) => {
   }>();
   const [modalResponseVisible, setModalResponseVisible] =
     useState<boolean>(false);
+
   const [modalResponseData, setModalResponseData] = useState<{
     type: ActionResponseType;
     icon: any;
@@ -522,6 +523,8 @@ export const CreditRetirementsTableComponent = (props: any) => {
       setModalResponseVisible(true);
     }
   };
+
+  console.log('--------modalResponseData----------', modalResponseData);
 
   return (
     <div className="content-card">

@@ -56,6 +56,19 @@
   flex-wrap: wrap;
 }
 
+.example {
+  color: #16B1FF;
+  font-weight: 500;
+}
+
+.main-card-example-section {
+  display: flex;
+  flex-direction: row;
+  padding: 8px 0px 0px 0px;
+  margin: 0px -28px -28px 0px;
+  justify-content: flex-end;
+}
+
 .main-title-container {
   flex: 0 0 60%;
   min-width: 400px;
@@ -161,8 +174,17 @@
   border: none;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
-  padding: 2rem;
+  padding: 1.6rem;
   cursor: pointer;
+}
+
+.project-card-example {
+  text-align: right;
+}
+
+.credit-card-example {
+  text-align: right;
+  margin-bottom: -12px;
 }
 
 .project-card:hover,

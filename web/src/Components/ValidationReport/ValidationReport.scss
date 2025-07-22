@@ -828,3 +828,6 @@
 .applicability-table .ant-table-cell {
   vertical-align: top;
 }
+.ant-form-item-has-error .custom-checkbox .ant-checkbox-inner {
+  border-color: red !important;
+}

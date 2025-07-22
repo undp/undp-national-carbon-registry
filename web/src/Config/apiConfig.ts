@@ -22,7 +22,6 @@ export const API_PATHS = {
   ALL_PROJECTS: "national/programme/query",
   ADD_PROJECT_DOC: "national/programme/addDocument",
   PROJECT_DOC_ACTION: "national/programme/docAction",
-  PROJECT_DOCS: "national/programme/queryDocs",
   NEW_PROJECT: "national/programme/create",
   PROJECT_DOWNLOAD: "national/programme/download",
   PROGRAMME_BY_ID: "national/projectManagement/getProjectById", //Change this to project later
