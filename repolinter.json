@@ -1,0 +1,162 @@
+{
+  "extends": "https://raw.githubusercontent.com/DSACMS/repo-scaffolder/main/tier1/%7B%7Bcookiecutter.project_slug%7D%7D/repolinter.json",
+  "$schema": "https://raw.githubusercontent.com/todogroup/repolinter/master/rulesets/schema.json",
+  "version": 2,
+  "axioms": {
+    "linguist": "language",
+    "licensee": "license",
+    "packagers": "packager"
+  },
+  "rules": {
+    "contributing-file-exists": {
+      "level": "error"
+    },
+    "code-of-conduct-file-exists": {
+      "level": "error"
+    },
+    "community-guidelines-file-exists": {
+      "level": "error"
+    },
+    "readme-contains-project-vision": {
+      "level": "error"
+    },
+    "readme-contains-project-mission": {
+      "level": "error"
+    },
+    "readme-contains-agency-mission": {
+      "level": "error"
+    },
+    "readme-contains-team-mission": {
+      "level": "error"
+    },
+    "readme-contains-core-team": {
+      "level": "error"
+    },
+    "readme-contains-documentation-index": {
+      "level": "warning"
+    },
+    "readme-contains-repository-structure": {
+      "level": "warning"
+    },
+    "readme-contains-development-and-software-delivery-lifecycle": {
+      "level": "warning"
+    },
+    "readme-contains-local-development": {
+      "level": "error"
+    },
+    "readme-contains-coding-style-and-linters": {
+      "level": "error"
+    },
+    "readme-contains-branching-model": {
+      "level": "warning"
+    },
+    "readme-contains-contributing": {
+      "level": "error"
+    },
+    "readme-contains-codeowners": {
+      "level": "error"
+    },
+    "readme-contains-community": {
+      "level": "error"
+    },
+    "readme-contains-community-guidelines": {
+      "level": "error"
+    },
+    "readme-contains-governance": {
+      "level": "warning"
+    },
+    "readme-contains-feedback": {
+      "level": "warning"
+    },
+    "readme-contains-glossary": {
+      "level": "warning"
+    },
+    "contributing-contains-how-to-contribute": {
+      "level": "error"
+    },
+    "contributing-contains-getting-started": {
+      "level": "error"
+    },
+    "contributing-contains-team-specific-guidelines": {
+      "level": "warning"
+    },
+    "contributing-contains-building-dependencies": {
+      "level": "error"
+    },
+    "contributing-contains-building-the-project": {
+      "level": "error"
+    },
+    "contributing-contains-workflow-and-branching": {
+      "level": "error"
+    },
+    "contributing-contains-testing-conventions": {
+      "level": "warning"
+    },
+    "contributing-contains-coding-style-and-linters": {
+      "level": "error"
+    },
+    "contributing-contains-writing-issues": {
+      "level": "error"
+    },
+    "contributing-contains-writing-pull-requests": {
+      "level": "warning"
+    },
+    "contributing-contains-reviewing-pull-requests": {
+      "level": "warning"
+    },
+    "contributing-contains-shipping-releases": {
+      "level": "warning"
+    },
+    "contributing-contains-documentation": {
+      "level": "warning"
+    },
+    "contributing-contains-policies": {
+      "level": "error"
+    },
+    "contributing-contains-open-source-policy": {
+      "level": "error"
+    },
+    "contributing-contains-security-and-responsible-disclosure-policy": {
+      "level": "error"
+    },
+    "contributing-contains-public-domain": {
+      "level": "error"
+    },
+    "community-contains-table-of-project-members": {
+      "level": "error"
+    },
+    "community-contains-roles-and-responsibilities": {
+      "level": "warning"
+    },
+    "community-contains-maintainers-list": {
+      "level": "warning"
+    },
+    "community-contains-approvers-list": {
+      "level": "warning"
+    },
+    "community-contains-reviewers-list": {
+      "level": "warning"
+    },
+    "community-contains-contributors": {
+      "level": "warning"
+    },
+    "community-contains-alumni": {
+      "level": "warning"
+    },
+    "community-contains-principles": {
+      "level": "error"
+    },
+    "community-contains-community-guidelines": {
+      "level": "error"
+    },
+    "community-contains-acknowledgements": {
+      "level": "error"
+    },
+    "code-of-conduct-contains-contributor-code-of-conduct": {
+      "level": "error"
+    },
+    "code-of-conduct-contains-acknowledgements": {
+      "level": "error"
+    }
+  }
+}
