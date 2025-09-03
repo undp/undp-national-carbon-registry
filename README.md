@@ -7,26 +7,26 @@
 
 <a name="about"></a>
 
-# National Carbon Credit Registry (NEW RELEASE) 
+# National Carbon Credit Registry (NEW RELEASE)
 
 # About
-The National Carbon Credit Registry (v2.0) is an open-source toolkit developed by UNDP to help countries develop a national registry to fulfil the requirements of Article 6 (Paris Agreement). 
+The National Carbon Credit Registry (v2.0) is an open-source toolkit developed by UNDP to help countries develop a national registry to fulfil the requirements of Article 6 (Paris Agreement).
 
-It allows countries to track, record, issue, monitor, and trade credits from various mitigation activities, all while ensuring data integrity through a secure ledger. The system tracks the entire process of carbon credits, from issuance to retirement, and makes the data publicly available to enhance transparency. 
+It allows countries to track, record, issue, monitor, and trade credits from various mitigation activities, all while ensuring data integrity through a secure ledger. The system tracks the entire process of carbon credits, from issuance to retirement, and makes the data publicly available to enhance transparency.
 
-The UNDP hosts and maintains a free standard code base on this Github, with basic feature functionality. Countries can customize and deploy their version of the registry, so that it meets national requirements, linking it to other national and international systems. Using open-source code helps reduce costs, avoid duplication, and ensure compatibility with existing systems, simplifying the creation of domestic carbon markets.  
+The UNDP hosts and maintains a free standard code base on this Github, with basic feature functionality. Countries can customize and deploy their version of the registry, so that it meets national requirements, linking it to other national and international systems. Using open-source code helps reduce costs, avoid duplication, and ensure compatibility with existing systems, simplifying the creation of domestic carbon markets.
 
 The National Carbon Registry enables carbon credit tracking transactions from mitigation activities, as the digital implementation of the Paris Agreement. Any country can customize and deploy a local version of the registry then connect it to other national & international registries, MRV systems, and more.
 
-More information about the project’s background, vision, policy context, support provided can be found in the demo site https://www.demo.carbreg.org/. For national governments wishing to access the demo site to adapt the system, please contact the UNDP DPG team digital4planet@undp.org through your UNDP country office to request a walkthrough demonstration and to discuss further support and collaboration. 
+More information about the project’s background, vision, policy context, support provided can be found in the demo site https://www.demo.carbreg.org/. For national governments wishing to access the demo site to adapt the system, please contact the UNDP DPG team digital4planet@undp.org through your UNDP country office to request a walkthrough demonstration and to discuss further support and collaboration.
 
 The system continues to offer the below key features:
 
 - **User and Organization Management:** The system supports roles like Designated National Authority (DNA), Project Developers (PD), and Independant Certifiers (IC), each with Admin, Manager, or Viewer access. Users can register, log in, and reset passwords. Organizations are created and approved by DNA admins or the root user, with status management.
 - **Project Lifecycle:** Projects go through phases: Initial Notification form submission, Project Design Document submission, Validation Report submission, and final Authorization. Each step requires approvals from DNA or IC, with clear statuses and automated notifications. With the Monitoring and Verification reports submissions and approvals, the carbon credits are issued for the project for the amount that was approved when the project was authorized.
 - **Credit Transfers and Retirements:** Issued credits can be transferred to other approved organizations or retired voluntarily or through cross-border processes. Transfers and retirements require approval from the DNA. All actions are tracked in detailed tables with status updates.
-- **Dashboard and Reporting:**  
-  The dashboard displays overall system statistics, including all relevant projects and credit details. Users can also access comprehensive project information on the project detail overview page. This includes an activity timeline, which provides a clear audit trail of all actions performed by stakeholders, ensuring transparency and traceability throughout the project lifecycle.  
+- **Dashboard and Reporting:**
+  The dashboard displays overall system statistics, including all relevant projects and credit details. Users can also access comprehensive project information on the project detail overview page. This includes an activity timeline, which provides a clear audit trail of all actions performed by stakeholders, ensuring transparency and traceability throughout the project lifecycle.
   Additionally, the system supports Agreed Electronic Format (AEF) reports, allowing structured reporting of data such as, authorizations, issuances, transfers, and retirements ensuring international compliance and data standardization.
 
 ## Index
@@ -38,7 +38,7 @@ The system continues to offer the below key features:
 * [Architecture](#architecture)
 * [Project Structure](#structure)
 * [Run as Containers](#container)
-* [Run Services Locally](#local)
+* [Run Services Locally](#local-development)
 * [Run Services on Cloud](#cloud)
 * [User Onboarding](#user)
 * [Web Frontend](#frontend)
@@ -46,16 +46,18 @@ The system continues to offer the below key features:
 * [API](#api)
 * [Status Page](#status)
 * [Governance & Support](#support)
+* [Contributing](#contributing)
+* [Community Guidelines](#community)
 
 <a name="standards"></a>
 ## Standards and License
-This codebase follows the digital public goods standard: https://digitalpublicgoods.net/standard/ It is built according to the Principles for Digital Development: https://digitalprinciples.org/ 
+This codebase follows the digital public goods standard: https://digitalpublicgoods.net/standard/ It is built according to the Principles for Digital Development: https://digitalprinciples.org/
 
-The tool is developed and maintained by UNDP and is licensed under the GNU Affero General Public License (AGPL-3.0), which permits free use, modification, and sharing of the software.  
+The tool is developed and maintained by UNDP and is licensed under the GNU Affero General Public License (AGPL-3.0), which permits free use, modification, and sharing of the software.
 
-We kindly ask users to inform us of your usage by contacting digital4planet@undp.org, as this helps us track the tool’s impact and guide future improvements.  
+We kindly ask users to inform us of your usage by contacting digital4planet@undp.org, as this helps us track the tool’s impact and guide future improvements.
 
-Under AGPL-3.0, any modifications to the code must be made publicly available by creating a new branch on GitHub. The software cannot be relicensed under more restrictive terms without adhering to the AGPL-3.0 guidelines. Developers may anonymyse or remove any sensitive or identifiable data (customisations) before resubmitting code. 
+Under AGPL-3.0, any modifications to the code must be made publicly available by creating a new branch on GitHub. The software cannot be relicensed under more restrictive terms without adhering to the AGPL-3.0 guidelines. Developers may anonymyse or remove any sensitive or identifiable data (customisations) before resubmitting code.
 
 <a name="changelog"></a>
 
@@ -63,8 +65,8 @@ Under AGPL-3.0, any modifications to the code must be made publicly available by
 [Learn about the latest improvements.](./CHANGES.md)
 
 <a name="userflow"></a>
-## Features and User Flow 
-Every country has distinct carbon market policies, processes, and governance structures and will need to customize the Carbon Registry to accommodate local needs.  
+## Features and User Flow
+Every country has distinct carbon market policies, processes, and governance structures and will need to customize the Carbon Registry to accommodate local needs.
 
 The open-source code (demo version) includes the following common set of steps (features) that will be needed in most countries.
 
@@ -76,7 +78,7 @@ The open-source code (demo version) includes the following common set of steps (
 
 - **Credit Transfer/Retirement:** Issued credits can be traded domestically or internationally. Credits can be tracked, retired, or cancelled within the Registry, ensuring proper ownership transfer and preventing double counting.
 
-Key features of the software include:  
+Key features of the software include:
 -  **Updated default Serial Numbers**: Each Carbon Credit Document has a Serial Number (ID). The Demo Carbon Registry is aligned to UNFCCC's Article 6.4 Guidance Decision 5/CMA.4 This can be adapted to other types of Carbon Credits.
 
 -  **Reporting module**: The Registry automatically generates reports in the Agreed Electronic Format (AEF) for Article 6.2 of the Paris Agreement.
@@ -88,8 +90,8 @@ Key features of the software include:
 -  **Interoperable & Exportable Data**: The Data Model is aligned with the CAD Trust data standard and the ITMO Registry Standard Connection Platform. An Open RESTful API Allows for Additional Integrations and Innovation.
 
 <a name="demo"></a>
-## Demo Site 
-A demo site at https://www.demo.carbreg.org/login illustrates the basic functionality of the carbon registry for your country. Please contact the UNDP DPG team to request a walkthrough of the demo and to be added to the user list for the demo site. 
+## Demo Site
+A demo site at https://www.demo.carbreg.org/login illustrates the basic functionality of the carbon registry for your country. Please contact the UNDP DPG team to request a walkthrough of the demo and to be added to the user list for the demo site.
 
 <a name="architecture"></a>
 
@@ -293,9 +295,9 @@ The below diagram demonstrates the ledger behavior of project create, authorise,
   - http://localhost:3000/national#/
   - http://localhost:3100/stats#/
 
-<a name="local"></a>
+<a name="local-development"></a>
 
-## Run Services Locally
+## Local Development
 
 - Setup postgreSQL locally and create a new database.
 - Update following DB configurations in the .env.local file (If the file does not exist please create a new .env.local)
@@ -338,7 +340,7 @@ The below diagram demonstrates the ledger behavior of project create, authorise,
 ## External Connectivity
 
 ### UNDP'S ITMO Platform
-The Carbon Registry is designed to be linked to the ITMO Voluntary Bilateral Cooperation Platform, https://carboncooperation.undp.org/, managed by UNDP. This enables countries to automatically sync projects created/authorised and credits issued within its national registry to the international trading platform. The system does this by: 
+The Carbon Registry is designed to be linked to the ITMO Voluntary Bilateral Cooperation Platform, https://carboncooperation.undp.org/, managed by UNDP. This enables countries to automatically sync projects created/authorised and credits issued within its national registry to the international trading platform. The system does this by:
 1. Carbon Registry make a daily to the retrieve ITMO platform projects.
 2. Projects create in the Carbon Registry when projects are authorized in the ITMO Platform
 3. The Carbon Registry update when the projects are Issued with credits in the ITMO Platform
@@ -525,13 +527,6 @@ For integration, reference RESTful Web API Documentation documentation via Swagg
 
 Note: Above resource requirement mentioned for a single instance from each microservice.
 
-<a name="status"></a>
-
-### Status Page
-
-For transparent uptime monitoring go to status.APP_URL
-Open source code available at https://github.com/undp/carbon-registry-status
-
 <a name="support"></a>
 
 ### Governance and Support
@@ -539,3 +534,19 @@ Open source code available at https://github.com/undp/carbon-registry-status
 The United Nations Development Program (UNDP) is responsible for managing the application. To ensure alignment with international demand, Digital For Climate (D4C) will act as an advisory body to the Digital Public Good Carbon Registry codebase. D4C is a collaboration between [European Bank for Reconstruction and Development (EBRD)](https://www.ebrd.com), [United Nations Development Program (UNDP)](https://www.undp.org), [United Nations Framework Convention on Climate Change (UNFCCC)](https://www.unfccc.int), [International Emissions Trading Association (IETA)](https://www.ieta.org), [European Space Agency (ESA)](https://www.esa.int), and [World Bank Group](https://www.worldbank.org)  that aims to coordinate respective workflows and create a modular and interoperable end-to-end digital ecosystem for the carbon market. The overarching goal is to support a transparent, high integrity global carbon market that can channel capital for impactful climate action and low-carbon development.
 
 This code is managed by [United Nations Development Programme](https://www.undp.org) as custodian, detailed in the press release. For technical questions, please visit the community of practice [‘Keeping Track of the Paris Agreement’](<https://unfccc.int/news/paris-agreement-progress-tracker](https://www.sparkblue.org/group/keeping-track-digital-public-goods-paris-agreement/content/fourth-community-practice-meeting)>) or submit through the [open forum](https://github.com/undp/carbon-registry/discussions). For any other questions, contact us at digital4planet@undp.org.
+
+<a name="contributing"></a>
+### Contributing
+We welcome issues, discussions, and PRs! Please read **[CONTRIBUTING.md](./CONTRIBUTING.md)** for:
+- Getting started, build/test instructions
+- Coding style & linting
+- Branching, commits, and PR reviews
+- Security disclosure and policies
+
+<a name="community"></a>
+### Community Guidelines
+See **[COMMUNITY.md](./COMMUNITY.md)** for:
+- Project principles and norms
+- Roles & responsibilities (maintainers/approvers/reviewers/contributors)
+- Member table and acknowledgements
+- Code of Conduct → **[CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)**

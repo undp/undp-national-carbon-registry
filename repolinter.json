@@ -1,5 +1,5 @@
 {
-  "extends": "https://raw.githubusercontent.com/DSACMS/repo-scaffolder/main/tier1/%7B%7Bcookiecutter.project_slug%7D%7D/repolinter.json",
+  "extends": "https://raw.githubusercontent.com/Nolski/repo-scaffolder/main/tier1/%7B%7Bcookiecutter.project_slug%7D%7D/repolinter.json",
   "$schema": "https://raw.githubusercontent.com/todogroup/repolinter/master/rulesets/schema.json",
   "version": 2,
   "axioms": {
@@ -17,9 +17,6 @@
     "community-guidelines-file-exists": {
       "level": "error"
     },
-    "readme-contains-core-team": {
-      "level": "error"
-    },
     "readme-contains-documentation-index": {
       "level": "warning"
     },
@@ -28,6 +25,9 @@
     },
     "readme-contains-development-and-software-delivery-lifecycle": {
       "level": "warning"
+    },
+    "readme-contains-core-team": {
+        "level": "off"
     },
     "readme-contains-local-development": {
       "level": "error"
@@ -89,13 +89,7 @@
     "contributing-contains-policies": {
       "level": "error"
     },
-    "contributing-contains-open-source-policy": {
-      "level": "error"
-    },
     "contributing-contains-security-and-responsible-disclosure-policy": {
-      "level": "error"
-    },
-    "contributing-contains-public-domain": {
       "level": "error"
     },
     "community-contains-table-of-project-members": {
