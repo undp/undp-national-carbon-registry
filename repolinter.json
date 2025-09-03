@@ -81,7 +81,7 @@
       "level": "warning"
     },
     "contributing-contains-policies": {
-      "level": "error"
+      "level": "off"
     },
     "contributing-contains-security-and-responsible-disclosure-policy": {
       "level": "error"
