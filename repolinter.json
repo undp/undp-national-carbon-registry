@@ -17,9 +17,6 @@
     "community-guidelines-file-exists": {
       "level": "error"
     },
-    "readme-contains-documentation-index": {
-      "level": "warning"
-    },
     "readme-contains-repository-structure": {
       "level": "warning"
     },
@@ -33,9 +30,6 @@
       "level": "error"
     },
     "readme-contains-coding-style-and-linters": {
-      "level": "warning"
-    },
-    "readme-contains-branching-model": {
       "level": "warning"
     },
     "readme-contains-contributing": {
