@@ -1,0 +1,78 @@
+name: Update Contributors Information
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    # Weekly on Saturdays.
+    - cron: "30 1 * * 6"
+  push:
+    branches: [main]
+
+jobs:
+  update-contributors:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  
+
+      - name: Update contributor list
+        id: contrib_list
+        uses: akhilmhdh/contributors-readme-action@v2.3.10
+        env:
+          
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+        with:
+          readme_path: COMMUNITY.md
+          use_username: false
+          commit_message: "update contributors information"
+
+      - name: Get contributors count
+        id: get_contributors
+        env:
+          
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+
+        run: |
+            OWNER=$(echo $GITHUB_REPOSITORY | cut -d'/' -f1)
+            REPO=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
+            QUERY='query { repository(owner: \"'"$OWNER"'\", name: \"'"$REPO"'\") { collaborators { totalCount } } }'
+
+            CONTRIBUTORS=$(gh api \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/repos/$OWNER/$REPO/contributors?per_page=100" | \
+              jq '[.[] | select(.type != "Bot" and (.login | test("\\[bot\\]$") | not) and (.login | test("-bot$") | not))] | length')
+
+            echo "Total contributors: $CONTRIBUTORS"
+            echo "contributors=$CONTRIBUTORS" >> $GITHUB_OUTPUT
+
+
+      - name: Update COMMUNITY.md
+        run: |
+          
+          CONTRIBUTORS="${{ steps.get_contributors.outputs.contributors }}"
+          
+
+          perl -i -pe 's/(<!--CONTRIBUTOR COUNT START-->).*?(<!--CONTRIBUTOR COUNT END-->)/$1 '"$CONTRIBUTORS"' $2/' COMMUNITY.md
+
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add COMMUNITY.md
+          git commit -m "update contributors count to $CONTRIBUTORS" || exit 0
+
+      - name: Push protected
+        uses: CasperWA/push-protected@v2
+        with:
+          
+          token: ${{ secrets.PUSH_TO_PROTECTED_BRANCH }}
+          
+
+          branch: main

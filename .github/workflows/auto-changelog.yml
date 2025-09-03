@@ -1,0 +1,15 @@
+name: Changelog
+on:
+  release:
+    types:
+      - created
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Auto Generate changelog"
+        uses: heinrichreimer/action-github-changelog-generator@v2.3
+        with:
+          
+          token: ${{ secrets.GITHUB_TOKEN }}
+          

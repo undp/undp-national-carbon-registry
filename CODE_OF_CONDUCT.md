@@ -1,5 +1,7 @@
 # Contributor Covenant Code of Conduct
 
+This project adheres to the **Contributor Code of Conduct**.  By participating, you agree to abide by the guidelines described below and to help foster an open and welcoming environment for all.
+
 ## Our Pledge
 
 We as members, contributors, and leaders pledge to make participation in our
@@ -126,3 +128,7 @@ enforcement ladder](https://github.com/mozilla/diversity).
 For answers to common questions about this code of conduct, see the FAQ at
 https://www.contributor-covenant.org/faq. Translations are available at
 https://www.contributor-covenant.org/translations.
+
+## Acknowledgements
+
+This Code of Conduct is adapted from the [Contributor Covenant](https://www.contributor-covenant.org), version 2.0.  We would like to thank the maintainers of the Contributor Covenant and the broader open‑source community for establishing clear standards of behaviour.
