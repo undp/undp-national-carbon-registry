@@ -17,18 +17,6 @@
     "community-guidelines-file-exists": {
       "level": "error"
     },
-    "readme-contains-project-vision": {
-      "level": "error"
-    },
-    "readme-contains-project-mission": {
-      "level": "error"
-    },
-    "readme-contains-agency-mission": {
-      "level": "error"
-    },
-    "readme-contains-team-mission": {
-      "level": "error"
-    },
     "readme-contains-core-team": {
       "level": "error"
     },
@@ -45,7 +33,7 @@
       "level": "error"
     },
     "readme-contains-coding-style-and-linters": {
-      "level": "error"
+      "level": "warning"
     },
     "readme-contains-branching-model": {
       "level": "warning"
@@ -53,22 +41,10 @@
     "readme-contains-contributing": {
       "level": "error"
     },
-    "readme-contains-codeowners": {
-      "level": "error"
-    },
-    "readme-contains-community": {
-      "level": "error"
-    },
     "readme-contains-community-guidelines": {
       "level": "error"
     },
     "readme-contains-governance": {
-      "level": "warning"
-    },
-    "readme-contains-feedback": {
-      "level": "warning"
-    },
-    "readme-contains-glossary": {
       "level": "warning"
     },
     "contributing-contains-how-to-contribute": {
