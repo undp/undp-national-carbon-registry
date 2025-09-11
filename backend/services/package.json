@@ -44,7 +44,7 @@
     "aws-kinesis-agg": "^4.2.6",
     "aws-lambda": "^1.0.7",
     "aws-serverless-express": "^3.4.0",
-    "axios": "^1.2.4",
+    "axios": "^1.12.0",
     "bcrypt": "^6.0.0",
     "cache-manager": "5.2.1",
     "cheerio": "^1.0.0-rc.12",
