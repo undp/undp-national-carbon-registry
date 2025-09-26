@@ -8,22 +8,7 @@ const DemoSite = () => {
   return (
     <div className="demo-site-container">
       <h1 className="header-title">{t("homepage:demoSiteTitle")}</h1>
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          height: 0,
-          paddingTop: "56.2500%",
-          marginLeft: "24px",
-          paddingBottom: 0,
-          boxShadow: "0 2px 8px 0 rgba(63,69,81,0.16)",
-          marginTop: "1.6em",
-          marginBottom: "0.9em",
-          overflow: "hidden",
-          borderRadius: "8px",
-          willChange: "transform"
-        }}
-      >
+      <div className="demo-video">
         <iframe
           loading="lazy"
           style={{
@@ -34,7 +19,7 @@ const DemoSite = () => {
             left: 0,
             border: "none",
             padding: 0,
-            margin: 0
+            margin: 0,
           }}
           src="https://www.canva.com/design/DAGp5iEx29Q/yCCaXj1wkWWl-QHPT3yejQ/watch?embed"
           allowFullScreen={true}
