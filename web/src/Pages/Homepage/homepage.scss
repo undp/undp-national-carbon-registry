@@ -201,8 +201,8 @@ $title-color: #3a8ab5;
 
       @media (max-width: variables.$lg-size) {
         stroke-width: 2px;
-        width: 30px;
-        height: 36px;
+        // width: 30px;
+        // height: 36px;
       }
     }
 
@@ -285,6 +285,7 @@ $title-color: #3a8ab5;
       line-height: 1.2em;
       text-transform: uppercase;
       padding-top: 80px;
+      text-shadow: 0 0 4px black;
 
       @media (max-width: 1800px) {
         font-size: 3rem;
@@ -935,13 +936,10 @@ $title-color: #3a8ab5;
 }
 
 .developer-resources-row {
-  margin-bottom: 2rem;
-  max-width: 1300px;
-  margin: 0 auto;
-  padding-left: 36px;
-  white-space: nowrap;
-  gap: 150px;
-  margin-top: 20px;
+  max-width: 1360px;
+  margin: 0px auto 30px;
+  padding: 0px 20px 0px 44px;
+  text-wrap: no-wrap;
 }
 
 .resource-item {
@@ -949,9 +947,9 @@ $title-color: #3a8ab5;
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-
+  justify-content: left;
+  text-align: left;
+  line-height: 1rem;
 }
 
 .connects {
@@ -969,12 +967,17 @@ $title-color: #3a8ab5;
 
 @media (max-width: 992px) {
   .developer-resources-row {
-    gap: 10px;
+    display: flex;
+    gap: 0 0;
+    justify-content: flex-end;
+    margin-bottom: 50px;
   }
 
   .resource-item {
-    text-align: center;
-    justify-content: center;
+    // background-color: red;
+    text-align: start;
+    justify-content: start;
+    padding: 10px 30px 10px 0px;
   }
 
   .Devresources {
@@ -986,9 +989,12 @@ $title-color: #3a8ab5;
   .developer-resources-row {
     gap: 1px;
     justify-content: center;
+    padding: 3rem 2rem;
   }
 
   .resource-item {
+    margin: 0px 0 10px;
+    padding: 0 0;
     text-align: center;
     justify-content: center;
   }
