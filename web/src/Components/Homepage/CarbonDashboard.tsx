@@ -193,8 +193,16 @@ const CarbonDashboard = () => {
         {/* Footer Text */}
         <div className="footer-section">
           <p className="footer-text">
-            {t("homepage:policyContextBody")}
-            <b> {t("homepage:policyContextBody2")}</b>
+            {/* {t("homepage:policyContextBody")} */}
+            <Trans
+              i18nKey={"homepage:policyContextBody"}
+              components={{
+                br: <br />,
+                ul: <ul />,
+                li: <li />,
+                b: <strong />,
+              }}
+            />
           </p>
         </div>
       </div>

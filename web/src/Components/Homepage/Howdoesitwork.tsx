@@ -1,5 +1,5 @@
-import React from 'react';
-import { Mail, CheckCircle, Hammer, Wallet } from 'lucide-react';
+import React from "react";
+import { Mail, CheckCircle, Hammer, Wallet, LucideClipboardList } from "lucide-react";
 import { Trans, useTranslation } from "react-i18next";
 
 // Invisible SVG that defines the linear gradient
@@ -21,9 +21,9 @@ const ProcessFlow = () => {
       {/* Inject the gradient definition once */}
       <GradientDefs />
 
-      <h2 className="process-flow-title">How Does It Work?</h2>
+      <h2 className="process-flow-title">Example process flow</h2>
+      <p className="process-flow-subtitle">{t("homepage:HdiwBody")}</p>
       <div className="process-flow">
-
         {/* Step 1 */}
         <div className="step-card card1">
           <div className="step-header">
@@ -59,7 +59,7 @@ const ProcessFlow = () => {
           </div>
           <h3 className="step-title">{t("homepage:feature3Title")}</h3>
           <p className="step-description">
-           {t("homepage:feature3Description")}
+            {t("homepage:feature3Description")}
           </p>
         </div>
 
@@ -76,6 +76,18 @@ const ProcessFlow = () => {
           </p>
         </div>
 
+        {/* Step 5 */}
+        <div className="step-card card5">
+          <div className="step-header">
+            <div className="step-icon">
+              <LucideClipboardList size={80} stroke="url(#iconGradient)" />
+            </div>
+          </div>
+          <h3 className="step-title">{t("homepage:feature5Title")}</h3>
+          <p className="step-description">
+            {t("homepage:feature5Description")}
+          </p>
+        </div>
       </div>
     </div>
   );

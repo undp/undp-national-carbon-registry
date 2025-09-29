@@ -224,14 +224,11 @@ const Homepage = () => {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <h2 className="vision-title">Vision</h2>
+              <h2 className="vision-title">{t("homepage:ourVisonTitle")}</h2>
               <p className="vision-description">
-                UNDP's Open-Source National Carbon Registry Enables Countries to
-                Implement and Manage Carbon Markets by Issuing, Managing, and
-                Tracking Carbon Credits with Confidence, Achieving National
-                Climate Commitments.
+                {t("homepage:ourVisonContent")}
               </p>
-              <h3 className="vision-subtitle">The Platform Supports:</h3>
+              <h3 className="vision-subtitle">Our Platform Supports:</h3>
 
               <div className="vision-grid">
                 <motion.div
@@ -245,7 +242,8 @@ const Homepage = () => {
                   </div>
                   <p className="vision-role">Governments</p>
                   <p className="vision-text">
-                    Launching Carbon Markets Aligned with the Paris Agreement
+                    oversight and governance of national carbon markets
+                    according to national policy
                   </p>
                 </motion.div>
 
@@ -260,7 +258,8 @@ const Homepage = () => {
                   </div>
                   <p className="vision-role">Project Developers</p>
                   <p className="vision-text">
-                    Accessing Climate Finance for Emissions-Reducing Projects
+                    register and track projects that generate emission
+                    reductions
                   </p>
                 </motion.div>
 
@@ -275,7 +274,7 @@ const Homepage = () => {
                   </div>
                   <p className="vision-role">Certifiers</p>
                   <p className="vision-text">
-                    Verifying Climate Action Efficiently
+                    carry out verification and certification processes
                   </p>
                 </motion.div>
 
@@ -290,7 +289,8 @@ const Homepage = () => {
                   </div>
                   <p className="vision-role">Buyers</p>
                   <p className="vision-text">
-                    Navigating a Trusted Marketplace for Carbon Credits
+                    access transparent information on carbon credits and
+                    transactions
                   </p>
                 </motion.div>
               </div>
@@ -671,12 +671,12 @@ const Homepage = () => {
       <FAQ />
 
       <Row className="developer-resources-row">
-        <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
+        <Col xs={24} sm={12} md={8} lg={4} xl={4} className="Devresources">
           <div className="resource-item">
             <b>Developer Resources:</b>
           </div>
         </Col>
-        <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
+        <Col xs={24} sm={12} md={8} lg={5} xl={5} className="Devresources">
           <u>
             <a href="https://github.com/undp/carbon-registry" target="_blank">
               {" "}
@@ -684,17 +684,17 @@ const Homepage = () => {
             </a>
           </u>
         </Col>
-        <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
+        <Col xs={24} sm={12} md={8} lg={5} xl={5} className="Devresources">
           <div className="resource-item connects">
             Guidance to serial number
           </div>
         </Col>
-        <Col xs={12} sm={6} md={4} lg={3} xl={3} className="Devresources">
+        <Col xs={24} sm={12} md={8} lg={5} xl={5} className="Devresources">
           <div className="resource-item connects">
             Guidance for AEF reporting
           </div>
         </Col>
-        <Col xs={12} sm={6} md={8} lg={3} xl={3} className="Devresources">
+        <Col xs={24} sm={12} md={8} lg={5} xl={5} className="Devresources">
           <div className="resource-item connects">Cad Trust data model</div>
         </Col>
       </Row>
