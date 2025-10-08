@@ -107,6 +107,10 @@
       margin-left: -3.5rem;
     }
 
+    @media (max-width: 576px) {
+      align-items: center;
+    }
+
     .title {
       font-family: 'MuseoSans';
       font-size: 2rem;
@@ -117,6 +121,17 @@
 
       @media (max-width: 645px) {
         font-size: 1.8rem;
+      }
+
+      @media (max-width: 576px) {
+        font-size: 1.4rem;
+        line-height: 1.4rem;
+        margin-top: 5px;
+      }
+
+      @media (max-width: 480px) {
+        font-size: 1.2rem;
+        margin-top: unset;
       }
     }
 

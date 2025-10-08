@@ -72,6 +72,8 @@ services:
       RATE_LIMIT_ORGANISATION_DURATION: 60
     volumes:
       - filestore:/app/backend/services/public
+      - ./users.csv:/app/backend/services/users.csv
+      - ./organisations.csv:/app/backend/services/organisations.csv
   stats:
     build:
       context: .
@@ -103,7 +105,7 @@ services:
       RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
       SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
-      SMTP_USERNAME: AKIAUMXKTXDJEQ555F4J
+      SMTP_USERNAME: ***REMOVED***
       SMTP_PASSWORD: ""
       IS_EMAIL_DISABLED: "true"
       DISABLE_LOW_PRIORITY_EMAIL: "true"

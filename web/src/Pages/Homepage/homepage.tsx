@@ -1,5 +1,5 @@
 import { Button, Col, Collapse, CollapseProps, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Trans, useTranslation } from "react-i18next";
 import i18next from "i18next";
@@ -50,40 +50,41 @@ import FeatureCards from "../../Components/Homepage/Keyfeatures";
 
 const Homepage = () => {
   const { i18n, t } = useTranslation(["common", "homepage"]);
-  const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
   const navigate = useNavigate();
   const [Visible, setVisible] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  const heroImages = [heroImage1, heroImage2, heroImage3];
 
-  const heroImages = [
-    heroImage1,
-    heroImage2,
-    heroImage3
-  ];
-
+  const preloadImages = useCallback(() => {
+    heroImages.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, [heroImages]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-    }, 5000); 
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [heroImages.length]);
 
-  const controlDownArrow = () => {
+  // Preload images on component mount
+  useEffect(() => {
+    preloadImages();
+  }, [preloadImages]);
+
+  const controlDownArrow = useCallback(() => {
     if (window.scrollY > 150) {
       setVisible(false);
     } else {
       setVisible(true);
     }
-  };
+  }, []);
 
-  const handleLanguageChange = (lang: string) => {
-    i18n.changeLanguage(lang);
-  };
-
-  const handleClickScroll = () => {
+  const handleClickScroll = useCallback(() => {
     const element = document.getElementById("vision");
     if (element) {
       element.scrollIntoView({
@@ -91,32 +92,55 @@ const Homepage = () => {
         block: "start",
       });
     }
-  };
+  }, []);
 
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
 
   useEffect(() => {
-    if (localStorage.getItem("i18nextLng")!.length > 2) {
+    const storedLang = localStorage.getItem("i18nextLng");
+    if (storedLang && storedLang.length > 2) {
       i18next.changeLanguage("en");
     }
-    window.addEventListener("scroll", controlDownArrow);
+
+    window.addEventListener("scroll", controlDownArrow, { passive: true });
     return () => {
       window.removeEventListener("scroll", controlDownArrow);
     };
-  }, []);
+  }, [controlDownArrow]);
 
   return (
     <div className="homepage-container">
       <Row>
         <Col md={24} lg={24} flex="auto">
-          <div 
+          <div
             className="homepage-img-container"
             style={{
               backgroundImage: `url(${heroImages[currentSlide]})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'top',
-              transition: 'background-image 1s ease-in-out'
-            }}>
+              backgroundSize: "cover",
+              backgroundPosition: "top",
+              transition: "background-image 0.8s ease-in-out",
+            }}
+          >
+            {/* Preload next images in hidden divs */}
+            {heroImages.map(
+              (image, index) =>
+                index !== currentSlide && (
+                  <div
+                    key={index}
+                    style={{
+                      position: "absolute",
+                      opacity: 0,
+                      pointerEvents: "none",
+                      zIndex: -1,
+                      backgroundImage: `url(${image})`,
+                      backgroundSize: "cover",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  />
+                )
+            )}
+
             <Row>
               <Col md={18} lg={21} xs={17} flex="auto">
                 <div className="homepage-header-container">
@@ -171,14 +195,16 @@ const Homepage = () => {
                   </svg>
                 </nav>
               )}
-              
-              {/* Dot Indicators below the arrow */}
+
+              {/* Dot Indicators */}
               <div className="hero-slider-dots">
                 {heroImages.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentSlide(index)}
-                    className={`hero-dot ${index === currentSlide ? 'active' : ''}`}
+                    className={`hero-dot ${
+                      index === currentSlide ? "active" : ""
+                    }`}
                     aria-label={`Go to slide ${index + 1}`}
                   />
                 ))}
@@ -187,82 +213,87 @@ const Homepage = () => {
           </div>
         </Col>
       </Row>
-      <Row className="vision" >
+      <Row className="vision">
         <Col>
-        <section className="vision-section" id="vision" ref={ref}>
-      <motion.div
-        className="vision-container"
-        initial={{ opacity: 0, y: 40 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      >
-        <h2 className="vision-title">Vision</h2>
-        <p className="vision-description">
-          UNDP's Open-Source National Carbon Registry Enables Countries to Implement and Manage Carbon Markets by Issuing, Managing, and Tracking Carbon Credits with Confidence, Achieving National Climate Commitments.
-        </p>
-        <h3 className="vision-subtitle">The Platform Supports:</h3>
+          <section className="vision-section" id="vision" ref={ref}>
+            <motion.div
+              className="vision-container"
+              initial={{ opacity: 0, y: 40 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              <h2 className="vision-title">{t("homepage:ourVisonTitle")}</h2>
+              <p className="vision-description">
+                {t("homepage:ourVisonContent")}
+              </p>
+              <h3 className="vision-subtitle">Our Platform Supports:</h3>
 
-        <div className="vision-grid">
-          <motion.div
-            className="vision-card"
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
-            <div className="vision-icon">
-            <Government className="vislogo" />
-             </div>
-            <p className="vision-role">Governments</p>
-            <p className="vision-text">
-              Launching Carbon Markets Aligned with the Paris Agreement
-            </p>
-          </motion.div>
+              <div className="vision-grid">
+                <motion.div
+                  className="vision-card"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.2, duration: 0.6 }}
+                >
+                  <div className="vision-icon">
+                    <Government className="vislogo" />
+                  </div>
+                  <p className="vision-role">Governments</p>
+                  <p className="vision-text">
+                    oversight and governance of national carbon markets
+                    according to national policy
+                  </p>
+                </motion.div>
 
-          <motion.div
-            className="vision-card"
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          >
-            <div className="vision-icon">
-            <Projdev className="vislogo" />
-             </div>
-            <p className="vision-role">Project Developers</p>
-            <p className="vision-text">
-              Accessing Climate Finance for Emissions-Reducing Projects
-            </p>
-          </motion.div>
+                <motion.div
+                  className="vision-card"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.4, duration: 0.6 }}
+                >
+                  <div className="vision-icon">
+                    <Projdev className="vislogo" />
+                  </div>
+                  <p className="vision-role">Project Developers</p>
+                  <p className="vision-text">
+                    register and track projects that generate emission
+                    reductions
+                  </p>
+                </motion.div>
 
-          <motion.div
-            className="vision-card"
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.6, duration: 0.6 }}
-          >
-            <div className="vision-icon">
-            <Certifier className="vislogo" />
-             </div>
-            <p className="vision-role">Certifiers</p>
-            <p className="vision-text">Verifying Climate Action Efficiently</p>
-          </motion.div>
+                <motion.div
+                  className="vision-card"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.6, duration: 0.6 }}
+                >
+                  <div className="vision-icon">
+                    <Certifier className="vislogo" />
+                  </div>
+                  <p className="vision-role">Certifiers</p>
+                  <p className="vision-text">
+                    carry out verification and certification processes
+                  </p>
+                </motion.div>
 
-          <motion.div
-            className="vision-card"
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.8, duration: 0.6 }}
-          >
-            <div className="vision-icon">
-            <Buyer className="vislogo" />
-             </div>
-            <p className="vision-role">Buyers</p>
-            <p className="vision-text">
-              Navigating a Trusted Marketplace for Carbon Credits
-            </p>
-          </motion.div>
-        </div>
-      </motion.div>
-    </section>
+                <motion.div
+                  className="vision-card"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.8, duration: 0.6 }}
+                >
+                  <div className="vision-icon">
+                    <Buyer className="vislogo" />
+                  </div>
+                  <p className="vision-role">Buyers</p>
+                  <p className="vision-text">
+                    access transparent information on carbon credits and
+                    transactions
+                  </p>
+                </motion.div>
+              </div>
+            </motion.div>
+          </section>
         </Col>
       </Row>
       {/* <Row gutter={[8, 8]}>
@@ -628,43 +659,43 @@ const Homepage = () => {
           </div>
         </Col>
       </Row> */}
-      <CarbonDashboard/>
-      <DigitalPublicGood/>
-      <MapAnimation/>
-      <DemoSite/>
-      <ProcessFlow/>
-      <FeatureCards/>
-      <PartnershipBanner/>
-      <FAQ/>
+      <CarbonDashboard />
+      <DigitalPublicGood />
+      <MapAnimation />
+      <DemoSite />
+      <ProcessFlow />
+      <FeatureCards />
+      <PartnershipBanner />
+      <FAQ />
 
-<Row className="developer-resources-row">
-  <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
-    <div className="resource-item">
-      <b>Developer Resources:</b>
-    </div>
-  </Col>
-  <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
-  <u><a href="https://github.com/undp/carbon-registry" target="_blank"> <div className="resource-item connects">
-      GitHub site
-    </div></a></u>
-    
-  </Col>
-  <Col xs={12} sm={6} md={4} lg={2} xl={2} className="Devresources">
-   <div className="resource-item connects">
-      Guidance to serial number
-    </div>
-  </Col>
-  <Col xs={12} sm={6} md={4} lg={3} xl={3} className="Devresources">
-    <div className="resource-item connects">
-      Guidance for AEF reporting
-    </div>
-  </Col>
-  <Col xs={12} sm={6} md={8} lg={3} xl={3} className="Devresources">
-    <div className="resource-item connects">
-      Cad Trust data model
-    </div>
-  </Col>
-</Row>
+      <Row className="developer-resources-row">
+        <Col xs={24} sm={12} md={8} lg={4} xl={4} className="Devresources">
+          <div className="resource-item">
+            <b>Developer Resources:</b>
+          </div>
+        </Col>
+        <Col xs={24} sm={12} md={8} lg={5} xl={5} className="Devresources">
+          <u>
+            <a href="https://github.com/undp/carbon-registry" target="_blank">
+              {" "}
+              <div className="resource-item connects">GitHub site</div>
+            </a>
+          </u>
+        </Col>
+        <Col xs={24} sm={12} md={8} lg={5} xl={5} className="Devresources">
+          <div className="resource-item connects">
+            Guidance to serial number
+          </div>
+        </Col>
+        <Col xs={24} sm={12} md={8} lg={5} xl={5} className="Devresources">
+          <div className="resource-item connects">
+            Guidance for AEF reporting
+          </div>
+        </Col>
+        <Col xs={24} sm={12} md={8} lg={5} xl={5} className="Devresources">
+          <div className="resource-item connects">Cad Trust data model</div>
+        </Col>
+      </Row>
       <LayoutFooter />
     </div>
   );
