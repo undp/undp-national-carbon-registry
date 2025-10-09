@@ -8,22 +8,38 @@ const DemoSite = () => {
   return (
     <div className="demo-site-container">
       <h1 className="header-title">{t("homepage:demoSiteTitle")}</h1>
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          height: 0,
-          paddingTop: "56.2500%",
-          marginLeft: "24px",
-          paddingBottom: 0,
-          boxShadow: "0 2px 8px 0 rgba(63,69,81,0.16)",
-          marginTop: "1.6em",
-          marginBottom: "0.9em",
-          overflow: "hidden",
-          borderRadius: "8px",
-          willChange: "transform"
-        }}
-      >
+      <div className="demo-site-content">
+        <div className="demo-site-text">
+          <p className="main-description">
+            This demo site showcases core features developed. The demo site is
+            available by invitation to national governments working with UNDP.
+            For national governments and UNDP country offices wishing to request
+            a demo, please contact <b>UNDP Digital For Planet </b>via your
+            national country office contact at{" "}
+            <u>
+              <a href="mailto:digital4planet@undp.org" className="link">
+                digital4planet@undp.org
+              </a>
+            </u>
+            .
+          </p>
+
+          <p className="footer-text">
+            More technical information can be found on our{" "}
+            <u>
+              <a
+                href="https://github.com/undp/carbon-registry"
+                target="_blank"
+                className="link"
+              >
+                Github
+              </a>
+            </u>{" "}
+            page.
+          </p>
+        </div>
+      </div>
+      <div className="demo-video">
         <iframe
           loading="lazy"
           style={{
@@ -34,7 +50,7 @@ const DemoSite = () => {
             left: 0,
             border: "none",
             padding: 0,
-            margin: 0
+            margin: 0,
           }}
           src="https://www.canva.com/design/DAGp5iEx29Q/yCCaXj1wkWWl-QHPT3yejQ/watch?embed"
           allowFullScreen={true}
@@ -54,46 +70,6 @@ const DemoSite = () => {
             </div>
           </div>
         </iframe>
-      </div>
-
-      <div className="demo-site-content">
-        <div className="demo-site-text">
-          <p className="main-description">
-            This demo site showcases core features developed. The demo site is
-            available by invitation to governments and potential partners
-            working with UNDP. For inquiries and to request a demo, please
-            contact <b>UNDP Digital For Planet </b>via your country office at{" "}
-            <u>
-              <a href="mailto:digital4planet@undp.org" className="link">
-                digital4planet@undp.org
-              </a>
-            </u>
-          </p>
-
-          <p className="secondary-description">
-            Through UNDP country offices, governments can:
-          </p>
-
-          <ul className="feature-list">
-            <li>Request access to the demo site.</li>
-            <li>Schedule a live demonstration.</li>
-            <li>Explore potential collaboration and support.</li>
-          </ul>
-
-          <p className="footer-text">
-            More technical information can be found on our{" "}
-            <u>
-              <a
-                href="https://github.com/undp/carbon-registry"
-                target="_blank"
-                className="link"
-              >
-                Github
-              </a>
-            </u>{" "}
-            page.
-          </p>
-        </div>
       </div>
     </div>
   );
