@@ -59,25 +59,33 @@ const LayoutSider = (props: LayoutSiderProps) => {
   const items: MenuItem[] = [
     getItem(t("nav:dashboard"), "dashboard", <DashboardOutlined />),
     getItem(
-      t("nav:slcfprogrammes"),
-      "programmeManagement/viewAllProjects",
-      <AppstoreOutlined />
-    ),
-    getItem(
       t("nav:projectList"),
       "programmeManagement/viewAll",
       <UnorderedListOutlined />
     ),
-    // getItem(t('nav:programmes'), 'programmeManagement/viewAll', <AppstoreOutlined />),
-    // getItem(t('nav:cdmTransitionProjects'), 'cdmManagement/viewAll', <UnorderedListOutlined />),
-    // getItem(t('nav:verra'), 'verraManagement/viewAll', <AppstoreOutlined />),
-    // getItem(t('nav:goldStandards'), 'goldStandardManagement/viewAll', <AppstoreOutlined />),
-    // getItem(t('nav:ndcActions'), 'ndcManagement/viewAll', <Icon.Clipboard2Data />),
-    // getItem(t('nav:investments'), 'investmentManagement/viewAll', <Icon.Cash />),
-    // getItem(t('nav:transfers'), 'creditTransfers/viewAll', <Icon.ArrowLeftRight />),
     getItem(t("nav:companies"), "companyManagement/viewAll", <ShopOutlined />),
     getItem(t("nav:users"), "userManagement/viewAll", <UserOutlined />),
   ];
+
+  if (
+    userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+    userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER
+  ) {
+    items.splice(
+      2,
+      0,
+      getItem(t("nav:credits"), "credits", <AppstoreOutlined />, [
+        getItem(t("nav:creditBalance"), "credits/balance", <Icon.Wallet2 />),
+        getItem(t("nav:transfers"), "credits/transfers", <SwapOutlined />),
+        getItem(
+          t("nav:retirements"),
+          "credits/retirements",
+          <Icon.ClockHistory />
+        ),
+      ])
+    );
+  }
+
 
   if (
     userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
@@ -91,24 +99,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
     );
   }
   
-  if (
-    userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
-    userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER
-  ) {
-    items.splice(
-      3,
-      0,
-      getItem(t("nav:credits"), "credits", <AppstoreOutlined />, [
-        getItem(t("nav:creditBalance"), "credits/balance", <Icon.Wallet2 />),
-        getItem(t("nav:transfers"), "credits/transfers", <SwapOutlined />),
-        getItem(
-          t("nav:retirements"),
-          "credits/retirements",
-          <Icon.ClockHistory />
-        ),
-      ])
-    );
-  }
+  
 
   useEffect(() => {
     setSelectKey(currentPage);
@@ -218,7 +209,6 @@ const LayoutSider = (props: LayoutSiderProps) => {
                     item?.key === "ndcManagement/viewAll" ||
                     item?.key === "investmentManagement/viewAll" ||
                     item?.key === "retirementManagement/viewAll" ||
-                    item?.key === "programmeManagement/viewAll" ||
                     item?.key === "creditTransfers/viewAll"
                       ? "custom-padding-left"
                       : item?.key === "cdmManagement/viewAll"

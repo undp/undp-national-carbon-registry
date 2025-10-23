@@ -48,5 +48,6 @@
   "invalidSectoralScopeForSector": "Invalid sectoral scope for the sector",
   "success": "SUCCESS",
   "notAuthorizedProjectParticipant": "Not authorized project participant",
-  "companyInDeactivatedState": "Organisation is Deactivated, Action is Unauthorised"
+  "companyInDeactivatedState": "Organisation is Deactivated, Action is Unauthorised",
+  "invalidDocumentUpload":"Invalid file type"
 }

@@ -2,7 +2,7 @@ import { ValidationStepsProps } from "./StepProps";
 import { Row, Button, Form, Input, Col, Upload, DatePicker, Radio } from "antd";
 import { MinusOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
-import { ProcessSteps } from "./ValidationStepperComponent";
+import { ProcessSteps } from "./StepperComponent";
 import moment from "moment";
 import { fileUploadValueExtract } from "../../Utils/utilityHelper";
 import { FormMode } from "../../Definitions/Enums/formMode.enum";
@@ -109,32 +109,32 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
     return e?.fileList;
   };
   const validatePositiveNumber = async (rule, value) => {
-  const valStr = String(value).trim();
+    const valStr = String(value).trim();
 
-  // Check for empty/null/undefined values
-  if (valStr === "" || value === null || value === undefined) {
-    throw new Error(`${t("validationReport:required")}`);
-  }
+    // Check for empty/null/undefined values
+    if (valStr === "" || value === null || value === undefined) {
+      throw new Error(`${t("validationReport:required")}`);
+    }
 
-  // Check if it's a valid number
-  if (isNaN(value)) {
-    throw new Error("Should be a number");
-  }
+    // Check if it's a valid number
+    if (isNaN(value)) {
+      throw new Error("Should be a number");
+    }
 
-  const numValue = Number(value);
+    const numValue = Number(value);
 
-  // Check if it's an integer
-  if (!Number.isInteger(numValue)) {
-    throw new Error("Value must be an integer");
-  }
+    // Check if it's an integer
+    if (!Number.isInteger(numValue)) {
+      throw new Error("Value must be an integer");
+    }
 
-  // Check if it's a positive integer (0 or more)
-  if (numValue < 0) {
-    throw new Error("Value must be a positive integer");
-  }
+    // Check if it's a positive integer (0 or more)
+    if (numValue < 0) {
+      throw new Error("Value must be a positive integer");
+    }
 
-  return Promise.resolve();
-};
+    return Promise.resolve();
+  };
 
   const onFinish = async (values: any) => {
     const body: any = {
@@ -803,7 +803,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -824,7 +824,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -872,7 +872,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -893,7 +893,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -914,7 +914,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -941,7 +941,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -962,7 +962,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -983,7 +983,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1021,7 +1021,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1042,7 +1042,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1063,7 +1063,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1090,7 +1090,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1111,7 +1111,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1132,7 +1132,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1159,7 +1159,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1180,7 +1180,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1201,7 +1201,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1228,7 +1228,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1249,7 +1249,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1270,7 +1270,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1297,7 +1297,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1318,7 +1318,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1339,7 +1339,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1366,7 +1366,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1408,7 +1408,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1435,7 +1435,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1456,7 +1456,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1504,7 +1504,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1525,7 +1525,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1573,7 +1573,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1594,7 +1594,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1615,7 +1615,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1642,7 +1642,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1663,7 +1663,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1684,7 +1684,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1711,7 +1711,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1732,7 +1732,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1753,7 +1753,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1779,7 +1779,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1800,7 +1800,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1821,7 +1821,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1848,7 +1848,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1869,7 +1869,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1890,7 +1890,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1917,7 +1917,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1959,7 +1959,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -1986,7 +1986,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2007,7 +2007,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2028,7 +2028,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2055,7 +2055,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2076,7 +2076,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2119,7 +2119,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                           {
                             required: true,
                             message: "",
-                          }
+                          },
                         ]}
                       >
                         <Input
@@ -2137,7 +2137,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2158,7 +2158,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2206,7 +2206,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2222,7 +2222,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >
@@ -2238,7 +2238,7 @@ const MeansOfValidation = (props: ValidationStepsProps) => {
                             message: "",
                           },
                           {
-                            validator:validatePositiveNumber,
+                            validator: validatePositiveNumber,
                           },
                         ]}
                       >

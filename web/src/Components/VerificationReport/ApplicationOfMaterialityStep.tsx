@@ -204,7 +204,7 @@ export const ApplicationOfMaterialityStep = (props: VerificationStepProps) => {
                                     </Col>
                                     <Col xl={8} className="other-cols col">
                                       <Form.Item
-                                        name={[name, "justification "]}
+                                        name={[name, "justification"]}
                                         rules={[
                                           {
                                             required: true,

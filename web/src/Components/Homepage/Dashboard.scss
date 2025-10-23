@@ -5,7 +5,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  
 }
 
 /* Main Dashboard Container */
@@ -56,6 +55,31 @@
   flex-wrap: wrap;
 }
 
+.example {
+  color: #16B1FF;
+  font-weight: 500;
+}
+
+.main-card-example-section {
+  display: flex;
+  flex-direction: row;
+  padding: 8px 0px 0px 0px;
+  margin: 0px -28px -28px 0px;
+  justify-content: flex-end;
+
+  @media screen and (max-width:768px) {
+    margin: 0px -10px -10px 0px;
+  }
+
+  @media screen and (max-width:576px) {
+    margin: 0px -10px -10px 0px;
+  }
+
+  @media screen and (max-width:480px) {
+    margin: 0px -10px -10px 0px;
+  }
+}
+
 .main-title-container {
   flex: 0 0 60%;
   min-width: 400px;
@@ -92,17 +116,18 @@
 .main-statistic {
   text-align: center;
   margin-right: -3rem;
-  font-family:inter;
+  font-family: inter;
 }
-.procount{
-    padding-right: 90px;
+
+.procount {
+  padding-right: 90px;
 }
 
 .statistic-value {
   background-image: linear-gradient(to right, #0063AC, #003257);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-family:inter;
+  font-family: inter;
   font-size: 48px;
   font-weight: 600;
   line-height: 100%;
@@ -120,9 +145,17 @@
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* Section Styles */
@@ -161,8 +194,17 @@
   border: none;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
-  padding: 2rem;
+  padding: 1.6rem;
   cursor: pointer;
+}
+
+.project-card-example {
+  text-align: right;
+}
+
+.credit-card-example {
+  text-align: right;
+  margin-bottom: -12px;
 }
 
 .project-card:hover,
@@ -224,6 +266,10 @@
   line-height: 1.6;
   text-align: justify;
   margin: 0;
+
+  ul {
+    margin-left: 3rem;
+  }
 }
 
 /* Responsive Design */
@@ -239,22 +285,20 @@
     padding: 2rem;
     width: 85%;
   }
-  
   .main-title-container {
     flex: 0 0 55%;
     min-width: 350px;
   }
-  
   .stats-container {
     flex: 0 0 40%;
     min-width: 250px;
     padding-right: 1rem;
   }
-  
+
   .main-title {
     font-size: 28px;
   }
-  
+
   .statistic-value {
     font-size: 56px;
   }
@@ -265,23 +309,21 @@
     padding: 1.5rem;
     width: 90%;
   }
-  
+
   .main-card {
     padding: 2rem;
   }
-  
+
   .main-card-content {
     flex-direction: column;
     text-align: center;
   }
-  
   .main-title-container {
     flex: none;
     min-width: auto;
     max-width: none;
     width: 100%;
   }
-  
   .stats-container {
     flex: none;
     min-width: auto;
@@ -289,58 +331,108 @@
     justify-content: center;
     padding-right: 0;
   }
-  
   .main-title {
     font-size: 24px;
     text-align: center;
     margin-bottom: 2rem;
     margin-left: 0;
   }
-  
   .stats-wrapper {
     gap: 2rem;
     justify-content: center;
   }
-  
+
   .statistic-value {
     font-size: 48px;
   }
+
   .footer-text {
 
-  font-size: 14px;
+    font-size: 14px;
 
+  }
 }
+
+@media (max-width: 576px) {
+  .carbon-dashboard {
+    padding: 2rem;
+  }
+
+  .dashboard-container {
+    padding: 0;
+    margin: 1rem 0;
+    width: 100%;
+
+    .main-card {
+      .stats-container {
+        .stats-wrapper {
+          flex-direction: column;
+
+          .main-statistic {
+            margin: 0;
+            padding: 0;
+          }
+        }
+      }
+    }
+
+    .section {
+      .section-title {
+        text-align: center;
+      }
+    }
+
+    .credit-value {
+      font-size: 2rem;
+    }
+  }
+
+  .footer-text {
+    ul {
+      margin-left: 2rem;
+    }
+  }
 }
 
 @media (max-width: 480px) {
+  .carbon-dashboard {
+    padding: 2rem 1rem;
+  }
+
   .project-card,
   .credit-card {
     padding: 1.5rem;
   }
-  
+
   .main-title-container {
     min-width: auto;
   }
-  
+
   .main-title {
     font-size: 20px;
   }
-  
+
   .statistic-value {
     font-size: 40px;
   }
-  
+
   .project-value {
     font-size: 2rem;
   }
-  
+
   .credit-value {
     font-size: 1.75rem;
   }
-  
+
   .stats-wrapper {
     flex-direction: column;
     gap: 1.5rem;
+  }
+
+  .footer-text {
+    ul {
+      margin-left: 1rem;
+    }
   }
 }
 
@@ -349,12 +441,13 @@
 .digital-public-good {
   max-width: 1360px;
   margin: auto;
-  padding: 0 2.5rem 2.5rem 2.5rem; 
+  padding: 0 2.5rem 2.5rem 2.5rem;
   width: 95%;
-  .header-title{
+
+  .header-title {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
-     margin: 0 0 1.5rem 0;
+    margin: 0 0 1.5rem 0;
   }
 }
 
@@ -366,7 +459,7 @@
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
-  height: 550px; 
+  height: 550px;
 
   // Gradient overlay
   &::before {
@@ -383,7 +476,8 @@
     height: 100%;
     object-fit: cover;
     height: 720px;
-    object-position: center bottom; /* This crops from the top */
+    object-position: center bottom;
+    /* This crops from the top */
   }
 }
 
@@ -433,7 +527,28 @@
   }
 
   .image-caption {
-    font-size: 0.7rem;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 576px) {
+  .digital-public-good {
+    padding: 0 2rem;
+    margin: 0;
+    width: 100%;
+
+    .image-containers {
+      .main-image {
+        object-position: -230px bottom;
+      }
+    }
+  }
+
+  .image-caption {
+    left: 1rem;
+    right: 1rem;
+    font-size: 14px;
+    text-shadow: 0 0 4px black;
   }
 }
 
@@ -447,10 +562,11 @@
   }
 
   .image-caption {
-    font-size: 0.65rem;
-    padding: 12px;
+    padding: 2px;
+    font-size: 12px;
   }
 }
+
 /*flow diagram*/
 /* ProcessFlow.css */
 // Dashboard.scss
@@ -471,112 +587,62 @@
   margin-bottom: 1.5rem;
 }
 
+.process-flow-subtitle {
+  margin-left: 24px;
+  font-size: 1rem;
+}
+
 .process-flow {
-  display: flex ;
+  display: flex;
   flex-wrap: nowrap;
   align-items: stretch;
   justify-content: center;
+  margin-left: 24px;
   gap: 0;
-}
 
-.step-card {
-  background: white;
-
-  border-radius: 12px;
-  padding: 24px;
-  text-align: center;
-  width: 280px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-}
-.card1 {
+  .step-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    width: 280px;
     position: relative;
-  
-}
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(100%/5); // divide by the card count on desktop
 
-.card1::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 6px;
-    z-index: 1;
-    width: 100%;
-    height: 50%;
-    border-top: 6px solid #0EA5E9;
-    border-left: 6px solid #0EA5E9;
-    border-right: 6px solid #0EA5E9;;
-    box-sizing: border-box;
-    border-top-left-radius: 12px;
-    border-top-right-radius:12px;
-}
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: 50%;
+      border-width: 6px;
+      border-color: #0EA5E9;
+      border-style: solid;
+      width: calc(100% + 6px);
 
-.card2 {
-    position: relative;
-    /* Remove the direct borders since we'll create them with pseudo-elements */
-}
+    }
 
-.card2::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-     /* Start from middle (50%) */
-    left: 0;
-    width: 100%;
-    height: 50%; /* From middle to bottom */
-    border-bottom: 6px solid #0EA5E9;
-    border-left: 6px solid #0EA5E9;
-    border-right: 6px solid #0EA5E9;
-    box-sizing: border-box;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-}
-.card3 {
-    position: relative;
-    padding-left: 12px;
-    /* Remove the direct borders since we'll create them with pseudo-elements */
-}
+    &:nth-child(odd) {
+      &::before {
+        top: 0;
+        border-radius: 12px 12px 0px 0px;
+        border-bottom: none;
+      }
+    }
 
-.card3::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -6px;
-    width: 100%;
-    height: 50%;
-    border-top: 6px solid #0EA5E9;
-    border-left: 6px solid #0EA5E9;
-    border-right: 6px solid #0EA5E9;;
-    box-sizing: border-box;
-    border-top-left-radius: 12px;
-    border-top-right-radius:12px;
+    &:nth-child(even) {
+      &::before {
+        bottom: 0;
+        border-radius: 0px 0px 12px 12px;
+        border-top: none;
+      }
+    }
+  }
 }
-
-.card4 {
-    position: relative;
-    padding-left: 8px;
-    /* Remove the direct borders since we'll create them with pseudo-elements */
-}
-
-.card4::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-     /* Start from middle (50%) */
-    left: -12px;
-    width: 100%;
-    height: 50%; /* From middle to bottom */
-    border-bottom: 6px solid #0EA5E9;
-    border-left: 6px solid #0EA5E9;
-    border-right: 6px solid #0EA5E9;
-    box-sizing: border-box;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-}
-/* Alternative approach using clip-path for cleaner L-shape */
 
 .step-header {
   display: flex;
@@ -591,7 +657,7 @@
   -webkit-text-fill-color: transparent;
   text-align: center;
   line-height: 1;
-  display: inline-block; 
+  display: inline-block;
 }
 
 
@@ -628,345 +694,99 @@
 
 
 /* Responsive Design */
-@media (max-width: 1380px){
-    .process-flow {
-    flex-wrap: nowrap;
-    gap: 20px;
-    justify-content: center;
-  }
-  
-  .step-card {
-    margin-bottom: 20px;
-  }
-  .card1 {
-    position: relative;
-    padding-left: 60px;
-  
-}
-
-.card1::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 25.5px;
-    z-index: 1;
-    width: 100%;
-    height: 50%;
-    border-top: 6px solid #0EA5E9;
-    border-left: 6px solid #0EA5E9;
-    border-right: 6px solid #0EA5E9;;
-    box-sizing: border-box;
-    border-top-left-radius: 12px;
-    border-top-right-radius:12px;
-}
-
-.card2 {
-    position: relative;
-    padding-right: 20px;
-    /* Remove the direct borders since we'll create them with pseudo-elements */
-}
-
-.card2::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-     /* Start from middle (50%) */
-    left: -0.5px;
-    width: 100%;
-    height: 50%; /* From middle to bottom */
-    border-bottom: 6px solid #0EA5E9;
-    border-left: 6px solid #0EA5E9;
-    border-right: 6px solid #0EA5E9;
-    box-sizing: border-box;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-}
-.card3 {
-    position: relative;
-    padding-right: 60px;
-    /* Remove the direct borders since we'll create them with pseudo-elements */
-}
-
-.card3::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -26.5px;
-    width: 100%;
-    height: 50%;
-    border-top: 6px solid #0EA5E9;
-    border-left: 6px solid #0EA5E9;
-    border-right: 6px solid #0EA5E9;;
-    box-sizing: border-box;
-    border-top-left-radius: 12px;
-    border-top-right-radius:12px;
-}
-
-.card4 {
-    position: relative;
-    padding-right: 90px;
-}
-
-.card4::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-     /* Start from middle (50%) */
-    left: -52px;
-    width: 100%;
-    height: 50%; /* From middle to bottom */
-    border-bottom: 6px solid #0EA5E9;
-    border-left: 6px solid #0EA5E9;
-    border-right: 6px solid #0EA5E9;
-    box-sizing: border-box;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-}
-
-}
-@media (max-width: 1200px) {
+@media (max-width: 1380px) {
   .process-flow {
-    flex-wrap: nowrap;
-    gap: 20px;
-    justify-content: center;
+    margin-left: 24px;
+    margin-right: 20px;
   }
-  
-  .step-card {
-    margin-bottom: 20px;
-  }
-  .card1 {
-    position: relative;
-    padding-left: 60px;
-  
-}
-
-.card1::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 26px;
-    z-index: 1;
-    width: 100%;
-    height: 50%;
-    border-top: 6px solid #0EA5E9;
-    border-left: 6px solid #0EA5E9;
-    border-right: 6px solid #0EA5E9;;
-    box-sizing: border-box;
-    border-top-left-radius: 12px;
-    border-top-right-radius:12px;
-}
-
-.card2 {
-    position: relative;
-    padding-right: 20px;
-    /* Remove the direct borders since we'll create them with pseudo-elements */
-}
-
-.card2::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-     /* Start from middle (50%) */
-    left: 0;
-    width: 100%;
-    height: 50%; /* From middle to bottom */
-    border-bottom: 6px solid #0EA5E9;
-    border-left: 6px solid #0EA5E9;
-    border-right: 6px solid #0EA5E9;
-    box-sizing: border-box;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-}
-.card3 {
-    position: relative;
-    padding-right: 60px;
-    /* Remove the direct borders since we'll create them with pseudo-elements */
-}
-
-.card3::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -26px;
-    width: 100%;
-    height: 50%;
-    border-top: 6px solid #0EA5E9;
-    border-left: 6px solid #0EA5E9;
-    border-right: 6px solid #0EA5E9;;
-    box-sizing: border-box;
-    border-top-left-radius: 12px;
-    border-top-right-radius:12px;
-}
-
-.card4 {
-    position: relative;
-    padding-right: 90px;
-}
-
-.card4::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-     /* Start from middle (50%) */
-    left: -52px;
-    width: 100%;
-    height: 50%; /* From middle to bottom */
-    border-bottom: 6px solid #0EA5E9;
-    border-left: 6px solid #0EA5E9;
-    border-right: 6px solid #0EA5E9;
-    box-sizing: border-box;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-}
-
 }
 
 @media (max-width: 924px) {
- .process-flow-title {
-    font-size: 32px;
-    text-align: center;
-  }
-  .step-card {
-    margin-bottom: 0px;
-    height: 36vh;
-  }
-  
   .process-flow {
     flex-direction: column;
     align-items: center;
     justify-content: center;
     align-items: center;
-    gap:0px;
+    gap: 0px;
+
+    .step-card {
+      width: 50%;
+      min-width: 350px;
+      padding: 50px 24px;
+
+      &::before {
+        width: 50%;
+        height: calc(100% + 6px);
+        margin-bottom: -6px;
+      }
+
+      &:nth-child(odd) {
+        &::before {
+          border-radius: 12px 0px 0px 12px;
+          border-bottom: 6px solid #0EA5E9;
+          border-right: none;
+        }
+      }
+
+      &:nth-child(even) {
+        &::before {
+          border-radius: 0px 12px 12px 0px;
+          border-top: 6px solid #0EA5E9;
+          border-left: none;
+          left: unset;
+        }
+      }
+    }
+
+    .process-flow-title {
+      font-size: 32px;
+      text-align: center;
+    }
   }
-  
-  .step-card {
-    width: 100%;
-    max-width: 350px;
-  }
-  .card1 {
-    position: relative;
-    padding-left: 24px;
-  
+
 }
 
-.card1::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0px;
-    width: 50%;
-    height: 100%;
-    border-top: 0px solid #0EA5E9;
-    border-left: 6px solid #0EA5E9;
-    border-right: 0px solid #0EA5E9;
-    border-bottom: 6px solid #0EA5E9;
-    box-sizing: border-box;
-    border-top-left-radius: 0px;
-    border-top-right-radius:0px;
-    border-bottom-left-radius: 12px;
-
-}
-
-.card2 {
-    position: relative;
-    padding-left: 24px;
+@media (max-width: 576px) {
+  .process-flow-container {
+    padding: 2rem;
     margin: 0;
-    padding-top: 6px;
 
-    /* Remove the direct borders since we'll create them with pseudo-elements */
-}
-
-.card2::before {
-    content: '';
-    position: absolute;
-     /* Start from middle (50%) */
-     top: -6px;
-    left: 50%;
-    bottom: 100%;
-    width: 50%;
-    height: 100%; /* From middle to bottom */
-    border-bottom: 6px solid #0EA5E9;
-    border-left: 0px solid #0EA5E9;
-    border-right: 6px solid #0EA5E9;
-    border-top: 6px solid #0EA5E9;
-    box-sizing: border-box;
-    border-bottom-right-radius: 12px;
-    border-top-right-radius: 12px;
-    border-bottom-left-radius: 0px;
-
-    
-}
-.card3 {
-    position: relative;
-    padding-right: 0px;
-    margin-bottom: 0px;
-    /* Remove the direct borders since we'll create them with pseudo-elements */
-}
-
-.card3::before {
-    content: '';
-    position: absolute;
-    top: -12px;
-    left: 0px;
-    width: 50%;
-    height: 100%;
-    border-top: 6px solid #0EA5E9;
-    border-left: 6px solid #0EA5E9;
-    border-right: 0px solid #0EA5E9;
-    border-bottom: 6px solid #0EA5E9;
-    box-sizing: border-box;
-    border-top-left-radius: 12px;
-    border-top-right-radius:0px;
-    border-bottom-left-radius: 12px;
-}
-
-.card4 {
-    position: relative;
-    padding-right: 24px;
-    padding-left: 24px;
-}
-
-.card4::before {
-    content: '';
-    position: absolute;
-    top: -18px;
-     /* Start from middle (50%) */
-    left: 50%;
-    width: 50%;
-    height: 100%; /* From middle to bottom */
-    border-bottom: 0px solid #0EA5E9;
-    border-left: 0px solid #0EA5E9;
-    border-right: 6px solid #0EA5E9;
-    border-top:6px solid #0EA5E9; ;
-    box-sizing: border-box;
-    border-bottom-right-radius: 0px;
-    border-top-right-radius: 12px;
-}
-
-
+    .process-flow-title {
+      margin-left: 0;
+    }
+  }
 }
 
 @media (max-width: 480px) {
+  .process-flow-container {
+    padding: 2rem 1rem;
+
+    .step-card {
+      width: 100%;
+      min-width: unset;
+    }
+  }
+
   .step-card {
     width: 100%;
     padding: 20px;
   }
-  
+
   .step-icon svg {
-    width: 32px;
-    height: 32px;
+    width: 75px;
+    height: 75px;
   }
-  
+
   .step-number {
     width: 24px;
     height: 24px;
     font-size: 12px;
   }
-  
+
   .step-title {
     font-size: 15px;
   }
-  
+
   .step-description {
     font-size: 14px;
   }
@@ -977,11 +797,12 @@
   margin: 2.5rem auto 2rem auto;
   padding: 20px;
   border-radius: 8px;
-  .header-title{
-     font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  margin: 0 0 12px 24px;
+
+  .header-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    margin: 0 0 12px 24px;
   }
 }
 
@@ -999,7 +820,7 @@
 
 .banner-description strong {
   font-weight: 600;
-  color:#003257 ;
+  color: #003257;
   text-decoration: underline;
   text-decoration-color: #0063AC;
   text-underline-offset: 2px;
@@ -1021,7 +842,6 @@
   flex: 1;
   min-width: 120px;
   padding-top: 10px;
-  
 }
 
 .logo {
@@ -1038,9 +858,9 @@
   object-fit: contain;
 }
 
-.ebrd{
-    max-height: 150px;
-    max-width: 240px;
+.ebrd {
+  max-height: 150px;
+  max-width: 240px;
 }
 
 .logo-main {
@@ -1052,58 +872,88 @@
   color: #718096;
   font-size: 10px;
 }
-/* Responsive Design */
-@media (max-width: 768px) {
-  .logos-container {
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 15px;
-  }
-  
-  .logo-item {
-    min-width: auto;
-  }
-  
-  .logo-img {
-    max-height: 100px;
-    max-width: 160px;
-  }
-  
-  .banner-description {
-    font-size: 12px;
-  }
-  
-  .banner-title {
-    font-size: 16px;
-  }
-}
 
+/* Responsive Design */
 @media (max-width: 1024px) {
   .logos-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 15px;
   }
-  
+
   .logo-item {
     min-width: 100px;
   }
-  
+
   .logo-img {
     max-height: 80px;
     max-width: px;
   }
 }
+
+@media (max-width: 768px) {
+  .logos-container {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+  }
+
+  .logo-item {
+    min-width: auto;
+  }
+
+  .logo-img {
+    max-height: 100px;
+    max-width: 160px;
+  }
+
+  .banner-description {
+    font-size: 12px;
+  }
+
+  .banner-title {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  .partnership-banner {
+    padding: 2rem;
+    margin: 0;
+
+    .header-title,
+    .banner-description,
+    .logos-container {
+      margin-left: 0;
+    }
+
+    .banner-description {
+      text-align: center;
+    }
+
+    .logos-container {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .partnership-banner {
+    padding: 2rem 1rem;
+  }
+}
+
 /* FAQ styles*/
 
 .faq-container {
   max-width: 1360px;
   margin: 0 auto;
   padding: 20px;
-  .header-title{
-     font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 24px;
-  margin-left: 24px;
+
+  .header-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    margin-left: 24px;
   }
 }
 
@@ -1162,7 +1012,7 @@
   color: #0c0c0c;
   transition: transform 0.2s ease;
   user-select: none;
-   margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .chevron.rotated {
@@ -1170,7 +1020,7 @@
 }
 
 .faq-answer {
-  padding: 0 20px 20px 45px;
+  padding: 20px 20px 20px 45px;
 }
 
 .faq-answer p {
@@ -1180,9 +1030,11 @@
   line-height: 1.6;
   color: #4b5563;
 }
-.faqList{
-  padding-left:40px;
-  .faqSubList{
+
+.faqList {
+  padding-left: 40px;
+
+  .faqSubList {
     padding-left: 20px;
   }
 }
@@ -1192,18 +1044,35 @@
   .faq-container {
     padding: 16px;
   }
-  
   .faq-question {
     padding: 14px 16px;
     font-size: 14px;
   }
-  
+
   .faq-answer {
-    padding: 0 16px 16px 40px;
+    padding: 20px 16px 16px 40px;
   }
-  
+
   .question-text {
     margin-right: 8px;
+  }
+}
+
+@media screen and (max-width: 567px) {
+  .faq-container {
+    padding: 2rem;
+    margin: 0;
+
+    .header-title,
+    .faq-list {
+      margin-left: 17px;
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .faq-container {
+    padding: 2rem 1rem;
   }
 }
 
@@ -1289,9 +1158,11 @@
   opacity: 80%;
   line-height: 1.4;
 }
-.country-name{
+
+.country-name {
   white-space: nowrap;
 }
+
 .country-bullet {
   color: #3A3541;
   font-weight: 700;
@@ -1310,55 +1181,71 @@
   .global-impact-container {
     padding: 40px 16px 30px;
   }
-  
   .global-impact-content {
     grid-template-columns: 1fr;
     gap: 40px;
   }
-  
+
   .global-impact-content::before {
     display: none;
   }
-  
+
   .global-impact-title {
     font-size: 2rem;
     margin-bottom: 20px;
   }
-  
   .global-impact-description {
     font-size: 0.95rem;
     max-width: none;
   }
-  
   .countries-grid {
     grid-template-columns: 1fr 1fr 1fr;
     gap: 10px;
   }
-  
   .country-item {
     gap: 10px;
     font-size: 0.95rem;
   }
 }
 
+@media (max-width: 567px) {
+  .global-impact-container {
+    padding: 2rem;
+
+    .global-impact-title {
+      text-align: center;
+      padding: 0;
+    }
+
+    .global-impact-content {
+      padding: 0;
+
+      .global-impact-description {
+        text-align: center;
+      }
+    }
+
+  }
+}
+
 @media (max-width: 480px) {
   .global-impact-container {
-    padding: 30px 12px 20px;
+    padding: 2rem 1rem;
   }
-  
+
   .global-impact-title {
     font-size: 1.75rem;
   }
-  
+
   .global-impact-description {
     font-size: 0.9rem;
     line-height: 1.5;
   }
-  
+
   .countries-grid {
     gap: 10px;
   }
-  
+
   .country-item {
     font-size: 0.9rem;
   }
@@ -1368,10 +1255,40 @@
   max-width: 1360px;
   margin: 0 auto;
   padding: 60px 20px 40px;
-  .header-title{
+
+  .header-title {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
-     margin: 0 0 1.5rem 24px;
+    margin: 0 0 1.5rem 24px;
+  }
+
+  .demo-video {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-top: 56.2500%;
+    margin-left: 24px;
+    padding-bottom: 0;
+    box-shadow: 0 2px 8px 0 rgba(63, 69, 81, 0.16);
+    margin-top: 1.6em;
+    margin-bottom: 0.9em;
+    overflow: hidden;
+    border-radius: 8px;
+    will-change: transform;
+  }
+
+  @media screen and (max-width:576px) {
+    padding: 2rem;
+
+    .header-title,
+    .demo-video,
+    .demo-site-content {
+      margin-left: 0px;
+    }
+  }
+
+  @media screen and (max-width:480px) {
+    padding: 2rem 1rem;
   }
 }
 
@@ -1380,7 +1297,7 @@
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   height: 40vh;
-  margin-left:24px;
+  margin-left: 24px;
 }
 
 .demo-site-title {
@@ -1449,10 +1366,10 @@
   margin: 0 auto;
   padding: 60px 20px 40px;
 
-  .header-title{
+  .header-title {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
-     margin: 0 0 1.5rem 24px;
+    margin: 0 0 1.5rem 24px;
   }
 }
 
@@ -1467,7 +1384,6 @@
 
 .feature-cards-item {
   background: linear-gradient(160deg, #001529 0%, #003a6b 25%, #000000 75%, #002b27 100%);
- 
   border-radius: 20px;
   padding: 2.5rem;
   color: white;
@@ -1484,7 +1400,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -1492,13 +1408,11 @@
   &.feature-cards-large {
     grid-column: span 1;
     min-height: 240px;
-    
     // First row positioning
     &:nth-child(2) {
       grid-column: 3 / 4;
       grid-row: 1;
     }
-    
     &:nth-child(1) {
       grid-column: 1 / 3;
       grid-row: 1;
@@ -1508,16 +1422,15 @@
   &.feature-cards-small {
     min-height: 200px;
     grid-row: 2;
-    
     // Second row positioning - 3 equal cards
     &:nth-child(3) {
       grid-column: 1;
     }
-    
+
     &:nth-child(4) {
       grid-column: 2;
     }
-    
+
     &:nth-child(5) {
       grid-column: 3;
     }
@@ -1554,7 +1467,7 @@
 }
 
 // Hover Effects - Fixed to prevent blur on gaps
-.feature-cards-item:hover ~ .feature-cards-item,
+.feature-cards-item:hover~.feature-cards-item,
 .feature-cards-item:has(~ .feature-cards-item:hover) {
   transform: scale(0.92);
   opacity: 0.7;
@@ -1599,18 +1512,31 @@
 
   .feature-cards-item {
     min-height: 180px;
-    
     &.feature-cards-large,
     &.feature-cards-small {
       grid-column: 1 !important;
       grid-row: auto !important;
     }
 
-    &:nth-child(1) { grid-row: 1; }
-    &:nth-child(2) { grid-row: 2; }
-    &:nth-child(3) { grid-row: 3; }
-    &:nth-child(4) { grid-row: 4; }
-    &:nth-child(5) { grid-row: 5; }
+    &:nth-child(1) {
+      grid-row: 1;
+    }
+
+    &:nth-child(2) {
+      grid-row: 2;
+    }
+
+    &:nth-child(3) {
+      grid-row: 3;
+    }
+
+    &:nth-child(4) {
+      grid-row: 4;
+    }
+
+    &:nth-child(5) {
+      grid-row: 5;
+    }
   }
 
   .feature-cards-container .feature-cards-title {
@@ -1618,9 +1544,23 @@
   }
 }
 
+@media (max-width: 576px) {
+  .feature-cards-container {
+    padding: 2rem;
+
+    .feature-cards-grid {
+      max-width: 100%;
+    }
+
+    .header-title {
+      margin-left: 0;
+    }
+  }
+}
+
 @media (max-width: 480px) {
   .feature-cards-container {
-    padding: 1rem;
+    padding: 2rem 1rem;
   }
 
   .feature-cards-item {

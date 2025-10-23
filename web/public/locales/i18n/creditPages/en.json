@@ -228,5 +228,6 @@
     "creditRetireAcceptedSuccessfully": "The credit retirement request, Acceptance has been initiated",
     "creditRetireCancelledSuccessfully": "The credit retire request has been cancelled successfully",
     "country": "Country",
-    "shouldBeInterger": "Credit Amount Should be Interger Value"
+    "shouldBeInterger": "Credit Amount Should be Interger Value",
+    "invalidOrganizationName":"Invalid organization name"
 }

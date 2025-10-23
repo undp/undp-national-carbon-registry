@@ -11,6 +11,7 @@ const allowedFileTypes = [
   'text/csv',
   'image/png',
   'image/jpeg',
+  'image/svg+xml',
 ];
 
 const environmentalImpactAssessmentAllowedTypes = [
@@ -21,10 +22,6 @@ const environmentalImpactAssessmentAllowedTypes = [
   'image/jpeg',
 ];
 
-export const isValidateFileType = (fileType: string, docType?: string): boolean => {
-  if (docType === DocType.ENVIRONMENTAL_IMPACT_ASSESSMENT) {
-    return environmentalImpactAssessmentAllowedTypes.includes(fileType);
-  } else {
-    return allowedFileTypes.includes(fileType);
-  }
+export const isValidateFileType = (fileType: string): boolean => {
+  return allowedFileTypes.includes(fileType);
 };

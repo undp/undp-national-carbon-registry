@@ -14,12 +14,13 @@ import {
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
-import { ProcessSteps } from "./ValidationStepperComponent";
+import { ProcessSteps } from "./StepperComponent";
 import { requiredValidationRule } from "../../Utils/validationHelper";
 import { FormMode } from "../../Definitions/Enums/formMode.enum";
 import { useEffect, useState } from "react";
 import LabelWithTooltip from "../LabelWithTooltip/LabelWithTooltip";
 import { useLocation } from "react-router-dom";
+import "./ValidationReport.scss";
 
 const ValidationMethodology = (props: ValidationStepsProps) => {
   const countryName = import.meta.env.VITE_APP_COUNTRY_NAME || "CountryX";
@@ -45,36 +46,31 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
 
   const onFinish = async (values: any) => {
     console.log("--------values-----------", values);
-    const body = { 
+    const body = {
       ...values,
       validationTeamMembers: values?.validationTeamMembers?.map((item: any) => {
-        return (
-          {
-            role: item?.role,
-            typeOfResource: item?.typeOfResource,
-            lastName: item?.lastName,
-            firstName: item?.firstName,
-            affliation: item?.affliation,
-            documentReview: item?.documentReview,
-            onsiteInspections: item?.onsiteInspections,
-            interviews: item?.interviews,
-            verificationFindings: item?.verificationFindings,
-          }
-        )
+        return {
+          role: item?.role,
+          typeOfResource: item?.typeOfResource,
+          lastName: item?.lastName,
+          firstName: item?.firstName,
+          affliation: item?.affliation,
+          documentReview: item?.documentReview,
+          onsiteInspections: item?.onsiteInspections,
+          interviews: item?.interviews,
+          verificationFindings: item?.verificationFindings,
+        };
       }),
       technicalReviews: values?.technicalReviews?.map((item: any) => {
-        return (
-          {
-            role: item?.role,
-            typeOfResource: item?.typeOfResource,
-            lastName: item?.lastName,
-            firstName: item?.firstName,
-            affliation: item?.affliation,
-          }
-        )
+        return {
+          role: item?.role,
+          typeOfResource: item?.typeOfResource,
+          lastName: item?.lastName,
+          firstName: item?.firstName,
+          affliation: item?.affliation,
+        };
       }),
-     };
-
+    };
     console.log(ProcessSteps.VR_VALIDATION_METHODOLOGY, body);
     handleValuesUpdate({
       validationMethdology: body,
@@ -239,17 +235,19 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                               ]}
                             >
                               <Radio.Group
-                                 className="radio-btn-grp"
-                                  disabled={disableFields}
-                                  >
-                              <Radio value="IR" style={{ paddingLeft: '18px' }}>
+                                className="radio-btn-grp"
+                                disabled={disableFields}
+                              >
+                                <Radio
+                                  value="IR"
+                                  style={{ paddingLeft: "18px" }}
+                                >
                                   {t("validationReport:IR")}
-                             </Radio>
-                              <Radio value="ER">
-                                {t("validationReport:ER")}
-                              </Radio>
+                                </Radio>
+                                <Radio value="ER">
+                                  {t("validationReport:ER")}
+                                </Radio>
                               </Radio.Group>
-
                             </Form.Item>
                           </Col>
                           <Col xl={3} className="other-cols col">
@@ -345,32 +343,151 @@ const ValidationMethodology = (props: ValidationStepsProps) => {
                                 <Form.Item
                                   name={[name, "documentReview"]}
                                   valuePropName="checked"
+                                  className="custom-checkbox"
+                                  rules={[
+                                    {
+                                      validator: async (rule, value) => {
+                                        const formValues =
+                                          form.getFieldsValue();
+                                        const validationTeamMembers =
+                                          formValues.validationTeamMembers ||
+                                          [];
+                                        const currentMember =
+                                          validationTeamMembers[name];
+
+                                        if (currentMember) {
+                                          const hasAtLeastOne =
+                                            currentMember.documentReview ||
+                                            currentMember.onsiteInspections ||
+                                            currentMember.interviews ||
+                                            currentMember.verificationFindings;
+
+                                          if (!hasAtLeastOne) {
+                                            return Promise.reject(new Error());
+                                          }
+                                        }
+                                      },
+                                    },
+                                  ]}
                                 >
-                                  <Checkbox disabled={disableFields} />
+                                  <Checkbox
+                                    disabled={disableFields}
+                                    className="custom-checkbox"
+                                  />
                                 </Form.Item>
                               </Col>
+
                               <Col xl={6} className="other-cols checkbox-cols">
                                 <Form.Item
                                   name={[name, "onsiteInspections"]}
                                   valuePropName="checked"
+                                  className="custom-checkbox"
+                                  rules={[
+                                    {
+                                      validator: async (rule, value) => {
+                                        const formValues =
+                                          form.getFieldsValue();
+                                        const validationTeamMembers =
+                                          formValues.validationTeamMembers ||
+                                          [];
+                                        const currentMember =
+                                          validationTeamMembers[name];
+
+                                        if (currentMember) {
+                                          const hasAtLeastOne =
+                                            currentMember.documentReview ||
+                                            currentMember.onsiteInspections ||
+                                            currentMember.interviews ||
+                                            currentMember.verificationFindings;
+
+                                          if (!hasAtLeastOne) {
+                                            return Promise.reject(new Error());
+                                          }
+                                        }
+                                      },
+                                    },
+                                  ]}
                                 >
-                                  <Checkbox disabled={disableFields} />
+                                  <Checkbox
+                                    disabled={disableFields}
+                                    className="custom-checkbox"
+                                  />
                                 </Form.Item>
                               </Col>
+
                               <Col xl={6} className="other-cols checkbox-cols">
                                 <Form.Item
                                   name={[name, "interviews"]}
                                   valuePropName="checked"
+                                  className="custom-checkbox"
+                                  rules={[
+                                    {
+                                      validator: async (rule, value) => {
+                                        const formValues =
+                                          form.getFieldsValue();
+                                        const validationTeamMembers =
+                                          formValues.validationTeamMembers ||
+                                          [];
+                                        const currentMember =
+                                          validationTeamMembers[name];
+
+                                        if (currentMember) {
+                                          const hasAtLeastOne =
+                                            currentMember.documentReview ||
+                                            currentMember.onsiteInspections ||
+                                            currentMember.interviews ||
+                                            currentMember.verificationFindings;
+
+                                          if (!hasAtLeastOne) {
+                                            return Promise.reject(new Error());
+                                          }
+                                        }
+                                      },
+                                    },
+                                  ]}
                                 >
-                                  <Checkbox disabled={disableFields} />
+                                  <Checkbox
+                                    disabled={disableFields}
+                                    className="custom-checkbox"
+                                  />
                                 </Form.Item>
                               </Col>
+
                               <Col xl={6} className="other-cols checkbox-cols">
                                 <Form.Item
-                                  name={[name, "validationFindings"]}
+                                  name={[name, "verificationFindings"]}
                                   valuePropName="checked"
+                                  className="custom-checkbox"
+                                  rules={[
+                                    {
+                                      validator: async (rule, value) => {
+                                        const formValues =
+                                          form.getFieldsValue();
+                                        const validationTeamMembers =
+                                          formValues.validationTeamMembers ||
+                                          [];
+                                        const currentMember =
+                                          validationTeamMembers[name];
+
+                                        if (currentMember) {
+                                          const hasAtLeastOne =
+                                            currentMember.documentReview ||
+                                            currentMember.onsiteInspections ||
+                                            currentMember.interviews ||
+                                            currentMember.verificationFindings;
+
+                                          if (!hasAtLeastOne) {
+                                            return Promise.reject(new Error());
+                                          }
+                                        }
+                                      },
+                                    },
+                                  ]}
                                 >
-                                  <Checkbox disabled={disableFields} />
+                                  <Checkbox
+                                    disabled={disableFields}
+                                    className="custom-checkbox"
+                                  />
                                 </Form.Item>
                               </Col>
                             </Row>
