@@ -1,5 +1,9 @@
 # ATLAS v4.11.0-lts-quantique × UNDP Carbon Registry Integration
 
+[![Awesome UNDP × ATLAS](https://awesome.re/badge.svg)](AWESOME_UNDP_ATLAS.md)
+
+> 📚 **[Awesome UNDP × ATLAS](AWESOME_UNDP_ATLAS.md)** - Liste curée complète de ressources, outils et intégrations
+
 ## 🎯 Vision Stratégique
 
 Intégration du système ATLAS (Autonomous Trust Layer Architecture System) avec le UNDP National Carbon Credit Registry pour la validation souveraine des projets carbone via :
