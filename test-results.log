@@ -1,0 +1,10 @@
+
+🧪 UNDP × ATLAS Integration - Phase 1 Testing
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[0;34mStep 1:[0m Checking ATLAS KG Mock Server...
+[0;31m✗[0m ATLAS KG Mock Server not running
+
+Please start the mock server first:
+  node atlas-kg-mock-server.js
+
