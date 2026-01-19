@@ -251,9 +251,11 @@ describe('POST /api/atlas/kg/link-project/:id', () => {
 ## Références
 
 - UNDP ProjectEntity Schema: `backend/services/libs/shared/src/entities/projects.entity.ts`
-- ATLAS KG API Spec: `BC-OS-Cortex/biolab-mcp-research-server/docs/kg-api.yaml`
-- ODD Framework: https://sdgs.un.org/goals
+- ATLAS KG API Reference: [docs/atlas/atlas-kg-api-reference.md](atlas-kg-api-reference.md)
+- ATLAS Integration Spec: [specs/atlas/atlas-kg-api-spec.yaml](../../specs/atlas/atlas-kg-api-spec.yaml)
+- ODD Framework (UN): https://sdgs.un.org/goals
 - Article 6 Paris Agreement: https://unfccc.int/process/the-paris-agreement/cooperative-implementation
+- ATLAS v4.11.0 Source: https://github.com/aguennoune/atlas-system (workspace externe)
 
 ---
 
