@@ -2,7 +2,9 @@
 
 [![Awesome UNDP × ATLAS](https://awesome.re/badge.svg)](AWESOME_UNDP_ATLAS.md)
 
-> 📚 **[Awesome UNDP × ATLAS](AWESOME_UNDP_ATLAS.md)** - Liste curée complète de ressources, outils et intégrations
+> 📚 **Awesome List**: [🇫🇷 Français](AWESOME_UNDP_ATLAS.md) | [🇺🇸 English](AWESOME_UNDP_ATLAS_EN.md)
+> 
+> Comprehensive curated resource list for UNDP × ATLAS integration
 
 ## 🎯 Vision Stratégique
 

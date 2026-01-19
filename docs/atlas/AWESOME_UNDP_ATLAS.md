@@ -6,6 +6,8 @@
 
 > 📚 Une liste curée de ressources, outils, documentation et intégrations pour le UNDP National Carbon Credit Registry avec le framework ATLAS.
 
+**🌐 Languages**: **🇫🇷 Français** | [🇺🇸 English](AWESOME_UNDP_ATLAS_EN.md)
+
 **Vision**: Démocratiser l'accès aux marchés carbone via blockchain, Article 6 du Paris Agreement, et validation souveraine par Knowledge Graph.
 
 ---
