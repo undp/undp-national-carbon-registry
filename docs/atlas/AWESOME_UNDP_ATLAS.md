@@ -21,9 +21,11 @@
 - [Documentation Technique](#-documentation-technique)
 - [Outils de Développement](#-outils-de-développement)
 - [Déploiement & DevOps](#-déploiement--devops)
+- [Vidéos & Démos](#-vidéos--démos)
 - [Cas d'Usage & Études](#-cas-dusage--études)
 - [Standards & Compliance](#-standards--compliance)
 - [Communauté & Support](#-communauté--support)
+- [Maintainers & Contact](#-maintainers--contact)
 - [Projets Connexes](#-projets-connexes)
 
 ---
@@ -43,10 +45,11 @@
 
 ### ATLAS Framework
 
-- **Repository**: [aguennoune/atlas-system](https://github.com/aguennoune/atlas-system)
+- **ATLAS v4.11.0**: Framework souverain ML avec hybrid bridge (Negentropic World Model)
 - **Version**: v4.11.0-lts-quantique
 - **Stack**: Python + NestJS + PostgreSQL + Knowledge Graph
 - **Licence**: AGPL-3.0
+- **Intégration**: Disponible via branche [feature/atlas-integration](https://github.com/aguennoune/undp-national-carbon-registry/tree/feature/atlas-integration)
 
 ---
 
@@ -343,6 +346,87 @@ npm install
 npm run build
 npm run test
 ```
+
+**Dependencies**:
+
+---
+
+## 🎬 Vidéos & Démos
+
+### Démonstration Complète ATLAS × UNDP
+
+**🎥 Vidéo Démo Stack Complète** (À venir)
+- **Titre**: "ATLAS v4.11.0-lts-quantique × UNDP Carbon Registry - Démonstration Intégration Complète"
+- **Durée estimée**: 10-15 minutes
+- **Contenu**:
+  - Architecture tri-couche (TERRA/NEXUS/ORBITAL)
+  - Génération Nano-Datacenter IDs (MA-2026-ARG-001-NDC-NEXUS-8a4f2b1e)
+  - Calcul NER Score (9,799.49 pour projet Argan)
+  - Quantum Entanglement (ports 8081 ↔ 8082 ↔ 5173)
+  - Truth Table Adapter en action
+  - Integration Knowledge Graph ODD 13
+  - PostgreSQL single source of truth
+  - Évaluation Teleological (τ, κ, λ)
+- **Lien**: 🔗 [Vidéo démo à venir après déploiement](https://github.com/aguennoune/undp-national-carbon-registry/releases)
+- **Status**: ⏳ En cours de production (après build et déploiement stack complète)
+- **Contexte**: Démonstration pour experts économistes UNDP - validation souveraine crédits carbone Maroc
+
+### Tutoriels Vidéo Planifiés
+
+- **Setup Guide**: Installation complète ATLAS × UNDP en 5 minutes
+- **API Walkthrough**: Utilisation endpoints Truth Table Adapter
+- **Nano-ID Deep Dive**: Architecture tri-layer TERRA/NEXUS/ORBITAL
+- **Knowledge Graph Demo**: Linkage automatique ODD 13 Climate Action
+- **Production Deployment**: Guide DevOps complet avec Kubernetes
+
+### Screenshots & Visualisations
+
+- 📸 Data Resolver Interface (port 8081)
+- 📸 UNDP ODD Visualizer (port 5173)
+- 📸 Truth Table Adapter Dashboard (port 8082)
+- 📸 PostgreSQL Schema Migration
+- 📸 Nano-Datacenter ID Generator Output
+- 📸 NER Score Calculation (9,799.49)
+- 📸 Knowledge Graph ODD 13 Relations
+
+---
+
+## 👥 Maintainers & Contact
+
+### Lead Maintainer - Intégration ATLAS
+
+**Abderrahim Guennoune**
+- **GitHub**: [@aguennoune](https://github.com/aguennoune)
+- **Email**: 📧 [aguennoune@outlook.com](mailto:aguennoune@outlook.com)
+- **Rôle**: Architecte Principal - Intégration ATLAS × UNDP Carbon Registry
+- **Expertise**: Knowledge Graph, Pipeline ML, Validation Souveraine Crédits Carbone
+- **Timezone**: GMT+1 (Maroc)
+- **Co-Authoring**: Anthropic with Claude (Regenerative AI Co-Authoring)
+
+### Comment Contribuer
+
+**Pour les Maintainers UNDP**:
+- 📝 Ouvrir une issue sur [undp/national-carbon-registry](https://github.com/undp/national-carbon-registry/issues)
+- 💬 Discuter l'intégration ATLAS via [@aguennoune](mailto:aguennoune@outlook.com)
+- 🔀 Pull requests vers `feature/atlas-integration` branch
+- 📅 Sessions de review hebdomadaires (sur demande)
+
+**Pour les Contributors**:
+- ⭐ Star le projet d'intégration [feature/atlas-integration](https://github.com/aguennoune/undp-national-carbon-registry/tree/feature/atlas-integration)
+- 🐛 Reporter des bugs via GitHub Issues sur le repository UNDP
+- 📖 Améliorer la documentation (awesome-lists, ADRs, guides)
+- 🧪 Ajouter des tests unitaires et d'intégration
+- 🌍 Traduire la documentation (arabe, espagnol, autres langues ONU)
+
+### Support & Questions
+
+- **Questions Intégration ATLAS**: Contacter [@aguennoune](mailto:aguennoune@outlook.com) directement
+- **Questions UNDP Registry**: [UNDP Support](https://github.com/undp/national-carbon-registry/discussions)
+- **Demandes de Features**: Créer une issue avec le label `enhancement`
+- **Rapports de Bugs**: Créer une issue avec le label `bug`
+- **Urgences Production**: Contacter [@aguennoune](mailto:aguennoune@outlook.com) directement
+
+---
 
 **Dependencies**:
 - `@nestjs/common`: ^10.0.0

@@ -1,0 +1,22 @@
+{
+  "name": "atlas-kg-mock-server",
+  "version": "4.11.0",
+  "description": "ATLAS Knowledge Graph Mock Server for UNDP Integration Testing",
+  "main": "atlas-kg-mock-server.js",
+  "scripts": {
+    "start": "node atlas-kg-mock-server.js"
+  },
+  "keywords": [
+    "atlas",
+    "knowledge-graph",
+    "odd",
+    "undp",
+    "carbon-credit"
+  ],
+  "author": "ATLAS Integration Team",
+  "license": "AGPL-3.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {}
+}

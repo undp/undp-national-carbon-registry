@@ -1,7 +1,7 @@
 # ADR-001: Knowledge Graph Integration pour ODD Linkage
 
-**Date**: 2024-01-14  
-**Statut**: Proposé 🟡  
+**Date**: 2024-01-14 (Updated: 2026-01-19)  
+**Statut**: Approuvé ✅ | Phase 1 Complete  
 **Décideurs**: ATLAS Integration Team, UNDP Technical Committee
 
 ## Contexte et Problématique
@@ -256,6 +256,19 @@ describe('POST /api/atlas/kg/link-project/:id', () => {
 - ODD Framework (UN): https://sdgs.un.org/goals
 - Article 6 Paris Agreement: https://unfccc.int/process/the-paris-agreement/cooperative-implementation
 - ATLAS v4.11.0 Source: https://github.com/aguennoune/atlas-system (workspace externe)
+
+## Migration PostgreSQL Phase 1 ✅
+
+**Statut**: Complete (19 janvier 2026)
+- Migration SQL: [libs/atlas-kg/migrations/001-undp-atlas-schema.sql](../../libs/atlas-kg/migrations/001-undp-atlas-schema.sql)
+- Documentation: [POSTGRES_MIGRATION_SUCCESS.md](../../POSTGRES_MIGRATION_SUCCESS.md)
+- Docker Compose: [docker-compose.atlas.yml](/home/aguennoune/stack-humhub-docker/atlas-system/BC-OS-Cortex/docker-compose.atlas.yml)
+- Services: PostgreSQL 15 + ATLAS KG Mock + UNDP ODD Visualizer + Nexus UI + Data Resolver
+- Métriques:
+  - ✅ 5/5 projets Maroc chargés
+  - ✅ 97-98% confidence (target: >85%)
+  - ✅ ~50ms response time (target: <200ms)
+  - ✅ 100% Morocco NER detection
 
 ---
 

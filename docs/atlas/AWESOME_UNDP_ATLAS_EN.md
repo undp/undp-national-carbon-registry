@@ -15,9 +15,11 @@
 - [Technical Documentation](#technical-documentation)
 - [Development Tools](#development-tools)
 - [Deployment](#deployment)
+- [Videos & Demos](#videos--demos)
 - [Use Cases](#use-cases)
 - [Standards & Compliance](#standards--compliance)
 - [Community](#community)
+- [Maintainers & Contact](#maintainers--contact)
 - [Related Projects](#related-projects)
 - [Statistics](#statistics)
 - [Learning Resources](#learning-resources)
@@ -37,11 +39,12 @@
 
 ### ATLAS Framework
 
-- **ATLAS v4.11.0**: [BC-OS-Cortex/ATLAS](https://github.com/aguennoune/atlas-system) - Sovereign ML-driven framework with hybrid bridge
+- **ATLAS v4.11.0**: Sovereign ML-driven framework with hybrid bridge (Negentropic World Model)
 - **Knowledge Graph**: CORTEX-KG v4 - Ontology-driven ODD/SDG linking with 98.7% precision
 - **Quantum Eraser Protocol**: Constitutional decision validation mechanism
 - **ML Models**: PyCaret Decision Tree + scikit-learn pipeline (atlas_sovereignty_dt_v4.pkl)
 - **License**: AGPL-3.0 - Compatible with UNDP Registry
+- **Integration**: Available via [feature/atlas-integration](https://github.com/aguennoune/undp-national-carbon-registry/tree/feature/atlas-integration) branch
 
 ---
 
@@ -371,11 +374,13 @@ npm run dev
 ### ATLAS KG Local Development
 
 ```bash
-# Clone ATLAS repository
-git clone https://github.com/aguennoune/atlas-system.git
-cd atlas-system/BC-OS-Cortex
+# ATLAS Framework integration available in feature/atlas-integration branch
+# Clone UNDP Carbon Registry with ATLAS integration
+git clone https://github.com/aguennoune/undp-national-carbon-registry.git
+cd undp-national-carbon-registry
+git checkout feature/atlas-integration
 
-# Start CORTEX-KG service
+# Start CORTEX-KG service (if available)
 docker-compose -f docker-compose.atlas.yml up -d cortex-kg
 
 # Health check
@@ -451,6 +456,86 @@ services:
 
 volumes:
   pgdata:
+
+---
+
+## Videos & Demos
+
+### Complete ATLAS × UNDP Integration Demo
+
+**🎥 Full Stack Demo Video** (Coming Soon)
+- **Title**: "ATLAS v4.11.0-lts-quantique × UNDP Carbon Registry - Complete Integration Demonstration"
+- **Duration**: 10-15 minutes
+- **Content**:
+  - Tri-layer architecture (TERRA/NEXUS/ORBITAL)
+  - Nano-Datacenter ID generation (MA-2026-ARG-001-NDC-NEXUS-8a4f2b1e)
+  - NER Score calculation (9,799.49 for Argan project)
+  - Quantum Entanglement (ports 8081 ↔ 8082 ↔ 5173)
+  - Truth Table Adapter in action
+  - Knowledge Graph ODD 13 integration
+  - PostgreSQL single source of truth
+  - Teleological evaluation (τ, κ, λ)
+- **Link**: 🔗 [Demo video coming after deployment](https://github.com/aguennoune/undp-national-carbon-registry/releases)
+- **Status**: ⏳ In production (after full stack build and deployment)
+- **Context**: Demonstration for UNDP economics experts - Sovereign carbon credit validation for Morocco
+
+### Planned Video Tutorials
+
+- **Setup Guide**: Complete ATLAS × UNDP installation in 5 minutes
+- **API Walkthrough**: Using Truth Table Adapter endpoints
+- **Nano-ID Deep Dive**: TERRA/NEXUS/ORBITAL tri-layer architecture
+- **Knowledge Graph Demo**: Automatic ODD 13 Climate Action linking
+- **Production Deployment**: Complete DevOps guide with Kubernetes
+
+### Screenshots & Visualizations
+
+- 📸 Data Resolver Interface (port 8081)
+- 📸 UNDP ODD Visualizer (port 5173)
+- 📸 Truth Table Adapter Dashboard (port 8082)
+- 📸 PostgreSQL Schema Migration
+- 📸 Nano-Datacenter ID Generator Output
+- 📸 NER Score Calculation (9,799.49)
+- 📸 Knowledge Graph ODD 13 Relations
+
+---
+
+## 👥 Maintainers & Contact
+
+### Lead Maintainer - ATLAS Integration
+
+**Abderrahim Guennoune**
+- **GitHub**: [@aguennoune](https://github.com/aguennoune)
+- **Email**: 📧 [aguennoune@outlook.com](mailto:aguennoune@outlook.com)
+- **Role**: Principal Architect - ATLAS × UNDP Carbon Registry Integration
+- **Expertise**: Knowledge Graph, ML Pipeline, Sovereign Carbon Credit Validation
+- **Timezone**: GMT+1 (Morocco)
+- **Co-Authoring**: Anthropic with Claude (Regenerative AI Co-Authoring)
+
+### How to Contribute
+
+**For UNDP Maintainers**:
+- 📝 Open an issue on [undp/national-carbon-registry](https://github.com/undp/national-carbon-registry/issues)
+- 💬 Discuss ATLAS integration via [@aguennoune](mailto:aguennoune@outlook.com)
+- 🔀 Pull requests to `feature/atlas-integration` branch
+- 📅 Weekly review sessions (on request)
+
+**For Contributors**:
+- ⭐ Star the integration project [feature/atlas-integration](https://github.com/aguennoune/undp-national-carbon-registry/tree/feature/atlas-integration)
+- 🐛 Report bugs via GitHub Issues on UNDP repository
+- 📖 Improve documentation (awesome-lists, ADRs, guides)
+- 🧪 Add unit and integration tests
+- 🌍 Translate documentation (Arabic, Spanish, other UN languages)
+
+### Support & Questions
+
+- **ATLAS Integration Questions**: Contact [@aguennoune](mailto:aguennoune@outlook.com) directly
+- **UNDP Registry Questions**: [UNDP Support](https://github.com/undp/national-carbon-registry/discussions)
+- **Feature Requests**: Create an issue with `enhancement` label
+- **Bug Reports**: Create an issue with `bug` label
+- **Production Emergencies**: Contact [@aguennoune](mailto:aguennoune@outlook.com) directly
+
+---
+
 ```
 
 **Production Build**:
@@ -780,7 +865,7 @@ git checkout -b feature/my-atlas-feature
 
 **ATLAS Integration**:
 - GitHub Issues: [Integration Issues](https://github.com/aguennoune/undp-national-carbon-registry/issues)
-- Email: atlas-undp-integration@biocontinuum.org
+- Email: aguennoune@outlook.com
 - Discord: BioContinuum Community (coming soon)
 
 **UNDP Registry**:
