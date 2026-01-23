@@ -464,7 +464,7 @@ test-results.log              # Integration test results (if backend tested)
 
 **Questions about this demo?**
 - GitHub Issues: [aguennoune/undp-national-carbon-registry](https://github.com/aguennoune/undp-national-carbon-registry/issues)
-- Email: atlas-undp-integration@biocontinuum.org
+- Email: abderrahimguennoune@gmail.com
 
 ---
 
