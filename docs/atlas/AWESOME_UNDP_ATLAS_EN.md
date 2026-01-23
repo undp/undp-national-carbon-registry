@@ -865,7 +865,7 @@ git checkout -b feature/my-atlas-feature
 
 **ATLAS Integration**:
 - GitHub Issues: [Integration Issues](https://github.com/aguennoune/undp-national-carbon-registry/issues)
-- Email: aguennoune@outlook.com
+- Email: abderrahimguennoune@gmail.com
 - Discord: BioContinuum Community (coming soon)
 
 **UNDP Registry**:
