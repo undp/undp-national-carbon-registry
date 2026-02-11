@@ -27,7 +27,7 @@
     "@aws-sdk/client-qldb-session": "^3.408.0",
     "@aws-sdk/client-s3": "^3.408.0",
     "@aws-sdk/client-sqs": "^3.408.0",
-    "@casl/ability": "^6.3.2",
+    "@casl/ability": "^6.7.5",
     "@drdgvhbh/postgres-error-codes": "^0.0.6",
     "@nestjs/cache-manager": "^2.3.0",
     "@nestjs/common": "^9.0.0",
