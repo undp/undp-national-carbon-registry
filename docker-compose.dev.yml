@@ -1,0 +1,153 @@
+volumes:
+  pgdata:
+    driver: local
+  filestore:
+    driver: local
+
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: carbon123
+      POSTGRES_USER: root
+      POSTGRES_DB: carbondev
+      PGDATA: /data/postgres
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:Z
+      - pgdata:/data/postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d carbondev"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  national:
+    build:
+      context: .
+      dockerfile: ./backend/services/Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: root
+      DB_PASSWORD: carbon123
+      DB_NAME: carbondev
+      NODE_ENV: local
+      LEDGER_TYPE: PGSQL
+      RUN_MODULE: national-api
+      rootEmail: admin@carbon.dev
+      systemCountryCode: NG
+      systemCountryName: Nigeria
+      systemContinentName: Africa
+      name: National DNA
+      Ministry: ""
+      Department: ""
+      logoBase64: ""
+      IS_EMAIL_DISABLED: "true"
+      DISABLE_LOW_PRIORITY_EMAIL: "true"
+      LOCATION_SERVICE: FILE
+      FILE_SERVICE: LOCAL
+      ASYNC_OPERATIONS_TYPE: Database
+      HOST: http://localhost:3030
+      BACKEND_HOST: http://localhost:3000
+      DOMAIN_MAP: "false"
+      EXPIRES_IN: "7200"
+      REFRESH_TOKEN_EXPIRES_IN: "12h"
+    volumes:
+      - filestore:/app/backend/services/public
+
+  async:
+    build:
+      context: .
+      dockerfile: ./backend/services/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+      national:
+        condition: service_started
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: root
+      DB_PASSWORD: carbon123
+      DB_NAME: carbondev
+      NODE_ENV: local
+      LEDGER_TYPE: PGSQL
+      RUN_MODULE: async-operations-handler
+      IS_EMAIL_DISABLED: "true"
+      DISABLE_LOW_PRIORITY_EMAIL: "true"
+      ASYNC_OPERATIONS_TYPE: Database
+      LOCATION_SERVICE: FILE
+      FILE_SERVICE: LOCAL
+      SYNC_ENABLE: "false"
+      BACKEND_HOST: http://localhost:3000
+    volumes:
+      - filestore:/app/backend/services/public
+
+  stats:
+    build:
+      context: .
+      dockerfile: ./backend/services/Dockerfile
+    ports:
+      - "3100:3100"
+    depends_on:
+      db:
+        condition: service_healthy
+      national:
+        condition: service_started
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: root
+      DB_PASSWORD: carbon123
+      DB_NAME: carbondev
+      NODE_ENV: local
+      LEDGER_TYPE: PGSQL
+      RUN_PORT: 3100
+      RUN_MODULE: analytics-api
+      DOMAIN_MAP: "false"
+
+  dev-init:
+    image: postgres:15
+    depends_on:
+      national:
+        condition: service_started
+    environment:
+      PGPASSWORD: carbon123
+    restart: "no"
+    command: >
+      sh -c '
+        echo "Waiting for backend to seed the database...";
+        while [ "$$(psql -h db -U root -d carbondev -tAc "SELECT count(*) FROM \"user\" WHERE role = '"'"'Root'"'"';" 2>/dev/null)" != "1" ]; do sleep 3; done;
+        psql -h db -U root -d carbondev -c "UPDATE \"user\" SET password = '"'"'123'"'"' WHERE role = '"'"'Root'"'"';";
+        echo "================================================";
+        echo "  Dev environment ready!";
+        echo "  Login:  admin@carbon.dev / 123";
+        echo "  Web UI: http://localhost:3030";
+        echo "  API:    http://localhost:3000";
+        echo "================================================";
+      '
+
+  web:
+    build:
+      context: .
+      dockerfile: ./web/Dockerfile
+      args:
+        VITE_APP_BACKEND: http://localhost:3000
+        VITE_APP_COUNTRY_NAME: Nigeria
+        VITE_APP_COUNTRY_CODE: NG
+        VITE_APP_MAP_TYPE: None
+        VITE_APP_MAPBOXGL_ACCESS_TOKEN: ""
+        VITE_APP_COUNTRY_FLAG_URL: ""
+        VITE_APP_ENABLE_REGISTRATION: "true"
+    ports:
+      - "3030:3030"
+    depends_on:
+      - national

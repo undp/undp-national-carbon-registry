@@ -4,14 +4,8 @@ COPY ./web .
 RUN apk add python3 make g++ && rm -rf /var/cache/apk/*
 RUN CI=false yarn install
 
-ARG PORT
-ENV PORT $PORT
-
 ARG VITE_APP_BACKEND
 ENV VITE_APP_BACKEND $VITE_APP_BACKEND
-
-ARG VITE_APP_COUNTRY_NAME
-ENV VITE_APP_COUNTRY_NAME $VITE_APP_COUNTRY_NAME
 
 ARG VITE_APP_COUNTRY_NAME
 ENV VITE_APP_COUNTRY_NAME $VITE_APP_COUNTRY_NAME
@@ -31,15 +25,14 @@ ENV VITE_APP_MAP_TYPE $VITE_APP_MAP_TYPE
 ARG VITE_APP_ENABLE_REGISTRATION
 ENV VITE_APP_ENABLE_REGISTRATION $VITE_APP_ENABLE_REGISTRATION
 
-# Build the app
 RUN CI=false yarn build
 
-# production environment
 FROM nginx:stable-alpine
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY ./web/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 COPY ./web/nginx.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE $PORT
+EXPOSE 3030
+ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
