@@ -1,0 +1,41 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  backend-tests:
+    name: Backend Unit & Integration Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/services
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+          cache-dependency-path: backend/services/yarn.lock
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
+
+      - name: Run CADT v2 integration tests
+        run: >
+          npx jest --no-coverage --forceExit
+          --testPathPattern='cadt/__tests__|cadt-export\.controller'
+
+      - name: Run other passing unit tests
+        run: >
+          npx jest --no-coverage --forceExit
+          --testPathPattern='shared\.service|core\.service|casl-ability'
