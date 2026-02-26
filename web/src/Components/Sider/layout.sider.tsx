@@ -62,7 +62,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
   useEffect(() => {
     get(`national/Settings/query?id=${CADT_EXPORT_SETTING_ID}`)
       .then((resp: any) => {
-        if (resp?.data === "true") setCadtEnabled(true);
+        if (String(resp?.data) === "true") setCadtEnabled(true);
       })
       .catch(() => {});
   }, []);

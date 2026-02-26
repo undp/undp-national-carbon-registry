@@ -20,7 +20,7 @@ const Settings = (props: any) => {
   useEffect(() => {
     get(`national/Settings/query?id=${CADT_EXPORT_SETTING_ID}`)
       .then((resp: any) => {
-        if (resp?.data === "true") {
+        if (String(resp?.data) === "true") {
           setCadtEnabled(true);
         }
       })
