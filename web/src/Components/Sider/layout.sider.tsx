@@ -97,6 +97,11 @@ const LayoutSider = (props: LayoutSiderProps) => {
       0,
       getItem(t("nav:reports"), "reports", <Icon.ClipboardData />)
     );
+    items.splice(
+      4,
+      0,
+      getItem("CAD Trust Export", "cadtExport", <Icon.CloudArrowUp />)
+    );
   }
   
   

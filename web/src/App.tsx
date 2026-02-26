@@ -45,6 +45,7 @@ import { CreditBalancePage } from "./Pages/CreditPages/creditBalancePage";
 import { CreditTransfersPage } from "./Pages/CreditPages/creditTransfersPage";
 import { CreditRetirementsPage } from "./Pages/CreditPages/creditRetirementsPage";
 import Reports from "./Pages/Reports/Reports";
+import CadtExport from "./Pages/CadtExport/CadtExport";
 
 const App = () => {
   const { t } = useTranslation(["common"]);
@@ -188,6 +189,12 @@ const App = () => {
                     element={<CustomLayout selectedKey="reports" />}
                   >
                     <Route path="" element={<Reports />} />
+                  </Route>
+                  <Route
+                    path="/cadtExport"
+                    element={<CustomLayout selectedKey="cadtExport" />}
+                  >
+                    <Route path="" element={<CadtExport />} />
                   </Route>
                   <Route
                     path="/companyProfile"

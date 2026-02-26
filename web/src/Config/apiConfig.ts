@@ -169,5 +169,10 @@ export const API_PATHS = {
   POPUP_ACTION: (endpoint: string) => `national/programme/${endpoint}`,
   // AEF RECORDS:
   QUERY_AEF_RECORDS: `national/reportsManagement/queryAefRecords`,
-  DOWNLOAD_AEF_RECORDS: `national/reportsManagement/downloadAefReport`
+  DOWNLOAD_AEF_RECORDS: `national/reportsManagement/downloadAefReport`,
+  // CADT V2 EXPORT:
+  CADT_V2_SYNC: `national/cadtExport/sync`,
+  CADT_V2_SYNC_PROJECT: (id: string) => `national/cadtExport/syncProject/${id}`,
+  CADT_V2_DOWNLOAD: `national/cadtExport/download`,
+  CADT_V2_STATUS: `national/cadtExport/status`,
 };

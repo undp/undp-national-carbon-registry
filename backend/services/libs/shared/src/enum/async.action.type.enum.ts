@@ -15,5 +15,9 @@ export enum AsyncActionType {
   CADTCertify,
   CADTTransferCredit,
   CompanyUpdate,
-  NationalInvestment
+  NationalInvestment,
+  CADTv2ProjectSync,
+  CADTv2CreditIssue,
+  CADTv2CreditTransfer,
+  CADTv2CreditRetire,
 }
