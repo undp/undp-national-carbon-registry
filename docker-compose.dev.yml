@@ -121,15 +121,22 @@ services:
         condition: service_started
     environment:
       PGPASSWORD: carbon123
+    volumes:
+      - ./seed-test-data.sql:/seed-test-data.sql:Z
     restart: "no"
     command: >
       sh -c '
         echo "Waiting for backend to seed the database...";
         while [ "$$(psql -h db -U root -d carbondev -tAc "SELECT count(*) FROM \"user\" WHERE role = '"'"'Root'"'"';" 2>/dev/null)" != "1" ]; do sleep 3; done;
         psql -h db -U root -d carbondev -c "UPDATE \"user\" SET password = '"'"'123'"'"' WHERE role = '"'"'Root'"'"';";
+        echo "Seeding test data...";
+        psql -h db -U root -d carbondev -f /seed-test-data.sql;
         echo "================================================";
         echo "  Dev environment ready!";
         echo "  Login:  admin@carbon.dev / 123";
+        echo "  Other:  pd1@carbon.dev / 123  (Project Developer)";
+        echo "         pd2@carbon.dev / 123  (Project Developer)";
+        echo "         ic@carbon.dev / 123   (Certifier)";
         echo "  Web UI: http://localhost:3030";
         echo "  API:    http://localhost:3000";
         echo "================================================";
