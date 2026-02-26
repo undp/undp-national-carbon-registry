@@ -189,12 +189,8 @@ const App = () => {
                     element={<CustomLayout selectedKey="reports" />}
                   >
                     <Route path="" element={<Reports />} />
-                  </Route>
-                  <Route
-                    path="/cadtExport"
-                    element={<CustomLayout selectedKey="cadtExport" />}
-                  >
-                    <Route path="" element={<CadtExport />} />
+                    <Route path="aef" element={<Reports />} />
+                    <Route path="cadtExport" element={<CadtExport />} />
                   </Route>
                   <Route
                     path="/companyProfile"

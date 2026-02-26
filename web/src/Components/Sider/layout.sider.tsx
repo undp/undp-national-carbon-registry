@@ -17,6 +17,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { LayoutSiderProps } from "../../Definitions/Definitions/layout.sider.definitions";
 import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
+import { useConnection } from "../../Context/ConnectionContext/connectionContext";
 import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
 import { Role } from "../../Definitions/Enums/role.enum";
 import { ROUTES } from "../../Config/uiRoutingConfig";
@@ -45,14 +46,26 @@ function getItem(
   } as MenuItem;
 }
 
+const CADT_EXPORT_SETTING_ID = 3;
+
 const LayoutSider = (props: LayoutSiderProps) => {
   const { selectedKey } = props;
   const navigate = useNavigate();
   const { userInfoState } = useUserContext();
+  const { get } = useConnection();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [selectKey, setSelectKey] = useState<any>(selectedKey);
+  const [cadtEnabled, setCadtEnabled] = useState(false);
   const { i18n, t } = useTranslation(["nav"]);
+
+  useEffect(() => {
+    get(`national/Settings/query?id=${CADT_EXPORT_SETTING_ID}`)
+      .then((resp: any) => {
+        if (resp?.data === "true") setCadtEnabled(true);
+      })
+      .catch(() => {});
+  }, []);
 
   const currentPage = location.pathname.replace(/^\/|\/$/g, "");
 
@@ -92,15 +105,18 @@ const LayoutSider = (props: LayoutSiderProps) => {
     (userInfoState?.userRole === Role.Admin ||
       userInfoState?.userRole === Role.Root)
   ) {
+    const reportChildren: MenuItem[] = [
+      getItem("AEF Reports", "reports/aef", <Icon.FileEarmarkText />),
+    ];
+    if (cadtEnabled) {
+      reportChildren.push(
+        getItem("CAD Trust Export", "reports/cadtExport", <Icon.CloudArrowUp />)
+      );
+    }
     items.splice(
       3,
       0,
-      getItem(t("nav:reports"), "reports", <Icon.ClipboardData />)
-    );
-    items.splice(
-      4,
-      0,
-      getItem("CAD Trust Export", "cadtExport", <Icon.CloudArrowUp />)
+      getItem(t("nav:reports"), "reports", <Icon.ClipboardData />, reportChildren)
     );
   }
   
@@ -133,9 +149,9 @@ const LayoutSider = (props: LayoutSiderProps) => {
   //   );
   // }
 
-  // if (userInfoState?.userRole === Role.Root) {
-  //   items.push(getItem(t('nav:settings'), 'settings', <SettingOutlined />));
-  // }
+  if (userInfoState?.userRole === Role.Root) {
+    items.push(getItem("Settings", "settings", <SettingOutlined />));
+  }
 
   const onClick: MenuProps["onClick"] = (e: { key: string }) => {
     navigate("/" + e.key);

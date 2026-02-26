@@ -1,5 +1,6 @@
 export enum ConfigurationSettingsType {
   isTransferFrozen,
   chairmanSign,
-  ceoSign
+  ceoSign,
+  cadtExportEnabled,
 }
