@@ -220,15 +220,16 @@ test.describe("Cooperative Approach - Article 6.2", () => {
       await dnaPage.locator("input#hostParty").fill("GH");
 
       // participatingParties is an Ant Design Select in "tags" mode.
-      // We focus the input inside the selector, type country codes,
-      // and press Enter so each becomes a tag.
-      const partiesSelect = dnaPage
-        .locator("#participatingParties")
-        .locator("..");
-      await partiesSelect.click();
-      const partiesInput = dnaPage
-        .locator("#participatingParties")
-        .locator("input");
+      // Ant Design doesn't put the id on the inner <input>; it is on the
+      // wrapping combobox. The actual input is .ant-select-selection-search-input
+      // inside the form-item whose label contains "Participating Parties".
+      const partiesItem = dnaPage
+        .locator(".ant-form-item")
+        .filter({ hasText: /Participating Parties/i });
+      await partiesItem.locator(".ant-select-selector").click();
+      const partiesInput = partiesItem.locator(
+        ".ant-select-selection-search-input"
+      );
       await partiesInput.fill("GH");
       await partiesInput.press("Enter");
       await partiesInput.fill("CH");
@@ -287,23 +288,27 @@ test.describe("Cooperative Approach - Article 6.2", () => {
       );
       await dnaPage.waitForLoadState("networkidle");
 
-      // Ant Design Select rendered for canManage users. Find the
-      // selector within the Status description cell and open it.
-      const selector = dnaPage.locator(".ant-select-selector").first();
-      await selector.click();
+      // Scope to the .content-card (which wraps Descriptions) and find
+      // the Select whose current value is "Draft" — uniquely identifies
+      // the status Select on a freshly created CA.
+      const statusSelect = dnaPage
+        .locator(".content-card .ant-select")
+        .filter({ hasText: /Draft/ })
+        .first();
+      await statusSelect.locator(".ant-select-selector").click();
 
-      // Dropdown options are teleported to body; click the "Active"
-      // option.
+      // Dropdown options are teleported to body; click "Active" and
+      // wait for the PUT to complete before asserting persistence.
+      const updateCall = dnaPage.waitForResponse(
+        (r) =>
+          /cooperativeApproach\/update/.test(r.url()) && r.request().method() === "PUT"
+      );
       await dnaPage
         .locator(".ant-select-item-option")
         .filter({ hasText: /^Active$/ })
         .first()
         .click();
-
-      // UI fires PUT /update; wait for it to settle then reload and
-      // confirm via API (UI reflection is tested indirectly — the
-      // selector's value should be "Active" after refetch).
-      await dnaPage.waitForLoadState("networkidle");
+      await updateCall;
 
       const res = await apiDna.get(
         `national/cooperativeApproach/get?id=${encodeURIComponent(

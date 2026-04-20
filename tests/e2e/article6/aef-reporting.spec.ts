@@ -406,13 +406,11 @@ test.describe("AEF Reporting - Article 6.2", () => {
       // The URL should stay on /reports — a redirect to /login would
       // indicate the auth check kicked us out.
       expect(dnaPage.url()).toContain("/reports");
-      // Look for the page title set via i18n key reporting:reportsTitle.
-      // Fall back to the raw key if i18n has not loaded yet; either
-      // form is acceptable for this smoke.
-      const titleEl = dnaPage
-        .locator("text=/^Reports$/i, text=/^reportsTitle$/")
-        .first();
+      // Title lives in .title-container > .main and is set from i18n key
+      // reporting:reportsTitle which resolves to "Reports".
+      const titleEl = dnaPage.locator(".title-container .main").first();
       await expect(titleEl).toBeVisible({ timeout: 10000 });
+      await expect(titleEl).toHaveText(/Reports|reportsTitle/i);
     });
 
     test("/reports exposes Export AS CSV and Export AS EXCEL buttons", async ({

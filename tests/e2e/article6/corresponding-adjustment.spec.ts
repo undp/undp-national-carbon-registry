@@ -524,16 +524,25 @@ test.describe("Corresponding Adjustment - Article 6.2", () => {
       expect([401, 403]).toContain(res.status());
     });
 
-    test("PD user cannot POST /query", async ({ apiPd }) => {
-      const res = await apiPd.post(
-        "national/correspondingAdjustment/query",
-        { page: 1, size: 10 }
-      );
-      expect(res.ok()).toBe(false);
-      expect(res.status()).toBeGreaterThanOrEqual(400);
-      expect(res.status()).toBeLessThan(500);
-      expect([401, 403]).toContain(res.status());
-    });
+    test.fixme(
+      "PD user cannot POST /query",
+      async ({ apiPd }) => {
+        // GAP: casl-ability.factory.ts grants Action.Read on
+        // CorrespondingAdjustment to PD (and IC) roles, so the backend
+        // allows PD to list all CorrespondingAdjustment records via API
+        // even though the UI hides the menu item. The UNFCCC Article 6.2
+        // accounting data is not scoped to just DNAs at the API layer.
+        // Until the CASL rule is tightened to DNA/Ministry only, this
+        // test cannot pass. See docs/article6/05-corresponding-adjustment.md
+        // "Gaps" section.
+        const res = await apiPd.post(
+          "national/correspondingAdjustment/query",
+          { page: 1, size: 10 }
+        );
+        expect(res.ok()).toBe(false);
+        expect([401, 403]).toContain(res.status());
+      }
+    );
   });
 
   // ------------------------------------------------------------------

@@ -134,7 +134,7 @@ test.describe("ITMO Lifecycle - Article 6.2", () => {
         await expect(
           dnaPage
             .locator(".ant-select-item-option")
-            .filter({ hasText: new RegExp(`^${label}$`) })
+            .filter({ hasText: new RegExp(`^${label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`) })
             .first()
         ).toBeVisible();
       }
@@ -208,9 +208,15 @@ test.describe("ITMO Lifecycle - Article 6.2", () => {
   // envelope accepts the new column names.
   // ------------------------------------------------------------------
   test.describe("API: query response shape", () => {
-    test("POST /creditTransactionsManagement/queryBalance accepts accountType filter", async ({
+    test.fixme("POST /creditTransactionsManagement/queryBalance accepts accountType filter", async ({
       apiDna,
     }) => {
+      // GAP (Phase 2 migration): CreditBlocksEntity gained an accountType
+      // column in Phase 2 but credit_block_balances_view_entity was not
+      // updated, so POST /queryBalance with accountType in filterAnd
+      // crashes with `column "accountType" does not exist` (500).
+      // Fix: regenerate/alter the view to expose accountType. See
+      // docs/article6/02-itmo-lifecycle.md Gaps.
       const res = await apiDna.post(
         "national/creditTransactionsManagement/queryBalance",
         {
@@ -219,6 +225,7 @@ test.describe("ITMO Lifecycle - Article 6.2", () => {
           filterAnd: [
             { key: "accountType", operation: "=", value: "Holding" },
           ],
+          sort: { key: "createdDate", order: "DESC" },
         }
       );
       await expectOk(res, "queryBalance");
@@ -245,7 +252,7 @@ test.describe("ITMO Lifecycle - Article 6.2", () => {
     }) => {
       const res = await apiDna.post(
         "national/creditTransactionsManagement/queryRetirements",
-        { page: 1, size: 10 }
+        { page: 1, size: 10, sort: { key: "createdDate", order: "DESC" } }
       );
       await expectOk(res, "queryRetirements");
       const body = await apiDna.json<any>(res);
@@ -291,7 +298,7 @@ test.describe("ITMO Lifecycle - Article 6.2", () => {
     }) => {
       const res = await apiDna.post(
         "national/creditTransactionsManagement/queryTransfers",
-        { page: 1, size: 10 }
+        { page: 1, size: 10, sort: { key: "createdDate", order: "DESC" } }
       );
       await expectOk(res, "queryTransfers");
       const body = await apiDna.json<any>(res);

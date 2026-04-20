@@ -202,6 +202,7 @@ test.describe("Article 6.2 - Cross-cutting Integration", () => {
       const irQueryRes = await apiDna.post("national/initialReport/query", {
         page: 1,
         size: 50,
+        sort: { key: "createdTime", order: "DESC" },
       });
       await expectOk(irQueryRes, "flagship IR query");
       const irRows = extractRows(await apiDna.json<any>(irQueryRes));
@@ -214,7 +215,11 @@ test.describe("Article 6.2 - Cross-cutting Integration", () => {
 
       const calcQueryRes = await apiDna.post(
         "national/correspondingAdjustment/query",
-        { page: 1, size: 50 }
+        {
+          page: 1,
+          size: 50,
+          sort: { key: "createdTime", order: "DESC" },
+        }
       );
       await expectOk(calcQueryRes, "flagship CA-ADJ query");
       const calcRows = extractRows(await apiDna.json<any>(calcQueryRes));
@@ -320,7 +325,11 @@ test.describe("Article 6.2 - Cross-cutting Integration", () => {
       // gated by Read CooperativeApproach which PD has.
       const queryRes = await apiPd.post(
         "national/cooperativeApproach/query",
-        { page: 1, size: 10 }
+        {
+          page: 1,
+          size: 10,
+          sort: { key: "createdTime", order: "DESC" },
+        }
       );
       // PD is Read-allowed on CA at the API layer.
       await expectOk(queryRes, "PD can query CAs");
@@ -328,7 +337,8 @@ test.describe("Article 6.2 - Cross-cutting Integration", () => {
       expect(
         queryRows.some(
           (r: any) => r.cooperativeApproachId === seeded.cooperativeApproachId
-        )
+        ),
+        `seeded ${seeded.cooperativeApproachId} not in first page of ${queryRows.length} results`
       ).toBe(true);
 
       // Create: PD must be denied.
@@ -384,7 +394,11 @@ test.describe("Article 6.2 - Cross-cutting Integration", () => {
       // indicate a narrower grant we should document.
       const queryRes = await apiIc.post(
         "national/cooperativeApproach/query",
-        { page: 1, size: 10 }
+        {
+          page: 1,
+          size: 10,
+          sort: { key: "createdTime", order: "DESC" },
+        }
       );
       if (queryRes.ok()) {
         const queryRows = extractRows(await apiIc.json<any>(queryRes));
@@ -773,6 +787,7 @@ test.describe("Article 6.2 - Cross-cutting Integration", () => {
       const qRes = await apiDna.post("national/initialReport/query", {
         page: 1,
         size: 100,
+        sort: { key: "createdTime", order: "DESC" },
       });
       await expectOk(qRes, "IR query after submit");
       const rows = extractRows(await apiDna.json<any>(qRes));

@@ -18,7 +18,7 @@ services:
       # POSTGRES_HOST_AUTH_METHOD: trust
       PGDATA: /data/postgres
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:Z
       - data:/data/postgres
   national:
     build:
@@ -72,8 +72,8 @@ services:
       RATE_LIMIT_ORGANISATION_DURATION: 60
     volumes:
       - filestore:/app/backend/services/public
-      - ./users.csv:/app/backend/services/users.csv
-      - ./organisations.csv:/app/backend/services/organisations.csv
+      - ./users.csv:/app/backend/services/users.csv:Z
+      - ./organisations.csv:/app/backend/services/organisations.csv:Z
   stats:
     build:
       context: .
@@ -105,7 +105,7 @@ services:
       RUN_MODULE: replicator,async-operations-handler
       LOCATION_SERVICE: OPENSTREET
       SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
-      SMTP_USERNAME: ***REMOVED***
+      SMTP_USERNAME: "***REMOVED***"
       SMTP_PASSWORD: ""
       IS_EMAIL_DISABLED: "true"
       DISABLE_LOW_PRIORITY_EMAIL: "true"

@@ -84,13 +84,29 @@ export interface CaCalculateInput {
   ndcTarget?: number;
 }
 
+const NDC_TYPE_WIRE = {
+  SINGLE_YEAR: "SingleYear",
+  MULTI_YEAR: "MultiYear",
+} as const;
+
+const CA_METHOD_WIRE = {
+  TRAJECTORY: "Trajectory",
+  AVERAGING: "Averaging",
+  MULTI_YEAR: "MultiYear",
+} as const;
+
 export async function calculateCorrespondingAdjustment(
   api: ApiClient,
   input: CaCalculateInput
 ): Promise<any> {
+  const payload = {
+    ...input,
+    ndcType: NDC_TYPE_WIRE[input.ndcType],
+    caMethod: CA_METHOD_WIRE[input.caMethod],
+  };
   const res = await api.post(
     "national/correspondingAdjustment/calculate",
-    input
+    payload
   );
   await expectOk(res, "calculateCorrespondingAdjustment");
   const raw = await api.json<any>(res);
@@ -105,6 +121,7 @@ export async function queryCooperativeApproaches(
   const res = await api.post("national/cooperativeApproach/query", {
     page,
     size,
+    sort: { key: "createdTime", order: "DESC" },
   });
   await expectOk(res, "queryCooperativeApproaches");
   const raw = await api.json<any>(res);
