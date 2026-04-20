@@ -40,6 +40,7 @@ import { BASE_URL } from "./support/auth";
 import {
   createCooperativeApproach,
   generateInitialReport,
+  setInitialReportStatusDirect,
   submitInitialReport,
   uniqueSuffix,
 } from "./support/factories";
@@ -317,19 +318,27 @@ test.describe("Initial Report - Article 6.2", () => {
       expect(res.status()).toBe(404);
     });
 
-    test.fixme(
-      "PUT /update on a Published IR returns 400 (cannot modify after publication)",
-      async () => {
-        // The service at lines 184-189 rejects updates when
-        // `status === InitialReportStatus.PUBLISHED`. However, no API
-        // endpoint transitions an IR to `Published` — submitReport
-        // only writes `Submitted`, and there is no `/publish` or
-        // `/approve` route. Exercising the guard would require a
-        // direct-database mutation (outside the Playwright fixture
-        // surface) or a future /publish endpoint. Deferred; the
-        // guard's existence is flagged in 06-initial-report.md Gaps.
-      }
-    );
+    test("PUT /update on a Published IR returns 400 (cannot modify after publication)", async ({
+      apiDna,
+    }) => {
+      // There is no HTTP endpoint that transitions an IR to Published,
+      // so we seed the state via direct SQL. The service guard at
+      // initial-report.service.ts:184-189 should still fire.
+      const ca = await createCooperativeApproach(apiDna, {
+        title: `IR Published ${uniqueSuffix()}`,
+      });
+      const gen = await generateInitialReport(apiDna, {
+        cooperativeApproachId: ca.cooperativeApproachId,
+      });
+      setInitialReportStatusDirect(gen.reportId, "Published");
+
+      const res = await apiDna.put("national/initialReport/update", {
+        reportId: gen.reportId,
+        caMethodDescription: "should be rejected",
+      });
+      expect(res.ok()).toBe(false);
+      expect(res.status()).toBe(400);
+    });
   });
 
   // ------------------------------------------------------------------
@@ -684,18 +693,39 @@ test.describe("Initial Report - Article 6.2", () => {
       ).toBeVisible();
     });
 
-    test.fixme(
-      "Submitting the Create form navigates to viewAll and shows the new IR row",
-      async () => {
-        // Requires a CA to exist so the form submission succeeds, and
-        // the CA must not already have an IR attached. The antd Input
-        // controls are straightforward (unlike antd Select/InputNumber
-        // in caCalculation.tsx), but the post-submit navigation race
-        // + the table rendering from /query need a stable waiter
-        // helper. The API path is already covered by
-        // "API: generate > POST /generate with only cooperativeApproachId
-        // returns 201 ..." so this UI promotion is deferred.
-      }
-    );
+    test("Submitting the Create form navigates to viewAll and shows the new IR row", async ({
+      dnaPage,
+      apiDna,
+    }) => {
+      // Seed a fresh CA so the form has a valid target and no existing IR.
+      const ca = await createCooperativeApproach(apiDna, {
+        title: `IR UI Flow ${uniqueSuffix()}`,
+      });
+
+      await dnaPage.goto(`${BASE_URL}/initialReports/create`);
+      await dnaPage.waitForLoadState("networkidle");
+
+      await dnaPage.locator("input#cooperativeApproachId").fill(
+        ca.cooperativeApproachId
+      );
+
+      const generateResp = dnaPage.waitForResponse(
+        (r) =>
+          /initialReport\/generate/.test(r.url()) &&
+          r.request().method() === "POST"
+      );
+      await dnaPage
+        .locator("button[type='submit']", { hasText: /Generate/i })
+        .first()
+        .click();
+      const resp = await generateResp;
+      expect(resp.status()).toBe(201);
+
+      // After successful generate the component navigates to viewAll.
+      await dnaPage.waitForURL(/\/initialReports\/viewAll$/, { timeout: 10000 });
+      await expect(
+        dnaPage.locator(".ant-table").first()
+      ).toBeVisible();
+    });
   });
 });

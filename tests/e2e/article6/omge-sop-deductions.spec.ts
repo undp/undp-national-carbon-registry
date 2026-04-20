@@ -37,7 +37,7 @@
  */
 import { test, expect } from "./support/fixtures";
 import { BASE_URL } from "./support/auth";
-import { uniqueSuffix } from "./support/factories";
+import { seedCreditBlockDirect, uniqueSuffix } from "./support/factories";
 import { expectOk } from "./support/api-client";
 
 // ---------------------------------------------------------------------
@@ -263,25 +263,38 @@ test.describe("OMGE/SOP Deductions - Article 6.2", () => {
       }
     });
 
-    test.fixme(
-      "a freshly issued block with autoDeductAtIssuance=true has both flags set to true",
-      async () => {
-        // Issuance is driven by the programme-lifecycle NDC action flow
-        // rather than a direct /issueCredits endpoint. Setting up the
-        // fixture is the same blocker flagged in Phase 2's spec
-        // (tests/e2e/article6/itmo-lifecycle.spec.ts describe
-        // "API: issuance & first-transfer bindings (deferred)").
-        //
-        // Once /issueCredits is exposed or a programme factory lands in
-        // support/factories.ts, this test should:
-        //   1. create a CA (via createCooperativeApproach()),
-        //   2. create a programme bound to it,
-        //   3. issue N credits,
-        //   4. query the resulting CreditBlocksEntity row, and assert
-        //      omgeDeductedAtIssuance === true and
-        //      sopDeductedAtIssuance === true.
-      }
-    );
+    test("a credit block seeded with both flags=true is round-tripped by queryBalance", async ({
+      apiDna,
+    }) => {
+      // Shape-only check: exercises that the view columns
+      // omgeDeductedAtIssuance / sopDeductedAtIssuance are returned as
+      // booleans matching the seeded value. The actual service logic
+      // that sets these on issuance is exercised when /issueCredits is
+      // HTTP-reachable (deferred — see the no-double-deduction fixme).
+      const seeded = seedCreditBlockDirect({
+        ownerCompanyId: 1,
+        creditAmount: 1000,
+        accountType: "Holding",
+        omgeDeductedAtIssuance: true,
+        sopDeductedAtIssuance: true,
+      });
+      const res = await apiDna.post(
+        "national/creditTransactionsManagement/queryBalance",
+        {
+          page: 1,
+          size: 50,
+          sort: { key: "createdDate", order: "DESC" },
+        }
+      );
+      await expectOk(res, "queryBalance after flag seed");
+      const body = await apiDna.json<any>(res);
+      const data = body?.data ?? body;
+      const rows = Array.isArray(data) ? data : data?.data ?? [];
+      const match = rows.find((r: any) => r.id === seeded.creditBlockId);
+      expect(match, "seeded block with flags not in balance view").toBeTruthy();
+      expect(match.omgeDeductedAtIssuance).toBe(true);
+      expect(match.sopDeductedAtIssuance).toBe(true);
+    });
 
     test.fixme(
       "issuing with ITMO_AUTO_DEDUCT_AT_ISSUANCE=false leaves both flags false",

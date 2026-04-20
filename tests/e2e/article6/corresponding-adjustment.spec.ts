@@ -46,7 +46,11 @@
  */
 import { test, expect } from "./support/fixtures";
 import { BASE_URL } from "./support/auth";
-import { createCooperativeApproach, uniqueSuffix } from "./support/factories";
+import {
+  createCooperativeApproach,
+  seedEmissionRowDirect,
+  uniqueSuffix,
+} from "./support/factories";
 import { expectOk } from "./support/api-client";
 
 // ---------------------------------------------------------------------
@@ -251,17 +255,35 @@ test.describe("Corresponding Adjustment - Article 6.2", () => {
       }
     });
 
-    test.fixme(
-      "safeguard fail path: large firstTransferred + low ndcTarget sets safeguardCheckPassed=false",
-      async () => {
-        // Requires either (a) an Emission row for the reporting year
-        // in the configured systemCountry AND CreditTransactions that
-        // push adjustedEmissions above ndcTarget, or (b) an api to
-        // inject CreditTransactionsEntity rows directly. Neither is
-        // available to Playwright in this fixture set; the analogous
-        // fail-path spec exists as a unit test in the service package.
-      }
-    );
+    test("safeguard fail path: emission > ndcTarget sets safeguardCheckPassed=false", async ({
+      apiDna,
+    }) => {
+      // Seed an Emission row with a large co2eq for a unique year, then
+      // call /calculate with a tiny ndcTarget so adjustedEmissions >
+      // ndcTarget. The Emission row is the only prerequisite because
+      // emissionsBalance can be zero (no transactions) and the
+      // safeguard comparison still fires.
+      const year = 2300 + Math.floor(Math.random() * 100);
+      seedEmissionRowDirect({
+        year,
+        country: "NG",
+        co2eqWithoutLand: 1000000,
+      });
+      const res = await apiDna.post(
+        "national/correspondingAdjustment/calculate",
+        {
+          year,
+          ndcType: "SingleYear",
+          caMethod: "Trajectory",
+          ndcTarget: 1,
+        }
+      );
+      expect(res.status()).toBe(201);
+      const body = await apiDna.json<any>(res);
+      const ca = body?.data ?? body;
+      expect(ca.safeguardCheckPassed).toBe(false);
+      expect(ca.safeguardNotes).toMatch(/exceed NDC target/i);
+    });
 
     test("cooperativeApproachId filter scopes the aggregation (no cross-contamination)", async ({
       apiDna,
@@ -589,17 +611,60 @@ test.describe("Corresponding Adjustment - Article 6.2", () => {
       ).toBeVisible();
     });
 
-    test.fixme(
-      "Submitting the Calculate form renders the results card with a Safeguard tag",
-      async () => {
-        // Requires driving antd InputNumber + Select reliably in a
-        // headless browser (the antd Select dropdown portal lands
-        // outside the form's DOM subtree and requires extra scoping).
-        // The underlying POST path is already covered by the
-        // "API: calculate > POST /calculate returns 201 ..." test;
-        // promoting this UI flow is deferred until a shared antd
-        // helper is added to support/factories.ts.
-      }
-    );
+    test("Submitting the Calculate form renders the results card with a Safeguard tag", async ({
+      dnaPage,
+    }) => {
+      await dnaPage.goto(`${BASE_URL}/correspondingAdjustments/calculate`);
+      await dnaPage.waitForLoadState("networkidle");
+
+      // Year (antd InputNumber renders an <input role="spinbutton">)
+      const yearInput = dnaPage.locator("input#year");
+      await yearInput.fill(String(2110 + Math.floor(Math.random() * 20)));
+
+      // NDC Type select — scope to the Form.Item with that label to
+      // avoid the "Cooperative Approach" optional Select above it.
+      const ndcTypeItem = dnaPage
+        .locator(".ant-form-item")
+        .filter({ hasText: /^\s*NDC Type/i });
+      await ndcTypeItem.locator(".ant-select-selector").click();
+      await dnaPage
+        .locator(".ant-select-dropdown:visible .ant-select-item-option")
+        .filter({ hasText: /Single-Year Target/i })
+        .first()
+        .click();
+
+      // CA Method select.
+      const methodItem = dnaPage
+        .locator(".ant-form-item")
+        .filter({ hasText: /^\s*CA Method/i });
+      await methodItem.locator(".ant-select-selector").click();
+      await dnaPage
+        .locator(".ant-select-dropdown:visible .ant-select-item-option")
+        .filter({ hasText: /Trajectory/i })
+        .first()
+        .click();
+
+      // Submit via the Calculate button inside the form.
+      const calcResp = dnaPage.waitForResponse(
+        (r) =>
+          /correspondingAdjustment\/calculate/.test(r.url()) &&
+          r.request().method() === "POST"
+      );
+      await dnaPage
+        .locator("button[type='submit']", { hasText: /Calculate/i })
+        .first()
+        .click();
+      const resp = await calcResp;
+      expect(resp.status()).toBe(201);
+
+      // Results card renders an Alert "Safeguard Check Passed" or
+      // "Safeguard Check Failed" (caCalculation.tsx lines 155-170).
+      await expect(
+        dnaPage
+          .locator(".ant-alert")
+          .filter({ hasText: /Safeguard Check (Passed|Failed)/i })
+          .first()
+      ).toBeVisible({ timeout: 5000 });
+    });
   });
 });

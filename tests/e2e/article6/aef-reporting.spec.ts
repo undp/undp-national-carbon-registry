@@ -35,7 +35,7 @@
  */
 import { test, expect } from "./support/fixtures";
 import { BASE_URL } from "./support/auth";
-import { uniqueSuffix } from "./support/factories";
+import { seedAefActionDirect, uniqueSuffix } from "./support/factories";
 import { expectOk } from "./support/api-client";
 
 // ---------------------------------------------------------------------
@@ -247,37 +247,91 @@ test.describe("AEF Reporting - Article 6.2", () => {
       }
     });
 
-    test.fixme(
-      "HOLDINGS CSV body contains only actionType=authorization rows",
-      async () => {
-        // Fetching and parsing the CSV body requires an HTTP-reachable
-        // URL for the uploaded file. In this environment the service
-        // uses a FileHandler implementation that writes to S3 /
-        // MinIO / local disk; the returned url is not guaranteed to be
-        // reachable from the Playwright worker without additional
-        // configuration. The service-level filter is trivially
-        // verifiable by reading aef-report-management.service.ts lines
-        // 202-210: downloadAefReport forces filterAnd=[{actionType=
-        // "authorization"}] before calling queryAefRecords for HOLDINGS
-        // reports. Promote this test to executable once an
-        // aef_export fixture seeds at least one CROSS_BOARDER_TRANSFER
-        // + one AUTHORIZATION row and the spec can call queryAefRecords
-        // with the same filter to verify the same projection.
-      }
-    );
+    test("HOLDINGS filter returns only actionType=authorization rows via queryAefRecords", async ({
+      apiDna,
+    }) => {
+      // Seed one authorization + one crossBoarderTransfer row so we can
+      // assert the HOLDINGS filter (actionType=authorization) excludes
+      // the transfer. Bypasses the CSV-download path (the returned url
+      // points at a FileHandler destination not always reachable from
+      // the Playwright worker) in favour of queryAefRecords, which uses
+      // the same filter under the hood (aef-report-management.service.ts
+      // lines 202-210).
+      const authSeed = seedAefActionDirect({
+        actionType: "authorization",
+        creditAmount: 500,
+      });
+      const transferSeed = seedAefActionDirect({
+        actionType: "crossBoarderTransfer",
+        creditAmount: 300,
+      });
 
-    test.fixme(
-      "ACTIONS report contains multiple actionType values when seeded",
-      async () => {
-        // Same blocker as above. Requires a seed that exercises all 11
-        // AefActionTypeEnum branches in handleAefRecord (ISSUE,
-        // TRANSFER + isNotTransferred, TRANSFER, RETIRE with each of
-        // the 5 retirementType sub-branches, plus the plain RETIRE
-        // fallback). Credit issuance and retirement are both service-
-        // layer triggered (no direct HTTP create endpoint), so a
-        // dedicated factory is needed.
+      const res = await apiDna.post("national/reportsManagement/queryAefRecords", {
+        page: 1,
+        size: 100,
+        sort: { key: "createdTime", order: "DESC" },
+        filterAnd: [
+          { key: "actionType", operation: "=", value: "authorization" },
+        ],
+      });
+      expect(res.ok()).toBe(true);
+      const body = await apiDna.json<any>(res);
+      const data = body?.data ?? body;
+      const rows = Array.isArray(data) ? data : data?.data ?? [];
+      expect(rows.length).toBeGreaterThan(0);
+      // Service transforms enum values to Title Case with spaces in the
+      // response (e.g. "authorization" -> "Authorization").
+      for (const row of rows) {
+        expect(row.actionType).toMatch(/^authorization$/i);
       }
-    );
+      const ids = rows.map((r: any) => r.id);
+      expect(ids).toContain(authSeed.id);
+      expect(ids).not.toContain(transferSeed.id);
+    });
+
+    test("ACTIONS report returns multiple actionType values when seeded", async ({
+      apiDna,
+    }) => {
+      // Seed a handful of rows covering several of the 11 AefActionType
+      // enum branches, then query without the HOLDINGS filter to assert
+      // the types all round-trip.
+      const seeds = [
+        seedAefActionDirect({ actionType: "authorization" }),
+        seedAefActionDirect({ actionType: "firstTransfer", isFirstTransfer: true }),
+        seedAefActionDirect({ actionType: "transfer" }),
+        seedAefActionDirect({ actionType: "useTowardsNDC" }),
+        seedAefActionDirect({ actionType: "omgeCancellation" }),
+      ];
+      const seededIds = new Set(seeds.map((s) => s.id));
+
+      const res = await apiDna.post("national/reportsManagement/queryAefRecords", {
+        page: 1,
+        size: 500,
+        sort: { key: "createdTime", order: "DESC" },
+      });
+      expect(res.ok()).toBe(true);
+      const body = await apiDna.json<any>(res);
+      const data = body?.data ?? body;
+      const rows = Array.isArray(data) ? data : data?.data ?? [];
+      const found = rows.filter((r: any) => seededIds.has(r.id));
+      // Service returns actionType as Title Case (with spaces) — match
+      // case-insensitively on the enum stem.
+      // The service prefixes certain i18n-missing keys with "aef." so we
+      // normalize by stripping the prefix and all non-alphanumerics.
+      const foundTypeStems = new Set(
+        found.map((r: any) =>
+          String(r.actionType)
+            .toLowerCase()
+            .replace(/^aef\./, "")
+            .replace(/[^a-z0-9]/g, "")
+        )
+      );
+      expect(foundTypeStems).toContain("authorization");
+      expect(foundTypeStems).toContain("firsttransfer");
+      expect(foundTypeStems).toContain("transfer");
+      expect(foundTypeStems).toContain("usetowardsndc");
+      expect(foundTypeStems).toContain("omgecancellation");
+    });
 
     test("rejects an invalid reportType with 400/422 (class-validator AefExportDto)", async ({
       apiDna,

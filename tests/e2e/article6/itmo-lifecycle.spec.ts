@@ -25,7 +25,11 @@
  */
 import { test, expect } from "./support/fixtures";
 import { BASE_URL } from "./support/auth";
-import { uniqueSuffix } from "./support/factories";
+import {
+  createCooperativeApproach,
+  seedCreditBlockDirect,
+  uniqueSuffix,
+} from "./support/factories";
 import { expectOk } from "./support/api-client";
 
 // ---------------------------------------------------------------------
@@ -325,18 +329,43 @@ test.describe("ITMO Lifecycle - Article 6.2", () => {
   // reachable via HTTP. Documented via test.fixme.
   // ------------------------------------------------------------------
   test.describe("API: issuance & first-transfer bindings (deferred)", () => {
-    test.fixme(
-      "issuing credits against a CA sets cooperativeApproachId + accountType=Holding on the block",
-      async () => {
-        // Credit issuance in this registry happens via the programme
-        // lifecycle (project creation -> NDC actions -> issuance
-        // trigger) rather than a direct POST /issueCredits endpoint.
-        // The credit block inherits cooperativeApproachId +
-        // authorizationPurpose from upstream programme metadata, which
-        // this spec can't seed cheaply. Expose an /issueCredits fixture
-        // in support/factories.ts to enable this test.
-      }
-    );
+    test("a credit block linked to a CA surfaces cooperativeApproachId + accountType=Holding in queryBalance", async ({
+      apiDna,
+    }) => {
+      // Uses seedCreditBlockDirect (test-only SQL insert) because there
+      // is no cheap HTTP fixture for programme issuance. Once such a
+      // fixture exists, replace with the full programme->NDC->issue
+      // flow to additionally verify that the service (not the DB) sets
+      // these fields.
+      const ca = await createCooperativeApproach(apiDna, {
+        title: `Block+CA ${uniqueSuffix()}`,
+      });
+      const seeded = seedCreditBlockDirect({
+        ownerCompanyId: 1, // PD Admin (Org 2) — any existing company
+        creditAmount: 1000,
+        cooperativeApproachId: ca.cooperativeApproachId,
+        authorizationPurpose: "UseTowardsNDC",
+        accountType: "Holding",
+      });
+
+      const res = await apiDna.post(
+        "national/creditTransactionsManagement/queryBalance",
+        {
+          page: 1,
+          size: 50,
+          sort: { key: "createdDate", order: "DESC" },
+        }
+      );
+      await expectOk(res, "queryBalance after seed");
+      const body = await apiDna.json<any>(res);
+      const data = body?.data ?? body;
+      const rows = Array.isArray(data) ? data : data?.data ?? [];
+      const match = rows.find((r: any) => r.id === seeded.creditBlockId);
+      expect(match, `seeded block ${seeded.creditBlockId} not in balance view`).toBeTruthy();
+      expect(match.cooperativeApproachId).toBe(ca.cooperativeApproachId);
+      expect(match.accountType).toBe("Holding");
+      expect(match.authorizationPurpose).toBe("UseTowardsNDC");
+    });
 
     test.fixme(
       "isFirstTransfer=true on the first outgoing transfer and false on subsequent transfers",
