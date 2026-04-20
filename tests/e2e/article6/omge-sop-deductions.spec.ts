@@ -304,7 +304,7 @@ test.describe("OMGE/SOP Deductions - Article 6.2", () => {
   // ------------------------------------------------------------------
   test.describe("Account routing: CANCELLATION_OMGE / CANCELLATION_SOP", () => {
     for (const accountType of CANCELLATION_ACCOUNTS) {
-      test.fixme(`queryBalance accepts accountType=${accountType} filter (Phase 2 enum value)`, async ({
+      test(`queryBalance accepts accountType=${accountType} filter (Phase 2 enum value)`, async ({
         apiDna,
       }) => {
         const res = await apiDna.post(

@@ -7,8 +7,10 @@ type Fixtures = {
   pdPage: Page;
   icPage: Page;
   apiDna: ApiClient;
+  apiDnaViewOnly: ApiClient;
   apiPd: ApiClient;
   apiIc: ApiClient;
+  apiMinistry: ApiClient;
 };
 
 async function loggedInPage(page: Page, user: UserKey): Promise<Page> {
@@ -38,6 +40,16 @@ export const test = base.extend<Fixtures>({
   },
   apiIc: async ({}, use) => {
     const api = await createApiClient("icAdmin");
+    await use(api);
+    await api.request.dispose();
+  },
+  apiMinistry: async ({}, use) => {
+    const api = await createApiClient("ministryAdmin");
+    await use(api);
+    await api.request.dispose();
+  },
+  apiDnaViewOnly: async ({}, use) => {
+    const api = await createApiClient("dnaViewOnly");
     await use(api);
     await api.request.dispose();
   },

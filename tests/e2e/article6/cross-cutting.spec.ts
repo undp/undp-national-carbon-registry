@@ -491,29 +491,64 @@ test.describe("Article 6.2 - Cross-cutting Integration", () => {
       }
     });
 
-    test.fixme(
-      "Ministry admin has Manage on IR and CA-ADJ (CASL factory mirror of DNA branch)",
-      async () => {
-        // users.csv seeds only DESIGNATED_NATIONAL_AUTHORITY,
-        // PROJECT_DEVELOPER, INDEPENDENT_CERTIFIER, and API_USER. A
-        // Ministry (GOVERNMENT) admin is not present. The CASL factory
-        // at lines 201-226 grants Manage InitialReport and Manage
-        // CorrespondingAdjustment to Ministry Admin/Root, which — per
-        // 06-initial-report.md — mismatches the phase brief's "DNA
-        // only" authorship. Promote this test once a Ministry admin is
-        // seeded.
-      }
-    );
+    test("Ministry admin has Manage on IR and CA-ADJ (CASL factory mirror of DNA branch)", async ({
+      apiMinistry,
+      apiDna,
+    }) => {
+      // CASL factory grants Manage InitialReport + CorrespondingAdjustment
+      // to Ministry admins the same as DNA admins. This documents the
+      // CASL mirror — the UI hides the menu for Ministry but the API
+      // accepts their writes. Seeded user: palinda+ministry@xeptagon.com.
+      const ca = await createCooperativeApproach(apiDna, {
+        title: `Ministry CASL ${uniqueSuffix()}`,
+      });
 
-    test.fixme(
-      "DNA ViewOnly cannot Manage IR (Read only)",
-      async () => {
-        // Same blocker: no ViewOnly user is seeded in users.csv. The
-        // CASL factory lines 161-199 shows DNA + non-ViewOnly gets
-        // Manage; DNA + ViewOnly gets only Read. Promote once a
-        // ViewOnly DNA user is added to the seed.
-      }
-    );
+      // Ministry can generate an IR.
+      const irRes = await apiMinistry.post(
+        "national/initialReport/generate",
+        { cooperativeApproachId: ca.cooperativeApproachId }
+      );
+      await expectOk(irRes, "Ministry IR generate");
+
+      // Ministry can calculate a Corresponding Adjustment.
+      const calcRes = await apiMinistry.post(
+        "national/correspondingAdjustment/calculate",
+        {
+          year: nextFutureYear(),
+          cooperativeApproachId: ca.cooperativeApproachId,
+          ndcType: "SingleYear",
+          caMethod: "Trajectory",
+        }
+      );
+      await expectOk(calcRes, "Ministry CA-ADJ calculate");
+    });
+
+    test("DNA ViewOnly cannot Manage IR (Read only)", async ({
+      apiDnaViewOnly,
+      apiDna,
+    }) => {
+      // CASL factory lines 161-199: DNA Admin/Root/Manager gets Manage;
+      // DNA ViewOnly gets only Read on InitialReport. A ViewOnly user
+      // cannot generate or update an IR, but can query existing ones.
+      const ca = await createCooperativeApproach(apiDna, {
+        title: `ViewOnly CASL ${uniqueSuffix()}`,
+      });
+
+      // Manage (generate) is blocked.
+      const genRes = await apiDnaViewOnly.post(
+        "national/initialReport/generate",
+        { cooperativeApproachId: ca.cooperativeApproachId }
+      );
+      expect(genRes.ok()).toBe(false);
+      expect([401, 403]).toContain(genRes.status());
+
+      // Read (query) is allowed.
+      const queryRes = await apiDnaViewOnly.post(
+        "national/initialReport/query",
+        { page: 1, size: 10, sort: { key: "createdTime", order: "DESC" } }
+      );
+      await expectOk(queryRes, "ViewOnly IR query");
+    });
   });
 
   // ------------------------------------------------------------------

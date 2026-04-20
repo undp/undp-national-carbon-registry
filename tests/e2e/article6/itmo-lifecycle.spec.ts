@@ -208,15 +208,12 @@ test.describe("ITMO Lifecycle - Article 6.2", () => {
   // envelope accepts the new column names.
   // ------------------------------------------------------------------
   test.describe("API: query response shape", () => {
-    test.fixme("POST /creditTransactionsManagement/queryBalance accepts accountType filter", async ({
+    test("POST /creditTransactionsManagement/queryBalance accepts accountType filter", async ({
       apiDna,
     }) => {
-      // GAP (Phase 2 migration): CreditBlocksEntity gained an accountType
-      // column in Phase 2 but credit_block_balances_view_entity was not
-      // updated, so POST /queryBalance with accountType in filterAnd
-      // crashes with `column "accountType" does not exist` (500).
-      // Fix: regenerate/alter the view to expose accountType. See
-      // docs/article6/02-itmo-lifecycle.md Gaps.
+      // Fixed in the accompanying commit: credit_block_balances_view_entity
+      // now exposes accountType (and cooperativeApproachId / authorization
+      // Purpose / omgeDeductedAtIssuance / sopDeductedAtIssuance).
       const res = await apiDna.post(
         "national/creditTransactionsManagement/queryBalance",
         {

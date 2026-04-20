@@ -2,7 +2,7 @@ import { ViewColumn, ViewEntity } from "typeorm";
 
 @ViewEntity({
   expression: `
-    SELECT 
+    SELECT
       cb."creditBlockId" AS "id",
       cb."serialNumber" AS "serialNumber",
       (cb."creditAmount" - cb."reservedCreditAmount") AS "creditAmount",
@@ -15,7 +15,12 @@ import { ViewColumn, ViewEntity } from "typeorm";
       cb."previousOwnerCompanyId" AS "senderId",
       s."name" AS "senderName",
       s."logo" AS "senderLogo",
-      CASE 
+      COALESCE(cb."accountType"::text, 'Holding') AS "accountType",
+      cb."cooperativeApproachId" AS "cooperativeApproachId",
+      cb."authorizationPurpose"::text AS "authorizationPurpose",
+      COALESCE(cb."omgeDeductedAtIssuance", FALSE) AS "omgeDeductedAtIssuance",
+      COALESCE(cb."sopDeductedAtIssuance", FALSE) AS "sopDeductedAtIssuance",
+      CASE
         WHEN cb."isNotTransferred" = TRUE THEN 'issued'
         ELSE 'received'
       END AS "type"
@@ -61,6 +66,21 @@ export class CreditBlockBalancesViewEntity {
 
   @ViewColumn()
   senderLogo: string;
+
+  @ViewColumn()
+  accountType: string;
+
+  @ViewColumn()
+  cooperativeApproachId: string;
+
+  @ViewColumn()
+  authorizationPurpose: string;
+
+  @ViewColumn()
+  omgeDeductedAtIssuance: boolean;
+
+  @ViewColumn()
+  sopDeductedAtIssuance: boolean;
 
   @ViewColumn()
   type: string;

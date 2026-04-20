@@ -5,8 +5,10 @@ export const API_URL = process.env.E2E_API_URL ?? "http://localhost:3000";
 
 export const USERS = {
   dnaAdmin: { email: "palinda+add@xeptagon.com", password: "123" },
+  dnaViewOnly: { email: "palinda+view@xeptagon.com", password: "123" },
   pdAdmin: { email: "palinda+dev@xeptagon.com", password: "123" },
   icAdmin: { email: "palinda+cet@xeptagon.com", password: "123" },
+  ministryAdmin: { email: "palinda+ministry@xeptagon.com", password: "123" },
   apiUser: { email: "palinda+api@xeptagon.com", password: "123" },
 } as const;
 

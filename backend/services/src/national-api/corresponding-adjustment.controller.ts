@@ -45,7 +45,7 @@ export class CorrespondingAdjustmentController {
   @ApiBearerAuth()
   @UseGuards(
     JwtAuthGuard,
-    PoliciesGuardEx(true, Action.Read, CorrespondingAdjustment, true)
+    PoliciesGuardEx(true, Action.Read, CorrespondingAdjustment)
   )
   @Post("query")
   query(@Body() query: QueryDto, @Request() req) {
