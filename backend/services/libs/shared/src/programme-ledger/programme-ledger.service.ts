@@ -44,6 +44,39 @@ import { AccountType } from "../enum/account.type.enum";
 import { AuthorizationPurpose } from "../enum/authorization.purpose.enum";
 import { CreditRetirementTypeEnum } from "../enum/credit.retirement.type.enum";
 
+/**
+ * Map a CreditRetirementTypeEnum selection to the Dec 2/CMA.3 Annex
+ * para 29 account bucket the retired credits land in. Wiring this map
+ * is the final piece of the retirement flow that closes the Phase 2
+ * gap: prior to this commit, the four Article 6.2 retirement types
+ * were accepted by the DTO but never caused the derived retirement
+ * block to carry the right accountType, so AEF Actions rows did not
+ * reflect the authorizing Party's intent.
+ */
+function mapRetirementTypeToAccountType(
+  retirementType: CreditRetirementTypeEnum
+): AccountType {
+  switch (retirementType) {
+    case CreditRetirementTypeEnum.USE_TOWARDS_NDC:
+      return AccountType.RETIREMENT_NDC;
+    case CreditRetirementTypeEnum.USE_FOR_OIMP:
+      return AccountType.RETIREMENT_OIMP;
+    case CreditRetirementTypeEnum.OMGE_CANCELLATION:
+      return AccountType.CANCELLATION_OMGE;
+    case CreditRetirementTypeEnum.SOP_ADAPTATION:
+      return AccountType.CANCELLATION_SOP;
+    case CreditRetirementTypeEnum.VOLUNTARY_CANCELLATIONS:
+      return AccountType.CANCELLATION_VOLUNTARY;
+    case CreditRetirementTypeEnum.CROSS_BORDER_TRANSACTIONS:
+    default:
+      // Cross-border transfer doesn't live in a specific Dec 2/CMA.3
+      // para 29 bucket — the credits move to another Party's
+      // registry. Retain Holding so the local account-type filter
+      // doesn't misclassify it as a cancellation.
+      return AccountType.HOLDING;
+  }
+}
+
 @Injectable()
 export class ProgrammeLedgerService {
   constructor(
@@ -809,6 +842,14 @@ export class ProgrammeLedgerService {
         let updateWhereMap = {};
         let insertMap = {};
         if (retirementAction.action == RetirementACtionEnum.ACCEPT) {
+          // Dec 2/CMA.3 Annex para 29 + Draft -/CMA.5 para 80: the 6
+          // retirement / cancellation account types must end up on the
+          // retired block so AEF Actions rows report the correct
+          // action subtype. Map the retirementType chosen on the
+          // request to the AccountType bucket the credits land in.
+          const accountTypeForRetirement = mapRetirementTypeToAccountType(
+            retireRequestRecord.retirementType
+          );
           if (
             creditBlock.reservedCreditAmount == retireRequestRecord.amount &&
             creditBlock.creditAmount == retireRequestRecord.amount
@@ -828,6 +869,7 @@ export class ProgrammeLedgerService {
               isNotTransferred: false,
               reservedCreditAmount: 0,
               transactionRecords: creditBlock.transactionRecords,
+              accountType: accountTypeForRetirement,
             };
           } else {
             const { firstSerialNumber, secondSerialNumber } =
@@ -884,6 +926,14 @@ export class ProgrammeLedgerService {
                   },
                 ],
                 isNotTransferred: false,
+                // Propagate the Dec 2/CMA.3 para 29 retirement account
+                // bucket + the Phase 2 CA linkage + authorization
+                // purpose to the derived retirement block so AEF
+                // Actions rows carry the correct Article 6.2 metadata.
+                accountType: accountTypeForRetirement,
+                cooperativeApproachId: creditBlock.cooperativeApproachId,
+                authorizationPurpose: creditBlock.authorizationPurpose,
+                itmoSerial: creditBlock.itmoSerial,
               });
           }
           if (creditBlock.isNotTransferred) {
