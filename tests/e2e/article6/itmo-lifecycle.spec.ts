@@ -28,6 +28,7 @@ import { BASE_URL } from "./support/auth";
 import {
   createCooperativeApproach,
   seedCreditBlockDirect,
+  seedCreditBlockLedgerEvent,
   uniqueSuffix,
 } from "./support/factories";
 import { expectOk } from "./support/api-client";
@@ -367,18 +368,123 @@ test.describe("ITMO Lifecycle - Article 6.2", () => {
       expect(match.authorizationPurpose).toBe("UseTowardsNDC");
     });
 
-    test.fixme(
-      "isFirstTransfer=true on the first outgoing transfer and false on subsequent transfers",
-      async () => {
-        // Requires a programme with issued credits and two consecutive
-        // /transfer calls. The existing transfer flow uses the
-        // multi-step ProgrammeTransferRequest -> approve path
-        // (see programme.controller.ts lines 245-286), not
-        // /creditTransactionsManagement/transfer. The isFirstTransfer
-        // flag is set on CreditTransactionsEntity at insert time; no
-        // current test fixture produces the two-transfer sequence.
+    test("isFirstTransfer=true on the first outgoing transfer, false on subsequent transfers", async ({
+      apiDna,
+    }) => {
+      // Dec 2/CMA.3 Annex para 1(a) and Dec 4/CMA.6 Annex II Actions
+      // table distinguish "first transfer" from subsequent transfers.
+      // The replicator consumes ledger events and calls
+      // credit-transactions-management.handleTransactionRecords, which
+      // compares the pre-update CreditBlocksEntity (isNotTransferred)
+      // against the new txType to assign
+      // CreditTransactionTypesEnum.FIRST_TRANSFER.
+      //
+      // Test strategy: seed three ledger events for the same credit
+      // block into carbondevEvents.credit_blocks — (1) ISSUE,
+      // (2) TRANSFER from DNA->PD, (3) a second TRANSFER. Wait for the
+      // replicator (polls every 1s) to process them, then query
+      // credit_transactions_entity and assert the row types.
+      const blockId = `BLK-FT-${uniqueSuffix()}`;
+      const projectRefId = `PROJ-FT-${uniqueSuffix()}`;
+      const serialNumber = `SN-FT-${uniqueSuffix()}`;
+
+      // Event 1: ISSUE. isNotTransferred=true, ownerCompanyId=DNA (6).
+      seedCreditBlockLedgerEvent({
+        creditBlockId: blockId,
+        txRef: "e2e-first-transfer",
+        txType: "2", // ISSUE
+        txTime: Date.now(),
+        previousOwnerCompanyId: 0,
+        ownerCompanyId: 6,
+        projectRefId,
+        serialNumber,
+        vintage: "2025",
+        creditAmount: 1000,
+        isNotTransferred: true,
+        reservedCreditAmount: 0,
+        createTime: Date.now(),
+        accountType: "Holding",
+        omgeDeductedAtIssuance: false,
+        sopDeductedAtIssuance: false,
+        transactionRecords: [],
+      });
+      // Event 2: first TRANSFER — DNA->PD. isNotTransferred flips false.
+      seedCreditBlockLedgerEvent({
+        creditBlockId: blockId,
+        txRef: "e2e-first-transfer",
+        txType: "3", // TRANSFER
+        txTime: Date.now() + 1,
+        previousOwnerCompanyId: 6,
+        ownerCompanyId: 1,
+        projectRefId,
+        serialNumber,
+        vintage: "2025",
+        creditAmount: 1000,
+        isNotTransferred: false,
+        reservedCreditAmount: 0,
+        createTime: Date.now(),
+        accountType: "Holding",
+        omgeDeductedAtIssuance: false,
+        sopDeductedAtIssuance: false,
+        transactionRecords: [],
+      });
+      // Event 3: second TRANSFER — PD -> IC. isNotTransferred still false.
+      seedCreditBlockLedgerEvent({
+        creditBlockId: blockId,
+        txRef: "e2e-first-transfer",
+        txType: "3", // TRANSFER
+        txTime: Date.now() + 2,
+        previousOwnerCompanyId: 1,
+        ownerCompanyId: 2,
+        projectRefId,
+        serialNumber,
+        vintage: "2025",
+        creditAmount: 1000,
+        isNotTransferred: false,
+        reservedCreditAmount: 0,
+        createTime: Date.now(),
+        accountType: "Holding",
+        omgeDeductedAtIssuance: false,
+        sopDeductedAtIssuance: false,
+        transactionRecords: [],
+      });
+
+      // Poll the API until the replicator has persisted both transfer
+      // rows. Replicator polls every 1s.
+      const deadline = Date.now() + 15000;
+      let transferRows: any[] = [];
+      while (Date.now() < deadline) {
+        const res = await apiDna.post(
+          "national/creditTransactionsManagement/queryTransfers",
+          {
+            page: 1,
+            size: 100,
+            sort: { key: "createdDate", order: "DESC" },
+          }
+        );
+        if (res.ok()) {
+          const body = await apiDna.json<any>(res);
+          const data = body?.data ?? body;
+          const rows = Array.isArray(data) ? data : data?.data ?? [];
+          transferRows = rows.filter(
+            (r: any) => r.serialNumber === serialNumber
+          );
+          if (transferRows.length >= 2) break;
+        }
+        await new Promise((r) => setTimeout(r, 1000));
       }
-    );
+      expect(transferRows.length, `expected 2 transfer rows for ${serialNumber}`).toBeGreaterThanOrEqual(2);
+
+      // Exactly one row is the first transfer.
+      const firstTransferRows = transferRows.filter(
+        (r: any) => r.isFirstTransfer === true
+      );
+      const subsequentRows = transferRows.filter(
+        (r: any) => r.isFirstTransfer === false
+      );
+      expect(firstTransferRows.length).toBe(1);
+      expect(subsequentRows.length).toBeGreaterThanOrEqual(1);
+    });
 
     test.fixme(
       "ItmoAccount records can be queried for a company",

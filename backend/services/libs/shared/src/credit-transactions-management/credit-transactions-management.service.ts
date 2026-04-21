@@ -398,7 +398,8 @@ export class CreditTransactionsManagementService {
 
   public async handleTransactionRecords(
     creditBlock: CreditBlocksEntity,
-    em: EntityManager
+    em: EntityManager,
+    previousCreditBlock?: CreditBlocksEntity
   ) {
     if (creditBlock.txType == TxType.ISSUE) {
       const id = await this.counterService.incrementCount(
@@ -415,6 +416,12 @@ export class CreditTransactionsManagementService {
         serialNumber: creditBlock.serialNumber,
         amount: creditBlock.creditAmount,
         projectRefId: creditBlock.projectRefId,
+        // Propagate Phase 2 Article 6.2 metadata from the block so
+        // annual AEF tables (Dec 4/CMA.6 Annex II Actions + Holdings)
+        // can surface them without a join against credit_blocks_entity.
+        cooperativeApproachId: creditBlock.cooperativeApproachId,
+        authorizationPurpose: creditBlock.authorizationPurpose,
+        toAccountType: creditBlock.accountType,
       });
       await em.save(CreditTransactionsEntity, newIssueRecord);
     } else if (creditBlock.txType == TxType.TRANSFER) {
@@ -422,16 +429,34 @@ export class CreditTransactionsManagementService {
         CounterType.CREDIT_TRANSACTIONS,
         0
       );
+      // Dec 2/CMA.3 Annex para 1(a) and Dec 4/CMA.6 Annex II Actions
+      // table both distinguish a "first transfer" from subsequent
+      // transfers because the first transfer is the event that
+      // finalises authorization and triggers the corresponding
+      // adjustment obligation. We infer "first transfer" from the
+      // pre-update block state: a block is being first-transferred
+      // iff it had isNotTransferred === true before this update and
+      // the tx type is TRANSFER.
+      const isFirstTransfer = Boolean(
+        previousCreditBlock && previousCreditBlock.isNotTransferred === true
+      );
       const newTranferRecord = plainToClass(CreditTransactionsEntity, {
         id: id,
         senderId: creditBlock.previousOwnerCompanyId,
         recieverId: creditBlock.ownerCompanyId,
-        type: CreditTransactionTypesEnum.TRANSFERED,
+        type: isFirstTransfer
+          ? CreditTransactionTypesEnum.FIRST_TRANSFER
+          : CreditTransactionTypesEnum.TRANSFERED,
         status: CreditTransactionStatusEnum.COMPLETED,
         creditBlockId: creditBlock.creditBlockId,
         serialNumber: creditBlock.serialNumber,
         amount: creditBlock.creditAmount,
         projectRefId: creditBlock.projectRefId,
+        isFirstTransfer,
+        cooperativeApproachId: creditBlock.cooperativeApproachId,
+        authorizationPurpose: creditBlock.authorizationPurpose,
+        fromAccountType: previousCreditBlock?.accountType,
+        toAccountType: creditBlock.accountType,
       });
       await em.save(CreditTransactionsEntity, newTranferRecord);
     } else if (creditBlock.txType == TxType.RETIRE_REQ) {
@@ -481,7 +506,11 @@ export class CreditTransactionsManagementService {
         updatedTranferRecord
       );
     }
-    await this.aefReportManagementService.handleAefRecord(creditBlock, em);
+    await this.aefReportManagementService.handleAefRecord(
+      creditBlock,
+      em,
+      previousCreditBlock
+    );
   }
 
   public async queryCreditBalances(

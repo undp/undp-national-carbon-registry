@@ -178,6 +178,28 @@ export function setInitialReportStatusDirect(
 }
 
 /**
+ * Seed a credit_blocks ledger event in carbondevEvents. The
+ * ledger-replicator (a separate container) polls this table every 1s
+ * and produces CreditBlocksEntity + CreditTransactionsEntity rows in
+ * the RDBMS. Used by the isFirstTransfer behaviour test to simulate
+ * an ISSUE followed by a TRANSFER for the same credit block so the
+ * replicator's pre-vs-post comparison can assign
+ * CreditTransactionTypesEnum.FIRST_TRANSFER correctly per
+ * Dec 2/CMA.3 Annex para 1(a).
+ */
+export function seedCreditBlockLedgerEvent(data: Record<string, any>): void {
+  const container = process.env.E2E_DB_CONTAINER ?? "db";
+  const sql = `
+    INSERT INTO credit_blocks (data, meta)
+    VALUES ('${JSON.stringify(data).replace(/'/g, "''")}'::jsonb, '{}'::jsonb);
+  `.replace(/\s+/g, " ").trim();
+  execSync(
+    `podman exec ${container} psql -U root -d carbondevEvents -c ${JSON.stringify(sql)}`,
+    { stdio: ["ignore", "ignore", "pipe"] }
+  );
+}
+
+/**
  * Seed an aef_actions_table_entity row directly. Used by aef-reporting
  * spec row-content tests because there is no HTTP fixture for producing
  * AEF action rows (they are populated as a side effect of the programme

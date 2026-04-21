@@ -77,11 +77,34 @@ export class AefReportManagementService {
     private fileHandler: FileHandlerInterface
   ) {}
 
-  public async handleAefRecord(creditBlock: CreditBlocksEntity, em: EntityManager) {
+  public async handleAefRecord(
+    creditBlock: CreditBlocksEntity,
+    em: EntityManager,
+    previousCreditBlock?: CreditBlocksEntity
+  ) {
     if (![TxType.ISSUE, TxType.TRANSFER, TxType.RETIRE].includes(creditBlock.txType)) {
       return;
     }
     const project = await this.programmeLedgerService.getProjectById(creditBlock.projectRefId);
+    // In production, every credit-block event is always tied to a project
+    // that was persisted first. If the project lookup returns null, we
+    // are looking at an orphan (e.g. test fixture seeded out of band);
+    // skip AEF emission rather than crashing the replicator. Without
+    // this guard a single bad ledger row would loop-retry forever and
+    // halt downstream replication.
+    if (!project) {
+      return;
+    }
+    // Dec 2/CMA.3 Annex para 1(a) + Dec 4/CMA.6 Annex II Actions table:
+    // a transfer is the "first transfer" of a block iff the block was
+    // not yet transferred at the moment the transfer began. The pre-
+    // update state lives in previousCreditBlock; the post-update state
+    // already has isNotTransferred=false (flipped by the transfer), so
+    // inspecting the live block's flag would always evaluate false.
+    const isFirstTransfer = Boolean(
+      creditBlock.txType === TxType.TRANSFER &&
+        previousCreditBlock?.isNotTransferred === true
+    );
     const newAefActionRecord = plainToClass(AefActionsTableEntity, {
       creditBlockStartId: this.serialNumberManagementService.getBlockStartId(
         creditBlock.serialNumber
@@ -98,18 +121,15 @@ export class AefReportManagementService {
       cooperativeApproachId: creditBlock.cooperativeApproachId || null,
       authorizationPurpose: creditBlock.authorizationPurpose || null,
       acquiringPartyCountryCode: project.acquiringPartyCountryCode || null,
-      isFirstTransfer: creditBlock.isNotTransferred && creditBlock.txType === TxType.TRANSFER,
+      isFirstTransfer,
       reportingYear: new Date(creditBlock.txTime).getFullYear(),
     });
     if (creditBlock.txType == TxType.ISSUE) {
       newAefActionRecord.actionType = AefActionTypeEnum.AUTHORIZATION;
     } else if (creditBlock.txType == TxType.TRANSFER) {
-      if (creditBlock.isNotTransferred) {
-        newAefActionRecord.actionType = AefActionTypeEnum.FIRST_TRANSFER;
-        newAefActionRecord.isFirstTransfer = true;
-      } else {
-        newAefActionRecord.actionType = AefActionTypeEnum.TRANSFER;
-      }
+      newAefActionRecord.actionType = isFirstTransfer
+        ? AefActionTypeEnum.FIRST_TRANSFER
+        : AefActionTypeEnum.TRANSFER;
     } else if (creditBlock.txType == TxType.RETIRE) {
       const txData: CreditRetireActionDto = creditBlock.txData;
       if (txData && txData.action == RetirementACtionEnum.ACCEPT) {
