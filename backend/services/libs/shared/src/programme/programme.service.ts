@@ -56,6 +56,8 @@ import { CountryService } from "../util/country.service";
 import { Programme } from "../entities/programme.entity";
 import { InitialReport } from "../entities/initial.report.entity";
 import { InitialReportStatus } from "../enum/initial.report.status.enum";
+import { CooperativeApproach } from "../entities/cooperative.approach.entity";
+import { CooperativeApproachStatus } from "../enum/cooperative.approach.status.enum";
 import { ConstantEntity } from "../entities/constants.entity";
 import { CounterType } from "../util/counter.type.enum";
 import { DataListResponseDto } from "../dto/data.list.response";
@@ -200,7 +202,11 @@ export class ProgrammeService {
     // InitialReport so we can refuse authorizeProgramme for an Article
     // 6.2 programme whose cooperative approach has no submitted IR.
     @InjectRepository(InitialReport)
-    private initialReportRepo: Repository<InitialReport>
+    private initialReportRepo: Repository<InitialReport>,
+    // Draft -/CMA.5 paras 20-21 guard: refuse authorizeProgramme when
+    // the linked cooperative approach has been revoked.
+    @InjectRepository(CooperativeApproach)
+    private cooperativeApproachRepo: Repository<CooperativeApproach>
   ) {}
 
   private fileExtensionMap = new Map([
@@ -6410,6 +6416,25 @@ export class ProgrammeService {
       if (!program.cooperativeApproachId) {
         throw new HttpException(
           "Article 6.2 programmes must be linked to a cooperative approach before authorization (Dec 2/CMA.3 Annex para 18).",
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      // Draft -/CMA.5 paras 20-21: a revoked cooperative approach
+      // cannot be the source of new first transfers or authorizations.
+      // Completed approaches are also terminal and should not mint new
+      // ITMOs; only Active (post-Draft) approaches can authorize.
+      const ca = await this.cooperativeApproachRepo.findOne({
+        where: { cooperativeApproachId: program.cooperativeApproachId },
+      });
+      if (!ca) {
+        throw new HttpException(
+          `Cooperative approach ${program.cooperativeApproachId} not found.`,
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      if (ca.status === CooperativeApproachStatus.REVOKED) {
+        throw new HttpException(
+          `Cooperative approach ${program.cooperativeApproachId} has been revoked; new ITMO authorizations are not permitted (Draft -/CMA.5 paras 20-21).`,
           HttpStatus.BAD_REQUEST
         );
       }

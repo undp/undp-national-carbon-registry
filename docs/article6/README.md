@@ -38,7 +38,7 @@ These are the items most likely to matter in a UNFCCC compliance audit. Detail i
 
 7. **No TER (Article 6 Technical Expert Review) workflow** — `SUBMITTED` status is the terminal state reachable via HTTP; there is no review, feedback, or approval channel before publication. [06-initial-report.md](./06-initial-report.md)
 
-8. **No CA revocation or revision workflow** per Draft -/CMA.5 ¶¶ on revocation — once a Cooperative Approach status reaches `COMPLETED`, there is no mechanism for withdrawing authorization or handling post-authorization revisions. [01-cooperative-approach.md](./01-cooperative-approach.md), [07-cross-cutting.md](./07-cross-cutting.md)
+8. ~~No CA revocation or revision workflow~~ — **RESOLVED for revocation**. `CooperativeApproachStatus` gains a `REVOKED` terminal value per Draft -/CMA.5 ¶¶20-21. `programme.service.authorizeProgramme` refuses to mint ITMOs for a Revoked CA, returning HTTP 400 with a message that cites the paragraph. Revision workflow (para 19 — handling of changes to an active CA) remains open. [01-cooperative-approach.md](./01-cooperative-approach.md), [07-cross-cutting.md](./07-cross-cutting.md)
 
 9. **Safeguard check silently defaults to `true`** when national emissions data is missing — the Corresponding Adjustment service persists `safeguardCheckPassed=true` when the `Emission` entity lacks a row for the target year, which could mask genuine violations. [05-corresponding-adjustment.md](./05-corresponding-adjustment.md)
 

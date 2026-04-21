@@ -674,23 +674,47 @@ test.describe("Article 6.2 - Cross-cutting Integration", () => {
       expect(body).not.toMatch(/para 18/i);
     });
 
-    test.fixme(
-      "Revoked CA cannot be the source of a new first transfer (Draft -/CMA.5 paras 20-21)",
-      async () => {
-        // Draft -/CMA.5 paras 20-21 describe revocation conditions for
-        // cooperative approaches. The registry today has no
-        // revocation endpoint — CooperativeApproachStatus supports
-        // Suspended and Completed, but NO REVOKED value. There is no
-        // test of whether a Suspended CA can still be used as the
-        // first-transfer source (semantics of Suspended vs Revoked are
-        // not defined in code).
-        //
-        // Blocked by: (a) no Revoked status in the enum; (b) no guard
-        // tying CA status to credit-issuance eligibility; (c) no
-        // HTTP-reachable ITMO issuance endpoint. Promote once a
-        // revocation workflow is added per Draft -/CMA.5 para 20.
-      }
-    );
+    test("Revoked CA cannot be the source of a new ITMO authorization (Draft -/CMA.5 paras 20-21)", async ({
+      apiDna,
+    }) => {
+      // CooperativeApproachStatus gains a REVOKED terminal value in
+      // this blocker fix. authorizeProgramme refuses to proceed when
+      // the linked CA has status=Revoked, returning HTTP 400 with a
+      // message that cites the paragraph.
+      const ca = await createCooperativeApproach(apiDna, {
+        title: `Revoked Source ${uniqueSuffix()}`,
+      });
+      // Seed a submitted IR so the para 18 guard does not fire first.
+      const gen = await generateInitialReport(apiDna, {
+        cooperativeApproachId: ca.cooperativeApproachId,
+      });
+      await submitInitialReport(apiDna, gen.reportId);
+      // Flip the CA to Revoked via PUT /update (revocation endpoint).
+      const revokeRes = await apiDna.put(
+        "national/cooperativeApproach/update",
+        {
+          cooperativeApproachId: ca.cooperativeApproachId,
+          status: "Revoked",
+        }
+      );
+      await expectOk(revokeRes, "revoke CA");
+      const seeded = seedProgrammeDirect({
+        companyId: 1,
+        cooperativeApproachId: ca.cooperativeApproachId,
+        article6trade: true,
+        currentStage: "Approved",
+      });
+      const res = await apiDna.put("national/programme/authorize", {
+        programmeId: seeded.programmeId,
+        issueAmount: 100,
+        comment: "should be blocked by revocation",
+      });
+      expect(res.ok()).toBe(false);
+      expect(res.status()).toBe(400);
+      const body = await res.text();
+      expect(body).toMatch(/revoked/i);
+      expect(body).toMatch(/20-21/);
+    });
   });
 
   // ------------------------------------------------------------------
