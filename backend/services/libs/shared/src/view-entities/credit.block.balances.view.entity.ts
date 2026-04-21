@@ -5,6 +5,7 @@ import { ViewColumn, ViewEntity } from "typeorm";
     SELECT
       cb."creditBlockId" AS "id",
       cb."serialNumber" AS "serialNumber",
+      cb."itmoSerial" AS "itmoSerial",
       (cb."creditAmount" - cb."reservedCreditAmount") AS "creditAmount",
       cb."createTime" AS "createdDate",
       cb."projectRefId" AS "projectId",
@@ -36,6 +37,10 @@ export class CreditBlockBalancesViewEntity {
 
   @ViewColumn()
   serialNumber: string;
+
+  // Dec 6/CMA.4 Annex I para 5 ITMO identifier.
+  @ViewColumn()
+  itmoSerial: string;
 
   @ViewColumn()
   creditAmount: number;

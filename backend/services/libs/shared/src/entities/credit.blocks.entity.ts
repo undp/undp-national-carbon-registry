@@ -40,6 +40,14 @@ export class CreditBlocksEntity {
   @Column({ type: "text" })
   serialNumber: string;
 
+  // Dec 6/CMA.4 Annex I para 5: each ITMO must have a unique
+  // 5-component identifier (originating Party / ITMO type / vintage /
+  // mitigation activity / unique sequence). Immutable per Draft -/CMA.5
+  // para 132 — split-not-mutate preserves it. Nullable so legacy blocks
+  // issued prior to this column landing don't block migration.
+  @Column({ type: "text", nullable: true })
+  itmoSerial?: string;
+
   @Column({ type: "text" })
   vintage: string;
 

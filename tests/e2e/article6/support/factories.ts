@@ -36,6 +36,9 @@ export interface SeedCreditBlockInput {
   omgeDeductedAtIssuance?: boolean;
   sopDeductedAtIssuance?: boolean;
   vintage?: string;
+  // Dec 6/CMA.4 Annex I para 5 structured ITMO serial. Optional so
+  // legacy-format tests still compile.
+  itmoSerial?: string;
 }
 
 export function seedCreditBlockDirect(
@@ -55,17 +58,18 @@ export function seedCreditBlockDirect(
   const accountType = input.accountType ?? "Holding";
   const omge = input.omgeDeductedAtIssuance ? "TRUE" : "FALSE";
   const sop = input.sopDeductedAtIssuance ? "TRUE" : "FALSE";
+  const itmoSerialSql = input.itmoSerial ? `'${input.itmoSerial}'` : "NULL";
 
   const sql = `
     INSERT INTO credit_blocks_entity (
       "creditBlockId","txRef","txType","txTime",
-      "ownerCompanyId","projectRefId","serialNumber","vintage",
+      "ownerCompanyId","projectRefId","serialNumber","itmoSerial","vintage",
       "creditAmount","isNotTransferred","reservedCreditAmount","createTime",
       "cooperativeApproachId","authorizationPurpose",
       "accountType","omgeDeductedAtIssuance","sopDeductedAtIssuance"
     ) VALUES (
       '${creditBlockId}','e2e-fixture','2',(EXTRACT(EPOCH FROM NOW())::bigint * 1000),
-      ${input.ownerCompanyId},'${projectRefId}','${serialNumber}','${vintage}',
+      ${input.ownerCompanyId},'${projectRefId}','${serialNumber}',${itmoSerialSql},'${vintage}',
       ${input.creditAmount}, TRUE, 0, (EXTRACT(EPOCH FROM NOW())::bigint * 1000),
       ${cooperativeApproachIdSql}, ${authorizationPurposeSql},
       '${accountType}', ${omge}, ${sop}

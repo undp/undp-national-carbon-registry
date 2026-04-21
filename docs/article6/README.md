@@ -24,7 +24,7 @@ These are the items most likely to matter in a UNFCCC compliance audit. Detail i
 
 1. ~~Decision 2/CMA.3 ¶18 is not enforced~~ — **RESOLVED**. `programme.service.authorizeProgramme` now checks that any `article6trade` programme has a linked `cooperativeApproachId` with a submitted (or published) `InitialReport`, and returns `HTTP 400` citing the paragraph when the prerequisite is missing. See [06-initial-report.md](./06-initial-report.md) Gaps (struck-through entry) and the two cross-cutting tests under "Sequencing invariants" that verify both the deny path and the pass path.
 
-2. **No structured 5-component ITMO serial number** per Decision 6/CMA.4 Annex I ¶5 — the registry uses opaque credit-block IDs, so ITMO serials are not Article 6 AEF-compliant. [02-itmo-lifecycle.md](./02-itmo-lifecycle.md)
+2. ~~No structured 5-component ITMO serial number~~ — **RESOLVED**. `CreditBlocksEntity` gains an `itmoSerial` column populated at issuance with the UNFCCC 5-component identifier (`{originatingParty}-{itmoType}-{vintage}-{activityId}-{start}:{end}`), `SerialNumberManagementService` exposes `getItmoSerial` / `parseItmoSerial`, and the balance view surfaces the column so AEF Holdings can reference it. Immutability per Draft -/CMA.5 ¶132 is preserved by the registry's split-not-mutate pattern.
 
 3. **Most ITMO lifecycle events are not HTTP-exposed** — `retireToAccount`, `ItmoAccount` CRUD, and the four new Article 6.2 retirement types (`USE_TOWARDS_NDC`, `USE_FOR_OIMP`, `OMGE_CANCELLATION`, `SOP_ADAPTATION`) are service-internal; the UI retirement modal only exposes the two pre-Article-6.2 options. **First-transfer toggling is RESOLVED** (see entry 3b below). [02-itmo-lifecycle.md](./02-itmo-lifecycle.md)
 

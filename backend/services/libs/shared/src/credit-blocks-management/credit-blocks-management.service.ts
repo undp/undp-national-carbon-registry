@@ -199,6 +199,21 @@ export class CreditBlocksManagementService {
       );
     const creditBlockId =
       this.serialNumberManagementService.getCreditBlockId(serialNumber);
+
+    // Dec 6/CMA.4 Annex I para 5 — compose the 5-component ITMO
+    // identifier alongside the registry-internal serialNumber. The ITMO
+    // serial is what appears in AEF Actions / Holdings tables and in
+    // cross-registry transfer notifications; the internal serialNumber
+    // continues to drive block-split arithmetic.
+    const blockStart = alreadyIssuedCredits ? alreadyIssuedCredits + 1 : 1;
+    const blockEnd = blockStart + creditAmount - 1;
+    const itmoSerial = this.serialNumberManagementService.getItmoSerial(
+      project.refId,
+      vintage,
+      blockStart,
+      blockEnd
+    );
+
     const newBlock = plainToClass(CreditBlocksEntity, {
       creditBlockId: creditBlockId,
       txRef: this.getCreditBlockTxRef(
@@ -213,6 +228,7 @@ export class CreditBlocksManagementService {
       ownerCompanyId: project.companyId,
       projectRefId: project.refId,
       serialNumber: serialNumber,
+      itmoSerial: itmoSerial,
       vintage: vintage,
       creditAmount: creditAmount,
       reservedCreditAmount: 0,

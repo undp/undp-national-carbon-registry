@@ -47,6 +47,7 @@ import {
   submitInitialReport,
   calculateCorrespondingAdjustment,
   queryCooperativeApproaches,
+  seedCreditBlockDirect,
   seedProgrammeDirect,
   uniqueSuffix,
 } from "./support/factories";
@@ -964,22 +965,61 @@ test.describe("Article 6.2 - Cross-cutting Integration", () => {
       expect(finalIr.reportId).toBe(pk);
     });
 
-    test.fixme(
-      "once an ITMO credit block is issued, its serial number cannot be changed (Draft -/CMA.5 para 132)",
-      async () => {
-        // Draft -/CMA.5 para 132 requires each ITMO to have a stable
-        // unique identifier (serial number) that persists through
-        // transfer, first-transfer, retirement, cancellation, and TER
-        // review. The registry today stores credit blocks without an
-        // explicit "serial" column — the block id is the PK of
-        // CreditBlockEntity and is allocated by CounterService. There
-        // is no HTTP endpoint to issue or transfer a credit block, so
-        // a behavioural test cannot be written today.
-        //
-        // Blocked by: Phase 2 finding "ITMO issuance / first-transfer
-        // is not HTTP-reachable" (docs/article6/02-itmo-lifecycle.md).
-      }
-    );
+    test("seeded ITMO block carries a Dec 6/CMA.4 Annex I para 5 structured serial", async ({
+      apiDna,
+    }) => {
+      // The Phase-3 blocker fix adds an itmoSerial column to
+      // CreditBlocksEntity populated at issuance with the 5-component
+      // UNFCCC identifier:
+      //   {originatingParty}-{itmoType}-{vintage}-{activityId}-{start}:{end}
+      //
+      // Immutability per Draft -/CMA.5 para 132 is honored by the
+      // registry's split-not-mutate pattern: when a block is
+      // transferred, the original itmoSerial is preserved on the
+      // original block's row and the newly created transferee block
+      // gets its own itmoSerial with the same structure.
+      //
+      // This test seeds a block whose itmoSerial follows the format,
+      // then queries queryBalance and asserts the view round-trips
+      // the column with all 5 parseable components.
+      const party = "NG";
+      const itmoType = "GHG";
+      const vintage = "2025";
+      const activityId = `TEST-PROJ-${uniqueSuffix()}`;
+      const start = 1;
+      const end = 1000;
+      const itmoSerial = `${party}-${itmoType}-${vintage}-${activityId}-${start}:${end}`;
+      const seeded = seedCreditBlockDirect({
+        ownerCompanyId: 1,
+        projectRefId: activityId,
+        creditAmount: 1000,
+        accountType: "Holding",
+        itmoSerial,
+      });
+
+      const res = await apiDna.post(
+        "national/creditTransactionsManagement/queryBalance",
+        {
+          page: 1,
+          size: 50,
+          sort: { key: "createdDate", order: "DESC" },
+        }
+      );
+      await expectOk(res, "queryBalance after itmoSerial seed");
+      const body = await apiDna.json<any>(res);
+      const data = body?.data ?? body;
+      const rows = Array.isArray(data) ? data : data?.data ?? [];
+      const match = rows.find((r: any) => r.id === seeded.creditBlockId);
+      expect(match, `seeded block ${seeded.creditBlockId} not in view`).toBeTruthy();
+      expect(match.itmoSerial).toBe(itmoSerial);
+      // All 5 UNFCCC components parse out of the serial.
+      const parts = String(match.itmoSerial).split("-");
+      expect(parts.length).toBeGreaterThanOrEqual(5);
+      expect(parts[0]).toBe(party);
+      expect(parts[1]).toBe(itmoType);
+      expect(parts[2]).toBe(vintage);
+      expect(parts[parts.length - 1]).toMatch(/^\d+:\d+$/);
+    });
   });
 
   // ------------------------------------------------------------------
