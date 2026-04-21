@@ -19,6 +19,7 @@ import { CooperativeApproachController } from "./cooperative-approach.controller
 import { CorrespondingAdjustmentController } from "./corresponding-adjustment.controller";
 import { InitialReportController } from "./initial-report.controller";
 import { ItmoAccountController } from "./itmo-account.controller";
+import { AdminController } from "./admin.controller";
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { ItmoAccountController } from "./itmo-account.controller";
     CorrespondingAdjustmentController,
     InitialReportController,
     ItmoAccountController,
+    AdminController,
   ],
   providers: [NationalAPIService, Logger],
 })

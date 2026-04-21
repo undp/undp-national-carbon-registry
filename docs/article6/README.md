@@ -42,7 +42,7 @@ These are the items most likely to matter in a UNFCCC compliance audit. Detail i
 
 9. **Safeguard check silently defaults to `true`** when national emissions data is missing — the Corresponding Adjustment service persists `safeguardCheckPassed=true` when the `Emission` entity lacks a row for the target year, which could mask genuine violations. [05-corresponding-adjustment.md](./05-corresponding-adjustment.md)
 
-10. **Voluntary OMGE/SOP deductions have no admin UI** — percentages and the `autoDeductAtIssuance` toggle are env-var-only, with no runtime introspection endpoint. [03-omge-sop-deductions.md](./03-omge-sop-deductions.md)
+10. ~~Voluntary OMGE/SOP deductions have no admin UI — percentages and the `autoDeductAtIssuance` toggle are env-var-only, with no runtime introspection endpoint.~~ **PARTIALLY RESOLVED**. `GET /national/admin/deductionConfig` now exposes the live config (DNA admin/root only). Admin UI for mutating the config still requires env-var + restart — that remains open. [03-omge-sop-deductions.md](./03-omge-sop-deductions.md)
 
 11. **CASL/UI permission drift** — `InitialReport` and `CorrespondingAdjustment` backends permit Ministry role via CASL `Manage`, but the UI navigation is DNA-admin-only. API callers with Ministry credentials can bypass the UI gate. [06-initial-report.md](./06-initial-report.md), [07-cross-cutting.md](./07-cross-cutting.md)
 

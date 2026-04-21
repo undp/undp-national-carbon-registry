@@ -209,17 +209,32 @@ test.describe("OMGE/SOP Deductions - Article 6.2", () => {
       expect(DEFAULT_CONFIG.autoDeductAtIssuance).toBe(true);
     });
 
-    test.fixme(
-      "GET /national/admin/deductionConfig returns the live ITMO deduction config",
-      async () => {
-        // There is no introspection endpoint for
-        // ProgrammeLedgerService.getDeductionConfig(). An admin cannot
-        // see the currently-applied OMGE / SOP percentages at runtime;
-        // they are fixed by ITMO_OMGE_PERCENTAGE / ITMO_SOP_PERCENTAGE /
-        // ITMO_AUTO_DEDUCT_AT_ISSUANCE env vars at process start. See
-        // docs/article6/03-omge-sop-deductions.md Gaps.
-      }
-    );
+    test("GET /national/admin/deductionConfig returns the live ITMO deduction config", async ({
+      apiDna,
+    }) => {
+      // Draft -/CMA.5 paragraph 59 context: a Party that voluntarily
+      // applies OMGE / SOP under Art 6.2 should make the applied rates
+      // discoverable. This endpoint is the transparency surface for
+      // that obligation — a DNA admin can read the live config without
+      // shelling into the container.
+      const res = await apiDna.get("national/admin/deductionConfig");
+      expect(res.ok()).toBe(true);
+      const body = await apiDna.json<any>(res);
+      const data = body?.data ?? body;
+      expect(typeof data.omgePercentage).toBe("number");
+      expect(typeof data.sopPercentage).toBe("number");
+      expect(typeof data.autoDeductAtIssuance).toBe("boolean");
+      // Defaults per configuration.ts when env-vars are not set.
+      expect(data.omgePercentage).toBe(2);
+      expect(data.sopPercentage).toBe(5);
+      expect(data.autoDeductAtIssuance).toBe(true);
+    });
+
+    test("PD cannot read /national/admin/deductionConfig", async ({ apiPd }) => {
+      const res = await apiPd.get("national/admin/deductionConfig");
+      expect(res.ok()).toBe(false);
+      expect([401, 403]).toContain(res.status());
+    });
   });
 
   // ------------------------------------------------------------------
