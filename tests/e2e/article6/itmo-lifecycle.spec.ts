@@ -510,16 +510,47 @@ test.describe("ITMO Lifecycle - Article 6.2", () => {
       expect(subsequentRows.length).toBeGreaterThanOrEqual(1);
     });
 
-    test.fixme(
-      "ItmoAccount records can be queried for a company",
-      async () => {
-        // The ItmoAccount entity is registered with TypeORM
-        // (backend/services/libs/shared/src/credit-blocks-management/
-        // credit-blocks-management.module.ts) but no controller exposes
-        // CRUD on it. Adding a GET /itmoAccount/query endpoint is a
-        // prerequisite for this test.
+    test("ItmoAccount records can be queried via POST /national/itmoAccount/query", async ({
+      apiDna,
+    }) => {
+      // Dec 2/CMA.3 Annex para 29: the national registry exposes its
+      // holding / retirement / cancellation accounts. This commit
+      // adds the HTTP surface. On a fresh DB the ItmoAccount table
+      // may be empty (rows are populated only through specific
+      // lifecycle paths), so the contract we assert here is that the
+      // endpoint returns 200 and the response shape is valid.
+      const res = await apiDna.post("national/itmoAccount/query", {
+        page: 1,
+        size: 50,
+        sort: { key: "createdTime", order: "DESC" },
+      });
+      expect(res.ok()).toBe(true);
+      const body = await apiDna.json<any>(res);
+      const data = body?.data ?? body;
+      expect(data).toBeDefined();
+      // Response may be an array or wrapped {data: [...], total: N}.
+      const rows = Array.isArray(data) ? data : data?.data ?? [];
+      expect(Array.isArray(rows)).toBe(true);
+      // If any rows exist, each should carry the expected columns.
+      for (const row of rows) {
+        expect(typeof row.accountId).toBe("string");
+        expect(typeof row.companyId === "number" || typeof row.companyId === "string").toBe(true);
+        expect(typeof row.accountType).toBe("string");
       }
-    );
+    });
+
+    test("PD cannot read ItmoAccount (Dec 2/CMA.3 para 29 scope)", async ({
+      apiPd,
+    }) => {
+      // The CASL factory grants Read on ItmoAccount only to DNA. PD
+      // (and IC) receive 403 when attempting to query.
+      const res = await apiPd.post("national/itmoAccount/query", {
+        page: 1,
+        size: 10,
+      });
+      expect(res.ok()).toBe(false);
+      expect([401, 403]).toContain(res.status());
+    });
   });
 
   // ------------------------------------------------------------------

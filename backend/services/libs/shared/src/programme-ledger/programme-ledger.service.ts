@@ -848,7 +848,7 @@ export class ProgrammeLedgerService {
           // action subtype. Map the retirementType chosen on the
           // request to the AccountType bucket the credits land in.
           const accountTypeForRetirement = mapRetirementTypeToAccountType(
-            retireRequestRecord.retirementType
+            creditRetirementRequest.retirementType
           );
           if (
             creditBlock.reservedCreditAmount == retireRequestRecord.amount &&

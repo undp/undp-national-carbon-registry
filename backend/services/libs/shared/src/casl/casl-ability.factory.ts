@@ -36,6 +36,7 @@ import { ProjectEntity } from "../entities/projects.entity";
 import { CooperativeApproach } from "../entities/cooperative.approach.entity";
 import { CorrespondingAdjustment } from "../entities/corresponding.adjustment.entity";
 import { InitialReport } from "../entities/initial.report.entity";
+import { ItmoAccount } from "../entities/itmo.account.entity";
 
 type Subjects = InferSubjects<typeof EntitySubject> | "all";
 
@@ -169,6 +170,10 @@ export class CaslAbilityFactory {
         can(Action.Read, CooperativeApproach);
         can(Action.Read, CorrespondingAdjustment);
         can(Action.Read, InitialReport);
+        // Dec 2/CMA.3 Annex para 29: DNA has full visibility into the
+        // Party's ITMO accounts (holding + retirement + cancellation
+        // buckets) so AEF Holdings reports can be produced.
+        can(Action.Read, ItmoAccount);
 
         if (user.role !== Role.ViewOnly) {
           can(Action.Create, Emission);

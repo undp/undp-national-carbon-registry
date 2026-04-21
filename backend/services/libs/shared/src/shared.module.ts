@@ -28,6 +28,7 @@ import { AefReportManagementModule } from "./aef-report-management/aef-report-ma
 import { CooperativeApproachModule } from "./cooperative-approach/cooperative-approach.module";
 import { CorrespondingAdjustmentModule } from "./corresponding-adjustment/corresponding-adjustment.module";
 import { InitialReportModule } from "./initial-report/initial-report.module";
+import { ItmoAccountModule } from "./itmo-account/itmo-account.module";
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { InitialReportModule } from "./initial-report/initial-report.module";
     CooperativeApproachModule,
     CorrespondingAdjustmentModule,
     InitialReportModule,
+    ItmoAccountModule,
   ],
   providers: [SharedService],
   exports: [
@@ -91,6 +93,7 @@ import { InitialReportModule } from "./initial-report/initial-report.module";
     CooperativeApproachModule,
     CorrespondingAdjustmentModule,
     InitialReportModule,
+    ItmoAccountModule,
   ],
 })
 export class SharedModule {}
