@@ -28,6 +28,7 @@ import { EventLog } from "../entities/event.log.entity";
 import { Region } from "../entities/region.entity";
 import { CreditAuditLog } from "../entities/credit.audit.log.entity";
 import { DocumentEntity } from "../entities/document.entity";
+import { InitialReport } from "../entities/initial.report.entity";
 
 @Module({
   imports: [
@@ -52,6 +53,8 @@ import { DocumentEntity } from "../entities/document.entity";
       Region,
       CreditAuditLog,
       DocumentEntity,
+      // Dec 2/CMA.3 Annex chapter V para 18 guard
+      InitialReport,
     ]),
     UtilModule,
     CompanyModule,

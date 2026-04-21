@@ -47,6 +47,7 @@ import {
   submitInitialReport,
   calculateCorrespondingAdjustment,
   queryCooperativeApproaches,
+  seedProgrammeDirect,
   uniqueSuffix,
 } from "./support/factories";
 import { createApiClient, expectOk } from "./support/api-client";
@@ -611,41 +612,66 @@ test.describe("Article 6.2 - Cross-cutting Integration", () => {
       );
     });
 
-    test.fixme(
-      "Issuing the first ITMO authorization for a CA without a submitted IR must be blocked (Decision 2/CMA.3 para 18)",
-      async () => {
-        // CRITICAL GAP. Phase 6 agent's grep confirms hasSubmittedReport
-        // is declared on the service and exposed through /check but
-        // NEVER CALLED as a guard before any credit-issuance code path.
-        // Decision 2/CMA.3 annex chapter V para 18 forbids authorizing
-        // ITMOs for a cooperative approach before the participating
-        // Party has submitted an initial report for that CA.
-        //
-        // As written this test would:
-        //   1. Create a CA (no IR).
-        //   2. Attempt to issue the first ITMO authorization for that
-        //      CA through the authorization service.
-        //   3. Expect 400/409 with a "initial report not submitted"
-        //      error.
-        //
-        // Blocked by TWO unrelated gaps:
-        //   (a) Phase 6: the guard is missing — a registry that enforces
-        //       para 18 would need hasSubmittedReport() to be called
-        //       from credit-issuance.service before the first mint.
-        //       Phase 6 agent's file: docs/article6/06-initial-report.md
-        //       Gap #1.
-        //   (b) Phase 2: ITMO issuance / first-transfer has no
-        //       HTTP-reachable endpoint (programme-ledger's internal
-        //       methods are not exposed through /national/...). Phase 2
-        //       agent's file: docs/article6/02-itmo-lifecycle.md Gaps.
-        //
-        // Promote to executable once (a) the guard is wired AND (b) a
-        // /authorize-first-transfer HTTP endpoint exists.
-        //
-        // Reference: docs/article6/07-cross-cutting.md "Sequencing
-        // invariants" table, row "para 18".
-      }
-    );
+    test("Authorizing a programme without a submitted IR for its CA returns 400 citing Dec 2/CMA.3 para 18", async ({
+      apiDna,
+    }) => {
+      // After the para 18 guard landed in programme.service.ts:
+      // authorizeProgramme refuses to proceed when article6trade is
+      // true and the linked cooperativeApproachId has no IR in status
+      // Submitted or Published. This test exercises the negative path.
+      const ca = await createCooperativeApproach(apiDna, {
+        title: `Para18 ${uniqueSuffix()}`,
+      });
+      const seeded = seedProgrammeDirect({
+        companyId: 1,
+        cooperativeApproachId: ca.cooperativeApproachId,
+        article6trade: true,
+        currentStage: "Approved",
+      });
+
+      const res = await apiDna.put("national/programme/authorize", {
+        programmeId: seeded.programmeId,
+        issueAmount: 100,
+        comment: "test",
+      });
+      expect(res.ok()).toBe(false);
+      expect(res.status()).toBe(400);
+      const body = await res.text();
+      expect(body).toMatch(/para 18/i);
+    });
+
+    test("Authorizing a programme WITH a submitted IR for its CA passes the para 18 gate", async ({
+      apiDna,
+    }) => {
+      // Positive-path companion: once a submitted IR exists for the CA
+      // the guard should no longer block. Other authorize-flow
+      // failures (e.g. missing `creditEst` vs `issueAmount`) may still
+      // surface; we assert only that the para 18 error is not what we
+      // get back.
+      const ca = await createCooperativeApproach(apiDna, {
+        title: `Para18 Pass ${uniqueSuffix()}`,
+      });
+      const gen = await generateInitialReport(apiDna, {
+        cooperativeApproachId: ca.cooperativeApproachId,
+      });
+      await submitInitialReport(apiDna, gen.reportId);
+      const seeded = seedProgrammeDirect({
+        companyId: 1,
+        cooperativeApproachId: ca.cooperativeApproachId,
+        article6trade: true,
+        currentStage: "Approved",
+      });
+
+      const res = await apiDna.put("national/programme/authorize", {
+        programmeId: seeded.programmeId,
+        issueAmount: 100,
+        comment: "test",
+      });
+      const body = await res.text();
+      // Must not be the para 18 error — other authorize-flow errors
+      // are acceptable for this gate-only assertion.
+      expect(body).not.toMatch(/para 18/i);
+    });
 
     test.fixme(
       "Revoked CA cannot be the source of a new first transfer (Draft -/CMA.5 paras 20-21)",

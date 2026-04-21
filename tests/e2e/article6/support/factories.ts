@@ -83,6 +83,80 @@ export function seedCreditBlockDirect(
 }
 
 /**
+ * Seed a minimal Programme row so /programme/authorize can be exercised
+ * without building out the full ProgrammeDto fixture. Fields below are
+ * the minimum TypeORM NOT NULL set for the programme table as of Phase
+ * 6; update if the schema grows.
+ */
+export function seedProgrammeDirect(input: {
+  companyId: number;
+  cooperativeApproachId?: string;
+  article6trade?: boolean;
+  currentStage?: "New" | "AwaitingAuthorization" | "Approved" | "Authorised" | "Rejected";
+}): { programmeId: string } {
+  const container = process.env.E2E_DB_CONTAINER ?? "db";
+  const programmeId = `TEST-PROG-${uniqueSuffix()}`;
+  const caIdSql = input.cooperativeApproachId
+    ? `'${input.cooperativeApproachId}'`
+    : "NULL";
+  const article6 = input.article6trade === false ? "FALSE" : "TRUE";
+  const currentStage = input.currentStage ?? "Approved";
+  const sql = `
+    INSERT INTO programme (
+      "programmeId","title","sectoralScope","sector","countryCodeA2",
+      "currentStage","startTime","endTime","creditEst","creditUnit",
+      "proponentTaxVatId","companyId","article6trade","cooperativeApproachId",
+      "programmeProperties","txTime","createdTime"
+    ) VALUES (
+      '${programmeId}','Test Programme','1','Energy','NG',
+      '${currentStage}',(EXTRACT(EPOCH FROM NOW())::bigint * 1000),
+      (EXTRACT(EPOCH FROM NOW())::bigint * 1000) + 86400000,1000,'tCO2e',
+      '{}', '{${input.companyId}}', ${article6}, ${caIdSql},
+      '{}'::jsonb,
+      (EXTRACT(EPOCH FROM NOW())::bigint * 1000),
+      (EXTRACT(EPOCH FROM NOW())::bigint * 1000)
+    );
+  `.replace(/\s+/g, " ").trim();
+  execSync(
+    `podman exec ${container} psql -U root -d carbondev -c ${JSON.stringify(sql)}`,
+    { stdio: ["ignore", "ignore", "pipe"] }
+  );
+
+  // Also seed the ledger (carbondevEvents) — programme.service.authorizeProgramme
+  // reads the programme via programmeLedger.getProgrammeById, which
+  // fetches from the `programmes` table in the ledger DB.
+  const ledgerData: Record<string, any> = {
+    programmeId,
+    title: "Test Programme",
+    sectoralScope: "1",
+    sector: "Energy",
+    countryCodeA2: "NG",
+    currentStage,
+    startTime: Date.now(),
+    endTime: Date.now() + 86400000,
+    creditEst: 1000,
+    creditUnit: "tCO2e",
+    proponentTaxVatId: [],
+    companyId: [input.companyId],
+    article6trade: input.article6trade !== false,
+    cooperativeApproachId: input.cooperativeApproachId ?? null,
+    programmeProperties: {},
+    txTime: Date.now(),
+    createdTime: Date.now(),
+  };
+  const ledgerSql = `
+    INSERT INTO programmes (data, meta)
+    VALUES ('${JSON.stringify(ledgerData).replace(/'/g, "''")}'::jsonb, '{}'::jsonb);
+  `.replace(/\s+/g, " ").trim();
+  execSync(
+    `podman exec ${container} psql -U root -d carbondevEvents -c ${JSON.stringify(ledgerSql)}`,
+    { stdio: ["ignore", "ignore", "pipe"] }
+  );
+
+  return { programmeId };
+}
+
+/**
  * Seed an emission row for a given year + country with a totalCo2WithoutLand
  * co2eq value. Used by the Corresponding Adjustment safeguard-fail test.
  */

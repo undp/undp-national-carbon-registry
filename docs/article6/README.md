@@ -22,7 +22,7 @@ Each feature doc follows the same template: UNFCCC requirement citations → reg
 
 These are the items most likely to matter in a UNFCCC compliance audit. Detail in the per-feature docs.
 
-1. **Decision 2/CMA.3 ¶18 is not enforced** — `InitialReportService.hasSubmittedReport` exists as a probe but is never called as a guard before ITMO authorization. A DNA can authorize first transfers for a Cooperative Approach with no submitted Initial Report. [07-cross-cutting.md](./07-cross-cutting.md), [06-initial-report.md](./06-initial-report.md)
+1. ~~Decision 2/CMA.3 ¶18 is not enforced~~ — **RESOLVED**. `programme.service.authorizeProgramme` now checks that any `article6trade` programme has a linked `cooperativeApproachId` with a submitted (or published) `InitialReport`, and returns `HTTP 400` citing the paragraph when the prerequisite is missing. See [06-initial-report.md](./06-initial-report.md) Gaps (struck-through entry) and the two cross-cutting tests under "Sequencing invariants" that verify both the deny path and the pass path.
 
 2. **No structured 5-component ITMO serial number** per Decision 6/CMA.4 Annex I ¶5 — the registry uses opaque credit-block IDs, so ITMO serials are not Article 6 AEF-compliant. [02-itmo-lifecycle.md](./02-itmo-lifecycle.md)
 
