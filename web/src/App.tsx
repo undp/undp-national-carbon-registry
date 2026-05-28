@@ -45,6 +45,13 @@ import { CreditBalancePage } from "./Pages/CreditPages/creditBalancePage";
 import { CreditTransfersPage } from "./Pages/CreditPages/creditTransfersPage";
 import { CreditRetirementsPage } from "./Pages/CreditPages/creditRetirementsPage";
 import Reports from "./Pages/Reports/Reports";
+import CooperativeApproaches from "./Pages/CooperativeApproaches/cooperativeApproaches";
+import AddCooperativeApproach from "./Pages/CooperativeApproaches/addCooperativeApproach";
+import CooperativeApproachDetails from "./Pages/CooperativeApproaches/cooperativeApproachDetails";
+import CaManagement from "./Pages/CorrespondingAdjustment/caManagement";
+import CaCalculation from "./Pages/CorrespondingAdjustment/caCalculation";
+import InitialReportManagement from "./Pages/InitialReport/initialReportManagement";
+import CreateInitialReport from "./Pages/InitialReport/createInitialReport";
 
 const App = () => {
   const { t } = useTranslation(["common"]);
@@ -153,6 +160,49 @@ const App = () => {
                     <Route
                       path="retirements"
                       element={<CreditRetirementsPage />}
+                    />
+                  </Route>
+                  <Route
+                    path="/cooperativeApproaches"
+                    element={
+                      <CustomLayout selectedKey="cooperativeApproaches/viewAll" />
+                    }
+                  >
+                    <Route
+                      path="viewAll"
+                      element={<CooperativeApproaches />}
+                    />
+                    <Route
+                      path="add"
+                      element={<AddCooperativeApproach />}
+                    />
+                    <Route
+                      path="view/:id"
+                      element={<CooperativeApproachDetails />}
+                    />
+                  </Route>
+                  <Route
+                    path="/correspondingAdjustments"
+                    element={
+                      <CustomLayout selectedKey="correspondingAdjustments/viewAll" />
+                    }
+                  >
+                    <Route path="viewAll" element={<CaManagement />} />
+                    <Route path="calculate" element={<CaCalculation />} />
+                  </Route>
+                  <Route
+                    path="/initialReports"
+                    element={
+                      <CustomLayout selectedKey="initialReports/viewAll" />
+                    }
+                  >
+                    <Route
+                      path="viewAll"
+                      element={<InitialReportManagement />}
+                    />
+                    <Route
+                      path="create"
+                      element={<CreateInitialReport />}
                     />
                   </Route>
                   <Route

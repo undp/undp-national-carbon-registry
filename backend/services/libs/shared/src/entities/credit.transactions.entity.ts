@@ -8,6 +8,8 @@ import {
 import { CreditTransactionTypesEnum } from "../enum/credit.transaction.types.enum";
 import { CreditTransactionStatusEnum } from "../enum/credit.transaction.status.enum";
 import { CreditRetirementTypeEnum } from "../enum/credit.retirement.type.enum";
+import { AccountType } from "../enum/account.type.enum";
+import { AuthorizationPurpose } from "../enum/authorization.purpose.enum";
 
 @Entity()
 export class CreditTransactionsEntity {
@@ -49,6 +51,36 @@ export class CreditTransactionsEntity {
 
   @Column({ type: "text", nullable: true })
   organizationName?: string;
+
+  @Column({
+    type: "enum",
+    enum: AccountType,
+    array: false,
+    nullable: true,
+  })
+  fromAccountType?: AccountType;
+
+  @Column({
+    type: "enum",
+    enum: AccountType,
+    array: false,
+    nullable: true,
+  })
+  toAccountType?: AccountType;
+
+  @Column({ nullable: true })
+  cooperativeApproachId?: string;
+
+  @Column({
+    type: "enum",
+    enum: AuthorizationPurpose,
+    array: false,
+    nullable: true,
+  })
+  authorizationPurpose?: AuthorizationPurpose;
+
+  @Column({ type: "boolean", default: false })
+  isFirstTransfer: boolean;
 
   @Column({ type: "bigint" })
   createTime: number;

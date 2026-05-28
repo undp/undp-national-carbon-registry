@@ -62,7 +62,7 @@ export const getIssuedReceivedTagColor = (status: IssuedOrReceivedOptions) => {
 };
 
 export const CreditBalanceTableComponent = (props: any) => {
-  const { t } = props;
+  const { t, accountTypeFilter } = props;
 
   const { post } = useConnection();
   const { userInfoState } = useUserContext();
@@ -114,6 +114,14 @@ export const CreditBalanceTableComponent = (props: any) => {
         key: "type",
         operation: "in",
         value: checkBoxOptions,
+      });
+    }
+
+    if (accountTypeFilter && accountTypeFilter !== "all") {
+      filterAnd.push({
+        key: "accountType",
+        operation: "=",
+        value: accountTypeFilter,
       });
     }
 
@@ -408,7 +416,7 @@ export const CreditBalanceTableComponent = (props: any) => {
     if (isInitialRender.current) {
       getQueryData();
     }
-  }, [currentPage, pageSize, modalActionVisible, modalResponseVisible]);
+  }, [currentPage, pageSize, modalActionVisible, modalResponseVisible, accountTypeFilter]);
 
   useEffect(() => {
     if (isInitialRender.current) {

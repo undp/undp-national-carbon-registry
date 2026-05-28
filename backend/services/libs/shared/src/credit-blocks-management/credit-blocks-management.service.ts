@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { HelperService } from "../util/helpers.service";
 import { CreditBlocksEntity } from "../entities/credit.blocks.entity";
 import { TxType } from "../enum/txtype.enum";
+import { AccountType } from "../enum/account.type.enum";
 import { User } from "../entities/user.entity";
 import { SerialNumberManagementService } from "../serial-number-management/serial-number-management.service";
 import { plainToClass } from "class-transformer";
@@ -198,6 +199,21 @@ export class CreditBlocksManagementService {
       );
     const creditBlockId =
       this.serialNumberManagementService.getCreditBlockId(serialNumber);
+
+    // Dec 6/CMA.4 Annex I para 5 — compose the 5-component ITMO
+    // identifier alongside the registry-internal serialNumber. The ITMO
+    // serial is what appears in AEF Actions / Holdings tables and in
+    // cross-registry transfer notifications; the internal serialNumber
+    // continues to drive block-split arithmetic.
+    const blockStart = alreadyIssuedCredits ? alreadyIssuedCredits + 1 : 1;
+    const blockEnd = blockStart + creditAmount - 1;
+    const itmoSerial = this.serialNumberManagementService.getItmoSerial(
+      project.refId,
+      vintage,
+      blockStart,
+      blockEnd
+    );
+
     const newBlock = plainToClass(CreditBlocksEntity, {
       creditBlockId: creditBlockId,
       txRef: this.getCreditBlockTxRef(
@@ -212,11 +228,15 @@ export class CreditBlocksManagementService {
       ownerCompanyId: project.companyId,
       projectRefId: project.refId,
       serialNumber: serialNumber,
+      itmoSerial: itmoSerial,
       vintage: vintage,
       creditAmount: creditAmount,
       reservedCreditAmount: 0,
       transactionRecords: [],
       isNotTransferred: true,
+      accountType: AccountType.HOLDING,
+      cooperativeApproachId: project.cooperativeApproachId || null,
+      authorizationPurpose: project.authorizationPurpose || null,
     });
     return newBlock;
   }

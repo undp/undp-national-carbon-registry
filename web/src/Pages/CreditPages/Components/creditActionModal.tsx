@@ -44,10 +44,29 @@ interface CreditActionModalProps {
   data?: CreditBalanceInterface | CreditRetirementInterface;
 }
 
+// Local presentation enum for the retirement-type radio group. Values
+// are the hand-rolled i18n keys used by Credit Actions strings; the
+// six members mirror CreditRetirementTypeEmnum. The four Article 6.2
+// types (Use Towards NDC, Use For OIMP, OMGE Cancellation, SOP
+// Adaptation) are added per Decision 2/CMA.3 Annex para 29 (account
+// types) + Draft -/CMA.5 para 80 (action subtypes).
 enum RetirementType {
   CROSS_BORDER = "crossBoarderTransaction",
   VOLUNTARY_CANCELLATION = "voluntaryCancellations",
+  USE_TOWARDS_NDC = "useTowardsNDC",
+  USE_FOR_OIMP = "useForOIMP",
+  OMGE_CANCELLATION = "omgeCancellation",
+  SOP_ADAPTATION = "sopAdaptation",
 }
+
+const RETIREMENT_TYPE_TO_ENUM = {
+  [RetirementType.CROSS_BORDER]: "Cross-Border Transactions",
+  [RetirementType.VOLUNTARY_CANCELLATION]: "Voluntary Cancellations",
+  [RetirementType.USE_TOWARDS_NDC]: "Use Towards NDC",
+  [RetirementType.USE_FOR_OIMP]: "Use For OIMP",
+  [RetirementType.OMGE_CANCELLATION]: "OMGE Cancellation",
+  [RetirementType.SOP_ADAPTATION]: "SOP Adaptation",
+} as const;
 
 export const CreditActionModal = (props: CreditActionModalProps) => {
   const {
@@ -241,10 +260,7 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
         undefined
       );
     } else if (type === CreditActionType.RETIREMENT) {
-      const retType =
-        retirementType === RetirementType.CROSS_BORDER
-          ? CreditRetirementTypeEmnum.CROSS_BORDER_TRANSACTIONS
-          : CreditRetirementTypeEmnum.VOLUNTARY_CANCELLATIONS;
+      const retType = RETIREMENT_TYPE_TO_ENUM[retirementType] as CreditRetirementTypeEmnum;
 
       onFinish(
         recivePartyRef.current,
@@ -419,6 +435,21 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                   </Radio>
                   <Radio value={RetirementType.VOLUNTARY_CANCELLATION}>
                     {t(RetirementType.VOLUNTARY_CANCELLATION)}
+                  </Radio>
+                  {/* Article 6.2 retirement types (Dec 2/CMA.3 Annex
+                     para 29 account buckets + Draft -/CMA.5 para 80
+                     action subtypes). */}
+                  <Radio value={RetirementType.USE_TOWARDS_NDC}>
+                    Use Towards NDC
+                  </Radio>
+                  <Radio value={RetirementType.USE_FOR_OIMP}>
+                    Use For OIMP
+                  </Radio>
+                  <Radio value={RetirementType.OMGE_CANCELLATION}>
+                    OMGE Cancellation
+                  </Radio>
+                  <Radio value={RetirementType.SOP_ADAPTATION}>
+                    SOP Adaptation
                   </Radio>
                 </Radio.Group>
               </Form.Item>

@@ -1,0 +1,31 @@
+.cooperative-approaches-container {
+  padding: 0 24px;
+
+  .title-bar {
+    margin-bottom: 24px;
+
+    .body-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: rgba(58, 53, 65, 0.87);
+    }
+
+    .body-sub-title {
+      font-size: 0.875rem;
+      color: rgba(58, 53, 65, 0.6);
+    }
+  }
+
+  .content-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
+      0px 1px 1px rgba(0, 0, 0, 0.14), 0px 1px 3px rgba(0, 0, 0, 0.12);
+
+    .table-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  }
+}

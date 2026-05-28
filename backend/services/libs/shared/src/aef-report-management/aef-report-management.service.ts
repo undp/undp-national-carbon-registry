@@ -77,11 +77,34 @@ export class AefReportManagementService {
     private fileHandler: FileHandlerInterface
   ) {}
 
-  public async handleAefRecord(creditBlock: CreditBlocksEntity, em: EntityManager) {
+  public async handleAefRecord(
+    creditBlock: CreditBlocksEntity,
+    em: EntityManager,
+    previousCreditBlock?: CreditBlocksEntity
+  ) {
     if (![TxType.ISSUE, TxType.TRANSFER, TxType.RETIRE].includes(creditBlock.txType)) {
       return;
     }
     const project = await this.programmeLedgerService.getProjectById(creditBlock.projectRefId);
+    // In production, every credit-block event is always tied to a project
+    // that was persisted first. If the project lookup returns null, we
+    // are looking at an orphan (e.g. test fixture seeded out of band);
+    // skip AEF emission rather than crashing the replicator. Without
+    // this guard a single bad ledger row would loop-retry forever and
+    // halt downstream replication.
+    if (!project) {
+      return;
+    }
+    // Dec 2/CMA.3 Annex para 1(a) + Dec 4/CMA.6 Annex II Actions table:
+    // a transfer is the "first transfer" of a block iff the block was
+    // not yet transferred at the moment the transfer began. The pre-
+    // update state lives in previousCreditBlock; the post-update state
+    // already has isNotTransferred=false (flipped by the transfer), so
+    // inspecting the live block's flag would always evaluate false.
+    const isFirstTransfer = Boolean(
+      creditBlock.txType === TxType.TRANSFER &&
+        previousCreditBlock?.isNotTransferred === true
+    );
     const newAefActionRecord = plainToClass(AefActionsTableEntity, {
       creditBlockStartId: this.serialNumberManagementService.getBlockStartId(
         creditBlock.serialNumber
@@ -95,23 +118,44 @@ export class AefReportManagementService {
       authorizationId: project.authorizationId,
       actionTime: creditBlock.txTime,
       aquiringParty: this.configService.get("AEF.defaultAquiringParty"),
+      cooperativeApproachId: creditBlock.cooperativeApproachId || null,
+      authorizationPurpose: creditBlock.authorizationPurpose || null,
+      acquiringPartyCountryCode: project.acquiringPartyCountryCode || null,
+      isFirstTransfer,
+      reportingYear: new Date(creditBlock.txTime).getFullYear(),
     });
     if (creditBlock.txType == TxType.ISSUE) {
       newAefActionRecord.actionType = AefActionTypeEnum.AUTHORIZATION;
     } else if (creditBlock.txType == TxType.TRANSFER) {
-      newAefActionRecord.actionType = AefActionTypeEnum.TRANSFER;
+      newAefActionRecord.actionType = isFirstTransfer
+        ? AefActionTypeEnum.FIRST_TRANSFER
+        : AefActionTypeEnum.TRANSFER;
     } else if (creditBlock.txType == TxType.RETIRE) {
       const txData: CreditRetireActionDto = creditBlock.txData;
-      if (txData.action == RetirementACtionEnum.ACCEPT) {
+      if (txData && txData.action == RetirementACtionEnum.ACCEPT) {
         const retireTrasaction = await this.creditTransactionsEntityRepository.findOne({
           where: { id: txData.transactionId },
         });
-        if (retireTrasaction.retirementType == CreditRetirementTypeEnum.CROSS_BORDER_TRANSACTIONS) {
+        if (!retireTrasaction) {
+          newAefActionRecord.actionType = AefActionTypeEnum.RETIRE;
+        } else if (retireTrasaction.retirementType == CreditRetirementTypeEnum.CROSS_BORDER_TRANSACTIONS) {
           newAefActionRecord.actionType = AefActionTypeEnum.CROSS_BOARDER_TRANSFER;
           newAefActionRecord.aquiringParty = retireTrasaction.country;
+          newAefActionRecord.acquiringPartyCountryCode = retireTrasaction.country;
+        } else if (retireTrasaction.retirementType == CreditRetirementTypeEnum.USE_TOWARDS_NDC) {
+          newAefActionRecord.actionType = AefActionTypeEnum.USE_TOWARDS_NDC;
+        } else if (retireTrasaction.retirementType == CreditRetirementTypeEnum.USE_FOR_OIMP) {
+          newAefActionRecord.actionType = AefActionTypeEnum.USE_FOR_OIMP;
+        } else if (retireTrasaction.retirementType == CreditRetirementTypeEnum.VOLUNTARY_CANCELLATIONS) {
+          newAefActionRecord.actionType = AefActionTypeEnum.VOLUNTARY_CANCELLATION;
+        } else if (retireTrasaction.retirementType == CreditRetirementTypeEnum.OMGE_CANCELLATION) {
+          newAefActionRecord.actionType = AefActionTypeEnum.OMGE_CANCELLATION;
         } else {
           newAefActionRecord.actionType = AefActionTypeEnum.RETIRE;
         }
+      } else if (!txData) {
+        // Retirement via retireToAccount (no txData with action field)
+        newAefActionRecord.actionType = AefActionTypeEnum.RETIRE;
       } else {
         return;
       }
@@ -198,6 +242,10 @@ export class AefReportManagementService {
         case AefReportTypeEnum.ACTIONS:
           prepData = this.prepareActionsData(resp);
           localFileName = `${AefReportTypeEnum.ACTIONS}`;
+          break;
+        case AefReportTypeEnum.ANNUAL_INFORMATION:
+          prepData = this.prepareActionsData(resp);
+          localFileName = `${AefReportTypeEnum.ANNUAL_INFORMATION}`;
           break;
         default:
           break;
