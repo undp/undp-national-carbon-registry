@@ -3,6 +3,7 @@ import { RegistryClientService } from "@app/shared/registry-client/registry-clie
 import { EmailService } from "@app/shared/email/email.service";
 import { AsyncActionType } from "@app/shared/enum/async.action.type.enum";
 import { CadtApiService } from "@app/shared/cadt/cadt.api.service";
+import { CadtV2ApiService } from "@app/shared/cadt/cadt-v2-api.service";
 
 @Injectable()
 export class AsyncOperationsHandlerService {
@@ -10,6 +11,7 @@ export class AsyncOperationsHandlerService {
     private emailService: EmailService,
     private registryClient: RegistryClientService,
     private cadtService: CadtApiService,
+    private cadtV2Service: CadtV2ApiService,
     private logger: Logger
   ) {}
 
@@ -60,6 +62,15 @@ export class AsyncOperationsHandlerService {
             dataObject.programme,
             dataObject.transfer
           );
+
+        case AsyncActionType.CADTv2ProjectSync.toString():
+          return this.cadtV2Service.syncProject(dataObject.projectRefId);
+        case AsyncActionType.CADTv2CreditIssue.toString():
+          return this.cadtV2Service.syncProject(dataObject.projectRefId);
+        case AsyncActionType.CADTv2CreditTransfer.toString():
+          return this.cadtV2Service.syncProject(dataObject.projectRefId);
+        case AsyncActionType.CADTv2CreditRetire.toString():
+          return this.cadtV2Service.syncProject(dataObject.projectRefId);
       }
     }
   }

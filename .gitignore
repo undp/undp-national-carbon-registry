@@ -16,3 +16,5 @@ backend/services/*.pdf
 backend/services/*.csv
 backend/services/*.xlsx
 backend/services/public/*
+external-docs/
+ARCHITECTURAL_INTEGRATION_OVERVIEW.md

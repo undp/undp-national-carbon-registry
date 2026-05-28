@@ -99,6 +99,11 @@ export default () => ({
     enable: process.env.CADTRUST_ENABLE === "true" ? true : false,
     endpoint: process.env.CADTRUST_ENDPOINT || "http://44.212.139.61:31310/",
   },
+  cadTrustV2: {
+    enable: process.env.CADTRUST_V2_ENABLE === "true" ? true : false,
+    endpoint: process.env.CADTRUST_V2_ENDPOINT || "http://localhost:31310/",
+    apiKey: process.env.CADTRUST_V2_API_KEY || undefined,
+  },
   systemType: process.env.SYSTEM_TYPE || "CARBON_UNIFIED_SYSTEM",
   systemName: process.env.SYSTEM_NAME || "SystemX",
   environmentalManagementActHyperlink:
