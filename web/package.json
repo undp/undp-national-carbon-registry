@@ -55,7 +55,7 @@
     "sha1": "^1.1.1",
     "styled-components": "^5.3.6",
     "typescript": "^5.8.3",
-    "validator": "^13.9.0",
+    "validator": "^13.15.22",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"
   },
