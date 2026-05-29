@@ -1,0 +1,82 @@
+nohup: ignoring input
+
+🚀 ATLAS CORTEX-KG Mock Server v4.11.0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📡 Server running at http://localhost:8888
+
+Available Endpoints:
+  GET  http://localhost:8888/api/v4/health
+  POST http://localhost:8888/api/v4/odd/link
+
+🧪 Mock Mode: Simulating ATLAS Knowledge Graph
+   - 17 ODD nodes
+   - Morocco-specific NER keywords
+   - Sector-based ODD mapping
+
+Press Ctrl+C to stop
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[2026-01-19T22:37:42.905Z] POST /api/v4/odd/link
+  Sector: Forestry
+  Confidence: 0.98
+  Primary ODDs: 13.1, 13.2, 15.1, 15.2, 2.4
+[2026-01-19T22:37:42.915Z] POST /api/v4/odd/link
+  Sector: Forestry
+  Confidence: 0.98
+  Primary ODDs: 13.1, 13.2, 15.1, 15.2, 15.3
+[2026-01-19T22:37:42.927Z] POST /api/v4/odd/link
+  Sector: Energy
+  Confidence: 0.98
+  Primary ODDs: 7.2, 7.3, 13.1
+[2026-01-19T22:37:42.944Z] POST /api/v4/odd/link
+  Sector: Agriculture
+  Confidence: 0.97
+  Primary ODDs: 2.3, 2.4, 13.1, 15.1
+[2026-01-19T22:37:42.956Z] POST /api/v4/odd/link
+  Sector: Other
+  Confidence: 0.5
+  Primary ODDs: 13.1
+[2026-01-19T23:04:53.403Z] POST /api/v4/odd/link
+  Sector: Forestry
+  Confidence: 0.98
+  Primary ODDs: 13.1, 13.2, 15.1, 15.2, 2.4
+[2026-01-19T23:05:30.826Z] POST /api/v4/odd/link
+  Sector: Forestry
+  Confidence: 0.98
+  Primary ODDs: 13.1, 13.2, 15.1, 15.2, 2.4
+[2026-01-19T23:06:32.191Z] POST /api/v4/odd/link
+  Sector: Forestry
+  Confidence: 0.98
+  Primary ODDs: 13.1, 13.2, 15.1, 15.2, 2.4
+[2026-01-19T23:06:32.222Z] POST /api/v4/odd/link
+  Sector: Energy
+  Confidence: 0.98
+  Primary ODDs: 7.2, 7.3, 13.1
+[2026-01-19T23:06:32.246Z] POST /api/v4/odd/link
+  Sector: Unknown
+  Confidence: 0.5
+  Primary ODDs: 13.1
+[2026-01-19T23:33:20.967Z] POST /api/v4/odd/link
+  Sector: Forestry
+  Confidence: 0.98
+  Primary ODDs: 13.1, 13.2, 15.1, 15.2, 2.4
+[2026-01-19T23:33:20.994Z] POST /api/v4/odd/link
+  Sector: Energy
+  Confidence: 0.98
+  Primary ODDs: 7.2, 7.3, 13.1
+[2026-01-19T23:33:21.016Z] POST /api/v4/odd/link
+  Sector: Forestry
+  Confidence: 0.98
+  Primary ODDs: 13.1, 13.2, 15.1, 15.2, 15.3
+[2026-01-19T23:33:21.465Z] POST /api/v4/odd/link
+  Sector: Forestry
+  Confidence: 0.89
+  Primary ODDs: 13.1, 13.2, 15.1, 15.2
+[2026-01-19T23:33:21.478Z] POST /api/v4/odd/link
+  Sector: Forestry
+  Confidence: 0.98
+  Primary ODDs: 13.1, 13.2, 15.1, 15.2, 2.4
+[2026-01-20T00:48:05.861Z] POST /api/v4/odd/link
+  Sector: Forestry
+  Confidence: 0.98
+  Primary ODDs: 13.1, 13.2, 15.1, 15.2, 2.4

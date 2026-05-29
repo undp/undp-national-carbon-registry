@@ -1,0 +1,408 @@
+openapi: 3.0.3
+info:
+  title: ATLAS Knowledge Graph ODD Linker API
+  description: |
+    API pour lier les projets UNDP Carbon Registry aux Objectifs de Développement Durable (ODD) 
+    via le Knowledge Graph ATLAS v4.11.0-lts-quantique.
+    
+    **Phase 1: Proof of Concept**
+    - Linkage ODD automatisé via NLP
+    - Mode fallback si ATLAS KG indisponible
+    - Validation cohérence climate action
+    
+    **Cas d'usage**: Agroforesterie Maroc (ODD 13.1, 13.2, 15.1)
+  version: 1.0.0
+  contact:
+    name: ATLAS Integration Team
+    email: aguennoune@biocontinuum-os
+  license:
+    name: AGPL-3.0
+    url: https://www.gnu.org/licenses/agpl-3.0.html
+
+servers:
+  - url: http://localhost:3000
+    description: Development server (local)
+  - url: https://carbon-registry-dev.undp.org
+    description: UNDP Dev environment
+  - url: https://carbon-registry.undp.org
+    description: UNDP Production
+
+tags:
+  - name: ODD Linkage
+    description: Endpoints pour lier projets aux ODD
+  - name: Validation
+    description: Validation ODD links
+  - name: Health
+    description: Monitoring ATLAS KG connectivity
+
+paths:
+  /api/atlas/kg/link-project/{projectId}:
+    post:
+      tags:
+        - ODD Linkage
+      summary: Link project to SDG (ODD)
+      description: |
+        Analyse le projet UNDP et retourne les ODD primaires/secondaires via ATLAS Knowledge Graph.
+        
+        **Étapes**:
+        1. Analyse NLP du titre + description
+        2. Extraction entités nommées (arganiers, foresterie, etc.)
+        3. Mapping vers ODD via KG ATLAS
+        4. Construction relations graphe
+        
+        **Mode fallback**: Si ATLAS KG indisponible → mapping par secteur
+      operationId: linkProjectToODD
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: PROJECT_123
+          description: Identifiant unique du projet UNDP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkProjectRequest'
+            examples:
+              moroccoAgroforestry:
+                summary: Agroforesterie Maroc
+                value:
+                  title: "Agroforesterie El Alaoui"
+                  description: "500 hectares d'arganiers pour séquestration carbone dans la région de Souss-Massa"
+                  country: "MA"
+                  sector: "Forestry"
+              solarEnergy:
+                summary: Énergie solaire Sahara
+                value:
+                  title: "Parc solaire Noor Ouarzazate"
+                  description: "Centrale solaire thermique 580 MW"
+                  country: "MA"
+                  sector: "Energy"
+      responses:
+        '200':
+          description: ODD linkage successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkProjectResponse'
+              examples:
+                success:
+                  summary: Linkage réussi avec ATLAS KG
+                  value:
+                    project_id: "PROJECT_123"
+                    odd_links:
+                      primary: ["ODD_13.1", "ODD_13.2", "ODD_15.1"]
+                      secondary: ["ODD_2.4"]
+                      confidence: 0.87
+                      metadata:
+                        linked_at: "2024-01-14T10:30:00Z"
+                        linker_version: "atlas-kg@1.0.0"
+                        fallback_mode: false
+                    kg_relations:
+                      graph_id: "atlas-kg-ma-2024"
+                      nodes:
+                        - type: "PROJECT"
+                          id: "PROJECT_123"
+                          weight: 1.0
+                        - type: "ODD"
+                          id: "ODD_13.1"
+                          weight: 0.9
+                        - type: "ODD"
+                          id: "ODD_15.1"
+                          weight: 0.85
+                      last_sync: "2024-01-14T10:30:00Z"
+                fallback:
+                  summary: Mode fallback (ATLAS KG indisponible)
+                  value:
+                    project_id: "PROJECT_456"
+                    odd_links:
+                      primary: ["ODD_13.1", "ODD_15.1"]
+                      secondary: []
+                      confidence: 0.5
+                      metadata:
+                        linked_at: "2024-01-14T11:00:00Z"
+                        linker_version: "atlas-kg@1.0.0"
+                        fallback_mode: true
+                    kg_relations:
+                      graph_id: "atlas-kg-ma-2024"
+                      nodes:
+                        - type: "PROJECT"
+                          id: "PROJECT_456"
+                          weight: 1.0
+                        - type: "ODD"
+                          id: "ODD_13.1"
+                          weight: 0.9
+                      last_sync: "2024-01-14T11:00:00Z"
+        '400':
+          description: Bad request - Missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                statusCode: 400
+                message: "Missing required fields: title, description, country"
+                error: "Bad Request"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                statusCode: 500
+                message: "Internal server error during ODD linkage"
+                error: "Internal Server Error"
+
+  /api/atlas/kg/validate-odds/{projectId}:
+    get:
+      tags:
+        - Validation
+      summary: Validate ODD links for project
+      description: |
+        Valide la cohérence des ODD linkés pour un projet carbone.
+        
+        **Critères validation**:
+        - ✅ Au moins 1 ODD primaire
+        - ✅ ODD 13.x (Climate Action) obligatoire
+        - ✅ Confiance ≥ 0.6
+        - ⚠️ Warning si fallback mode
+      operationId: validateOddLinks
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: PROJECT_123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                odd_links:
+                  $ref: '#/components/schemas/OddLinks'
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  project_id:
+                    type: string
+                  validation:
+                    type: object
+                    properties:
+                      valid:
+                        type: boolean
+                      warnings:
+                        type: array
+                        items:
+                          type: string
+                      score:
+                        type: number
+                        format: float
+                        minimum: 0
+                        maximum: 1
+              examples:
+                valid:
+                  summary: Validation réussie
+                  value:
+                    project_id: "PROJECT_123"
+                    validation:
+                      valid: true
+                      warnings: []
+                      score: 1.0
+                missingClimateODD:
+                  summary: Manque ODD climat
+                  value:
+                    project_id: "PROJECT_456"
+                    validation:
+                      valid: false
+                      warnings:
+                        - "Missing ODD 13.x (Climate Action) for carbon project"
+                      score: 0.8
+                lowConfidence:
+                  summary: Confiance trop basse
+                  value:
+                    project_id: "PROJECT_789"
+                    validation:
+                      valid: false
+                      warnings:
+                        - "Low confidence score: 0.45 (expected > 0.6)"
+                      score: 0.8
+
+  /api/atlas/kg/health:
+    get:
+      tags:
+        - Health
+      summary: Health check ATLAS KG connectivity
+      description: |
+        Vérifie la disponibilité du service ATLAS Knowledge Graph.
+        
+        **Status**:
+        - `healthy`: Temps réponse < 500ms
+        - `degraded`: Temps réponse 500-2000ms
+        - `unhealthy`: ATLAS KG injoignable
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, degraded, unhealthy]
+                  atlas_kg_reachable:
+                    type: boolean
+                  response_time_ms:
+                    type: integer
+                  version:
+                    type: string
+              examples:
+                healthy:
+                  summary: ATLAS KG disponible
+                  value:
+                    status: "healthy"
+                    atlas_kg_reachable: true
+                    response_time_ms: 120
+                    version: "1.0.0"
+                unhealthy:
+                  summary: ATLAS KG indisponible
+                  value:
+                    status: "unhealthy"
+                    atlas_kg_reachable: false
+                    response_time_ms: 2500
+                    version: "1.0.0"
+
+components:
+  schemas:
+    LinkProjectRequest:
+      type: object
+      required:
+        - title
+        - description
+        - country
+      properties:
+        title:
+          type: string
+          description: Titre du projet
+          example: "Agroforesterie El Alaoui"
+        description:
+          type: string
+          description: Description détaillée du projet
+          example: "500 hectares d'arganiers pour séquestration carbone"
+        country:
+          type: string
+          description: Code ISO 3166-1 alpha-2 du pays
+          example: "MA"
+          pattern: "^[A-Z]{2}$"
+        sector:
+          type: string
+          description: Secteur du projet
+          enum: [Agriculture, Forestry, Energy, Transport, Waste]
+          example: "Forestry"
+
+    LinkProjectResponse:
+      type: object
+      properties:
+        project_id:
+          type: string
+          example: "PROJECT_123"
+        odd_links:
+          $ref: '#/components/schemas/OddLinks'
+        kg_relations:
+          $ref: '#/components/schemas/KgRelations'
+
+    OddLinks:
+      type: object
+      properties:
+        primary:
+          type: array
+          items:
+            type: string
+            pattern: "^ODD_\\d+\\.\\d+$"
+          example: ["ODD_13.1", "ODD_13.2", "ODD_15.1"]
+          description: ODD avec confiance > 0.75
+        secondary:
+          type: array
+          items:
+            type: string
+            pattern: "^ODD_\\d+\\.\\d+$"
+          example: ["ODD_2.4"]
+          description: ODD avec confiance 0.5-0.75
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.87
+          description: Score de confiance global
+        metadata:
+          type: object
+          properties:
+            linked_at:
+              type: string
+              format: date-time
+              example: "2024-01-14T10:30:00Z"
+            linker_version:
+              type: string
+              example: "atlas-kg@1.0.0"
+            fallback_mode:
+              type: boolean
+              example: false
+              description: True si ATLAS KG indisponible
+
+    KgRelations:
+      type: object
+      properties:
+        graph_id:
+          type: string
+          example: "atlas-kg-ma-2024"
+          description: Identifiant du graphe ATLAS
+        nodes:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum: [PROJECT, ODD, NDC]
+              id:
+                type: string
+              weight:
+                type: number
+                format: float
+                minimum: 0
+                maximum: 1
+          example:
+            - type: "PROJECT"
+              id: "PROJECT_123"
+              weight: 1.0
+            - type: "ODD"
+              id: "ODD_13.1"
+              weight: 0.9
+        last_sync:
+          type: string
+          format: date-time
+          example: "2024-01-14T10:30:00Z"
+
+    ErrorResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
+        error:
+          type: string

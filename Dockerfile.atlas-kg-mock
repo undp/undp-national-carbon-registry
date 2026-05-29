@@ -1,0 +1,13 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy mock server (pure Node.js, no dependencies)
+COPY atlas-kg-mock-server.js .
+COPY package-atlas-kg-mock.json ./package.json
+
+# No npm install needed - mock server uses only Node.js built-ins
+
+EXPOSE 8888
+
+CMD ["node", "atlas-kg-mock-server.js"]

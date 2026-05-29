@@ -1,0 +1,158 @@
+
+🧪 UNDP × ATLAS Integration - Phase 1 Demo
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 TEST 1: Morocco Agroforestry - Argan Trees
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{
+  "primary_odds": [
+    "13.1",
+    "13.2",
+    "15.1",
+    "15.2",
+    "2.4"
+  ],
+  "secondary_odds": [
+    "2.4",
+    "8.4"
+  ],
+  "confidence": 0.98,
+  "reasoning": "Climate action through carbon sequestration. Terrestrial ecosystems restoration. Morocco-specific co-benefits identified.",
+  "sector_mapping": {
+    "Forestry": [
+      "13.1",
+      "13.2",
+      "15.1",
+      "15.2"
+    ]
+  },
+  "kg_metadata": {
+    "atlas_version": "4.11.0-lts-quantique",
+    "kg_nodes_traversed": 48,
+    "inference_method": "semantic_similarity",
+    "morocco_context": true
+  }
+}
+
+
+📋 TEST 2: Morocco Cedar Restoration - Atlas Mountains + Oasis
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{
+  "primary_odds": [
+    "13.1",
+    "13.2",
+    "15.1",
+    "15.2",
+    "15.3"
+  ],
+  "secondary_odds": [
+    "2.4",
+    "8.4"
+  ],
+  "confidence": 0.98,
+  "reasoning": "Climate action through carbon sequestration. Terrestrial ecosystems restoration. Morocco-specific co-benefits identified.",
+  "sector_mapping": {
+    "Forestry": [
+      "13.1",
+      "13.2",
+      "15.1",
+      "15.2"
+    ]
+  },
+  "kg_metadata": {
+    "atlas_version": "4.11.0-lts-quantique",
+    "kg_nodes_traversed": 19,
+    "inference_method": "semantic_similarity",
+    "morocco_context": true
+  }
+}
+
+
+📋 TEST 3: Solar Energy - Noor Ouarzazate
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{
+  "primary_odds": [
+    "7.2",
+    "7.3",
+    "13.1"
+  ],
+  "secondary_odds": [
+    "9.4",
+    "12.2"
+  ],
+  "confidence": 0.98,
+  "reasoning": "Renewable energy transition. Greenhouse gas emissions reduction. Morocco-specific co-benefits identified.",
+  "sector_mapping": {
+    "Energy": [
+      "7.2",
+      "7.3",
+      "13.1"
+    ]
+  },
+  "kg_metadata": {
+    "atlas_version": "4.11.0-lts-quantique",
+    "kg_nodes_traversed": 32,
+    "inference_method": "semantic_similarity",
+    "morocco_context": true
+  }
+}
+
+
+📋 TEST 4: Sustainable Agriculture
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{
+  "primary_odds": [
+    "2.3",
+    "2.4",
+    "13.1",
+    "15.1"
+  ],
+  "secondary_odds": [
+    "15.3",
+    "12.2"
+  ],
+  "confidence": 0.97,
+  "reasoning": "Sustainable agriculture and food security. Climate-resilient farming practices. Morocco-specific co-benefits identified.",
+  "sector_mapping": {
+    "Agriculture": [
+      "2.3",
+      "2.4",
+      "13.1"
+    ]
+  },
+  "kg_metadata": {
+    "atlas_version": "4.11.0-lts-quantique",
+    "kg_nodes_traversed": 42,
+    "inference_method": "semantic_similarity",
+    "morocco_context": true
+  }
+}
+
+
+📋 TEST 5: Fallback Mode (Unknown Sector)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{
+  "primary_odds": [
+    "13.1"
+  ],
+  "secondary_odds": [],
+  "confidence": 0.5,
+  "reasoning": "General climate action.",
+  "sector_mapping": {
+    "Other": [
+      "13.1"
+    ]
+  },
+  "kg_metadata": {
+    "atlas_version": "4.11.0-lts-quantique",
+    "kg_nodes_traversed": 37,
+    "inference_method": "semantic_similarity",
+    "morocco_context": false
+  }
+}
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ ATLAS KG Integration Demo Complete
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
