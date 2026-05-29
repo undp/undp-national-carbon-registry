@@ -3123,10 +3123,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@casl/ability@^6.3.2":
-  version "6.4.0"
-  resolved "https://registry.yarnpkg.com/@casl/ability/-/ability-6.4.0.tgz#6866110e6f85ca0e8d67a530bea4381d61f4ab6b"
-  integrity sha512-Z2bi5QdijspY/t4OhVjIWXV6kuKhZtZFI2nNthrcWEs9CtR2jkdDCjiqptFGlRBMTSZWJTCSVovtZfOzkGhhIA==
+"@casl/ability@^6.7.5":
+  version "6.7.5"
+  resolved "https://registry.yarnpkg.com/@casl/ability/-/ability-6.7.5.tgz#9468b210005ab5cbd7a5e030fb48d3a3720de92b"
+  integrity sha512-NaOHPi9JMn8Kesh+GRkjNKAYkl4q8qMFAlqw7w2yrE+cBQZSbV9GkBGKvgzs3CdzEc5Yl1cn3JwDxxbBN5gjog==
   dependencies:
     "@ucast/mongo2js" "^1.3.0"
 
