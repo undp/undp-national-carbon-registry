@@ -429,28 +429,44 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                   },
                 ]}
               >
-                <Radio.Group disabled={isProceed}>
-                  <Radio value={RetirementType.CROSS_BORDER}>
-                    {t(RetirementType.CROSS_BORDER)}
-                  </Radio>
-                  <Radio value={RetirementType.VOLUNTARY_CANCELLATION}>
-                    {t(RetirementType.VOLUNTARY_CANCELLATION)}
-                  </Radio>
-                  {/* Article 6.2 retirement types (Dec 2/CMA.3 Annex
-                     para 29 account buckets + Draft -/CMA.5 para 80
-                     action subtypes). */}
-                  <Radio value={RetirementType.USE_TOWARDS_NDC}>
-                    Use Towards NDC
-                  </Radio>
-                  <Radio value={RetirementType.USE_FOR_OIMP}>
-                    Use For OIMP
-                  </Radio>
-                  <Radio value={RetirementType.OMGE_CANCELLATION}>
-                    OMGE Cancellation
-                  </Radio>
-                  <Radio value={RetirementType.SOP_ADAPTATION}>
-                    SOP Adaptation
-                  </Radio>
+                <Radio.Group disabled={isProceed} style={{ width: "100%" }}>
+                  {/* Grid lives on a plain wrapper div: antd v4's
+                     Radio.Group does not forward `style` to its DOM
+                     node, but the Radios still join the group via
+                     RadioGroupContext regardless of DOM nesting. The
+                     2-column layout keeps all six options inside the
+                     430px modal instead of overflowing horizontally. */}
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      rowGap: 8,
+                      columnGap: 8,
+                      width: "100%",
+                    }}
+                  >
+                    <Radio value={RetirementType.CROSS_BORDER}>
+                      {t(RetirementType.CROSS_BORDER)}
+                    </Radio>
+                    <Radio value={RetirementType.VOLUNTARY_CANCELLATION}>
+                      {t(RetirementType.VOLUNTARY_CANCELLATION)}
+                    </Radio>
+                    {/* Article 6.2 retirement types (Dec 2/CMA.3 Annex
+                       para 29 account buckets + Draft -/CMA.5 para 80
+                       action subtypes). */}
+                    <Radio value={RetirementType.USE_TOWARDS_NDC}>
+                      Use Towards NDC
+                    </Radio>
+                    <Radio value={RetirementType.USE_FOR_OIMP}>
+                      Use For OIMP
+                    </Radio>
+                    <Radio value={RetirementType.OMGE_CANCELLATION}>
+                      OMGE Cancellation
+                    </Radio>
+                    <Radio value={RetirementType.SOP_ADAPTATION}>
+                      SOP Adaptation
+                    </Radio>
+                  </div>
                 </Radio.Group>
               </Form.Item>
             )}
