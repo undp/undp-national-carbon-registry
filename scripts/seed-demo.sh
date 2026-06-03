@@ -335,19 +335,33 @@ echo "  + 3 ledger credit_blocks rows"
 echo "[seed] Mirroring programmes -> project_entity for UI list visibility"
 mirror_project() {
   local pid=$1 title=$2 stage=$3 issued=$4 balance=$5
+  # authorizationId mirrors serialNumberManagementService.getAuthorizationId:
+  # DDMMYY + systemCountryCode + projectId (e.g. 130526NG004).
+  local auth_time auth_id
+  if [ "$stage" = "AUTHORISED" ]; then
+    auth_time="$NOW_MS"
+    auth_id="$(date +%d%m%y)${COUNTRY}${pid}"
+  else
+    auth_time="NULL"
+    auth_id="NULL"
+  fi
   # ON CONFLICT DO UPDATE so this step is idempotent against rows the
   # replicator may already have written (it writes project_entity for
   # programmes that have been through the methodology+authorize event
-  # chain — i.e. our 003 + 004 — once the replicator catches up).
+  # chain — i.e. our 003 + 004 — once the replicator catches up). The
+  # replicator-written row leaves projectAuthorizationTime / authorizationId
+  # NULL on the local stack, so we explicitly carry them through the
+  # upsert; without this, aef-report-management's handleAefRecord skips
+  # emission (aef-report-management.service.ts:104) and Reports stays empty.
   podman exec "$DB_CONTAINER" psql -U root -d carbondev -c "
 INSERT INTO project_entity (
   \"refId\",\"title\",\"companyId\",\"independentCertifiers\",\"projectProposalStage\",
-  \"sector\",\"sectoralScope\",\"projectAuthorizationTime\",\"txType\",\"txTime\",
+  \"sector\",\"sectoralScope\",\"projectAuthorizationTime\",\"authorizationId\",\"txType\",\"txTime\",
   \"createTime\",\"updateTime\",\"creditEst\",\"creditBalance\",\"creditIssued\",\"creditChange\",
   \"cooperativeApproachId\",\"authorizationPurpose\"
 ) VALUES (
   '$pid','$title',1,'{}','$stage',
-  'Energy','1',$([ "$stage" = "AUTHORISED" ] && echo "$NOW_MS" || echo "NULL"),'0',(EXTRACT(EPOCH FROM NOW())::bigint*1000),
+  'Energy','1',$auth_time,$([ "$auth_id" = "NULL" ] && echo "NULL" || echo "'$auth_id'"),'0',(EXTRACT(EPOCH FROM NOW())::bigint*1000),
   (EXTRACT(EPOCH FROM NOW())::bigint*1000),(EXTRACT(EPOCH FROM NOW())::bigint*1000),
   1000,$balance,$issued,0,
   '$CA1','UseTowardsNDC'
@@ -355,6 +369,8 @@ INSERT INTO project_entity (
 ON CONFLICT (\"refId\") DO UPDATE SET
   \"title\" = EXCLUDED.\"title\",
   \"projectProposalStage\" = EXCLUDED.\"projectProposalStage\",
+  \"projectAuthorizationTime\" = EXCLUDED.\"projectAuthorizationTime\",
+  \"authorizationId\" = EXCLUDED.\"authorizationId\",
   \"creditEst\" = EXCLUDED.\"creditEst\",
   \"creditBalance\" = EXCLUDED.\"creditBalance\",
   \"creditIssued\" = EXCLUDED.\"creditIssued\",
@@ -366,6 +382,40 @@ mirror_project "$PB"     "Mangrove Reforestation — Approved"           "APPROV
 mirror_project "$PC"     "Cookstove Distribution — Authorised"         "AUTHORISED" 0    0
 mirror_project "$PD_ID"  "Wind Farm — Authorised + Issued"             "AUTHORISED" 1000 1000
 echo "  + 4 project_entity rows"
+
+# ---------------------------------------------------------------------
+# Materialise AEF Actions rows for the seeded credit blocks. Normally
+# aef-report-management.service.ts:handleAefRecord is fired as a side
+# effect of the legitimate issue/transfer/retire flow in
+# credit-transactions-management.service.ts:552. The seed bypass writes
+# credit_blocks_entity directly (above), so the AEF table stays empty
+# and Reports → Article 6.2 (Actions + Holdings) shows "No data". Seed
+# three actionType='authorization' rows matching the three credit blocks
+# so the Reports page has demo content for the current reporting year.
+# ---------------------------------------------------------------------
+echo "[seed] Materialising AEF Actions rows for $PD_ID credit blocks"
+AUTH_ID_D="$(date +%d%m%y)${COUNTRY}${PD_ID}"
+podman exec "$DB_CONTAINER" psql -U root -d carbondev -c "
+INSERT INTO aef_actions_table_entity (
+  \"creditBlockStartId\",\"creditBlockEndId\",\"creditAmount\",\"vintage\",
+  \"sector\",\"sectoralScope\",\"projectAuthorizationTime\",\"authorizationId\",
+  \"actionTime\",\"actionType\",\"aquiringParty\",\"cooperativeApproachId\",
+  \"authorizationPurpose\",\"isFirstTransfer\",\"reportingYear\",\"createdTime\"
+) VALUES
+  ('$ITMO_SERIAL_BASE-1','$ITMO_SERIAL_BASE-930',930,'$SEED_YEAR',
+   'Energy','1',$NOW_MS,'$AUTH_ID_D',
+   $NOW_MS,'authorization','$COUNTRY','$CA1',
+   'UseTowardsNDC',FALSE,$SEED_YEAR,$NOW_MS),
+  ('$ITMO_SERIAL_BASE-931','$ITMO_SERIAL_BASE-950',20,'$SEED_YEAR',
+   'Energy','1',$NOW_MS,'$AUTH_ID_D',
+   $NOW_MS,'authorization','$COUNTRY','$CA1',
+   'UseTowardsNDC',FALSE,$SEED_YEAR,$NOW_MS),
+  ('$ITMO_SERIAL_BASE-951','$ITMO_SERIAL_BASE-1000',50,'$SEED_YEAR',
+   'Energy','1',$NOW_MS,'$AUTH_ID_D',
+   $NOW_MS,'authorization','$COUNTRY','$CA1',
+   'UseTowardsNDC',FALSE,$SEED_YEAR,$NOW_MS);
+" > /dev/null
+echo "  + 3 AEF action rows (Holding 930, OMGE 20, SOP 50; reportingYear=$SEED_YEAR)"
 
 # ---------------------------------------------------------------------
 # Corresponding Adjustment
