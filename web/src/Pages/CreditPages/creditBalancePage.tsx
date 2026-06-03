@@ -1,17 +1,21 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Select, Tag } from 'antd';
+import { Select } from 'antd';
 import { CreditBalanceTableComponent } from './Components/creditBalanceTable';
 import './creditPageStyles.scss';
 
+// Account buckets follow the A6.2 action vocabulary: ITMOs are "used" (towards
+// NDC / for OIMP) or "cancelled" (voluntary / OMGE / SOP), not "retired". Only
+// the labels change here — the stored `value` strings are unchanged so existing
+// data and the backend filter keep working. SOP carries an A6.2-review flag.
 const accountTypeOptions = [
   { value: 'all', label: 'All Accounts' },
   { value: 'Holding', label: 'Holding' },
-  { value: 'RetirementNDC', label: 'Retired (NDC)' },
-  { value: 'RetirementOIMP', label: 'Retired (OIMP)' },
+  { value: 'RetirementNDC', label: 'Used (Towards NDC)' },
+  { value: 'RetirementOIMP', label: 'Used (For OIMP)' },
   { value: 'CancellationVoluntary', label: 'Cancelled (Voluntary)' },
   { value: 'CancellationOMGE', label: 'Cancelled (OMGE)' },
-  { value: 'CancellationSOP', label: 'Cancelled (SOP)' },
+  { value: 'CancellationSOP', label: 'Cancelled (SOP) *' },
 ];
 
 export const CreditBalancePage = () => {

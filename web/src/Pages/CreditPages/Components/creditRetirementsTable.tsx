@@ -36,7 +36,10 @@ import {
 } from "../Enums/creditRetirementProceedType.enum";
 import { CreditRetirementInterface } from "../Interfaces/creditRetirement.interface";
 import moment from "moment";
-import { addCommSep } from "../../../Definitions/Definitions/programme.definitions";
+import {
+  addCommSep,
+  getCreditActionLabel,
+} from "../../../Definitions/Definitions/programme.definitions";
 import { Role } from "../../../Definitions/Enums/role.enum";
 import { COLOR_CONFIGS } from "../../../Config/colorConfigs";
 
@@ -203,7 +206,7 @@ export const CreditRetirementsTableComponent = (props: any) => {
                     color={COLOR_CONFIGS.PRIMARY_THEME_COLOR}
                   />
                 ),
-                title: t("acceptCreditRetireRequest"),
+                title: t("acceptCreditActionRequest"),
                 type: CreditActionType.RETIREMENT,
                 actionBtnText: t("proceed"),
                 remarkRequired: false,
@@ -355,12 +358,15 @@ export const CreditRetirementsTableComponent = (props: any) => {
       },
     },
     {
-      title: t(CrediRetirementsColumns.RETIREMENT_TYPE),
+      // A pending request may be a use, a cancellation or a cross-border
+      // transfer — all stored as "retirement" transactions. Show the A6.2
+      // action label rather than the raw "retirement type" string.
+      title: t("creditActionType"),
       key: "retirementType",
       sorter: true,
       align: "center" as const,
       render: (item: CreditRetirementInterface) => {
-        return <span>{item?.retirementType}</span>;
+        return <span>{getCreditActionLabel(item?.retirementType)}</span>;
       },
     },
     {
@@ -488,10 +494,10 @@ export const CreditRetirementsTableComponent = (props: any) => {
             ),
           title: t(
             action === RetirementActionEnum.ACCEPT
-              ? "creditRetireAcceptedSuccessfully"
+              ? "creditActionAcceptedSuccessfully"
               : action === RetirementActionEnum.REJECT
-              ? "creditRetireRejectedSuccessfully"
-              : "creditRetireCancelledSuccessfully"
+              ? "creditActionRejectedSuccessfully"
+              : "creditActionCancelledSuccessfully"
           ),
           buttonText: t("okay"),
         });
@@ -503,7 +509,7 @@ export const CreditRetirementsTableComponent = (props: any) => {
               color={COLOR_CONFIGS.FAILED_RESPONSE_COLOR}
             />
           ),
-          title: t("creditRetirementSubmittedFailed"),
+          title: t("creditActionFailed"),
           buttonText: t("okay"),
         });
       }

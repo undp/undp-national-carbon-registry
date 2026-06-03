@@ -212,18 +212,36 @@ export const CreditBalanceTableComponent = (props: any) => {
             },
           },
           {
-            text: t("retire"),
-            icon: <Icon.ClockHistory color="#FF4D4F" />,
+            // "Use" an ITMO towards an NDC or for OIMP (A6.2 terminal action).
+            text: t("use"),
+            icon: <Icon.Bullseye color={COLOR_CONFIGS.PRIMARY_THEME_COLOR} />,
             click: () => {
               setModalActionData({
                 icon: (
-                  <Icon.BoxArrowDown
+                  <Icon.BoxArrowInDownRight
                     color={COLOR_CONFIGS.PRIMARY_THEME_COLOR}
                   />
                 ),
-                title: t("areYouWantToRetireCredit"),
-                type: CreditActionType.RETIREMENT,
-                actionBtnText: t("retire"),
+                title: t("useCreditTitle"),
+                type: CreditActionType.USE,
+                actionBtnText: t("use"),
+                remarkRequired: false,
+                proceedAction: CreditRetirementProceedAction.ACCEPT,
+                data: record,
+              });
+              setModalActionVisible(true);
+            },
+          },
+          {
+            // "Cancel" an ITMO (voluntary / OMGE / SOP) — A6.2 cancellation.
+            text: t("cancelCredits"),
+            icon: <Icon.SlashCircle color="#FF4D4F" />,
+            click: () => {
+              setModalActionData({
+                icon: <Icon.SlashCircle color="#FF4D4F" />,
+                title: t("cancelCreditTitle"),
+                type: CreditActionType.CANCEL,
+                actionBtnText: t("cancelCreditsAction"),
                 remarkRequired: false,
                 proceedAction: CreditRetirementProceedAction.ACCEPT,
                 data: record,
@@ -438,8 +456,12 @@ export const CreditBalanceTableComponent = (props: any) => {
     try {
       let response: any;
       setModalActionLoading(true);
+      const action = modalActionData?.type;
 
-      if (modalActionData?.type === CreditActionType.TRANSFER) {
+      // No retirementType → a plain organization transfer. Otherwise (Use,
+      // Cancel, or cross-border transfer) it carries a retirementType and posts
+      // through the retire endpoint, which keeps the stored values unchanged.
+      if (!retirementType) {
         response = await post(API_PATHS.CREDIT_TRANSFER_REQUEST, {
           receiverOrgId: reciveParty,
           blockId: blockId,
@@ -461,17 +483,33 @@ export const CreditBalanceTableComponent = (props: any) => {
           amount: Number(creditAmount),
         });
       }
+
+      // Toast copy follows the action the user chose. Cross-border transfer is
+      // still a "transfer" to the user even though it uses the retire endpoint.
+      const successKey =
+        action === CreditActionType.USE
+          ? "creditUseSubmitted"
+          : action === CreditActionType.CANCEL
+          ? "creditCancelSubmitted"
+          : action === CreditActionType.TRANSFER
+          ? "creditTransferInitiated"
+          : "creditRetirementSubmitted";
+      const failKey =
+        action === CreditActionType.USE
+          ? "creditUseSubmittedFailed"
+          : action === CreditActionType.CANCEL
+          ? "creditCancelSubmittedFailed"
+          : action === CreditActionType.TRANSFER
+          ? "creditTransferInitiatedFailed"
+          : "creditRetirementSubmittedFailed";
+
       if (response.status === HttpStatusCode.Created) {
         setModalResponseData({
           type: ActionResponseType.SUCCESS,
           icon: (
             <Icon.CheckCircle color={COLOR_CONFIGS.SUCCESS_RESPONSE_COLOR} />
           ),
-          title: t(
-            modalActionData?.type === CreditActionType.TRANSFER
-              ? "creditTransferInitiated"
-              : "creditRetirementSubmitted"
-          ),
+          title: t(successKey),
           buttonText: t("okay"),
         });
       } else {
@@ -482,11 +520,7 @@ export const CreditBalanceTableComponent = (props: any) => {
               color={COLOR_CONFIGS.FAILED_RESPONSE_COLOR}
             />
           ),
-          title: t(
-            modalActionData?.type === CreditActionType.TRANSFER
-              ? "creditTransferInitiatedFailed"
-              : "creditRetirementSubmittedFailed"
-          ),
+          title: t(failKey),
           buttonText: t("okay"),
         });
       }
