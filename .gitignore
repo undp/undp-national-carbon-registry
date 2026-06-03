@@ -16,3 +16,9 @@ backend/services/*.pdf
 backend/services/*.csv
 backend/services/*.xlsx
 backend/services/public/*
+
+# Local dev / tooling artifacts
+.playwright-mcp/
+test-results/
+web/tsconfig.tsbuildinfo
+todo.md
