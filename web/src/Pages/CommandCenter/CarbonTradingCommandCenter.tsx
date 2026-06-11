@@ -19,6 +19,10 @@ import {
   Users,
 } from "lucide-react";
 import rawChinaGeoJson from "china-map-geojson/lib/china";
+import {
+  fetchRegionalDashboardSummary,
+  type RegionalDashboardSummary,
+} from "./regionalMarketApi";
 import "./commandCenter.scss";
 
 type AccountType = {
@@ -312,6 +316,54 @@ const formatClock = (date: Date) =>
     hour12: false,
   });
 
+const formatNumber = (value?: number, fractionDigits = 0) =>
+  typeof value === "number"
+    ? value.toLocaleString("zh-CN", {
+        minimumFractionDigits: fractionDigits,
+        maximumFractionDigits: fractionDigits,
+      })
+    : undefined;
+
+const toProjectRows = (
+  registrations?: RegionalDashboardSummary["recentProjectRegistrations"]
+): ProjectRow[] => {
+  if (!registrations?.length) {
+    return projectRows;
+  }
+
+  return registrations.map((project, index) => ({
+    id: Number(project.id ?? project.refId ?? index + 1),
+    name: String(project.name ?? project.title ?? project.projectName ?? "-"),
+    owner: String(project.owner ?? project.companyName ?? project.ownerName ?? "-"),
+    method: String(project.method ?? project.sector ?? project.methodology ?? "-"),
+    credits: String(
+      formatNumber(Number(project.credits ?? project.creditIssued ?? 0)) ?? "0"
+    ),
+  }));
+};
+
+const toTradeRows = (
+  trades?: RegionalDashboardSummary["recentTrades"]
+): TradeRow[] => {
+  if (!trades?.length) {
+    return tradeRows;
+  }
+
+  return trades.map((trade) => {
+    const amount = Number(trade.amount ?? 0);
+    const unitPrice = Number(trade.unitPrice ?? trade.averagePrice ?? 0);
+    const totalPrice = Number(trade.totalPrice ?? amount * unitPrice);
+
+    return {
+      date: String(trade.tradeTime ?? trade.date ?? "").slice(0, 10) || "-",
+      volume: formatNumber(amount) ?? "0",
+      amount: formatNumber(totalPrice, 2) ?? "0.00",
+      average: formatNumber(unitPrice, 2) ?? "0.00",
+      sector: String(trade.sector ?? trade.projectSector ?? "OTC 转让"),
+    };
+  });
+};
+
 const chinaGeoJson = rawChinaGeoJson as FeatureCollection<
   Geometry,
   ChinaFeatureProperties
@@ -520,19 +572,69 @@ const ChinaTradingMap = ({ points }: { points: MapPoint[] }) => {
 
 const CarbonTradingCommandCenter = () => {
   const [clock, setClock] = useState(() => new Date());
+  const [dashboardSummary, setDashboardSummary] =
+    useState<RegionalDashboardSummary>();
 
   useEffect(() => {
     const timer = window.setInterval(() => setClock(new Date()), 1000);
     return () => window.clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    fetchRegionalDashboardSummary()
+      .then((summary) => {
+        if (!cancelled) {
+          setDashboardSummary(summary);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setDashboardSummary(undefined);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const visibleProjectRows = useMemo(
+    () => toProjectRows(dashboardSummary?.recentProjectRegistrations),
+    [dashboardSummary]
+  );
+
+  const visibleTradeRows = useMemo(
+    () => toTradeRows(dashboardSummary?.recentTrades),
+    [dashboardSummary]
+  );
+
+  const metrics = dashboardSummary?.metrics;
+
   const daySummary = useMemo(
     () => [
-      { label: "成交量", value: "48,500 吨" },
-      { label: "成交额", value: "417.79 万元" },
-      { label: "成交均价", value: "86.14 元/吨" },
+      {
+        label: "成交量",
+        value: `${formatNumber(metrics?.transferVolume) ?? "48,500"} 吨`,
+      },
+      {
+        label: "成交额",
+        value: `${
+          formatNumber(
+            typeof metrics?.otcTradeValue === "number"
+              ? metrics.otcTradeValue / 10000
+              : undefined,
+            2
+          ) ?? "417.79"
+        } 万元`,
+      },
+      {
+        label: "成交均价",
+        value: `${formatNumber(metrics?.averageOtcPrice, 2) ?? "86.14"} 元/吨`,
+      },
     ],
-    []
+    [metrics]
   );
 
   return (
@@ -580,15 +682,17 @@ const CarbonTradingCommandCenter = () => {
                 <div className="cc-table-scroll">
                   <table className="cc-table cc-table--body">
                     <tbody className="cc-table__rolling cc-table__rolling--slow">
-                      {[...projectRows, ...projectRows].map((project, index) => (
-                        <tr key={`${project.id}-${index}`}>
-                          <td>{project.id}</td>
-                          <td>{project.name}</td>
-                          <td>{project.owner}</td>
-                          <td>{project.method}</td>
-                          <td>{project.credits}</td>
-                        </tr>
-                      ))}
+                      {[...visibleProjectRows, ...visibleProjectRows].map(
+                        (project, index) => (
+                          <tr key={`${project.id}-${index}`}>
+                            <td>{project.id}</td>
+                            <td>{project.name}</td>
+                            <td>{project.owner}</td>
+                            <td>{project.method}</td>
+                            <td>{project.credits}</td>
+                          </tr>
+                        )
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -600,17 +704,21 @@ const CarbonTradingCommandCenter = () => {
             <div className="cc-top-metrics">
               <Metric
                 icon={<TrendingUp size={22} />}
-                value="13,844,658 吨"
+                value={`${
+                  formatNumber(metrics?.transferVolume) ?? "13,844,658"
+                } 吨`}
                 label="交易数量"
               />
               <Metric
                 icon={<Layers size={22} />}
-                value="20 个"
+                value={`${formatNumber(metrics?.activeProjectCount) ?? "20"} 个`}
                 label="登记项目数量"
               />
               <Metric
                 icon={<Database size={22} />}
-                value="21,550,019 吨"
+                value={`${
+                  formatNumber(metrics?.totalIssuedCredits) ?? "21,550,019"
+                } 吨`}
                 label="登记减排量数量"
               />
             </div>
@@ -729,7 +837,7 @@ const CarbonTradingCommandCenter = () => {
                 <div className="cc-table-scroll">
                   <table className="cc-table cc-table--body">
                     <tbody className="cc-table__rolling">
-                      {[...tradeRows, ...tradeRows].map((trade, index) => (
+                      {[...visibleTradeRows, ...visibleTradeRows].map((trade, index) => (
                         <tr key={`${trade.date}-${trade.volume}-${index}`}>
                           <td>{trade.date}</td>
                           <td>{trade.volume}</td>
