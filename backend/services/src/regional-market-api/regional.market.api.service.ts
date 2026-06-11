@@ -1,10 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { RegionalMarketService } from "@app/shared/regional-market/regional-market.service";
+import { RegionalMarketProjectionService } from "@app/shared/regional-market/regional-market-projection.service";
 import { QueryDto } from "@app/shared/dto/query.dto";
 
 @Injectable()
 export class RegionalMarketAPIService {
-  constructor(private readonly regionalMarketService: RegionalMarketService) {}
+  constructor(
+    private readonly regionalMarketService: RegionalMarketService,
+    private readonly regionalMarketProjectionService: RegionalMarketProjectionService
+  ) {}
 
   getInfo() {
     return this.regionalMarketService.getBoundary();
@@ -59,5 +63,9 @@ export class RegionalMarketAPIService {
 
   executeOtcTrade(dto: any, user?: any) {
     return this.regionalMarketService.executeOtcTrade(dto, user);
+  }
+
+  getDashboardSummary() {
+    return this.regionalMarketProjectionService.getDashboardSummary();
   }
 }

@@ -1,11 +1,13 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { RegionalMarketService } from "@app/shared/regional-market/regional-market.service";
+import { RegionalMarketProjectionService } from "@app/shared/regional-market/regional-market-projection.service";
 import { RegionalMarketAPIController } from "./regional.market.api.controller";
 import { RegionalMarketAPIService } from "./regional.market.api.service";
 
 describe("RegionalMarketAPIController", () => {
   let controller: RegionalMarketAPIController;
   let regionalMarketService: Record<string, jest.Mock>;
+  let regionalMarketProjectionService: Record<string, jest.Mock>;
 
   const req = {
     user: { id: 12 },
@@ -34,6 +36,12 @@ describe("RegionalMarketAPIController", () => {
         cashSettlementMode: "offline",
       }),
     };
+    regionalMarketProjectionService = {
+      getDashboardSummary: jest.fn().mockResolvedValue({
+        metrics: { transferVolume: 300, averageOtcPrice: 42 },
+        recentTrades: [],
+      }),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [RegionalMarketAPIController],
@@ -42,6 +50,10 @@ describe("RegionalMarketAPIController", () => {
         {
           provide: RegionalMarketService,
           useValue: regionalMarketService,
+        },
+        {
+          provide: RegionalMarketProjectionService,
+          useValue: regionalMarketProjectionService,
         },
       ],
     }).compile();
@@ -174,5 +186,15 @@ describe("RegionalMarketAPIController", () => {
       dto,
       req.user
     );
+  });
+
+  it("returns dashboard summary projection", async () => {
+    await expect(controller.getDashboardSummary()).resolves.toEqual({
+      metrics: { transferVolume: 300, averageOtcPrice: 42 },
+      recentTrades: [],
+    });
+    expect(
+      regionalMarketProjectionService.getDashboardSummary
+    ).toHaveBeenCalled();
   });
 });

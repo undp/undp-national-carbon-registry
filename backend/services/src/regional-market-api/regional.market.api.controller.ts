@@ -80,4 +80,9 @@ export class RegionalMarketAPIController {
   async executeOtcTrade(@Body() dto: any, @Request() req: any) {
     return this.regionalMarketAPIService.executeOtcTrade(dto, req?.user);
   }
+
+  @Get("dashboard/summary")
+  async getDashboardSummary() {
+    return this.regionalMarketAPIService.getDashboardSummary();
+  }
 }
