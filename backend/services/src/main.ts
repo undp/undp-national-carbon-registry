@@ -5,6 +5,7 @@ import * as setupHandler from "@app/shared/setup/handler";
 import { NationalAPIModule } from "./national-api/national.api.module";
 import { join } from "path";
 import { AnalyticsAPIModule } from "./analytics-api/analytics.api.module";
+import { RegionalMarketAPIModule } from "./regional-market-api/regional.market.api.module";
 import { buildNestApp } from "./server";
 import * as fs from "fs";
 //const fs = require("fs");
@@ -28,6 +29,10 @@ async function bootstrap() {
       case "analytics-api":
         module = AnalyticsAPIModule;
         httpPath = "stats";
+        break;
+      case "regional-market-api":
+        module = RegionalMarketAPIModule;
+        httpPath = "regional";
         break;
       case "replicator":
         await handler();
