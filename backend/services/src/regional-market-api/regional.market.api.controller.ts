@@ -75,4 +75,9 @@ export class RegionalMarketAPIController {
   async issueProjectCredits(@Body() issueDto: any, @Request() req: any) {
     return this.regionalMarketAPIService.issueProjectCredits(issueDto, req?.user);
   }
+
+  @Post("otc-trades/execute")
+  async executeOtcTrade(@Body() dto: any, @Request() req: any) {
+    return this.regionalMarketAPIService.executeOtcTrade(dto, req?.user);
+  }
 }

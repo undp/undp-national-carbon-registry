@@ -28,6 +28,11 @@ describe("RegionalMarketAPIController", () => {
         .fn()
         .mockResolvedValue({ status: "APPROVED" }),
       issueProjectCredits: jest.fn().mockResolvedValue({ creditIssued: 100 }),
+      executeOtcTrade: jest.fn().mockResolvedValue({
+        registryTransaction: { id: "TX-1" },
+        marketTrade: { id: "TRADE-1" },
+        cashSettlementMode: "offline",
+      }),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -150,6 +155,23 @@ describe("RegionalMarketAPIController", () => {
       dto.companyId,
       dto.document,
       dto.txRef,
+      req.user
+    );
+  });
+
+  it("delegates OTC trade execution to the regional market service", async () => {
+    const dto = {
+      transfer: { senderId: 10, recieverId: 20, amount: 100 },
+      market: { unitPrice: 42, currency: "CNY" },
+    };
+
+    await expect(controller.executeOtcTrade(dto as any, req)).resolves.toEqual({
+      registryTransaction: { id: "TX-1" },
+      marketTrade: { id: "TRADE-1" },
+      cashSettlementMode: "offline",
+    });
+    expect(regionalMarketService.executeOtcTrade).toHaveBeenCalledWith(
+      dto,
       req.user
     );
   });

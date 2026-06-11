@@ -93,4 +93,59 @@ describe("RegionalMarketService", () => {
       user
     );
   });
+
+  it("executes an OTC trade as registry transfer plus market metadata", async () => {
+    const creditTransactionsManagementService = {
+      transferCredits: jest.fn().mockResolvedValue({
+        id: "TX-1",
+        creditBlockId: "CB-1",
+      }),
+    };
+    const marketTradeExecutionService = {
+      createFromTransfer: jest.fn().mockResolvedValue({ id: "TRADE-1" }),
+    };
+    const service = new RegionalMarketService(
+      undefined,
+      creditTransactionsManagementService as any,
+      undefined,
+      undefined,
+      marketTradeExecutionService as any
+    );
+    const dto = {
+      transfer: {
+        senderId: 10,
+        recieverId: 20,
+        amount: 100,
+        projectRefId: "PRJ-1",
+        creditBlockId: "CB-1",
+        serialNumber: "SN-1",
+      },
+      market: {
+        unitPrice: 42,
+        currency: "CNY",
+        tradeTime: new Date("2026-06-11T00:00:00.000Z"),
+      },
+    };
+    const user = { id: 1 };
+
+    await expect(service.executeOtcTrade(dto as any, user)).resolves.toEqual({
+      registryTransaction: { id: "TX-1", creditBlockId: "CB-1" },
+      marketTrade: { id: "TRADE-1" },
+      cashSettlementMode: "offline",
+    });
+    expect(creditTransactionsManagementService.transferCredits).toHaveBeenCalledWith(
+      dto.transfer,
+      user
+    );
+    expect(marketTradeExecutionService.createFromTransfer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        creditTransactionId: "TX-1",
+        creditBlockId: "CB-1",
+        sellerCompanyId: 10,
+        buyerCompanyId: 20,
+        amount: 100,
+        unitPrice: 42,
+      })
+    );
+  });
 });

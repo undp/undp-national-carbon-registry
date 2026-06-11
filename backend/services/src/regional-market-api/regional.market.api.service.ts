@@ -56,4 +56,8 @@ export class RegionalMarketAPIService {
       user
     );
   }
+
+  executeOtcTrade(dto: any, user?: any) {
+    return this.regionalMarketService.executeOtcTrade(dto, user);
+  }
 }

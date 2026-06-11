@@ -4,6 +4,7 @@ import { QueryDto } from "../dto/query.dto";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { ProjectManagementService } from "../project-management/project-management.service";
 import { Injectable, Optional } from "@nestjs/common";
+import { MarketTradeExecutionService } from "./market-trade-execution.service";
 
 @Injectable()
 export class RegionalMarketService {
@@ -15,7 +16,9 @@ export class RegionalMarketService {
     @Optional()
     private readonly documentManagementService?: DocumentManagementService,
     @Optional()
-    private readonly programmeLedgerService?: ProgrammeLedgerService
+    private readonly programmeLedgerService?: ProgrammeLedgerService,
+    @Optional()
+    private readonly marketTradeExecutionService?: MarketTradeExecutionService
   ) {}
 
   getBoundary() {
@@ -103,6 +106,45 @@ export class RegionalMarketService {
       txRef,
       user
     );
+  }
+
+  async executeOtcTrade(dto: any, user?: any) {
+    this.assertProvider(
+      this.creditTransactionsManagementService,
+      "CreditTransactionsManagementService"
+    );
+    this.assertProvider(
+      this.marketTradeExecutionService,
+      "MarketTradeExecutionService"
+    );
+
+    const registryTransaction: any =
+      await this.creditTransactionsManagementService.transferCredits(
+        dto.transfer,
+        user
+      );
+    const marketTrade =
+      await this.marketTradeExecutionService.createFromTransfer({
+        creditTransactionId: registryTransaction?.id,
+        creditBlockId:
+          registryTransaction?.creditBlockId ?? dto.transfer?.creditBlockId,
+        sellerCompanyId: dto.transfer?.senderId,
+        buyerCompanyId: dto.transfer?.recieverId ?? dto.transfer?.receiverId,
+        projectRefId: dto.transfer?.projectRefId,
+        serialNumber: dto.transfer?.serialNumber,
+        amount: dto.transfer?.amount,
+        unitPrice: dto.market?.unitPrice,
+        totalPrice: dto.market?.totalPrice,
+        currency: dto.market?.currency,
+        tradeTime: dto.market?.tradeTime,
+        settlementStatus: "SETTLED_OFFLINE",
+      });
+
+    return {
+      registryTransaction,
+      marketTrade,
+      cashSettlementMode: "offline",
+    };
   }
 
   private assertProvider<T>(provider: T | undefined, name: string): asserts provider is T {
