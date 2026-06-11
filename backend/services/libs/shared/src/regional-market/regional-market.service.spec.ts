@@ -1,26 +1,41 @@
-import { Test, TestingModule } from "@nestjs/testing";
+import { MODULE_METADATA } from "@nestjs/common/constants";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { CreditTransactionsManagementModule } from "../credit-transactions-management/credit-transactions-management.module";
 import { DocumentManagementService } from "../document-management/document-management.service";
+import { DocumentManagementModule } from "../document-management/document-management.module";
+import { Country } from "../entities/country.entity";
+import { MarketTradeExecutionEntity } from "../entities/market.trade.execution.entity";
+import { ProjectEntity } from "../entities/projects.entity";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
+import { ProgrammeLedgerModule } from "../programme-ledger/programme-ledger.module";
+import { ProjectManagementModule } from "../project-management/project-management.module";
 import { RegionalMarketModule } from "./regional-market.module";
 import { RegionalMarketService } from "./regional-market.service";
 
 describe("RegionalMarketService", () => {
-  let module: TestingModule;
+  it("declares the real registry dependencies required by the regional facade", () => {
+    const imports =
+      Reflect.getMetadata(MODULE_METADATA.IMPORTS, RegionalMarketModule) ?? [];
 
-  beforeEach(async () => {
-    module = await Test.createTestingModule({
-      imports: [RegionalMarketModule],
-    }).compile();
-  });
-
-  afterEach(async () => {
-    await module.close();
-  });
-
-  it("resolves from the regional market module", () => {
-    expect(module.get(RegionalMarketService)).toBeInstanceOf(
-      RegionalMarketService
-    );
+    expect(imports).toContain(ProjectManagementModule);
+    expect(imports).toContain(DocumentManagementModule);
+    expect(imports).toContain(ProgrammeLedgerModule);
+    expect(imports).toContain(CreditTransactionsManagementModule);
+    expect(
+      imports.some(
+        (moduleImport) =>
+          moduleImport?.module === TypeOrmModule &&
+          moduleImport?.providers?.some((provider) =>
+            provider?.provide?.includes?.(MarketTradeExecutionEntity.name)
+          ) &&
+          moduleImport?.providers?.some((provider) =>
+            provider?.provide?.includes?.(ProjectEntity.name)
+          ) &&
+          moduleImport?.providers?.some((provider) =>
+            provider?.provide?.includes?.(Country.name)
+          )
+      )
+    ).toBe(true);
   });
 
   it("delegates project document creation to document management", async () => {
@@ -132,6 +147,7 @@ describe("RegionalMarketService", () => {
       registryTransaction: { id: "TX-1", creditBlockId: "CB-1" },
       marketTrade: { id: "TRADE-1" },
       cashSettlementMode: "offline",
+      settlementStatus: "SETTLED_OFFLINE",
     });
     expect(creditTransactionsManagementService.transferCredits).toHaveBeenCalledWith(
       dto.transfer,
@@ -147,5 +163,49 @@ describe("RegionalMarketService", () => {
         unitPrice: 42,
       })
     );
+  });
+
+  it("marks OTC trades for reconciliation when market metadata cannot be recorded after registry transfer", async () => {
+    const creditTransactionsManagementService = {
+      transferCredits: jest.fn().mockResolvedValue({
+        id: "TX-1",
+        creditBlockId: "CB-1",
+      }),
+    };
+    const marketTradeExecutionService = {
+      createFromTransfer: jest
+        .fn()
+        .mockRejectedValue(new Error("database unavailable")),
+    };
+    const service = new RegionalMarketService(
+      undefined,
+      creditTransactionsManagementService as any,
+      undefined,
+      undefined,
+      marketTradeExecutionService as any
+    );
+    const dto = {
+      transfer: {
+        senderId: 10,
+        receiverId: 20,
+        amount: 100,
+        projectRefId: "PRJ-1",
+        creditBlockId: "CB-1",
+        serialNumber: "SN-1",
+      },
+      market: {
+        unitPrice: 42,
+        currency: "CNY",
+      },
+    };
+
+    await expect(service.executeOtcTrade(dto as any, { id: 1 })).resolves.toEqual({
+      registryTransaction: { id: "TX-1", creditBlockId: "CB-1" },
+      marketTrade: undefined,
+      cashSettlementMode: "offline",
+      settlementStatus: "RECONCILIATION_REQUIRED",
+      reconciliationRequired: true,
+      reconciliationReason: "database unavailable",
+    });
   });
 });

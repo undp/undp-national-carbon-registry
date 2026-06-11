@@ -3,6 +3,7 @@ import { RegionalMarketModule } from "@app/shared/regional-market/regional-marke
 import { RateLimiterModule } from "nestjs-rate-limiter";
 import { RegionalMarketAPIController } from "./regional.market.api.controller";
 import { RegionalMarketAPIService } from "./regional.market.api.service";
+import { RegionalMarketDemoGuard } from "./regional.market.demo.guard";
 
 @Module({
   imports: [
@@ -12,6 +13,6 @@ import { RegionalMarketAPIService } from "./regional.market.api.service";
     RegionalMarketModule,
   ],
   controllers: [RegionalMarketAPIController],
-  providers: [RegionalMarketAPIService, Logger],
+  providers: [RegionalMarketAPIService, RegionalMarketDemoGuard, Logger],
 })
 export class RegionalMarketAPIModule {}

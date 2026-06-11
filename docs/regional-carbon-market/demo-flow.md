@@ -11,6 +11,12 @@ cd backend/services
 RUN_MODULE=regional-market-api RUN_PORT=3001 yarn start:dev
 ```
 
+Protected regional workflow routes require an authenticated request user. For a local PoC without the national auth stack, start the API with explicit demo mode:
+
+```bash
+REGIONAL_MARKET_DEMO_MODE=true RUN_MODULE=regional-market-api RUN_PORT=3001 yarn start:dev
+```
+
 Start the web dashboard:
 
 ```bash
@@ -43,7 +49,18 @@ The registry transfer changes carbon-credit ownership. Cash movement is assumed 
 
 ```json
 {
-  "cashSettlementMode": "offline"
+  "cashSettlementMode": "offline",
+  "settlementStatus": "SETTLED_OFFLINE"
+}
+```
+
+If the registry transfer succeeds but the OTC market metadata cannot be recorded, the response is explicitly marked for reconciliation:
+
+```json
+{
+  "cashSettlementMode": "offline",
+  "settlementStatus": "RECONCILIATION_REQUIRED",
+  "reconciliationRequired": true
 }
 ```
 
@@ -70,6 +87,9 @@ Expected dashboard response shape:
 
 ```json
 {
+  "dataStatus": "real",
+  "projectionAvailable": true,
+  "projectionErrors": [],
   "metrics": {
     "totalIssuedCredits": 0,
     "activeProjectCount": 0,
@@ -83,6 +103,8 @@ Expected dashboard response shape:
   "regionalMetrics": []
 }
 ```
+
+When trade storage is unavailable, the backend returns `dataStatus: "fallback"` and `projectionAvailable: false`. The dashboard treats that as a full demo-data fallback instead of rendering zero-valued API metrics beside mock tables.
 
 ## Demo Data Notes
 

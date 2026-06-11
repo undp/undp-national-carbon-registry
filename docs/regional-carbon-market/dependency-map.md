@@ -59,7 +59,6 @@ The extracted subsystem is a regional carbon asset registry plus OTC settlement 
 - credit balance/transfer/retirement view entities required by `CreditTransactionsManagementService`
 - New market read/write entities:
   - `MarketTradeExecutionEntity`
-  - `RegionalMarketProjectionEntity`
 
 ## Modules To Avoid In First PoC
 

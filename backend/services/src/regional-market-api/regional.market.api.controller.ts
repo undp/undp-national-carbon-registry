@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post, Request } from "@nestjs/common";
+import { Body, Controller, Get, Post, Request, UseGuards } from "@nestjs/common";
 import { QueryDto } from "@app/shared/dto/query.dto";
 import { RegionalMarketAPIService } from "./regional.market.api.service";
+import { RegionalMarketDemoGuard } from "./regional.market.demo.guard";
 
 @Controller()
 export class RegionalMarketAPIController {
@@ -12,6 +13,7 @@ export class RegionalMarketAPIController {
   }
 
   @Post("projects/query")
+  @UseGuards(RegionalMarketDemoGuard)
   async queryProjects(@Body() query: QueryDto, @Request() req: any) {
     return this.regionalMarketAPIService.queryProjects(
       query,
@@ -21,6 +23,7 @@ export class RegionalMarketAPIController {
   }
 
   @Post("projects/getById")
+  @UseGuards(RegionalMarketDemoGuard)
   async getProjectById(
     @Body("programmeId") programmeId: string,
     @Request() req: any
@@ -29,6 +32,7 @@ export class RegionalMarketAPIController {
   }
 
   @Post("credits/balance")
+  @UseGuards(RegionalMarketDemoGuard)
   async queryCreditBalances(@Body() query: QueryDto, @Request() req: any) {
     return this.regionalMarketAPIService.queryCreditBalances(
       query,
@@ -38,6 +42,7 @@ export class RegionalMarketAPIController {
   }
 
   @Post("settlements/transfers/query")
+  @UseGuards(RegionalMarketDemoGuard)
   async queryTransfers(@Body() query: QueryDto, @Request() req: any) {
     return this.regionalMarketAPIService.queryTransfers(
       query,
@@ -47,6 +52,7 @@ export class RegionalMarketAPIController {
   }
 
   @Post("retirements/query")
+  @UseGuards(RegionalMarketDemoGuard)
   async queryRetirements(@Body() query: QueryDto, @Request() req: any) {
     return this.regionalMarketAPIService.queryRetirements(
       query,
@@ -56,6 +62,7 @@ export class RegionalMarketAPIController {
   }
 
   @Post("projects/documents")
+  @UseGuards(RegionalMarketDemoGuard)
   async createProjectDocument(@Body() documentDto: any, @Request() req: any) {
     return this.regionalMarketAPIService.createProjectDocument(
       documentDto,
@@ -64,6 +71,7 @@ export class RegionalMarketAPIController {
   }
 
   @Post("projects/documents/action")
+  @UseGuards(RegionalMarketDemoGuard)
   async performProjectDocumentAction(@Body() actionDto: any, @Request() req: any) {
     return this.regionalMarketAPIService.performProjectDocumentAction(
       actionDto,
@@ -72,11 +80,13 @@ export class RegionalMarketAPIController {
   }
 
   @Post("projects/credits/issue")
+  @UseGuards(RegionalMarketDemoGuard)
   async issueProjectCredits(@Body() issueDto: any, @Request() req: any) {
     return this.regionalMarketAPIService.issueProjectCredits(issueDto, req?.user);
   }
 
   @Post("otc-trades/execute")
+  @UseGuards(RegionalMarketDemoGuard)
   async executeOtcTrade(@Body() dto: any, @Request() req: any) {
     return this.regionalMarketAPIService.executeOtcTrade(dto, req?.user);
   }

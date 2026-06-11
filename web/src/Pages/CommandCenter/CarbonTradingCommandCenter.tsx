@@ -600,17 +600,27 @@ const CarbonTradingCommandCenter = () => {
     };
   }, []);
 
+  const hasRealRegionalProjection = dashboardSummary?.dataStatus === "real";
+
   const visibleProjectRows = useMemo(
-    () => toProjectRows(dashboardSummary?.recentProjectRegistrations),
-    [dashboardSummary]
+    () =>
+      toProjectRows(
+        hasRealRegionalProjection
+          ? dashboardSummary?.recentProjectRegistrations
+          : undefined
+      ),
+    [dashboardSummary, hasRealRegionalProjection]
   );
 
   const visibleTradeRows = useMemo(
-    () => toTradeRows(dashboardSummary?.recentTrades),
-    [dashboardSummary]
+    () =>
+      toTradeRows(
+        hasRealRegionalProjection ? dashboardSummary?.recentTrades : undefined
+      ),
+    [dashboardSummary, hasRealRegionalProjection]
   );
 
-  const metrics = dashboardSummary?.metrics;
+  const metrics = hasRealRegionalProjection ? dashboardSummary?.metrics : undefined;
 
   const daySummary = useMemo(
     () => [

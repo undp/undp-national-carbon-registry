@@ -3,21 +3,16 @@ import { DocumentManagementService } from "../document-management/document-manag
 import { QueryDto } from "../dto/query.dto";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { ProjectManagementService } from "../project-management/project-management.service";
-import { Injectable, Optional } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { MarketTradeExecutionService } from "./market-trade-execution.service";
 
 @Injectable()
 export class RegionalMarketService {
   constructor(
-    @Optional()
     private readonly projectManagementService?: ProjectManagementService,
-    @Optional()
     private readonly creditTransactionsManagementService?: CreditTransactionsManagementService,
-    @Optional()
     private readonly documentManagementService?: DocumentManagementService,
-    @Optional()
     private readonly programmeLedgerService?: ProgrammeLedgerService,
-    @Optional()
     private readonly marketTradeExecutionService?: MarketTradeExecutionService
   ) {}
 
@@ -123,13 +118,14 @@ export class RegionalMarketService {
         dto.transfer,
         user
       );
-    const marketTrade =
-      await this.marketTradeExecutionService.createFromTransfer({
+    let marketTrade;
+    try {
+      marketTrade = await this.marketTradeExecutionService.createFromTransfer({
         creditTransactionId: registryTransaction?.id,
         creditBlockId:
           registryTransaction?.creditBlockId ?? dto.transfer?.creditBlockId,
         sellerCompanyId: dto.transfer?.senderId,
-        buyerCompanyId: dto.transfer?.recieverId ?? dto.transfer?.receiverId,
+        buyerCompanyId: dto.transfer?.receiverId ?? dto.transfer?.recieverId,
         projectRefId: dto.transfer?.projectRefId,
         serialNumber: dto.transfer?.serialNumber,
         amount: dto.transfer?.amount,
@@ -139,11 +135,23 @@ export class RegionalMarketService {
         tradeTime: dto.market?.tradeTime,
         settlementStatus: "SETTLED_OFFLINE",
       });
+    } catch (error) {
+      return {
+        registryTransaction,
+        marketTrade: undefined,
+        cashSettlementMode: "offline",
+        settlementStatus: "RECONCILIATION_REQUIRED",
+        reconciliationRequired: true,
+        reconciliationReason:
+          error instanceof Error ? error.message : "market trade record failed",
+      };
+    }
 
     return {
       registryTransaction,
       marketTrade,
       cashSettlementMode: "offline",
+      settlementStatus: "SETTLED_OFFLINE",
     };
   }
 

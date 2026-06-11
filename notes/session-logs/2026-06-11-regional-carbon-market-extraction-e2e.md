@@ -23,6 +23,17 @@ yarn test regional-market.service.spec.ts regional.market.api.controller.spec.ts
 
 Result: 4 suites passed, 20 tests passed.
 
+Post-review focused tests:
+
+```bash
+cd backend/services
+yarn test regional-market.service.spec.ts regional-market-api.module.integration.spec.ts regional.market.api.controller.spec.ts regional.market.demo.guard.spec.ts market-trade-execution.service.spec.ts regional-market-projection.service.spec.ts regional.market.api.integration.spec.ts --runInBand
+```
+
+Result: 7 suites passed, 29 tests passed.
+
+The added `regional-market-api.module.integration.spec.ts` compiles `RegionalMarketAPIModule` with the real `RegionalMarketModule` and real transitive registry modules while replacing the database connection with a fake TypeORM `DataSource`. This verifies the extracted module graph without requiring local Postgres.
+
 Backend build:
 
 ```bash
@@ -65,7 +76,7 @@ Nest could not select the given module (it does not exist in current context)
 
 Root cause: `backend/services/src/server.ts` unconditionally called `useContainer(nestApp.select(UtilModule), ...)`, but the extracted regional API intentionally avoids the heavy `UtilModule`.
 
-Fix: skip `UtilModule` class-validator binding for `RegionalMarketAPIModule`.
+Fix: `buildNestApp` now accepts an explicit `useClassValidatorContainer` option. `regional-market-api` starts with that option disabled instead of relying on a module class-name special case.
 
 ### Dashboard Projection Without Trade Repository
 
@@ -77,7 +88,53 @@ MarketTradeExecution repository is not available
 
 Root cause: the minimal regional module can run without TypeORM repository registration. The projection service had a `MarketTradeExecutionService` provider, but no repository-backed storage.
 
-Fix: `RegionalMarketProjectionService` now falls back to empty metrics and empty recent trades when trade storage is unavailable. A regression test was added.
+Fix: `RegionalMarketProjectionService` now returns `dataStatus: "fallback"`, `projectionAvailable: false`, and `projectionErrors` when trade storage is unavailable. The frontend treats that as a full demo-data fallback instead of rendering zero-valued API metrics beside mock tables.
+
+### Protected Regional Workflow Routes
+
+Regional workflow routes now require either an authenticated request user or explicit local PoC mode:
+
+```bash
+REGIONAL_MARKET_DEMO_MODE=true RUN_MODULE=regional-market-api RUN_PORT=3001 yarn start:dev
+```
+
+`GET /regional/info` and `GET /regional/dashboard/summary` remain public. Protected POST routes return `401` without auth or demo mode.
+
+### Runtime DB Prerequisite And Smoke
+
+After wiring the real registry modules, `regional-market-api` is a smaller registry-backed backend, not a DB-free mock service. A full runtime smoke requires a reachable Postgres database configured by `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME`.
+
+After local Postgres became available, a clean smoke database was created:
+
+```bash
+createdb -h 127.0.0.1 -p 5432 -U cy carbondev
+createdb -h 127.0.0.1 -p 5432 -U cy carbondevEvents
+```
+
+Initial DB-backed startup exposed a TypeORM schema-sync ordering failure: credit transaction view entities depend on `project_entity` and `country`, but those base entities were not registered in the regional module graph. `RegionalMarketModule` now includes `ProjectEntity` and `Country` in its TypeORM feature registration so the view dependencies are part of the extracted runtime.
+
+DB-backed startup command:
+
+```bash
+cd backend/services
+REGIONAL_MARKET_DEMO_MODE=true \
+RUN_MODULE=regional-market-api \
+RUN_PORT=3001 \
+DB_HOST=127.0.0.1 \
+DB_PORT=5432 \
+DB_USER=cy \
+DB_NAME=carbondev \
+DB_PASSWORD= \
+yarn start:dev
+```
+
+Result: Nest application started successfully and mapped all `/regional/*` routes.
+
+Smoke responses:
+
+- `GET /regional/info`: `200 OK`, returned `subsystem: "regional-carbon-market"`.
+- `GET /regional/dashboard/summary`: `200 OK`, returned `dataStatus: "real"` and zero-valued empty-database metrics.
+- `POST /regional/projects/query` with demo mode enabled: `201 Created`, returned `{"total":0,"data":[]}`.
 
 ## API Smoke Results
 
@@ -117,6 +174,9 @@ Startup evidence:
 
 ```json
 {
+  "dataStatus": "fallback",
+  "projectionAvailable": false,
+  "projectionErrors": ["repository unavailable"],
   "metrics": {
     "totalIssuedCredits": 0,
     "activeProjectCount": 0,
@@ -155,8 +215,8 @@ Observed:
 - header `区域温室气体自愿减排交易数据平台`;
 - panels `开户情况`, `减排量登记情况`, `市场行情`, `当日成交数据`, `监管提示`, `历史成交情况`;
 - China map SVG with `cc-china-map` and province paths;
-- API-backed zero metrics rendered as `0 吨`, `0 个`, and `0.00 元/吨`;
-- rolling project and historical trade tables still render fallback rows when projection arrays are empty.
+- when the API returns `dataStatus: "real"`, API-backed metrics and recent trade rows are rendered;
+- when the API returns `dataStatus: "fallback"`, the dashboard uses the complete local demo dataset instead of mixing zero metrics with mock rows.
 
 Fallback dashboard command:
 
@@ -185,4 +245,4 @@ Observed:
 
 - Headless Chrome did not exit by itself because the dashboard intentionally has a live clock interval; the DOM was captured successfully and the process was killed after timeout.
 - E2E did not execute a real project issuance or OTC transfer against a database. It verified standalone regional API startup, smoke endpoints, dashboard projection, and dashboard fallback behavior.
-- With the minimal regional module, dashboard projection uses empty metrics until TypeORM repositories or a materialized projection store are wired into the regional runtime.
+- With unavailable trade storage, dashboard projection reports `dataStatus: "fallback"` until repository-backed trade data or a materialized projection store is available.

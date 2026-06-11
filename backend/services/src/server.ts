@@ -91,7 +91,8 @@ export function getLogger(module) {
 export async function buildNestApp(
   module: any,
   httpBase: string,
-  expressApp?: AbstractHttpAdapter
+  expressApp?: AbstractHttpAdapter,
+  appOptions: { useClassValidatorContainer?: boolean } = {}
 ): Promise<NestExpressApplication> {
   let options: any = {
     logger: getLogger(module),
@@ -107,7 +108,7 @@ export async function buildNestApp(
     new ExpressAdapter(expressApp),
     options
   );
-  if (module.name !== "RegionalMarketAPIModule") {
+  if (appOptions.useClassValidatorContainer !== false) {
     useContainer(nestApp.select(UtilModule), { fallbackOnErrors: true });
   }
   nestApp.setGlobalPrefix(httpBase);

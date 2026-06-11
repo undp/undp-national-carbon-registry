@@ -56,7 +56,9 @@ async function bootstrap() {
         httpPath = "national";
     }
 
-    const app = await buildNestApp(module, "/" + httpPath);
+    const app = await buildNestApp(module, "/" + httpPath, undefined, {
+      useClassValidatorContainer: moduleName !== "regional-market-api",
+    });
     if (moduleName == "national-api") {
       if (fs.existsSync("organisations.csv")) {
         const orgs = await fs.readFileSync("organisations.csv", "utf8");

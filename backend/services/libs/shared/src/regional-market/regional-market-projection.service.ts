@@ -17,6 +17,9 @@ export class RegionalMarketProjectionService {
     };
     let tradeSummary = emptyTradeSummary;
     let recentTrades = [];
+    let dataStatus = "fallback";
+    let projectionAvailable = false;
+    const projectionErrors: string[] = [];
 
     if (this.marketTradeExecutionService) {
       try {
@@ -24,13 +27,23 @@ export class RegionalMarketProjectionService {
         recentTrades = await this.marketTradeExecutionService.queryTrades({
           take: 10,
         });
+        dataStatus = "real";
+        projectionAvailable = true;
       } catch (error) {
         tradeSummary = emptyTradeSummary;
         recentTrades = [];
+        projectionErrors.push(
+          error instanceof Error ? error.message : "trade projection unavailable"
+        );
       }
+    } else {
+      projectionErrors.push("market trade projection service unavailable");
     }
 
     return {
+      dataStatus,
+      projectionAvailable,
+      projectionErrors,
       metrics: {
         totalIssuedCredits: 0,
         activeProjectCount: 0,

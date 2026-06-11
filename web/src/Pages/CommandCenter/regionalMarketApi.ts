@@ -1,4 +1,7 @@
 export type RegionalDashboardSummary = {
+  dataStatus?: "real" | "fallback";
+  projectionAvailable?: boolean;
+  projectionErrors?: string[];
   metrics?: {
     totalIssuedCredits?: number;
     activeProjectCount?: number;

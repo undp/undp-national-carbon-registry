@@ -16,6 +16,8 @@ describe("RegionalMarketProjectionService", () => {
     );
 
     await expect(service.getDashboardSummary()).resolves.toMatchObject({
+      dataStatus: "real",
+      projectionAvailable: true,
       metrics: {
         totalIssuedCredits: 0,
         activeProjectCount: 0,
@@ -41,6 +43,9 @@ describe("RegionalMarketProjectionService", () => {
     );
 
     await expect(service.getDashboardSummary()).resolves.toMatchObject({
+      dataStatus: "fallback",
+      projectionAvailable: false,
+      projectionErrors: ["repository unavailable"],
       metrics: {
         transferVolume: 0,
         averageOtcPrice: 0,
