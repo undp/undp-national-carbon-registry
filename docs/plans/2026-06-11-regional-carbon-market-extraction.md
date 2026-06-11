@@ -623,10 +623,11 @@ git add docs/regional-carbon-market/demo-flow.md backend/services/src/regional-m
 git commit -m "docs: add regional market demo flow"
 ```
 
-## Task 11: Final Verification
+## Task 11: E2E Usability Verification
 
 **Files:**
-- All changed files
+- Modify: `docs/plans/2026-06-11-regional-carbon-market-extraction.md`
+- Create: `notes/session-logs/2026-06-11-regional-carbon-market-extraction-e2e.md`
 
 **Step 1: Check status**
 
@@ -636,21 +637,21 @@ Run:
 git status --short --branch
 ```
 
-Expected: only intentional changes staged/unstaged before final commit, or clean after final commit.
+Expected: only intentional changes staged/unstaged before final commit.
 
-**Step 2: Backend verification**
+**Step 2: Run focused backend verification**
 
 Run:
 
 ```bash
 cd backend/services
-yarn test --runInBand
+yarn test regional-market.service.spec.ts regional.market.api.controller.spec.ts market-trade-execution.service.spec.ts regional-market-projection.service.spec.ts --runInBand
 yarn build
 ```
 
-If full test suite is too slow or contains pre-existing failures, record exact failures in the final handoff and at minimum run all new regional market specs plus `yarn build`.
+Expected: all new regional-market specs pass and backend build succeeds.
 
-**Step 3: Frontend verification**
+**Step 3: Run frontend build verification**
 
 Run:
 
@@ -661,21 +662,99 @@ yarn build
 
 Expected: build passes; Vite chunk warning is acceptable if unchanged from baseline.
 
-**Step 4: Manual route verification**
+**Step 4: Start the regional API**
 
-Run backend:
+Run:
 
 ```bash
 cd backend/services
 RUN_MODULE=regional-market-api RUN_PORT=3001 yarn start:dev
 ```
 
-Run frontend:
+Wait until the Nest server reports the module is initiated. Keep the process running for API and browser checks.
+
+**Step 5: Verify regional API smoke routes**
+
+Run:
+
+```bash
+curl -s http://127.0.0.1:3001/regional/info
+curl -s http://127.0.0.1:3001/regional/dashboard/summary
+```
+
+Expected:
+
+- `/regional/info` returns `subsystem: regional-carbon-market`, `mode: registry-otc-settlement`, and `cashSettlementMode: offline`.
+- `/regional/dashboard/summary` returns JSON with `metrics`, `recentProjectRegistrations`, `recentTrades`, `supervisoryAlerts`, and `regionalMetrics`.
+
+**Step 6: Start the web app against the regional API**
+
+Run:
 
 ```bash
 cd web
-yarn dev --host 127.0.0.1
+VITE_REGIONAL_MARKET_API_BASE=http://127.0.0.1:3001 yarn dev --host 127.0.0.1
 ```
+
+Use the first available Vite local URL, normally:
+
+```text
+http://127.0.0.1:3030/command-center
+```
+
+**Step 7: Browser usability check with API available**
+
+Open `/command-center` in the in-app Browser and verify:
+
+- page renders without a blank screen;
+- header text `区域温室气体自愿减排交易数据平台` is visible;
+- command-center panels are visible: `开户情况`, `减排量登记情况`, `市场行情`, `当日成交数据`, `监管提示`, `历史成交情况`;
+- China map SVG is visible inside the globe area;
+- top metrics and day-trade metrics show values;
+- there are no obvious overlapping labels or collapsed table rows at desktop size.
+
+**Step 8: Browser fallback check with API unavailable**
+
+Stop or ignore the backend API, then reload `/command-center`.
+
+Expected:
+
+- page still renders using mock fallback data;
+- rolling project and historical trade tables still contain rows;
+- no user-facing error overlay appears.
+
+**Step 9: Record E2E evidence**
+
+Create:
+
+```text
+notes/session-logs/2026-06-11-regional-carbon-market-extraction-e2e.md
+```
+
+Include:
+
+- commands run;
+- pass/fail result for backend specs and builds;
+- API response summary;
+- browser usability observations;
+- fallback behavior result;
+- known limitations or environmental issues.
+
+**Step 10: Commit Task 11 evidence**
+
+Run:
+
+```bash
+git add docs/plans/2026-06-11-regional-carbon-market-extraction.md notes/session-logs/2026-06-11-regional-carbon-market-extraction-e2e.md
+git commit -m "test: document regional market e2e usability verification"
+```
+
+## Task 12: Final Completion Handoff
+
+**Files:**
+- All changed files
+
+**Step 1: Final route verification**
 
 Verify:
 
@@ -683,7 +762,7 @@ Verify:
 - `http://127.0.0.1:3001/regional/dashboard/summary`
 - `http://127.0.0.1:3030/command-center`
 
-**Step 5: Write completion handoff**
+**Step 2: Write completion handoff**
 
 Create:
 
@@ -700,7 +779,7 @@ Include:
 - known limitations;
 - remaining steps for a real exchange.
 
-**Step 6: Final commit**
+**Step 3: Final commit**
 
 Run:
 

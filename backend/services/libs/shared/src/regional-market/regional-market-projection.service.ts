@@ -9,17 +9,26 @@ export class RegionalMarketProjectionService {
   ) {}
 
   async getDashboardSummary() {
-    const tradeSummary = this.marketTradeExecutionService
-      ? await this.marketTradeExecutionService.getTradeSummary()
-      : {
-          tradeCount: 0,
-          totalAmount: 0,
-          totalValue: 0,
-          averagePrice: 0,
-        };
-    const recentTrades = this.marketTradeExecutionService
-      ? await this.marketTradeExecutionService.queryTrades({ take: 10 })
-      : [];
+    const emptyTradeSummary = {
+      tradeCount: 0,
+      totalAmount: 0,
+      totalValue: 0,
+      averagePrice: 0,
+    };
+    let tradeSummary = emptyTradeSummary;
+    let recentTrades = [];
+
+    if (this.marketTradeExecutionService) {
+      try {
+        tradeSummary = await this.marketTradeExecutionService.getTradeSummary();
+        recentTrades = await this.marketTradeExecutionService.queryTrades({
+          take: 10,
+        });
+      } catch (error) {
+        tradeSummary = emptyTradeSummary;
+        recentTrades = [];
+      }
+    }
 
     return {
       metrics: {

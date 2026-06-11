@@ -28,4 +28,27 @@ describe("RegionalMarketProjectionService", () => {
       supervisoryAlerts: [],
     });
   });
+
+  it("falls back to empty market metrics when trade storage is unavailable", async () => {
+    const marketTradeExecutionService = {
+      getTradeSummary: jest
+        .fn()
+        .mockRejectedValue(new Error("repository unavailable")),
+      queryTrades: jest.fn(),
+    };
+    const service = new RegionalMarketProjectionService(
+      marketTradeExecutionService as any
+    );
+
+    await expect(service.getDashboardSummary()).resolves.toMatchObject({
+      metrics: {
+        transferVolume: 0,
+        averageOtcPrice: 0,
+        otcTradeCount: 0,
+        otcTradeValue: 0,
+      },
+      recentTrades: [],
+    });
+    expect(marketTradeExecutionService.queryTrades).not.toHaveBeenCalled();
+  });
 });

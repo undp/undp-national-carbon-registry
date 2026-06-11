@@ -107,7 +107,9 @@ export async function buildNestApp(
     new ExpressAdapter(expressApp),
     options
   );
-  useContainer(nestApp.select(UtilModule), { fallbackOnErrors: true });
+  if (module.name !== "RegionalMarketAPIModule") {
+    useContainer(nestApp.select(UtilModule), { fallbackOnErrors: true });
+  }
   nestApp.setGlobalPrefix(httpBase);
   nestApp.use(bodyParser.json({ limit: "50mb" }));
   nestApp.enableCors();
