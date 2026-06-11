@@ -23,6 +23,11 @@ describe("RegionalMarketAPIController", () => {
       queryCreditBalances: jest.fn().mockResolvedValue({ data: [] }),
       queryTransfers: jest.fn().mockResolvedValue({ data: [] }),
       queryRetirements: jest.fn().mockResolvedValue({ data: [] }),
+      createProjectDocument: jest.fn().mockResolvedValue({ id: 1 }),
+      performProjectDocumentAction: jest
+        .fn()
+        .mockResolvedValue({ status: "APPROVED" }),
+      issueProjectCredits: jest.fn().mockResolvedValue({ creditIssued: 100 }),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -103,6 +108,48 @@ describe("RegionalMarketAPIController", () => {
     expect(regionalMarketService.queryRetirements).toHaveBeenCalledWith(
       query,
       req.abilityCondition,
+      req.user
+    );
+  });
+
+  it("delegates project document creation to the regional market service", async () => {
+    const dto = { documentType: "INITIAL_NOTIFICATION_FORM" };
+
+    await controller.createProjectDocument(dto as any, req);
+
+    expect(regionalMarketService.createProjectDocument).toHaveBeenCalledWith(
+      dto,
+      req.user
+    );
+  });
+
+  it("delegates project approval actions to the regional market service", async () => {
+    const dto = { documentId: 1, action: "APPROVE" };
+
+    await controller.performProjectDocumentAction(dto as any, req);
+
+    expect(
+      regionalMarketService.performProjectDocumentAction
+    ).toHaveBeenCalledWith(dto, req.user);
+  });
+
+  it("delegates credit issuance to the regional market service", async () => {
+    const dto = {
+      activity: { projectRefId: "PRJ-1" },
+      creditVerified: [{ vintage: 2025, creditAmount: 100 }],
+      companyId: 20,
+      document: { id: 1 },
+      txRef: "TX-1",
+    };
+
+    await controller.issueProjectCredits(dto as any, req);
+
+    expect(regionalMarketService.issueProjectCredits).toHaveBeenCalledWith(
+      dto.activity,
+      dto.creditVerified,
+      dto.companyId,
+      dto.document,
+      dto.txRef,
       req.user
     );
   });

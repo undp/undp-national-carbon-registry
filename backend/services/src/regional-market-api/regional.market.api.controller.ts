@@ -54,4 +54,25 @@ export class RegionalMarketAPIController {
       req?.user
     );
   }
+
+  @Post("projects/documents")
+  async createProjectDocument(@Body() documentDto: any, @Request() req: any) {
+    return this.regionalMarketAPIService.createProjectDocument(
+      documentDto,
+      req?.user
+    );
+  }
+
+  @Post("projects/documents/action")
+  async performProjectDocumentAction(@Body() actionDto: any, @Request() req: any) {
+    return this.regionalMarketAPIService.performProjectDocumentAction(
+      actionDto,
+      req?.user
+    );
+  }
+
+  @Post("projects/credits/issue")
+  async issueProjectCredits(@Body() issueDto: any, @Request() req: any) {
+    return this.regionalMarketAPIService.issueProjectCredits(issueDto, req?.user);
+  }
 }

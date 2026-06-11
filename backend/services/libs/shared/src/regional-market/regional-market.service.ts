@@ -1,5 +1,7 @@
 import { CreditTransactionsManagementService } from "../credit-transactions-management/credit-transactions-management.service";
+import { DocumentManagementService } from "../document-management/document-management.service";
 import { QueryDto } from "../dto/query.dto";
+import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { ProjectManagementService } from "../project-management/project-management.service";
 import { Injectable, Optional } from "@nestjs/common";
 
@@ -9,7 +11,11 @@ export class RegionalMarketService {
     @Optional()
     private readonly projectManagementService?: ProjectManagementService,
     @Optional()
-    private readonly creditTransactionsManagementService?: CreditTransactionsManagementService
+    private readonly creditTransactionsManagementService?: CreditTransactionsManagementService,
+    @Optional()
+    private readonly documentManagementService?: DocumentManagementService,
+    @Optional()
+    private readonly programmeLedgerService?: ProgrammeLedgerService
   ) {}
 
   getBoundary() {
@@ -66,6 +72,35 @@ export class RegionalMarketService {
     return this.creditTransactionsManagementService.queryRetirements(
       query,
       abilityCondition,
+      user
+    );
+  }
+
+  async createProjectDocument(documentDto: any, user?: any) {
+    this.assertProvider(this.documentManagementService, "DocumentManagementService");
+    return this.documentManagementService.addDocument(documentDto, user);
+  }
+
+  async performProjectDocumentAction(actionDto: any, user?: any) {
+    this.assertProvider(this.documentManagementService, "DocumentManagementService");
+    return this.documentManagementService.verify(actionDto, user);
+  }
+
+  async issueProjectCredits(
+    activity: any,
+    creditVerified: any[],
+    companyId: number,
+    document: any,
+    txRef: string,
+    user?: any
+  ) {
+    this.assertProvider(this.programmeLedgerService, "ProgrammeLedgerService");
+    return this.programmeLedgerService.issueCredits(
+      activity,
+      creditVerified,
+      companyId,
+      document,
+      txRef,
       user
     );
   }

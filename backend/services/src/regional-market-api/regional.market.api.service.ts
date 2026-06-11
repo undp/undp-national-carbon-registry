@@ -37,4 +37,23 @@ export class RegionalMarketAPIService {
       user
     );
   }
+
+  createProjectDocument(documentDto: any, user?: any) {
+    return this.regionalMarketService.createProjectDocument(documentDto, user);
+  }
+
+  performProjectDocumentAction(actionDto: any, user?: any) {
+    return this.regionalMarketService.performProjectDocumentAction(actionDto, user);
+  }
+
+  issueProjectCredits(issueDto: any, user?: any) {
+    return this.regionalMarketService.issueProjectCredits(
+      issueDto.activity,
+      issueDto.creditVerified,
+      issueDto.companyId,
+      issueDto.document,
+      issueDto.txRef,
+      user
+    );
+  }
 }
