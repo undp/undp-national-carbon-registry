@@ -574,6 +574,9 @@ const CarbonTradingCommandCenter = () => {
   const [clock, setClock] = useState(() => new Date());
   const [dashboardSummary, setDashboardSummary] =
     useState<RegionalDashboardSummary>();
+  const [regionalApiStatus, setRegionalApiStatus] = useState<
+    "loading" | "connected" | "unavailable"
+  >("loading");
 
   useEffect(() => {
     const timer = window.setInterval(() => setClock(new Date()), 1000);
@@ -587,11 +590,13 @@ const CarbonTradingCommandCenter = () => {
       .then((summary) => {
         if (!cancelled) {
           setDashboardSummary(summary);
+          setRegionalApiStatus("connected");
         }
       })
       .catch(() => {
         if (!cancelled) {
           setDashboardSummary(undefined);
+          setRegionalApiStatus("unavailable");
         }
       });
 
@@ -601,6 +606,19 @@ const CarbonTradingCommandCenter = () => {
   }, []);
 
   const hasRealRegionalProjection = dashboardSummary?.dataStatus === "real";
+  const regionalDataMode = hasRealRegionalProjection
+    ? "real"
+    : regionalApiStatus === "unavailable"
+      ? "unavailable"
+      : regionalApiStatus === "loading"
+        ? "loading"
+        : "demo";
+  const regionalDataModeLabel = {
+    real: "实时数据",
+    demo: "演示数据",
+    loading: "连接中",
+    unavailable: "API 不可用",
+  }[regionalDataMode];
 
   const visibleProjectRows = useMemo(
     () =>
@@ -652,6 +670,12 @@ const CarbonTradingCommandCenter = () => {
       <div className="cc-shell">
         <header className="cc-header">
           <div className="cc-header__line" />
+          <div
+            className={`cc-data-mode cc-data-mode--${regionalDataMode}`}
+            aria-label={`区域市场数据状态：${regionalDataModeLabel}`}
+          >
+            {regionalDataModeLabel}
+          </div>
           <h1>区域温室气体自愿减排交易数据平台</h1>
           <time>{formatClock(clock)}</time>
         </header>

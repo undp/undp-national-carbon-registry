@@ -41,6 +41,8 @@ Open:
 http://127.0.0.1:3030/command-center
 ```
 
+The command center header shows the current data mode: `实时数据` for real projection data, `演示数据` for backend fallback, `连接中` while loading, and `API 不可用` when the regional API cannot be reached.
+
 ## Scenario
 
 1. Create or import an organization account holder.
