@@ -2,6 +2,11 @@ import { Body, Controller, Get, Post, Request, UseGuards } from "@nestjs/common"
 import { QueryDto } from "@app/shared/dto/query.dto";
 import { RegionalMarketAPIService } from "./regional.market.api.service";
 import { RegionalMarketDemoGuard } from "./regional.market.demo.guard";
+import {
+  RegionalIssueCreditsDto,
+  RegionalOtcTradeExecuteDto,
+  RegionalProjectIdDto,
+} from "./regional.market.api.dto";
 
 @Controller()
 export class RegionalMarketAPIController {
@@ -25,10 +30,13 @@ export class RegionalMarketAPIController {
   @Post("projects/getById")
   @UseGuards(RegionalMarketDemoGuard)
   async getProjectById(
-    @Body("programmeId") programmeId: string,
+    @Body() body: RegionalProjectIdDto,
     @Request() req: any
   ) {
-    return this.regionalMarketAPIService.getProjectById(programmeId, req?.user);
+    return this.regionalMarketAPIService.getProjectById(
+      body.programmeId,
+      req?.user
+    );
   }
 
   @Post("credits/balance")
@@ -81,13 +89,19 @@ export class RegionalMarketAPIController {
 
   @Post("projects/credits/issue")
   @UseGuards(RegionalMarketDemoGuard)
-  async issueProjectCredits(@Body() issueDto: any, @Request() req: any) {
+  async issueProjectCredits(
+    @Body() issueDto: RegionalIssueCreditsDto,
+    @Request() req: any
+  ) {
     return this.regionalMarketAPIService.issueProjectCredits(issueDto, req?.user);
   }
 
   @Post("otc-trades/execute")
   @UseGuards(RegionalMarketDemoGuard)
-  async executeOtcTrade(@Body() dto: any, @Request() req: any) {
+  async executeOtcTrade(
+    @Body() dto: RegionalOtcTradeExecuteDto,
+    @Request() req: any
+  ) {
     return this.regionalMarketAPIService.executeOtcTrade(dto, req?.user);
   }
 

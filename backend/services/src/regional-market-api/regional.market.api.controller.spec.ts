@@ -84,9 +84,9 @@ describe("RegionalMarketAPIController", () => {
   });
 
   it("delegates project details to the regional market service", async () => {
-    await expect(controller.getProjectById("PRJ-1", req)).resolves.toEqual({
-      refId: "PRJ-1",
-    });
+    await expect(
+      controller.getProjectById({ programmeId: "PRJ-1" }, req)
+    ).resolves.toEqual({ refId: "PRJ-1" });
     expect(regionalMarketService.getProjectById).toHaveBeenCalledWith(
       "PRJ-1",
       req.user

@@ -1,4 +1,4 @@
-import { INestApplication } from "@nestjs/common";
+import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
 import { RegionalMarketAPIController } from "./regional.market.api.controller";
@@ -16,6 +16,10 @@ describe("RegionalMarketAPI routes", () => {
         subsystem: "regional-carbon-market",
       }),
       queryProjects: jest.fn().mockResolvedValue({ data: [] }),
+      executeOtcTrade: jest.fn().mockResolvedValue({
+        registryTransaction: { id: "TX-1" },
+        marketTrade: { id: "TRADE-1" },
+      }),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -31,6 +35,7 @@ describe("RegionalMarketAPI routes", () => {
 
     app = module.createNestApplication();
     app.setGlobalPrefix("regional");
+    app.useGlobalPipes(new ValidationPipe());
     await app.init();
   });
 
@@ -75,5 +80,26 @@ describe("RegionalMarketAPI routes", () => {
         companyRole: "REGIONAL_MARKET_DEMO",
       })
     );
+  });
+
+  it("rejects invalid OTC trade execution payloads before reaching the service", async () => {
+    process.env.REGIONAL_MARKET_DEMO_MODE = "true";
+
+    await request(app.getHttpServer())
+      .post("/regional/otc-trades/execute")
+      .send({
+        transfer: {
+          senderId: 10,
+          receiverId: 20,
+          projectRefId: "PRJ-1",
+          creditBlockId: "CB-1",
+          amount: 0,
+        },
+        market: {
+          unitPrice: -1,
+        },
+      })
+      .expect(400);
+    expect(service.executeOtcTrade).not.toHaveBeenCalled();
   });
 });
