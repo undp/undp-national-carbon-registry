@@ -4,18 +4,29 @@ This demo presents the extracted subsystem as a regional carbon asset registry p
 
 ## Runtime
 
-Start the regional API:
+Local smoke prerequisites:
+
+- `pg_isready`, `psql`, `createdb`, and `curl` are available on `PATH`.
+- A local Postgres server is reachable.
+- Database settings can be overridden with `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_NAME`, `DB_EVENTS_NAME`, and `DB_PASSWORD`.
+- The default smoke values are `DB_HOST=127.0.0.1`, `DB_PORT=5432`, `DB_USER=cy`, `DB_NAME=carbondev`, and `DB_EVENTS_NAME=carbondevEvents`.
+
+Prepare the local Postgres smoke databases:
 
 ```bash
-cd backend/services
-RUN_MODULE=regional-market-api RUN_PORT=3001 yarn start:dev
+scripts/regional-market-smoke.sh check-db
+scripts/regional-market-smoke.sh prepare-db
 ```
 
-Protected regional workflow routes require an authenticated request user. For a local PoC without the national auth stack, start the API with explicit demo mode:
+Print the regional API startup command for the current database environment:
 
 ```bash
-REGIONAL_MARKET_DEMO_MODE=true RUN_MODULE=regional-market-api RUN_PORT=3001 yarn start:dev
+scripts/regional-market-smoke.sh start-cmd
 ```
+
+Protected regional workflow routes require an authenticated request user. For a local PoC without the national auth stack, start the API with explicit `REGIONAL_MARKET_DEMO_MODE=true`. The script prints that command with `RUN_MODULE=regional-market-api`, `RUN_PORT=3001`, and the active `DB_*` settings.
+
+The smoke script does not start or stop the API process. Run the printed startup command in a separate terminal, wait for `Nest application successfully started`, then run the smoke command below.
 
 Start the web dashboard:
 
@@ -69,9 +80,14 @@ This is intentional for the PoC. A production exchange would require a separate 
 ## API Smoke Checks
 
 ```bash
-curl http://127.0.0.1:3001/regional/info
-curl http://127.0.0.1:3001/regional/dashboard/summary
+scripts/regional-market-smoke.sh smoke
 ```
+
+The smoke command verifies:
+
+- `GET /regional/info` returns `subsystem: "regional-carbon-market"`.
+- `GET /regional/dashboard/summary` returns `dataStatus: "real"` when trade storage is connected.
+- `POST /regional/projects/query` reaches a protected route in explicit demo mode and returns a `data` field.
 
 Expected `info` response:
 
