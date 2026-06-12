@@ -1,5 +1,6 @@
 import { MODULE_METADATA } from "@nestjs/common/constants";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { Logger } from "@nestjs/common";
 import { CreditTransactionsManagementModule } from "../credit-transactions-management/credit-transactions-management.module";
 import { DocumentManagementService } from "../document-management/document-management.service";
 import { DocumentManagementModule } from "../document-management/document-management.module";
@@ -166,6 +167,9 @@ describe("RegionalMarketService", () => {
   });
 
   it("marks OTC trades for reconciliation when market metadata cannot be recorded after registry transfer", async () => {
+    const errorSpy = jest
+      .spyOn(Logger.prototype, "error")
+      .mockImplementation(() => undefined);
     const creditTransactionsManagementService = {
       transferCredits: jest.fn().mockResolvedValue({
         id: "TX-1",
@@ -207,5 +211,14 @@ describe("RegionalMarketService", () => {
       reconciliationRequired: true,
       reconciliationReason: "database unavailable",
     });
+    expect(errorSpy).toHaveBeenCalledWith(
+      "OTC market metadata recording failed after registry transfer",
+      expect.objectContaining({
+        creditTransactionId: "TX-1",
+        creditBlockId: "CB-1",
+        reconciliationRequired: true,
+      })
+    );
+    errorSpy.mockRestore();
   });
 });

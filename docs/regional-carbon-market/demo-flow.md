@@ -89,6 +89,15 @@ The smoke command verifies:
 - `GET /regional/dashboard/summary` returns `dataStatus: "real"` when trade storage is connected.
 - `POST /regional/projects/query` reaches a protected route in explicit demo mode and returns a `data` field.
 
+To verify repository-backed market trade aggregation on a clean smoke database:
+
+```bash
+scripts/regional-market-smoke.sh seed-trade
+scripts/regional-market-smoke.sh trade-smoke
+```
+
+This inserts a deterministic `SMOKE-TX-1` row into `market_trade_execution_entity` and verifies the dashboard projection reports `transferVolume: 300`, `otcTradeCount: 1`, and `averageOtcPrice: 42`. Use a clean smoke database for exact aggregate assertions.
+
 Expected `info` response:
 
 ```json

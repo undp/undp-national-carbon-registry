@@ -3,11 +3,13 @@ import { DocumentManagementService } from "../document-management/document-manag
 import { QueryDto } from "../dto/query.dto";
 import { ProgrammeLedgerService } from "../programme-ledger/programme-ledger.service";
 import { ProjectManagementService } from "../project-management/project-management.service";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { MarketTradeExecutionService } from "./market-trade-execution.service";
 
 @Injectable()
 export class RegionalMarketService {
+  private readonly logger = new Logger(RegionalMarketService.name);
+
   constructor(
     private readonly projectManagementService?: ProjectManagementService,
     private readonly creditTransactionsManagementService?: CreditTransactionsManagementService,
@@ -136,6 +138,16 @@ export class RegionalMarketService {
         settlementStatus: "SETTLED_OFFLINE",
       });
     } catch (error) {
+      this.logger.error(
+        "OTC market metadata recording failed after registry transfer",
+        {
+          creditTransactionId: registryTransaction?.id,
+          creditBlockId:
+            registryTransaction?.creditBlockId ?? dto.transfer?.creditBlockId,
+          reconciliationRequired: true,
+          error: error instanceof Error ? error.message : error,
+        }
+      );
       return {
         registryTransaction,
         marketTrade: undefined,

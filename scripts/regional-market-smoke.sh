@@ -19,6 +19,8 @@ Commands:
   prepare-db   Create ${DB_NAME} and ${DB_EVENTS_NAME} if they do not exist.
   start-cmd    Print the regional API startup command for this DB.
   smoke        Verify /regional/info, /regional/dashboard/summary, and a demo protected query.
+  seed-trade   Insert a deterministic OTC trade row into market_trade_execution_entity.
+  trade-smoke  Verify the seeded OTC trade is reflected in dashboard aggregation.
 
 Environment:
   DB_HOST=${DB_HOST}
@@ -96,6 +98,55 @@ smoke() {
   echo "OK: /regional/projects/query"
 }
 
+seed_trade() {
+  require_cmd psql
+
+  psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -v ON_ERROR_STOP=1 <<SQL
+delete from market_trade_execution_entity where "creditTransactionId" = 'SMOKE-TX-1';
+insert into market_trade_execution_entity (
+  "creditTransactionId",
+  "creditBlockId",
+  "sellerCompanyId",
+  "buyerCompanyId",
+  "projectRefId",
+  "serialNumber",
+  amount,
+  "unitPrice",
+  "totalPrice",
+  currency,
+  "tradeTime",
+  "settlementStatus"
+) values (
+  'SMOKE-TX-1',
+  'SMOKE-CB-1',
+  10,
+  20,
+  'SMOKE-PRJ-1',
+  'SMOKE-SN-1',
+  300,
+  42,
+  12600,
+  'CNY',
+  '2026-06-11T00:00:00.000Z',
+  'SETTLED_OFFLINE'
+);
+SQL
+
+  echo "OK: seeded market_trade_execution_entity"
+}
+
+trade_smoke() {
+  require_cmd curl
+
+  local summary
+  summary="$(curl -fsS "$API_BASE/regional/dashboard/summary")"
+  echo "$summary" | grep -q '"dataStatus":"real"'
+  echo "$summary" | grep -q '"transferVolume":300'
+  echo "$summary" | grep -q '"otcTradeCount":1'
+  echo "$summary" | grep -q '"averageOtcPrice":42'
+  echo "OK: seeded trade reflected in dashboard aggregation"
+}
+
 case "${1:-}" in
   check-db)
     check_db
@@ -108,6 +159,12 @@ case "${1:-}" in
     ;;
   smoke)
     smoke
+    ;;
+  seed-trade)
+    seed_trade
+    ;;
+  trade-smoke)
+    trade_smoke
     ;;
   *)
     usage
