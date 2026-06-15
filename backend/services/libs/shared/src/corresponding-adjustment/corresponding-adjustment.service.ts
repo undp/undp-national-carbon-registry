@@ -45,6 +45,23 @@ export class CorrespondingAdjustmentService {
       3
     );
 
+    // NOTE: `ndcType` (single-year vs multi-year) and `caMethod` (trajectory /
+    // averaging / multi-year) are accepted and persisted (see below) but are NOT
+    // yet applied to the calculation. Decision 2/CMA.3 annex para 7 prescribes a
+    // different corresponding-adjustment method per case — single-year trajectory
+    // (7(a)(i)), single-year averaging via cumulative ÷ elapsed years (7(a)(ii)),
+    // and multi-year with an end-of-period cumulative true-up (7(b)) — plus a
+    // finalization step (para 12). This implementation performs one flat annual
+    // calculation (the single-year transaction window below) for all of them.
+    //
+    // These method-specific paths are intentionally not implemented yet: the CMA
+    // requested further guidance on corresponding adjustments for single-year and
+    // multi-year NDCs (Decision 2/CMA.3 para 3(b)) and that guidance has not been
+    // issued, so the exact arithmetic (especially averaging and the cumulative
+    // reconciliation) is not yet settled. Branch on `caMethod` here once the
+    // methodology is finalized and SME-confirmed.
+    // See docs/a6/compliance-remediation-plan.md (F2).
+
     // Fetch all credit transactions for the year
     const yearStart = new Date(year, 0, 1).getTime();
     const yearEnd = new Date(year + 1, 0, 1).getTime();
@@ -130,6 +147,11 @@ export class CorrespondingAdjustmentService {
         safeguardNotes = `Adjusted emissions (${adjustedEmissions !== null ? adjustedEmissions.toFixed(2) : "N/A"}) are within NDC target (${ndcTarget}).`;
       }
     } else {
+      // Dec 2/CMA.3 annex para 7 requires participation to result in "no net
+      // increase" in emissions. If the NDC target or national emissions data is
+      // missing we cannot demonstrate that, so the check must NOT silently pass —
+      // record it as not-passed rather than leaving the default `true`.
+      safeguardCheckPassed = false;
       safeguardNotes =
         "Safeguard check could not be performed: missing NDC target or emissions data.";
     }
@@ -139,6 +161,9 @@ export class CorrespondingAdjustmentService {
     ca.year = year;
     ca.cooperativeApproachId = cooperativeApproachId;
     ca.metric = "tCO2e";
+    // Stored for record-keeping and future use only — not applied to the
+    // calculation above (pending CMA guidance; see the NOTE at the top of this
+    // method and docs/a6/compliance-remediation-plan.md F2).
     ca.ndcType = ndcType;
     ca.caMethod = caMethod;
     ca.authorizedItmos = authorizedItmos;
@@ -216,7 +241,48 @@ export class CorrespondingAdjustmentService {
         HttpStatus.NOT_FOUND
       );
     }
+    // Only a DRAFT corresponding adjustment may be submitted. Guarding here keeps
+    // submit non-idempotent-safe: re-submitting an already SUBMITTED/APPROVED
+    // record (or skipping the draft stage) is rejected rather than silently
+    // overwriting the status.
+    if (ca.status !== CaStatus.DRAFT) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "correspondingAdjustment.onlyDraftCanBeSubmitted",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
     ca.status = CaStatus.SUBMITTED;
+    ca.updatedTime = new Date().getTime();
+    const saved = await this.caRepo.save(ca);
+    return new DataResponseDto(HttpStatus.OK, saved);
+  }
+
+  async approve(caId: string, user: User): Promise<DataResponseDto> {
+    const ca = await this.caRepo.findOneBy({ caId });
+    if (!ca) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "correspondingAdjustment.notFound",
+          []
+        ),
+        HttpStatus.NOT_FOUND
+      );
+    }
+    // Only a SUBMITTED corresponding adjustment can be approved. Without this the
+    // APPROVED terminal state was unreachable (never assigned anywhere).
+    if (ca.status !== CaStatus.SUBMITTED) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "correspondingAdjustment.onlySubmittedCanBeApproved",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    ca.status = CaStatus.APPROVED;
     ca.updatedTime = new Date().getTime();
     const saved = await this.caRepo.save(ca);
     return new DataResponseDto(HttpStatus.OK, saved);
