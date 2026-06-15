@@ -585,8 +585,7 @@ export function seedAefActionDirect(input: {
     | "useTowardsNDC"
     | "useForOIMP"
     | "voluntaryCancellation"
-    | "omgeCancellation"
-    | "holdingsSnapshot";
+    | "omgeCancellation";
   creditAmount?: number;
   aquiringParty?: string;
   cooperativeApproachId?: string;

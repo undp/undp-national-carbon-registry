@@ -218,16 +218,17 @@ test.describe("Corresponding Adjustment - Article 6.2", () => {
       expect(toNumber(ca.emissionsBalance)).toBe(0);
     });
 
-    test("safeguard defaults to passed=true when nationalEmissions data is missing", async ({
+    test("safeguard does NOT silently pass when emissions data is missing (F13)", async ({
       apiDna,
     }) => {
-      // The service's safeguard branch reads:
+      // F13 fix: the service's safeguard branch reads:
       //   if (ndcTarget && adjustedEmissions !== null) { ...compare... }
-      //   else { safeguardNotes = "could not be performed"; }
-      // and leaves `safeguardCheckPassed = true` as the initial value.
-      // Running against a year with no Emission row (1900) exercises
-      // the "missing data" fallback documented in the Gaps section as
-      // a silent-pass.
+      //   else { safeguardCheckPassed = false; notes = "could not be performed"; }
+      // Previously the else branch left `safeguardCheckPassed = true`
+      // (silent-pass). Dec 2/CMA.3 annex para 7 ("no net increase")
+      // means an undemonstrable check must NOT be recorded as passed.
+      // Year 1900 has no Emission row, so adjustedEmissions=null and we
+      // hit the missing-data branch.
       const res = await apiDna.post(
         "national/correspondingAdjustment/calculate",
         {
@@ -240,17 +241,14 @@ test.describe("Corresponding Adjustment - Article 6.2", () => {
       await expectOk(res, "calculate (missing emissions)");
       const ca = unwrap<any>(await apiDna.json<any>(res));
 
-      // When no Emission row exists for (year, country), the service
-      // leaves adjustedEmissions=null and falls through to the "could
-      // not be performed" notes. safeguardCheckPassed stays true.
       if (ca.adjustedEmissions === null) {
-        expect(ca.safeguardCheckPassed).toBe(true);
+        // The fix: missing data is now recorded as not-passed.
+        expect(ca.safeguardCheckPassed).toBe(false);
         expect(typeof ca.safeguardNotes).toBe("string");
         expect(ca.safeguardNotes).toMatch(/could not be performed|missing/i);
       } else {
         // If the environment happens to have an emission row for 1900,
-        // fall through to the pass/fail arithmetic with a very high
-        // ndcTarget we supplied above.
+        // the comparison runs against the high ndcTarget and passes.
         expect(toNumber(ca.adjustedEmissions)).toBeLessThanOrEqual(500000);
         expect(ca.safeguardCheckPassed).toBe(true);
       }
@@ -488,15 +486,13 @@ test.describe("Corresponding Adjustment - Article 6.2", () => {
       expect(submitted.status).toBe("Submitted");
     });
 
-    test("PUT /submit on an already-Submitted CA is idempotent (no 4xx)", async ({
+    test("PUT /submit on an already-Submitted CA is rejected with 400 (DRAFT-only guard, F12)", async ({
       apiDna,
     }) => {
-      // Service implementation at lines 208-222 of
-      // corresponding-adjustment.service.ts unconditionally sets
-      // status = SUBMITTED — there is no DRAFT-gate. Document the
-      // current behaviour: re-submit succeeds and leaves the row at
-      // SUBMITTED. This is flagged in 05-corresponding-adjustment.md
-      // as a gap (no state-machine enforcement, no APPROVED path).
+      // F12 fix: submit() now guards on status === DRAFT. Re-submitting
+      // an already-SUBMITTED row is rejected with 400 instead of
+      // silently overwriting the status (no state-machine enforcement
+      // was the gap flagged in 05-corresponding-adjustment.md).
       const year = nextFutureYear();
       const seedRes = await apiDna.post(
         "national/correspondingAdjustment/calculate",
@@ -517,16 +513,66 @@ test.describe("Corresponding Adjustment - Article 6.2", () => {
       const second = await apiDna.put(
         `national/correspondingAdjustment/submit?id=${encodeURIComponent(caId)}`
       );
-      // Accept either 2xx (idempotent) or 400 (if a future guard is
-      // added). Either is a legitimate implementation choice.
-      const ok = second.ok();
-      if (ok) {
-        const body = unwrap<any>(await apiDna.json<any>(second));
-        expect(body.status).toBe("Submitted");
-      } else {
-        expect(second.status()).toBeGreaterThanOrEqual(400);
-        expect(second.status()).toBeLessThan(500);
-      }
+      expect(second.ok()).toBe(false);
+      expect(second.status()).toBe(400);
+    });
+
+    test("PUT /approve moves a Submitted CA to Approved (F12)", async ({
+      apiDna,
+    }) => {
+      // F12: the previously-unreachable APPROVED state is now reachable
+      // via a guarded approve() (SUBMITTED -> APPROVED).
+      const year = nextFutureYear();
+      const seedRes = await apiDna.post(
+        "national/correspondingAdjustment/calculate",
+        { year, ndcType: "SingleYear", caMethod: "Trajectory" }
+      );
+      await expectOk(seedRes, "seed for approve");
+      const caId = unwrap<any>(await apiDna.json<any>(seedRes)).caId;
+
+      const submitRes = await apiDna.put(
+        `national/correspondingAdjustment/submit?id=${encodeURIComponent(caId)}`
+      );
+      await expectOk(submitRes, "submit before approve");
+
+      const approveRes = await apiDna.put(
+        `national/correspondingAdjustment/approve?id=${encodeURIComponent(caId)}`
+      );
+      await expectOk(approveRes, "approve");
+      const approved = unwrap<any>(await apiDna.json<any>(approveRes));
+      expect(approved.caId).toBe(caId);
+      expect(approved.status).toBe("Approved");
+    });
+
+    test("PUT /approve on a Draft CA is rejected with 400 (must be Submitted first, F12)", async ({
+      apiDna,
+    }) => {
+      const year = nextFutureYear();
+      const seedRes = await apiDna.post(
+        "national/correspondingAdjustment/calculate",
+        { year, ndcType: "SingleYear", caMethod: "Trajectory" }
+      );
+      await expectOk(seedRes, "seed for approve-draft");
+      const caId = unwrap<any>(await apiDna.json<any>(seedRes)).caId;
+
+      const approveRes = await apiDna.put(
+        `national/correspondingAdjustment/approve?id=${encodeURIComponent(caId)}`
+      );
+      expect(approveRes.ok()).toBe(false);
+      expect(approveRes.status()).toBe(400);
+    });
+
+    test("PUT /approve on nonexistent caId returns 404 (F12)", async ({
+      apiDna,
+    }) => {
+      const missing = `CA-ADJ-MISSING-${uniqueSuffix()}`;
+      const res = await apiDna.put(
+        `national/correspondingAdjustment/approve?id=${encodeURIComponent(
+          missing
+        )}`
+      );
+      expect(res.ok()).toBe(false);
+      expect(res.status()).toBe(404);
     });
 
     test("PUT /submit on nonexistent caId returns 404", async ({ apiDna }) => {
