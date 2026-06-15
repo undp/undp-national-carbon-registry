@@ -656,9 +656,11 @@ test.describe("Initial Report - Article 6.2", () => {
       await expect(
         dnaPage.locator("text=/Generate Initial Report/i").first()
       ).toBeVisible({ timeout: 10000 });
-      // Form.Item labels from createInitialReport.tsx.
+      // Form.Item labels from createInitialReport.tsx. The CA field is a
+      // searchable Select labelled "Cooperative Approach" (not a free-text
+      // "Cooperative Approach ID" input — that was the pre-redesign shape).
       await expect(
-        dnaPage.locator("text=/Cooperative Approach ID/i").first()
+        dnaPage.locator("text=/Cooperative Approach/i").first()
       ).toBeVisible();
       await expect(dnaPage.locator("text=/NDC Target/i").first()).toBeVisible();
       await expect(dnaPage.locator("text=/Base Year/i").first()).toBeVisible();
@@ -685,16 +687,49 @@ test.describe("Initial Report - Article 6.2", () => {
       apiDna,
     }) => {
       // Seed a fresh CA so the form has a valid target and no existing IR.
+      // New CAs default to Draft; the create form only accepts an *Active*
+      // CA (createInitialReport.tsx validator + disabled submit), so flip it
+      // to Active first.
       const ca = await createCooperativeApproach(apiDna, {
         title: `IR UI Flow ${uniqueSuffix()}`,
       });
+      await expectOk(
+        await apiDna.put("national/cooperativeApproach/update", {
+          cooperativeApproachId: ca.cooperativeApproachId,
+          status: "Active",
+        }),
+        "activate CA"
+      );
 
       await dnaPage.goto(`${BASE_URL}/initialReports/create`);
       await dnaPage.waitForLoadState("networkidle");
 
-      await dnaPage.locator("input#cooperativeApproachId").fill(
-        ca.cooperativeApproachId
+      // CA field is a searchable antd Select (loads CAs from the API),
+      // not a plain text input. Open it, search by id, pick the option.
+      const caItem = dnaPage
+        .locator(".ant-form-item")
+        .filter({ hasText: /Cooperative Approach/ })
+        .first();
+      await caItem.locator(".ant-select-selector").click();
+      await caItem
+        .locator("input.ant-select-selection-search-input")
+        .fill(ca.cooperativeApproachId);
+      await dnaPage
+        .locator(".ant-select-dropdown:visible .ant-select-item-option")
+        .filter({ hasText: ca.cooperativeApproachId })
+        .first()
+        .click();
+
+      // Sectors is a required tags-mode Select — add one or submit is blocked.
+      const sectorsItem = dnaPage
+        .locator(".ant-form-item")
+        .filter({ hasText: /^\s*Sectors/ })
+        .first();
+      const sectorsInput = sectorsItem.locator(
+        "input.ant-select-selection-search-input"
       );
+      await sectorsInput.fill("Energy");
+      await sectorsInput.press("Enter");
 
       const generateResp = dnaPage.waitForResponse(
         (r) =>
