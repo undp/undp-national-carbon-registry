@@ -3,6 +3,8 @@ import { Injectable, Optional } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { MarketTradeExecutionEntity } from "../entities/market.trade.execution.entity";
 
+const SETTLED_MARKET_TRADE_STATUSES = ["SETTLED_OFFLINE"];
+
 export interface CreateMarketTradeExecutionDto {
   creditTransactionId?: string;
   creditBlockId?: string;
@@ -39,12 +41,18 @@ export class MarketTradeExecutionService {
     return repository.save(entity);
   }
 
-  async queryTrades(options: { take?: number } = {}) {
+  async queryTrades(options: { take?: number | null } = {}) {
     const repository = this.getRepository();
-    return repository.find({
+    const query: Parameters<typeof repository.find>[0] = {
       order: { tradeTime: "DESC" },
-      take: options.take ?? 20,
-    });
+      where: { settlementStatus: SETTLED_MARKET_TRADE_STATUSES[0] },
+    };
+
+    if (options.take !== null) {
+      query.take = options.take ?? 20;
+    }
+
+    return repository.find(query);
   }
 
   async getTradeSummary() {
@@ -54,7 +62,13 @@ export class MarketTradeExecutionService {
       .select("COUNT(trade.id)", "count")
       .addSelect("COALESCE(SUM(trade.amount), 0)", "amount")
       .addSelect("COALESCE(SUM(trade.totalPrice), 0)", "value")
-      .addSelect("COALESCE(AVG(trade.unitPrice), 0)", "averagePrice")
+      .addSelect(
+        "COALESCE(SUM(trade.totalPrice) / NULLIF(SUM(trade.amount), 0), 0)",
+        "averagePrice"
+      )
+      .where("trade.settlementStatus IN (:...settlementStatuses)", {
+        settlementStatuses: SETTLED_MARKET_TRADE_STATUSES,
+      })
       .getRawOne();
 
     return {

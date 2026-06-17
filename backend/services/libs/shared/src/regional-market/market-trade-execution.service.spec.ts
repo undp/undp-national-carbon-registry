@@ -53,11 +53,15 @@ describe("MarketTradeExecutionService", () => {
     ]);
     expect(repo.find).toHaveBeenCalledWith({
       order: { tradeTime: "DESC" },
+      where: { settlementStatus: "SETTLED_OFFLINE" },
       take: 5,
     });
   });
 
-  it("summarizes OTC trade totals", async () => {
+  it("summarizes only settled offline OTC trade totals", async () => {
+    const select = jest.fn().mockReturnThis();
+    const addSelect = jest.fn().mockReturnThis();
+    const where = jest.fn().mockReturnThis();
     const getRawOne = jest.fn().mockResolvedValue({
       count: "2",
       amount: "300",
@@ -66,8 +70,9 @@ describe("MarketTradeExecutionService", () => {
     });
     const repo = {
       createQueryBuilder: jest.fn(() => ({
-        select: jest.fn().mockReturnThis(),
-        addSelect: jest.fn().mockReturnThis(),
+        select,
+        addSelect,
+        where,
         getRawOne,
       })),
     };
@@ -79,5 +84,13 @@ describe("MarketTradeExecutionService", () => {
       totalValue: 12600,
       averagePrice: 42,
     });
+    expect(addSelect).toHaveBeenCalledWith(
+      "COALESCE(SUM(trade.totalPrice) / NULLIF(SUM(trade.amount), 0), 0)",
+      "averagePrice"
+    );
+    expect(where).toHaveBeenCalledWith(
+      "trade.settlementStatus IN (:...settlementStatuses)",
+      { settlementStatuses: ["SETTLED_OFFLINE"] }
+    );
   });
 });

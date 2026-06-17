@@ -10,6 +10,9 @@ ENV PORT $PORT
 ARG VITE_APP_BACKEND
 ENV VITE_APP_BACKEND $VITE_APP_BACKEND
 
+ARG VITE_REGIONAL_MARKET_API_BASE
+ENV VITE_REGIONAL_MARKET_API_BASE $VITE_REGIONAL_MARKET_API_BASE
+
 ARG VITE_APP_COUNTRY_NAME
 ENV VITE_APP_COUNTRY_NAME $VITE_APP_COUNTRY_NAME
 
@@ -36,6 +39,7 @@ RUN CI=false yarn build
 
 # production environment
 FROM nginx:stable-alpine
+RUN apk add --no-cache openssl
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY ./web/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh

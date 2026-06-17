@@ -44,6 +44,27 @@ if [ "$1" = "nginx" -o "$1" = "nginx-debug" ]; then
     fi
 fi
 
+PORT="${PORT:-3030}"
+sed -i "s|listen 3030;|listen ${PORT};|g" /etc/nginx/conf.d/default.conf
+
+BASIC_AUTH_USERNAME=$(env | grep BASIC_AUTH_USERNAME= | cut -d'=' -f2-)
+BASIC_AUTH_PASSWORD=$(env | grep BASIC_AUTH_PASSWORD= | cut -d'=' -f2-)
+AUTH_CONFIG_PATH="/etc/nginx/conf.d/auth.conf"
+AUTH_FILE_PATH="/etc/nginx/.htpasswd"
+
+if [ -n "$BASIC_AUTH_USERNAME" ] && [ -n "$BASIC_AUTH_PASSWORD" ]; then
+    HASHED_PASSWORD=$(openssl passwd -apr1 "$BASIC_AUTH_PASSWORD")
+    printf "%s:%s\n" "$BASIC_AUTH_USERNAME" "$HASHED_PASSWORD" > "$AUTH_FILE_PATH"
+    {
+        echo 'auth_basic "Restricted";'
+        echo "auth_basic_user_file $AUTH_FILE_PATH;"
+    } > "$AUTH_CONFIG_PATH"
+    echo "Basic Auth enabled."
+else
+    : > "$AUTH_CONFIG_PATH"
+    echo "Basic Auth disabled."
+fi
+
 VITE_APP_BACKEND=$(env | grep VITE_APP_BACKEND= | cut -d'=' -f2-)
 VITE_APP_COUNTRY_NAME=$(env | grep VITE_APP_COUNTRY_NAME= | cut -d'=' -f2-)
 VITE_APP_REGISTRY_NAME=$(env | grep VITE_APP_REGISTRY_NAME= | cut -d'=' -f2-)
