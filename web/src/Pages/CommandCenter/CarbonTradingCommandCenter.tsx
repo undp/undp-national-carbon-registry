@@ -14,7 +14,15 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import {
+  fetchRegionalDemoIndicatorSource,
+  fetchRegionalDemoIndicators,
   fetchRegionalDashboardSummary,
+  loginRegionalDemo,
+  switchRegionalDemoRole,
+  type DemoIndicatorSource,
+  type DemoRegionIndicator,
+  type DemoRole,
+  type DemoSession,
   type RegionalDashboardSummary,
 } from "./regionalMarketApi";
 import { singleCountTradeVolume } from "./regionalSnapshotMath";
@@ -222,6 +230,100 @@ const fallbackTradeRows: TradeRow[] = [
     sector: "场外协议转让",
   },
 ];
+
+const fallbackDemoIndicators: DemoRegionIndicator[] = [
+  {
+    id: "s12-henan-gdp-2025",
+    regionCode: "410000",
+    regionName: "河南省",
+    indicatorCode: "GDP_CURRENT_PRICE",
+    indicatorName: "地区生产总值",
+    dimension: "economy",
+    period: "2025",
+    value: 66632.79,
+    targetValue: null,
+    unit: "亿元",
+    caliber: "初步核算，绝对数按现价，增长速度按不变价格计算。",
+    sourceLabel: "河南省统计局 2025年河南省国民经济和社会发展统计公报",
+    sourceUrl: "https://tjj.henan.gov.cn/2026/04-09/3341308.html",
+    sourceDocument: null,
+    sourceYear: 2026,
+    verified: true,
+    verifiedBy: "Phase 0 source catalog",
+    verifiedAt: "2026-06-17T00:00:00+08:00",
+    methodologyNote: "年度宏观公开指标，用于S12经济底座展示。",
+    truthStatus: "REAL_PUBLIC_DATA",
+    displayOrder: 10,
+  },
+  {
+    id: "s12-zhengzhou-gdp-2025",
+    regionCode: "410100",
+    regionName: "郑州市",
+    indicatorCode: "GDP_CURRENT_PRICE",
+    indicatorName: "地区生产总值",
+    dimension: "economy",
+    period: "2025",
+    value: 15244.6,
+    targetValue: null,
+    unit: "亿元",
+    caliber: "初步核算，绝对数按现价，增长速度按不变价格计算。",
+    sourceLabel: "郑州市统计局 2025年郑州市国民经济和社会发展统计公报",
+    sourceUrl: "https://tjj.zhengzhou.gov.cn/tjgb/10017864.jhtml",
+    sourceDocument: null,
+    sourceYear: 2026,
+    verified: true,
+    verifiedBy: "Phase 0 source catalog",
+    verifiedAt: "2026-06-17T00:00:00+08:00",
+    methodologyNote: "重点地市经济底座指标。",
+    truthStatus: "REAL_PUBLIC_DATA",
+    displayOrder: 30,
+  },
+  {
+    id: "s12-henan-afforestation-area-2025",
+    regionCode: "410000",
+    regionName: "河南省",
+    indicatorCode: "AFFORESTATION_AREA",
+    indicatorName: "完成造林面积",
+    dimension: "ecology",
+    period: "2025",
+    value: 44.8,
+    targetValue: null,
+    unit: "千公顷",
+    caliber: "年度完成造林面积，来源公报资源、环境和应急管理章节。",
+    sourceLabel: "河南省统计局 2025年河南省国民经济和社会发展统计公报",
+    sourceUrl: "https://tjj.henan.gov.cn/2026/04-09/3341308.html",
+    sourceDocument: null,
+    sourceYear: 2026,
+    verified: true,
+    verifiedBy: "Phase 0 source catalog",
+    verifiedAt: "2026-06-17T00:00:00+08:00",
+    methodologyNote: "生态/碳汇相关公开指标；不等同于经核算碳汇量。",
+    truthStatus: "REAL_PUBLIC_DATA",
+    displayOrder: 50,
+  },
+];
+
+const demoRoles: Array<{
+  role: DemoRole;
+  label: string;
+  account: string;
+}> = [
+  { role: "GOVERNMENT", label: "政府", account: "gov_demo" },
+  { role: "ENTERPRISE", label: "企业", account: "enterprise_demo" },
+  { role: "FINANCE", label: "金融", account: "finance_demo" },
+  { role: "OPERATOR", label: "操作", account: "operator_demo" },
+];
+
+const fallbackDemoSession: DemoSession = {
+  sessionId: "demo-session-gov",
+  user: {
+    id: "demo-user-gov",
+    account: "gov_demo",
+    role: "GOVERNMENT",
+    organizationId: "demo-org-government",
+    organizationName: "河南省区域碳市场演示监管端",
+  },
+};
 
 const henanDemoCities: CityBaseline[] = [
   {
@@ -1609,6 +1711,16 @@ const CarbonTradingCommandCenter = () => {
   const [regionalApiStatus, setRegionalApiStatus] = useState<
     "loading" | "connected" | "unavailable"
   >("loading");
+  const [demoShellStatus, setDemoShellStatus] = useState<
+    "loading" | "connected" | "fallback"
+  >("loading");
+  const [demoSession, setDemoSession] = useState<DemoSession>(fallbackDemoSession);
+  const [demoIndicators, setDemoIndicators] =
+    useState<DemoRegionIndicator[]>(fallbackDemoIndicators);
+  const [selectedDemoIndicator, setSelectedDemoIndicator] =
+    useState<DemoRegionIndicator>(fallbackDemoIndicators[0]);
+  const [demoSource, setDemoSource] =
+    useState<DemoIndicatorSource>(fallbackDemoIndicators[0]);
   const [demoProgress, setDemoProgress] = useState(demoEvents.length);
   const [isDemoPlaying, setIsDemoPlaying] = useState(false);
   const [carouselTick, setCarouselTick] = useState(0);
@@ -1632,6 +1744,39 @@ const CarbonTradingCommandCenter = () => {
         if (!cancelled) {
           setDashboardSummary(undefined);
           setRegionalApiStatus("unavailable");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    Promise.all([loginRegionalDemo("gov_demo"), fetchRegionalDemoIndicators()])
+      .then(([session, indicators]) => {
+        if (cancelled) {
+          return;
+        }
+
+        const verifiedIndicators = indicators.items.length
+          ? indicators.items
+          : fallbackDemoIndicators;
+        setDemoSession(session);
+        setDemoIndicators(verifiedIndicators);
+        setSelectedDemoIndicator(verifiedIndicators[0]);
+        setDemoSource(verifiedIndicators[0]);
+        setDemoShellStatus("connected");
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setDemoSession(fallbackDemoSession);
+          setDemoIndicators(fallbackDemoIndicators);
+          setSelectedDemoIndicator(fallbackDemoIndicators[0]);
+          setDemoSource(fallbackDemoIndicators[0]);
+          setDemoShellStatus("fallback");
         }
       });
 
@@ -1827,6 +1972,48 @@ const CarbonTradingCommandCenter = () => {
   };
 
   const projectionErrors = dashboardSummary?.projectionErrors ?? [];
+  const demoRoleLabel =
+    demoRoles.find((item) => item.role === demoSession.user.role)?.label ?? "政府";
+  const demoShellStatusLabel = {
+    loading: "会话连接中",
+    connected: "演示会话已连接",
+    fallback: "本地演示数据",
+  }[demoShellStatus];
+  const handleDemoRoleSwitch = async (role: DemoRole) => {
+    const roleConfig = demoRoles.find((item) => item.role === role) ?? demoRoles[0];
+
+    try {
+      const nextSession = await switchRegionalDemoRole(demoSession.sessionId, role);
+      setDemoSession(nextSession);
+      setDemoShellStatus("connected");
+    } catch {
+      setDemoSession({
+        sessionId: `demo-session-${role.toLowerCase()}`,
+        user: {
+          id: `demo-user-${role.toLowerCase()}`,
+          account: roleConfig.account,
+          role,
+          organizationId: `demo-org-${role.toLowerCase()}`,
+          organizationName: `${roleConfig.label}演示工作台`,
+        },
+      });
+      setDemoShellStatus("fallback");
+    }
+  };
+  const handleDemoSourceSelect = async (indicator: DemoRegionIndicator) => {
+    setSelectedDemoIndicator(indicator);
+    setDemoSource(indicator);
+
+    try {
+      const source = await fetchRegionalDemoIndicatorSource(indicator.id);
+      setDemoSource(source);
+      setDemoShellStatus("connected");
+    } catch {
+      setDemoSource(indicator);
+      setDemoShellStatus((current) => (current === "connected" ? current : "fallback"));
+    }
+  };
+  const demoIndicatorCards = demoIndicators.slice(0, 4);
 
   return (
     <main className="carbon-command-center">
@@ -1870,6 +2057,84 @@ const CarbonTradingCommandCenter = () => {
             <time>{formatClock(clock)}</time>
           </div>
         </header>
+
+        <section className="cc-demo-briefing" aria-label="Phase 1 区域市场演示驾驶舱">
+          <div className="cc-demo-briefing__rail">
+            <div>
+              <span className="cc-demo-briefing__eyebrow">Phase 1 Role Shell</span>
+              <h2>S12 真实公开指标驾驶舱</h2>
+              <p>
+                当前角色：{demoRoleLabel} · {demoSession.user.organizationName} ·{" "}
+                {demoShellStatusLabel}
+              </p>
+            </div>
+            <div className="cc-demo-roles" aria-label="演示角色切换">
+              {demoRoles.map((item) => (
+                <button
+                  key={item.role}
+                  type="button"
+                  className={demoSession.user.role === item.role ? "is-active" : ""}
+                  onClick={() => void handleDemoRoleSwitch(item.role)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="cc-demo-briefing__body">
+            <div className="cc-demo-indicators" aria-label="S12 verified indicators">
+              {demoIndicatorCards.map((indicator) => (
+                <button
+                  key={indicator.id}
+                  type="button"
+                  className={
+                    selectedDemoIndicator.id === indicator.id ? "is-selected" : ""
+                  }
+                  onClick={() => void handleDemoSourceSelect(indicator)}
+                >
+                  <span>{indicator.regionName}</span>
+                  <strong>
+                    {formatNumber(indicator.value, indicator.value % 1 === 0 ? 0 : 2)}
+                    {indicator.unit}
+                  </strong>
+                  <b>{indicator.indicatorName}</b>
+                  <small>已核验公开来源 · {indicator.period}</small>
+                </button>
+              ))}
+            </div>
+
+            <div className="cc-demo-source" aria-label="来源明细">
+              <div>
+                <span>来源明细</span>
+                <strong>{demoSource.sourceLabel}</strong>
+                <small>{demoSource.caliber}</small>
+              </div>
+              <a href={demoSource.sourceUrl} target="_blank" rel="noreferrer">
+                <FileText size={14} />
+                查看公开来源
+              </a>
+            </div>
+
+            <div className="cc-demo-prototypes" aria-label="S8 S10 prototype placeholders">
+              <div>
+                <span>S8</span>
+                <strong>模拟运营信号</strong>
+                <small>演示数据 · 模拟成交状态凭证 · 不触发生产交易流程</small>
+              </div>
+              <div>
+                <span>S8</span>
+                <strong>演示合同预览</strong>
+                <small>仅用于流程说明，不构成法律文件</small>
+              </div>
+              <div>
+                <span>S10</span>
+                <strong>融资测算</strong>
+                <small>质押意向申请 · 模拟审批结果 · 不涉及实际出款</small>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <div className="cc-grid">
           <div className="cc-column">

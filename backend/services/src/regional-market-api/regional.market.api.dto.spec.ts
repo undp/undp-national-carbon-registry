@@ -2,6 +2,8 @@ import "reflect-metadata";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import {
+  RegionalDemoLoginDto,
+  RegionalDemoSwitchRoleDto,
   RegionalIssueCreditsDto,
   RegionalOtcTradeExecuteDto,
   RegionalProjectIdDto,
@@ -78,6 +80,27 @@ describe("Regional market API DTOs", () => {
       companyId: 20,
       document: {},
       txRef: "TX-1",
+    });
+
+    await expect(validate(dto)).resolves.toHaveLength(0);
+  });
+
+  it("accepts golden demo login accounts", async () => {
+    const dto = plainToInstance(RegionalDemoLoginDto, { account: "gov_demo" });
+
+    await expect(validate(dto)).resolves.toHaveLength(0);
+  });
+
+  it("rejects unknown demo login accounts", async () => {
+    const dto = plainToInstance(RegionalDemoLoginDto, { account: "real_bank" });
+
+    await expect(validate(dto)).resolves.not.toHaveLength(0);
+  });
+
+  it("accepts backend role switch requests with session id", async () => {
+    const dto = plainToInstance(RegionalDemoSwitchRoleDto, {
+      sessionId: "demo-session-gov",
+      role: "ENTERPRISE",
     });
 
     await expect(validate(dto)).resolves.toHaveLength(0);

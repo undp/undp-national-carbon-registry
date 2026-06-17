@@ -20,6 +20,29 @@ describe("RegionalMarketAPI routes", () => {
         registryTransaction: { id: "TX-1" },
         marketTrade: { id: "TRADE-1" },
       }),
+      loginDemoSession: jest.fn().mockReturnValue({
+        sessionId: "demo-session-gov",
+        user: { account: "gov_demo", role: "GOVERNMENT" },
+      }),
+      switchDemoRole: jest.fn().mockReturnValue({
+        sessionId: "demo-session-enterprise",
+        user: { account: "enterprise_demo", role: "ENTERPRISE" },
+      }),
+      getDemoSessionMe: jest.fn().mockReturnValue({
+        sessionId: "demo-session-gov",
+        user: { account: "gov_demo", role: "GOVERNMENT" },
+      }),
+      listDemoIndicators: jest.fn().mockReturnValue({
+        verifiedOnly: true,
+        items: [{ id: "s12-henan-gdp-2025", verified: true }],
+      }),
+      getDemoIndicatorSource: jest.fn().mockReturnValue({
+        id: "s12-henan-gdp-2025",
+        verified: true,
+      }),
+      resetDemo: jest.fn().mockReturnValue({
+        status: "RESET",
+      }),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -101,5 +124,58 @@ describe("RegionalMarketAPI routes", () => {
       })
       .expect(400);
     expect(service.executeOtcTrade).not.toHaveBeenCalled();
+  });
+
+  it("serves phase-one demo session login", async () => {
+    await request(app.getHttpServer())
+      .post("/regional/demo/session/login")
+      .send({ account: "gov_demo" })
+      .expect(201)
+      .expect({
+        sessionId: "demo-session-gov",
+        user: { account: "gov_demo", role: "GOVERNMENT" },
+      });
+    expect(service.loginDemoSession).toHaveBeenCalledWith("gov_demo");
+  });
+
+  it("rejects unknown phase-one demo accounts", async () => {
+    await request(app.getHttpServer())
+      .post("/regional/demo/session/login")
+      .send({ account: "real_bank" })
+      .expect(400);
+    expect(service.loginDemoSession).not.toHaveBeenCalledWith("real_bank");
+  });
+
+  it("serves verified S12 indicators and source details", async () => {
+    await request(app.getHttpServer())
+      .get("/regional/demo/indicators?verifiedOnly=true")
+      .expect(200)
+      .expect({
+        verifiedOnly: true,
+        items: [{ id: "s12-henan-gdp-2025", verified: true }],
+      });
+    expect(service.listDemoIndicators).toHaveBeenCalledWith({
+      verifiedOnly: "true",
+    });
+
+    await request(app.getHttpServer())
+      .get("/regional/demo/indicators/s12-henan-gdp-2025/source")
+      .expect(200)
+      .expect({
+        id: "s12-henan-gdp-2025",
+        verified: true,
+      });
+    expect(service.getDemoIndicatorSource).toHaveBeenCalledWith(
+      "s12-henan-gdp-2025"
+    );
+  });
+
+  it("serves reset skeleton", async () => {
+    await request(app.getHttpServer())
+      .post("/regional/demo/reset")
+      .send({})
+      .expect(201)
+      .expect({ status: "RESET" });
+    expect(service.resetDemo).toHaveBeenCalled();
   });
 });

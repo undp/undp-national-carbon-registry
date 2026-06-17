@@ -8,6 +8,7 @@ import {
   IsOptional,
   IsPositive,
   IsString,
+  IsIn,
   ValidateNested,
 } from "class-validator";
 
@@ -15,6 +16,22 @@ export class RegionalProjectIdDto {
   @IsString()
   @IsNotEmpty()
   programmeId: string;
+}
+
+export class RegionalDemoLoginDto {
+  @IsString()
+  @IsIn(["gov_demo", "enterprise_demo", "finance_demo"])
+  account: string;
+}
+
+export class RegionalDemoSwitchRoleDto {
+  @IsString()
+  @IsOptional()
+  sessionId?: string;
+
+  @IsString()
+  @IsIn(["GOVERNMENT", "ENTERPRISE", "FINANCE", "OPERATOR"])
+  role: string;
 }
 
 export class RegionalIssueCreditsDto {

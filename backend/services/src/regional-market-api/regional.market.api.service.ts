@@ -1,7 +1,220 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { RegionalMarketService } from "@app/shared/regional-market/regional-market.service";
 import { RegionalMarketProjectionService } from "@app/shared/regional-market/regional-market-projection.service";
 import { QueryDto } from "@app/shared/dto/query.dto";
+
+type DemoRole = "GOVERNMENT" | "ENTERPRISE" | "FINANCE" | "OPERATOR";
+
+type DemoUser = {
+  id: string;
+  account: string;
+  role: DemoRole;
+  organizationId: string;
+  organizationName: string;
+};
+
+type DemoRegionIndicator = {
+  id: string;
+  regionCode: string;
+  regionName: string;
+  indicatorCode: string;
+  indicatorName: string;
+  dimension: string;
+  period: string;
+  value: number;
+  targetValue: number | null;
+  unit: string;
+  caliber: string;
+  sourceLabel: string;
+  sourceUrl: string;
+  sourceDocument: string | null;
+  sourceYear: number;
+  verified: boolean;
+  verifiedBy: string;
+  verifiedAt: string;
+  methodologyNote: string;
+  truthStatus: "REAL_PUBLIC_DATA" | "UNVERIFIED_SOURCE_CANDIDATE";
+  displayOrder: number;
+};
+
+const DEMO_USERS: Record<string, DemoUser> = {
+  gov_demo: {
+    id: "user-gov-demo",
+    account: "gov_demo",
+    role: "GOVERNMENT",
+    organizationId: "org-gov-demo",
+    organizationName: "河南省区域绿色发展演示专班",
+  },
+  enterprise_demo: {
+    id: "user-enterprise-demo",
+    account: "enterprise_demo",
+    role: "ENTERPRISE",
+    organizationId: "org-enterprise-demo",
+    organizationName: "郑州绿能制造演示企业",
+  },
+  finance_demo: {
+    id: "user-finance-demo",
+    account: "finance_demo",
+    role: "FINANCE",
+    organizationId: "org-finance-demo",
+    organizationName: "中原绿色金融演示机构",
+  },
+  operator_demo: {
+    id: "user-operator-demo",
+    account: "operator_demo",
+    role: "OPERATOR",
+    organizationId: "org-operator-demo",
+    organizationName: "阶段零演示操作台",
+  },
+};
+
+const ROLE_TO_ACCOUNT: Record<DemoRole, string> = {
+  GOVERNMENT: "gov_demo",
+  ENTERPRISE: "enterprise_demo",
+  FINANCE: "finance_demo",
+  OPERATOR: "operator_demo",
+};
+
+const DEMO_REGION_INDICATORS: DemoRegionIndicator[] = [
+  {
+    id: "s12-henan-gdp-2025",
+    regionCode: "410000",
+    regionName: "河南省",
+    indicatorCode: "GDP_CURRENT_PRICE",
+    indicatorName: "地区生产总值",
+    dimension: "economy",
+    period: "2025",
+    value: 66632.79,
+    targetValue: null,
+    unit: "亿元",
+    caliber: "初步核算，绝对数按现价，增长速度按不变价格计算。",
+    sourceLabel: "河南省统计局 2025年河南省国民经济和社会发展统计公报",
+    sourceUrl: "https://tjj.henan.gov.cn/2026/04-09/3341308.html",
+    sourceDocument: null,
+    sourceYear: 2026,
+    verified: true,
+    verifiedBy: "Codex source check, 2026-06-17",
+    verifiedAt: "2026-06-17T00:00:00+08:00",
+    methodologyNote: "年度宏观公开指标，用于S12经济底座展示。",
+    truthStatus: "REAL_PUBLIC_DATA",
+    displayOrder: 10,
+  },
+  {
+    id: "s12-henan-industrial-energy-consumption-2025",
+    regionCode: "410000",
+    regionName: "河南省",
+    indicatorCode: "INDUSTRIAL_ENERGY_CONSUMPTION_GROWTH",
+    indicatorName: "规模以上工业综合能源消费量增速",
+    dimension: "energy",
+    period: "2025",
+    value: -0.6,
+    targetValue: null,
+    unit: "%",
+    caliber: "规模以上工业综合能源消费量同比变化。",
+    sourceLabel: "河南省统计局 2025年河南省国民经济和社会发展统计公报",
+    sourceUrl: "https://tjj.henan.gov.cn/2026/04-09/3341308.html",
+    sourceDocument: null,
+    sourceYear: 2026,
+    verified: true,
+    verifiedBy: "Codex source check, 2026-06-17",
+    verifiedAt: "2026-06-17T00:00:00+08:00",
+    methodologyNote: "能源消费强度相关公开指标；不得替代全社会碳排放核算。",
+    truthStatus: "REAL_PUBLIC_DATA",
+    displayOrder: 20,
+  },
+  {
+    id: "s12-zhengzhou-gdp-2025",
+    regionCode: "410100",
+    regionName: "郑州市",
+    indicatorCode: "GDP_CURRENT_PRICE",
+    indicatorName: "地区生产总值",
+    dimension: "economy",
+    period: "2025",
+    value: 15244.6,
+    targetValue: null,
+    unit: "亿元",
+    caliber: "初步核算，绝对数按现价，增长速度按不变价格计算。",
+    sourceLabel: "郑州市统计局 2025年郑州市国民经济和社会发展统计公报",
+    sourceUrl: "https://tjj.zhengzhou.gov.cn/tjgb/10017864.jhtml",
+    sourceDocument: null,
+    sourceYear: 2026,
+    verified: true,
+    verifiedBy: "Codex source check, 2026-06-17",
+    verifiedAt: "2026-06-17T00:00:00+08:00",
+    methodologyNote: "重点地市经济底座指标。",
+    truthStatus: "REAL_PUBLIC_DATA",
+    displayOrder: 30,
+  },
+  {
+    id: "s12-zhengzhou-power-consumption-2025",
+    regionCode: "410100",
+    regionName: "郑州市",
+    indicatorCode: "TOTAL_ELECTRICITY_CONSUMPTION",
+    indicatorName: "全社会用电量",
+    dimension: "energy",
+    period: "2025",
+    value: 726.6,
+    targetValue: null,
+    unit: "亿千瓦时",
+    caliber: "年度全社会用电量，同比增速在来源公报中列示。",
+    sourceLabel: "郑州市统计局 2025年郑州市国民经济和社会发展统计公报",
+    sourceUrl: "https://tjj.zhengzhou.gov.cn/tjgb/10017864.jhtml",
+    sourceDocument: null,
+    sourceYear: 2026,
+    verified: true,
+    verifiedBy: "Codex source check, 2026-06-17",
+    verifiedAt: "2026-06-17T00:00:00+08:00",
+    methodologyNote: "能源活动相关公开指标；不等同于碳排放量。",
+    truthStatus: "REAL_PUBLIC_DATA",
+    displayOrder: 40,
+  },
+  {
+    id: "s12-henan-afforestation-area-2025",
+    regionCode: "410000",
+    regionName: "河南省",
+    indicatorCode: "AFFORESTATION_AREA",
+    indicatorName: "完成造林面积",
+    dimension: "ecology",
+    period: "2025",
+    value: 44.8,
+    targetValue: null,
+    unit: "千公顷",
+    caliber: "年度完成造林面积，来源公报资源、环境和应急管理章节。",
+    sourceLabel: "河南省统计局 2025年河南省国民经济和社会发展统计公报",
+    sourceUrl: "https://tjj.henan.gov.cn/2026/04-09/3341308.html",
+    sourceDocument: null,
+    sourceYear: 2026,
+    verified: true,
+    verifiedBy: "Codex source check, 2026-06-17",
+    verifiedAt: "2026-06-17T00:00:00+08:00",
+    methodologyNote: "生态/碳汇相关公开指标；不等同于经核算碳汇量。",
+    truthStatus: "REAL_PUBLIC_DATA",
+    displayOrder: 50,
+  },
+  {
+    id: "s12-candidate-carbon-intensity",
+    regionCode: "410000",
+    regionName: "河南省",
+    indicatorCode: "CARBON_INTENSITY_CANDIDATE",
+    indicatorName: "单位地区生产总值碳排放强度候选指标",
+    dimension: "carbon",
+    period: "2025",
+    value: 0,
+    targetValue: null,
+    unit: "待核验",
+    caliber: "缺少阶段零可公开核验来源，禁止作为真实公开数据上屏。",
+    sourceLabel: "待核验候选来源",
+    sourceUrl: "",
+    sourceDocument: null,
+    sourceYear: 2026,
+    verified: false,
+    verifiedBy: "",
+    verifiedAt: "",
+    methodologyNote: "用于测试 verifiedOnly 过滤；不得在真实公开指标区展示。",
+    truthStatus: "UNVERIFIED_SOURCE_CANDIDATE",
+    displayOrder: 999,
+  },
+];
 
 @Injectable()
 export class RegionalMarketAPIService {
@@ -67,5 +280,111 @@ export class RegionalMarketAPIService {
 
   getDashboardSummary() {
     return this.regionalMarketProjectionService.getDashboardSummary();
+  }
+
+  loginDemoSession(account: string) {
+    const user = DEMO_USERS[account];
+    if (!user || account === "operator_demo") {
+      throw new BadRequestException({
+        error: {
+          code: "DEMO_INVALID_ACCOUNT",
+          message: "Unknown phase-zero demo account.",
+        },
+      });
+    }
+
+    return this.demoSessionForUser(user);
+  }
+
+  switchDemoRole(role: string) {
+    const account = ROLE_TO_ACCOUNT[role as DemoRole];
+    if (!account) {
+      throw new BadRequestException({
+        error: {
+          code: "DEMO_INVALID_ROLE",
+          message: "Unknown phase-zero demo role.",
+        },
+      });
+    }
+
+    return this.demoSessionForUser(DEMO_USERS[account]);
+  }
+
+  getDemoSessionMe(role?: string) {
+    if (role) {
+      return this.switchDemoRole(role);
+    }
+
+    return this.demoSessionForUser(DEMO_USERS.gov_demo);
+  }
+
+  listDemoIndicators(query: Record<string, any> = {}) {
+    const verifiedOnly = query.verifiedOnly !== "false";
+    const regionCode = query.regionCode;
+    const dimension = query.dimension;
+
+    const items = DEMO_REGION_INDICATORS.filter((indicator) => {
+      if (verifiedOnly && !indicator.verified) return false;
+      if (regionCode && indicator.regionCode !== regionCode) return false;
+      if (dimension && indicator.dimension !== dimension) return false;
+      return true;
+    }).sort((a, b) => a.displayOrder - b.displayOrder);
+
+    return {
+      truthStatus: "REAL_PUBLIC_DATA",
+      verifiedOnly,
+      items,
+    };
+  }
+
+  getDemoIndicatorSource(id: string) {
+    const indicator = DEMO_REGION_INDICATORS.find((item) => item.id === id);
+    if (!indicator) {
+      throw new NotFoundException({
+        error: {
+          code: "DEMO_INDICATOR_NOT_FOUND",
+          message: "Demo indicator was not found.",
+        },
+      });
+    }
+
+    return {
+      id: indicator.id,
+      sourceLabel: indicator.sourceLabel,
+      sourceUrl: indicator.sourceUrl,
+      sourceDocument: indicator.sourceDocument,
+      sourceYear: indicator.sourceYear,
+      caliber: indicator.caliber,
+      methodologyNote: indicator.methodologyNote,
+      verified: indicator.verified,
+      verifiedBy: indicator.verifiedBy,
+      verifiedAt: indicator.verifiedAt,
+      truthStatus: indicator.truthStatus,
+    };
+  }
+
+  resetDemo() {
+    return {
+      status: "RESET",
+      preserved: {
+        verifiedIndicators: DEMO_REGION_INDICATORS.filter(
+          (indicator) => indicator.verified
+        ).length,
+      },
+      reset: {
+        sessions: true,
+        demoTransactions: true,
+        financeState: true,
+      },
+    };
+  }
+
+  private demoSessionForUser(user: DemoUser) {
+    const sessionSuffix = user.account.replace("_demo", "");
+
+    return {
+      sessionId: `demo-session-${sessionSuffix}`,
+      user,
+    };
   }
 }

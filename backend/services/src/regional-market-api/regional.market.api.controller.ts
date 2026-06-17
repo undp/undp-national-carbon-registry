@@ -1,9 +1,20 @@
-import { Body, Controller, Get, Post, Request, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from "@nestjs/common";
 import { QueryDto } from "@app/shared/dto/query.dto";
 import { RegionalMarketAPIService } from "./regional.market.api.service";
 import { RegionalMarketDemoGuard } from "./regional.market.demo.guard";
 import {
   RegionalIssueCreditsDto,
+  RegionalDemoLoginDto,
+  RegionalDemoSwitchRoleDto,
   RegionalOtcTradeExecuteDto,
   RegionalProjectIdDto,
 } from "./regional.market.api.dto";
@@ -108,5 +119,35 @@ export class RegionalMarketAPIController {
   @Get("dashboard/summary")
   async getDashboardSummary() {
     return this.regionalMarketAPIService.getDashboardSummary();
+  }
+
+  @Post("demo/session/login")
+  async loginDemoSession(@Body() body: RegionalDemoLoginDto) {
+    return this.regionalMarketAPIService.loginDemoSession(body.account);
+  }
+
+  @Post("demo/session/switch-role")
+  async switchDemoRole(@Body() body: RegionalDemoSwitchRoleDto) {
+    return this.regionalMarketAPIService.switchDemoRole(body.role);
+  }
+
+  @Get("demo/session/me")
+  async getDemoSessionMe(@Query("role") role?: string) {
+    return this.regionalMarketAPIService.getDemoSessionMe(role);
+  }
+
+  @Get("demo/indicators")
+  async listDemoIndicators(@Query() query: Record<string, any>) {
+    return this.regionalMarketAPIService.listDemoIndicators(query);
+  }
+
+  @Get("demo/indicators/:id/source")
+  async getDemoIndicatorSource(@Param("id") id: string) {
+    return this.regionalMarketAPIService.getDemoIndicatorSource(id);
+  }
+
+  @Post("demo/reset")
+  async resetDemo() {
+    return this.regionalMarketAPIService.resetDemo();
   }
 }

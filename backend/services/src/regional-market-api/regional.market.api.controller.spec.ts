@@ -197,4 +197,84 @@ describe("RegionalMarketAPIController", () => {
       regionalMarketProjectionService.getDashboardSummary
     ).toHaveBeenCalled();
   });
+
+  it("logs in a government demo session", async () => {
+    await expect(
+      controller.loginDemoSession({ account: "gov_demo" })
+    ).resolves.toMatchObject({
+      sessionId: "demo-session-gov",
+      user: {
+        account: "gov_demo",
+        role: "GOVERNMENT",
+      },
+    });
+  });
+
+  it("switches demo roles through the backend service", async () => {
+    await expect(
+      controller.switchDemoRole({
+        sessionId: "demo-session-gov",
+        role: "ENTERPRISE",
+      })
+    ).resolves.toMatchObject({
+      sessionId: "demo-session-enterprise",
+      user: {
+        account: "enterprise_demo",
+        role: "ENTERPRISE",
+      },
+    });
+  });
+
+  it("returns verified S12 indicators by default", async () => {
+    const indicators = await controller.listDemoIndicators({});
+
+    expect(indicators.items.length).toBeGreaterThanOrEqual(3);
+    expect(indicators.items.every((item) => item.verified)).toBe(true);
+    expect(indicators.items[0]).toMatchObject({
+      truthStatus: "REAL_PUBLIC_DATA",
+      sourceLabel: expect.any(String),
+      sourceYear: expect.any(Number),
+      methodologyNote: expect.any(String),
+    });
+  });
+
+  it("can include unverified S12 source candidates only when requested", async () => {
+    const verifiedOnly = await controller.listDemoIndicators({
+      verifiedOnly: "true",
+    });
+    const includingCandidates = await controller.listDemoIndicators({
+      verifiedOnly: "false",
+    });
+
+    expect(verifiedOnly.items.some((item) => item.verified === false)).toBe(false);
+    expect(includingCandidates.items.some((item) => item.verified === false)).toBe(true);
+  });
+
+  it("returns indicator source details", async () => {
+    const indicators = await controller.listDemoIndicators({});
+
+    await expect(
+      controller.getDemoIndicatorSource(indicators.items[0].id)
+    ).resolves.toMatchObject({
+      id: indicators.items[0].id,
+      sourceLabel: indicators.items[0].sourceLabel,
+      verified: true,
+      verifiedBy: expect.any(String),
+      verifiedAt: expect.any(String),
+    });
+  });
+
+  it("returns reset skeleton result without deleting verified indicators", async () => {
+    await expect(controller.resetDemo()).resolves.toMatchObject({
+      status: "RESET",
+      preserved: {
+        verifiedIndicators: expect.any(Number),
+      },
+      reset: {
+        sessions: true,
+        demoTransactions: true,
+        financeState: true,
+      },
+    });
+  });
 });
