@@ -3,10 +3,14 @@
 **Scope:** Article 6.2 (cooperative approaches / ITMOs) only. Article 6.4 mechanism and 6.8
 non-market approaches are out of scope.
 
-**Status:** Audit complete. All 14 findings below were verified against the current code
+**Status:** Audit complete. All 15 findings below were verified against the current code
 (file:line evidence cited). Items marked 🔒 are interpretation-sensitive and must be confirmed by
 an Article 6.2 subject-matter expert (SME) **before** code changes; everything else is an
 unambiguous wiring/validation gap and can be implemented directly.
+
+**Implementation progress** (branch `article-6-compliance-improvements`, PR #361):
+**F12, F13, F14, F15 are done** — implemented and verified against the full Playwright Article 6.2
+e2e suite (193/193). Next up (no gate): **F4**. See the per-finding sections for detail.
 
 **Governing decisions** (in `docs/a6/`):
 
@@ -17,27 +21,29 @@ unambiguous wiring/validation gap and can be implemented directly.
 
 ## Priority overview
 
-| #   | Finding                                  | Change?     | Effort            | SME gate | Phase |
-|-----|------------------------------------------|-------------|-------------------|----------|-------|
-| F1  | Emissions-balance formula wrong          | Yes         | 1-line            | 🔒       | 2     |
-| F2  | Single vs multi-year not applied         | Yes         | Large             | 🔒       | 3     |
-| F3  | OMGE/SOP auto-deducted as mandatory      | Yes         | Small             | 🔒       | 2     |
-| F4  | `authorizationPurpose` never set         | Yes         | Small/Med         | No       | 1     |
-| F5  | No "NDC and OIMP" dual purpose           | Yes         | Small + migration | 🔒       | 2     |
-| F6  | First-transfer definition not per-auth   | Yes         | Med + migration   | 🔒       | 2     |
-| F7  | Authorized entities not linked to CA     | Yes         | Med + migration   | No       | 1     |
-| F8  | Annual Information is a placeholder       | Yes         | Large             | No       | 1     |
-| F9  | Exports drop 3 columns                   | Yes         | Small             | No       | 1     |
-| F10 | Non-GHG metrics unsupported              | Conditional | Large             | 🔒       | 3     |
-| F11 | Initial report missing sections          | Yes         | Med + migration   | No       | 1     |
-| F12 | CA-adjustment status workflow incomplete | Yes         | Small/Med         | No       | 1     |
-| F13 | Safeguard check silent-passes            | Yes         | 1-line            | No       | 1     |
-| F14 | Vintage unvalidated; dead enum           | Yes         | Small             | No       | 1     |
-| F15 | First transfers lost on partial/split    | Yes         | Small/Med         | No       | 1     |
+| #   | Finding                                  | Change?     | Effort            | SME gate | Status     |
+|-----|------------------------------------------|-------------|-------------------|----------|------------|
+| F1  | Emissions-balance formula wrong          | Yes         | 1-line            | 🔒       | SME-gate   |
+| F2  | Single vs multi-year not applied         | Yes         | Large             | 🔒       | SME-gate   |
+| F3  | OMGE/SOP auto-deducted as mandatory      | Yes         | Small             | 🔒       | SME-gate   |
+| F4  | `authorizationPurpose` never set         | Yes         | Small/Med         | No       | **next**   |
+| F5  | No "NDC and OIMP" dual purpose           | Yes         | Small + migration | 🔒       | SME-gate   |
+| F6  | First-transfer definition not per-auth   | Yes         | Med + migration   | 🔒       | SME-gate   |
+| F7  | Authorized entities not linked to CA     | Yes         | Med + migration   | No       | open       |
+| F8  | Annual Information is a placeholder       | Yes         | Large             | No       | vendor     |
+| F9  | Exports drop 3 columns                   | Yes         | Small             | No       | vendor     |
+| F10 | Non-GHG metrics unsupported              | Conditional | Large             | 🔒       | SME-gate   |
+| F11 | Initial report missing sections          | Yes         | Med + migration   | No       | open       |
+| F12 | CA-adjustment status workflow incomplete | Yes         | Small/Med         | No       | done ✅    |
+| F13 | Safeguard check silent-passes            | Yes         | 1-line            | No       | done ✅    |
+| F14 | Vintage unvalidated; dead enum           | Yes         | Small             | No       | done ✅    |
+| F15 | First transfers lost on partial/split    | Yes         | Small/Med         | No       | done ✅    |
 
-**Phase 1 (no gate, do now):** F4, F7, F8, F9, F11, F12, F13, F14, F15
-**Phase 2 (post-SME, accounting/financial-equivalent values, needs data migration plan):** F1, F3, F5, F6
-**Phase 3 (post-SME, conditional on host NDC):** F2, F10
+**Done (Phase 1, no gate):** F12, F13, F14, F15 — implemented + e2e-verified (193/193) on
+`article-6-compliance-improvements` (PR #361).
+**Phase 1 remaining (no gate):** **F4** (next — no migration), F7, F11 (F7/F11 need migrations).
+**Vendor (AEF reporting templates):** F8, F9 + the new CMA.6 5-table AEF format (separate vendor work plan).
+**SME-gated (🔒, post sign-off):** F1, F3, F5, F6; F2 + F10 conditional on host NDC.
 
 ---
 
@@ -438,7 +444,7 @@ so submission passes with empty quantification.
 
 ---
 
-## F12 — CorrespondingAdjustment status workflow incomplete
+## F12 — CorrespondingAdjustment status workflow incomplete — ✅ DONE (PR #361)
 
 **Severity:** Low/Med · **Decision basis:** internal integrity · **No gate**
 
@@ -458,7 +464,7 @@ controller (`corresponding-adjustment.controller.ts`) exposes only `calculate/qu
 
 ---
 
-## F13 — Safeguard check silent-passes on missing data
+## F13 — Safeguard check silent-passes on missing data — ✅ DONE (PR #361)
 
 **Severity:** Low/Med · **Decision basis:** Dec 2/CMA.3 para 7 ("no net increase") · **No gate**
 
@@ -473,7 +479,7 @@ distinguished from "failed," change the column to `boolean | null` and set it `n
 
 ---
 
-## F14 — Vintage unvalidated; `HOLDINGS_SNAPSHOT` dead enum
+## F14 — Vintage unvalidated; `HOLDINGS_SNAPSHOT` dead enum — ✅ DONE (PR #361)
 
 **Severity:** Low · **Decision basis:** Dec 2/CMA.3 para 23(j) (vintage required) · **No gate**
 
@@ -494,7 +500,7 @@ distinguished from "failed," change the column to `boolean | null` and set it `n
 
 ---
 
-## F15 — First transfers lost on partial/split transfers
+## F15 — First transfers lost on partial/split transfers — ✅ DONE (PR #361)
 
 **Severity:** High · **Decision basis:** Dec 2/CMA.3 para 1(a), para 2, para 8 · **No gate**
 
