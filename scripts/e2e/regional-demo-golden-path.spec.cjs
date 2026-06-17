@@ -47,4 +47,15 @@ test.describe("regional demo phase-two golden path", () => {
     await expect(transferButton).toBeDisabled();
     await expect(page.getByText("交易可用 0 吨")).toBeVisible();
   });
+
+  test("operator can quick fill and reset the demo", async ({ page }) => {
+    await page.goto(`${baseUrl}/command-center`, { waitUntil: "networkidle" });
+
+    await page.getByRole("button", { name: "操作" }).click();
+    await expect(page.getByLabel("操作员恢复台")).toBeVisible();
+    await page.getByRole("button", { name: "一键补齐S8" }).click();
+    await expect(page.getByText("成交：800 吨 · 33,600.00 元")).toBeVisible();
+    await page.getByRole("button", { name: "复位演示" }).click();
+    await expect(page.getByText("交易可用 0 吨")).toBeVisible();
+  });
 });

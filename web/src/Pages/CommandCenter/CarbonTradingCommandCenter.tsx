@@ -26,6 +26,7 @@ import {
   fetchRegionalDemoStatusCertificate,
   fetchRegionalDashboardSummary,
   loginRegionalDemo,
+  resetRegionalDemo,
   reviewRegionalDemoFinanceApplication,
   switchRegionalDemoRole,
   transferRegionalDemoToTrading,
@@ -2119,6 +2120,7 @@ const CarbonTradingCommandCenter = () => {
 
     try {
       const result = await transferRegionalDemoToTrading(
+        demoSession.user.role,
         selectedRegistryHolding.id,
         quantity
       );
@@ -2168,7 +2170,12 @@ const CarbonTradingCommandCenter = () => {
     if (!tradingHolding) return;
 
     try {
-      const result = await createRegionalDemoListing(tradingHolding.id, 800, 42);
+      const result = await createRegionalDemoListing(
+        demoSession.user.role,
+        tradingHolding.id,
+        800,
+        42
+      );
       setDemoListing(result.listing);
       setDemoShellStatus("connected");
       await refreshSupervisionSummary();
@@ -2198,6 +2205,7 @@ const CarbonTradingCommandCenter = () => {
 
     try {
       const result = await confirmRegionalDemoDeal(
+        demoSession.user.role,
         demoListing.id,
         "org-buyer-demo",
         demoListing.quantity
@@ -2251,6 +2259,7 @@ const CarbonTradingCommandCenter = () => {
 
     try {
       const valuation = await createRegionalDemoFinanceValuation(
+        demoSession.user.role === "OPERATOR" ? "OPERATOR" : "FINANCE",
         enterpriseId,
         assetId,
         1000,
@@ -2258,12 +2267,14 @@ const CarbonTradingCommandCenter = () => {
         0.6
       );
       const application = await createRegionalDemoFinanceApplication(
+        demoSession.user.role === "OPERATOR" ? "OPERATOR" : "ENTERPRISE",
         enterpriseId,
         valuation.valuation.id,
         20000,
         "绿色设备更新演示"
       );
       const review = await reviewRegionalDemoFinanceApplication(
+        demoSession.user.role === "OPERATOR" ? "OPERATOR" : "FINANCE",
         application.application.id,
         "APPROVED",
         "演示额度内"
@@ -2310,6 +2321,106 @@ const CarbonTradingCommandCenter = () => {
         },
       }));
       setDemoShellStatus("fallback");
+    }
+  };
+  const resetLocalDemoFlow = () => {
+    setRegistryHoldings(fallbackRegistryHoldings);
+    setSelectedRegistryHolding(fallbackRegistryHoldings[0]);
+    setTradingHolding(undefined);
+    setDemoListing(undefined);
+    setDemoDeal(undefined);
+    setContractPreview(undefined);
+    setStatusCertificate(undefined);
+    setFinanceApplication(undefined);
+    setFinanceAssessedAmount(undefined);
+    setSupervisionSummary(fallbackSupervisionSummary);
+  };
+  const handleOperatorReset = async () => {
+    try {
+      await resetRegionalDemo("OPERATOR");
+      setDemoShellStatus("connected");
+    } catch {
+      setDemoShellStatus("fallback");
+    } finally {
+      resetLocalDemoFlow();
+    }
+  };
+  const handleOperatorFillS8 = async () => {
+    if (
+      selectedRegistryHolding.status === "PLEDGE_LOCKED" ||
+      selectedRegistryHolding.lockedQuantity > 0
+    ) {
+      return;
+    }
+
+    const nextRegistryHolding = {
+      ...selectedRegistryHolding,
+      availableQuantity: Math.max(selectedRegistryHolding.availableQuantity - 1000, 0),
+    };
+    const nextTradingHolding: DemoTradingHolding = {
+      id: "trading-holding-operator-fill",
+      registryHoldingId: selectedRegistryHolding.id,
+      enterpriseId: selectedRegistryHolding.enterpriseId,
+      assetName: selectedRegistryHolding.assetName,
+      totalQuantity: 1000,
+      availableQuantity: 200,
+      listedQuantity: 0,
+      unit: selectedRegistryHolding.unit,
+      status: "DEAL_CONFIRMED",
+      truthStatus: "SIMULATED_DEMO_DATA",
+    };
+    const nextListing: DemoTradingListing = {
+      id: "listing-operator-fill",
+      tradingHoldingId: nextTradingHolding.id,
+      enterpriseId: selectedRegistryHolding.enterpriseId,
+      quantity: 800,
+      unitPrice: 42,
+      listedAmount: 33600,
+      status: "DEAL_CONFIRMED",
+      truthStatus: "SIMULATED_DEMO_DATA",
+    };
+    const nextDeal: DemoTradingDeal = {
+      id: "deal-operator-fill",
+      listingId: nextListing.id,
+      buyerOrganizationId: "org-buyer-demo",
+      sellerEnterpriseId: selectedRegistryHolding.enterpriseId,
+      quantity: 800,
+      unitPrice: 42,
+      totalAmount: 33600,
+      status: "CONFIRMED",
+      truthStatus: "SIMULATED_DEMO_DATA",
+    };
+
+    setSelectedRegistryHolding(nextRegistryHolding);
+    setRegistryHoldings([nextRegistryHolding]);
+    setTradingHolding(nextTradingHolding);
+    setDemoListing(nextListing);
+    setDemoDeal(nextDeal);
+    setContractPreview({
+      title: "演示合同预览",
+      legalEffect: "演示文本，不具法律效力",
+      truthStatus: "SIMULATED_DEMO_DOCUMENT",
+    });
+    setStatusCertificate({
+      title: "模拟成交状态凭证",
+      settlementBoundary: "不含资金清算或银行结算",
+      truthStatus: "SIMULATED_DEMO_DOCUMENT",
+    });
+    setSupervisionSummary((current) => ({
+      ...current,
+      simulatedTradingActivity: {
+        ...current.simulatedTradingActivity,
+        transferCount: 1,
+        listingCount: 1,
+        dealCount: 1,
+        totalConfirmedQuantity: 800,
+      },
+    }));
+    setDemoShellStatus("fallback");
+  };
+  const handleOperatorFillS10 = async () => {
+    if (financeApplication?.status !== "SIMULATED_APPROVED") {
+      await handleFinanceReview();
     }
   };
   const demoIndicatorCards = demoIndicators.slice(0, 4);
@@ -2365,6 +2476,9 @@ const CarbonTradingCommandCenter = () => {
               <p>
                 当前角色：{demoRoleLabel} · {demoSession.user.organizationName} ·{" "}
                 {demoShellStatusLabel}
+              </p>
+              <p className="cc-demo-offline-label">
+                离线/本地回退：{demoShellStatus === "fallback" ? "已启用静态演示状态" : "在线优先，失败时切换"}
               </p>
             </div>
             <div className="cc-demo-roles" aria-label="演示角色切换">
@@ -2533,6 +2647,27 @@ const CarbonTradingCommandCenter = () => {
               </div>
             </div>
           </div>
+
+          {demoSession.user.role === "OPERATOR" && (
+            <div className="cc-demo-operator" aria-label="操作员恢复台">
+              <div>
+                <span>操作员恢复台</span>
+                <strong>仅操作角色可见</strong>
+                <small>用于现场恢复，不作为普通业务功能展示。</small>
+              </div>
+              <div className="cc-demo-actions">
+                <button type="button" onClick={() => void handleOperatorFillS8()}>
+                  一键补齐S8
+                </button>
+                <button type="button" onClick={() => void handleOperatorFillS10()}>
+                  一键补齐S10
+                </button>
+                <button type="button" onClick={() => void handleOperatorReset()}>
+                  复位演示
+                </button>
+              </div>
+            </div>
+          )}
         </section>
 
         <div className="cc-grid">

@@ -27,6 +27,11 @@ required_component_terms=(
   "真实公开数据"
   "模拟交易活动"
   "模拟融资意向"
+  "离线/本地回退"
+  "操作员恢复台"
+  "一键补齐S8"
+  "一键补齐S10"
+  "复位演示"
 )
 
 for term in "${required_component_terms[@]}"; do

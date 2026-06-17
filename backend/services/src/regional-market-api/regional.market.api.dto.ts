@@ -36,6 +36,10 @@ export class RegionalDemoSwitchRoleDto {
 
 export class RegionalDemoTransferToTradingDto {
   @IsString()
+  @IsIn(["GOVERNMENT", "ENTERPRISE", "FINANCE", "OPERATOR"])
+  actorRole: string;
+
+  @IsString()
   @IsNotEmpty()
   holdingId: string;
 
@@ -45,6 +49,10 @@ export class RegionalDemoTransferToTradingDto {
 }
 
 export class RegionalDemoTradingListingDto {
+  @IsString()
+  @IsIn(["GOVERNMENT", "ENTERPRISE", "FINANCE", "OPERATOR"])
+  actorRole: string;
+
   @IsString()
   @IsNotEmpty()
   tradingHoldingId: string;
@@ -60,6 +68,10 @@ export class RegionalDemoTradingListingDto {
 
 export class RegionalDemoTradingDealDto {
   @IsString()
+  @IsIn(["GOVERNMENT", "ENTERPRISE", "FINANCE", "OPERATOR"])
+  actorRole: string;
+
+  @IsString()
   @IsNotEmpty()
   listingId: string;
 
@@ -73,6 +85,10 @@ export class RegionalDemoTradingDealDto {
 }
 
 export class RegionalDemoFinanceValuationDto {
+  @IsString()
+  @IsIn(["GOVERNMENT", "ENTERPRISE", "FINANCE", "OPERATOR"])
+  actorRole: string;
+
   @IsString()
   @IsNotEmpty()
   enterpriseId: string;
@@ -96,6 +112,10 @@ export class RegionalDemoFinanceValuationDto {
 
 export class RegionalDemoFinanceApplicationDto {
   @IsString()
+  @IsIn(["GOVERNMENT", "ENTERPRISE", "FINANCE", "OPERATOR"])
+  actorRole: string;
+
+  @IsString()
   @IsNotEmpty()
   enterpriseId: string;
 
@@ -113,6 +133,10 @@ export class RegionalDemoFinanceApplicationDto {
 }
 
 export class RegionalDemoFinanceReviewDto {
+  @IsString()
+  @IsIn(["GOVERNMENT", "ENTERPRISE", "FINANCE", "OPERATOR"])
+  actorRole: string;
+
   @IsString()
   @IsIn(["APPROVED", "REJECTED"])
   result: string;

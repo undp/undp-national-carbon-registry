@@ -210,10 +210,10 @@ describe("RegionalMarketAPI routes", () => {
   it("serves reset skeleton", async () => {
     await request(app.getHttpServer())
       .post("/regional/demo/reset")
-      .send({})
+      .send({ actorRole: "OPERATOR" })
       .expect(201)
       .expect({ status: "RESET" });
-    expect(service.resetDemo).toHaveBeenCalled();
+    expect(service.resetDemo).toHaveBeenCalledWith("OPERATOR");
   });
 
   it("serves phase-two registry and trading routes", async () => {
@@ -228,12 +228,14 @@ describe("RegionalMarketAPI routes", () => {
     await request(app.getHttpServer())
       .post("/regional/demo/registry/transfers-to-trading")
       .send({
+        actorRole: "ENTERPRISE",
         holdingId: "reg-holding-enterprise-forest-2025",
         quantity: 1200,
       })
       .expect(201)
       .expect({ transfer: { id: "transfer-1" } });
     expect(service.transferDemoRegistryHoldingToTrading).toHaveBeenCalledWith({
+      actorRole: "ENTERPRISE",
       holdingId: "reg-holding-enterprise-forest-2025",
       quantity: 1200,
     });
@@ -246,6 +248,7 @@ describe("RegionalMarketAPI routes", () => {
     await request(app.getHttpServer())
       .post("/regional/demo/trading/listings")
       .send({
+        actorRole: "ENTERPRISE",
         tradingHoldingId: "trading-holding-1",
         quantity: 800,
         unitPrice: 42,
@@ -256,6 +259,7 @@ describe("RegionalMarketAPI routes", () => {
     await request(app.getHttpServer())
       .post("/regional/demo/trading/deals")
       .send({
+        actorRole: "ENTERPRISE",
         listingId: "listing-1",
         buyerOrganizationId: "org-buyer-demo",
         quantity: 800,
@@ -277,6 +281,7 @@ describe("RegionalMarketAPI routes", () => {
     await request(app.getHttpServer())
       .post("/regional/demo/trading/listings")
       .send({
+        actorRole: "ENTERPRISE",
         tradingHoldingId: "trading-holding-1",
         quantity: 0,
         unitPrice: -1,
@@ -294,6 +299,7 @@ describe("RegionalMarketAPI routes", () => {
     await request(app.getHttpServer())
       .post("/regional/demo/finance/valuations")
       .send({
+        actorRole: "ENTERPRISE",
         enterpriseId: "org-enterprise-demo",
         assetId: "reg-holding-enterprise-forest-2025",
         quantity: 1000,
@@ -306,6 +312,7 @@ describe("RegionalMarketAPI routes", () => {
     await request(app.getHttpServer())
       .post("/regional/demo/finance/applications")
       .send({
+        actorRole: "ENTERPRISE",
         enterpriseId: "org-enterprise-demo",
         valuationId: "valuation-1",
         requestedAmount: 20000,
@@ -317,6 +324,7 @@ describe("RegionalMarketAPI routes", () => {
     await request(app.getHttpServer())
       .post("/regional/demo/finance/applications/finance-application-1/review")
       .send({
+        actorRole: "FINANCE",
         result: "APPROVED",
         reviewerNote: "演示额度内",
       })

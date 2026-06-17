@@ -265,7 +265,7 @@ describe("RegionalMarketAPIController", () => {
   });
 
   it("returns reset skeleton result without deleting verified indicators", async () => {
-    await expect(controller.resetDemo()).resolves.toMatchObject({
+    await expect(controller.resetDemo({ actorRole: "OPERATOR" })).resolves.toMatchObject({
       status: "RESET",
       preserved: {
         verifiedIndicators: expect.any(Number),
@@ -285,6 +285,7 @@ describe("RegionalMarketAPIController", () => {
 
     await expect(
       controller.transferDemoRegistryHoldingToTrading({
+        actorRole: "ENTERPRISE",
         holdingId: holding.id,
         quantity: 1200,
       })
@@ -308,6 +309,7 @@ describe("RegionalMarketAPIController", () => {
 
     await expect(
       controller.transferDemoRegistryHoldingToTrading({
+        actorRole: "ENTERPRISE",
         holdingId: holding.id,
         quantity: holding.availableQuantity + 1,
       })
@@ -323,6 +325,7 @@ describe("RegionalMarketAPIController", () => {
   it("blocks listing before transfer-in and confirms demo deals with non-legal documents", async () => {
     await expect(
       controller.createDemoTradingListing({
+        actorRole: "ENTERPRISE",
         tradingHoldingId: "missing-trading-holding",
         quantity: 100,
         unitPrice: 42,
@@ -336,10 +339,12 @@ describe("RegionalMarketAPIController", () => {
     });
 
     const transfer = await controller.transferDemoRegistryHoldingToTrading({
+      actorRole: "ENTERPRISE",
       holdingId: "reg-holding-enterprise-forest-2025",
       quantity: 1000,
     });
     const listing = await controller.createDemoTradingListing({
+      actorRole: "ENTERPRISE",
       tradingHoldingId: transfer.tradingHolding.id,
       quantity: 800,
       unitPrice: 42,
@@ -355,6 +360,7 @@ describe("RegionalMarketAPIController", () => {
     });
 
     const deal = await controller.confirmDemoTradingDeal({
+      actorRole: "ENTERPRISE",
       listingId: listing.listing.id,
       buyerOrganizationId: "org-buyer-demo",
       quantity: 800,
@@ -394,6 +400,7 @@ describe("RegionalMarketAPIController", () => {
     });
 
     const valuation = await controller.createDemoFinanceValuation({
+      actorRole: "ENTERPRISE",
       enterpriseId: "org-enterprise-demo",
       assetId: profile.assets[0].id,
       quantity: 1000,
@@ -410,12 +417,14 @@ describe("RegionalMarketAPIController", () => {
     });
 
     const application = await controller.createDemoFinanceApplication({
+      actorRole: "ENTERPRISE",
       enterpriseId: "org-enterprise-demo",
       valuationId: valuation.valuation.id,
       requestedAmount: 20000,
       purpose: "绿色设备更新演示",
     });
     const review = await controller.reviewDemoFinanceApplication(application.application.id, {
+      actorRole: "FINANCE",
       result: "APPROVED",
       reviewerNote: "演示额度内",
     });
@@ -432,10 +441,12 @@ describe("RegionalMarketAPIController", () => {
 
   it("returns supervision summary with real and simulated truth layers separated", async () => {
     await controller.transferDemoRegistryHoldingToTrading({
+      actorRole: "ENTERPRISE",
       holdingId: "reg-holding-enterprise-forest-2025",
       quantity: 600,
     });
     const valuation = await controller.createDemoFinanceValuation({
+      actorRole: "ENTERPRISE",
       enterpriseId: "org-enterprise-demo",
       assetId: "reg-holding-enterprise-forest-2025",
       quantity: 600,
@@ -443,6 +454,7 @@ describe("RegionalMarketAPIController", () => {
       discountFactor: 0.6,
     });
     await controller.createDemoFinanceApplication({
+      actorRole: "ENTERPRISE",
       enterpriseId: "org-enterprise-demo",
       valuationId: valuation.valuation.id,
       requestedAmount: 10000,

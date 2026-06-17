@@ -123,6 +123,23 @@ type DemoFinanceApplication = {
   truthStatus: "SIMULATED_DEMO_DATA";
 };
 
+type DemoAuditLog = {
+  id: string;
+  action:
+    | "LOGIN"
+    | "SWITCH_ROLE"
+    | "TRANSFER_TO_TRADING"
+    | "CREATE_LISTING"
+    | "CONFIRM_DEAL"
+    | "CREATE_FINANCE_APPLICATION"
+    | "REVIEW_FINANCE_APPLICATION"
+    | "RESET";
+  actorRole?: DemoRole;
+  targetId?: string;
+  createdAt: string;
+  truthStatus: "INTERNAL_DEMO_LOGIC";
+};
+
 type DemoState = {
   registryHoldings: DemoRegistryHolding[];
   tradingHoldings: DemoTradingHolding[];
@@ -131,6 +148,7 @@ type DemoState = {
   deals: DemoTradingDeal[];
   valuations: DemoFinanceValuation[];
   financeApplications: DemoFinanceApplication[];
+  auditLogs: DemoAuditLog[];
 };
 
 const DEMO_USERS: Record<string, DemoUser> = {
@@ -347,6 +365,7 @@ const createInitialDemoState = (): DemoState => ({
   deals: [],
   valuations: [],
   financeApplications: [],
+  auditLogs: [],
 });
 
 @Injectable()
@@ -428,6 +447,7 @@ export class RegionalMarketAPIService {
       });
     }
 
+    this.recordDemoAudit("LOGIN", user.role, user.account);
     return this.demoSessionForUser(user);
   }
 
@@ -442,6 +462,7 @@ export class RegionalMarketAPIService {
       });
     }
 
+    this.recordDemoAudit("SWITCH_ROLE", role as DemoRole, account);
     return this.demoSessionForUser(DEMO_USERS[account]);
   }
 
@@ -506,9 +527,11 @@ export class RegionalMarketAPIService {
   }
 
   transferDemoRegistryHoldingToTrading(dto: {
+    actorRole?: string;
     holdingId: string;
     quantity: number;
   }) {
+    this.assertDemoRoleAllowed(dto.actorRole, ["ENTERPRISE", "OPERATOR"]);
     const registryHolding = this.demoState.registryHoldings.find(
       (holding) => holding.id === dto.holdingId
     );
@@ -565,6 +588,11 @@ export class RegionalMarketAPIService {
 
     this.demoState.tradingHoldings.push(tradingHolding);
     this.demoState.transfers.push(transfer);
+    this.recordDemoAudit(
+      "TRANSFER_TO_TRADING",
+      dto.actorRole as DemoRole,
+      transfer.id
+    );
 
     return {
       truthStatus: "SIMULATED_DEMO_DATA",
@@ -582,10 +610,12 @@ export class RegionalMarketAPIService {
   }
 
   createDemoTradingListing(dto: {
+    actorRole?: string;
     tradingHoldingId: string;
     quantity: number;
     unitPrice: number;
   }) {
+    this.assertDemoRoleAllowed(dto.actorRole, ["ENTERPRISE", "OPERATOR"]);
     const tradingHolding = this.demoState.tradingHoldings.find(
       (holding) => holding.id === dto.tradingHoldingId
     );
@@ -621,6 +651,11 @@ export class RegionalMarketAPIService {
     };
 
     this.demoState.listings.push(listing);
+    this.recordDemoAudit(
+      "CREATE_LISTING",
+      dto.actorRole as DemoRole,
+      listing.id
+    );
 
     return {
       truthStatus: "SIMULATED_DEMO_DATA",
@@ -630,10 +665,12 @@ export class RegionalMarketAPIService {
   }
 
   confirmDemoTradingDeal(dto: {
+    actorRole?: string;
     listingId: string;
     buyerOrganizationId: string;
     quantity: number;
   }) {
+    this.assertDemoRoleAllowed(dto.actorRole, ["ENTERPRISE", "OPERATOR"]);
     const listing = this.demoState.listings.find(
       (item) => item.id === dto.listingId
     );
@@ -683,6 +720,11 @@ export class RegionalMarketAPIService {
     };
 
     this.demoState.deals.push(deal);
+    this.recordDemoAudit(
+      "CONFIRM_DEAL",
+      dto.actorRole as DemoRole,
+      deal.id
+    );
 
     return {
       truthStatus: "SIMULATED_DEMO_DATA",
@@ -748,12 +790,18 @@ export class RegionalMarketAPIService {
   }
 
   createDemoFinanceValuation(dto: {
+    actorRole?: string;
     enterpriseId: string;
     assetId: string;
     quantity: number;
     unitPrice: number;
     discountFactor: number;
   }) {
+    this.assertDemoRoleAllowed(dto.actorRole, [
+      "ENTERPRISE",
+      "FINANCE",
+      "OPERATOR",
+    ]);
     const asset = this.demoState.registryHoldings.find(
       (holding) =>
         holding.id === dto.assetId && holding.enterpriseId === dto.enterpriseId
@@ -799,11 +847,13 @@ export class RegionalMarketAPIService {
   }
 
   createDemoFinanceApplication(dto: {
+    actorRole?: string;
     enterpriseId: string;
     valuationId: string;
     requestedAmount: number;
     purpose: string;
   }) {
+    this.assertDemoRoleAllowed(dto.actorRole, ["ENTERPRISE", "OPERATOR"]);
     const valuation = this.demoState.valuations.find(
       (item) => item.id === dto.valuationId && item.enterpriseId === dto.enterpriseId
     );
@@ -837,6 +887,11 @@ export class RegionalMarketAPIService {
     };
 
     this.demoState.financeApplications.push(application);
+    this.recordDemoAudit(
+      "CREATE_FINANCE_APPLICATION",
+      dto.actorRole as DemoRole,
+      application.id
+    );
 
     return {
       truthStatus: "SIMULATED_DEMO_DATA",
@@ -846,8 +901,9 @@ export class RegionalMarketAPIService {
 
   reviewDemoFinanceApplication(
     id: string,
-    dto: { result: string; reviewerNote?: string }
+    dto: { actorRole?: string; result: string; reviewerNote?: string }
   ) {
+    this.assertDemoRoleAllowed(dto.actorRole, ["FINANCE", "OPERATOR"]);
     const application = this.demoState.financeApplications.find(
       (item) => item.id === id
     );
@@ -878,6 +934,11 @@ export class RegionalMarketAPIService {
         asset.lockedQuantity = Math.max(asset.lockedQuantity, valuation?.quantity ?? 0);
       }
     }
+    this.recordDemoAudit(
+      "REVIEW_FINANCE_APPLICATION",
+      dto.actorRole as DemoRole,
+      application.id
+    );
 
     return {
       truthStatus: "SIMULATED_DEMO_DATA",
@@ -920,8 +981,12 @@ export class RegionalMarketAPIService {
     };
   }
 
-  resetDemo() {
+  resetDemo(actorRole?: string) {
+    this.assertDemoRoleAllowed(actorRole, ["OPERATOR"]);
+    const auditLogs = this.demoState.auditLogs;
     this.demoState = createInitialDemoState();
+    this.demoState.auditLogs = auditLogs;
+    this.recordDemoAudit("RESET", actorRole as DemoRole, "demo-state");
 
     return {
       status: "RESET",
@@ -949,6 +1014,13 @@ export class RegionalMarketAPIService {
     };
   }
 
+  listDemoAuditLogs() {
+    return {
+      truthStatus: "INTERNAL_DEMO_LOGIC",
+      items: this.demoState.auditLogs,
+    };
+  }
+
   private getDemoDealOrThrow(id: string) {
     const deal = this.demoState.deals.find((item) => item.id === id);
     if (!deal) {
@@ -961,6 +1033,32 @@ export class RegionalMarketAPIService {
     }
 
     return deal;
+  }
+
+  private assertDemoRoleAllowed(actorRole: string | undefined, allowedRoles: DemoRole[]) {
+    if (!actorRole || !allowedRoles.includes(actorRole as DemoRole)) {
+      throw new BadRequestException({
+        error: {
+          code: "DEMO_ROLE_NOT_ALLOWED",
+          message: "Role is not allowed for this demo action.",
+        },
+      });
+    }
+  }
+
+  private recordDemoAudit(
+    action: DemoAuditLog["action"],
+    actorRole?: DemoRole,
+    targetId?: string
+  ) {
+    this.demoState.auditLogs.push({
+      id: `audit-${this.demoState.auditLogs.length + 1}`,
+      action,
+      actorRole,
+      targetId,
+      createdAt: new Date().toISOString(),
+      truthStatus: "INTERNAL_DEMO_LOGIC",
+    });
   }
 }
 

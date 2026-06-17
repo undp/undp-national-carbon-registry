@@ -114,15 +114,18 @@ describe("Regional market API DTOs", () => {
 
   it("accepts phase-two transfer, listing, and deal payloads", async () => {
     const transfer = plainToInstance(RegionalDemoTransferToTradingDto, {
+      actorRole: "ENTERPRISE",
       holdingId: "reg-holding-enterprise-forest-2025",
       quantity: 1200,
     });
     const listing = plainToInstance(RegionalDemoTradingListingDto, {
+      actorRole: "ENTERPRISE",
       tradingHoldingId: "trading-holding-1",
       quantity: 800,
       unitPrice: 42,
     });
     const deal = plainToInstance(RegionalDemoTradingDealDto, {
+      actorRole: "ENTERPRISE",
       listingId: "listing-1",
       buyerOrganizationId: "org-buyer-demo",
       quantity: 800,
@@ -135,6 +138,7 @@ describe("Regional market API DTOs", () => {
 
   it("rejects phase-two non-positive quantities", async () => {
     const dto = plainToInstance(RegionalDemoTradingListingDto, {
+      actorRole: "ENTERPRISE",
       tradingHoldingId: "trading-holding-1",
       quantity: 0,
       unitPrice: -1,
@@ -148,6 +152,7 @@ describe("Regional market API DTOs", () => {
 
   it("accepts S10 valuation, application, and review payloads", async () => {
     const valuation = plainToInstance(RegionalDemoFinanceValuationDto, {
+      actorRole: "ENTERPRISE",
       enterpriseId: "org-enterprise-demo",
       assetId: "reg-holding-enterprise-forest-2025",
       quantity: 1000,
@@ -155,12 +160,14 @@ describe("Regional market API DTOs", () => {
       discountFactor: 0.6,
     });
     const application = plainToInstance(RegionalDemoFinanceApplicationDto, {
+      actorRole: "ENTERPRISE",
       enterpriseId: "org-enterprise-demo",
       valuationId: "valuation-1",
       requestedAmount: 20000,
       purpose: "绿色设备更新演示",
     });
     const review = plainToInstance(RegionalDemoFinanceReviewDto, {
+      actorRole: "FINANCE",
       result: "APPROVED",
       reviewerNote: "演示额度内",
     });
@@ -172,6 +179,7 @@ describe("Regional market API DTOs", () => {
 
   it("rejects unsupported S10 review results", async () => {
     const dto = plainToInstance(RegionalDemoFinanceReviewDto, {
+      actorRole: "FINANCE",
       result: "DISBURSED",
     });
 

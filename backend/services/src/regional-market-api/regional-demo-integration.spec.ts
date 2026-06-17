@@ -30,15 +30,18 @@ describe("regional demo integration golden path", () => {
 
   it("runs S8, S10, supervision return, and reset with separated truth labels", () => {
     const transfer = service.transferDemoRegistryHoldingToTrading({
+      actorRole: "ENTERPRISE",
       holdingId: "reg-holding-enterprise-forest-2025",
       quantity: 1000,
     });
     const listing = service.createDemoTradingListing({
+      actorRole: "ENTERPRISE",
       tradingHoldingId: transfer.tradingHolding.id,
       quantity: 800,
       unitPrice: 42,
     });
     const deal = service.confirmDemoTradingDeal({
+      actorRole: "ENTERPRISE",
       listingId: listing.listing.id,
       buyerOrganizationId: "org-buyer-demo",
       quantity: 800,
@@ -58,6 +61,7 @@ describe("regional demo integration golden path", () => {
     });
 
     const valuation = service.createDemoFinanceValuation({
+      actorRole: "ENTERPRISE",
       enterpriseId: "org-enterprise-demo",
       assetId: "reg-holding-enterprise-forest-2025",
       quantity: 1000,
@@ -65,12 +69,14 @@ describe("regional demo integration golden path", () => {
       discountFactor: 0.6,
     });
     const application = service.createDemoFinanceApplication({
+      actorRole: "ENTERPRISE",
       enterpriseId: "org-enterprise-demo",
       valuationId: valuation.valuation.id,
       requestedAmount: 20000,
       purpose: "绿色设备更新演示",
     });
     const review = service.reviewDemoFinanceApplication(application.application.id, {
+      actorRole: "FINANCE",
       result: "APPROVED",
       reviewerNote: "演示额度内",
     });
@@ -96,7 +102,7 @@ describe("regional demo integration golden path", () => {
       internalAssessmentTags: { truthStatus: "INTERNAL_DEMO_LOGIC" },
     });
 
-    service.resetDemo();
+    service.resetDemo("OPERATOR");
 
     expect(service.getDemoSupervisionSummary()).toMatchObject({
       simulatedTradingActivity: {
@@ -113,6 +119,7 @@ describe("regional demo integration golden path", () => {
 
   it("blocks transfer from a pledge-locked demo registry holding", () => {
     const valuation = service.createDemoFinanceValuation({
+      actorRole: "ENTERPRISE",
       enterpriseId: "org-enterprise-demo",
       assetId: "reg-holding-enterprise-forest-2025",
       quantity: 1000,
@@ -120,18 +127,21 @@ describe("regional demo integration golden path", () => {
       discountFactor: 0.6,
     });
     const application = service.createDemoFinanceApplication({
+      actorRole: "ENTERPRISE",
       enterpriseId: "org-enterprise-demo",
       valuationId: valuation.valuation.id,
       requestedAmount: 20000,
       purpose: "绿色设备更新演示",
     });
     service.reviewDemoFinanceApplication(application.application.id, {
+      actorRole: "FINANCE",
       result: "APPROVED",
       reviewerNote: "演示额度内",
     });
 
     try {
       service.transferDemoRegistryHoldingToTrading({
+        actorRole: "ENTERPRISE",
         holdingId: "reg-holding-enterprise-forest-2025",
         quantity: 100,
       });

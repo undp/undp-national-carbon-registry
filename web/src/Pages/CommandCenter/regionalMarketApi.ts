@@ -295,6 +295,7 @@ export const fetchRegionalDemoRegistryHoldings = async (): Promise<{
 };
 
 export const transferRegionalDemoToTrading = (
+  actorRole: DemoRole,
   holdingId: string,
   quantity: number
 ) =>
@@ -302,9 +303,14 @@ export const transferRegionalDemoToTrading = (
     truthStatus: "SIMULATED_DEMO_DATA";
     registryHolding: DemoRegistryHolding;
     tradingHolding: DemoTradingHolding;
-  }>("/regional/demo/registry/transfers-to-trading", { holdingId, quantity });
+  }>("/regional/demo/registry/transfers-to-trading", {
+    actorRole,
+    holdingId,
+    quantity,
+  });
 
 export const createRegionalDemoListing = (
+  actorRole: DemoRole,
   tradingHoldingId: string,
   quantity: number,
   unitPrice: number
@@ -313,12 +319,14 @@ export const createRegionalDemoListing = (
     truthStatus: "SIMULATED_DEMO_DATA";
     listing: DemoTradingListing;
   }>("/regional/demo/trading/listings", {
+    actorRole,
     tradingHoldingId,
     quantity,
     unitPrice,
   });
 
 export const confirmRegionalDemoDeal = (
+  actorRole: DemoRole,
   listingId: string,
   buyerOrganizationId: string,
   quantity: number
@@ -327,6 +335,7 @@ export const confirmRegionalDemoDeal = (
     truthStatus: "SIMULATED_DEMO_DATA";
     deal: DemoTradingDeal;
   }>("/regional/demo/trading/deals", {
+    actorRole,
     listingId,
     buyerOrganizationId,
     quantity,
@@ -361,6 +370,7 @@ export const fetchRegionalDemoStatusCertificate = async (
 };
 
 export const createRegionalDemoFinanceValuation = (
+  actorRole: DemoRole,
   enterpriseId: string,
   assetId: string,
   quantity: number,
@@ -375,6 +385,7 @@ export const createRegionalDemoFinanceValuation = (
       disclaimer: string;
     };
   }>("/regional/demo/finance/valuations", {
+    actorRole,
     enterpriseId,
     assetId,
     quantity,
@@ -383,6 +394,7 @@ export const createRegionalDemoFinanceValuation = (
   });
 
 export const createRegionalDemoFinanceApplication = (
+  actorRole: DemoRole,
   enterpriseId: string,
   valuationId: string,
   requestedAmount: number,
@@ -392,6 +404,7 @@ export const createRegionalDemoFinanceApplication = (
     truthStatus: "SIMULATED_DEMO_DATA";
     application: DemoFinanceApplication;
   }>("/regional/demo/finance/applications", {
+    actorRole,
     enterpriseId,
     valuationId,
     requestedAmount,
@@ -399,6 +412,7 @@ export const createRegionalDemoFinanceApplication = (
   });
 
 export const reviewRegionalDemoFinanceApplication = (
+  actorRole: DemoRole,
   applicationId: string,
   result: "APPROVED" | "REJECTED",
   reviewerNote: string
@@ -407,6 +421,7 @@ export const reviewRegionalDemoFinanceApplication = (
     truthStatus: "SIMULATED_DEMO_DATA";
     application: DemoFinanceApplication;
   }>(`/regional/demo/finance/applications/${applicationId}/review`, {
+    actorRole,
     result,
     reviewerNote,
   });
@@ -425,3 +440,9 @@ export const fetchRegionalDemoSupervisionSummary =
 
     return response.json();
   };
+
+export const resetRegionalDemo = (actorRole: DemoRole) =>
+  postJson<{
+    status: "RESET";
+    reset: Record<string, boolean>;
+  }>("/regional/demo/reset", { actorRole });

@@ -224,7 +224,7 @@ export class RegionalMarketAPIController {
   }
 
   @Post("demo/reset")
-  async resetDemo() {
-    return this.regionalMarketAPIService.resetDemo();
+  async resetDemo(@Body() body: { actorRole?: string } = {}) {
+    return this.regionalMarketAPIService.resetDemo(body.actorRole);
   }
 }
