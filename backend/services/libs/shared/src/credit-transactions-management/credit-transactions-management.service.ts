@@ -478,10 +478,19 @@ export class CreditTransactionsManagementService {
       // finalises authorization and triggers the corresponding
       // adjustment obligation. We infer "first transfer" from the
       // pre-update block state: a block is being first-transferred
-      // iff it had isNotTransferred === true before this update and
-      // the tx type is TRANSFER.
+      // iff it had isNotTransferred === true before this update.
+      //
+      // F15: a partial transfer splits off a *new* creditBlockId for the
+      // transferred portion, so there is no predecessor row to inspect
+      // (previousCreditBlock === null). In that case fall back to the
+      // child's firstTransferOnSplit flag, which carries the parent's
+      // pre-split status — otherwise a partial first transfer would be
+      // silently demoted to a regular transfer and dropped from
+      // firstTransferredItmos in the corresponding-adjustment balance.
       const isFirstTransfer = Boolean(
-        previousCreditBlock && previousCreditBlock.isNotTransferred === true
+        previousCreditBlock
+          ? previousCreditBlock.isNotTransferred === true
+          : creditBlock.firstTransferOnSplit === true
       );
       const newTranferRecord = plainToClass(CreditTransactionsEntity, {
         id: id,

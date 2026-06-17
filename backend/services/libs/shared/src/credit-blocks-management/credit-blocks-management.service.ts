@@ -116,7 +116,18 @@ export class CreditBlocksManagementService {
             creditAmount: transferredCreditAmountFromBlock,
             reservedCreditAmount: 0,
             transactionRecords: [],
+            // F15: this split child IS the transferred portion, so its
+            // final state is transferred (isNotTransferred=false). But it
+            // has a fresh creditBlockId with no predecessor row, so the
+            // replicator can't tell whether this transfer is a *first*
+            // transfer. Carry the parent's pre-split status here: if the
+            // parent was never transferred, this child's transfer is a
+            // first transfer (Dec 2/CMA.3 annex para 1(a)/2 — a partial
+            // first transfer is still a first transfer). The split path
+            // never mutates the parent's isNotTransferred, so reading it
+            // here yields the pre-split value.
             isNotTransferred: false,
+            firstTransferOnSplit: creditBlock.isNotTransferred,
           });
           newBlocks.push(newBlock);
         }
@@ -194,7 +205,18 @@ export class CreditBlocksManagementService {
             creditAmount: transferredCreditAmountFromBlock,
             reservedCreditAmount: 0,
             transactionRecords: [],
+            // F15: this split child IS the transferred portion, so its
+            // final state is transferred (isNotTransferred=false). But it
+            // has a fresh creditBlockId with no predecessor row, so the
+            // replicator can't tell whether this transfer is a *first*
+            // transfer. Carry the parent's pre-split status here: if the
+            // parent was never transferred, this child's transfer is a
+            // first transfer (Dec 2/CMA.3 annex para 1(a)/2 — a partial
+            // first transfer is still a first transfer). The split path
+            // never mutates the parent's isNotTransferred, so reading it
+            // here yields the pre-split value.
             isNotTransferred: false,
+            firstTransferOnSplit: creditBlock.isNotTransferred,
           });
           newBlocks.push(newBlock);
         }

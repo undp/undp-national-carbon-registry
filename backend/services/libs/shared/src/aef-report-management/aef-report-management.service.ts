@@ -110,9 +110,16 @@ export class AefReportManagementService {
     // update state lives in previousCreditBlock; the post-update state
     // already has isNotTransferred=false (flipped by the transfer), so
     // inspecting the live block's flag would always evaluate false.
+    //
+    // F15: a partial transfer splits off a new creditBlockId for the
+    // transferred portion, which has no predecessor row. Fall back to its
+    // firstTransferOnSplit flag (the parent's pre-split status) so the AEF
+    // action is recorded as FIRST_TRANSFER, not TRANSFER.
     const isFirstTransfer = Boolean(
       creditBlock.txType === TxType.TRANSFER &&
-        previousCreditBlock?.isNotTransferred === true
+        (previousCreditBlock
+          ? previousCreditBlock.isNotTransferred === true
+          : creditBlock.firstTransferOnSplit === true)
     );
     const newAefActionRecord = plainToClass(AefActionsTableEntity, {
       creditBlockStartId: this.serialNumberManagementService.getBlockStartId(
