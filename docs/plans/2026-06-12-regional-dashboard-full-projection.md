@@ -209,3 +209,68 @@ scripts/regional-market-smoke.sh dashboard-demo-smoke
 6. Request Poe Gemini 3.1 Pro review.
 7. Only commit after both agree there is no blocker.
 
+## Execution Status: Tasks 0-7
+
+Status as of 2026-06-12:
+
+- Task 0 completed. Local Postgres schema was probed with `\d project_entity`, `\d credit_transactions_entity`, and `\d market_trade_execution_entity`; the minimum deterministic insert set was verified against `carbondev`.
+- Task 1 completed. `/regional/dashboard/summary` now returns `sectionStatus` for `projects`, `issuance`, `trades`, and `retirements`; `dataStatus: "real"` requires all four sections to succeed.
+- Task 2 completed. Project projection uses `ProjectEntity`, counts active projects only in `AUTHORISED` / `AUTHORIZED`, and returns recent project registration rows.
+- Task 3 completed. Issuance projection uses `SUM(project.creditIssued)` as lifecycle issued credits, with a completed issued-transaction fallback if the project aggregate fails.
+- Task 4 completed. OTC average price is weighted as `SUM(totalPrice) / SUM(amount)`, and dashboard trade summary/recent/aggregate queries now only include `SETTLED_OFFLINE` OTC metadata rows so reconciliation-required records do not affect volume, value, average price, or regional buy/sell metrics. The existing `seed-trade` / `trade-smoke` remains trade aggregation-focused.
+- Task 5 completed. Retirement projection uses `CreditBlockRetirementsViewEntity` and explicitly filters `status = Completed`.
+- Task 6 completed. `seed-dashboard-demo` and `dashboard-demo-smoke` seed and verify deterministic project, issuance, trade, and retirement dashboard data.
+- Task 7 completed locally. Backend tests, backend build, web build, and live API smoke passed. Poe DeepSeek v4 flash gate returned: `No blockers`.
+- Follow-up account projection completed. Account-holder counts are now sourced from active `company` rows and included in the full-real dashboard contract as `sectionStatus.accounts` plus `accountSummary`. Map markers, supervisory prompt text, and footer status text remain intentionally static until their data models and interactions are designed.
+- Follow-up SOT alignment completed on 2026-06-17. Dashboard trade summaries, recent trades, and regional buy/sell aggregation count only `SETTLED_OFFLINE` OTC metadata rows; recent project registrations count only `AUTHORISED` / `AUTHORIZED` projects; frontend real API data is no longer overwritten by default demo playback; and frontend regional snapshot trade volume now uses single-count regional volume instead of `boughtCredits + soldCredits`.
+- Remaining SOT gaps are intentionally moved out of this dashboard PoC and into `docs/plans/2026-06-17-registry-exchange-system-modeling.md`: trading-account binding, CCER transfer to trading account/platform, instrument listing, trading-account holdings, clearing result, registry delivery/holding-change records, and governance-score methodology versioning.
+
+Verification run:
+
+```bash
+cd backend/services
+yarn test regional-market --runInBand
+yarn build
+
+cd web
+yarn build
+
+scripts/regional-market-smoke.sh seed-dashboard-demo
+REGIONAL_MARKET_DEMO_MODE=true RUN_MODULE=regional-market-api RUN_PORT=3001 DB_HOST=127.0.0.1 DB_PORT=5432 DB_USER=cy DB_NAME=carbondev yarn start:dev
+scripts/regional-market-smoke.sh smoke
+scripts/regional-market-smoke.sh dashboard-demo-smoke
+```
+
+Clean seed dashboard result observed through `GET /regional/dashboard/summary`:
+
+```json
+{
+  "dataStatus": "real",
+  "projectionAvailable": true,
+  "sectionStatus": {
+    "projects": "real",
+    "issuance": "real",
+    "trades": "real",
+    "retirements": "real",
+    "accounts": "real"
+  },
+  "accountSummary": {
+    "totalAccounts": 15,
+    "accountTypes": [
+      { "label": "重点排放单位", "count": 15, "value": "15 家" },
+      { "label": "地方重点排放单位", "count": 1, "value": "1 家" },
+      { "label": "项目业主", "count": 9, "value": "9 家" },
+      { "label": "核证与交易主体", "count": 5, "value": "5 家" }
+    ]
+  },
+  "metrics": {
+    "totalIssuedCredits": 15000,
+    "activeProjectCount": 15,
+    "transferVolume": 4500,
+    "retiredCredits": 1500,
+    "averageOtcPrice": 42,
+    "otcTradeCount": 15,
+    "otcTradeValue": 189000
+  }
+}
+```

@@ -7,6 +7,7 @@ backend/services/.env
 **/yarn-error.log
 **/coverage
 .worktrees/
+.design-lab/
 .env.local
 ./data/*
 !./data/README.md
