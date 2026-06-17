@@ -1,6 +1,6 @@
 module.exports = {
   testDir: ".",
-  testMatch: /regional-(dashboard-ui|demo-phase-one)-smoke\.spec\.cjs/,
+  testMatch: /regional-(dashboard-ui-smoke|demo-phase-one-smoke|demo-golden-path)\.spec\.cjs/,
   timeout: 120000,
   use: {
     browserName: "chromium",

@@ -34,6 +34,94 @@ export class RegionalDemoSwitchRoleDto {
   role: string;
 }
 
+export class RegionalDemoTransferToTradingDto {
+  @IsString()
+  @IsNotEmpty()
+  holdingId: string;
+
+  @IsNumber()
+  @IsPositive()
+  quantity: number;
+}
+
+export class RegionalDemoTradingListingDto {
+  @IsString()
+  @IsNotEmpty()
+  tradingHoldingId: string;
+
+  @IsNumber()
+  @IsPositive()
+  quantity: number;
+
+  @IsNumber()
+  @IsPositive()
+  unitPrice: number;
+}
+
+export class RegionalDemoTradingDealDto {
+  @IsString()
+  @IsNotEmpty()
+  listingId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  buyerOrganizationId: string;
+
+  @IsNumber()
+  @IsPositive()
+  quantity: number;
+}
+
+export class RegionalDemoFinanceValuationDto {
+  @IsString()
+  @IsNotEmpty()
+  enterpriseId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  assetId: string;
+
+  @IsNumber()
+  @IsPositive()
+  quantity: number;
+
+  @IsNumber()
+  @IsPositive()
+  unitPrice: number;
+
+  @IsNumber()
+  @IsPositive()
+  discountFactor: number;
+}
+
+export class RegionalDemoFinanceApplicationDto {
+  @IsString()
+  @IsNotEmpty()
+  enterpriseId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  valuationId: string;
+
+  @IsNumber()
+  @IsPositive()
+  requestedAmount: number;
+
+  @IsString()
+  @IsNotEmpty()
+  purpose: string;
+}
+
+export class RegionalDemoFinanceReviewDto {
+  @IsString()
+  @IsIn(["APPROVED", "REJECTED"])
+  result: string;
+
+  @IsString()
+  @IsOptional()
+  reviewerNote?: string;
+}
+
 export class RegionalIssueCreditsDto {
   @IsObject()
   activity: Record<string, any>;

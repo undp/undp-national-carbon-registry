@@ -4,6 +4,12 @@ import { validate } from "class-validator";
 import {
   RegionalDemoLoginDto,
   RegionalDemoSwitchRoleDto,
+  RegionalDemoFinanceApplicationDto,
+  RegionalDemoFinanceReviewDto,
+  RegionalDemoFinanceValuationDto,
+  RegionalDemoTradingDealDto,
+  RegionalDemoTradingListingDto,
+  RegionalDemoTransferToTradingDto,
   RegionalIssueCreditsDto,
   RegionalOtcTradeExecuteDto,
   RegionalProjectIdDto,
@@ -104,5 +110,71 @@ describe("Regional market API DTOs", () => {
     });
 
     await expect(validate(dto)).resolves.toHaveLength(0);
+  });
+
+  it("accepts phase-two transfer, listing, and deal payloads", async () => {
+    const transfer = plainToInstance(RegionalDemoTransferToTradingDto, {
+      holdingId: "reg-holding-enterprise-forest-2025",
+      quantity: 1200,
+    });
+    const listing = plainToInstance(RegionalDemoTradingListingDto, {
+      tradingHoldingId: "trading-holding-1",
+      quantity: 800,
+      unitPrice: 42,
+    });
+    const deal = plainToInstance(RegionalDemoTradingDealDto, {
+      listingId: "listing-1",
+      buyerOrganizationId: "org-buyer-demo",
+      quantity: 800,
+    });
+
+    await expect(validate(transfer)).resolves.toHaveLength(0);
+    await expect(validate(listing)).resolves.toHaveLength(0);
+    await expect(validate(deal)).resolves.toHaveLength(0);
+  });
+
+  it("rejects phase-two non-positive quantities", async () => {
+    const dto = plainToInstance(RegionalDemoTradingListingDto, {
+      tradingHoldingId: "trading-holding-1",
+      quantity: 0,
+      unitPrice: -1,
+    });
+
+    const errors = await validate(dto);
+
+    expect(JSON.stringify(errors)).toContain("quantity");
+    expect(JSON.stringify(errors)).toContain("unitPrice");
+  });
+
+  it("accepts S10 valuation, application, and review payloads", async () => {
+    const valuation = plainToInstance(RegionalDemoFinanceValuationDto, {
+      enterpriseId: "org-enterprise-demo",
+      assetId: "reg-holding-enterprise-forest-2025",
+      quantity: 1000,
+      unitPrice: 42,
+      discountFactor: 0.6,
+    });
+    const application = plainToInstance(RegionalDemoFinanceApplicationDto, {
+      enterpriseId: "org-enterprise-demo",
+      valuationId: "valuation-1",
+      requestedAmount: 20000,
+      purpose: "绿色设备更新演示",
+    });
+    const review = plainToInstance(RegionalDemoFinanceReviewDto, {
+      result: "APPROVED",
+      reviewerNote: "演示额度内",
+    });
+
+    await expect(validate(valuation)).resolves.toHaveLength(0);
+    await expect(validate(application)).resolves.toHaveLength(0);
+    await expect(validate(review)).resolves.toHaveLength(0);
+  });
+
+  it("rejects unsupported S10 review results", async () => {
+    const dto = plainToInstance(RegionalDemoFinanceReviewDto, {
+      result: "DISBURSED",
+    });
+
+    await expect(validate(dto)).resolves.not.toHaveLength(0);
   });
 });

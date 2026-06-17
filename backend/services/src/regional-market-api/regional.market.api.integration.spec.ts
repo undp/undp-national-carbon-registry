@@ -40,6 +40,43 @@ describe("RegionalMarketAPI routes", () => {
         id: "s12-henan-gdp-2025",
         verified: true,
       }),
+      listDemoRegistryHoldings: jest.fn().mockReturnValue({
+        truthStatus: "SIMULATED_DEMO_DATA",
+        items: [{ id: "reg-holding-enterprise-forest-2025" }],
+      }),
+      transferDemoRegistryHoldingToTrading: jest.fn().mockReturnValue({
+        transfer: { id: "transfer-1" },
+      }),
+      listDemoTradingHoldings: jest.fn().mockReturnValue({
+        items: [{ id: "trading-holding-1" }],
+      }),
+      createDemoTradingListing: jest.fn().mockReturnValue({
+        listing: { id: "listing-1" },
+      }),
+      confirmDemoTradingDeal: jest.fn().mockReturnValue({
+        deal: { id: "deal-1" },
+      }),
+      getDemoTradingDealContractPreview: jest.fn().mockReturnValue({
+        title: "演示合同预览",
+      }),
+      getDemoTradingDealStatusCertificate: jest.fn().mockReturnValue({
+        title: "模拟成交状态凭证",
+      }),
+      getDemoFinanceProfile: jest.fn().mockReturnValue({
+        enterpriseId: "org-enterprise-demo",
+      }),
+      createDemoFinanceValuation: jest.fn().mockReturnValue({
+        valuation: { id: "valuation-1" },
+      }),
+      createDemoFinanceApplication: jest.fn().mockReturnValue({
+        application: { id: "finance-application-1" },
+      }),
+      reviewDemoFinanceApplication: jest.fn().mockReturnValue({
+        application: { status: "SIMULATED_APPROVED" },
+      }),
+      getDemoSupervisionSummary: jest.fn().mockReturnValue({
+        publicIndicators: { truthStatus: "REAL_PUBLIC_DATA" },
+      }),
       resetDemo: jest.fn().mockReturnValue({
         status: "RESET",
       }),
@@ -177,5 +214,118 @@ describe("RegionalMarketAPI routes", () => {
       .expect(201)
       .expect({ status: "RESET" });
     expect(service.resetDemo).toHaveBeenCalled();
+  });
+
+  it("serves phase-two registry and trading routes", async () => {
+    await request(app.getHttpServer())
+      .get("/regional/demo/registry/holdings")
+      .expect(200)
+      .expect({
+        truthStatus: "SIMULATED_DEMO_DATA",
+        items: [{ id: "reg-holding-enterprise-forest-2025" }],
+      });
+
+    await request(app.getHttpServer())
+      .post("/regional/demo/registry/transfers-to-trading")
+      .send({
+        holdingId: "reg-holding-enterprise-forest-2025",
+        quantity: 1200,
+      })
+      .expect(201)
+      .expect({ transfer: { id: "transfer-1" } });
+    expect(service.transferDemoRegistryHoldingToTrading).toHaveBeenCalledWith({
+      holdingId: "reg-holding-enterprise-forest-2025",
+      quantity: 1200,
+    });
+
+    await request(app.getHttpServer())
+      .get("/regional/demo/trading/holdings")
+      .expect(200)
+      .expect({ items: [{ id: "trading-holding-1" }] });
+
+    await request(app.getHttpServer())
+      .post("/regional/demo/trading/listings")
+      .send({
+        tradingHoldingId: "trading-holding-1",
+        quantity: 800,
+        unitPrice: 42,
+      })
+      .expect(201)
+      .expect({ listing: { id: "listing-1" } });
+
+    await request(app.getHttpServer())
+      .post("/regional/demo/trading/deals")
+      .send({
+        listingId: "listing-1",
+        buyerOrganizationId: "org-buyer-demo",
+        quantity: 800,
+      })
+      .expect(201)
+      .expect({ deal: { id: "deal-1" } });
+
+    await request(app.getHttpServer())
+      .get("/regional/demo/trading/deals/deal-1/contract-preview")
+      .expect(200)
+      .expect({ title: "演示合同预览" });
+    await request(app.getHttpServer())
+      .get("/regional/demo/trading/deals/deal-1/status-certificate")
+      .expect(200)
+      .expect({ title: "模拟成交状态凭证" });
+  });
+
+  it("rejects invalid phase-two quantities before reaching the service", async () => {
+    await request(app.getHttpServer())
+      .post("/regional/demo/trading/listings")
+      .send({
+        tradingHoldingId: "trading-holding-1",
+        quantity: 0,
+        unitPrice: -1,
+      })
+      .expect(400);
+    expect(service.createDemoTradingListing).not.toHaveBeenCalled();
+  });
+
+  it("serves phase-two finance and supervision routes", async () => {
+    await request(app.getHttpServer())
+      .get("/regional/demo/finance/profile/org-enterprise-demo")
+      .expect(200)
+      .expect({ enterpriseId: "org-enterprise-demo" });
+
+    await request(app.getHttpServer())
+      .post("/regional/demo/finance/valuations")
+      .send({
+        enterpriseId: "org-enterprise-demo",
+        assetId: "reg-holding-enterprise-forest-2025",
+        quantity: 1000,
+        unitPrice: 42,
+        discountFactor: 0.6,
+      })
+      .expect(201)
+      .expect({ valuation: { id: "valuation-1" } });
+
+    await request(app.getHttpServer())
+      .post("/regional/demo/finance/applications")
+      .send({
+        enterpriseId: "org-enterprise-demo",
+        valuationId: "valuation-1",
+        requestedAmount: 20000,
+        purpose: "绿色设备更新演示",
+      })
+      .expect(201)
+      .expect({ application: { id: "finance-application-1" } });
+
+    await request(app.getHttpServer())
+      .post("/regional/demo/finance/applications/finance-application-1/review")
+      .send({
+        result: "APPROVED",
+        reviewerNote: "演示额度内",
+      })
+      .expect(201)
+      .expect({ application: { status: "SIMULATED_APPROVED" } });
+
+    await request(app.getHttpServer())
+      .get("/regional/demo/supervision/summary")
+      .expect(200)
+      .expect({ publicIndicators: { truthStatus: "REAL_PUBLIC_DATA" } });
   });
 });

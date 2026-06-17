@@ -12,9 +12,15 @@ import { QueryDto } from "@app/shared/dto/query.dto";
 import { RegionalMarketAPIService } from "./regional.market.api.service";
 import { RegionalMarketDemoGuard } from "./regional.market.demo.guard";
 import {
+  RegionalDemoFinanceApplicationDto,
+  RegionalDemoFinanceReviewDto,
+  RegionalDemoFinanceValuationDto,
   RegionalIssueCreditsDto,
   RegionalDemoLoginDto,
   RegionalDemoSwitchRoleDto,
+  RegionalDemoTradingDealDto,
+  RegionalDemoTradingListingDto,
+  RegionalDemoTransferToTradingDto,
   RegionalOtcTradeExecuteDto,
   RegionalProjectIdDto,
 } from "./regional.market.api.dto";
@@ -144,6 +150,77 @@ export class RegionalMarketAPIController {
   @Get("demo/indicators/:id/source")
   async getDemoIndicatorSource(@Param("id") id: string) {
     return this.regionalMarketAPIService.getDemoIndicatorSource(id);
+  }
+
+  @Get("demo/registry/holdings")
+  async listDemoRegistryHoldings() {
+    return this.regionalMarketAPIService.listDemoRegistryHoldings();
+  }
+
+  @Post("demo/registry/transfers-to-trading")
+  async transferDemoRegistryHoldingToTrading(
+    @Body() body: RegionalDemoTransferToTradingDto
+  ) {
+    return this.regionalMarketAPIService.transferDemoRegistryHoldingToTrading(
+      body
+    );
+  }
+
+  @Get("demo/trading/holdings")
+  async listDemoTradingHoldings() {
+    return this.regionalMarketAPIService.listDemoTradingHoldings();
+  }
+
+  @Post("demo/trading/listings")
+  async createDemoTradingListing(@Body() body: RegionalDemoTradingListingDto) {
+    return this.regionalMarketAPIService.createDemoTradingListing(body);
+  }
+
+  @Post("demo/trading/deals")
+  async confirmDemoTradingDeal(@Body() body: RegionalDemoTradingDealDto) {
+    return this.regionalMarketAPIService.confirmDemoTradingDeal(body);
+  }
+
+  @Get("demo/trading/deals/:id/contract-preview")
+  async getDemoTradingDealContractPreview(@Param("id") id: string) {
+    return this.regionalMarketAPIService.getDemoTradingDealContractPreview(id);
+  }
+
+  @Get("demo/trading/deals/:id/status-certificate")
+  async getDemoTradingDealStatusCertificate(@Param("id") id: string) {
+    return this.regionalMarketAPIService.getDemoTradingDealStatusCertificate(id);
+  }
+
+  @Get("demo/finance/profile/:enterpriseId")
+  async getDemoFinanceProfile(@Param("enterpriseId") enterpriseId: string) {
+    return this.regionalMarketAPIService.getDemoFinanceProfile(enterpriseId);
+  }
+
+  @Post("demo/finance/valuations")
+  async createDemoFinanceValuation(
+    @Body() body: RegionalDemoFinanceValuationDto
+  ) {
+    return this.regionalMarketAPIService.createDemoFinanceValuation(body);
+  }
+
+  @Post("demo/finance/applications")
+  async createDemoFinanceApplication(
+    @Body() body: RegionalDemoFinanceApplicationDto
+  ) {
+    return this.regionalMarketAPIService.createDemoFinanceApplication(body);
+  }
+
+  @Post("demo/finance/applications/:id/review")
+  async reviewDemoFinanceApplication(
+    @Param("id") id: string,
+    @Body() body: RegionalDemoFinanceReviewDto
+  ) {
+    return this.regionalMarketAPIService.reviewDemoFinanceApplication(id, body);
+  }
+
+  @Get("demo/supervision/summary")
+  async getDemoSupervisionSummary() {
+    return this.regionalMarketAPIService.getDemoSupervisionSummary();
   }
 
   @Post("demo/reset")

@@ -277,4 +277,194 @@ describe("RegionalMarketAPIController", () => {
       },
     });
   });
+
+  it("transfers registry demo holdings into the trading context and blocks unavailable quantity", async () => {
+    const registryBefore = await controller.listDemoRegistryHoldings();
+    const holding = registryBefore.items[0];
+    const availableBeforeTransfer = holding.availableQuantity;
+
+    await expect(
+      controller.transferDemoRegistryHoldingToTrading({
+        holdingId: holding.id,
+        quantity: 1200,
+      })
+    ).resolves.toMatchObject({
+      truthStatus: "SIMULATED_DEMO_DATA",
+      transfer: {
+        holdingId: holding.id,
+        quantity: 1200,
+        status: "TRANSFERRED_TO_TRADING",
+      },
+      registryHolding: {
+        id: holding.id,
+        availableQuantity: availableBeforeTransfer - 1200,
+      },
+      tradingHolding: {
+        registryHoldingId: holding.id,
+        availableQuantity: 1200,
+        status: "AVAILABLE_FOR_LISTING",
+      },
+    });
+
+    await expect(
+      controller.transferDemoRegistryHoldingToTrading({
+        holdingId: holding.id,
+        quantity: holding.availableQuantity + 1,
+      })
+    ).rejects.toMatchObject({
+      response: {
+        error: {
+          code: "DEMO_TRANSFER_QUANTITY_UNAVAILABLE",
+        },
+      },
+    });
+  });
+
+  it("blocks listing before transfer-in and confirms demo deals with non-legal documents", async () => {
+    await expect(
+      controller.createDemoTradingListing({
+        tradingHoldingId: "missing-trading-holding",
+        quantity: 100,
+        unitPrice: 42,
+      })
+    ).rejects.toMatchObject({
+      response: {
+        error: {
+          code: "DEMO_TRADING_HOLDING_NOT_FOUND",
+        },
+      },
+    });
+
+    const transfer = await controller.transferDemoRegistryHoldingToTrading({
+      holdingId: "reg-holding-enterprise-forest-2025",
+      quantity: 1000,
+    });
+    const listing = await controller.createDemoTradingListing({
+      tradingHoldingId: transfer.tradingHolding.id,
+      quantity: 800,
+      unitPrice: 42,
+    });
+
+    expect(listing).toMatchObject({
+      truthStatus: "SIMULATED_DEMO_DATA",
+      listing: {
+        status: "LISTED",
+        quantity: 800,
+        unitPrice: 42,
+      },
+    });
+
+    const deal = await controller.confirmDemoTradingDeal({
+      listingId: listing.listing.id,
+      buyerOrganizationId: "org-buyer-demo",
+      quantity: 800,
+    });
+
+    expect(deal).toMatchObject({
+      truthStatus: "SIMULATED_DEMO_DATA",
+      deal: {
+        status: "CONFIRMED",
+        totalAmount: 33600,
+      },
+    });
+
+    await expect(
+      controller.getDemoTradingDealContractPreview(deal.deal.id)
+    ).resolves.toMatchObject({
+      title: "演示合同预览",
+      legalEffect: "演示文本，不具法律效力",
+      truthStatus: "SIMULATED_DEMO_DOCUMENT",
+    });
+    await expect(
+      controller.getDemoTradingDealStatusCertificate(deal.deal.id)
+    ).resolves.toMatchObject({
+      title: "模拟成交状态凭证",
+      settlementBoundary: "不含资金清算或银行结算",
+      truthStatus: "SIMULATED_DEMO_DOCUMENT",
+    });
+  });
+
+  it("runs S10 valuation, financing-intent review, and pledge lock without disbursement semantics", async () => {
+    const profile = await controller.getDemoFinanceProfile("org-enterprise-demo");
+
+    expect(profile).toMatchObject({
+      truthStatus: "SIMULATED_DEMO_DATA",
+      enterpriseId: "org-enterprise-demo",
+      esgModel: "ESG demo-v1 为内部演示模型",
+    });
+
+    const valuation = await controller.createDemoFinanceValuation({
+      enterpriseId: "org-enterprise-demo",
+      assetId: profile.assets[0].id,
+      quantity: 1000,
+      unitPrice: 42,
+      discountFactor: 0.6,
+    });
+
+    expect(valuation).toMatchObject({
+      truthStatus: "SIMULATED_DEMO_DATA",
+      valuation: {
+        assessedAmount: 25200,
+        disclaimer: "融资测算结果仅用于演示",
+      },
+    });
+
+    const application = await controller.createDemoFinanceApplication({
+      enterpriseId: "org-enterprise-demo",
+      valuationId: valuation.valuation.id,
+      requestedAmount: 20000,
+      purpose: "绿色设备更新演示",
+    });
+    const review = await controller.reviewDemoFinanceApplication(application.application.id, {
+      result: "APPROVED",
+      reviewerNote: "演示额度内",
+    });
+
+    expect(review).toMatchObject({
+      truthStatus: "SIMULATED_DEMO_DATA",
+      application: {
+        status: "SIMULATED_APPROVED",
+        pledgeStatus: "PLEDGE_LOCKED",
+        reviewDisclaimer: "模拟审批不代表银行授信",
+      },
+    });
+  });
+
+  it("returns supervision summary with real and simulated truth layers separated", async () => {
+    await controller.transferDemoRegistryHoldingToTrading({
+      holdingId: "reg-holding-enterprise-forest-2025",
+      quantity: 600,
+    });
+    const valuation = await controller.createDemoFinanceValuation({
+      enterpriseId: "org-enterprise-demo",
+      assetId: "reg-holding-enterprise-forest-2025",
+      quantity: 600,
+      unitPrice: 42,
+      discountFactor: 0.6,
+    });
+    await controller.createDemoFinanceApplication({
+      enterpriseId: "org-enterprise-demo",
+      valuationId: valuation.valuation.id,
+      requestedAmount: 10000,
+      purpose: "演示用途",
+    });
+
+    await expect(controller.getDemoSupervisionSummary()).resolves.toMatchObject({
+      publicIndicators: {
+        truthStatus: "REAL_PUBLIC_DATA",
+        count: expect.any(Number),
+      },
+      simulatedTradingActivity: {
+        truthStatus: "SIMULATED_DEMO_DATA",
+        transferCount: 1,
+      },
+      simulatedFinancingIntent: {
+        truthStatus: "SIMULATED_DEMO_DATA",
+        applicationCount: 1,
+      },
+      internalAssessmentTags: {
+        truthStatus: "INTERNAL_DEMO_LOGIC",
+      },
+    });
+  });
 });

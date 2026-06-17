@@ -6,11 +6,13 @@ SUMMARY_FIXTURE="$ROOT_DIR/web/public/regional/dashboard/summary"
 API_ADAPTER="$ROOT_DIR/web/src/Pages/CommandCenter/regionalMarketApi.ts"
 WEB_ENTRYPOINT="$ROOT_DIR/web/docker-entrypoint.sh"
 WEB_DOCKERFILE="$ROOT_DIR/web/Dockerfile"
+DEMO_FIXTURE_JSON="$(bash "${ROOT_DIR}/scripts/regional-demo-static-fixture.sh")"
 
-node - "$SUMMARY_FIXTURE" "$API_ADAPTER" "$WEB_ENTRYPOINT" "$WEB_DOCKERFILE" <<'NODE'
+node - "$SUMMARY_FIXTURE" "$API_ADAPTER" "$WEB_ENTRYPOINT" "$WEB_DOCKERFILE" "$DEMO_FIXTURE_JSON" <<'NODE'
 const fs = require("fs");
 
-const [summaryPath, apiAdapterPath, entrypointPath, dockerfilePath] = process.argv.slice(2);
+const [summaryPath, apiAdapterPath, entrypointPath, dockerfilePath, demoFixtureJson] =
+  process.argv.slice(2);
 const failures = [];
 
 function assert(condition, message) {
@@ -71,6 +73,31 @@ assert(
   dockerfile.includes("ARG VITE_REGIONAL_MARKET_API_BASE") &&
     dockerfile.includes("ENV VITE_REGIONAL_MARKET_API_BASE"),
   "web Dockerfile should allow live regional API override at build time"
+);
+
+const demoFixture = JSON.parse(demoFixtureJson);
+const requiredDemoSections = [
+  ["publicIndicators", "REAL_PUBLIC_DATA"],
+  ["simulatedTradingActivity", "SIMULATED_DEMO_DATA"],
+  ["simulatedFinancingIntent", "SIMULATED_DEMO_DATA"],
+  ["internalAssessmentTags", "INTERNAL_DEMO_LOGIC"],
+];
+
+for (const [key, truthStatus] of requiredDemoSections) {
+  assert(Boolean(demoFixture.supervisionSummary?.[key]), `demo fixture should include ${key}`);
+  assert(
+    demoFixture.supervisionSummary?.[key]?.truthStatus === truthStatus,
+    `${key} truthStatus should be ${truthStatus}`
+  );
+}
+assert(Boolean(demoFixture.s8?.deal?.id), "demo fixture should include S8 deal");
+assert(
+  demoFixture.s8?.contractPreview?.legalEffect === "演示文本，不具法律效力",
+  "demo fixture should include non-legal contract preview boundary"
+);
+assert(
+  demoFixture.s10?.application?.reviewDisclaimer === "模拟审批不代表银行授信",
+  "demo fixture should include S10 simulated review disclaimer"
 );
 
 if (failures.length) {

@@ -14,15 +14,33 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import {
+  confirmRegionalDemoDeal,
+  createRegionalDemoFinanceApplication,
+  createRegionalDemoFinanceValuation,
+  createRegionalDemoListing,
   fetchRegionalDemoIndicatorSource,
   fetchRegionalDemoIndicators,
+  fetchRegionalDemoRegistryHoldings,
+  fetchRegionalDemoSupervisionSummary,
+  fetchRegionalDemoContractPreview,
+  fetchRegionalDemoStatusCertificate,
   fetchRegionalDashboardSummary,
   loginRegionalDemo,
+  reviewRegionalDemoFinanceApplication,
   switchRegionalDemoRole,
+  transferRegionalDemoToTrading,
+  type DemoContractPreview,
   type DemoIndicatorSource,
+  type DemoFinanceApplication,
   type DemoRegionIndicator,
+  type DemoRegistryHolding,
   type DemoRole,
   type DemoSession,
+  type DemoStatusCertificate,
+  type DemoSupervisionSummary,
+  type DemoTradingDeal,
+  type DemoTradingHolding,
+  type DemoTradingListing,
   type RegionalDashboardSummary,
 } from "./regionalMarketApi";
 import { singleCountTradeVolume } from "./regionalSnapshotMath";
@@ -322,6 +340,46 @@ const fallbackDemoSession: DemoSession = {
     role: "GOVERNMENT",
     organizationId: "demo-org-government",
     organizationName: "河南省区域碳市场演示监管端",
+  },
+};
+
+const fallbackRegistryHoldings: DemoRegistryHolding[] = [
+  {
+    id: "reg-holding-enterprise-forest-2025",
+    enterpriseId: "org-enterprise-demo",
+    enterpriseName: "郑州绿能制造演示企业",
+    assetName: "区域绿色权益演示资产-林业2025",
+    projectName: "伏牛山生态修复演示项目",
+    totalQuantity: 5000,
+    availableQuantity: 5000,
+    lockedQuantity: 0,
+    unit: "吨",
+    status: "REGISTRY_AVAILABLE",
+    truthStatus: "SIMULATED_DEMO_DATA",
+  },
+];
+
+const fallbackSupervisionSummary: DemoSupervisionSummary = {
+  publicIndicators: {
+    truthStatus: "REAL_PUBLIC_DATA",
+    count: fallbackDemoIndicators.length,
+  },
+  simulatedTradingActivity: {
+    truthStatus: "SIMULATED_DEMO_DATA",
+    transferCount: 0,
+    listingCount: 0,
+    dealCount: 0,
+    totalConfirmedQuantity: 0,
+  },
+  simulatedFinancingIntent: {
+    truthStatus: "SIMULATED_DEMO_DATA",
+    applicationCount: 0,
+    approvedCount: 0,
+    pledgeLockedCount: 0,
+  },
+  internalAssessmentTags: {
+    truthStatus: "INTERNAL_DEMO_LOGIC",
+    tags: ["demo-v1", "simulated-activity-separated"],
   },
 };
 
@@ -1721,6 +1779,21 @@ const CarbonTradingCommandCenter = () => {
     useState<DemoRegionIndicator>(fallbackDemoIndicators[0]);
   const [demoSource, setDemoSource] =
     useState<DemoIndicatorSource>(fallbackDemoIndicators[0]);
+  const [registryHoldings, setRegistryHoldings] =
+    useState<DemoRegistryHolding[]>(fallbackRegistryHoldings);
+  const [selectedRegistryHolding, setSelectedRegistryHolding] =
+    useState<DemoRegistryHolding>(fallbackRegistryHoldings[0]);
+  const [tradingHolding, setTradingHolding] = useState<DemoTradingHolding>();
+  const [demoListing, setDemoListing] = useState<DemoTradingListing>();
+  const [demoDeal, setDemoDeal] = useState<DemoTradingDeal>();
+  const [contractPreview, setContractPreview] = useState<DemoContractPreview>();
+  const [statusCertificate, setStatusCertificate] =
+    useState<DemoStatusCertificate>();
+  const [financeApplication, setFinanceApplication] =
+    useState<DemoFinanceApplication>();
+  const [financeAssessedAmount, setFinanceAssessedAmount] = useState<number>();
+  const [supervisionSummary, setSupervisionSummary] =
+    useState<DemoSupervisionSummary>(fallbackSupervisionSummary);
   const [demoProgress, setDemoProgress] = useState(demoEvents.length);
   const [isDemoPlaying, setIsDemoPlaying] = useState(false);
   const [carouselTick, setCarouselTick] = useState(0);
@@ -1755,8 +1828,13 @@ const CarbonTradingCommandCenter = () => {
   useEffect(() => {
     let cancelled = false;
 
-    Promise.all([loginRegionalDemo("gov_demo"), fetchRegionalDemoIndicators()])
-      .then(([session, indicators]) => {
+    Promise.all([
+      loginRegionalDemo("gov_demo"),
+      fetchRegionalDemoIndicators(),
+      fetchRegionalDemoRegistryHoldings(),
+      fetchRegionalDemoSupervisionSummary(),
+    ])
+      .then(([session, indicators, holdings, summary]) => {
         if (cancelled) {
           return;
         }
@@ -1768,6 +1846,11 @@ const CarbonTradingCommandCenter = () => {
         setDemoIndicators(verifiedIndicators);
         setSelectedDemoIndicator(verifiedIndicators[0]);
         setDemoSource(verifiedIndicators[0]);
+        setRegistryHoldings(holdings.items.length ? holdings.items : fallbackRegistryHoldings);
+        setSelectedRegistryHolding(
+          holdings.items.length ? holdings.items[0] : fallbackRegistryHoldings[0]
+        );
+        setSupervisionSummary(summary);
         setDemoShellStatus("connected");
       })
       .catch(() => {
@@ -1776,6 +1859,9 @@ const CarbonTradingCommandCenter = () => {
           setDemoIndicators(fallbackDemoIndicators);
           setSelectedDemoIndicator(fallbackDemoIndicators[0]);
           setDemoSource(fallbackDemoIndicators[0]);
+          setRegistryHoldings(fallbackRegistryHoldings);
+          setSelectedRegistryHolding(fallbackRegistryHoldings[0]);
+          setSupervisionSummary(fallbackSupervisionSummary);
           setDemoShellStatus("fallback");
         }
       });
@@ -2013,6 +2099,219 @@ const CarbonTradingCommandCenter = () => {
       setDemoShellStatus((current) => (current === "connected" ? current : "fallback"));
     }
   };
+  const refreshSupervisionSummary = async () => {
+    try {
+      const summary = await fetchRegionalDemoSupervisionSummary();
+      setSupervisionSummary(summary);
+    } catch {
+      setSupervisionSummary((current) => current);
+    }
+  };
+  const handleTransferToTrading = async () => {
+    const quantity = 1000;
+
+    if (
+      selectedRegistryHolding.status === "PLEDGE_LOCKED" ||
+      selectedRegistryHolding.lockedQuantity > 0
+    ) {
+      return;
+    }
+
+    try {
+      const result = await transferRegionalDemoToTrading(
+        selectedRegistryHolding.id,
+        quantity
+      );
+      setSelectedRegistryHolding(result.registryHolding);
+      setRegistryHoldings((current) =>
+        current.map((holding) =>
+          holding.id === result.registryHolding.id ? result.registryHolding : holding
+        )
+      );
+      setTradingHolding(result.tradingHolding);
+      setDemoShellStatus("connected");
+      await refreshSupervisionSummary();
+    } catch {
+      const nextRegistryHolding = {
+        ...selectedRegistryHolding,
+        availableQuantity: Math.max(
+          selectedRegistryHolding.availableQuantity - quantity,
+          0
+        ),
+      };
+      const nextTradingHolding: DemoTradingHolding = {
+        id: "trading-holding-local-1",
+        registryHoldingId: selectedRegistryHolding.id,
+        enterpriseId: selectedRegistryHolding.enterpriseId,
+        assetName: selectedRegistryHolding.assetName,
+        totalQuantity: quantity,
+        availableQuantity: quantity,
+        listedQuantity: 0,
+        unit: selectedRegistryHolding.unit,
+        status: "AVAILABLE_FOR_LISTING",
+        truthStatus: "SIMULATED_DEMO_DATA",
+      };
+      setSelectedRegistryHolding(nextRegistryHolding);
+      setRegistryHoldings([nextRegistryHolding]);
+      setTradingHolding(nextTradingHolding);
+      setSupervisionSummary((current) => ({
+        ...current,
+        simulatedTradingActivity: {
+          ...current.simulatedTradingActivity,
+          transferCount: 1,
+        },
+      }));
+      setDemoShellStatus("fallback");
+    }
+  };
+  const handleCreateListing = async () => {
+    if (!tradingHolding) return;
+
+    try {
+      const result = await createRegionalDemoListing(tradingHolding.id, 800, 42);
+      setDemoListing(result.listing);
+      setDemoShellStatus("connected");
+      await refreshSupervisionSummary();
+    } catch {
+      setDemoListing({
+        id: "listing-local-1",
+        tradingHoldingId: tradingHolding.id,
+        enterpriseId: tradingHolding.enterpriseId,
+        quantity: 800,
+        unitPrice: 42,
+        listedAmount: 33600,
+        status: "LISTED",
+        truthStatus: "SIMULATED_DEMO_DATA",
+      });
+      setSupervisionSummary((current) => ({
+        ...current,
+        simulatedTradingActivity: {
+          ...current.simulatedTradingActivity,
+          listingCount: 1,
+        },
+      }));
+      setDemoShellStatus("fallback");
+    }
+  };
+  const handleConfirmDeal = async () => {
+    if (!demoListing) return;
+
+    try {
+      const result = await confirmRegionalDemoDeal(
+        demoListing.id,
+        "org-buyer-demo",
+        demoListing.quantity
+      );
+      const [preview, certificate] = await Promise.all([
+        fetchRegionalDemoContractPreview(result.deal.id),
+        fetchRegionalDemoStatusCertificate(result.deal.id),
+      ]);
+      setDemoDeal(result.deal);
+      setContractPreview(preview);
+      setStatusCertificate(certificate);
+      setDemoShellStatus("connected");
+      await refreshSupervisionSummary();
+    } catch {
+      const localDeal: DemoTradingDeal = {
+        id: "deal-local-1",
+        listingId: demoListing.id,
+        buyerOrganizationId: "org-buyer-demo",
+        sellerEnterpriseId: demoListing.enterpriseId,
+        quantity: demoListing.quantity,
+        unitPrice: demoListing.unitPrice,
+        totalAmount: demoListing.listedAmount,
+        status: "CONFIRMED",
+        truthStatus: "SIMULATED_DEMO_DATA",
+      };
+      setDemoDeal(localDeal);
+      setContractPreview({
+        title: "演示合同预览",
+        legalEffect: "演示文本，不具法律效力",
+        truthStatus: "SIMULATED_DEMO_DOCUMENT",
+      });
+      setStatusCertificate({
+        title: "模拟成交状态凭证",
+        settlementBoundary: "不含资金清算或银行结算",
+        truthStatus: "SIMULATED_DEMO_DOCUMENT",
+      });
+      setSupervisionSummary((current) => ({
+        ...current,
+        simulatedTradingActivity: {
+          ...current.simulatedTradingActivity,
+          dealCount: 1,
+          totalConfirmedQuantity: localDeal.quantity,
+        },
+      }));
+      setDemoShellStatus("fallback");
+    }
+  };
+  const handleFinanceReview = async () => {
+    const enterpriseId = selectedRegistryHolding.enterpriseId;
+    const assetId = selectedRegistryHolding.id;
+
+    try {
+      const valuation = await createRegionalDemoFinanceValuation(
+        enterpriseId,
+        assetId,
+        1000,
+        42,
+        0.6
+      );
+      const application = await createRegionalDemoFinanceApplication(
+        enterpriseId,
+        valuation.valuation.id,
+        20000,
+        "绿色设备更新演示"
+      );
+      const review = await reviewRegionalDemoFinanceApplication(
+        application.application.id,
+        "APPROVED",
+        "演示额度内"
+      );
+      setFinanceAssessedAmount(valuation.valuation.assessedAmount);
+      setFinanceApplication(review.application);
+      setSelectedRegistryHolding((current) => ({
+        ...current,
+        status: review.application.pledgeStatus === "PLEDGE_LOCKED"
+          ? "PLEDGE_LOCKED"
+          : current.status,
+        lockedQuantity:
+          review.application.pledgeStatus === "PLEDGE_LOCKED"
+            ? Math.max(current.lockedQuantity, 1000)
+            : current.lockedQuantity,
+      }));
+      setDemoShellStatus("connected");
+      await refreshSupervisionSummary();
+    } catch {
+      setFinanceAssessedAmount(25200);
+      setFinanceApplication({
+        id: "finance-application-local-1",
+        enterpriseId,
+        valuationId: "valuation-local-1",
+        requestedAmount: 20000,
+        purpose: "绿色设备更新演示",
+        status: "SIMULATED_APPROVED",
+        pledgeStatus: "PLEDGE_LOCKED",
+        reviewDisclaimer: "模拟审批不代表银行授信",
+        truthStatus: "SIMULATED_DEMO_DATA",
+      });
+      setSelectedRegistryHolding((current) => ({
+        ...current,
+        status: "PLEDGE_LOCKED",
+        lockedQuantity: Math.max(current.lockedQuantity, 1000),
+      }));
+      setSupervisionSummary((current) => ({
+        ...current,
+        simulatedFinancingIntent: {
+          ...current.simulatedFinancingIntent,
+          applicationCount: 1,
+          approvedCount: 1,
+          pledgeLockedCount: 1,
+        },
+      }));
+      setDemoShellStatus("fallback");
+    }
+  };
   const demoIndicatorCards = demoIndicators.slice(0, 4);
 
   return (
@@ -2131,6 +2430,106 @@ const CarbonTradingCommandCenter = () => {
                 <span>S10</span>
                 <strong>融资测算</strong>
                 <small>质押意向申请 · 模拟审批结果 · 不涉及实际出款</small>
+              </div>
+            </div>
+          </div>
+
+          <div className="cc-demo-phase2" aria-label="Phase 2 golden path">
+            <div className="cc-demo-flow-card">
+              <span>S8 演示交易状态机</span>
+              <strong>{selectedRegistryHolding.assetName}</strong>
+              <small>
+                登记可用 {formatNumber(selectedRegistryHolding.availableQuantity)}{" "}
+                {selectedRegistryHolding.unit} · 交易可用{" "}
+                {formatNumber(tradingHolding?.availableQuantity ?? 0)}{" "}
+                {selectedRegistryHolding.unit}
+              </small>
+              <div className="cc-demo-actions">
+                <button
+                  type="button"
+                  onClick={() => void handleTransferToTrading()}
+                  disabled={
+                    Boolean(tradingHolding) ||
+                    selectedRegistryHolding.status === "PLEDGE_LOCKED" ||
+                    selectedRegistryHolding.lockedQuantity > 0
+                  }
+                >
+                  转入交易上下文
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void handleCreateListing()}
+                  disabled={!tradingHolding || Boolean(demoListing)}
+                >
+                  创建挂牌
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void handleConfirmDeal()}
+                  disabled={!demoListing || Boolean(demoDeal)}
+                >
+                  确认演示成交
+                </button>
+              </div>
+              <div className="cc-demo-state-list">
+                <span>挂牌：{demoListing ? `${demoListing.quantity} 吨 · ${demoListing.unitPrice} 元/吨` : "待创建"}</span>
+                <span>成交：{demoDeal ? `${demoDeal.quantity} 吨 · ${formatNumber(demoDeal.totalAmount, 2)} 元` : "待确认"}</span>
+                <span>{contractPreview?.legalEffect ?? "演示文本，不具法律效力"}</span>
+                <span>{statusCertificate?.settlementBoundary ?? "不含资金清算或银行结算"}</span>
+              </div>
+            </div>
+
+            <div className="cc-demo-flow-card">
+              <span>S10 融资意向状态机</span>
+              <strong>融资测算结果仅用于演示</strong>
+              <small>
+                ESG demo-v1 为内部演示模型 ·{" "}
+                {selectedRegistryHolding.status === "PLEDGE_LOCKED"
+                  ? "质押意向已锁定演示资产"
+                  : "待提交质押意向申请"}
+              </small>
+              <div className="cc-demo-actions">
+                <button
+                  type="button"
+                  onClick={() => void handleFinanceReview()}
+                  disabled={financeApplication?.status === "SIMULATED_APPROVED"}
+                >
+                  提交融资意向
+                </button>
+              </div>
+              <div className="cc-demo-state-list">
+                <span>测算金额：{financeAssessedAmount ? `${formatNumber(financeAssessedAmount, 2)} 元` : "待测算"}</span>
+                <span>模拟审批结果：{financeApplication?.status ?? "待审核"}</span>
+                <span>{financeApplication?.reviewDisclaimer ?? "模拟审批不代表银行授信"}</span>
+                <span>质押状态：{financeApplication?.pledgeStatus ?? "NOT_LOCKED"}</span>
+              </div>
+            </div>
+
+            <div className="cc-demo-flow-card cc-demo-flow-card--return">
+              <span>政府回看分层</span>
+              <strong>真实公开数据 / 模拟活动分离</strong>
+              <small>所有回看区块保留 truthStatus，不合并为未标注综合分。</small>
+              <div className="cc-demo-return-grid">
+                <div>
+                  <span>真实公开数据</span>
+                  <strong>{supervisionSummary.publicIndicators.count}</strong>
+                  <small>{supervisionSummary.publicIndicators.truthStatus}</small>
+                </div>
+                <div>
+                  <span>模拟交易活动</span>
+                  <strong>{supervisionSummary.simulatedTradingActivity.dealCount}</strong>
+                  <small>{supervisionSummary.simulatedTradingActivity.truthStatus}</small>
+                </div>
+                <div>
+                  <span>模拟融资意向</span>
+                  <strong>{supervisionSummary.simulatedFinancingIntent.applicationCount}</strong>
+                  <small>{supervisionSummary.simulatedFinancingIntent.truthStatus}</small>
+                </div>
+                <div>
+                  <span>内部评估标签</span>
+                  <strong>{supervisionSummary.internalAssessmentTags.tags.length}</strong>
+                  <small>{supervisionSummary.internalAssessmentTags.truthStatus}</small>
+                </div>
               </div>
             </div>
           </div>
