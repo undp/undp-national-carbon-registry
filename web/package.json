@@ -28,6 +28,7 @@
     "axios": "^1.6.0",
     "bootstrap-icons": "^1.10.2",
     "buffer": "^6.0.3",
+    "china-map-geojson": "1.0.4",
     "class-transformer": "^0.5.1",
     "cross-env": "^7.0.3",
     "env-cmd": "^10.1.0",

@@ -1,0 +1,59 @@
+# Allow red-line terms only in explicit negation, quotation, or boundary-review contexts.
+# Format: path-fragment|term|reason
+
+docs/plans/2026-06-17-phase-zero-demo-revised-design-baseline.md|官方 CCER 交易|Boundary document lists prohibited affirmative claims.
+docs/plans/2026-06-17-phase-zero-demo-revised-design-baseline.md|核证自愿减排量交易|Boundary document lists prohibited affirmative claims.
+docs/plans/2026-06-17-phase-zero-demo-revised-design-baseline.md|真实登记结算|Boundary document lists prohibited affirmative claims.
+docs/plans/2026-06-17-phase-zero-demo-revised-design-baseline.md|真实清算|Boundary document lists prohibited affirmative claims.
+docs/plans/2026-06-17-phase-zero-demo-revised-design-baseline.md|银行放款|Boundary document lists prohibited affirmative claims.
+docs/plans/2026-06-17-phase-zero-demo-revised-design-baseline.md|法律有效电子合同|Boundary document lists prohibited affirmative claims.
+docs/plans/2026-06-17-phase-zero-demo-revised-design-baseline.md|官方预警|Boundary document lists prohibited affirmative claims.
+docs/plans/2026-06-17-phase-zero-demo-revised-design-baseline.md|交易账户真实持仓|Boundary document lists prohibited affirmative claims.
+docs/plans/2026-06-17-phase-zero-demo-revised-design-baseline.md|交易平台正式上线|Boundary document lists prohibited affirmative claims.
+
+docs/plans/2026-06-17-phase-zero-demo-development-plan.md|官方 CCER 交易|Development plan repeats the prohibited-claim list.
+docs/plans/2026-06-17-phase-zero-demo-development-plan.md|核证自愿减排量交易|Development plan repeats the prohibited-claim list.
+docs/plans/2026-06-17-phase-zero-demo-development-plan.md|真实登记结算|Development plan repeats the prohibited-claim list.
+docs/plans/2026-06-17-phase-zero-demo-development-plan.md|真实清算|Development plan repeats the prohibited-claim list.
+docs/plans/2026-06-17-phase-zero-demo-development-plan.md|银行放款|Development plan repeats the prohibited-claim list.
+docs/plans/2026-06-17-phase-zero-demo-development-plan.md|法律有效电子合同|Development plan repeats the prohibited-claim list.
+docs/plans/2026-06-17-phase-zero-demo-development-plan.md|官方预警|Development plan repeats the prohibited-claim list.
+docs/plans/2026-06-17-phase-zero-demo-development-plan.md|交易账户真实持仓|Development plan repeats the prohibited-claim list.
+docs/plans/2026-06-17-phase-zero-demo-development-plan.md|交易平台正式上线|Development plan repeats the prohibited-claim list.
+
+docs/regional-carbon-market/terminology-guardrails.md|官方 CCER 交易|Terminology guardrail states what the PoC must not claim.
+docs/regional-carbon-market/terminology-guardrails.md|核证自愿减排量交易|Terminology guardrail states what the PoC must not claim.
+docs/regional-carbon-market/terminology-guardrails.md|真实登记结算|Terminology guardrail states what the PoC must not claim.
+docs/regional-carbon-market/terminology-guardrails.md|真实清算|Terminology guardrail states what the PoC must not claim.
+docs/regional-carbon-market/terminology-guardrails.md|银行放款|Terminology guardrail states what the PoC must not claim.
+docs/regional-carbon-market/terminology-guardrails.md|法律有效电子合同|Terminology guardrail states what the PoC must not claim.
+docs/regional-carbon-market/terminology-guardrails.md|官方预警|Terminology guardrail states what the PoC must not claim.
+docs/regional-carbon-market/terminology-guardrails.md|交易账户真实持仓|Terminology guardrail states what the PoC must not claim.
+docs/regional-carbon-market/terminology-guardrails.md|交易平台正式上线|Terminology guardrail states what the PoC must not claim.
+
+docs/regional-carbon-market/dashboard-sot-compliance-review.md|银行放款|Review document states absent production capabilities and is not user-facing demo copy.
+docs/regional-carbon-market/dashboard-sot-compliance-review.md|官方 CCER 交易|Review document states absent production capabilities and is not user-facing demo copy.
+docs/regional-carbon-market/dashboard-sot-compliance-review.md|核证自愿减排量交易|Review document quotes SOT requirements and is not user-facing demo copy.
+
+docs/plans/2026-06-17-phase-zero-demo-agentic-workflow.md|银行放款|Workflow document shows a verification command, not affirmative demo copy.
+docs/plans/2026-06-17-phase-zero-demo-agentic-workflow.md|法律有效电子合同|Workflow document shows a verification command, not affirmative demo copy.
+
+docs/regional-carbon-market/ui-copy-guardrails.md|官方 CCER 交易|Copy guardrail lists prohibited affirmative wording.
+docs/regional-carbon-market/ui-copy-guardrails.md|核证自愿减排量交易|Copy guardrail lists prohibited affirmative wording.
+docs/regional-carbon-market/ui-copy-guardrails.md|真实登记结算|Copy guardrail lists prohibited affirmative wording.
+docs/regional-carbon-market/ui-copy-guardrails.md|真实清算|Copy guardrail lists prohibited affirmative wording.
+docs/regional-carbon-market/ui-copy-guardrails.md|银行放款|Copy guardrail lists prohibited affirmative wording.
+docs/regional-carbon-market/ui-copy-guardrails.md|法律有效电子合同|Copy guardrail lists prohibited affirmative wording.
+docs/regional-carbon-market/ui-copy-guardrails.md|官方预警|Copy guardrail lists prohibited affirmative wording.
+docs/regional-carbon-market/ui-copy-guardrails.md|交易账户真实持仓|Copy guardrail lists prohibited affirmative wording.
+docs/regional-carbon-market/ui-copy-guardrails.md|交易平台正式上线|Copy guardrail lists prohibited affirmative wording.
+
+docs/regional-carbon-market/api-contract.md|真实清算|API contract negates official or bank clearing semantics.
+docs/regional-carbon-market/api-contract.md|银行放款|API contract negates bank disbursement semantics.
+docs/regional-carbon-market/api-contract.md|法律有效电子合同|API contract negates legal contract semantics.
+docs/regional-carbon-market/domain-model-baseline.md|真实清算|Domain baseline negates official or bank clearing semantics.
+docs/regional-carbon-market/domain-model-baseline.md|银行放款|Domain baseline negates bank disbursement semantics.
+docs/regional-carbon-market/domain-model-baseline.md|官方预警|Domain baseline negates official warning semantics.
+docs/regional-carbon-market/terminology-mapping.md|官方 CCER 交易|Mapping document records forbidden inference.
+docs/regional-carbon-market/terminology-mapping.md|真实登记结算|Mapping document records forbidden inference.
+docs/regional-carbon-market/terminology-mapping.md|银行放款|Mapping document records forbidden inference.

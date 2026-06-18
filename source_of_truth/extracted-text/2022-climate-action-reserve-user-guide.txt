@@ -1,0 +1,2885 @@
+                 O -
+            +
+             N
+        N
+
+            User Guide
+                  May 2022
+
+
+
+    H
+C               O C O
+    H
+ NOTE TO USERS:
+
+ From time to time, the Climate Action Reserve may update this document. Please
+ make sure you are using the latest version, available at www.climateactionreserve.org.
+
+ For information, comments, or questions, please email
+ reserve@climateactionreserve.org.
+
+
+
+
+Climate Action Reserve
+818 West 7th Street, Suite 710
+Los Angeles, CA 90017
+www.climateactionreserve.org
+
+Released May 2022
+
+© 2022 Climate Action Reserve. All rights reserved. This material may not be reproduced, displayed,
+modified or distributed without the express written permission of the Climate Action Reserve.
+Climate Action Reserve
+User Guide
+1            Introduction .............................................................................................................. 1
+    1.1      About Us .................................................................................................................... 1
+    1.2      Reserve Administrator ............................................................................................... 1
+2            Reserve Account Registration ................................................................................ 2
+    2.1      Who Is Eligible ........................................................................................................... 2
+    2.2      Types of Accounts ..................................................................................................... 2
+    2.3      Obtaining an Account................................................................................................. 2
+    2.4      Designation of Authority ............................................................................................. 3
+3            Layout of the Reserve ............................................................................................. 4
+    3.1      The Dashboard and Display Modules ........................................................................ 4
+    3.2      Customizing the Dashboard ....................................................................................... 4
+4            Account Access ....................................................................................................... 6
+    4.1      The Account Manager................................................................................................ 6
+    4.2      Account Information ................................................................................................... 6
+     4.2.1   Account Information Used in the Reserve .................................................................. 6
+    4.3      Best Practices for Account Protection ........................................................................ 7
+    4.4      Modifying Account Information ................................................................................... 7
+    4.5      Privacy ....................................................................................................................... 8
+    4.6      Creating Additional Logins ......................................................................................... 9
+    4.7      Configuring User Access to Projects and Accounts ................................................... 9
+    4.8      Account Inactivation and Cancellation ....................................................................... 9
+5            Reserve Communication ........................................................................................11
+    5.1      Email Notification ......................................................................................................11
+    5.2      Message Notification.................................................................................................11
+6            Reports ....................................................................................................................13
+    6.1      Standard Report Features.........................................................................................13
+    6.2      My Reports ...............................................................................................................14
+    6.3      Public Reports ..........................................................................................................15
+7            Overview of the Project Registration Process ......................................................16
+    7.1      Project Status: New, Listed, and Registered .............................................................16
+    7.2      Project Phases..........................................................................................................17
+    7.3      Submitting a Project in the Reserve ..........................................................................22
+    7.4      Submitting a Cooperative or Aggregate ....................................................................25
+    7.5      Transferring an Existing Project from another Registry .............................................27
+    7.6      Making Changes to Project Submittal Forms ............................................................27
+    7.7      Project Documents Displayed to the Public ...............................................................28
+    7.8      SDG Alignment and Co-benefits Reporting ...............................................................29
+8            Selecting a Verification Body .................................................................................30
+    8.1      Assessing Conflict of Interest ....................................................................................30
+9            Submitting for Verification .....................................................................................31
+ 9.1         Entering Project Data ................................................................................................31
+ 9.2         Additional Project Verification Documents.................................................................32
+   9.2.1     Adjustments to Data..................................................................................................32
+ 9.3         Submitting a Project for Verification ..........................................................................33
+10           Project Verification .................................................................................................34
+ 10.1        Require Resubmittal of Data .....................................................................................34
+ 10.2     Annual Verification Activities .....................................................................................34
+ 10.3     Deferred Verification: ARB Compliance Projects.......................................................35
+   10.3.1 Deferred Verification for ARB Compliance Sequestration Projects ............................35
+   10.3.2 Deferred Verification for ARB Compliance Non-Sequestration Projects ....................35
+ 10.4     Deferred Verification: Voluntary Projects...................................................................36
+11        Offset Credit Issuance ............................................................................................39
+ 11.1     Reserve Approval of Projects....................................................................................39
+ 11.2     Offset Credit Issuance ..............................................................................................41
+ 11.3     Offset Credit Serial Numbers ....................................................................................42
+12        Reserve Offset Credit Accounts ............................................................................45
+ 12.1     Organizing the Default Active and Retirement Accounts ...........................................45
+ 12.2     Creating New Offset Credit Subaccounts ..................................................................46
+ 12.3     Displaying Accounts to the Public .............................................................................46
+ 12.4     Beneficial Ownership of Offset Credits ......................................................................47
+13        Transferring Offset Credits ....................................................................................48
+ 13.1     Transferring to an Active or Retirement Account .......................................................48
+ 13.2     Transferring Offset Credits to Another Account Holder .............................................49
+ 13.3     Receiving Offset Credits from an Account Holder .....................................................50
+ 13.4     Canceling a Transfer.................................................................................................50
+ 13.5     Forward and Recurring Offset Credit Transfers.........................................................50
+ 13.6     Transferring a Project to another Account Holder .....................................................52
+14        Retiring Offset Credits ............................................................................................53
+ 14.1     Transferring Offset Credits for Retirement ................................................................53
+ 14.2     Retirements on Behalf of Third Parties......................................................................53
+ 14.3     Retirements for CORSIA ...........................................................................................54
+15        California Air Resources Board Compliance Offset Program .............................55
+ 15.1     The Reserve’s Role as an OPR ................................................................................55
+ 15.2     Submittal and Listing.................................................................................................55
+ 15.3     NOVS and COI Processing .......................................................................................55
+ 15.4     Verification and Registration .....................................................................................56
+ 15.5     Transitioning ARB-Eligible Credits to ARBOCs .........................................................56
+ 15.6     ARB Compliance Offset Program Invalidation Verification ........................................58
+16        Invoicing and Payments .........................................................................................59
+ 16.1     My Invoices Report ...................................................................................................59
+ 16.2     Submitting Payment ..................................................................................................60
+ 16.3     Payment Due Dates ..................................................................................................60
+ 16.4     Past Due Invoices .....................................................................................................60
+ 16.5     Holding a Balance .....................................................................................................61
+Appendix A: Glossary of Common Terms ............................................................................62
+Appendix B: Voluntary Project Registration Process Overview..........................................64
+Appendix C: ARB Compliance Project Registration Process Overview .............................67
+Appendix D: Fee Structure .....................................................................................................70
+
+List of Figures
+
+Figure 3.1. The Reserve Dashboard .......................................................................................... 4
+Figure 3.2. Customize Page ....................................................................................................... 5
+Figure 4.1. Change Password Detail .......................................................................................... 8
+Figure 5.1. Message Notification Module ..................................................................................11
+Figure 6.1.Sorting Columns Detail.............................................................................................13
+Figure 6.2. Downloading Reports Detail ....................................................................................13
+Figure 6.3. Search Reports Detail .............................................................................................13
+Figure 6.4. Print Reports Detail .................................................................................................14
+Figure 6.5. Multiple Page Navigation Detail...............................................................................14
+Figure 7.1. Manage Projects Module.........................................................................................22
+Figure 7.2. Project Setup Screen Detail ....................................................................................23
+Figure 7.3. Manage Projects Module Detail ...............................................................................23
+Figure 7.4. Project Documents Screen Detail ............................................................................24
+Figure 7.5 Manage Projects Module Detail................................................................................25
+Figure 7.6. Cooperative/Aggregate Setup Page Detail ..............................................................26
+Figure 7.7. My Cooperative/Aggregate Detail ............................................................................26
+Figure 7.8. Project Documents Screen Detail ............................................................................26
+Figure 7.9. Project Setup Screen Detail ....................................................................................27
+Figure 8.1. Selecting a Verification Body ...................................................................................30
+Figure 9.1. Project Emissions/Reductions Screen .....................................................................31
+Figure 9.2. Example of a Landfill Project Type Project Data Screen..........................................32
+Figure 9.3. Example of Project Emissions/Reductions Screen ..................................................32
+Figure 10.1. Submit Project Verification or Require Resubmittal of Project Data .......................34
+Figure 10.2. Submit OPDR and Defer Verification .....................................................................36
+Figure 10.3. Submit OPDR – Proceed with Verification .............................................................36
+Figure 10.4. Deferring Verification .............................................................................................37
+Figure 10.5. Selecting a Verification Body on the Project Setup Page.......................................38
+Figure 10.6. Saving Changes on the Project Setup Page..........................................................38
+Figure 11.1. Making Changes to Emissions/Reductions Data ...................................................39
+Figure 11.2. Saving Emissions/Reductions Data .......................................................................40
+Figure 11.3. Submitting a Project for Verification.......................................................................40
+Figure 11.4. Submitting a Project for Verification.......................................................................41
+Figure 11.5. Submitting a Project for Final Approval..................................................................41
+Figure 11.6. Credits Issued into “Pending” Account ..................................................................42
+Figure 11.7. Releasing Offset Credits .......................................................................................42
+Figure 12.1. View, Transfer, and Retire Offset Credits Module..................................................45
+Figure 12.2. Create New/Edit Account Screen ..........................................................................46
+Figure 13.1. Offset Credit Account Detail ..................................................................................48
+Figure 13.2. Transfer Offset Credits Page .................................................................................49
+Figure 13.3. Outgoing Offset Credit Transfers Module ..............................................................50
+Figure 13.4. Incoming Offset Credit Transfers Module ..............................................................50
+Figure 13.5. Recurring Transfers Module ..................................................................................50
+Figure 13.6. New Forward Transfer Setup Page .......................................................................51
+Figure 13.7. Forward Transfer Inbox .........................................................................................51
+Figure 13.8. My Recurring Transfers .........................................................................................52
+Figure 13.9. My Recurring Transfers Report Detail ...................................................................52
+Figure 14.1. Retirement Sub-Account Detail .............................................................................54
+Figure 15.1. Offset Credit Account Detail ..................................................................................56
+Figure 15.2. Transfer Offset Credits Page .................................................................................57
+Figure 15.3 Offset Credit Details Report....................................................................................58
+Figure 16.1 My Invoices Report ................................................................................................59
+Figure 16.2 Sample Invoice.......................................................................................................60
+Figure 16.3 Apply Balance to Invoices Screen ..........................................................................61
+Figure B.1. Voluntary Project Submittal                                                                                           64
+Figure B.2. Select an Accredited Verification Body                                                                                65
+Figure B.3. Voluntary Project Registration                                                                                        66
+Figure C.1. ARB Compliance Project Listing                                                                                  67
+Figure C.2. Select an ARB-accredited Verification Body                                                                      68
+Figure C.3. ARB Compliance Project Registration                                                                             69
+
+List of Tables
+
+Table 4.1. Contact Information Collected ................................................................................... 6
+Table 7.1. Voluntary Project Phases .........................................................................................17
+Table 11.1. Serial Number Guide ..............................................................................................43
+Climate Action Reserve User Guide                                                        May 2022
+
+
+
+
+1     Introduction
+The purpose of this document is to provide information regarding general use of the Climate
+Action Reserve (Reserve) registry system, including rules and guidelines for performing
+common tasks. The following sections will outline the processes for the Climate Action Reserve
+Voluntary Program as well as the California Compliance Offset program. See Section 15 of this
+document for a more complete overview of the compliance program. This document does not
+detail the legal responsibilities for project developers or Offset Project Operators (OPO)
+registering projects or for Reserve account holders under the Reserve program. For further
+information on these issues, please see the Terms of Use at
+climateactionreserve.org/how/program/documents and the Reserve Offset Program Manual at
+climateactionreserve.org/how/program/program-manual.
+
+1.1 About Us
+The Climate Action Reserve is a pioneer in carbon accounting and the most experienced,
+trusted and efficient offset registry to serve the carbon markets. With deep roots in California
+and a reach across North America, the Reserve encourages actions to reduce greenhouse gas
+emissions and works to ensure environmental benefit, integrity and transparency in market-
+based solutions to address global climate change. It does this by establishing regulatory-quality
+standards for the development, quantification, and verification of GHG emission reduction
+projects in North America; issuing carbon offset credits known as Climate Reserve Tonnes
+(CRTs) generated from such projects; and tracking the transaction of credits over time in a
+transparent, publicly-accessible system. Adherence to the Reserve’s high standards ensures
+that emission reductions associated with projects are real, permanent, and additional, thereby
+instilling confidence in the environmental benefit, credibility, and efficiency of the U.S. carbon
+market.
+
+The Reserve also serves as an Offset Project Registry (OPR) under the California Air
+Resources Board (ARB) Compliance Offset Program, helping to facilitate the listing, reporting,
+and verification of offset projects using ARB’s Compliance Offset Protocols. For more
+information on the Compliance Offset Program, please see Section 15.
+
+At the heart of the Reserve is a publicly accessible web-based system (often referred to as the
+Reserve) where owners and developers of carbon offset projects are required to provide project
+information demonstrating GHG emission reductions. Information on all registered offset
+projects, including verification documentation, is available through this registry. For
+transparency, each offset credit issued by the Reserve has a unique serial number with
+embedded information that identifies the project type, location, developer and vintage (the
+calendar year in which the reduction took place). The unique serial number persists as offsets
+are transferred between account holders or retired. Sales or purchases of offset credits take
+place directly between a buyer and seller outside of the Reserve. After a sale takes place, the
+parties use the Reserve’s system to move offset credits from one account to another.
+
+1.2 Reserve Administrator
+The Reserve Administrator is responsible for monitoring all project activity and administering
+certain aspects of user accounts and system data. You may contact the Reserve Administrator
+at:
+        reserve@climateactionreserve.org
+        213-891-1444 ext. 2
+
+
+
+Please ensure that you are using the latest version of the User Guide                            1
+Climate Action Reserve User Guide                                                            May 2022
+
+
+
+
+2       Reserve Account Registration
+2.1 Who Is Eligible
+Any person or organization may apply for a Reserve account regardless of location or affiliation.
+The Reserve Administrator maintains the right to accept or reject new account applications. Any
+organization or individual whose account has been disabled due to misuse will not be eligible for
+a new account.
+
+2.2 Types of Accounts
+Different user account types include different functionalities to accommodate varying user
+needs. When you originally request an account, you may select from the following account
+types:
+
+        Project Developer. A project developer is an organization or individual that wishes to
+         develop projects that generate GHG offsets. This user type can transfer and manage
+         offset credits. A project developer must hold legal title and all beneficial ownership rights
+         with respect to all offset credits issued to its accounts or transferred to its account from
+         another account holder.
+        Verification Body. Verification bodies are trained and authorized by the Reserve or
+         ARB to verify projects and must meet certain accreditation requirements detailed within
+         the Reserve’s Verification Program Manual or California Cap-and-Trade regulation.
+         Verification bodies are not assessed account fees but must still agree to the Terms of
+         Use for the program.
+        Project Owner (Limited). A project owner is an organization or individual that may own
+         projects but does not develop or manage projects. This user type cannot create,
+         develop, or register projects, but can manage offset credits within their accounts. Project
+         owners hold legal title and all beneficial ownership rights to offset credits in their account
+         but have limited access to their project.
+        Trader/Broker/Retailer. This type of user may receive, manage and transfer offset
+         credits, but does not develop or register projects.
+        Client. Client accounts have the same functionality as trader/broker/retailer accounts,
+         but are intended for buyers who are primarily purchasing offset credits to hold or retire
+         and offset their emissions.
+
+2.3 Obtaining an Account
+To establish a Reserve account, users must do the following:
+
+    1. Agree to the Terms of Use (TOU)
+            Download a .pdf of the entire document for review from
+                climateactionreserve.org/how/program/documents
+            Under the Login section on the Reserve system home page, click “Register Here”
+    2. Proceed to choose your account type from
+       https://thereserve2.apx.com/mymodule/reg/AHAgreement.asp
+            Click “Agree” to all terms and conditions after review
+    3. Complete the New Account Application form online.
+    4. Upon completing the New Account Application form and clicking “Submit for Approval,”
+       the account manager entered by the applicant will receive an email notification to
+
+
+
+Please ensure that you are using the latest version of the User Guide                                 2
+Climate Action Reserve User Guide                                                     May 2022
+
+
+       activate the account. This activation must occur before the Reserve Administrator is
+       notified of the user’s pending account.
+    5. The Reserve Administrator will review the New Account Application form and request the
+       submittal of supporting documentation. The supporting documentation will undergo an
+       internal review process. After the account has been approved internally, an email
+       notification describing account approval will be sent to the account manager email
+       address provided in the New Account Application form. If materials are incomplete or
+       additional information is required, the Reserve Administrator will notify the account
+       manager. Furthermore, document requirements may vary for different users in order to
+       provide due diligence for activities carried out within the Reserve. The account manager
+       may begin using all functions of the system as soon as the account is approved.
+    6. Accounts will be invoiced for the Account Setup Fee upon account approval. Once the
+       invoice is created, the Reserve sends the account manager an email notification with
+       invoice and payment details. The invoice is made available online via the “My Invoices”
+       report within the Reserve for downloading and printing. Invoices must be paid within 30
+       days. Failure to pay will result in account inactivation.
+
+2.4 Designation of Authority
+If contractors, consultants or any other agent representing an account holder needs to obtain
+information or have access to an account he or she does not hold, the Designation of Authority
+form must be completed. The form, found at climateactionreserve.org/how/program/documents,
+must be signed by both the account holder and party requesting access to the account holder’s
+information. Send completed forms to reserve@climateactionreserve.org.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                        3
+Climate Action Reserve User Guide                                                           May 2022
+
+
+
+
+3       Layout of the Reserve
+3.1 The Dashboard and Display Modules
+The Dashboard is the first screen you see after setting up and logging into your account. It
+provides centralized access to the features you interact with most and is divided into Display
+Modules with specific functionalities, including account management, project management,
+offset credit management, and message notification. The Dashboard is customizable, allowing
+you to add, remove and move the most accessed modules to centralized locations and least
+accessed modules further down the page.
+
+The Display Modules available in the Dashboard depend on the account type. The possible
+modules include:
+
+        Public Reports                                         Manage Projects
+        Account Management                                     Message Notification
+        Account Information                                    Incoming Offset Credit Transfers
+        My Account Setup                                       Outgoing Offset Credit Transfers
+        My Reports                                             View, Transfer and Retire Offset
+        Verification Body Reports                               Credits
+
+Take some time to familiarize yourself with the Reserve when you first log in by clicking on the
+various links to see what information is available. At any time while using the Reserve, you can
+return to the Dashboard by clicking the Home link in the upper left hand corner of the page.
+
+
+
+
+Figure 3.1. The Reserve Dashboard
+
+3.2 Customizing the Dashboard
+To customize the Dashboard, start by clicking on the Customize Page link in the upper right
+corner of the Dashboard. This brings you to a page where you can add, remove and move the
+
+
+Please ensure that you are using the latest version of the User Guide                               4
+Climate Action Reserve User Guide                                                     May 2022
+
+
+available modules. After making changes, be sure to save them by clicking the Save button on
+the bottom left of the page. The Reserve recommends showing all available modules when you
+first begin to use the program. Over time, as users become familiar with which Display Modules
+are accessed most often, they may decide to remove modules used less frequently.
+
+
+
+
+Figure 3.2. Customize Page
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                        5
+Climate Action Reserve User Guide                                                                  May 2022
+
+
+
+
+4      Account Access
+4.1 The Account Manager
+The person who requests an account with the Reserve is designated the account manager and
+the primary contact for the Reserve. The account manager is responsible for setting up the
+organization contact and billing information as well as receiving communication from the
+Reserve Administrator. The account manager is also responsible for creating additional logins
+for those in the organization who need to access the Reserve (see Section 4.6 below).
+
+4.2 Account Information
+The Account Information screen can be accessed by clicking on the Change Profile link in the
+My Account Setup module. The Account Information screen contains all information initially
+entered when completing a new account application. Once the account has been approved by
+the Reserve Administrator, the account manager can update the contact and address
+information for the company. Only the Reserve Administrator can update the organization name
+and the account login name.
+
+4.2.1 Account Information Used in the Reserve
+The Reserve ensures that certain information relative to the accounts maintained by its users
+remains privileged and confidential. The following is the contact information collected by the
+Reserve and how it is used:
+
+Table 4.1. Contact Information Collected
+    Contact Information                                Where Used
+    Organization’s address, phone, email               Reserve Administrator only
+                                                       Displays on the public report Participating
+    Organization’s city, state, country, and website
+                                                       Companies
+    Organization’s billing address, billing contact
+                                                       Reserve Administrator only
+    person, phone, and email
+    Account manager’s name, address, phone and
+                                                       Reserve Administrator only
+    email
+                                                       Displays on the following public reports:
+                                                       • Projects
+                                                       • ARB Compliance Projects
+    Account manager’s name
+                                                       • Project Offset Credits Issued
+                                                       • Accounts Disclosed to Public
+                                                       • Retired Offset Credits
+    Company name, account holder type, company         Displays on the account holder report Participating
+    city/state, country, and website.                  Companies. This report is publicly accessible.
+    Each user with a login (non-account manager)
+                                                       Reserve Administrator only
+    name, address, phone, and email
+    Project contact name, phone and email              Reserve Administrator only
+                                                       Displays on the following public reports:
+                                                       • Projects
+    Project site location and state
+                                                       • Projects Offset Credits Issued
+                                                       • Retired Offset Credits
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                                     6
+Climate Action Reserve User Guide                                                            May 2022
+
+
+  Contact Information                                  Where Used
+  Project mailing address, contact name, phone,
+                                                       Reserve Administrator only
+  and email
+
+
+
+4.3 Best Practices for Account Protection
+
+       Use different passwords for all user accounts
+       Change passwords immediately if they may have been compromised
+       Never tell a password to anyone, including people who claim to be from customer
+        service or security
+       Never write down a password
+       Never communicate a password by telephone, e-mail, or instant messaging
+       Be careful to log off before leaving a computer unattended
+       Use the latest anti-virus protection programs
+       Do not access your account from public locations where others could capture your
+        confidential information
+       Always use strong passwords
+
+A strong password:
+
+       Is at least seven characters long and contains at least one number and one letter
+        (requirement)
+       Does not contain your username, real name, or company name
+       Does not contain a complete dictionary word
+       Is significantly different from previous passwords. Passwords that increment
+        (Password1, Password2, Password3 ...) are not strong
+       Contains characters from each of the following four groups: Uppercase letters (A, B,
+        C...), Lowercase letters (a, b, c ...), Numerals (0, 1, 2, 3, 4, 5, 6, 7, 8, 9), Symbols found
+        on the keyboard (all keyboard characters not defined as letters or numerals)
+
+4.4 Modifying Account Information
+If you are the account manager, you can modify account information by clicking the Change
+Profile link from the My Account Setup module. You can change all your information except for
+the following:
+
+       Organization Name
+       Account Holder Type
+       Login Name
+       Security Question
+       Security Answer
+
+To change your password, please click the Change Password link at the upper right-hand
+corner of the dashboard.
+
+    1. Ensure that your login name appears in the Login Name field.
+    2. Enter your current (old) password in the Current Password field.
+    3. Enter your new password in the New Password field. Your new password must be at
+       least seven characters in length and must contain at least one number and one letter.
+    4. Confirm your new password by reentering it in the Reenter Password field.
+
+
+Please ensure that you are using the latest version of the User Guide                                    7
+Climate Action Reserve User Guide                                                          May 2022
+
+
+    5. Click Change to save your new password. You will return to the login page, where you
+       must sign in with the new password.
+
+
+
+
+Figure 4.1. Change Password Detail
+
+4.5 Privacy
+The Reserve is intended to serve account holders by allowing the use of functions such as
+submitting projects and transferring offset credits, and to serve the public by displaying the listed
+projects currently in development or registered projects that have been issued offset credits.
+Account holders do have some options in controlling what information to display to the public;
+however, for transparency purposes the following information will, by default, be publicly
+available:
+
+       Organizations participating as account holders in the Reserve
+       Account manager’s name
+       Projects that have been listed on the Reserve
+       Any information disclosed on documents uploaded to the Reserve that have a public
+        privilege type
+       Offset credits that have been generated and registered after the final approval of a
+        project
+       All retired offset credits
+       Serial numbers of offset credits issued (following a search by the user)
+
+Information that is never shared with the public includes:
+
+       Company street addresses
+       Company phone and email address
+       Internal company information, such as the billing address
+       Any individual’s contact information
+
+Your contact information will not be shared with external parties and will only be used by the
+Reserve to notify you of important system occurrences.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                              8
+Climate Action Reserve User Guide                                                               May 2022
+
+
+4.6 Creating Additional Logins
+Additional logins can be created with similar privileges to those of the account manager or
+limited access privileges for those who might only need to view but not edit information.
+
+To add a new login, click the Review/Edit/Add Logins link from the Account Management
+module. After clicking the “Add New Login” button at the top of the next screen, complete the
+Login Information screen, selecting one of the following user privileges:
+
+       Admin, with equal privileges to the account manager’s
+       Limited Access, with restricted rights to projects and offset credit accounts
+
+The account manager will set up a temporary password for the new login that contains at least
+seven characters with at least one number and one letter. The account manager must provide
+the login name and password to the user in order for the user to access the Reserve. The user
+will be prompted to change the password when first attempting to log in.
+
+4.7 Configuring User Access to Projects and Accounts
+The default for the Limited Access login privilege is a restriction on creating or viewing projects
+or viewing any offset credit accounts. The Admin-type account is given the same privileges as
+the account manager by default.
+
+The account manager may edit the privileges associated with any Limited Access login by
+clicking Edit Privileges from the screen showing the list of logins. The following privileges may
+be assigned:
+
+       Ability to create a new project
+       Ability to view selected projects
+       Ability to edit selected projects
+       Ability to view the primary offset credit account (where offset credits are initially
+        deposited at issuance)
+       Ability to view selected offset credit accounts
+
+4.8 Account Inactivation and Cancellation
+Account holders who use the Reserve for anything other than its intended purposes or who are
+delinquent with their account fees may have their accounts inactivated and/or cancelled by the
+Reserve Administrator. Accounts are not immediately inactivated without notice unless
+inappropriate or malicious behavior is observed.
+
+Accounts with outstanding fees will be sent an email that warns the account manager of account
+inactivation if the invoice due is not paid. If the account manager does not respond or issue
+payment within 30 days after notification, the Reserve will inactivate the account, and move the
+phase of the active projects in the account to “Inactivated by Administrator”. You will not have
+access to the offset credits or the projects in your account until all past due invoices and
+associated late fees are paid. After outstanding fees are paid, the account will be re-opened and
+assessed a re-activation fee. If an invoice is outstanding for 6 months, the account will be
+closed and all active projects in the account will be moved to “Completed”.
+
+Account holders may request that their accounts be closed at any time. However, the annual
+account maintenance fee cannot be refunded or pro-rated. The account manager listed on the
+
+
+
+Please ensure that you are using the latest version of the User Guide                                  9
+Climate Action Reserve User Guide                                                       May 2022
+
+
+account is the only individual that can request account closure. All outstanding fees must be
+paid in full before an account can be closed.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                           10
+Climate Action Reserve User Guide                                                      May 2022
+
+
+
+
+5       Reserve Communication
+The Reserve generates automated emails relating to account status, project status, or invoicing
+to account administrators and project contacts associated with the account. Messages are also
+posted in the Message Notification module in the Reserve software. Direct correspondence from
+the Reserve Administrator will go to the account manager or to specified project contacts, as
+appropriate.
+
+5.1 Email Notification
+The Reserve Administrator will send email notifications whenever activity occurs in an account
+holder’s account. These emails provide notification regarding the next course of action that is
+required in the account and follows the Reserve’s programmatic requirements. These email
+notifications will also appear in the account in the Message Notification module.
+
+5.2 Message Notification
+The Message Notification module only displays a total of 5 messages, which must be less than
+30 days old.
+
+The Message Notification module receives and displays messages that were sent from the
+Reserve Administrator. The table has the following columns:
+
+        Message Type: To whom the message was sent (My Messages, Account Holders, All,
+         or Public)
+        Message: The Message column displays the first few words of each message. Clicking
+         a link in the Message column opens the Messages screen, which allows you to view the
+         entire message
+        Receive Date: Date and time the message was received
+
+
+
+
+Figure 5.1. Message Notification Module
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                         11
+Climate Action Reserve User Guide                                                       May 2022
+
+
+By clicking the More... link in the module, a screen will open allowing you to view all your
+messages, including messages that are more than 30 days old. This screen also contains tabs
+that are used to filter the messages. Clicking on a tab with a specific message type will filter
+messages so only the messages of the same type will be displayed. Clicking a link in the
+Message column in the Message Notification module opens the Read Message window, which
+allows you to view the entire selected message and the date the message was sent. When you
+have finished reading the message, click Done to exit.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                         12
+Climate Action Reserve User Guide                                                          May 2022
+
+
+
+
+6       Reports
+6.1 Standard Report Features
+There are two categories of Reserve reports:
+
+        Public Reports. Available to the public
+        My Reports. Customized to the needs of the different user types (project developers,
+         trader/broker/retailers, verification bodies, etc.)
+
+In addition to displaying data, some account holder reports also provide links to screens where
+data can be updated. Public reports only display data and documents, and cannot be used to
+edit project information.
+
+All reports have common features that help you review and analyze information, as well as
+provide access to the underlying data reflected in the reports. Wherever there is hyperlinked text
+within a report, you can click on it to access the underlying data - such as projects or invoices.
+
+The standard report features are:
+
+
+
+
+Figure 6.1.Sorting Columns Detail
+
+        Sorting Report Records by Column. Allows the report tables to be sorted in ascending
+         or descending order using any column. To sort in ascending (A-Z) order, click the up
+         arrow in the header of the column you wish to sort. To sort in descending (Z-A) order,
+         click the down arrow in the header of the column you wish to sort.
+
+
+
+
+Figure 6.2. Downloading Reports Detail
+
+        Downloading Reports. All reports can be downloaded immediately in .csv, .txt, or .pdf
+         format. To download a report, simply click on one of the download icons located at the
+         upper right of the screen. Both .csv and .txt formats can be opened with a spreadsheet
+         application. Downloading a report in .csv file format will allow you to open the report in
+         Microsoft Excel. Downloading a report in .pdf file format will allow you to open the report
+         in a .pdf reader application such as Adobe Reader and Acrobat.
+
+
+
+
+Figure 6.3. Search Reports Detail
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                             13
+Climate Action Reserve User Guide                                                          May 2022
+
+
+       Searching for Specific Report Records. For reports that have many records, you can
+        filter or search the report to locate a specific record. Simply click on the magnifying glass
+        icon located at the upper right of the screen. A screen will open allowing you to perform
+        advanced data searches and filtering.
+
+
+
+
+Figure 6.4. Print Reports Detail
+
+       Printing Reports. To print a report, press the print icon located at the upper right of the
+        screen. A new window will open displaying the report in print view.
+
+
+
+Figure 6.5. Multiple Page Navigation Detail
+
+       Working with Multiple Page Reports. If there are more than 50 records in the report,
+        the data will be listed on multiple pages. You will be able to find the page you want using
+        the navigation buttons that appear underneath the last record. From left to right, the
+        navigation buttons are:
+
+               First: Clicking the first button takes you to the first page of the current report.
+               Previous: Clicking the prev button takes you to the previous page of the current
+                report.
+               Go To: Clicking the goto button allows you to specify a page within the current
+                report and takes you to that page.
+               Next: Clicking the next button takes you to the next page of the current report.
+               Last: Clicking the last button takes you to the last page of the current report.
+
+6.2 My Reports
+My reports are designed to display information specific to a user’s role. For example, project
+developers and trader/broker/retailers have the following reporting options:
+
+       My Event Log. Records all transactions made by the account holder.
+       My Accounts. Displays the named or default offset credit accounts and their balances.
+       My Linked Account Holders. Displays any accounts linked to the user’s account.
+       My Offset Credits. Displays the offset credits in the primary, active, and retirement
+        accounts.
+       My Invoices. An online statement of fees issued for Reserve services.
+       My Recurring Transfers. Displays the details of active recurring transfers.
+       My Offset Credit Transfer History. Shows offset credits transferred to and from
+        account.
+
+Project verification bodies and reviewers have access to the following reports:
+
+       My Event Log. Records all transactions made by the account holder.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                                 14
+Climate Action Reserve User Guide                                                       May 2022
+
+
+       My Projects. Provides verification bodies and reviewers access to the projects to which
+        they have been assigned. Verification bodies may review the project data and submit
+        documents. Reviewers may review the project data and documents and add comments.
+
+6.3 Public Reports
+The public (non-account holders) and all account holders have access to the following reports:
+
+       Participating Companies. Lists organizations that have an active Reserve account but
+        does not include address or contact information. This prevents the public from creating
+        mailing or phone lists from the report.
+       Projects. Displays projects that are listed or registered with the Reserve. Listing and
+        registration dates, project location, and any project notes entered by the account holder
+        are also displayed. Does not display any cancelled or rejected projects.
+       ARB Compliance Projects. Displays ARB compliance projects that are listed or
+        registered with the Reserve. Listing and registration dates, project location, and any
+        project notes entered by the account holder are also displayed. Does not display any
+        cancelled or rejected projects.
+       Project Offset Credits Issued. Shows projects for which offset credits have been
+        issued and the original CRT or Registry Offset Credit (ROC) issuance quantity by
+        vintage. Also displays the quantity of credits cancelled for ARB compliance purposes.
+        Does not indicate the current status of the project’s credit balance.
+       Search Serial Numbers. Allows searching for an offset credit serial number by batch
+        number or block start or end numbers. The results include whether the credits are active
+        or retired, and include the time and date when the credits were retired.
+       Accounts Disclosed to Public. Displays the active or retired offset credit balances that
+        account holders have chosen to be shown to the general public.
+       Retired Offset Credits. Displays the offset credits that have been retired by account
+        holders.
+       Canceled Offset Credits. Displays the offset credits that have been cancelled in the
+        Reserve system by project name and vintage. Cancelation is generally due to
+        conversion of Early Action Offset Credits or ROCs to ARB offset credits.
+       ODS Projects’ Certificates of Destruction. Provides information on ODS project
+        destruction events, including the project name, the name of the destruction facility, and
+        the certificate of destruction (COD) identification number.
+       Buffer Pool Account Balance. Displays the quantity of forest project offset credits
+        deposited into/removed from the Reserve buffer pool by year.
+       Credit Status. Displays the status of all credits issued by the Reserve. The statuses
+        include Active, Retired, Cancelled, and Exported.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                          15
+Climate Action Reserve User Guide                                                         May 2022
+
+
+
+
+7       Overview of the Project Registration Process
+A number of steps that involve project developers, their authorized representatives, verifiers,
+and the Reserve Administrator are required for a voluntary project to be registered and issued
+CRTs. These steps may be undertaken by anyone with a project developer account or any
+agent with designation of authority as described in the Terms of Use agreement for the
+Reserve.
+
+The general project registration steps are as follows:
+
+    1. The project developer or its authorized representative submits the project and pays
+        project submittal fee.
+    2. The Reserve reviews the project, ensures that it meets the eligibility requirements, and
+        publicly lists the project.
+    3. The project developer selects an approved verification body in the Reserve.
+    4. The verifier submits a Notification of Verification Activities/Conflict of Interest
+        (NOVA/COI) form.
+    5. The Reserve reviews the NOVA/COI form and approves the proposed verification
+        activities.
+    6. The project developer enters project data, uploads attestations, and submits the project
+        for verification.
+    7. The verifier completes the verification activities and submits the project verification
+        report.
+    8. The Reserve reviews and approves the data and the verification report.
+    9. The project developer pays the offset credit issuance fee.
+    10. The project developer transfers or retires offset credits.
+
+Please see Appendix B for a flow diagram of these steps.
+
+7.1 Project Status: New, Listed, and Registered
+A project in the Reserve is assigned a different status as it reaches certain milestones. The
+various status identifications that a project may have are:
+
+        New: The Project Setup has been completed in the Reserve, but the Project Submittal
+         Form has not been uploaded and submitted to the Reserve Administrator. The project is
+         not yet displayed to the public and is not available to anyone except the project
+         developer and the Reserve Administrator.
+        Listed: The Project Submittal Form has been uploaded by the project developer or its
+         authorized representative and the project has been approved by the Reserve
+         Administrator. The Project Submittal Form is made available to the public.
+        Registered: The project has undergone verification and has been submitted to and
+         approved by the Reserve. The Verification Report, Verification Statement, and
+         Attestations are made public.
+        Completed: The project has either reached the end of its crediting period(s) and is no
+         longer being issued offset credits or has stopped reporting at the request of the account
+         holder or due to administrative issues. The project information remains publicly available
+         in the Reserve software indefinitely. The specific reason for completion is not disclosed
+         to the public.
+        Cancelled by Developer: The project was cancelled by the project developer for
+         circumstantial issues. The reasons for cancellation are not disclosed to the public.
+
+
+Please ensure that you are using the latest version of the User Guide                             16
+Climate Action Reserve User Guide                                                             May 2022
+
+
+        Rejected by Administrator: The project failed to meet protocol specific eligibility
+         requirements or is not eligible under the Reserve program. The reasons for rejection are
+         not disclosed to the public.
+
+There are deadlines associated with project verification and registration. Please refer to the
+Reserve Offset Program Manual for more information.
+
+7.2 Project Phases
+As a project goes through the registration process, it also goes through several phases. These
+phases notify you of any action that is necessary to move your project through registration.
+
+Table 7.1. Voluntary Project Phases
+    Status               Phase                      Next Step                     Explanation
+                Project Submittal            Submit Project Submittal   A new project has been
+                Pending                      Form                       created. The project
+                                                                        developer is in the process of
+                                                                        completing the project
+                                                                        submittal.
+                Project Submitted –          Pay Submittal Fee          The project has been
+        New     Submittal Fee Due                                       officially submitted.The
+                                                                        project information has been
+                                                                        entered and all submittal
+                                                                        forms have been uploaded.
+                                                                        The next step is for the
+                                                                        project developer to pay the
+                                                                        Project Submittal Fee.
+                Project Submittal            Administrator Review       Reserve staff will review the
+                Ready for Review             Project                    project submittal for listing.
+                                                                        At this phase no action is
+                                                                        required by the project
+                                                                        developer.
+                Resubmit Project             Revise Project Submittal   Reserve staff has reviewed
+                                                                        the project submittal and
+                                                                        found it insufficient, requiring
+        New                                                             a resubmittal of the project.
+                                                                        The project developer must
+                                                                        resubmit the project.
+                Resubmit Project (4th        Revise Submittal and       Reserve staff has found the
+                attempt)                     Pay Project Resubmittal    project submittal insufficient
+                                             Fee                        for a third time. The project
+                                                                        developer must resubmit the
+                                                                        project and pay the Project
+                                                                        Resubmittal Fee.
+                Project Submittal            Select Verification Body   Reserve staff has reviewed
+                Accepted                                                the project submittal and
+                                                                        found it sufficient for listing.
+                                                                        The project now appears in
+     Listed
+                                                                        the Projects public report.
+                                                                        The project developer can
+                                                                        now select a verification
+                                                                        body for the project.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                                 17
+Climate Action Reserve User Guide                                                             May 2022
+
+
+    Status                Phase                      Next Step                    Explanation
+                Verification Deferral        Administrator Review       The project developer has
+                Request Ready for            Verification Deferral      submitted the deferral
+                Review                       Request                    documentation and the
+                                                                        Reserve will approve after an
+                                                                        internal review. See Section
+                                                                        10.3 for a complete
+                                                                        discussion of the deferral
+                                                                        process.
+                Verification Deferred        Select Verification Body   The project developer has
+                                             or Defer Verification      the option to continue with a
+                                                                        deferred verification by
+                                                                        uploading the applicable
+                                                                        documentation or proceeding
+                                                                        to verification for the purpose
+                                                                        of registering offset credits.
+                Verification Body            Verification Body Submit   The project developer has
+                Selected                     NOVA/COI                   selected a verification body
+                                                                        for the project, the
+                                                                        verification body must submit
+                                                                        a Notification of Verification
+                                                                        Activities/Conflict of Interest
+                                                                        (NOVA/COI) form.
+                NOVA/COI Ready for           Administrator Review       The submitted NOVA/COI
+                Review                       NOVA/COI                   form is undergoing review by
+                                                                        Reserve staff. No action is
+                                                                        required by the project
+                                                                        developer or the verification
+                                                                        body.
+                Resubmit NOVA/COI            Verification Body          Reserve staff has reviewed
+                                             Resubmit NOVA/COI          the NOVA/COI form and
+                                                                        found it insufficient. The
+                                                                        verification body must revise
+                                                                        and resubmit the NOVA/COI.
+                NOVA/COI Approved            Submit Project Data To     Reserve staff has reviewed
+                                             Verification Body          and approved the
+                                                                        NOVA/COI. The project
+                                                                        developer may submit
+     Listed                                                             project emissions/reductions
+                                                                        data, upload documents
+                                                                        required for verification, and
+                                                                        submit the project for
+                                                                        verification.
+                Ready for Verification       Verification Body Submit   The project developer has
+                                             Verification Documents     officially submitted the
+                                                                        project and cannot edit
+                                                                        project information. The
+                                                                        verification body must submit
+                                                                        the verification documents.
+                Resubmit Project Data        Revise Project Data        The verification body or the
+                                                                        Reserve requires the project
+                                                                        emissions/reductions data to
+                                                                        be revised. The project
+
+
+
+Please ensure that you are using the latest version of the User Guide                                18
+Climate Action Reserve User Guide                                                            May 2022
+
+
+    Status                Phase                      Next Step                    Explanation
+                                                                        developer must revise data
+                                                                        and resubmit the project for
+                                                                        verification.
+                Verification Body            Submit Project for Final   The verification body has
+                Opinion Submitted            Approval                   officially submitted the
+                                                                        verification documents. The
+                                                                        next step is for the project
+                                                                        developer to review the
+                                                                        verification report and submit
+                                                                        the project to the Reserve for
+                                                                        final review.
+                Project Submitted for        Administrator Approve      The project developer has
+                Final Approval               Project                    officially submitted the
+                                                                        project to the Reserve for
+                                                                        final review. Reserve staff
+                                                                        will review the project for
+                                                                        registration.
+                Resubmit Verification        Verifier Revise Opinion    Reserve staff has found the
+                Body Documents                                          verification documents
+                                                                        insufficient and requires that
+                                                                        the verification body revise
+                                                                        and resubmit the documents.
+                                                                        Once the verification
+                                                                        documents are resubmitted
+                                                                        the project developer will
+                                                                        have to resubmit the project
+                                                                        to the Reserve for final
+                                                                        approval.
+                Registered                   Pay Issuance Fee           Reserve staff has found that
+                                                                        the verification documents
+                                                                        are sufficient and has
+                                                                        approved the project. The
+                                                                        project appears on the
+                                                                        Projects public report as
+                                                                        “Registered” and the credits
+                                                                        are placed in the account
+                                                                        holder’s pending account.
+                                                                        The next step is for the
+                                                                        project developer to pay the
+                                                                        Offset Credit Issuance Fee to
+  Registered                                                            obtain their credits.
+                Registered, Offset           Select Verification Body   The project developer has
+                Credits Released             or Defer Verification      paid the Offset Credit
+                                                                        Issuance Fee and the credits
+                                                                        are issued to the project
+                                                                        developer. The offset credits
+                                                                        appear on the Offset Credts
+                                                                        Issued public report. The
+                                                                        next step is for the project
+                                                                        developer to select a
+                                                                        verification body for the
+                                                                        subsequent verification or
+                                                                        upload the applicable
+
+
+
+Please ensure that you are using the latest version of the User Guide                               19
+Climate Action Reserve User Guide                                                             May 2022
+
+
+    Status                Phase                      Next Step                  Explanation
+                                                                        documents to proceeded
+                                                                        with a deferred verification.
+
+Table 7.2. Compliance Project Phases
+    Status               Phase                      Next Step                     Explanation
+                Project Submittal            Submit Project Submittal   A new project has been
+                Pending                      Form                       created. The Offset Project
+                                                                        Operator/Authorized Project
+                                                                        Designee (OPO/APD) is in
+                                                                        the process of completing
+                                                                        the Application for Listing.
+                Project Submitted –          Pay Submittal Fee          The project has been
+      New       Submittal Fee Due                                       officially submitted.The
+                                                                        project information has been
+                                                                        entered and all listing forms
+                                                                        and required attachements
+                                                                        have been uploaded. The
+                                                                        next step is for the OPO/APD
+                                                                        to pay the Project Listing
+                                                                        Fee.
+                Project Submittal            Administrator Review       Reserve staff will review the
+                Ready for Review             Project                    project listing. At this phase
+                                                                        no action is required by the
+                                                                        OPO/APD.
+                Resubmit Project             Revise Project Submittal   Reserve staff has reviewed
+                                                                        the project listing and found it
+                                                                        insufficient, requiring a
+                                                                        resubmittal of the project.
+      New
+                                                                        The OPO/APD must
+                                                                        resubmit the project.
+                Resubmit Project (4th        Revise Submittal and       Reserve staff has found the
+                attempt)                     Pay Project Resubmittal    project submittal insufficient
+                                             Fee                        for a third OPO/APD
+                                                                        developer must resubmit the
+                                                                        project and pay the Project
+                                                                        Resubmittal Fee.
+                Project Submittal            Select Verification Body   Reserve staff has reviewed
+                Accepted                                                the project listing and found it
+                                                                        sufficient. The project now
+                                                                        appears in the Projects
+                                                                        public report. The OPO/APD
+                                                                        can now select a verification
+     Listed                                                             body for the project.
+                OPDR Submittal Ready         Administrator Review       The OPO/APD is required to
+                for Review                   OPDR                       upload the OPDR within 4
+                                                                        months of the end date of the
+                                                                        reporting period or prior to
+                                                                        the site visit date, whichever
+                                                                        comes first.
+                OPDR Approved                Select Verification Body   The Reserve has reviewed
+     Listed
+                                                                        the OPDR for accuracy and
+
+
+
+Please ensure that you are using the latest version of the User Guide                                   20
+Climate Action Reserve User Guide                                                             May 2022
+
+
+    Status                Phase                      Next Step                    Explanation
+                                                                        the OPO/APD can contract
+                                                                        out for verification services
+                OPDR Submittal and           Administrator Review       After the initial verification,
+                Defferal Ready for           OPDR and Defferal          the OPO/APD can choose to
+                Review                       Request                    defer verification. The OPDR
+                                                                        must be submitted by the
+                                                                        applicable reporting
+                                                                        deadlines during a deferred
+                                                                        verification. See Section 10.3
+                                                                        for more detailed information
+                                                                        on deferred verification. The
+                                                                        Reserve will review the
+                                                                        OPDR and defferal request
+                                                                        and approve when the
+                                                                        information submitted is
+                                                                        deemed complete.
+                OPDR Approved –              Submit Data and Forms      The verification is deferred
+                Verification Deferred        to Offset Project          for the maximum length of
+                                             Registry                   time allowed for the protocol
+                                                                        type.
+                Verification Body            Verification Body Submit   The OPO/APD selected a
+                Selected                     COI and NOVS               ARB approved verification
+                                                                        body. The verificaiton body
+                                                                        must submit the Notice of
+                                                                        Verification Services and
+                                                                        Evaluation of Conflict of
+                                                                        Interest forms.
+                COI Ready for Review         Administrator Review       The Reserve reviews the
+                                             COI                        NOVS/ECOI forms.
+                Resubmit COI                 Verification Body          The NOVS/ECOI forms must
+                                             Resubmit COI               be resubmitted.
+                COI Approved                 Submit Project Data and    The NOVS and ECOI forms
+                                             Forms to Offset Project    were approved. The
+                                             Registry                   OPO/APD must enter in
+                                                                        project emissions/reductions
+                                                                        data to proceed with
+                                                                        verification.
+                Ready for Verification       Verification Body Submit   The verification body must
+                                             Verification Documents     upload an offset verification
+                                                                        report, offset verification
+     Listed
+                                                                        statement, sampling plan,
+                                                                        verification plan, and issues
+                                                                        log.
+                Resubmit Project Data        Revise Project Data        The verification body has
+                                                                        requested changes to the
+                                                                        OPO/APD’s
+     Listed                                                             emissions/reductions data.
+                Verification Body            Submit Project for Final   The verification body has
+                Opinion Submitted            Approval                   uploaded the appropriate
+                                                                        verification documentation.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                                21
+Climate Action Reserve User Guide                                                           May 2022
+
+
+    Status               Phase                       Next Step                    Explanation
+                Project Submitted for        Administrator Approve      The Reserve conducts a
+                Final Approval               Project                    review of the verification
+                                                                        documentation.
+                Resubmit Verification        Verification Body Revise   The Reserve has requested
+                Body Documents               Opinion                    revisions to the verification
+                                                                        documentation. The
+                                                                        verification body is required
+                                                                        to make the corrections and
+                                                                        submit the project to the
+                                                                        OPO/APD for final review.
+                Registered                   Pay Issuance Fee           The project is registered and
+  Registered                                                            credits are placed in the
+                                                                        pending account.
+                Registered, Offset           Submit Data and Forms      The OPO/APD has payed
+                Credits Released             to Offset Project          the issuance fee. The credits
+                                             Registry                   are now in the active account
+                                                                        and available for transfer.
+
+
+
+7.3 Submitting a Project in the Reserve
+Anyone with a project developer account type may create a new project in the Reserve.
+However, all projects must meet the standards set forth in the Reserve protocols, available at
+climateactionreserve.org/how/protocols. All project submittal forms must be submitted through
+the Reserve software and cannot be mailed, emailed, or faxed to the Reserve. To submit a
+cooperative or aggregate, please see Section 7.4.
+
+To submit a project in the Reserve, complete the following steps:
+
+    1. Complete the project submittal forms. A list of required documents by project type
+       can be accessed here: http://www.climateactionreserve.org/how/projects/register/. All of
+       the project submittal forms can be downloaded here:
+       http://www.climateactionreserve.org/how/program/documents/
+
+
+
+
+Figure 7.1. Manage Projects Module
+
+    2. Log into the Reserve. Select the Submit New Project link from the Manage Projects
+       module; this will take you to the Project Setup screen to enter basic information about
+       the project, including the name, project type, location, and contact information.
+
+
+Please ensure that you are using the latest version of the User Guide                               22
+Climate Action Reserve User Guide                                                       May 2022
+
+
+
+        This screen also contains tabs to navigate between the Project Setup, Project
+        Documents, and Project Emissions/Reductions screens.
+
+        All fields on the Project Setup screen denoted with an asterisk must be completed. The
+        information entered should be consistent with the information on the project submittal
+        forms. Once all fields have been completed, you must select Save to save the
+        information entered and proceed to the Project Documents screen to upload the project
+        submittal forms.
+
+
+
+
+Figure 7.2. Project Setup Screen Detail
+
+        If you are not ready to upload the forms, you can click Home in the upper left of the
+        screen to exit to the dashboard or Logout to exit the software completely. Your project
+        information will remain saved.
+
+
+
+
+Figure 7.3. Manage Projects Module Detail
+
+    3. Uploading documents and forms. Uploading any document into the software follows
+       the same procedure. You are required first to select the appropriate vintage that the
+       document relates to; vintage is the year that the reductions or removals took place. For
+       project submittals, just choose the current year. Documents relating to future
+       verifications will be uploaded under their corresponding vintage. You also will be
+       required to select the document type (e.g., Project Submittal Form) and then click
+
+
+
+Please ensure that you are using the latest version of the User Guide                             23
+Climate Action Reserve User Guide                                                           May 2022
+
+
+        Browse to select the file on your computer (the file must be in .docx, .pdf, or .jpg format).
+        After you have chosen a file, click Upload. Once you have correctly uploaded a
+        document, it will appear below with the Vintage, file name as Documents, the Document
+        Type, the Document category, the Upload Date, and Uploaded by fields populated. The
+        Reserve will manage the privilege type.
+
+
+
+
+Figure 7.4. Project Documents Screen Detail
+
+    4. Submit project for review. Once the documents have been uploaded you must click
+       Submit Project to submit your project for review. You will be invoiced for the Project
+       Submittal Fee.
+
+        If you are not ready to upload the forms, you can click Home in the upper left of the
+        screen to exit to the dashboard or Logout to exit the software completely and your
+        project information and project documents will remain saved. When your project is ready
+        for review, you must successfully submit your project for review by clicking Submit
+        Project.
+
+    5. Pay Project Submittal Fee. Once a project has been submitted, an invoice is
+       automatically generated and the account holder has 30 days to complete payment. For
+       information on fees, invoicing, and payments, please refer to Section 16. After you
+       submit a project, the Reserve will review your project within 10 business days and
+       approve it or request further information. Listing indicates that the project qualifies under
+       the Reserve’s protocols based on the information you provided, but it does not
+       guarantee that the project can be verified or that it will be issued offset credits.
+
+You may make three attempts to submit a project after initial project submission. If the project
+requires a fourth attempt to be listed (due to substantial issues with the project submittal), you
+will be invoiced for an additional Project Submittal Fee before the Reserve approves the project.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                              24
+Climate Action Reserve User Guide                                                        May 2022
+
+
+When your project submittal is approved, the project will display on the projects public report as
+“Listed”.
+
+7.4 Submitting a Cooperative or Aggregate
+Anyone with a project developer account type may create a new cooperative or aggregate in the
+Reserve. However, all projects must meet the standards set forth in the Reserve protocols,
+available at climateactionreserve.org/how/protocols. All project submittal forms must be
+submitted through the Reserve software and cannot be mailed, emailed, or faxed to the
+Reserve.
+
+To submit a project in the Reserve, complete the following steps:
+
+    1. Complete a cooperative or aggregate submittal form. All of the project submittal
+       forms can be downloaded here:
+       http://www.climateactionreserve.org/how/program/documents/
+
+
+
+
+Figure 7.5 Manage Projects Module Detail
+
+    2. Log into the Reserve. Select the Add New Cooperative/Aggregate link from the
+       Manage Projects module; this will take you to the Cooperative/Aggregate screen to enter
+       basic information about the project, including the name, cooperative/aggregate type,
+       location, and contact information.
+
+        This screen also contains tabs to navigate between the Project Setup, Project
+        Documents, Project Emissions/Reductions, and Cooperative Aggregate Linked Projects
+        screens.
+
+        All fields on the Cooperative/Aggregate Setup screen denoted with an asterisk must be
+        completed. The information entered should be consistent with the information on the
+        cooperative or aggregate submittal form. Once all fields have been completed, you must
+        select Save to save the information entered and proceed to the Project Documents
+        screen to upload the cooperative or aggregate submittal form.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                           25
+Climate Action Reserve User Guide                                                        May 2022
+
+
+
+
+Figure 7.6. Cooperative/Aggregate Setup Page Detail
+
+        If you are not ready to upload the forms, you can click Home in the upper left of the
+        screen to exit to the dashboard or Logout to exit the software completely. Your
+        cooperative or aggregate information will remain saved.
+
+
+
+
+Figure 7.7. My Cooperative/Aggregate Detail
+
+    3. Uploading the submittal form. Once the cooperative or aggregate submittal form is
+       complete, you will upload it to the Project Documents screen. Select the vintage (the
+       current year), the Document Type (Project Submittal), and select the appropriate form
+       from your computer (the file must be in .docx or .pdf format). Once you have correctly
+       uploaded a document, it will appear below with the Vintage, file name as Documents, the
+       Document Type, the Document Category, the Upload Date, and Uploaded by fields
+       populated. The Reserve will manage the privilege type.
+
+
+
+
+Figure 7.8. Project Documents Screen Detail
+
+
+Please ensure that you are using the latest version of the User Guide                           26
+Climate Action Reserve User Guide                                                       May 2022
+
+
+
+    4. Once the cooperative or aggregate has been saved, you will create projects following
+       the steps outlined in Section 7.3. Be sure to select the cooperative/aggregate that has
+       already been created in the dropdown on the Project Setup screen. This will link that
+       new project to the cooperative or aggregate.
+
+        Each linked project will need to have its own project documents uploaded before
+        submitting the group, including a project submittal form and a physical boundary map.
+
+
+
+
+Figure 7.9. Project Setup Screen Detail
+
+    5. When all projects are linked and ready for submittal, select the cooperative or aggregate
+       from the homepage. Select the Cooperative Aggregate Linked Projects screen, then
+       select Submit Group to submit your cooperative or aggregate for review. You will be
+       invoiced for the Project Submittal Fee.
+
+When your project submittals are approved, the projects will display on the projects public report
+as “Listed”.
+
+After project submittal approval, the projects in the cooperative or aggregate will move through
+project phases independently. For the rest of the projects’ phases, please follow the steps
+outlined in this guide for each individual project within the cooperative or aggregate.
+
+7.5 Transferring an Existing Project from another Registry
+You may transfer a project from another offset registry, but you must submit a Registry Project
+Transfer Attestation Form (available at climateactionreserve.org/how/program/documents).The
+project must be removed from the other registry before your project becomes registered on the
+Reserve.
+
+7.6 Making Changes to Project Submittal Forms
+After you have submitted your project, you are restricted from personally changing project
+information. You are only allowed to change the project contact information.
+
+If you discover an error after your project has been submitted, please contact the Reserve
+Administrator, who can help you upload another Project Submittal Form or change Project
+Setup information. If you need to replace any type of document uploaded to the Reserve, click
+Edit next to the document name and click the Remove button before sending a new file. The
+new document will be “Private” and not available to the public. You must notify the Reserve
+
+
+
+Please ensure that you are using the latest version of the User Guide                            27
+Climate Action Reserve User Guide                                                               May 2022
+
+
+Administrator of the revisions to the document and the Reserve Administrator will review the
+changes and then make the document public.
+
+If significant project information (i.e., information that affects project eligibility criteria) has
+changed after the project has been listed, the project must be de-listed and resubmitted for
+review.
+
+7.7 Project Documents Displayed to the Public
+Documentation that is uploaded to the Reserve can have a private or public privilege. Project
+documents that are private are not viewable by the public. All listed and registered projects will
+have the following documentation made public after the Reserve approves the documentation:
+
+       Voluntary Projects:
+            Project Submittal Form
+            Attestation of Title
+            Attestation of Regulatory Compliance
+            Attestation of Voluntary Implementation
+            Verification Report
+            Verification Statement
+            Positive Variance Determinations
+            Positive Extension Determinations
+            Positive Extraordinary Circumstances Determinations
+            Account Holder Project Transfer Form
+            Project Emissions Reductions page in the Reserve’s online system
+            Approved SDG Reporting Tool
+
+       ARB Compliance Projects:
+           Application for Listing
+           Offset Verification Statement
+           Offset Project Data Report
+           Account Holder Project Transfer Form
+           Project Emissions Reductions page in the Reserve’s online system
+
+Depending on the project type, you may also have publicly available maps, diagrams and start
+date documentation. The following documentation is never made public:
+
+       Verification List of Findings
+       Monitoring Plans/Reports
+       Requests for Project Variances
+       Requests for Project Extensions
+       Negative Variance Determinations
+       Negative Extension Determinations
+       Negative Extraordinary Circumstances Determinations
+       NOVA/COI Forms
+       Offset Verification Report (ARB Compliance Projects Only)
+
+A list of all Reserve program documents and their privileges is available at:
+http://www.climateactionreserve.org/how/program/documents/.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                                  28
+Climate Action Reserve User Guide                                                        May 2022
+
+
+7.8 SDG Alignment and Co-benefits Reporting
+At any point during a project’s life cycle, a project developer may choose to report to the
+Reserve any co-benefits that the project has supported. For a list of the UN’s Sustainable
+Development Goals, please see their site:
+https://www.un.org/sustainabledevelopment/sustainable-development-goals/.
+
+On the Project Setup screen, you may choose as many SDGs as you feel the project supports,
+then select Save at the bottom of the screen. Though the selections will be saved, they will not
+be publicly viewable until an SDG Reporting Tool has been uploaded and approved by the
+Reserve. You may find the SDG Reporting Tool available at:
+http://www.climateactionreserve.org/how/program/documents/
+
+Once the tool has been uploaded, the Reserve will be notified and will review the tool. Once all
+clarifications have been closed, the tool will be approved and made public, and the reported
+SDGs will be locked for editing and made publicly viewable.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                          29
+Climate Action Reserve User Guide                                                             May 2022
+
+
+
+
+8     Selecting a Verification Body
+The first step to begin project verification is to select a verification body to conduct verification
+services on your project. Information on connecting with a verification body is available at:
+climateactionreserve.org/how/verification/connect-with-a-verification-body.
+
+After your project is listed and you have chosen your verifier, you must select the verification
+body for your project in the Reserve system. To do so, complete the following steps:
+
+From the Project Setup screen, select a verification body under the Project Verification section.
+Only those verification bodies approved to verify your project type are listed.
+
+
+
+
+Figure 8.1. Selecting a Verification Body
+
+Selecting a verification body allows that verification body access to your project through its
+Manage Projects display module.
+
+8.1 Assessing Conflict of Interest
+The selected verification body will be prompted by the software to submit the Notification of
+Verification Activities/Conflict of Interest (NOVA/COI) form available at
+climateactionreserve.org/how/program/documents.
+
+This form is designed to capture the verification body’s past working relationships with the
+project developer, technical consultant(s), and third parties with a material interest. The
+information provided on the form allows the Reserve to determine whether the verification body
+can provide appropriately objective verification services for the project in question.
+
+The verification body completes the NOVA/COI form offline and then submits it by uploading it
+to the project documents page and clicking the Submit NOVA/COI button. To review the
+document upload process, please see Section 7.3, step 3.
+
+The Reserve reviews the submitted form, requests any necessary clarifications, and makes a
+determination. After the form is approved, the project developer and verification body are
+notified by email that verification activities can begin.
+
+For more detailed information about conflict of interest, please refer to the Reserve’s Verification
+Program Manual.
+
+
+Please ensure that you are using the latest version of the User Guide                                   30
+Climate Action Reserve User Guide                                                         May 2022
+
+
+
+
+9     Submitting for Verification
+9.1 Entering Project Data
+Once the NOVA/COI has been approved, the project developer will then be prompted to enter
+project data. The project developer may enter in project data at any time prior to this point, but
+they MUST enter data and submit the project for verification before verification can be
+completed. To enter data for a project, complete the following steps:
+
+    1. Select Submit Project Data to Verification Body from the Next Step column in the
+       Manage Projects module for the project. This takes you to the Project
+       Emissions/Reductions screen for the project.
+
+
+
+
+Figure 9.1. Project Emissions/Reductions Screen
+
+    2. Select Enter Emissions/Reductions. This will take you to the project data screen for your
+       particular project type.
+
+        Project data screens vary by project type. All project data screens require the following
+        information to be entered:
+
+                       Protocol Version
+                       Vintage
+                       Reporting Start and End Date
+                       CO2e Emission Reductions
+
+        For voluntary projects, emissions data must be entered for each vintage in the reporting
+        period. For example, if your reporting period is 4/15/16-4/14/17, you would enter
+        emissions for 2016 and 2017 and apportion the net emissions between each of these
+        years based on the metered or modeled data or as specified in the relevant protocol.
+
+        For ARB compliance projects, emissions data must be entered once for each reporting
+        period. The vintage associated with each entry is the year of the reporting period’s end
+        date.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                               31
+Climate Action Reserve User Guide                                                        May 2022
+
+
+
+
+Figure 9.2. Example of a Landfill Project Type Project Data Screen
+
+    3. Once the data has been entered, select Save. This will save your data and take you
+       back to the Project Emissions/Reductions screen. Please note that at this point your
+       project has NOT been submitted for verification and the verification body cannot view
+       your data. The data is simply saved and can still be revised if necessary.
+
+
+
+
+Figure 9.3. Example of Project Emissions/Reductions Screen
+
+9.2 Additional Project Verification Documents
+In addition to entering the project data, voluntary project developers must submit an Attestation
+of Title, Attestation of Regulatory Compliance, and an Attestation of Voluntary Implementation
+prior to submitting the data to their verifier. For more information on these documents, please
+see the Reserve Offset Program Manual. Developers of ARB compliance projects must submit
+the appropriate Offset Project Data Report (OPDR) prior to submitting the data to their verifier.
+OPDRs are posted on ARB’s website here: arb.ca.gov/cc/capandtrade/offsets/forms/forms.
+
+9.2.1 Adjustments to Data
+If you have not submitted the emissions for verification, you may edit the data you entered by
+clicking View/Update link from the Project Emissions/Reductions screen. You will know if the
+data has not been submitted for verification if the Status column reads “Not Submitted for
+Verification.”
+
+
+Please ensure that you are using the latest version of the User Guide                            32
+Climate Action Reserve User Guide                                                            May 2022
+
+
+
+After you have submitted emissions data for verification, you may view but not edit the data.
+Only after a Verification Body has reviewed and noted incorrect data will a project developer be
+able to correct and resubmit data.
+
+9.3 Submitting a Project for Verification
+After you have entered each vintage’s emissions data and uploaded the appropriate verification
+documents, you may then submit the project data and documents to the verifier.
+
+To do this, click Submit Project for Verification on any of the project’s three tabs (i.e., the Project
+Setup Page, the Project Documents Page or the Project Emissions/Reduction Page).
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                               33
+Climate Action Reserve User Guide                                                             May 2022
+
+
+
+
+10 Project Verification
+The Verification Statement and Verification Report confirm the quantity of offset credits
+attributable to the project for a specific period. After verification is complete, the verification body
+uploads the completed and signed Verification Statement form (downloaded from
+climateactionreserve.org/how-it-works/verification/verification-documents) and the Verification
+Report.
+
+Exception for Voluntary Forest Projects: Due to the fact that project developers must record
+a Project Implementation Agreement (PIA) or a PIA amendment every reporting period,
+verification bodies may submit unsigned draft versions of the Verification Statement and
+Verification Report. The statement and report will be finalized after the Reserve’s review of the
+verification documentation and the recordation of the PIA or PIA amendment.
+
+The verification body should review the emissions data that was entered for the projects and
+any relevant documents. For more details regarding verification procedures, please see the
+protocol and the Verification Program Manual. Once the project (and the uploaded data and
+forms) have been verified to meet the protocol’s specifications, the verifier can click the Submit
+Project Verification button.
+
+
+
+
+Figure 10.1. Submit Project Verification or Require Resubmittal of Project Data
+
+When the project verification has been submitted, the project developer will receive an email
+confirmation. The project developer should then carefully review the Verification Report and
+Verification Statement. The project developer then submits the project to the Reserve for final
+approval and registration by clicking Submit Project for Final Approval on any of the project’s
+tabs.
+
+10.1 Require Resubmittal of Data
+If the verifier cannot confirm the emissions data that has been entered, they can require
+resubmittal of data. To require resubmittal of data, the verifier must go to the Project Setup tab
+and select Require Resubmittal of Data. This will open the emissions data fields for the project
+developer, at which point they can then revise their data and resubmit it for verification.
+
+10.2 Annual Verification Activities
+After the initial verification is completed and the project is registered, the verification body must
+submit another NOVA/COI prior to verifying any further offset credits for the project. This is due
+at least 10 business days before the next verification begins. If the NOVA/COI is not submitted,
+the verifier will not be able to access the project data for the next reporting period, and the
+Verification Statement and Verification Report cannot be submitted.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                                34
+Climate Action Reserve User Guide                                                         May 2022
+
+
+10.3 Deferred Verification: ARB Compliance Projects
+Compliance projects have the option to defer verification of reporting periods when verification is
+not required by regulation and the relevant protocol. The steps for deferring verification are
+outlined in the sections below. An initial verification of GHG emission reductions and GHG
+removal enhancements for all sequestration and non-sequestration offset projects must be
+performed for the initial reporting period.
+
+10.3.1 Deferred Verification for ARB Compliance Sequestration Projects
+After the initial reporting period has been verified, verification must be conducted at least once
+every six years and may encompass up to six reporting periods for Improved Forest
+Management and Avoided Conversion project types. Reforestation and Urban Forest projects
+may defer the second verification for a period of time up to twelve years, but verification of
+OPDRs must be performed once every six years thereafter. OPDRs must be submitted by the
+applicable deadline (within 4 months of the end of each reporting period) even if the OPO/APD
+opts to defer verification. See section 95977 of the Regulation for more information.
+
+10.3.2 Deferred Verification for ARB Compliance Non-Sequestration Projects
+Non-sequestration project types may defer verification for up to one year after the initial
+reporting period if the OPDR for that subsequent reporting period demonstrates that the
+reporting period generated fewer than 25,000 metric tons of GHG reductions. OPDRs must still
+be submitted by the applicable deadline (within 4 months of the end of each reporting period)
+even if the OPO/APD opts to defer verification. See section 95977 of the Regulation for more
+information.
+
+To defer verification for an ARB Compliance offset project, the OPO/APD must execute
+the following steps:
+
+    1. Complete verification for the initial reporting period.
+    2. On the Project Documents screen, upload the OPDR for the subsequent reporting period
+       and select Submit OPDR – Defer Verification. The OPO/APD will receive a confirmation
+       email that the verification has been initiated for deferral.
+    3. The Reserve will review the OPDR submitted during the deferred verification for
+       completeness and accuracy.
+    4. After a positive review, the Reserve will approve the documents required for deferred
+       verification and the project phase will move to OPDR Approved - Verification Deferred.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                            35
+Climate Action Reserve User Guide                                                         May 2022
+
+
+
+
+Figure 10.2. Submit OPDR and Defer Verification
+
+    5. When the maximum length of time to defer verification is reached by the project (as
+       specified by the project type) or the project wishes to conduct verification for the purpose
+       of registering ROCs, the OPO/APD must select Submit OPDR – Proceed with
+       Verification on the Project Documents screen.
+
+
+
+
+Figure 10.3. Submit OPDR – Proceed with Verification
+
+    6. After the OPDR is reviewed and approved by the OPR, the OPO/APD can select a
+       verification body and proceed with verification following the steps outlined in Section 8 of
+       this document.
+
+10.4 Deferred Verification: Voluntary Projects
+Voluntary projects have the option to defer verification of reporting periods when verification is
+not required by the relevant protocol. The steps for deferring verification are outlined below. An
+initial verification of GHG emission reductions and GHG removal enhancements for all
+sequestration and non-sequestration offset projects must be performed for the initial reporting
+period.
+
+Projects including Improved Forest Management, Forest – Avoided Conversion, Grassland, and
+Urban Forest may defer verification up to five times under the voluntary program. The only
+
+
+Please ensure that you are using the latest version of the User Guide                            36
+Climate Action Reserve User Guide                                                            May 2022
+
+
+exception to this rule is for Reforestation projects, which may defer a second site visit
+verification beyond six years, at the project developer’s discretion. Livestock projects can defer
+verification for a maximum of 24 months. In all instances a monitoring report must be submitted
+by the applicable deadline (within one year of the end date of the reporting period). If a project
+wishes to seek CRTs for a reporting period within the deferral time period, the project must
+conduct verification activities pursuant to the requirements outlined in section 3.4.5 of the
+Reserve Offset Program Manual for full verification activities.
+
+To defer verification after registering the initial reporting period, execute the following steps:
+
+    1. On the Project Documents screen, upload the Annual Monitoring Report for the deferred
+       verification by the appropriate deadline. For example, if the deferred verification is
+       covering the 1/1/2016-12/31/2016 reporting period, the monitoring report will need to be
+       uploaded by 12/31/2017 to meet the applicable deadline. After uploaded the deferral
+       documentation, select Defer Verification at the bottom of the Project Documents screen.
+       The project developer will receive a confirmation email that the project has been initiated
+       for deferral.
+
+
+
+
+Figure 10.4. Deferring Verification
+
+    2. Select Defer Verification on the Project Documents page. At this point the project phase
+       will appear as Verification Deferral Request Ready for Review. The Reserve will review
+       the deferral documentation for accuracy and upon completion of the review, the project
+       will move to the Verification Deferred phase. The project developer will receive an email
+       notification when the deferral is approved.
+
+    3. After the project has deferred verification for the maximum length of time or the project
+       developer wishes to seek CRTs for the deferred reporting periods, select a verification
+       body on the Project Setup screen and select Save at the bottom of the screen. The
+       project phase will shift to Verification Body Submit NOVA/COI. The selected verification
+       body is now required to upload the Conflict of Interest documentation. The project
+       developer will receive an email notification when the COI is approved by the Reserve.
+       After the COI is approved by the Reserve, the project may now proceed with verification
+       following the steps outlined in Section 8 of this document.
+
+
+Please ensure that you are using the latest version of the User Guide                                37
+Climate Action Reserve User Guide                                       May 2022
+
+
+
+
+Figure 10.5. Selecting a Verification Body on the Project Setup Page
+
+
+
+
+Figure 10.6. Saving Changes on the Project Setup Page
+
+
+
+
+Please ensure that you are using the latest version of the User Guide        38
+Climate Action Reserve User Guide                                                       May 2022
+
+
+
+11 Offset Credit Issuance
+11.1 Reserve Approval of Projects
+After a project developer has submitted a project for final approval, the Reserve reviews the
+verification documentation and either approves the project for registration or requires a
+resubmittal of project data or verification documentation.
+
+If the project requires adjustments to the emissions data, the project must be verified again. If
+the verification documents must be resubmitted, the verification body must make changes and
+resubmit to the project developer to review the revisions and resubmit the project for final
+approval. When the project is required to resubmit project data it will be moved to the Resubmit
+Project Data phase. During this phase the project will need to execute the following steps:
+
+    1. Select View/Update.
+
+
+
+
+Figure 11.1. Making Changes to Emissions/Reductions Data
+
+    2. Make the requested changes to the emissions/reductions data and save.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                           39
+Climate Action Reserve User Guide                                                               May 2022
+
+
+
+
+Figure 11.2. Saving Emissions/Reductions Data
+
+    3. Select Submit Project for Verification.
+
+
+
+
+Figure 11.3. Submitting a Project for Verification
+
+After the project is submitted for verification, the verification body will do the following:
+
+    1. Review the changes to the emissions/reductions and upload any revised verification
+       documentation. After the review and new documents are uploaded, select Submit
+       Project Verification.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                                40
+Climate Action Reserve User Guide                                                           May 2022
+
+
+
+
+Figure 11.4. Submitting a Project for Verification
+
+    2. After the verification body submits the project for verification, the project developer will
+       need to select Submit for Final Approval in the project documents page.
+
+
+
+
+Figure 11.5. Submitting a Project for Final Approval
+
+When the project developer submits a project for final approval, this will denote the beginning of
+the Reserve’s review. The Reserve will register the project or request clarifications to the
+submitted documentation within 10 business days.
+
+When the project is approved, its status changes to “Registered” on public reports.
+
+11.2 Offset Credit Issuance
+After the project has received final approval from the Reserve and is registered, the offset
+credits are issued into a holding account denoted as the Pending account in the Reserve
+software.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                                 41
+Climate Action Reserve User Guide                                                         May 2022
+
+
+
+
+Figure 11.6. Credits Issued into “Pending” Account
+
+In order to be issued the credits, log in to the Reserve system and click on the credits in the
+Pending account in the Account Balances module. This will load a new page where you can
+specify the number of credits you would like to be released by clicking on the checkbox next to
+the project, typing in the number of credits you would like to be issued in the Transfer Quantity
+column, then clicking on the Release button on the top left of the screen.
+
+
+
+
+Figure 11.7. Releasing Offset Credits
+
+Clicking the Release button generates the issuance fee invoice and sends a notification to the
+account manager via email. After the invoice has been paid, the offset credits are released into
+the project developer’s Primary Account. As described in the Terms of Use, credits must be
+requested for release within five months of project registration. If the project developer does not
+request the credits to be released within five months of registration, the issuance fees will be
+invoiced automatically, and the project developer will have an additional 30 days to pay the fee.
+Once the issuance fee invoice has been paid, offset credits in a project developer account can
+be:
+
+       Transferred to another project developer account,
+       Transferred to a trader/broker/retailer account,
+       Transferred to an ARB compliance program for conversion, or
+       Retired
+
+11.3 Offset Credit Serial Numbers
+All offset credits created within the Reserve are assigned a unique serial number to eliminate
+double counting of offsets and provide a pedigree for each offset created. The unique serial
+numbers associated with the offsets persist as the offsets are transferred between account
+holders or retired.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                            42
+Climate Action Reserve User Guide                                                               May 2022
+
+
+Offsets are issued to projects in "batches," with each batch representing a quantity of offsets
+awarded to a single project for a specific reporting period. The format of the Reserve serial
+numbers encodes project and registry information. The following table identifies the serial
+number format that is used by the Reserve.
+
+Table 11.1. Serial Number Guide
+  Identifier          Description                               Range of Values
+  Originating         Alphanumeric used to identify the         CAR = Climate Action Reserve
+  Registry            registry originally issuing project
+                      credits. If transfer agreements
+                      between additional registries are
+                      created in the future, they would use
+                      other codes.
+  Unit type           Identifier of the type of offset credit   1 = Climate Reserve Tonne (CRT)
+                      issued                                    ROC = Registry Offset Credit
+  Project Country     Two-letter ISO country codes              US = United States
+                                                                MX = Mexico
+  Project ID          Number assigned by the Reserve to         e.g., CAR100 becomes “100”
+                      identify the project; unique to the
+                      originating registry
+  Project Type        Number identifying the project            1 = Conservation-Based Forest
+                      category                                      Management
+                                                                2 = Reforestation
+                                                                3 = Forest Conservation
+                                                                4 = Landfill Gas Capture/Combustion
+                                                                5 = Livestock Gas Capture/Combustion
+                                                                25 = Improved Forest Management
+                                                                26 = Avoided Conversion
+                                                                27 = Organic Waste Digestion
+                                                                28 = Coal Mine Methane – VAM
+                                                                29 = Coal Mine Methane – Drainage
+                                                                30 = Nitric Acid N2O- Secondary Catalyst
+                                                                31 = Nitric Acid N2O- Tertiary Catalyst
+                                                                32 = Ozone Depleting Substances – U.S
+                                                                33 = Ozone Depleting Substances –
+                                                                    Article 5 Imports
+                                                                34 = Organic Waste Composting
+                                                                35 = Rice Cultivation - Methane
+                                                                    Avoidance
+                                                                36 = Nitrogen Management
+                                                                37 = Avoided Grassland Conversion
+                                                                38 = Ozone Depleting Substances – MX
+                                                                39 = Boiler Efficiency – MX
+                                                                40 = Urban Forest Management
+                                                                41 = Urban Tree Planting
+                                                                42 = Forestry - MX
+                                                                43 = Landfill - MX
+                                                                44 = Livestock - MX
+                                                                45 = Canada Grassland
+                                                                46 = Adipic Acid
+                                                                47 = Soil Enrichment
+                                                                102 = Reforestation – ARB Compliance
+                                                                105 = Livestock – ARB Compliance
+
+
+
+Please ensure that you are using the latest version of the User Guide                                  43
+Climate Action Reserve User Guide                                                            May 2022
+
+
+  Identifier          Description                             Range of Values
+                                                              125 = Improved Forest Management –
+                                                                  ARB Compliance
+                                                              126 = Avoided Conversion – ARB
+                                                                  Compliance
+                                                              129 = Mine Methane Capture – ARB
+                                                                  Compliance
+                                                              132 = Ozone Depleting Substances –
+                                                                  U.S. – ARB Compliance
+                                                              135 = Rice Cultivation – ARB Compliance
+                                                              140 = Urban Forest ARB Compliance
+  Project             Number assigned by the Reserve          e.g., “100”
+  Developer ID        for the project developer; unique to
+                      the originating registry
+  Project State       Two-letter state abbreviation           e.g., CA
+  Abbreviation
+  Vintage             Year the emission reduction/removal     Format = YYYY
+                      occurred
+  Batch Number        Number assigned to each batch of        1 – 99,999
+                      offsets created; unique to the
+                      originating reserve
+  Unit Serial         Numbers assigned by the Reserve         1 - 999,999,999
+  Block Start
+  Unit Serial         Numbers assigned by the Reserve         1 - 999,999,999
+  Block End
+
+Example: The following serial number identifies a batch of 29,250 CRTs issued by the Reserve
+to project developer #120 for a forest conservation-based management project CAR293 for
+reductions in 2006  CAR-1-US-293-1-120-CA-2006-102-1 to 29251
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                               44
+Climate Action Reserve User Guide                                                         May 2022
+
+
+
+
+12 Reserve Offset Credit Accounts
+When offset credits are issued to a project, they are automatically deposited into the Primary
+Account. This account cannot be renamed or deleted. Consider this the incoming account for all
+new credits before they are transferred or retired.
+
+The three default offset credit accounts when you first access the Reserve as a project
+developer or trader/broker/retailer are the following:
+
+       Primary Account. All newly issued offset credits are deposited into the Primary Account
+        until otherwise organized by the user
+       Active Account. The account where active and not retired offset credits are stored. Can
+        be renamed
+       Retirement Account. The account where retired offset credits are stored. Can be
+        renamed. See Section 14 for more information on offset credit retirement
+
+Offset credits held in the Reserve can be organized into different subaccounts based on their
+characteristics. For example, an account holder may wish to keep all offset credits retired in the
+year 2008 in a retirement subaccount called Retired 2008.
+
+12.1 Organizing the Default Active and Retirement Accounts
+The Primary Account cannot be renamed; however, you can edit the name of the Active
+Account and Retired Account by clicking the account name from the View, Transfer, and Retire
+Offset Credits module.
+
+
+
+
+Figure 12.1. View, Transfer, and Retire Offset Credits Module
+
+From the View, Transfer and Retire Offset Credits module, click on an account to gain access to
+the functionality:
+
+       Change the name. Rename the account to help you organize credits by project type,
+        year, client, etc.
+       Change the alias. The alias is similar to a subtitle and is displayed on public project
+        reports. Use this to provide more information as needed.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                             45
+Climate Action Reserve User Guide                                                          May 2022
+
+
+       Display the offset credit balance to the public. Indicate to show the current credit
+        balance for an account on the Accounts Disclosed to the Public report.
+       Close an account. Removes account from the list of Open Accounts from the View,
+        Transfer, and Retire Offset Credits module.
+       Indicate why the account was closed. Note the reasons why an account was closed.
+
+12.2 Creating New Offset Credit Subaccounts
+You may create multiple active and retirement accounts by clicking the Create New Account link
+located at the bottom of the View, Transfer, and Retire Offset Credit module. From the Create
+New Account page, you may select the type of account to create, name the account, and
+choose to display the offset credit balance to the public, just like when editing an account.
+
+Note: Aside from the Retirement Account, you cannot change the name of any retirement
+accounts once created.
+
+
+
+
+Figure 12.2. Create New/Edit Account Screen
+
+12.3 Displaying Accounts to the Public
+When configuring your accounts, if you indicated that an active or retirement account was to be
+displayed to the public, the account name, alias, and offset credit balance will display on the
+Accounts Disclosed to the Public report. You may choose to do this to communicate the offset
+credit status of an account with a client or because you want this information to be transparent
+to the public. Neither individual transactions nor the original owners of the offset credits are
+displayed.
+
+Note that you may publish the balance of retirement offset credit accounts to the public. You
+might do this to give context to your retired credits by putting them in accounts by sector (e.g.,
+Retired Forest Credits 2007).
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                                46
+Climate Action Reserve User Guide                                                         May 2022
+
+
+12.4 Beneficial Ownership of Offset Credits
+Section 9 of the Reserve’s Terms of Use specifies under what circumstances an account holder
+may hold offset credits in one or more of their subaccounts. In most instances, an account
+holder may only hold offset credits over which it has sole legal title and beneficial ownership
+rights. Beneficial ownership is enjoyed by anyone who has the benefits of ownership of an offset
+credit, and yet does not nominally own the asset itself (i.e., it is not held in their own account).
+See Section 14.2 for information regarding the retirement of offset credits on behalf of third
+parties.
+
+The Reserve may, at its sole discretion, waive these rules for regulated entities, pursuant to
+section 9, subsection C of the Reserve Terms of Use.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                            47
+Climate Action Reserve User Guide                                                        May 2022
+
+
+
+
+13 Transferring Offset Credits
+There are two types of offset credit transfers:
+
+       Transfer to another of the credit holder’s own active or retirement accounts (see Section
+        12)
+       Transfer to another account holder
+
+For information on transitioning credits to ARB Offset Credits, please see Section 15.
+
+13.1 Transferring to an Active or Retirement Account
+To transfer offset credits from an active account to another active account or retirement account
+held by you, simply click on the offset credit quantity in the View/Transfer offset credit column
+within the View, Transfer, and Retire Offset Credits module. When you click on this quantity, you
+will be taken to the Account Detail page listing all offset credits held in the account.
+
+
+
+
+Figure 13.1. Offset Credit Account Detail
+
+From the Account Detail page, you can choose a batch of credits you want to transfer by
+clicking on the Transfer button. This will take you to the Transfer Offset Credits page. From the
+Transfer Offset Credits page, specify the quantity you wish to transfer and the name of the
+retirement or active subaccount you wish to transfer them to. For information regarding transfers
+to retirement accounts, see Section 14.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                          48
+Climate Action Reserve User Guide                                                      May 2022
+
+
+
+
+Figure 13.2. Transfer Offset Credits Page
+
+13.2 Transferring Offset Credits to Another Account Holder
+To transfer to another Reserve account holder, you follow the same process presented in
+Section 13.1 for transferring credits to one of your offset credit subaccounts. However, instead
+of choosing to transfer them to one of your active or retirement subaccounts, you simply choose
+to transfer to another account holder. Choose the appropriate account holder from the drop-
+down menu. This menu lists all the account holders who are capable of receiving offset credit
+transfers.
+
+After you have initiated this transfer, the offset credits are immediately deducted from the
+account from which they were transferred. The Outgoing Offset Credit Transfers module on the
+home page shows the pending transfer. The transfer will be finalized when confirmed by the
+recipient and you will be invoiced for the transfer fee.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                         49
+Climate Action Reserve User Guide                                                        May 2022
+
+
+
+
+Figure 13.3. Outgoing Offset Credit Transfers Module
+
+13.3 Receiving Offset Credits from an Account Holder
+If credits have been transferred to you, they appear in your Incoming Offset Credit Transfers
+module. Confirm the transfer by clicking the Confirm link and then select the account into which
+you want the credits deposited. Recipients of offset credits are not charged a transfer fee.
+
+
+
+
+Figure 13.4. Incoming Offset Credit Transfers Module
+
+13.4 Canceling a Transfer
+If you are the designated recipient of offset credits and wish to cancel the transfer, click the
+Reject link next to the offset credit record in your Incoming Offset Credit Transfers module. The
+credits are then returned to the transferor’s primary account.
+
+If you are the transferor of offset credits and you wish to cancel a transfer, click the Withdraw
+link in the Outgoing Offset Credit Transfers module. If the transfer has already been completed,
+you cannot cancel it unless the recipient agrees to transfer the credits back to your account.
+
+13.5 Forward and Recurring Offset Credit Transfers
+Project developers may arrange forward transfers prior to when credits are issued to a project.
+These forward transfers may be designated to occur on a one-time or recurring basis. This
+feature was developed in response to account holders who wanted more certainty that parties
+would follow through on their obligations to transfer offset credits. As such, forward transfers
+that have been arranged can only be rescinded when both parties are in agreement to cancel
+the arrangement. Forward transfers are arranged through the Recurring Transfer Module.
+
+
+
+
+Figure 13.5. Recurring Transfers Module
+
+
+
+Please ensure that you are using the latest version of the User Guide                          50
+Climate Action Reserve User Guide                                                              May 2022
+
+
+
+In arranging a forward transfer, you may choose to indicate either a percentage or quantity of
+un-issued offset credits to transfer for a particular vintage of a project. If the offset credits are to
+be transferred over multiple years, then you may designate a range of vintages to include. The
+priority label indicates the order in which the offset credits are distributed in the event that more
+are designated for transfer than eventually issued.
+
+
+
+
+Figure 13.6. New Forward Transfer Setup Page
+
+The receiving party of forward transfers has the option to accept or reject a proposed forward
+transfer in a similar manner as a standard transfer.
+
+
+
+
+Figure 13.7. Forward Transfer Inbox
+
+However, once a forward transfer has been proposed and accepted, a cancelation of the
+agreement must be accepted by both parties. This is managed through the My Recurring
+Transfers administrator report. Select My Recurring Transfers to monitor or cancel forward or
+recurring transfers. Then select the Request Withdrawal link to initiate a cancelation. The other
+party will be notified, and they can confirm in their account.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                                 51
+Climate Action Reserve User Guide                                                        May 2022
+
+
+
+
+Figure 13.8. My Recurring Transfers
+
+
+
+
+Figure 13.9. My Recurring Transfers Report Detail
+
+13.6 Transferring a Project to another Account Holder
+Existing projects can be transferred in the Reserve between project developer account holders.
+In order to initiate a transfer, navigate to the Project Documents tab. From there, select the
+current year as the Vintage, select Account Holder Project Transfer as the document type, and
+select the name of the project developer to whom you wish to transfer the project. Upload the
+completed Account Holder Project Transfer document (found here:
+climateactionreserve.org/how/program/documents).
+
+Once this form has been uploaded, an invoice for the transfer fee of $500 will automatically be
+generated and sent to the intended recipient of the project. When this invoice is paid, the project
+transfer will be completed.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                           52
+Climate Action Reserve User Guide                                                         May 2022
+
+
+
+
+14 Retiring Offset Credits
+Many individuals and businesses want to offset their GHG emissions for specific activities. To
+do so, offset credits may be acquired and applied against some emissions. In doing this, the
+credits are retired so that they cannot be used to offset any other emissions. The Reserve
+retires these offset credits by permanently placing them in a locked retirement account, thereby
+precluding any further transaction.
+
+When offset credits are retired, the retirement is permanent. They cannot be returned to active
+status and may never be transferred again. To prove that offset credits are retired, you may
+view them on the Retired Offset Credits public report. If you need to show just your own retired
+credits and not all account holders’, use the Search feature in the report to filter just your own
+records or access the Search Serial Numbers public report (see Section 6).
+
+14.1 Transferring Offset Credits for Retirement
+Offset credits may be retired in the same way that they are transferred, using the Transfer
+Offset Credits screen. When you retire offset credits, you may select the following options:
+
+       Quantity to retire
+       Retirement account in which to deposit offset credits
+       Reason for retirement
+       Notes about the retirement reason
+       A list of email recipients to be notified about the retired offset credits
+
+You may use these features to retire credits on behalf of an organization or a person and send
+notification regarding the retirement. For example, you may select the retirement reason
+Environmental Benefit and enter Work Commute January 2010 as the retirement reason. The
+Retirement Reason Details may appear on the Retired Offset Credits public report, so your
+retirement reason should be something that is meaningful to others.
+
+Note that for retirements up to and including 99,999 credits, you may select “I do not wish for
+the Retirement Reason Details to be shown publicly,” which will hide the Retirement Reason
+details from public view in the Retired Offset Credits public report. For retirements over and
+including 100,000 credits, Retirement Reason Details are required to be public.
+
+14.2 Retirements on Behalf of Third Parties
+Section 9 of the Terms of Use spells out exceptions to the beneficial ownership rules (Section
+12.4), specifically with regard to Offset Credits Retirement. No more than 99,999 credits may be
+retired in an account on behalf of another entity within a single year without providing public
+information on who the offset credit retirement is for and why the credits were retired.
+Additionally, if the number of CRTs retired on behalf of another organization is over 99, the
+account holder retiring the offset credits must provide to the Reserve the name of the
+organization for which they are retired, the contact information for a representative of said
+organization, and the reason for retirement. This is accomplished by creating a Retirement sub-
+account in the name of the third-party organization and making retirements within that sub-
+account as shown below.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                             53
+Climate Action Reserve User Guide                                                          May 2022
+
+
+
+
+Figure 14.1. Retirement Sub-Account Detail
+
+14.3 Retirements for CORSIA
+Account Holders may retire CORSIA (Carbon Offsetting and Reduction Scheme for International
+Aviation) eligible credits within the Reserve. For more information on the Reserve’s role with
+CORSIA, please see the Reserve Offset Program Manual.
+
+If credits are eligible to be retired for CORSIA, the option to do so will automatically appear in
+the Transfer Offset Credits module under the Retirement Reason dropdown.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                                54
+Climate Action Reserve User Guide                                                             May 2022
+
+
+
+
+15 California Air Resources Board Compliance Offset
+   Program
+15.1 The Reserve’s Role as an OPR
+As an OPR under the ARB Compliance Offset Program, the Reserve is responsible for
+facilitating the listing, reporting, and verification of compliance offset projects. In this capacity,
+the Reserve also issues ROCs that are eligible for transfer to ARB Offset Credits (ARBOCs).
+While the process for submitting, verifying, and registering an ARB compliance offset project is
+similar to the process for other projects under the Reserve’s program, there are several
+important distinctions that should be noted. Please review the following sections for more
+details, as well as the Reserve’s online resources and ARB’s Compliance Offset Program
+website.
+
+15.2 Submittal and Listing
+The process for submitting an ARB compliance offset project for listing is similar to the process
+described previously in Section 7.3. However, these projects should utilize the listing forms
+provided by ARB, which can be found here: https://ww2.arb.ca.gov/our-
+work/programs/compliance-offset-program/offset-program-forms.
+
+In addition to the Offset Project Listing Form, listing an ARB compliance offset project also
+requires registration with ARB in order to establish a Compliance Instrument Tracking System
+Service (CITSS) account. Information regarding CITSS registration is available on ARB’s
+website: arb.ca.gov/cc/capandtrade/markettrackingsystem/markettrackingsystem.
+
+Anyone with a project developer account type may create a new ARB compliance offset project
+in the Reserve as an Offset Project Operator (OPO). However, all projects must meet the
+standards set forth in the Compliance Offset Protocols, available at: https://ww2.arb.ca.gov/our-
+work/programs/compliance-offset-program/compliance-offset-protocols.
+
+OPOs may also choose to submit a Designation of Authorized Project Designee (APD) form at
+the listing stage, which authorizes another entity to act on its behalf in moving the project
+forward. This form can be found on the ARB Forms page: https://ww2.arb.ca.gov/our-
+work/programs/compliance-offset-program/offset-program-forms.
+
+To submit your ARB compliance project in the Reserve, complete the steps found in Section 7.3
+of this document.
+
+15.3 NOVS and COI Processing
+ARB Compliance projects preparing to undergo verification must select a verification body that
+has been approved and accredited by ARB. For more information on selecting a verification
+body, please see ARB’s website: arb.ca.gov/cc/capandtrade/offsets/verification/verification.
+
+These projects will also need to submit ARB’s Evaluation of COI/NOVS forms, found here:
+https://ww2.arb.ca.gov/our-work/programs/compliance-offset-program/offset-program-
+formsThese forms should be submitted to the Reserve by following the process described in
+Section 8.1. Please note that the NOVS will also need to be submitted to ARB electronically at
+ghgoffsetverification@arb.ca.gov.
+
+
+
+Please ensure that you are using the latest version of the User Guide                                55
+Climate Action Reserve User Guide                                                        May 2022
+
+
+
+For more detailed information regarding Conflict of Interest evaluations as they relate to the
+Compliance Offset Program, please see: https://ww2.arb.ca.gov/our-
+work/programs/compliance-offset-program/offset-program-forms.
+
+15.4 Verification and Registration
+The OPO or Authorized Project Designee (APD) for an ARB compliance offset project is
+required to submit an Offset Project Data Report (OPDR) within four months of the end of each
+reporting period. In order to register a project after it has been verified, a completed OVS form
+must be submitted by the Verification Body for each OPDR that has been verified. OVSs and
+OPDRs can be found here: https://ww2.arb.ca.gov/our-work/programs/compliance-offset-
+program/offset-program-forms.
+
+Along with the Verification Report, a Positive OVS will confirm the quantity of ROCs attributable
+to the project for the reporting period. As with the verification and registration of voluntary
+projects, the Reserve will review this information once it has been submitted by the Verification
+Body, either approving the project or requiring resubmittal.
+
+For more information on submitting verification documents, please refer to Section 9.
+
+15.5 Transitioning ARB-Eligible Credits to ARBOCs
+In order for the Reserve to cancel out ROCs for the purposes of transitioning credits to
+ARBOCs, the holder of the credit must conduct an offset credit transfer in the Reserve’s
+registry. This process should be initiated once you have submitted the Request for Issuance of
+ARB Offset Credits form to ARB. These forms can be found on ARB’s website:
+https://ww2.arb.ca.gov/our-work/programs/compliance-offset-program/offset-program-forms
+To conduct a transfer in the registry, you must complete the following steps:
+
+    1. The entity that submitted the Request for Issuance of ARB Offset Credits form to ARB
+       should submit the form to the Reserve. CITSS ID numbers may be redacted from the
+       forms.
+
+    2. Go to your Primary or Active account and select the project that generated the credits
+       you wish to cancel.
+
+
+
+
+Figure 15.1. Offset Credit Account Detail
+
+    3. Select Export Account and enter the quantity of ROCs you wish to transfer, the Project
+       ID, and the vintage. The quantity of ROCs should match the Number of Credits in Part IV
+       of the forms.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                            56
+Climate Action Reserve User Guide                                                         May 2022
+
+
+
+
+Figure 15.2. Transfer Offset Credits Page
+
+    4. Click Submit. Once the transfer is submitted, the Reserve will receive notification that the
+       transfer has been initiated. Until the transfer is confirmed by the Reserve, the credits will
+       show in the Outgoing Offset Credit Transfers module. To ensure that the Outgoing
+       Offset Credit Transfers module is visible in the Reserve, click the Customize Page link
+       located in the top right. After clicking Customize Page, make sure that the box next to
+       Outgoing Offset Credit Transfers in the Display Modules page is checked.
+
+    5. Once ARB notifies the Reserve of their determination to issue ARBOCs, the Reserve will
+       immediately confirm the transfer and the ROCs will be cancelled from the registry. The
+       Reserve will notify ARB that the ROCs have been cancelled. This process only occurs
+       on the second and fourth Wednesdays of the month.
+
+    6. Cancelled ROCs will appear in the account holder’s Exported offset credit account and
+       publicly show as Canceled for ARB Compliance:
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                            57
+Climate Action Reserve User Guide                                                        May 2022
+
+
+
+
+Figure 15.3 Offset Credit Details Report
+
+15.6 ARB Compliance Offset Program Invalidation Verification
+OPOs/APDs have the option of shortening the timeframe for invalidation of ARBOCs by
+conducting a 2nd regulatory verification. The process for submitting verification documentation
+associated with a regulatory invalidation verification is the same as the process for all other
+verification types, with the exception of being submitted to the Reserve via email rather than
+through the software. The process is summarized step by step as follows:
+
+       Verification Body submits the Notification of Offset Verification Services (NOVS) and
+        Evaluation of COI forms to reserve@climateactionreserve.org
+       Reserve reviews NOVS and COI forms. Once the NOVS and COI forms have been
+        approved, Verification Body performs verification services as required.
+       Verification Body submits the Verification Report and Offset Verification Statement
+        (OVS) to reserve@climateactionreserve.org.
+       Reserve reviews Verification Report and OVS. Once approved, timeframe for
+        invalidation of appropriate reporting periods is reduced per section 95985(b)(1)(A) of the
+        Cap-and-Trade Regulation.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                             58
+Climate Action Reserve User Guide                                                      May 2022
+
+
+
+
+16 Invoicing and Payments
+16.1 My Invoices Report
+Account holders may view a list of their invoices by accessing the My Invoices report from the
+My Reports module on the home page. The report shows the amounts due and the invoice
+status. You may also click on an invoice number to view and print the invoice. The Reserve’s
+fee structure can be found in Appendix D. Please note that invoices are issued on the hour, so
+may not be immediately available in the registry.
+
+To resolve any billing issues, please contact the Reserve Administrator.
+
+
+
+
+Figure 16.1 My Invoices Report
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                        59
+Climate Action Reserve User Guide                                                     May 2022
+
+
+
+
+Figure 16.2 Sample Invoice
+
+16.2 Submitting Payment
+Payments may be submitted by bank wire, check, or money order by mail. Checks, money
+orders, or cashier’s checks should be made payable to APX, Inc.
+
+Please include the invoice number(s) on all payments. Failure to do so may result in delayed
+payment processing.
+
+16.3 Payment Due Dates
+All invoices are due within 30 days of invoice generation.
+
+16.4 Past Due Invoices
+When account invoices become past due, the account manager will be contacted via email. If
+an invoice reaches 30 days past due, the account manager will be notified by email. If an
+invoice reaches 60 days past due, the account manager will be notified by phone and email and
+the account will be inactivated. If an invoice reaches 6 months past due, the account will be
+closed and all projects within the account moved to completed. All past due invoices must be
+paid to regain access to an account. Interest on past due invoices still accrues when the
+account is inactivated or closed.
+
+
+Please ensure that you are using the latest version of the User Guide                          60
+Climate Action Reserve User Guide                                                        May 2022
+
+
+16.5 Holding a Balance
+Account holders may choose to hold a balance in their account so that they may apply the
+balance to future invoices. If an account holder wishes to do so, please send payment by
+wire/ACH or check to APX, Inc., and send a notification to reserve@climateactionreserve.org
+with information on the incoming payment, including the account to which it should apply.
+
+If an account holder wishes to apply their balance to a pending invoice, in the My Invoices
+Report, click “Apply balance to invoices” under the Available Balance tab, select the invoices to
+which the balance will apply, then click “OK.”
+
+
+
+
+Figure 16.3 Apply Balance to Invoices Screen
+
+Once the request is submitted, APX will apply payment to the invoices within 24 hours.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                          61
+Climate Action Reserve User Guide                                                                 May 2022
+
+
+
+
+Appendix A: Glossary of Common Terms
+ Account (Offset Credit)         A storage area for groups of offset credits. Can be customized by the
+                                 user to organize credits in a meaningful way.
+
+ Account (User)                  Access privileges to the Reserve based on a unique organization name,
+                                 login and password. Each organization has a single account per annual
+                                 subscription, but may have multiple logins.
+
+ Account Holder                  Refers to the organization associated with a Reserve account and, more
+                                 specifically, the person who requested an account with the Reserve.
+
+ Account Holder Project          A form used when projects are being transferred from another registry.
+ Transfer Form
+
+ Account Manager                 The person who requested the account with the Reserve and to whom
+                                 communication is sent by the Reserve Administrator. The account
+                                 manager can create logins for other employees or colleagues, but is
+                                 considered the single point of contact at the organization.
+
+ Active Account                  An open account that contains credits that can be transferred or retired;
+                                 not for retired offset credits.
+
+ Aggregate/Cooperative           A bundle of either multiple projects in one group or multiple activities in a
+                                 single project for the purposes of project development and verification.
+
+ Climate Reserve Tonne           The type of offset credit resulting from voluntary Reserve project activity.
+ (CRT)                           One CRT is equal to one metric ton of CO2e reduced/sequestered.
+
+ Listed Project                  A project for which the Project Submittal Form has been approved.
+
+ Login                           Used to refer to a unique login ID and password identified with an
+                                 account that is not the account manager’s.
+
+ Offset Credit                   The measure of the offsetting activity resulting from project activity. One
+                                 offset credit is equal to one metric ton of CO2e reduced/sequestered. In
+                                 the Reserve program, offset credits are designated as either CRTs or
+                                 ROCs.
+
+ Primary Account                 The main account into which new offset credits are deposited when they
+                                 are issued for a project.
+
+ Project                         Planned activities within sectors for which Reserve protocols exist that
+                                 may result in GHG reductions.
+
+ Project Submittal Form          A form uploaded to the Reserve describing in general the nature of the
+                                 project. Used to determine whether a project is initially eligible according
+                                 to the Reserve protocols.
+
+
+ Registered Project              A project that has received final approval from the Reserve; eligible to be
+                                 issued offset credits.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                                     62
+Climate Action Reserve User Guide                                                                 May 2022
+
+
+ Registry Offset Credit          Pronounced “rock,” the type of offset credit resulting from ARB
+ (ROC)                           compliance offset project activity. One ROC is equal to one metric ton of
+                                 CO2e reduced/sequestered.
+
+ Retirement Subaccount           The subaccount for the retirement of CRTs that are held by an account
+ (Group)                         holder on an omnibus basis on behalf of one or more third parties that
+                                 hold legal title and/or beneficial ownership rights in those CRTs.
+                                 Referred to in the Reserve’s Terms of Use as a “Group Retirement
+                                 Subaccount.”
+
+ Retirement Account              An account where offset credits can be stored after being retired.
+
+ Verified Project                A project that has been successfully verified by a third-party verification
+                                 body.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                                     63
+Climate Action Reserve User Guide                                       May 2022
+
+
+
+
+Appendix B: Voluntary Project Registration Process
+            Overview
+Figure B.1. Voluntary Project Submittal
+
+
+
+
+Please ensure that you are using the latest version of the User Guide        64
+Climate Action Reserve User Guide                                       May 2022
+
+
+Figure B.2. Select an Accredited Verification Body
+
+
+
+
+Please ensure that you are using the latest version of the User Guide        65
+Climate Action Reserve User Guide                                       May 2022
+
+
+Figure B.3. Voluntary Project Registration
+
+
+
+
+   Project Developer:
+   Pay CRT Issuance Fee ($0.19 per CRT)
+
+
+
+
+Please ensure that you are using the latest version of the User Guide        66
+Climate Action Reserve User Guide                                       May 2022
+
+
+
+
+Appendix C: ARB Compliance Project Registration Process
+            Overview
+Figure C.1. ARB Compliance Project Listing
+
+
+
+
+Please ensure that you are using the latest version of the User Guide        67
+Climate Action Reserve User Guide                                       May 2022
+
+
+Figure C.2. Select an ARB-accredited Verification Body
+
+
+
+
+Please ensure that you are using the latest version of the User Guide        68
+Climate Action Reserve User Guide                                       May 2022
+
+
+Figure C.3. ARB Compliance Project Registration
+
+
+
+
+Please ensure that you are using the latest version of the User Guide        69
+Climate Action Reserve User Guide                                                                                            May 2022
+
+
+
+Appendix D: Fee Structure
+Fees are subject to change with 30 days’ notice to account holders.
+
+Account Setup Fee............................................................................................ $500
+Fee charged upon approval of a new account with the Reserve.
+
+Account Re-activation Fee ............................................................................... $500
+   Fee charged upon re-activation of a closed account.
+
+Account Maintenance Fee (annual) ................................................................. $500
+   An annually recurring fee charged to maintain account holder privileges.
+
+Project Submittal Fee under an ARB Compliance Offset Protocol
+(per project) ....................................................................................................... $700
+   Fee charged upon submission of a project under an Air Resources Board
+   Compliance Offset Protocol.
+
+Project Submittal Fee under a Reserve Protocol (per project) ...................... $500
+   Fee charged upon submission of a project under a Reserve Protocol.
+
+Offset Credit Issuance Fee (per offset credit issued) .................................... $0.19
+   After a project has received final approval from the Reserve and is issued
+   offset credits.
+
+Account Transfer Fee (per offset credit transferred between account
+holders or offset credit transitioned into ARB Offset Credits, paid by
+transferor)......................................................................................................... $0.03
+    Fee charged for the transfer of offset credits between account holders and
+    for offset credits that are cancelled from the registry in order to be
+    transitioned into ARB Offset Credits.
+
+Project Variance Fee .......................................................................................$1,350
+   Fee charged to request a variance on monitoring or calculation methods of
+   a specific project.
+
+Account Holder Project Transfer Fee .............................................................. $500
+(per project transferred between account holders, paid by transferee)
+   For account holders who wish to transfer ownership of a project to a
+   different account holder.
+
+Retirement (per offset credit retired) ...................................................... no charge
+   The Reserve does not charge a fee for the retirement of offset credits.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                                                             70
+Climate Action Reserve User Guide                                                                         May 2022
+
+
+Aggregate/Cooperative Project Fees
+
+Aggregator Accounts
+
+Project Developer Account Setup Fee............................................................. $500
+   Initial fee charged upon approval of a new Project Developer account with
+   the Reserve.
+
+Account Maintenance Fee (annual) ................................................................ $500
+   An annually recurring fee charged to maintain account holder privileges.
+
+Aggregation Participant Accounts
+
+Project Owner (Limited) Account Setup Fee ................................................... $200
+   Initial fee charged upon application for a new account with the Reserve.
+
+Account Maintenance Fee (annual) ................................................................. $200
+   An annually recurring fee charged to maintain account holder privileges.
+
+Offset Credit Issuance Fee (per offset credit issued) .................................... $0.19
+   After a project has received final approval from the Reserve and is issued
+   offset credits.
+
+Account Transfer Fee to the linked Project Developer.......................... no charge
+   Free when transferring to the linked Project Developer.
+
+Account Transfer Fee to other Account Holders (per offset credit
+transferred between account holders, paid by transferor) ........................... $0.03
+    Fee charged for the transfer of offset credits to another account holder that
+    is not the linked Project Developer.
+
+
+
+
+Please ensure that you are using the latest version of the User Guide                                          71
+

@@ -91,7 +91,8 @@ export function getLogger(module) {
 export async function buildNestApp(
   module: any,
   httpBase: string,
-  expressApp?: AbstractHttpAdapter
+  expressApp?: AbstractHttpAdapter,
+  appOptions: { useClassValidatorContainer?: boolean } = {}
 ): Promise<NestExpressApplication> {
   let options: any = {
     logger: getLogger(module),
@@ -107,7 +108,9 @@ export async function buildNestApp(
     new ExpressAdapter(expressApp),
     options
   );
-  useContainer(nestApp.select(UtilModule), { fallbackOnErrors: true });
+  if (appOptions.useClassValidatorContainer !== false) {
+    useContainer(nestApp.select(UtilModule), { fallbackOnErrors: true });
+  }
   nestApp.setGlobalPrefix(httpBase);
   nestApp.use(bodyParser.json({ limit: "50mb" }));
   nestApp.enableCors();

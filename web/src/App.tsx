@@ -45,6 +45,7 @@ import { CreditBalancePage } from "./Pages/CreditPages/creditBalancePage";
 import { CreditTransfersPage } from "./Pages/CreditPages/creditTransfersPage";
 import { CreditRetirementsPage } from "./Pages/CreditPages/creditRetirementsPage";
 import Reports from "./Pages/Reports/Reports";
+import CarbonTradingCommandCenter from "./Pages/CommandCenter/CarbonTradingCommandCenter";
 
 const App = () => {
   const { t } = useTranslation(["common"]);
@@ -102,6 +103,10 @@ const App = () => {
                 <Route path="codeconduct" element={<CodeOfConduct />} />
                 <Route path="cookie" element={<CookiePolicy />} />
                 <Route path="terms" element={<TermsOfUse />} />
+                <Route
+                  path="command-center"
+                  element={<CarbonTradingCommandCenter />}
+                />
                 <Route path="/" element={<Homepage />} />
                 <Route path="/" element={<PrivateRoute />}>
                   <Route
