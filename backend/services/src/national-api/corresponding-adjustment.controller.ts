@@ -71,4 +71,14 @@ export class CorrespondingAdjustmentController {
   submit(@Query("id") caId: string, @Request() req) {
     return this.caService.submit(caId, req.user);
   }
+
+  @ApiBearerAuth()
+  @UseGuards(
+    JwtAuthGuard,
+    PoliciesGuardEx(true, Action.Update, CorrespondingAdjustment)
+  )
+  @Put("approve")
+  approve(@Query("id") caId: string, @Request() req) {
+    return this.caService.approve(caId, req.user);
+  }
 }

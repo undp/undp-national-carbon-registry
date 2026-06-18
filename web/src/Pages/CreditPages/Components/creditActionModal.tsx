@@ -13,6 +13,7 @@ import {
   Radio,
   Row,
   Select,
+  Tag,
 } from "antd";
 import { CreditBalanceInterface } from "../Interfaces/creditBalance.interface";
 import { addCommSep } from "../../../Definitions/Definitions/programme.definitions";
@@ -68,6 +69,18 @@ const RETIREMENT_TYPE_TO_ENUM = {
   [RetirementType.SOP_ADAPTATION]: "SOP Adaptation",
 } as const;
 
+// Inverse of RETIREMENT_TYPE_TO_ENUM: maps a stored backend string back to the
+// presentation enum, so the pending-request (proceed) modal can show the true
+// type of any of the six stored actions as a read-only selection.
+const STORED_TO_RETIREMENT_TYPE: Record<string, RetirementType> = {
+  "Cross-Border Transactions": RetirementType.CROSS_BORDER,
+  "Voluntary Cancellations": RetirementType.VOLUNTARY_CANCELLATION,
+  "Use Towards NDC": RetirementType.USE_TOWARDS_NDC,
+  "Use For OIMP": RetirementType.USE_FOR_OIMP,
+  "OMGE Cancellation": RetirementType.OMGE_CANCELLATION,
+  "SOP Adaptation": RetirementType.SOP_ADAPTATION,
+};
+
 export const CreditActionModal = (props: CreditActionModalProps) => {
   const {
     onFinish,
@@ -102,12 +115,65 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
     { value: string; label: string }[]
   >([]);
 
-  const getDropDownList = async () => {
+  // --- Article 6.2 action model -------------------------------------------
+  // The single legacy "Retire" flow is split into distinct Transfer / Use /
+  // Cancel actions. RETIREMENT is retained only for the pending-request
+  // (proceed) workflow, which still reads stored "retirement" transactions.
+  const isTransfer = type === CreditActionType.TRANSFER;
+  const isUse = type === CreditActionType.USE;
+  const isCancel = type === CreditActionType.CANCEL;
+  const isRetirement = type === CreditActionType.RETIREMENT;
+
+  // Transfer can be organization-to-organization or cross-border (a first
+  // transfer / transfer under A6.2). Cross-border posts through the same
+  // endpoint as use/cancel, carrying retirementType="Cross-Border Transactions".
+  const [transferMode, setTransferMode] = useState<
+    "organization" | "crossBorder"
+  >("organization");
+  const isCrossBorder =
+    (isTransfer && transferMode === "crossBorder") ||
+    (isRetirement && retirementType === RetirementType.CROSS_BORDER);
+  // Actions that submit through the retire endpoint (carry a retirementType).
+  const usesRetireEndpoint = isUse || isCancel || isCrossBorder;
+
+  // Subtype radios offered per action (values map to backend strings via
+  // RETIREMENT_TYPE_TO_ENUM). Proceed mode lists all six for read-only display.
+  const subtypeOptions: RetirementType[] = isUse
+    ? [RetirementType.USE_TOWARDS_NDC, RetirementType.USE_FOR_OIMP]
+    : isCancel
+    ? [
+        RetirementType.VOLUNTARY_CANCELLATION,
+        RetirementType.OMGE_CANCELLATION,
+        RetirementType.SOP_ADAPTATION,
+      ]
+    : isRetirement
+    ? [
+        RetirementType.CROSS_BORDER,
+        RetirementType.VOLUNTARY_CANCELLATION,
+        RetirementType.USE_TOWARDS_NDC,
+        RetirementType.USE_FOR_OIMP,
+        RetirementType.OMGE_CANCELLATION,
+        RetirementType.SOP_ADAPTATION,
+      ]
+    : [];
+  const showSubtypeRadios = isUse || isCancel || isRetirement;
+  const subtypeLabel = isUse
+    ? t("useType")
+    : isCancel
+    ? t("cancellationType")
+    : t("creditActionType");
+  const defaultSubtype = isUse
+    ? RetirementType.USE_TOWARDS_NDC
+    : isCancel
+    ? RetirementType.VOLUNTARY_CANCELLATION
+    : RetirementType.CROSS_BORDER;
+
+  const getDropDownList = async (source: "org" | "country") => {
     setListLoading(true);
     try {
       setDropDownList([]);
       const response =
-        type === CreditActionType.TRANSFER
+        source === "org"
           ? await post(API_PATHS.TRANSFER_ORGANIZATIONS, {
               type: userInfoState?.companyRole,
               filterOwn: true,
@@ -116,13 +182,13 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
 
       if (response && response.data && response.data.length > 0) {
         const filteredData =
-          type === CreditActionType.TRANSFER
+          source === "org"
             ? response.data.filter((item: any) => item.state === "1")
             : response.data;
 
         setDropDownList(
           filteredData.map((item: any) => ({
-            value: type === CreditActionType.TRANSFER ? item.id : item.alpha2,
+            value: source === "org" ? item.id : item.alpha2,
             label: item.name,
           }))
         );
@@ -142,34 +208,47 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
 
   // eslint-disable-next-line no-unused-vars
   const handleValuesChange = (_: any, allValues: any) => {
-    console.log(
-      "-------handleValuesChange func running-----------",
-      allValues,
-      proceedAction,
-      type,
-      isProceed
-    );
-    const keys = Object.keys(allValues);
-
     creditAmountRef.current = allValues.creditAmount;
-    recivePartyRef.current =
-      type === CreditActionType.TRANSFER
-        ? allValues.toCompanyId
-        : type === CreditActionType.RETIREMENT &&
-          allValues.retirementType === RetirementType.CROSS_BORDER
-        ? {
-            country: allValues.toCountry,
-            organization: allValues.toOrganization,
-          }
-        : undefined;
+
+    // When the transfer mode toggles, re-fetch the right dropdown (orgs vs
+    // countries) and force re-confirmation, since cross-border is irreversible.
+    if (
+      isTransfer &&
+      allValues.transferMode &&
+      allValues.transferMode !== transferMode
+    ) {
+      setTransferMode(allValues.transferMode);
+      form.setFieldValue("confirm", false);
+      checkedRef.current = false;
+      getDropDownList(
+        allValues.transferMode === "crossBorder" ? "country" : "org"
+      );
+    }
+
+    const crossBorderNow =
+      (isTransfer && allValues.transferMode === "crossBorder") ||
+      (isRetirement &&
+        allValues.retirementType === RetirementType.CROSS_BORDER);
+
+    recivePartyRef.current = crossBorderNow
+      ? {
+          country: allValues.toCountry,
+          organization: allValues.toOrganization,
+        }
+      : isTransfer
+      ? allValues.toCompanyId
+      : undefined;
 
     remarkRef.current = allValues.comment || "";
     checkedRef.current = allValues.confirm || false;
 
     let valid = true;
+
+    // Reset the confirm checkbox when the subtype changes so the user must
+    // re-acknowledge the (irreversible) action against the new selection.
     if (allValues.retirementType) {
       if (
-        type === CreditActionType.RETIREMENT &&
+        showSubtypeRadios &&
         allValues.retirementType !== retirementType
       ) {
         form.setFieldValue("confirm", false);
@@ -178,27 +257,30 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
       setRetirementType(allValues.retirementType);
     }
 
-    // if (keys.includes('toOrganization') && allValues['toOrganization']) {
-    //   valid = true
-    // }
-    // else if (keys.includes('toOrganization') && !allValues['toOrganization']) {
-    //   valid = false
-    // }
-
-    if (type !== CreditActionType.TRANSFER && !checkedRef.current) {
+    // Use / cancel / cross-border are irreversible and require confirmation;
+    // a plain organization transfer does not.
+    const requiresConfirm = isUse || isCancel || crossBorderNow;
+    if (requiresConfirm && !checkedRef.current) {
       valid = false;
     }
+
     if (isProceed) {
       if (remarkRequired && !remarkRef.current.trim()) {
         valid = false;
       }
+      if (["cancel", "reject"].includes(proceedAction) && !allValues.comment) {
+        valid = false;
+      }
     } else {
+      // Receiving party: org transfer needs an organization; cross-border
+      // needs both a country and an organization name.
+      if (isTransfer && !crossBorderNow && !recivePartyRef.current) {
+        valid = false;
+      }
       if (
-        (type === CreditActionType.TRANSFER && !recivePartyRef.current) ||
-        (type === CreditActionType.RETIREMENT &&
-          allValues.retirementType === RetirementType.CROSS_BORDER &&
-          !recivePartyRef.current.country &&
-          !recivePartyRef.current.organization)
+        crossBorderNow &&
+        (!recivePartyRef.current?.country ||
+          !recivePartyRef.current?.organization)
       ) {
         valid = false;
       }
@@ -215,21 +297,6 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
       }
       if (remarkRequired && !remarkRef.current.trim()) {
         valid = false;
-      }
-    }
-
-    if (type === CreditActionType.RETIREMENT) {
-      if (!isProceed) {
-        if (keys.includes("toOrganization") && !allValues["toOrganization"]) {
-          valid = false;
-        }
-      } else {
-        if (
-          ["cancel", "reject"].includes(proceedAction) &&
-          !allValues["comment"]
-        ) {
-          valid = false;
-        }
       }
     }
 
@@ -251,7 +318,9 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
       return;
     }
 
-    if (type === CreditActionType.TRANSFER) {
+    // Plain organization transfer: no retirementType → parent posts to the
+    // transfer endpoint.
+    if (isTransfer && transferMode === "organization") {
       onFinish(
         recivePartyRef.current,
         data?.id,
@@ -259,56 +328,77 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
         remarkRef.current,
         undefined
       );
-    } else if (type === CreditActionType.RETIREMENT) {
-      const retType = RETIREMENT_TYPE_TO_ENUM[retirementType] as CreditRetirementTypeEmnum;
+      return;
+    }
 
+    // Cross-border transfer: carries the Cross-Border Transactions type +
+    // country/org, posted through the retire endpoint by the parent.
+    if (isCrossBorder) {
       onFinish(
         recivePartyRef.current,
         data?.id,
         creditAmountRef.current,
         remarkRef.current,
-        retType
+        CreditRetirementTypeEmnum.CROSS_BORDER_TRANSACTIONS
       );
+      return;
     }
+
+    // Use / Cancel: carries the chosen subtype, no receiving party.
+    const retType = RETIREMENT_TYPE_TO_ENUM[retirementType] as CreditRetirementTypeEmnum;
+    onFinish(
+      undefined,
+      data?.id,
+      creditAmountRef.current,
+      remarkRef.current,
+      retType
+    );
   };
 
   useEffect(() => {
     if (openModal) {
       form.resetFields();
+
+      // Initial subtype: in proceed mode reflect the stored type (any of six);
+      // otherwise use the per-action default.
       let retirementTypeRef: RetirementType;
       if (isProceed && data && "retirementType" in data) {
         retirementTypeRef =
-          data.retirementType.trim() ===
-          CreditRetirementTypeEmnum.VOLUNTARY_CANCELLATIONS
-            ? RetirementType.VOLUNTARY_CANCELLATION
-            : RetirementType.CROSS_BORDER;
+          STORED_TO_RETIREMENT_TYPE[data.retirementType.trim()] ??
+          RetirementType.CROSS_BORDER;
       } else {
-        retirementTypeRef = RetirementType.CROSS_BORDER;
+        retirementTypeRef = defaultSubtype;
       }
 
-      if (
-        !isProceed &&
-        !(
-          type === CreditActionType.RETIREMENT &&
-          retirementType === RetirementType.VOLUNTARY_CANCELLATION
-        )
-      ) {
-        getDropDownList();
+      // Fetch the right dropdown: orgs for organization transfer, countries for
+      // cross-border (transfer or legacy retirement). Use/cancel need neither.
+      if (!isProceed) {
+        if (isTransfer) {
+          getDropDownList("org");
+        } else if (
+          isRetirement &&
+          retirementTypeRef === RetirementType.CROSS_BORDER
+        ) {
+          getDropDownList("country");
+        }
       }
 
       form.setFieldsValue({
         owner: data?.senderName,
         project: data?.projectName,
         retirementType: retirementTypeRef,
+        transferMode: "organization",
         comment: "",
-        confirm: type === CreditActionType.TRANSFER,
+        // Organization transfer needs no confirmation; use/cancel/cross-border do.
+        confirm: isTransfer,
       });
 
       remarkRef.current = "";
       creditAmountRef.current = undefined;
       recivePartyRef.current = undefined;
-      checkedRef.current = type === CreditActionType.TRANSFER ? true : false;
+      checkedRef.current = isTransfer ? true : false;
 
+      setTransferMode("organization");
       setRetirementType(retirementTypeRef);
       setActionDisable(true);
     }
@@ -366,7 +456,23 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
               </Col>
             </Row>
 
-            {type === CreditActionType.TRANSFER && (
+            {isTransfer && (
+              <Form.Item
+                label={
+                  <span style={{ color: `${COLOR_CONFIGS.PRIMARY_FONT_COLOR}` }}>
+                    {t("transferType")}
+                  </span>
+                }
+                name="transferMode"
+              >
+                <Radio.Group disabled={isProceed}>
+                  <Radio value="organization">{t("organizationTransfer")}</Radio>
+                  <Radio value="crossBorder">{t("crossBorderTransfer")}</Radio>
+                </Radio.Group>
+              </Form.Item>
+            )}
+
+            {isTransfer && transferMode === "organization" && (
               <Row>
                 <Col span={24}>
                   <Form.Item
@@ -412,13 +518,13 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
               </Row>
             )}
 
-            {type === CreditActionType.RETIREMENT && (
+            {showSubtypeRadios && (
               <Form.Item
                 label={
                   <span
                     style={{ color: `${COLOR_CONFIGS.PRIMARY_FONT_COLOR}` }}
                   >
-                    {t("retirementType")}
+                    {subtypeLabel}
                   </span>
                 }
                 name="retirementType"
@@ -429,34 +535,47 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
                   },
                 ]}
               >
-                <Radio.Group disabled={isProceed}>
-                  <Radio value={RetirementType.CROSS_BORDER}>
-                    {t(RetirementType.CROSS_BORDER)}
-                  </Radio>
-                  <Radio value={RetirementType.VOLUNTARY_CANCELLATION}>
-                    {t(RetirementType.VOLUNTARY_CANCELLATION)}
-                  </Radio>
-                  {/* Article 6.2 retirement types (Dec 2/CMA.3 Annex
-                     para 29 account buckets + Draft -/CMA.5 para 80
-                     action subtypes). */}
-                  <Radio value={RetirementType.USE_TOWARDS_NDC}>
-                    Use Towards NDC
-                  </Radio>
-                  <Radio value={RetirementType.USE_FOR_OIMP}>
-                    Use For OIMP
-                  </Radio>
-                  <Radio value={RetirementType.OMGE_CANCELLATION}>
-                    OMGE Cancellation
-                  </Radio>
-                  <Radio value={RetirementType.SOP_ADAPTATION}>
-                    SOP Adaptation
-                  </Radio>
+                <Radio.Group disabled={isProceed} style={{ width: "100%" }}>
+                  {/* Grid lives on a plain wrapper div: antd v4's
+                     Radio.Group does not forward `style` to its DOM
+                     node, but the Radios still join the group via
+                     RadioGroupContext regardless of DOM nesting. The
+                     2-column layout keeps the options inside the 430px
+                     modal instead of overflowing horizontally. The radio
+                     set is scoped to the current action (Use / Cancel),
+                     or all six in the read-only proceed view. */}
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      rowGap: 8,
+                      columnGap: 8,
+                      width: "100%",
+                    }}
+                  >
+                    {subtypeOptions.map((option) => (
+                      <Radio key={option} value={option}>
+                        {t(option)}
+                        {option === RetirementType.SOP_ADAPTATION && (
+                          // TODO(A6.2-SME): SOP Adaptation (share of proceeds
+                          // for adaptation) is an Article 6.4 mechanism levy,
+                          // not a defined A6.2 ITMO action. Flagged pending
+                          // subject-matter-expert confirmation.
+                          <Tag
+                            color="warning"
+                            style={{ marginLeft: 6, fontSize: "0.65rem" }}
+                          >
+                            {t("sopReviewFlag")}
+                          </Tag>
+                        )}
+                      </Radio>
+                    ))}
+                  </div>
                 </Radio.Group>
               </Form.Item>
             )}
 
-            {type === CreditActionType.RETIREMENT &&
-              retirementType === RetirementType.CROSS_BORDER && (
+            {isCrossBorder && (
                 <Row>
                   <Col span={24}>
                     <Form.Item
@@ -665,7 +784,7 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
               </Col>
             </Row>
 
-            {type === CreditActionType.RETIREMENT && (
+            {(usesRetireEndpoint || (isRetirement && isProceed)) && (
               <Row>
                 <Col span={24}>
                   <Form.Item

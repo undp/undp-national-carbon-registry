@@ -1,0 +1,5 @@
+{
+  "notFound": "Corresponding adjustment {} not found.",
+  "onlyDraftCanBeSubmitted": "Only a Draft corresponding adjustment can be submitted.",
+  "onlySubmittedCanBeApproved": "Only a Submitted corresponding adjustment can be approved."
+}

@@ -557,6 +557,34 @@ export const getRetirementTypeString = (retirementType: string | null) => {
   }
 };
 
+// Maps a stored Article 6.2 `retirementType` value to a user-facing action
+// label. Per Decisions 2/CMA.3 & 6/CMA.4 the actions on an ITMO are transfer,
+// use (towards NDC / for OIMP) and cancellation (voluntary / OMGE) — not
+// "retirement" (which is Article 6.4 mechanism wording). "SOP Adaptation" is
+// flagged with a trailing "*" pending A6.2 SME confirmation: share of proceeds
+// for adaptation is a defined Article 6.4 levy, only encouraged under A6.2.
+// NOTE: this is a presentation remap only; the stored strings are unchanged.
+export const getCreditActionLabel = (retirementType?: string | null) => {
+  switch (retirementType) {
+    case "Cross-Border Transactions":
+      return "Transfer (Cross-Border)";
+    case "Use Towards NDC":
+      return "Used (Towards NDC)";
+    case "Use For OIMP":
+      return "Used (For OIMP)";
+    case "Voluntary Cancellations":
+      return "Cancelled (Voluntary)";
+    case "OMGE Cancellation":
+      return "Cancelled (OMGE)";
+    case "SOP Adaptation":
+      // TODO(A6.2-SME): confirm SOP Adaptation is a valid A6.2 cancellation
+      // subtype — share of proceeds for adaptation is an Article 6.4 concept.
+      return "Cancelled (SOP) *";
+    default:
+      return retirementType ?? "-";
+  }
+};
+
 export const sumArray = (arrList: any[]) => {
   if (arrList === undefined || arrList === null) {
     return 0;

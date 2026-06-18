@@ -7,6 +7,7 @@ import { TxType } from "../enum/txtype.enum";
 import { ProgrammeStage } from "../enum/programme-status.enum";
 import { EntitySubject } from "./entity.subject";
 import { MitigationProperties } from "../dto/mitigation.properties";
+import { AuthorizationPurpose } from "../enum/authorization.purpose.enum";
 
 @Entity()
 export class Programme implements EntitySubject {
@@ -100,6 +101,17 @@ export class Programme implements EntitySubject {
   // initial-report-before-first-authorization guard can fire.
   @Column({ nullable: true })
   cooperativeApproachId: string;
+
+  // F4 (Dec 2/CMA.3 para 1, 23(d); 6/CMA.4 Annex "Purposes for
+  // authorization"): the purpose under which ITMOs are authorized,
+  // captured at /authorize and cascaded to credit blocks / AEF.
+  @Column({
+    type: "enum",
+    enum: AuthorizationPurpose,
+    array: false,
+    nullable: true,
+  })
+  authorizationPurpose: AuthorizationPurpose;
 
   @Column({ type: "boolean", nullable: false, default: false })
   article68trade: boolean;

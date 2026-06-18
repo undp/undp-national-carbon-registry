@@ -6534,7 +6534,8 @@ export class ProgrammeService {
       this.configService.get("systemCountry"),
       program.companyId,
       req.issueAmount,
-      this.getUserRefWithRemarks(user, req.comment)
+      this.getUserRefWithRemarks(user, req.comment),
+      req.authorizationPurpose
     );
     if (!updated) {
       return new BasicResponseDto(

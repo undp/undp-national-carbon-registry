@@ -67,7 +67,6 @@ const AEF_ACTION_TYPE_VALUES = [
   "useForOIMP",
   "voluntaryCancellation",
   "omgeCancellation",
-  "holdingsSnapshot",
 ] as const;
 
 const AEF_REPORT_TYPE_VALUES = ["HOLDINGS", "ACTIONS", "ANNUAL_INFORMATION"] as const;
@@ -374,9 +373,10 @@ test.describe("AEF Reporting - Article 6.2", () => {
   // an empty DB, so this pure TS check is the canary.
   // ------------------------------------------------------------------
   test.describe("Enum shape", () => {
-    test("AefActionTypeEnum expanded to 11 values in Phase 4", () => {
-      expect(AEF_ACTION_TYPE_VALUES).toHaveLength(11);
-      // Phase 4 additions, specifically the 7 new entries.
+    test("AefActionTypeEnum has 10 values (dead holdingsSnapshot removed, F14)", () => {
+      // F14: the never-produced HOLDINGS_SNAPSHOT member was removed as
+      // dead code, taking the enum from 11 -> 10 values.
+      expect(AEF_ACTION_TYPE_VALUES).toHaveLength(10);
       for (const added of [
         "firstTransfer",
         "acquisition",
@@ -384,10 +384,11 @@ test.describe("AEF Reporting - Article 6.2", () => {
         "useForOIMP",
         "voluntaryCancellation",
         "omgeCancellation",
-        "holdingsSnapshot",
       ]) {
         expect(AEF_ACTION_TYPE_VALUES).toContain(added);
       }
+      // The dead value must be gone.
+      expect(AEF_ACTION_TYPE_VALUES).not.toContain("holdingsSnapshot");
     });
 
     test("AefReportTypeEnum has exactly 3 values (HOLDINGS, ACTIONS, ANNUAL_INFORMATION)", () => {

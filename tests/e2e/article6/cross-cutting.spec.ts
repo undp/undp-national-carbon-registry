@@ -721,7 +721,11 @@ test.describe("Article 6.2 - Cross-cutting Integration", () => {
       expect(res.status()).toBe(400);
       const body = await res.text();
       expect(body).toMatch(/revoked/i);
-      expect(body).toMatch(/20-21/);
+      // The revoked-CA auth guard cites the revocation paragraph
+      // specifically (Draft -/CMA.5 para 21). suspension=para 20,
+      // revocation=para 21 is the convention used across the i18n
+      // messages (programme.json / creditTransaction.json).
+      expect(body).toMatch(/Draft -\/CMA\.5 para 21/);
     });
 
     // ----------------------------------------------------------------

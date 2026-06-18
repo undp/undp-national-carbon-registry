@@ -9,5 +9,4 @@ export enum AefActionTypeEnum {
   USE_FOR_OIMP = "useForOIMP",
   VOLUNTARY_CANCELLATION = "voluntaryCancellation",
   OMGE_CANCELLATION = "omgeCancellation",
-  HOLDINGS_SNAPSHOT = "holdingsSnapshot",
 }

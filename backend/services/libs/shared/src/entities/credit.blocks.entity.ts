@@ -57,6 +57,15 @@ export class CreditBlocksEntity {
   @Column({ type: "boolean", default: true })
   isNotTransferred: boolean;
 
+  // F15 — set on a split child (the transferred portion, which gets a new
+  // creditBlockId and so has no predecessor row for the replicator to
+  // compare against) to carry the parent block's pre-split "not yet
+  // transferred" status. Lets the replicator classify a partial first
+  // transfer as FIRST_TRANSFER instead of demoting it to a regular
+  // transfer. False/absent for issued blocks and in-place transfers.
+  @Column({ type: "boolean", default: false })
+  firstTransferOnSplit?: boolean;
+
   @Column({ default: 0 })
   reservedCreditAmount?: number;
 

@@ -184,6 +184,60 @@ test.describe("Programme lifecycle - POST /national/programme/create", () => {
   });
 
   // ------------------------------------------------------------------
+  // F4 (Dec 2/CMA.3 para 1, 23(d); 6/CMA.4 Annex "Purposes for
+  // authorization"): the authorization purpose must be captured at
+  // /authorize and persisted on the programme so it can cascade to
+  // credit blocks / transactions / AEF. Before this fix the
+  // authorizationPurpose column existed on every entity but was never
+  // populated outside test fixtures (ProgrammeApprove had no field and
+  // authProgrammeStatus never wrote it), so the AEF "Purposes for
+  // authorization" column was empty in real data.
+  //
+  // This test drives the full /authorize gate (CA + Submitted IR +
+  // Approved programme) with authorizationPurpose=UseTowardsNDC and
+  // asserts the ledger event carries the purpose through. getHistory
+  // reads the ledger directly (same rationale as the test above).
+  // ------------------------------------------------------------------
+  test("authorize with authorizationPurpose persists the purpose on the programme (F4)", async ({
+    apiDna,
+  }) => {
+    const ca = await createCooperativeApproach(apiDna, {
+      title: `Auth Purpose ${uniqueSuffix()}`,
+    });
+    const ir = await generateInitialReport(apiDna, {
+      cooperativeApproachId: ca.cooperativeApproachId,
+    });
+    await submitInitialReport(apiDna, ir.reportId);
+
+    const prog = seedProgrammeDirect({
+      companyId: 6,
+      cooperativeApproachId: ca.cooperativeApproachId,
+      article6trade: true,
+      currentStage: "AwaitingAuthorization",
+    });
+    await uploadDesignDocument(apiDna, prog.programmeId);
+    await uploadMethodologyDocument(apiDna, prog.programmeId);
+
+    // F4: pass the purpose through the real ProgrammeApprove DTO.
+    await authorizeProgramme(apiDna, prog.programmeId, "UseTowardsNDC");
+
+    const historyRes = await apiDna.get(
+      `national/programme/getHistory?programmeId=${encodeURIComponent(
+        prog.programmeId
+      )}`
+    );
+    await expectOk(historyRes, "getHistory after authorize (F4)");
+    const history = unwrap<any[]>(await apiDna.json<any>(historyRes));
+    expect(Array.isArray(history)).toBe(true);
+    const latestEntry = history[history.length - 1];
+    const latest = latestEntry?.data ?? latestEntry;
+    expect(latest?.programmeId).toBe(prog.programmeId);
+    expect(latest?.currentStage).toBe("Authorised");
+    // The purpose must round-trip onto the authorized programme event.
+    expect(latest?.authorizationPurpose).toBe("UseTowardsNDC");
+  });
+
+  // ------------------------------------------------------------------
   // Gap #19 companion guard: authorize-before-APPROVED is rejected.
   // The /authorize route demands currentStage=APPROVED
   // (programme.service.ts:6474) and returns 400

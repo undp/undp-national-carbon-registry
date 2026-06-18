@@ -156,6 +156,56 @@ test.describe("Credit transfer - POST /national/creditTransactionsManagement/tra
   );
 
   // ------------------------------------------------------------------
+  // F15 — a *partial* transfer of a never-transferred block splits off a
+  // new creditBlockId for the transferred portion. That child must still
+  // be classified as a FIRST transfer (Dec 2/CMA.3 annex para 1(a)/2 — a
+  // partial first transfer is still a first transfer). Before the fix the
+  // child was hard-coded isNotTransferred=false with no predecessor row,
+  // so the replicator demoted it to a regular transfer and its quantity
+  // dropped out of firstTransferredItmos in the CA balance.
+  // ------------------------------------------------------------------
+  test(
+    "partial first transfer of a never-transferred block is classified FIRST_TRANSFER (F15)",
+    async ({ apiPd }) => {
+      const seeded = seedTransferrableBlock({
+        ownerCompanyId: SENDER_COMPANY_ID,
+        creditAmount: 1000,
+        accountType: "Holding",
+        authorizationPurpose: "UseTowardsNDC",
+      });
+      // 100/1000 -> partial -> exercises the split path.
+      await initiateTransfer(apiPd, {
+        blockId: seeded.creditBlockId,
+        receiverOrgId: RECEIVER_COMPANY_ID,
+        amount: 100,
+      });
+
+      let match: any;
+      const deadline = Date.now() + 15000;
+      while (Date.now() < deadline && !match) {
+        const qRes = await apiPd.post(
+          "national/creditTransactionsManagement/queryTransfers",
+          { page: 1, size: 50, sort: { key: "createdDate", order: "DESC" } }
+        );
+        if (qRes.status() < 300) {
+          const rows = extractRows(await apiPd.json<any>(qRes));
+          match = rows.find(
+            (r: any) =>
+              r.projectId === seeded.projectRefId &&
+              Number(r.senderId) === SENDER_COMPANY_ID &&
+              Number(r.recieverId) === RECEIVER_COMPANY_ID
+          );
+        }
+        if (!match) await new Promise((r) => setTimeout(r, 500));
+      }
+      expect(match, "transfer row should have replicated").toBeTruthy();
+      expect(Number(match.creditAmount)).toBe(100);
+      // The fix: the split child's transfer is the first transfer.
+      expect(match.isFirstTransfer).toBe(true);
+    }
+  );
+
+  // ------------------------------------------------------------------
   // Gap #7 Major — overdraw. Service guard at
   // credit-transactions-management.service.ts:136-147 compares
   // (creditAmount - reservedCreditAmount) against the requested amount

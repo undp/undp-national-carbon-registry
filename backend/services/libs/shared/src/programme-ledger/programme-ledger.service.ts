@@ -1819,7 +1819,8 @@ export class ProgrammeLedgerService {
     countryCodeA2: string,
     companyIds: number[],
     issueCredit: number,
-    user: string
+    user: string,
+    authorizationPurpose?: AuthorizationPurpose
   ): Promise<Programme> {
     this.logger.log(`Authorizing programme ${programmeId}`);
 
@@ -1918,6 +1919,11 @@ export class ProgrammeLedgerService {
         programme.emissionReductionAchieved = programme.creditIssued;
         programme.txRef = user;
         programme.txType = TxType.AUTH;
+        // F4: persist the authorization purpose so it cascades to credit
+        // blocks / transactions / AEF (Dec 2/CMA.3 para 1, 23(d)).
+        if (authorizationPurpose) {
+          programme.authorizationPurpose = authorizationPurpose;
+        }
         updatedProgramme = programme;
 
         let companyCreditDistribution = {};
@@ -1956,6 +1962,12 @@ export class ProgrammeLedgerService {
           txTime: programme.txTime,
           txType: programme.txType,
         };
+        // F4: only write the purpose when supplied so re-authorization or
+        // non-Article-6 flows don't blank an existing value.
+        if (authorizationPurpose) {
+          updateMap[this.ledger.tableName].authorizationPurpose =
+            authorizationPurpose;
+        }
         updateWhereMap[this.ledger.tableName] = {
           programmeId: programmeId,
           currentStage: ProgrammeStage.APPROVED.valueOf(),
