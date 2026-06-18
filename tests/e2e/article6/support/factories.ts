@@ -999,13 +999,23 @@ export async function createProgramme(
 
 /**
  * PUT /national/programme/authorize — ProgrammeApprove DTO
- * ({ programmeId, issueAmount?, comment? }). Throws on non-2xx.
+ * ({ programmeId, issueAmount?, comment?, authorizationPurpose? }).
+ * Throws on non-2xx. When authorizationPurpose is supplied (F4) it is
+ * persisted on the programme and cascades to credit blocks / AEF.
  */
 export async function authorizeProgramme(
   api: ApiClient,
-  programmeId: string
+  programmeId: string,
+  authorizationPurpose?:
+    | "UseTowardsNDC"
+    | "OtherInternationalMitigationPurposes"
+    | "OtherPurposes"
 ): Promise<void> {
-  const res = await api.put("national/programme/authorize", { programmeId });
+  const body: Record<string, unknown> = { programmeId };
+  if (authorizationPurpose) {
+    body.authorizationPurpose = authorizationPurpose;
+  }
+  const res = await api.put("national/programme/authorize", body);
   await expectOk(res, "authorizeProgramme");
 }
 
