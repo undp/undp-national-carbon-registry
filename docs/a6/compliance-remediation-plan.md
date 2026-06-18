@@ -9,8 +9,9 @@ an Article 6.2 subject-matter expert (SME) **before** code changes; everything e
 unambiguous wiring/validation gap and can be implemented directly.
 
 **Implementation progress** (branch `article-6-compliance-improvements`, PR #361):
-**F12, F13, F14, F15 are done** — implemented and verified against the full Playwright Article 6.2
-e2e suite (193/193). Next up (no gate): **F4**. See the per-finding sections for detail.
+**F4, F12, F13, F14, F15 are done** — implemented and verified against the full Playwright
+Article 6.2 e2e suite (all green). Next up (no gate): **F7**, then **F11** (both need
+migrations). See the per-finding sections for detail.
 
 **Governing decisions** (in `docs/a6/`):
 
@@ -26,10 +27,10 @@ e2e suite (193/193). Next up (no gate): **F4**. See the per-finding sections for
 | F1  | Emissions-balance formula wrong          | Yes         | 1-line            | 🔒       | SME-gate   |
 | F2  | Single vs multi-year not applied         | Yes         | Large             | 🔒       | SME-gate   |
 | F3  | OMGE/SOP auto-deducted as mandatory      | Yes         | Small             | 🔒       | SME-gate   |
-| F4  | `authorizationPurpose` never set         | Yes         | Small/Med         | No       | **next**   |
+| F4  | `authorizationPurpose` never set         | Yes         | Small/Med         | No       | done ✅    |
 | F5  | No "NDC and OIMP" dual purpose           | Yes         | Small + migration | 🔒       | SME-gate   |
 | F6  | First-transfer definition not per-auth   | Yes         | Med + migration   | 🔒       | SME-gate   |
-| F7  | Authorized entities not linked to CA     | Yes         | Med + migration   | No       | open       |
+| F7  | Authorized entities not linked to CA     | Yes         | Med + migration   | No       | next       |
 | F8  | Annual Information is a placeholder       | Yes         | Large             | No       | vendor     |
 | F9  | Exports drop 3 columns                   | Yes         | Small             | No       | vendor     |
 | F10 | Non-GHG metrics unsupported              | Conditional | Large             | 🔒       | SME-gate   |
@@ -39,9 +40,9 @@ e2e suite (193/193). Next up (no gate): **F4**. See the per-finding sections for
 | F14 | Vintage unvalidated; dead enum           | Yes         | Small             | No       | done ✅    |
 | F15 | First transfers lost on partial/split    | Yes         | Small/Med         | No       | done ✅    |
 
-**Done (Phase 1, no gate):** F12, F13, F14, F15 — implemented + e2e-verified (193/193) on
+**Done (Phase 1, no gate):** F4, F12, F13, F14, F15 — implemented + e2e-verified on
 `article-6-compliance-improvements` (PR #361).
-**Phase 1 remaining (no gate):** **F4** (next — no migration), F7, F11 (F7/F11 need migrations).
+**Phase 1 remaining (no gate):** **F7** (next), F11 (both need migrations).
 **Vendor (AEF reporting templates):** F8, F9 + the new CMA.6 5-table AEF format (separate vendor work plan).
 **SME-gated (🔒, post sign-off):** F1, F3, F5, F6; F2 + F10 conditional on host NDC.
 
@@ -207,25 +208,35 @@ misleading boolean flags on existing rows need resetting.
 
 ---
 
-## F4 — `authorizationPurpose` never populated in production
+## F4 — `authorizationPurpose` never populated in production ✅ DONE (PR #361)
 
 **Severity:** High · **Decision basis:** Dec 2/CMA.3 para 1, 23(d); 6/CMA.4 Annex · **No gate**
 
-**Current code:** The `authorizationPurpose` column exists on `projects.entity.ts:94-100`,
+**Was:** The `authorizationPurpose` column existed on `projects.entity.ts:94-100`,
 `credit.blocks.entity.ts:75`, `credit.transactions.entity.ts:80`, `aef.actions.table.entity.ts:62`,
-but `grep` for `.authorizationPurpose =` outside tests returns nothing. It is only ever *read* and
+but `grep` for `.authorizationPurpose =` outside tests returned nothing. It was only ever *read* and
 propagated from `project.authorizationPurpose` (always null — e.g.
-`credit-blocks-management.service.ts:270`). No DTO captures it
-(`programme.auth.ts` / `programme.approve.ts` / `project.create.dto.ts` have no such field).
-Result: the AEF "Purposes for authorization" column is empty in real data.
+`credit-blocks-management.service.ts:270`). No DTO captured it. Result: the AEF "Purposes for
+authorization" column was empty in real data.
 
-**What to do:**
-- Add `authorizationPurpose?: AuthorizationPurpose` to the authorization DTO (`programme.auth.ts`,
-  and/or `programme.approve.ts` per which step authorizes ITMOs).
-- Set `project.authorizationPurpose` from that DTO in the APPROVE_VALIDATION / authorization write
-  path in `programme-ledger.service.ts` so it cascades to blocks/transactions/AEF rows that already
-  read it.
-- Surface the field in the authorization UI.
+**What was done:**
+- Added optional `authorizationPurpose?: AuthorizationPurpose` (`@IsEnum`/`@IsOptional`) to
+  `dto/programme.approve.ts` (the ProgrammeApprove DTO used by `PUT /programme/authorize`).
+- Added the `authorizationPurpose` enum column to the ledger `Programme` entity
+  (`entities/programme.entity.ts`) so it serializes into the ledger event JSON and synchronizes to
+  the RDBMS view (`carbondev.programme`), then cascades to blocks/transactions/AEF rows that already
+  read `project.authorizationPurpose`.
+- `programme.service.ts authorizeProgramme` now forwards the purpose to
+  `programme-ledger.service.ts authProgrammeStatus`, which writes it into the AUTH `updateMap`
+  **only when supplied** (so re-authorization / non-Article-6 flows don't blank an existing value).
+- e2e: the `authorizeProgramme` factory helper accepts the purpose; a new
+  `programme-lifecycle.spec.ts` test drives the full `/authorize` gate with
+  `authorizationPurpose=UseTowardsNDC` and asserts the ledger event carries it.
+
+**Note:** the web app exposes **no `/authorize` trigger** today — the action handler exists in
+`ProjectDetailsViewComponent.tsx onAction` but no button ever sets `actionInfo.action="Authorise"`,
+so there is no authorization UI to surface the purpose in. If/when an authorize button is added, it
+should include a purpose dropdown (and offer "NDC and OIMP" once **F5** lands).
 
 **Considerations:** Ties to F5 — if "NDC and OIMP" is added, the DTO/UI should offer it.
 
