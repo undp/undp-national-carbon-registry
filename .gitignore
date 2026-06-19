@@ -4,9 +4,17 @@
 **/.build/
 backend/services/.env.local
 backend/services/.env
+backend/services/.env.*
+!backend/services/.env.example
 **/yarn-error.log
 **/coverage
 .env.local
+.env.db
+.env.national
+.env.replicator
+!.env.db.example
+!.env.national.example
+!.env.replicator.example
 ./data/*
 !./data/README.md
 web/src/Assets/.DS_Store
@@ -16,3 +24,9 @@ backend/services/*.pdf
 backend/services/*.csv
 backend/services/*.xlsx
 backend/services/public/*
+.env
+.env.db
+.env.national
+.env.replicator
+.env.local
+CODE_QUALITY_REVIEW.md
