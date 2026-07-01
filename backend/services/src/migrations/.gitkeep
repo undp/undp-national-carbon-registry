@@ -1,0 +1,6 @@
+# Migration files are generated here by the TypeORM CLI.
+#
+#   yarn migration:generate src/migrations/SomeName
+#
+# This .gitkeep ensures the folder exists in version control before the first
+# migration is created. It can be removed once real migrations are committed.

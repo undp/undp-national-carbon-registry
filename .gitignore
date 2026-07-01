@@ -30,3 +30,5 @@ backend/services/public/*
 .env.replicator
 .env.local
 CODE_QUALITY_REVIEW.md
+backend/services/docs/
+
