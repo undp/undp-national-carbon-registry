@@ -1,3 +1,13 @@
+function required(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(
+      `Missing required environment variable: ${name}. Set it in your .env file (see .env.example).`
+    );
+  }
+  return value;
+}
+
 export default () => ({
   stage: process.env.STAGE || "local",
   systemCountry: process.env.systemCountryCode || "NG",
@@ -16,16 +26,21 @@ export default () => ({
     username: process.env.DB_USER || "hquser",
     password: process.env.DB_PASSWORD || "",
     database: process.env.DB_NAME || "carbondev",
-    synchronize: process.env.NODE_ENV == "prod" ? true : true,
+    synchronize: process.env.NODE_ENV === "dev" || process.env.DB_SYNCHRONIZE === "true",
     autoLoadEntities: true,
     logging: ["error"],
+    // Apply pending migrations at startup when explicitly opted in (prod/staging).
+    // Uses the compiled output paths at runtime; the CLI uses the .ts sources.
+    migrations: ["dist/migrations/*.js"],
+    migrationsRun: process.env.DB_MIGRATIONS_RUN === "true",
+    migrationsTableName: "migrations",
   },
   jwt: {
     expiresIn: process.env.EXPIRES_IN || "7200",
     refreshTokenExpiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN || "12h",
-    userSecret: process.env.USER_JWT_SECRET || "1324",
-    refreshTokenSecret: process.env.REFRESH_TOKEN_JWT_SECRET || "9823",
-    adminSecret: process.env.ADMIN_JWT_SECRET || "8654",
+    userSecret: required("USER_JWT_SECRET"),
+    refreshTokenSecret: required("REFRESH_TOKEN_JWT_SECRET"),
+    adminSecret: required("ADMIN_JWT_SECRET"),
     encodePassword: process.env.ENCODE_PASSWORD || false,
     saltRounds: process.env.SALT_ROUNDS || 10,
   },
@@ -38,11 +53,9 @@ export default () => ({
     creditBlocksTable: "credit_blocks",
   },
   email: {
-    source: process.env.SOURCE_EMAIL || "info@xeptagon.xyz",
-    endpoint:
-      process.env.SMTP_ENDPOINT ||
-      "vpce-02cef9e74f152b675-b00ybiai.email-smtp.us-east-1.vpce.amazonaws.com",
-    username: process.env.SMTP_USERNAME || "AKIAUMXKTXDJIOFY2QXL",
+    source: process.env.SOURCE_EMAIL || "noreply@example.com",
+    endpoint: required("SMTP_ENDPOINT"),
+    username: required("SMTP_USERNAME"),
     password: process.env.SMTP_PASSWORD,
     disabled: process.env.IS_EMAIL_DISABLED === "true" ? true : false,
     disableLowPriorityEmails:
@@ -54,7 +67,7 @@ export default () => ({
   s3CommonBucket: {
     name: process.env.S3_COMMON_BUCKET || "carbon-common-dev",
   },
-  host: process.env.HOST || "https://test.carbreg.org",
+  host: process.env.HOST || "http://localhost:3030",
   backendHost: process.env.BACKEND_HOST || "http://localhost:3000",
   liveChat: "https://undp2020cdo.typeform.com/to/emSWOmDo",
   mapbox: {
@@ -63,13 +76,9 @@ export default () => ({
   openstreet: {
     retrieve: process.env.OPENSTREET_QUERY === "true" || false,
   },
-  asyncQueueName:
-    process.env.ASYNC_QUEUE_NAME ||
-    "https://sqs.us-east-1.amazonaws.com/302213478610/AsyncQueuedev.fifo",
+  asyncQueueName: required("ASYNC_QUEUE_NAME"),
   ITMOSystem: {
-    endpoint:
-      process.env.ITMO_ENDPOINT ||
-      "https://dev-digital-carbon-finance-webapp-api-rxloyxnj3dbso.azurewebsites.net/api/v1/",
+    endpoint: process.env.ITMO_ENDPOINT,
     apiKey: process.env.ITMO_API_KEY,
     email: process.env.ITMO_EMAIL,
     password: process.env.ITMO_PASSWORD,
@@ -80,9 +89,7 @@ export default () => ({
   },
   registry: {
     syncEnable: process.env.SYNC_ENABLE === "true" ? true : false,
-    endpoint:
-      process.env.SYNC_ENDPOINT ||
-      "https://u4h9swxm8b.execute-api.us-east-1.amazonaws.com/dev",
+    endpoint: process.env.SYNC_ENDPOINT,
     apiToken: process.env.SYNC_API_TOKEN,
   },
   docGenerate: {
@@ -97,7 +104,7 @@ export default () => ({
   },
   cadTrust: {
     enable: process.env.CADTRUST_ENABLE === "true" ? true : false,
-    endpoint: process.env.CADTRUST_ENDPOINT || "http://44.212.139.61:31310/",
+    endpoint: process.env.CADTRUST_ENDPOINT,
   },
   systemType: process.env.SYSTEM_TYPE || "CARBON_UNIFIED_SYSTEM",
   systemName: process.env.SYSTEM_NAME || "SystemX",
