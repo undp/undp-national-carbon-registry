@@ -94,6 +94,15 @@ export class ProgrammeDto {
   @IsOptional()
   article6trade?: boolean;
 
+  // Dec 2/CMA.3 Annex chapter V para 18: a cooperative approach
+  // authorized under Article 6.2 must carry back to the CA so that the
+  // Submitted-Initial-Report prerequisite can be enforced at the
+  // moment of first ITMO authorization.
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  cooperativeApproachId?: string;
+
   @ApiProperty()
   @IsNotEmpty()
   @IsBoolean()

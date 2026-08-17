@@ -1,0 +1,70 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git status:*)",
+      "Bash(git diff)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git show:*)",
+
+      "Bash(yarn install)",
+      "Bash(yarn install:*)",
+      "Bash(yarn build)",
+      "Bash(yarn lint)",
+      "Bash(yarn lint:*)",
+      "Bash(yarn test)",
+      "Bash(yarn test:*)",
+      "Bash(yarn test:cov)",
+      "Bash(yarn dev)",
+      "Bash(yarn migration:show)",
+      "Bash(yarn typeorm:*)",
+      "Bash(nest build)",
+
+      "Bash(cd backend/services && yarn install)",
+      "Bash(cd backend/services && yarn install:*)",
+      "Bash(cd backend/services && yarn build)",
+      "Bash(cd backend/services && yarn lint)",
+      "Bash(cd backend/services && yarn lint:*)",
+      "Bash(cd backend/services && yarn test)",
+      "Bash(cd backend/services && yarn test:*)",
+      "Bash(cd backend/services && yarn migration:show)",
+      "Bash(cd backend/services && yarn typeorm:*)",
+      "Bash(cd web && yarn install)",
+      "Bash(cd web && yarn install:*)",
+      "Bash(cd web && yarn build)",
+      "Bash(cd web && yarn lint)",
+      "Bash(cd web && yarn dev)",
+
+      "Bash(npx playwright --version)",
+      "Bash(npx playwright test:*)",
+
+      "Bash(docker-compose ps)",
+      "Bash(docker-compose ps:*)",
+      "Bash(docker-compose logs:*)",
+      "Bash(docker-compose up -d:*)",
+      "Bash(podman-compose ps)",
+      "Bash(podman-compose ps:*)",
+      "Bash(podman-compose logs:*)",
+      "Bash(podman-compose up -d:*)",
+      "Bash(podman exec db psql -U root -d carbondev -c *SELECT*)"
+    ],
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.local)",
+      "Read(**/.env.dev)",
+      "Read(**/.env.prod)",
+      "Read(**/.env.db)",
+      "Read(**/.env.national)",
+      "Read(**/.env.replicator)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Bash(cat **/.env)",
+      "Bash(cat **/.env.local)",
+      "Bash(cat **/.env.db)",
+      "Bash(cat **/.env.national)",
+      "Bash(cat **/.env.replicator)"
+    ]
+  }
+}

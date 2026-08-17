@@ -37,7 +37,10 @@ export abstract class LedgerDBInterface {
     tableName?: string
   ): Promise<dom.Value[]>;
 
-  abstract fetchHistory(where: Record<string, any>): Promise<dom.Value[]>;
+  abstract fetchHistory(
+    where: Record<string, any>,
+    tableName?: string
+  ): Promise<dom.Value[]>;
 
   abstract updateRecords(
     update: Record<string, any>,

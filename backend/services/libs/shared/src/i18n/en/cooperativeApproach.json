@@ -1,0 +1,15 @@
+{
+  "notFound": "Cooperative approach {} not found.",
+  "noManagePermission": "Only a government (DNA) Admin or Root user can manage cooperative approaches.",
+  "invalidDateRange": "The cooperative approach start date must be before its end date.",
+  "invalidTransition": "Cooperative approach {} cannot move from {} to {}.",
+  "activationRequiresSubmittedIr": "Cooperative approach {} cannot be activated until its initial report has been submitted (Dec 2/CMA.3 Annex para 18).",
+  "entityRequiresActiveCa": "Authorized entities can only be added to an Active cooperative approach ({} is not Active).",
+  "authorizedEntityNotFound": "Authorized entity {} not found.",
+  "countryOfIncorporationNotParticipating": "Country of incorporation {} is not a participating party of cooperative approach {}.",
+  "authorizationDateInFuture": "The authorization date cannot be in the future.",
+  "participatingPartyInUse": "Participating party {} cannot be removed from cooperative approach {} — an active authorized entity is incorporated there.",
+  "transitionFromCompleted": "Cooperative approach {} is Completed — its lifecycle has ended and its status cannot change. To start a new bilateral arrangement, create a fresh cooperative approach.",
+  "transitionFromRevoked": "Cooperative approach {} was Revoked under Draft -/CMA.5 paras 20-21. Revoked is terminal; no further status changes are permitted.",
+  "transitionRevertToDraft": "Cooperative approach {} cannot revert from {} to Draft. Once a CA leaves Draft, its working version is fixed."
+}

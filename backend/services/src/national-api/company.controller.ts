@@ -76,6 +76,13 @@ export class CompanyController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, Company, true))
+  @Post("queryNameIds")
+  queryNameIds(@Body() query: QueryDto, @Request() req) {
+    return this.companyService.queryNameIds(query, req.abilityCondition);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuardEx(true, Action.Read, Company, true))
   @Post("download")
   async getDownload(@Body() query: DataExportQueryDto, @Request() req) {
     try {

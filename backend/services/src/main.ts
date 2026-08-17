@@ -1,6 +1,7 @@
 import { handler } from "./ledger-replicator/handler";
 import { handler as asyncHandler } from "./async-operations-handler/handler";
 import { handler as importHandler } from "./data-importer/handler";
+import { handler as aefRolloverHandler } from "./aef-rollover/handler";
 import * as setupHandler from "@app/shared/setup/handler";
 import { NationalAPIModule } from "./national-api/national.api.module";
 import { join } from "path";
@@ -39,6 +40,14 @@ async function bootstrap() {
         continue;
       case "data-importer":
         await importHandler({ importTypes: process.env.DATA_IMPORT_TYPES });
+        console.log("Module initiated", moduleName);
+        continue;
+      case "aef-rollover":
+        // Manual re-run path for the AEF V2 start-of-year rollover
+        // (container deployments only — see AefV2SchedulerService for the
+        // normal in-process trigger, and serverless.yml's `aef-rollover`
+        // function for the Lambda equivalent of this same handler).
+        await aefRolloverHandler({});
         console.log("Module initiated", moduleName);
         continue;
       default:

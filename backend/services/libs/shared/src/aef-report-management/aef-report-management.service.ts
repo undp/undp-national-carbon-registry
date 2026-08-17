@@ -12,7 +12,8 @@ import { CreditRetireActionDto } from "../dto/credit.retire.action.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreditTransactionsEntity } from "../entities/credit.transactions.entity";
 import { RetirementACtionEnum } from "../enum/retirement.action.enum";
-import { CreditRetirementTypeEnum } from "../enum/credit.retirement.type.enum";
+import { CreditTransactionSubTypesEnum } from "../enum/credit.transaction.sub.types.enum";
+import { RetirementUseData } from "../dto/credit.transaction.data.types";
 import { ConfigService } from "@nestjs/config";
 import { QueryDto } from "../dto/query.dto";
 import { User } from "../entities/user.entity";
@@ -77,24 +78,55 @@ export class AefReportManagementService {
     private fileHandler: FileHandlerInterface
   ) {}
 
-  public async handleAefRecord(creditBlock: CreditBlocksEntity, em: EntityManager) {
+  public async handleAefRecord(
+    creditBlock: CreditBlocksEntity,
+    em: EntityManager
+  ) {
     if (![TxType.ISSUE, TxType.TRANSFER, TxType.RETIRE].includes(creditBlock.txType)) {
       return;
     }
     const project = await this.programmeLedgerService.getProjectById(creditBlock.projectRefId);
+    // In production, every credit-block event is always tied to a project
+    // that was persisted first. If the project lookup returns null, we
+    // are looking at an orphan (e.g. test fixture seeded out of band);
+    // skip AEF emission rather than crashing the replicator. Without
+    // this guard a single bad ledger row would loop-retry forever and
+    // halt downstream replication.
+    if (!project) {
+      return;
+    }
+    // AEF Actions/Holdings rows are only meaningful for authorized
+    // projects (Dec 4/CMA.6 Annex II: authorization is the root of the
+    // ITMO lifecycle the AEF describes). A project with no
+    // projectAuthorizationTime is either a draft that shouldn't be
+    // reported yet or a test fixture seeded out of band. Skip rather
+    // than crashing the replicator on a NOT NULL constraint.
+    if (!project.projectAuthorizationTime) {
+      return;
+    }
     const newAefActionRecord = plainToClass(AefActionsTableEntity, {
       creditBlockStartId: this.serialNumberManagementService.getBlockStartId(
         creditBlock.serialNumber
       ),
       creditBlockEndId: this.serialNumberManagementService.getBlockEndId(creditBlock.serialNumber),
       creditAmount: creditBlock.creditAmount,
-      vintage: this.serialNumberManagementService.getVintage(creditBlock.serialNumber),
+      // Vintage is authoritative on the CreditBlocksEntity column; the
+      // serial-number parse is a fallback for legacy rows that lost the
+      // direct field. Prefer entity, fall back to serial parse. Prevents
+      // a NOT NULL violation when the serial isn't in the canonical
+      // `CRED-{party}-{firstParty}-{project}-{start}-{end}-{vintage}`
+      // format (e.g., fixture-seeded ledger events).
+      vintage:
+        creditBlock.vintage ??
+        this.serialNumberManagementService.getVintage(creditBlock.serialNumber),
       sector: project.sector,
       sectoralScope: project.sectoralScope,
       projectAuthorizationTime: project.projectAuthorizationTime,
       authorizationId: project.authorizationId,
       actionTime: creditBlock.txTime,
       aquiringParty: this.configService.get("AEF.defaultAquiringParty"),
+      acquiringPartyCountryCode: null,
+      reportingYear: new Date(creditBlock.txTime).getFullYear(),
     });
     if (creditBlock.txType == TxType.ISSUE) {
       newAefActionRecord.actionType = AefActionTypeEnum.AUTHORIZATION;
@@ -102,13 +134,42 @@ export class AefReportManagementService {
       newAefActionRecord.actionType = AefActionTypeEnum.TRANSFER;
     } else if (creditBlock.txType == TxType.RETIRE) {
       const txData: CreditRetireActionDto = creditBlock.txData;
-      if (txData.action == RetirementACtionEnum.ACCEPT) {
+      if (txData && txData.action == RetirementACtionEnum.ACCEPT) {
         const retireTrasaction = await this.creditTransactionsEntityRepository.findOne({
           where: { id: txData.transactionId },
         });
-        if (retireTrasaction.retirementType == CreditRetirementTypeEnum.CROSS_BORDER_TRANSACTIONS) {
-          newAefActionRecord.actionType = AefActionTypeEnum.CROSS_BOARDER_TRANSFER;
-          newAefActionRecord.aquiringParty = retireTrasaction.country;
+        if (!retireTrasaction) {
+          newAefActionRecord.actionType = AefActionTypeEnum.RETIRE;
+        } else if (
+          retireTrasaction.subType == CreditTransactionSubTypesEnum.USE_TOWARDS_NDC ||
+          retireTrasaction.subType == CreditTransactionSubTypesEnum.FIRST_TRANSFER_TOWARDS_NDC
+        ) {
+          // AefActionTypeEnum keeps a single USE_TOWARDS_NDC bucket for
+          // both the MO-domestic and ITMO-first-transfer sub-types;
+          // isFirstTransfer below is what distinguishes them in AEF
+          // reporting.
+          const useData = retireTrasaction.data as RetirementUseData;
+          newAefActionRecord.actionType = AefActionTypeEnum.USE_TOWARDS_NDC;
+          if (useData?.country) {
+            newAefActionRecord.aquiringParty = useData.country;
+            newAefActionRecord.acquiringPartyCountryCode = useData.country;
+          }
+          // First transfer is the moment ITMO credits leave the
+          // country — this only fires for ITMO blocks; MO domestic
+          // NDC-use retirements never carry an ITMO authorization.
+          newAefActionRecord.isFirstTransfer = !!creditBlock.itmoAuthorizationRecord;
+        } else if (retireTrasaction.subType == CreditTransactionSubTypesEnum.FIRST_TRANSFER_FOR_OIMP) {
+          const useData = retireTrasaction.data as RetirementUseData;
+          newAefActionRecord.actionType = AefActionTypeEnum.USE_FOR_OIMP;
+          if (useData?.country) {
+            newAefActionRecord.aquiringParty = useData.country;
+            newAefActionRecord.acquiringPartyCountryCode = useData.country;
+          }
+          newAefActionRecord.isFirstTransfer = !!creditBlock.itmoAuthorizationRecord;
+        } else if (retireTrasaction.subType == CreditTransactionSubTypesEnum.VOLUNTARY_CANCELLATION) {
+          newAefActionRecord.actionType = AefActionTypeEnum.VOLUNTARY_CANCELLATION;
+        } else if (retireTrasaction.subType == CreditTransactionSubTypesEnum.OMGE_CANCELLATION) {
+          newAefActionRecord.actionType = AefActionTypeEnum.OMGE_CANCELLATION;
         } else {
           newAefActionRecord.actionType = AefActionTypeEnum.RETIRE;
         }
@@ -198,6 +259,10 @@ export class AefReportManagementService {
         case AefReportTypeEnum.ACTIONS:
           prepData = this.prepareActionsData(resp);
           localFileName = `${AefReportTypeEnum.ACTIONS}`;
+          break;
+        case AefReportTypeEnum.ANNUAL_INFORMATION:
+          prepData = this.prepareActionsData(resp);
+          localFileName = `${AefReportTypeEnum.ANNUAL_INFORMATION}`;
           break;
         default:
           break;

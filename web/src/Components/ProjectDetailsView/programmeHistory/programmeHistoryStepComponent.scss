@@ -204,6 +204,38 @@
     padding: 0.3rem 0.4rem 0.2rem 0.4rem;
   }
 
+  // ITMO authorization. The request uses the gold the ITMO type pill and the
+  // credit-history graph nodes already use for ITMOs; the three outcomes match
+  // their retirement counterparts above, so accepted/rejected/cancelled read
+  // the same way throughout the timeline.
+  .itmo_auth_requested {
+    color: #ad6800;
+    background-color: #fff1b8;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .itmo_auth_approved {
+    color: #3dc835;
+    background-color: #c0ffc2;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .itmo_auth_rejected {
+    color: #ad1515;
+    background-color: #f6e3e3;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
+  .itmo_auth_cancelled {
+    color: #ff4d4f;
+    background-color: #ffe0e0;
+    font-size: 1rem;
+    padding: 0.3rem 0.4rem 0.2rem 0.4rem;
+  }
+
   .remarks {
     margin-top: 6px;
 

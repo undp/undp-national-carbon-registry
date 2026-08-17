@@ -365,7 +365,10 @@ export class ProcessEventService {
 
           await this.creditTransactionsManagementService.handleTransactionRecords(
             creditBlock,
-            em
+            em,
+            // Pre-update block state, used to derive fromAccountType on
+            // transfer records.
+            previousCreditBlock ?? undefined
           );
         });
       } else {

@@ -74,5 +74,17 @@
   "retirementCancelledDescription": "{} request to retire {} credits from {} was cancelled",
 
   "retirementRejectedTitle": "Credit Retirement Rejected",
-  "retirementRejectedDescription": "{} request to retire {} credits from {} was rejected."
+  "retirementRejectedDescription": "{} request to retire {} credits from {} was rejected.",
+
+  "itmoAuthRequestedTitle": "ITMO Authorization Request",
+  "itmoAuthRequestedDescription": "{} credits have been requested for ITMO authorization from {} for the {}.",
+
+  "itmoAuthApprovedTitle": "ITMO Authorization Accepted",
+  "itmoAuthApprovedDescription": "The request to authorize {} credits as ITMOs from {} was accepted.",
+
+  "itmoAuthRejectedTitle": "ITMO Authorization Rejected",
+  "itmoAuthRejectedDescription": "The request to authorize {} credits as ITMOs from {} was rejected.",
+
+  "itmoAuthCancelledTitle": "ITMO Authorization Cancelled",
+  "itmoAuthCancelledDescription": "The request to authorize {} credits as ITMOs from {} was cancelled."
 }
