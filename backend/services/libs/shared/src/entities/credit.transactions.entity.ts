@@ -3,11 +3,12 @@ import {
   Column,
   Entity,
   PrimaryColumn,
-  PrimaryGeneratedColumn,
 } from "typeorm";
 import { CreditTransactionTypesEnum } from "../enum/credit.transaction.types.enum";
+import { CreditTransactionSubTypesEnum } from "../enum/credit.transaction.sub.types.enum";
 import { CreditTransactionStatusEnum } from "../enum/credit.transaction.status.enum";
-import { CreditRetirementTypeEnum } from "../enum/credit.retirement.type.enum";
+import { AccountType } from "../enum/account.type.enum";
+import { CreditTransactionData } from "../dto/credit.transaction.data.types";
 
 @Entity()
 export class CreditTransactionsEntity {
@@ -22,6 +23,13 @@ export class CreditTransactionsEntity {
 
   @Column({ type: "enum", enum: CreditTransactionTypesEnum })
   type: CreditTransactionTypesEnum;
+
+  @Column({
+    type: "enum",
+    enum: CreditTransactionSubTypesEnum,
+    nullable: true,
+  })
+  subType?: CreditTransactionSubTypesEnum;
 
   @Column({ type: "enum", enum: CreditTransactionStatusEnum })
   status: CreditTransactionStatusEnum;
@@ -38,17 +46,29 @@ export class CreditTransactionsEntity {
   @Column({ type: "text" })
   projectRefId: string;
 
-  @Column({ type: "enum", enum: CreditRetirementTypeEnum, nullable: true })
-  retirementType?: CreditRetirementTypeEnum;
+  // Type+subType-specific payload; see credit.transaction.data.types.ts
+  // for the shape each type/subType combination carries.
+  @Column("jsonb", { array: false, nullable: true })
+  data?: CreditTransactionData;
 
-  @Column({ type: "text", nullable: true })
-  remarks?: string;
+  @Column({
+    type: "enum",
+    enum: AccountType,
+    array: false,
+    nullable: true,
+  })
+  fromAccountType?: AccountType;
 
-  @Column({ type: "text", nullable: true })
-  country?: string;
+  @Column({
+    type: "enum",
+    enum: AccountType,
+    array: false,
+    nullable: true,
+  })
+  toAccountType?: AccountType;
 
-  @Column({ type: "text", nullable: true })
-  organizationName?: string;
+  @Column({ type: "boolean", default: false })
+  isFirstTransfer: boolean;
 
   @Column({ type: "bigint" })
   createTime: number;

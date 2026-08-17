@@ -2,19 +2,24 @@ import { ViewColumn, ViewEntity } from "typeorm";
 
 @ViewEntity({
   expression: `
-      SELECT 
+      SELECT
         ct."id" AS "id",
         ct."serialNumber" AS "serialNumber",
         ct."amount" AS "creditAmount",
         ct."createTime" AS "createdDate",
         ct."projectRefId" AS "projectId",
         p."title" AS "projectName",
+        p."companyId" AS "projectOwnerId",
         ct."recieverId" AS "recieverId",
         r."name" AS "receiverName",
         r."logo" AS "receiverLogo",
         ct."senderId" AS "senderId",
         s."name" AS "senderName",
-        s."logo" AS "senderLogo"
+        s."logo" AS "senderLogo",
+        ct."type"::text AS "type",
+        COALESCE(ct."isFirstTransfer", FALSE) AS "isFirstTransfer",
+        ct."fromAccountType"::text AS "fromAccountType",
+        ct."toAccountType"::text AS "toAccountType"
       FROM "credit_transactions_entity" ct
       LEFT JOIN project_entity p ON ct."projectRefId" = p."refId"
       LEFT JOIN company r ON ct."recieverId" = r."companyId"
@@ -42,6 +47,9 @@ export class CreditBlockTransfersViewEntity {
   projectName: string;
 
   @ViewColumn()
+  projectOwnerId: number;
+
+  @ViewColumn()
   recieverId: number;
 
   @ViewColumn()
@@ -58,4 +66,16 @@ export class CreditBlockTransfersViewEntity {
 
   @ViewColumn()
   senderLogo: string;
+
+  @ViewColumn()
+  type: string;
+
+  @ViewColumn()
+  isFirstTransfer: boolean;
+
+  @ViewColumn()
+  fromAccountType: string;
+
+  @ViewColumn()
+  toAccountType: string;
 }

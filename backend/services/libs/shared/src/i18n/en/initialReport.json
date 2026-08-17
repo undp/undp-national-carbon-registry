@@ -1,0 +1,10 @@
+{
+  "notFound": "The initial report does not exist.",
+  "cooperativeApproachNotFound": "The specified cooperative approach does not exist.",
+  "noManagePermission": "Only a government (DNA) Admin or Root user can manage initial reports.",
+  "caNotDraft": "Initial reports can only be created for Draft cooperative approaches ({} is {}).",
+  "alreadyExists": "An initial report already exists for cooperative approach {}. Edit it to create a new version instead.",
+  "notLatestVersion": "Report {} is not the latest version — use {} instead.",
+  "notEditable": "Report {} is {} — only the latest Draft version can be edited or submitted.",
+  "incomplete": "Initial report is incomplete. Missing sections: {}"
+}

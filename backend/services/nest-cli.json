@@ -19,6 +19,10 @@
       {
         "include": "../libs/shared/src/templates/**/*",
         "outDir": "dist"
+      },
+      {
+        "include": "../libs/aef-v2/src/export/templates/**/*",
+        "outDir": "dist"
       }
     ]
   },
@@ -39,6 +43,15 @@
       "sourceRoot": "libs/core/src",
       "compilerOptions": {
         "tsConfigPath": "libs/core/tsconfig.lib.json"
+      }
+    },
+    "aef-v2": {
+      "type": "library",
+      "root": "libs/aef-v2",
+      "entryFile": "index",
+      "sourceRoot": "libs/aef-v2/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/aef-v2/tsconfig.lib.json"
       }
     }
   }

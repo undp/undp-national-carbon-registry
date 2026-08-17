@@ -18,6 +18,7 @@ export const API_PATHS = {
   //PROJECT
   PROJECT_CREATE: "national/projectManagement/create",
   GET_PROJECT: "national/projectManagement/query",
+  PROJECT_NAME_IDS: "national/projectManagement/queryNameIds",
   PROJECT_BY_ID: "national/programmeSl/getProjectById",
   ALL_PROJECTS: "national/programme/query",
   ADD_PROJECT_DOC: "national/programme/addDocument",
@@ -32,6 +33,12 @@ export const API_PATHS = {
   PROJECT_ACTION: (action: string) => `programme/${action}`,
   // CREDITS
   CREDIT_BALANCE_QUERY: "national/creditTransactionsManagement/queryBalance",
+  CREDIT_BALANCE_BY_PROJECT_QUERY:
+    "national/creditTransactionsManagement/queryBalanceByProject",
+  CREDIT_BALANCE_PROJECT_NAMES:
+    "national/creditTransactionsManagement/queryBalanceProjectNames",
+  CREDIT_BALANCE_BY_ORGANIZATION_QUERY:
+    "national/creditTransactionsManagement/queryBalanceByOrganization",
   CREDIT_TRANSFERS_QUERY:
     "national/creditTransactionsManagement/queryTransfers",
   CREDIT_RETIREMENT_QUERY:
@@ -43,6 +50,15 @@ export const API_PATHS = {
   CREDIT_RETIREMENT_PERFROM:
     "national/creditTransactionsManagement/performRetireAction",
   CREDIT_TRANSFER_REQUEST: "national/creditTransactionsManagement/transfer",
+  CREDIT_EXPLORER_QUERY: "national/creditTransactionsManagement/queryExplorer",
+  CREDIT_BLOCK_HISTORY: "national/creditTransactionsManagement/creditBlockHistory",
+  CREDIT_ISSUANCES_QUERY: "national/creditTransactionsManagement/queryIssuances",
+  ORG_CREDIT_BLOCKS: "national/creditTransactionsManagement/orgCreditBlocks",
+  ITMO_AUTH_QUERY:
+    "national/creditTransactionsManagement/queryItmoAuthorizations",
+  ITMO_AUTH_REQUEST: "national/creditTransactionsManagement/itmoAuthRequest",
+  ITMO_AUTH_PERFORM:
+    "national/creditTransactionsManagement/performItmoAuthAction",
   //LOCATION
   PROVINCES: "national/location/province",
   DISTRICTS: "national/location/district",
@@ -62,6 +78,7 @@ export const API_PATHS = {
   ORGANIZATION_DETAILS: "national/organisation/query",
   UPDATE_ORGANIZATION: "national/organisation/update",
   ORGANIZATION_NAMES: "national/organisation/queryNames",
+  ORGANIZATION_NAME_IDS: "national/organisation/queryNameIds",
   DOWNLOAD_ORGANIZATION_DATA: "national/organisation/download",
   ORGANIZATION_PROFILE_DETAILS: (companyId: string) =>
     `national/organisation/profile?id=${companyId}`,
@@ -167,7 +184,13 @@ export const API_PATHS = {
   REJECT_VALIDATION: "national/programmeSl/validation/reject",
   APPROVE_VALIDATION: "national/programmeSl/validation/approve",
   POPUP_ACTION: (endpoint: string) => `national/programme/${endpoint}`,
-  // AEF RECORDS:
-  QUERY_AEF_RECORDS: `national/reportsManagement/queryAefRecords`,
-  DOWNLOAD_AEF_RECORDS: `national/reportsManagement/downloadAefReport`
+  // AEF V2 (@app/aef-v2):
+  AEF_V2_QUERY: `national/aefV2/query`,
+  AEF_V2_VALIDATE: `national/aefV2/validate`,
+  AEF_V2_SUBMIT: `national/aefV2/submit`,
+  AEF_V2_DOWNLOAD: `national/aefV2/download`,
+  AEF_V2_CONFIG: `national/aefV2/config`,
+  // COOPERATIVE APPROACH
+  CA_HOST_PARTY: "national/cooperativeApproach/hostParty",
+  AEF_HOST_PARTY: `national/cooperativeApproach/hostParty`
 };

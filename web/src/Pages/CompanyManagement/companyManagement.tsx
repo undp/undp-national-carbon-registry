@@ -15,6 +15,8 @@ const CompanyManagement = () => {
     CompanyManagementColumns.taxId,
     CompanyManagementColumns.companyRole,
     CompanyManagementColumns.programmeCount,
+    CompanyManagementColumns.creditIssued,
+    CompanyManagementColumns.creditRetired,
     CompanyManagementColumns.companyState,
     CompanyManagementColumns.action,
   ];

@@ -8,6 +8,10 @@ import "./programmeHistoryStepComponent.scss";
 import { DateTime } from "luxon";
 import { dateTimeFormat } from "../../../Definitions/Definitions/common.definitions";
 import { ProjectActivityStage } from "../../../Definitions/Enums/programmeStage.enum";
+import {
+  AUTHORIZATION_PURPOSE_LABELS,
+  AuthorizationPurpose,
+} from "../../../Definitions/Enums/authorizationPurpose.enum";
 
 interface ProgrammeLog {
   id: number;
@@ -47,6 +51,10 @@ const logTypeIcons: Record<string, React.ReactNode> = {
   RETIRE_APPROVED: <Icon.Check2Circle />,
   RETIRE_REJECTED: <Icon.FileX />,
   RETIRE_CANCELLED: <Icon.X />,
+  ITMO_AUTH_REQUESTED: <Icon.GlobeAmericas />,
+  ITMO_AUTH_APPROVED: <Icon.Check2Circle />,
+  ITMO_AUTH_REJECTED: <Icon.FileX />,
+  ITMO_AUTH_CANCELLED: <Icon.X />,
   DEFAULT: <FileOutlined />,
 };
 
@@ -54,6 +62,14 @@ interface ProgrammeHistoryStepsProps {
   historyData: ProgrammeLog[];
   translator: any;
 }
+
+/**
+ * ITMO authorization logs store the raw AuthorizationPurpose wire value
+ * (`UseTowardsNDC`, ...). Falls back to the raw value for a purpose added to
+ * the backend enum but not yet to the label map.
+ */
+const formatAuthorizationPurpose = (purpose?: string) =>
+  purpose ? AUTHORIZATION_PURPOSE_LABELS[purpose as AuthorizationPurpose] ?? purpose : "";
 
 const formatString = (langTag: string, vargs: any[], t: any) => {
   const str = t(langTag);
@@ -197,25 +213,57 @@ const getLogDescription = (log: any, t: any) => {
     case ProjectActivityStage.RETIRE_REQUESTED:
       return formatString(
         "slcfProgrammeTimeline:retireRequestedDescription",
-        [log.data.amount, log.fromCompanyName, log.data.retirementType],
+        [log.data.amount, log.fromCompanyName, (log.data.subType ?? log.data.retirementType)],
         t
       );
     case ProjectActivityStage.RETIRE_CANCELLED:
       return formatString(
         "slcfProgrammeTimeline:retirementCancelledDescription",
-        [log.data.retirementType, log.data.amount, log.fromCompanyName],
+        [(log.data.subType ?? log.data.retirementType), log.data.amount, log.fromCompanyName],
         t
       );
     case ProjectActivityStage.RETIRE_APPROVED:
       return formatString(
         "slcfProgrammeTimeline:retirementApprovedDescription",
-        [log.data.retirementType, log.data.amount, log.fromCompanyName],
+        [(log.data.subType ?? log.data.retirementType), log.data.amount, log.fromCompanyName],
         t
       );
     case ProjectActivityStage.RETIRE_REJECTED:
       return formatString(
         "slcfProgrammeTimeline:retirementRejectedDescription",
-        [log.data.retirementType, log.data.amount, log.fromCompanyName],
+        [(log.data.subType ?? log.data.retirementType), log.data.amount, log.fromCompanyName],
+        t
+      );
+    // The request log carries the purpose and the cooperative approach; the
+    // three outcome logs carry neither, so they read off amount and org alone.
+    // authorizationPurpose is the raw wire value - render it through the shared
+    // label map, same as every other ITMO surface.
+    case ProjectActivityStage.ITMO_AUTH_REQUESTED:
+      return formatString(
+        "slcfProgrammeTimeline:itmoAuthRequestedDescription",
+        [
+          log.data.amount,
+          log.fromCompanyName,
+          formatAuthorizationPurpose(log.data.authorizationPurpose),
+        ],
+        t
+      );
+    case ProjectActivityStage.ITMO_AUTH_APPROVED:
+      return formatString(
+        "slcfProgrammeTimeline:itmoAuthApprovedDescription",
+        [log.data.amount, log.fromCompanyName],
+        t
+      );
+    case ProjectActivityStage.ITMO_AUTH_REJECTED:
+      return formatString(
+        "slcfProgrammeTimeline:itmoAuthRejectedDescription",
+        [log.data.amount, log.fromCompanyName],
+        t
+      );
+    case ProjectActivityStage.ITMO_AUTH_CANCELLED:
+      return formatString(
+        "slcfProgrammeTimeline:itmoAuthCancelledDescription",
+        [log.data.amount, log.fromCompanyName],
         t
       );
     default:
@@ -480,6 +528,18 @@ const getLogTitle = (logType: any) => {
       break;
     case ProjectActivityStage.RETIRE_REQUESTED:
       return "slcfProgrammeTimeline:retireRequestedTitle";
+      break;
+    case ProjectActivityStage.ITMO_AUTH_REQUESTED:
+      return "slcfProgrammeTimeline:itmoAuthRequestedTitle";
+      break;
+    case ProjectActivityStage.ITMO_AUTH_APPROVED:
+      return "slcfProgrammeTimeline:itmoAuthApprovedTitle";
+      break;
+    case ProjectActivityStage.ITMO_AUTH_REJECTED:
+      return "slcfProgrammeTimeline:itmoAuthRejectedTitle";
+      break;
+    case ProjectActivityStage.ITMO_AUTH_CANCELLED:
+      return "slcfProgrammeTimeline:itmoAuthCancelledTitle";
       break;
     default:
       break;

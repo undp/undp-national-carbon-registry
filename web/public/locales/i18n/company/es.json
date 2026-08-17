@@ -10,6 +10,8 @@
   "addCompany": "Agregar organización",
   "numberOfProgrammes": "NÚMERO DE PROGRAMAS",
   "creditBalance": "SALDO DE CRÉDITO",
+  "creditIssued": "EMITIDO",
+  "creditRetired": "RETIRADO",
   "date": "Fecha",
   "getCompanyError": "Error al obtener la empresa",
   "filterByCompany": "Filtrar por Tipo de Organización",

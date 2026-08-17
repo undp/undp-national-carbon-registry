@@ -45,6 +45,20 @@ export class ProjectManagementController {
   @CheckPolicies((ability: AppAbility) =>
     ability.can(Action.Read, ProjectEntity)
   )
+  @Post("queryNameIds")
+  async queryNameIds(@Body() query: QueryDto, @Request() req) {
+    return this.projectManagementService.queryNameIds(
+      query,
+      req.abilityCondition,
+      req.user
+    );
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Read, ProjectEntity)
+  )
   @Post("getProjectById")
   async getProjectById(
     @Body("programmeId") programmeId: string,

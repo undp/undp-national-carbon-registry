@@ -29,5 +29,7 @@
   "averageCreditingPeriod": "Annual Average Over the Crediting Period",
   "yes": "yes",
   "no": "no",
-  "somethingWentWrong": "Something went wrong!"
+  "somethingWentWrong": "Something went wrong!",
+  "cooperativeApproachCreateFailed": "Failed to create cooperative approach",
+  "cooperativeApproachUpdateFailed": "Failed to update cooperative approach"
 }

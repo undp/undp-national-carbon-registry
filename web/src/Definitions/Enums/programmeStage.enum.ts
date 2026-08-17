@@ -38,6 +38,11 @@ export enum ProjectActivityStage {
   RETIRE_APPROVED = 'RETIRE_APPROVED',
   RETIRE_REJECTED = 'RETIRE_REJECTED',
   RETIRE_CANCELLED = 'RETIRE_CANCELLED',
+  // Mirrors backend ProjectAuditLogType (libs/shared/src/enum/project.audit.log.type.enum.ts).
+  ITMO_AUTH_REQUESTED = 'ITMO_AUTH_REQUESTED',
+  ITMO_AUTH_APPROVED = 'ITMO_AUTH_APPROVED',
+  ITMO_AUTH_REJECTED = 'ITMO_AUTH_REJECTED',
+  ITMO_AUTH_CANCELLED = 'ITMO_AUTH_CANCELLED',
 }
 
 export enum ActivityStateEnum {

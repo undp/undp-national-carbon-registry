@@ -28,6 +28,7 @@ import {
 } from 'antd';
 import React, { useEffect, useState } from 'react';
 import './companyManagementComponent.scss';
+import { TimedPageInfoTitle } from '../../Common/TimedPageInfoTitle/TimedPageInfoTitle';
 import '../../../Styles/common.table.scss';
 import {
   CertBGColor,
@@ -217,6 +218,24 @@ export const CompanyManagementComponent = (props: any) => {
       align: 'left' as const,
       render: (item: any) => {
         return item !== null ? addCommSep(item) : '-';
+      },
+    },
+    {
+      title: t('company:creditIssued'),
+      dataIndex: 'creditIssued',
+      key: CompanyManagementColumns.creditIssued,
+      align: 'left' as const,
+      render: (item: any) => {
+        return item !== null && item !== undefined ? addCommSep(item) : '-';
+      },
+    },
+    {
+      title: t('company:creditRetired'),
+      dataIndex: 'creditRetired',
+      key: CompanyManagementColumns.creditRetired,
+      align: 'left' as const,
+      render: (item: any) => {
+        return item !== null && item !== undefined ? addCommSep(item) : '-';
       },
     },
     {
@@ -455,7 +474,16 @@ export const CompanyManagementComponent = (props: any) => {
   return (
     <div className="content-container">
       <div className="title-bar">
-        <div className="body-title">{t('company:viewCompanies')}</div>
+        <TimedPageInfoTitle
+          title={t('company:viewCompanies')}
+          description={t('company:organizationsPageDescription', {
+            defaultValue:
+              'View and manage registered organizations, their roles, projects, credit activity, and account status.',
+          })}
+          infoButtonLabel={t('company:showOrganizationsPageDescription', {
+            defaultValue: 'Show information about Organizations',
+          })}
+        />
       </div>
       <div className="content-card">
         <Row className="table-actions-section">

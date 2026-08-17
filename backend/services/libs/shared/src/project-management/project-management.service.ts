@@ -4,6 +4,7 @@ import { CompanyRole } from "../enum/company.role.enum";
 import { HelperService } from "../util/helpers.service";
 import { CompanyService } from "../company/company.service";
 import { ProjectProposalStage } from "../enum/projectProposalStage.enum";
+import { SECTORAL_SCOPE_ALPHABETICAL_ORDER } from "../enum/inf.sectoral.scope.enum";
 import { TxType } from "../enum/txtype.enum";
 import { plainToClass } from "class-transformer";
 import { ProjectEntity } from "../entities/projects.entity";
@@ -59,11 +60,7 @@ export class ProjectManagementService {
     return await this.auditLogService.getLogs(refId);
   }
 
-  async query(
-    query: QueryDto,
-    abilityCondition: string,
-    user: User
-  ): Promise<DataListResponseDto> {
+  private applyProjectVisibilityScope(query: QueryDto, user: User): void {
     let permissionFilter: FilterEntry;
     if (user.companyRole == CompanyRole.PROJECT_DEVELOPER) {
       permissionFilter = {
@@ -85,9 +82,22 @@ export class ProjectManagementService {
         query.filterAnd = [permissionFilter];
       }
     }
-    const skip = query.size * query.page - query.size;
-    let resp = await this.projectViewRepo
+  }
+
+  async queryNameIds(
+    query: QueryDto,
+    abilityCondition: string,
+    user: User
+  ): Promise<DataListResponseDto> {
+    query.page = query.page || 1;
+    query.size = query.size || 10;
+    this.applyProjectVisibilityScope(query, user);
+    const resp = await this.projectViewRepo
       .createQueryBuilder("document_entity")
+      .select([
+        `"document_entity"."refId" AS "refId"`,
+        `"document_entity"."title" AS "title"`,
+      ])
       .where(
         this.helperService.generateWhereSQL(
           query,
@@ -103,6 +113,42 @@ export class ProjectManagementService {
           `"document_entity".${this.helperService.generateSortCol(
             query?.sort?.key
           )}`,
+        query?.sort?.order
+      )
+      .offset(query.size * query.page - query.size)
+      .limit(query.size)
+      .getRawMany();
+    return new DataListResponseDto(resp, undefined);
+  }
+
+  async query(
+    query: QueryDto,
+    abilityCondition: string,
+    user: User
+  ): Promise<DataListResponseDto> {
+    this.applyProjectVisibilityScope(query, user);
+    const skip = query.size * query.page - query.size;
+    let resp = await this.projectViewRepo
+      .createQueryBuilder("document_entity")
+      .where(
+        this.helperService.generateWhereSQL(
+          query,
+          this.helperService.parseMongoQueryToSQLWithTable(
+            "document_entity",
+            abilityCondition
+          ),
+          "document_entity"
+        )
+      )
+      .orderBy(
+        query?.sort?.key &&
+          (query.sort.key === "projectProposalStage"
+            ? `"document_entity"."projectProposalStage"::text`
+            : query.sort.key === "sectoralScope"
+            ? this.sectoralScopeAlphabeticalExpr()
+            : `"document_entity".${this.helperService.generateSortCol(
+                query?.sort?.key
+              )}`),
         query?.sort?.order,
         query?.sort?.nullFirst !== undefined
           ? query?.sort?.nullFirst === true
@@ -217,5 +263,21 @@ export class ProjectManagementService {
     };
 
     return projectDetails;
+  }
+
+  /**
+   * "sectoralScope" stores the raw InfSectoralScopeEnum code (e.g.
+   * "WASTE_FROM_FUELS") while the UI renders a translated label ("Fugitive
+   * Emissions from Fuels (Solid, Oil and Gas)"), so a plain ORDER BY
+   * alphabetizes the codes rather than what the user actually reads. Sort by
+   * each value's position in SECTORAL_SCOPE_ALPHABETICAL_ORDER instead. An
+   * unmapped value (e.g. a new scope added without updating that list) falls
+   * into the ELSE bucket and sorts last, rather than breaking the query.
+   */
+  private sectoralScopeAlphabeticalExpr(): string {
+    const whenClauses = SECTORAL_SCOPE_ALPHABETICAL_ORDER.map(
+      (scope, idx) => `WHEN '${scope}' THEN ${idx}`
+    ).join(" ");
+    return `CASE "document_entity"."sectoralScope" ${whenClauses} ELSE ${SECTORAL_SCOPE_ALPHABETICAL_ORDER.length} END`;
   }
 }

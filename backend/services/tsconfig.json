@@ -30,6 +30,12 @@
       ],
       "@app/core/*": [
         "libs/core/src/*"
+      ],
+      "@app/aef-v2": [
+        "libs/aef-v2/src"
+      ],
+      "@app/aef-v2/*": [
+        "libs/aef-v2/src/*"
       ]
     }
   }

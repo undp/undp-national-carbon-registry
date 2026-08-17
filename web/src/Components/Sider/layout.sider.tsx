@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Menu, Layout, MenuProps } from "antd";
 import sliderLogo from "../../Assets/Images/logo-slider.png";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -6,7 +6,10 @@ import "./layout.sider.scss";
 import * as Icon from "react-bootstrap-icons";
 import {
   AppstoreOutlined,
+  CalculatorOutlined,
   DashboardOutlined,
+  FileTextOutlined,
+  GlobalOutlined,
   SettingOutlined,
   ShopOutlined,
   SplitCellsOutlined,
@@ -52,7 +55,12 @@ const LayoutSider = (props: LayoutSiderProps) => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [selectKey, setSelectKey] = useState<any>(selectedKey);
-  const { i18n, t } = useTranslation(["nav"]);
+  const [menuScrollState, setMenuScrollState] = useState({
+    hasContentAbove: false,
+    hasContentBelow: false,
+  });
+  const menuContainerRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation(["nav"]);
 
   const currentPage = location.pathname.replace(/^\/|\/$/g, "");
 
@@ -63,6 +71,11 @@ const LayoutSider = (props: LayoutSiderProps) => {
       "programmeManagement/viewAll",
       <UnorderedListOutlined />
     ),
+    getItem(
+      "Cooperative Approaches",
+      "cooperativeApproaches/viewAll",
+      <GlobalOutlined />
+    ),
     getItem(t("nav:companies"), "companyManagement/viewAll", <ShopOutlined />),
     getItem(t("nav:users"), "userManagement/viewAll", <UserOutlined />),
   ];
@@ -71,18 +84,31 @@ const LayoutSider = (props: LayoutSiderProps) => {
     userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
     userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER
   ) {
+    const creditItems: MenuItem[] = [];
+    if (userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+      creditItems.push(
+        getItem(t("nav:creditBlockList"), "credits/blockList", <Icon.Search />)
+      );
+    }
+    creditItems.push(
+      getItem(t("nav:issuance"), "credits/issuanceList", <Icon.PlusCircle />),
+      getItem(t("nav:creditBalance"), "credits/balance", <Icon.Wallet2 />),
+      getItem(t("nav:transfers"), "credits/transfers", <SwapOutlined />),
+      getItem(
+        t("nav:retirements"),
+        "credits/retirements",
+        <Icon.ClockHistory />
+      ),
+      getItem(
+        t("nav:itmoAuthorizations"),
+        "credits/itmoAuthorizations",
+        <Icon.GlobeAmericas />
+      )
+    );
     items.splice(
       2,
       0,
-      getItem(t("nav:credits"), "credits", <AppstoreOutlined />, [
-        getItem(t("nav:creditBalance"), "credits/balance", <Icon.Wallet2 />),
-        getItem(t("nav:transfers"), "credits/transfers", <SwapOutlined />),
-        getItem(
-          t("nav:retirements"),
-          "credits/retirements",
-          <Icon.ClockHistory />
-        ),
-      ])
+      getItem(t("nav:credits"), "credits", <AppstoreOutlined />, creditItems)
     );
   }
 
@@ -95,7 +121,17 @@ const LayoutSider = (props: LayoutSiderProps) => {
     items.splice(
       3,
       0,
-      getItem(t("nav:reports"), "reports", <Icon.ClipboardData />)
+      getItem(t("nav:reports"), "reports", <Icon.ClipboardData />),
+      getItem(
+        "Corresponding Adjustments",
+        "correspondingAdjustments/viewAll",
+        <CalculatorOutlined />
+      ),
+      getItem(
+        "Initial Reports",
+        "initialReports/viewAll",
+        <FileTextOutlined />
+      )
     );
   }
   
@@ -104,6 +140,59 @@ const LayoutSider = (props: LayoutSiderProps) => {
   useEffect(() => {
     setSelectKey(currentPage);
   }, [currentPage]);
+
+  const updateMenuScrollState = useCallback(() => {
+    const menuContainer = menuContainerRef.current;
+    if (!menuContainer) return;
+
+    const hasContentAbove = menuContainer.scrollTop > 1;
+    const hasContentBelow =
+      menuContainer.scrollTop + menuContainer.clientHeight <
+      menuContainer.scrollHeight - 1;
+
+    setMenuScrollState((current) =>
+      current.hasContentAbove === hasContentAbove &&
+      current.hasContentBelow === hasContentBelow
+        ? current
+        : { hasContentAbove, hasContentBelow }
+    );
+  }, []);
+
+  useEffect(() => {
+    const menuContainer = menuContainerRef.current;
+    if (!menuContainer) return;
+
+    let animationFrame: number | undefined;
+    const scheduleUpdate = () => {
+      if (animationFrame !== undefined) {
+        cancelAnimationFrame(animationFrame);
+      }
+      animationFrame = requestAnimationFrame(updateMenuScrollState);
+    };
+
+    scheduleUpdate();
+
+    const resizeObserver = new ResizeObserver(scheduleUpdate);
+    resizeObserver.observe(menuContainer);
+    if (menuContainer.firstElementChild) {
+      resizeObserver.observe(menuContainer.firstElementChild);
+    }
+
+    const mutationObserver = new MutationObserver(scheduleUpdate);
+    mutationObserver.observe(menuContainer, {
+      attributes: true,
+      childList: true,
+      subtree: true,
+    });
+
+    return () => {
+      if (animationFrame !== undefined) {
+        cancelAnimationFrame(animationFrame);
+      }
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+    };
+  }, [collapsed, updateMenuScrollState]);
 
   // if (
   //   userInfoState?.userRole === Role.Root ||
@@ -175,7 +264,21 @@ const LayoutSider = (props: LayoutSiderProps) => {
             </div>
           )}
         </div>
-        <div className="layout-sider-menu-container">
+        <div
+          ref={menuContainerRef}
+          className={[
+            "layout-sider-menu-container",
+            menuScrollState.hasContentAbove
+              ? "layout-sider-menu-container--fade-top"
+              : "",
+            menuScrollState.hasContentBelow
+              ? "layout-sider-menu-container--fade-bottom"
+              : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+          onScroll={updateMenuScrollState}
+        >
           <Menu
             theme="light"
             selectedKeys={[

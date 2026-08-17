@@ -20,6 +20,7 @@ import moment from "moment";
 import { addCommSep } from "../../../Definitions/Definitions/programme.definitions";
 import { useUserContext } from "../../../Context/UserInformationContext/userInformationContext";
 import { CompanyRole } from "../../../Definitions/Enums/company.role.enum";
+import { ProjectDetailsLink } from "../../../Components/ProjectDetailsLink/projectDetailsLink";
 
 const { Search } = Input;
 
@@ -134,14 +135,20 @@ export const CreditTransfersTableComponent = (props: any) => {
       sorter: true,
       align: "left" as const,
       render: (item: CreditTransfersInterface) => {
-        return <span>{item?.projectName}</span>;
+        return (
+          <ProjectDetailsLink
+            projectId={item.projectId}
+            projectName={item.projectName}
+            projectOwnerId={item.projectOwnerId}
+          />
+        );
       },
     },
     {
       title: t(CrediTransferColumns.DATE),
       key: "createdDate",
       sorter: true,
-      align: "left" as const,
+      align: "center" as const,
       render: (item: CreditTransfersInterface) => {
         return (
           <span>
@@ -201,13 +208,9 @@ export const CreditTransfersTableComponent = (props: any) => {
     {
       title: t(CrediTransferColumns.CREDIT_TRANSFERRED),
       key: CrediTransferColumns.CREDIT_TRANSFERRED,
-      align: "left" as const,
+      align: "right" as const,
       render: (item: CreditTransfersInterface) => {
-        return (
-          <span style={{ marginLeft: "20px" }}>
-            {addCommSep(String(item?.creditAmount))}
-          </span>
-        );
+        return <span>{addCommSep(String(item?.creditAmount))}</span>;
       },
     },
     ...(userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER
@@ -267,7 +270,6 @@ export const CreditTransfersTableComponent = (props: any) => {
 
   useEffect(() => {
     getQueryData();
-    isInitialRender.current = true;
   }, []);
 
   useEffect(() => {
@@ -285,6 +287,16 @@ export const CreditTransfersTableComponent = (props: any) => {
       }
     }
   }, [sortField, sortOrder, search]);
+
+  // Declared last so it runs after the two effects above on the initial
+  // mount pass (effects fire in declaration order within the same commit) —
+  // flipping this here, rather than inside the first effect, is what keeps
+  // their `isInitialRender.current` check false during that mount pass, so
+  // they don't also redundantly re-fetch alongside the unconditional mount
+  // fetch above.
+  useEffect(() => {
+    isInitialRender.current = true;
+  }, []);
   // MARK: Main JSX START
 
   return (

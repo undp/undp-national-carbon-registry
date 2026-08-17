@@ -1,0 +1,12 @@
+{
+    "cooperativeApproaches": "Approches Coopératives",
+    "coopApproachDescription": "Approches coopératives bilatérales et multilatérales de l'article 6.2",
+    "showCoopApproachDescription": "Afficher les informations sur les Approches Coopératives",
+    "addNew": "Ajouter",
+    "columnId": "ID",
+    "columnCaReference": "Référence AC",
+    "columnTitle": "Titre",
+    "columnHostParty": "Partie Hôte",
+    "columnParticipatingParties": "Parties Participantes",
+    "columnStatus": "Statut"
+}

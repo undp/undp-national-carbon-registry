@@ -1,0 +1,32 @@
+@use '../../Styles/variables.scss';
+
+.corresponding-adjustment-container {
+  padding: 0 24px;
+
+  .title-bar {
+    margin-bottom: 24px;
+
+    .body-title {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: variables.$primary-color;
+    }
+
+    .body-sub-title {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: variables.$body-text-color;
+    }
+  }
+
+  .content-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+
+    .table-title {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  }
+}

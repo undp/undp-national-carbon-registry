@@ -1,0 +1,12 @@
+{
+    "cooperativeApproaches": "Enfoques Cooperativos",
+    "coopApproachDescription": "Enfoques cooperativos bilaterales y multilaterales del Artículo 6.2",
+    "showCoopApproachDescription": "Mostrar información sobre los Enfoques Cooperativos",
+    "addNew": "Agregar Nuevo",
+    "columnId": "ID",
+    "columnCaReference": "Referencia CA",
+    "columnTitle": "Título",
+    "columnHostParty": "Parte Anfitriona",
+    "columnParticipatingParties": "Partes Participantes",
+    "columnStatus": "Estado"
+}

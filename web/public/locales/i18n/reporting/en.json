@@ -1,76 +1,133 @@
 {
   "reportsTitle": "Reports",
+  "reportsPageDescription": "Generate and review the Article 6.2 Agreed Electronic Format (AEF) tables for the selected reporting year.",
+  "showReportsPageDescription": "Show information about Reports",
+  "allReports": "All",
+  "noReports": "No tables selected",
+  "noSubmission": "No submission record for this reporting year",
 
-  "ACTIONS": "Actions Report",
+  "SUBMISSION": "Submissions",
+  "AUTHORIZATIONS": "Authorizations",
+  "ACTIONS": "Actions",
+  "HOLDINGS": "Holdings",
+  "AUTHORIZED_ENTITIES": "Authorized Entities",
 
-  "HOLDINGS": "Holdings Report",
+  "partyLabel": "Party",
+  "reportedYearLabel": "Reported Year",
+  "exportAsExcel": "Export full report as Excel",
+  "exportAsCsv": "Export full report as CSV",
+  "exportFailed": "Could not download the report. Please try again.",
+  "provisional": "Provisional — as at today, not a year-end snapshot",
 
-  "recordId": "ARTICLE 6 DATABASE RECORD ID",
+  "submissionStatus": "STATUS",
+  "statusDRAFT": "Draft",
+  "statusSUBMITTED": "Submitted",
+  "statusUNDER_REVIEW": "Under review",
+  "statusSUPERSEDED": "Superseded",
+  "carpPending": "Populated by CARP",
+  "notApplicable": "NA",
+  "carpPopulatedHint": "This field is populated by the CARP and must be left empty on submission.",
+  "notYetSubmitted": "Not Submitted",
 
-  "cooperativeApproach": "COOPERATIVE APPROACH",
+  "actionsColumn": "ACTIONS",
+  "cancel": "Cancel",
+  "submitAef": "Submit",
+  "submitAefTitle": "Submit annual information",
+  "submitAefConfirm": "Submit AEF",
+  "submitAefLate": "Annual information for this reporting year was due by {{date}}.",
+  "submitAefAdvisory": "Submitting records the filing date and marks the year as submitted. It does not lock the data — later edits will not be reflected in what has already been filed with the CARP.",
+  "submitAefBlocked": "This year cannot be submitted yet — the following issues must be resolved first:",
+  "dateOfSubmissionRequired": "A submission date is required.",
+  "dateOfSubmissionFootnote": "The date the AEF is filed. Empty until submission — it is not knowable when the record is created.",
 
-  "itmo": "ITMO",
-
-  "uniqueIdentifier": "UNIQUE IDENTIFIER",
-
-  "firstUniqueIdentifier": "FIRST UNIQUE IDENTIFIER",
-
-  "lastUniqueIdentifier": "LAST UNIQUE IDENTIFIER",
-
-  "underlyingUnitBlockStartId": "UNDERLYING UNIT BLOCK START ID",
-
-  "underlyingUnitLastBlockId": "UNDERLYING UNIT BLOCK LAST ID",
-
-  "metricAndQuantity": "METRIC AND QUANTITY",
-
-  "metric": "METRIC",
-
-  "quantity": "QUANTITY (EXPRESSED IN METRIC)",
-
-  "quantity2": "QUANTITY (tCO2eq)",
-
-  "conversionFactor": "CONVERSION FACTOR (REPORTING PARTY)",
-
-  "itmoDetails": "ITMO DETAILS",
-
-  "firstTransferParty": "FIRST TRANSFERRING PARTICIPATING PARTY",
-
-  "vintage": "VINTAGE",
-
-  "sector": "SECTOR",
-
-  "activityType": "ACTIVITY TYPE",
-
-  "authorizationTitle": "AUTHORIZATION",
-
-  "dateOfAuthorization": "DATE OF AUTHORIZATION",
+  "party": "PARTY",
+  "submissionVersion": "VERSION",
+  "reportedYear": "REPORTED YEAR",
+  "dateOfSubmission": "DATE OF SUBMISSION",
+  "reviewStatusOfInitialReport": "REVIEW STATUS OF THE INITIAL REPORT",
+  "resultOfConsistencyCheck": "RESULT OF THE CONSISTENCY CHECK OF THIS AEF SUBMISSION",
+  "ndcFirstYear": "FIRST YEAR OF THE NDC IMPLEMENTATION PERIOD",
+  "ndcLastYear": "LAST YEAR OF THE NDC IMPLEMENTATION PERIOD",
+  "referenceToTerReport": "REFERENCE TO THE ARTICLE 6 TECHNICAL EXPERT REVIEW REPORT",
 
   "authorizationId": "AUTHORIZATION ID",
-
-  "authorizationPurposes": "PURPOSES FOR AUTHORIZATION",
-
+  "dateOfAuthorization": "DATE OF AUTHORIZATION",
+  "cooperativeApproachId": "COOPERATIVE APPROACH ID",
+  "authorizationVersion": "VERSION OF THE AUTHORIZATION",
+  "authorizedQuantity": "AUTHORIZED QUANTITY",
+  "authorizedQuantityFootnote": "Optional. The maximum quantity of mitigation outcomes authorized for use towards an NDC and/or OIMP.",
+  "sectors": "SECTOR(S)",
+  "activityType": "ACTIVITY TYPE(S)",
+  "purposesForAuthorization": "PURPOSES FOR AUTHORIZATION",
+  "authorizedParties": "AUTHORIZED PARTIES AND ENTITIES",
+  "authorizedPartyIds": "AUTHORIZED PARTY(IES) ID",
+  "authorizedPartyIdsFootnote": "Where the authorization is limited to a specific Party or Parties, their unique identifiers.",
+  "authorizedEntityIds": "AUTHORIZED ENTITY(IES) ID",
+  "authorizedEntityIdsFootnote": "Unique identifier of the entities that are authorized, if applicable.",
   "oimpAuthorized": "OIMP AUTHORIZED BY THE PARTY",
-
-  "firstTransferDefinition": "FIRST TRANSFER DEFINITION",
-
-  "actions": "ACTIONS",
-
-  "actionDetails": "ACTION DETAILS",
+  "oimpAuthorizedFootnote": "Only applicable if the authorization is for OIMP. The specific purpose, for example use under CORSIA.",
+  "authorizedTimeframe": "AUTHORIZED TIMEFRAME",
+  "authorizedTimeframeFootnote": "Optional. The timeframe in which mitigation outcomes may occur and/or be used, as 'dddd - dddd'.",
+  "authorizationTerms": "AUTHORIZATION TERMS AND CONDITIONS",
+  "authorizationDocumentation": "AUTHORIZATION DOCUMENTATION",
+  "firstTransferDefinitionOimp": "FIRST TRANSFER DEFINITION FOR OIMP",
+  "firstTransferDefinitionOimpFootnote": "Only applicable to authorizations for OIMP use. The Party's first transfer definition under decision 2/CMA.3, annex, para. 2(b).",
+  "additionalInformation": "ADDITIONAL EXPLANATORY INFORMATION",
 
   "actionDate": "ACTION DATE",
-
+  "actionDateFootnote": "Date on which the action was executed in the Party ITMO registry. ISO 8601 with a zero UTC offset.",
   "actionType": "ACTION TYPE",
+  "actionSubtype": "ACTION SUBTYPE",
+  "firstTransferringPartyId": "FIRST TRANSFERRING PARTICIPATING PARTY ID",
+  "partyItmoRegistryId": "PARTY ITMO REGISTRY ID",
 
-  "transferParty": "TRANSFERRING PARTICIPATING PARTY",
+  "itmoBlock": "ITMO BLOCK",
+  "firstId": "FIRST ID",
+  "firstIdFootnote": "First unique identifier of the ITMO block, per decision 6/CMA.4, annex I, para. 5.",
+  "lastId": "LAST ID",
+  "lastIdFootnote": "Last unique identifier of the ITMO block. Blocks from the same registry must not overlap.",
 
-  "aquiringParty": "ACQUIRING PARTICIPATING PARTY",
+  "underlyingUnit": "UNDERLYING UNIT",
+  "underlyingUnitRegistryId": "UNDERLYING UNIT REGISTRY ID",
+  "underlyingUnitRegistryFootnote": "The underlying cooperative approach registry. Reported as 'NA' if the approach does not use one.",
+  "firstUnitId": "FIRST UNIT ID",
+  "lastUnitId": "LAST UNIT ID",
 
-  "purposesForCancellation": "PURPOSES FOR CANCELLATION",
+  "metricAndQuantity": "METRIC AND QUANTITY",
+  "metric": "METRIC",
+  "gwpValues": "APPLICABLE GWP VALUE(S)",
+  "gwpValuesFootnote": "Where non-CO2 greenhouse gases are involved, the global warming potential values applied.",
+  "nonGhgMetric": "APPLICABLE NON-GHG METRIC",
+  "nonGhgMetricFootnote": "Type of non-GHG metric applied. Reported as 'NA' if the ITMOs are in a GHG metric.",
+  "quantityTCo2": "QUANTITY (t CO2 eq)",
+  "quantityNonGhg": "QUANTITY (IN NON-GHG METRIC)",
+  "quantityNonGhgFootnote": "Quantity in the respective non-GHG metric. Reported as 'NA' if the ITMOs are in a GHG metric.",
 
-  "usingParticipating": "USING PARTICIPATING PARTY OR AUTHORIZED ENTITY OR ENTITIES",
+  "mitigationType": "MITIGATION TYPE",
+  "vintage": "VINTAGE",
 
-  "firstTransfer": "FIRST TRANSFER",
-  "authorization": "Authorization",
-  "transfer": "Transfer",
-  "crossBoarderTransfer": "Cross Boarder Transfer"
+  "parties": "PARTIES",
+  "transferringPartyId": "TRANSFERRING PARTICIPATING PARTY ID",
+  "transferringPartyFootnote": "Only applicable to the action type 'acquisition'. Otherwise reported as 'NA'.",
+  "acquiringPartyId": "ACQUIRING PARTICIPATING PARTY ID",
+  "acquiringPartyFootnote": "Applicable to the action types 'first transfer' and 'transfer'. Otherwise reported as 'NA'.",
+  "usingCancellingPartyId": "USING/CANCELLING PARTICIPATING PARTY ID",
+  "usingCancellingPartyFootnote": "Only applicable to report a use for IMP or a cancellation for OP.",
+  "usingCancellingEntityId": "USING/CANCELLING AUTHORIZED ENTITY ID",
+  "usingCancellingEntityFootnote": "Only applicable where an authorized entity uses or cancels the ITMOs.",
+
+  "purposeItmoUsedForOimp": "PURPOSE FOR WHICH THE ITMO HAS BEEN USED TOWARDS OR CANCELLED FOR OIMP",
+  "purposeItmoUsedForOimpFootnote": "Only applicable to the action types 'use', 'first transfer' and 'cancellation'.",
+  "yearItmoUsedTowardsNdc": "CALENDAR YEAR FOR WHICH THE ITMOs ARE USED TOWARDS THE PARTY'S NDC",
+  "yearItmoUsedTowardsNdcFootnote": "Only applicable for use of ITMOs towards the Party's NDC.",
+  "resultOfConsistencyChecks": "RESULT OF THE CONSISTENCY CHECKS",
+
+  "entityName": "NAME",
+  "countryOfIncorporation": "COUNTRY OF INCORPORATION",
+  "identificationNumber": "IDENTIFICATION NUMBER",
+  "identificationNumberFootnote": "Identification number in the country of incorporation.",
+  "entityConditions": "CONDITIONS",
+  "entityConditionsFootnote": "Optional. The conditions under which the authorization was provided.",
+  "entityChangeConditions": "CHANGE AND REVOCATION CONDITIONS",
+  "entityChangeConditionsFootnote": "Optional. Whether the authorization may be changed or revoked, and under which conditions."
 }

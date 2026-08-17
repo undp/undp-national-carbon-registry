@@ -33,10 +33,14 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    gap: 4px;
 
     .profile-icon {
       margin-bottom: 4px;
-      margin-right: 4px;
+
+      &:not(:last-child) {
+        margin-right: 4px;
+      }
     }
   }
   .org-list {
@@ -44,10 +48,14 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    gap: 4px;
 
     .profile-icon {
       margin-bottom: 4px;
-      margin-right: 4px;
+
+      &:not(:last-child) {
+        margin-right: 4px;
+      }
     }
   }
   .table-actions-section {

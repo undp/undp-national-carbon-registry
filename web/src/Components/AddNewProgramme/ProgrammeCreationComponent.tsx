@@ -139,6 +139,10 @@ export const ProgrammeCreationComponent = (props: any) => {
   const [isMultipleLocations, setIsMultipleLocations] =
     useState<boolean>(false);
 
+  const [viewProjectLocation, setViewProjectLocation] = useState<
+    any[][] | undefined
+  >(undefined);
+
   const [provinces, setProvinces] = useState<string[]>([]);
   const [districts, setDistricts] = useState<string[]>([]);
   const [independentCertifiers, setIndependentCertifiers] = useState<any[]>([]);
@@ -404,6 +408,7 @@ export const ProgrammeCreationComponent = (props: any) => {
         };
 
         form.setFieldsValue(viewData);
+        setViewProjectLocation(documentData.geographicalLocationCoordinates);
       }
     };
 
@@ -911,10 +916,7 @@ export const ProgrammeCreationComponent = (props: any) => {
                                     !isMultipleLocations
                                   }
                                   disabled={disableFields}
-                                  existingCoordinate={
-                                    form.getFieldValue("projectLocation") ||
-                                    undefined
-                                  }
+                                  existingCoordinate={viewProjectLocation}
                                 />
                               </Form.Item>
 

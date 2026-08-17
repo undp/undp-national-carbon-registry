@@ -1,0 +1,170 @@
+.credit-history-graph-inline {
+  width: 100%;
+}
+
+.credit-history-graph {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .chg-mode-toggle {
+    display: flex;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    background: #f1f5f9;
+
+    button {
+      padding: 5px 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #64748b;
+      background: transparent;
+      white-space: nowrap;
+
+      &.active {
+        color: #fff;
+        background: #1890ff;
+      }
+    }
+  }
+
+  // "Credit #N" marker chip on the selected node (single-credit search).
+  .chg-credit-marker {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 0 8px;
+    border-radius: 999px;
+    border: 1px solid #17b634;
+    background: #cffae2;
+    color: #0f9e27;
+    font-size: 10.5px;
+    font-weight: 600;
+    line-height: 17px;
+    white-space: nowrap;
+  }
+
+  .chg-note-company-link {
+    color: #1890ff;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .chg-icon-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #64748b;
+    font-size: 12px;
+    background: #fff;
+
+    &:hover {
+      background: #f1f5f9;
+    }
+  }
+
+  .chg-hint-bar {
+    flex-shrink: 0;
+    margin-top: 6px;
+    text-align: left;
+    font-size: 11px;
+    color: #94a3b8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .chg-canvas-wrap {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background-color: #fbfcfd;
+
+    .chg-floating-mode-toggle {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 5;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .chg-floating-toolbar {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+      .chg-icon-btn {
+        border-color: transparent;
+      }
+    }
+
+    .react-flow__attribution {
+      display: none;
+    }
+
+    .chg-layout-loading {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 4px 12px;
+      font-size: 11.5px;
+      color: #64748b;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    .chg-layout-error {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      max-width: 80%;
+      background: #fff2f0;
+      border: 1px solid #ffccc7;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: #cf1322;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+  }
+}
+
+// Antd's Tooltip renders into a portal (appended to document.body), so this
+// can't be nested under .credit-history-graph like everything else here —
+// it has to target the overlay's own class globally.
+.chg-toolbar-tooltip .ant-tooltip-inner {
+  font-size: 11px;
+  min-height: unset;
+  padding: 4px 8px;
+}

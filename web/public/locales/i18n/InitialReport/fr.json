@@ -1,0 +1,11 @@
+{
+    "initialReports": "Rapports Initiaux",
+    "initialReportDescription": "Rapports initiaux de l'article 6.2 requis selon la Décision 2/CMA.3 par. 18 avant la première autorisation d'ITMO",
+    "showInitialReportDescription": "Afficher les informations sur les Rapports Initiaux",
+    "generateReport": "Générer un Rapport",
+    "columnReportId": "ID du Rapport",
+    "columnCooperativeApproach": "Approche Coopérative",
+    "columnVersion": "Version",
+    "columnStatus": "Statut",
+    "columnCreated": "Créé"
+}

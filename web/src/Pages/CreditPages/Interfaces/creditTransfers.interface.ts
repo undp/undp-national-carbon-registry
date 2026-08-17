@@ -5,6 +5,7 @@ export interface CreditTransfersInterface {
   createdDate: string;
   projectId: number;
   projectName: string;
+  projectOwnerId: number;
   receiverId: number;
   receiverName: string;
   receiverLogo: string;

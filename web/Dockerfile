@@ -36,6 +36,7 @@ RUN CI=false yarn build
 
 # production environment
 FROM nginx:stable-alpine
+ARG PORT=3030
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY ./web/docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh

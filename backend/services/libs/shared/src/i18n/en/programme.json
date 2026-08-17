@@ -111,5 +111,10 @@
   "programmeCannotbeAuthorized": "Programme Cannot Authorise due to Article 6 Trading",
   "programmeCannotbeReject": "Programme Cannot Reject due to Article 6 Trading",
   "programmeDesignDocumentIsRequired":"Design Document is required!",
-  "containsInvalidGeoLocationValues": "Contains invalid geographical locations"
+  "containsInvalidGeoLocationValues": "Contains invalid geographical locations",
+  "article6CaRequiredForAuth": "Programme {} is flagged as Article 6.2 (article6trade=true) but has no cooperativeApproachId. Link it to a cooperative approach before authorizing (Dec 2/CMA.3 Annex para 18).",
+  "caNotFoundForAuth": "Cooperative approach {} not found.",
+  "caSuspendedBlocksAuth": "Cooperative approach {} is Suspended. Suspension is temporary; reactivate the cooperative approach (Active) before authorizing programmes under it (Draft -/CMA.5 para 20).",
+  "caRevokedBlocksAuth": "Cooperative approach {} is Revoked. Revoked is terminal; new ITMO authorizations are not permitted (Draft -/CMA.5 para 21). Use a different cooperative approach for this programme.",
+  "noSubmittedIrForCaAuth": "Cannot authorize ITMOs for cooperative approach {} (\"{}\"): submit the Initial Report for this CA first (Initial Reports → {} → Submit). Required by Dec 2/CMA.3 Annex para 18."
 }
