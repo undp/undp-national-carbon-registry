@@ -45,7 +45,7 @@ Reviewers provide feedback on pull requests to ensure code quality and consisten
 
 We are grateful to everyone who contributes to this project.  The list below is generated automatically by the [contributors workflow](.github/workflows/contributors.yml).  Thank you for your support!
 
-Total contributors: <!--CONTRIBUTOR COUNT START--> 0 <!--CONTRIBUTOR COUNT END-->
+Total contributors: <!--CONTRIBUTOR COUNT START--> 29 <!--CONTRIBUTOR COUNT END-->
 
 <!-- readme: contributors -start -->
 <!-- readme: contributors -end -->
