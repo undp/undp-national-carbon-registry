@@ -9,11 +9,7 @@ import "./initialReports.scss";
 import "../../Styles/common.table.scss";
 import { useTranslation } from "react-i18next";
 import { TimedPageInfoTitle } from "../../Components/Common/TimedPageInfoTitle/TimedPageInfoTitle";
-
-const statusColors: Record<string, string> = {
-  Draft: "default",
-  Submitted: "blue",
-};
+import { statusColors } from "./initialReport.helpers";
 
 const InitialReportManagement = () => {
   const navigate = useNavigate();

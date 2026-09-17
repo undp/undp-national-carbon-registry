@@ -21,14 +21,10 @@ import {
   getCompatibleCaMethods,
 } from "../../Definitions/Enums/caMethod.enum";
 import { Sector } from "../../Definitions/Enums/sector.enum";
+import { statusColors } from "./initialReport.helpers";
 import "./initialReports.scss";
 
 const { TextArea } = Input;
-
-const statusColors: Record<string, string> = {
-  Draft: "default",
-  Submitted: "blue",
-};
 
 type IrShape = {
   reportNumber: string;
