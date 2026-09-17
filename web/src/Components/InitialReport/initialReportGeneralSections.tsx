@@ -1,8 +1,17 @@
 import { Descriptions, Tag } from "antd";
 import { useTranslation } from "react-i18next";
+import { statusColors } from "../../Pages/InitialReport/initialReport.helpers";
 
+// Two decimal places with thousands separators, matching the
+// Corresponding Adjustment pages' fmtDecimal — Base Year Emission and
+// NDC Target are large tonnage figures that are unreadable unseparated.
 const fmt = (val: number | string | null | undefined) =>
-  val !== undefined && val !== null && val !== "" ? Number(val).toFixed(2) : "—";
+  val !== undefined && val !== null && val !== ""
+    ? Number(val).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    : "—";
 
 // A long value ("CA Method Description", the environmental-integrity
 // free text) otherwise wraps to several narrow lines because antd
@@ -48,7 +57,13 @@ const InitialReportGeneralSections: React.FC<InitialReportGeneralSectionsProps> 
           {general.ndcType ?? "—"}
         </Descriptions.Item>
         <Descriptions.Item label={t("InitialReport:fieldStatus")}>
-          {report ? <Tag>{report.status}</Tag> : "—"}
+          {report ? (
+            <Tag color={statusColors[report.status] || "default"}>
+              {report.status}
+            </Tag>
+          ) : (
+            "—"
+          )}
         </Descriptions.Item>
         <Descriptions.Item label={t("InitialReport:fieldCurrentVersion")}>
           {report ? `v${report.majorVersion ?? 0}.${report.minorVersion ?? 0}` : "—"}
@@ -84,7 +99,7 @@ const InitialReportGeneralSections: React.FC<InitialReportGeneralSectionsProps> 
               {report.reportNumber}
             </Descriptions.Item>
             <Descriptions.Item label={t("InitialReport:fieldStatus")}>
-              <Tag color={report.status === "Draft" ? "default" : "blue"}>
+              <Tag color={statusColors[report.status] || "default"}>
                 {report.status}
               </Tag>
             </Descriptions.Item>
