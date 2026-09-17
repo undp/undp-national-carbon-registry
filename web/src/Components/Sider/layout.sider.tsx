@@ -8,6 +8,7 @@ import {
   AppstoreOutlined,
   CalculatorOutlined,
   DashboardOutlined,
+  DeploymentUnitOutlined,
   FileTextOutlined,
   GlobalOutlined,
   SettingOutlined,
@@ -64,6 +65,60 @@ const LayoutSider = (props: LayoutSiderProps) => {
 
   const currentPage = location.pathname.replace(/^\/|\/$/g, "");
 
+  const isDna =
+    userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY;
+  const isPd =
+    userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER;
+  const isDnaAdmin =
+    isDna &&
+    (userInfoState?.userRole === Role.Admin ||
+      userInfoState?.userRole === Role.Root);
+
+  const creditItems: MenuItem[] = [];
+  if (isDna) {
+    creditItems.push(
+      getItem(t("nav:creditBlockList"), "credits/blockList", <Icon.Search />)
+    );
+  }
+  creditItems.push(
+    getItem(t("nav:issuance"), "credits/issuanceList", <Icon.PlusCircle />),
+    getItem(t("nav:creditBalance"), "credits/balance", <Icon.Wallet2 />),
+    getItem(t("nav:transfers"), "credits/transfers", <SwapOutlined />),
+    getItem(
+      t("nav:retirements"),
+      "credits/retirements",
+      <Icon.ClockHistory />
+    ),
+    getItem(
+      t("nav:itmoAuthorizations"),
+      "credits/itmoAuthorizations",
+      <Icon.GlobeAmericas />
+    )
+  );
+
+  const article62Items: MenuItem[] = [];
+  if (isDnaAdmin) {
+    article62Items.push(
+      getItem(
+        t("nav:correspondingAdjustments"),
+        "correspondingAdjustments/viewAll",
+        <CalculatorOutlined />
+      ),
+      getItem(
+        t("nav:initialReports"),
+        "initialReports/viewAll",
+        <FileTextOutlined />
+      )
+    );
+  }
+  article62Items.push(
+    getItem(
+      t("nav:cooperativeApproaches"),
+      "cooperativeApproaches/viewAll",
+      <GlobalOutlined />
+    )
+  );
+
   const items: MenuItem[] = [
     getItem(t("nav:dashboard"), "dashboard", <DashboardOutlined />),
     getItem(
@@ -71,71 +126,33 @@ const LayoutSider = (props: LayoutSiderProps) => {
       "programmeManagement/viewAll",
       <UnorderedListOutlined />
     ),
+    ...(isDna || isPd
+      ? [
+          getItem(
+            t("nav:credits"),
+            "credits",
+            <AppstoreOutlined />,
+            creditItems
+          ),
+        ]
+      : []),
     getItem(
-      "Cooperative Approaches",
-      "cooperativeApproaches/viewAll",
-      <GlobalOutlined />
+      t("nav:article62"),
+      "article62",
+      <DeploymentUnitOutlined />,
+      article62Items
     ),
+    ...(isDnaAdmin
+      ? [getItem(t("nav:aefReports"), "reports", <Icon.ClipboardData />)]
+      : []),
     getItem(t("nav:companies"), "companyManagement/viewAll", <ShopOutlined />),
     getItem(t("nav:users"), "userManagement/viewAll", <UserOutlined />),
   ];
 
-  if (
-    userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
-    userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER
-  ) {
-    const creditItems: MenuItem[] = [];
-    if (userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
-      creditItems.push(
-        getItem(t("nav:creditBlockList"), "credits/blockList", <Icon.Search />)
-      );
-    }
-    creditItems.push(
-      getItem(t("nav:issuance"), "credits/issuanceList", <Icon.PlusCircle />),
-      getItem(t("nav:creditBalance"), "credits/balance", <Icon.Wallet2 />),
-      getItem(t("nav:transfers"), "credits/transfers", <SwapOutlined />),
-      getItem(
-        t("nav:retirements"),
-        "credits/retirements",
-        <Icon.ClockHistory />
-      ),
-      getItem(
-        t("nav:itmoAuthorizations"),
-        "credits/itmoAuthorizations",
-        <Icon.GlobeAmericas />
-      )
-    );
-    items.splice(
-      2,
-      0,
-      getItem(t("nav:credits"), "credits", <AppstoreOutlined />, creditItems)
-    );
-  }
-
-
-  if (
-    userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-    (userInfoState?.userRole === Role.Admin ||
-      userInfoState?.userRole === Role.Root)
-  ) {
-    items.splice(
-      3,
-      0,
-      getItem(t("nav:reports"), "reports", <Icon.ClipboardData />),
-      getItem(
-        "Corresponding Adjustments",
-        "correspondingAdjustments/viewAll",
-        <CalculatorOutlined />
-      ),
-      getItem(
-        "Initial Reports",
-        "initialReports/viewAll",
-        <FileTextOutlined />
-      )
-    );
-  }
-  
-  
+  const activeKey = selectedKey || selectKey || "dashboard";
+  const defaultOpenKeys = items
+    .filter((item) => item?.children?.some((child) => child?.key === activeKey))
+    .map((item) => String(item?.key));
 
   useEffect(() => {
     setSelectKey(currentPage);
@@ -288,6 +305,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
                 ? selectKey
                 : "dashboard",
             ]}
+            defaultOpenKeys={defaultOpenKeys}
             mode="inline"
             onClick={onClick}
           >
