@@ -100,9 +100,22 @@ function buildService(seedRows: Partial<CorrespondingAdjustment>[] = []) {
     },
   };
 
+  // TypeORM's Between(a, b) is a FindOperator — { type: "between", value:
+  // [a, b] } — rather than a plain range object; unwrap it the same way
+  // for whichever column (`year` here, `targetYear` below) the caller
+  // filtered on.
+  const betweenBounds = (operator: any): [number, number] =>
+    operator?.value ?? operator?._value;
+
   const caRepo: any = {
     createQueryBuilder: () => makeCaQueryBuilder(),
-    find: async () => [...store.values()].sort((a, b) => a.year - b.year),
+    find: async (options?: { where?: { year?: any } }) => {
+      const rows = [...store.values()].sort((a, b) => a.year - b.year);
+      const yearFilter = options?.where?.year;
+      if (!yearFilter) return rows;
+      const [lo, hi] = betweenBounds(yearFilter);
+      return rows.filter((r) => r.year >= lo && r.year <= hi);
+    },
     findOneBy: async ({ year, caId }: any) =>
       year != null
         ? store.get(year) ?? null
@@ -147,13 +160,24 @@ function buildService(seedRows: Partial<CorrespondingAdjustment>[] = []) {
     singleYearTarget: 40000 - (year - START) * 1000,
   });
 
+  const allYearlyTargets = Array.from(
+    { length: END - START + 1 },
+    (_, i) => yearlyTarget(START + i)
+  );
+
   const ndcTargetYearlyRepo: any = {
     findOne: async ({ where }: any) =>
       where.targetYear >= START && where.targetYear <= END
         ? yearlyTarget(where.targetYear)
         : null,
-    find: async () =>
-      Array.from({ length: END - START + 1 }, (_, i) => yearlyTarget(START + i)),
+    find: async (options?: { where?: { targetYear?: any } }) => {
+      const yearFilter = options?.where?.targetYear;
+      if (!yearFilter) return allYearlyTargets;
+      const [lo, hi] = betweenBounds(yearFilter);
+      return allYearlyTargets.filter(
+        (t) => t.targetYear >= lo && t.targetYear <= hi
+      );
+    },
   };
 
   const ndcTargetRepo: any = {
@@ -332,6 +356,77 @@ describe("CorrespondingAdjustmentService — Averaging across elapsed years", ()
     );
 
     expect(store.size).toBe(0);
+  });
+});
+
+// Dec 2/CMA.3 para 9's safeguard, under Averaging, compares the whole
+// period's cumulative activity against its cumulative trajectory — not
+// the reporting year's own figures against that year's own trajectory
+// point (year-by-year is what Trajectory uses; see the class's
+// evaluateSafeguard/computeCaFields comments). Cumulative trajectory
+// through 2023 = 40000 + 39000 + 38000 = 117000 (yearlyTarget above);
+// cumulative adjusted balance = Σ reportingYearEmission(2021..2023) +
+// cumulativeFirstTransferred (600, undivided — see FIRST_TRANSFERS).
+describe("CorrespondingAdjustmentService — Averaging safeguard check is cumulative", () => {
+  it("fails on the cumulative budget even when the just-saved year's own figures would pass alone", async () => {
+    const { service, store } = buildService();
+
+    // Each save's own per-year check would pass in isolation — 2023's
+    // adjustedEmissions (1000 + 200 uniform adjustment = 1200) is nowhere
+    // near its own 38000 trajectory point. The violation only shows up
+    // once every elapsed year's actual emissions are summed.
+    await service.saveCA(
+      { year: 2021, reportingYearEmission: 60000 } as any,
+      dnaAdmin
+    );
+    await service.saveCA(
+      { year: 2022, reportingYearEmission: 56000 } as any,
+      dnaAdmin
+    );
+    const result: any = await service.saveCA(
+      { year: 2023, reportingYearEmission: 1000 } as any,
+      dnaAdmin
+    );
+
+    // 60000 + 56000 + 1000 + 600 = 117600 > 117000 cumulative trajectory.
+    expect(store.get(2023).safeguardCheckPassed).toBe(false);
+    expect(result.data.safeguardCheckPassed).toBe(false);
+    expect(store.get(2023).safeguardNotes).toMatch(/117600.*117000|117000.*117600/);
+  });
+
+  it("passes the safeguard when the cumulative running total stays within the cumulative trajectory", async () => {
+    const { service, store } = buildService();
+
+    await service.saveCA(
+      { year: 2021, reportingYearEmission: 39000 } as any,
+      dnaAdmin
+    );
+    await service.saveCA(
+      { year: 2022, reportingYearEmission: 38000 } as any,
+      dnaAdmin
+    );
+    await service.saveCA(
+      { year: 2023, reportingYearEmission: 37000 } as any,
+      dnaAdmin
+    );
+
+    // 39000 + 38000 + 37000 + 600 = 114600 <= 117000 cumulative trajectory.
+    expect(store.get(2023).safeguardCheckPassed).toBe(true);
+  });
+
+  it("defers the safeguard verdict (passes with an explanatory note) while an earlier elapsed year still has no reported emission", async () => {
+    const { service, store } = buildService();
+
+    // Only 2023 is ever actually saved — 2021/2022 are cascade-created
+    // with reportingYearEmission left null (recomputeOpenAveragingYears),
+    // so the period is not yet fully reported and cannot be reconciled.
+    await service.saveCA(
+      { year: 2023, reportingYearEmission: 1000 } as any,
+      dnaAdmin
+    );
+
+    expect(store.get(2023).safeguardCheckPassed).toBe(true);
+    expect(store.get(2023).safeguardNotes).toMatch(/cannot reconcile/i);
   });
 });
 

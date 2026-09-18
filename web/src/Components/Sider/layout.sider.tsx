@@ -22,7 +22,6 @@ import { useTranslation } from "react-i18next";
 import { LayoutSiderProps } from "../../Definitions/Definitions/layout.sider.definitions";
 import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
 import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
-import { Role } from "../../Definitions/Enums/role.enum";
 import { ROUTES } from "../../Config/uiRoutingConfig";
 
 const { Sider } = Layout;
@@ -69,10 +68,6 @@ const LayoutSider = (props: LayoutSiderProps) => {
     userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY;
   const isPd =
     userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER;
-  const isDnaAdmin =
-    isDna &&
-    (userInfoState?.userRole === Role.Admin ||
-      userInfoState?.userRole === Role.Root);
 
   const creditItems: MenuItem[] = [];
   if (isDna) {
@@ -96,9 +91,24 @@ const LayoutSider = (props: LayoutSiderProps) => {
     )
   );
 
+  // Cooperative Approaches, Corresponding Adjustments and Initial
+  // Reports are a Designated National Authority (DNA)-only feature set
+  // (mirrors casl-ability.factory.ts's DNA branch) — every DNA role,
+  // including ViewOnly and Manager, can see and open all three, since
+  // both can still view the data; add/edit is gated inside each page
+  // instead (useArticle6Permissions().canManage, Root/Admin only).
+  // Previously Cooperative Approaches was pushed unconditionally here
+  // (visible to every company role) and the other two were gated to
+  // isDnaAdmin (hiding them from DNA ViewOnly/Manager, who should still
+  // be able to view) — both were bugs.
   const article62Items: MenuItem[] = [];
-  if (isDnaAdmin) {
+  if (isDna) {
     article62Items.push(
+      getItem(
+        t("nav:cooperativeApproaches"),
+        "cooperativeApproaches/viewAll",
+        <GlobalOutlined />
+      ),
       getItem(
         t("nav:correspondingAdjustments"),
         "correspondingAdjustments/viewAll",
@@ -111,13 +121,6 @@ const LayoutSider = (props: LayoutSiderProps) => {
       )
     );
   }
-  article62Items.push(
-    getItem(
-      t("nav:cooperativeApproaches"),
-      "cooperativeApproaches/viewAll",
-      <GlobalOutlined />
-    )
-  );
 
   const items: MenuItem[] = [
     getItem(t("nav:dashboard"), "dashboard", <DashboardOutlined />),
@@ -136,13 +139,21 @@ const LayoutSider = (props: LayoutSiderProps) => {
           ),
         ]
       : []),
-    getItem(
-      t("nav:article62"),
-      "article62",
-      <DeploymentUnitOutlined />,
-      article62Items
-    ),
-    ...(isDnaAdmin
+    ...(isDna
+      ? [
+          getItem(
+            t("nav:article62"),
+            "article62",
+            <DeploymentUnitOutlined />,
+            article62Items
+          ),
+        ]
+      : []),
+    // AEF reporting follows the same view/manage split as the Article
+    // 6.2 items above — DNA ViewOnly and Manager can view the AEF
+    // report, only Root/Admin can submit it (gated inside
+    // ReportingComponent, not here).
+    ...(isDna
       ? [getItem(t("nav:aefReports"), "reports", <Icon.ClipboardData />)]
       : []),
     getItem(t("nav:companies"), "companyManagement/viewAll", <ShopOutlined />),

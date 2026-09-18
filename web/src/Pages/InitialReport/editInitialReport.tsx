@@ -22,6 +22,7 @@ import {
 } from "../../Definitions/Enums/caMethod.enum";
 import { Sector } from "../../Definitions/Enums/sector.enum";
 import { statusColors } from "./initialReport.helpers";
+import { RequireDnaManage } from "../../Components/Common/AccessControl/RequireDnaAccess";
 import "./initialReports.scss";
 
 const { TextArea } = Input;
@@ -164,6 +165,7 @@ const EditInitialReport = () => {
     "Locked — this can no longer be changed once the initial report has been submitted";
 
   return (
+    <RequireDnaManage>
     <div className="initial-reports-container">
       <div className="title-bar">
         <div className="body-title">
@@ -262,7 +264,27 @@ const EditInitialReport = () => {
               <Form.Item
                 name="baseYearEmission"
                 label="Base Year Emission (tCO2eq)"
-                rules={[{ required: true, message: "Base year emission is required" }]}
+                dependencies={["ndcTarget"]}
+                rules={[
+                  { required: true, message: "Base year emission is required" },
+                  {
+                    validator: (_r, v) => {
+                      if (v === undefined || v === null || v === "")
+                        return Promise.resolve();
+                      const target = form.getFieldValue("ndcTarget");
+                      if (
+                        target !== undefined &&
+                        target !== null &&
+                        target !== "" &&
+                        Number(v) <= Number(target)
+                      )
+                        return Promise.reject(
+                          "Base year emission must be greater than the NDC target"
+                        );
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
                 tooltip={
                   locked
                     ? lockedTooltip
@@ -276,7 +298,27 @@ const EditInitialReport = () => {
               <Form.Item
                 name="ndcTarget"
                 label="NDC Target (tCO2eq)"
-                rules={[{ required: true, message: "NDC target is required" }]}
+                dependencies={["baseYearEmission"]}
+                rules={[
+                  { required: true, message: "NDC target is required" },
+                  {
+                    validator: (_r, v) => {
+                      if (v === undefined || v === null || v === "")
+                        return Promise.resolve();
+                      const emission = form.getFieldValue("baseYearEmission");
+                      if (
+                        emission !== undefined &&
+                        emission !== null &&
+                        emission !== "" &&
+                        Number(emission) <= Number(v)
+                      )
+                        return Promise.reject(
+                          "NDC target must be less than the base year emission"
+                        );
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
                 tooltip={
                   locked
                     ? lockedTooltip
@@ -289,7 +331,18 @@ const EditInitialReport = () => {
           </Row>
           <Row gutter={24}>
             <Col span={12}>
-              <Form.Item name="sectors" label="Sectors">
+              <Form.Item
+                name="sectors"
+                label="Sectors"
+                rules={[
+                  {
+                    required: true,
+                    type: "array",
+                    min: 1,
+                    message: "Add at least one sector",
+                  },
+                ]}
+              >
                 <Select
                   mode="multiple"
                   options={Object.values(Sector).map((s) => ({
@@ -380,6 +433,7 @@ const EditInitialReport = () => {
         </Form>
       </div>
     </div>
+    </RequireDnaManage>
   );
 };
 

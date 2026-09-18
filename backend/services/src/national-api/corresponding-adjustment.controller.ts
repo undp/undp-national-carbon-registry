@@ -41,11 +41,15 @@ export class CorrespondingAdjustmentController {
     return this.caService.getPeriodSummary(Number(year));
   }
 
-  // Computes without persisting — the "Calculate" button.
+  // Computes without persisting — the "Calculate" button. Guarded by
+  // Read, not Create: a DNA-ViewOnly user (Read only, no Create/Update)
+  // may calculate a preview even though save/submit below remain out of
+  // reach — see CorrespondingAdjustmentService.previewCA's
+  // assertCanView vs assertCanManage.
   @ApiBearerAuth()
   @UseGuards(
     JwtAuthGuard,
-    PoliciesGuardEx(true, Action.Create, CorrespondingAdjustment)
+    PoliciesGuardEx(true, Action.Read, CorrespondingAdjustment)
   )
   @Post("preview")
   preview(@Body() dto: CaPreviewDto, @Request() req) {

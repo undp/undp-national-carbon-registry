@@ -64,8 +64,9 @@ export class CooperativeApproachService {
     private readonly aefV2WriteService: AefV2WriteService
   ) {}
 
-  // Cooperative approaches are managed by the government (DNA) Admin /
-  // Root only — mirrors the retirement-action permission pattern.
+  // Cooperative approaches are managed by a government (DNA) Root/Admin
+  // only — Manager and ViewOnly are both view-only here, matching the
+  // CASL ability factory's Manage grant.
   private assertCanManage(user: User) {
     if (
       user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||

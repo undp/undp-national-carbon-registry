@@ -1,6 +1,6 @@
 {
   "notFound": "The corresponding adjustment record does not exist.",
-  "noManagePermission": "Only a government (DNA) Admin or Root user can manage corresponding adjustments.",
+  "noManagePermission": "Only a government (DNA) Root or Admin user can manage corresponding adjustments.",
   "notEditable": "Record {} is {} — only a Draft record can be edited or submitted.",
   "notSubmitted": "Record {} is {} — only a Submitted record can be approved.",
   "methodNotCompatibleWithNdcType": "CA method {} is not compatible with NDC type {}.",

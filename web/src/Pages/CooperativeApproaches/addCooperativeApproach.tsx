@@ -19,6 +19,7 @@ import {
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import "./cooperativeApproaches.scss";
 import { TimedPageInfoTitle } from "../../Components/Common/TimedPageInfoTitle/TimedPageInfoTitle";
+import { RequireDnaManage } from "../../Components/Common/AccessControl/RequireDnaAccess";
 
 const { TextArea } = Input;
 
@@ -155,6 +156,7 @@ const AddCooperativeApproach = () => {
   };
 
   return (
+    <RequireDnaManage>
     <div className="cooperative-approaches-container">
       <div className="title-bar">
         <TimedPageInfoTitle
@@ -435,6 +437,7 @@ const AddCooperativeApproach = () => {
         </Form>
       </div>
     </div>
+    </RequireDnaManage>
   );
 };
 

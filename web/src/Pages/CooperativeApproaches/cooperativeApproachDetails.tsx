@@ -3,8 +3,9 @@ import moment from "moment";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
-import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
 import { useCountryOptions } from "../../Components/Common/hooks/useCountryOptions";
+import { useArticle6Permissions } from "../../Components/Common/hooks/useArticle6Permissions";
+import RequireDnaAccess from "../../Components/Common/AccessControl/RequireDnaAccess";
 import {
   Button,
   Col,
@@ -22,8 +23,6 @@ import {
 } from "antd";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { Trash } from "react-bootstrap-icons";
-import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
-import { Role } from "../../Definitions/Enums/role.enum";
 import {
   CA_ALLOWED_TRANSITIONS,
   CA_STATUS_COLORS,
@@ -42,7 +41,7 @@ const CooperativeApproachDetails = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(["common"]);
   const { get, put, post } = useConnection();
-  const { userInfoState } = useUserContext();
+  const { canManage } = useArticle6Permissions();
   const { byCode: countryNameByCode } = useCountryOptions();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
@@ -57,13 +56,6 @@ const CooperativeApproachDetails = () => {
   const [removingEntity, setRemovingEntity] = useState(false);
   const [removeEntityErrorMsg, setRemoveEntityErrorMsg] = useState("");
 
-  // Cooperative approaches are managed by government (DNA) Admin/Root
-  // only — mirrors the backend service check.
-  const canManage =
-    userInfoState?.companyRole ===
-      CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-    (userInfoState?.userRole === Role.Admin ||
-      userInfoState?.userRole === Role.Root);
 
   const fetchAuthorizedEntities = async () => {
     setEntitiesLoading(true);
@@ -304,6 +296,7 @@ const CooperativeApproachDetails = () => {
   ];
 
   return (
+    <RequireDnaAccess>
     <div className="cooperative-approaches-container">
       <div className="title-bar">
         <Row justify="space-between" align="middle">
@@ -534,6 +527,7 @@ const CooperativeApproachDetails = () => {
         loading={removingEntity}
       />
     </div>
+    </RequireDnaAccess>
   );
 };
 

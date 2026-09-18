@@ -21,6 +21,7 @@ import {
   TABULAR_REPORT_TYPES,
 } from "./reportTypes";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { useArticle6Permissions } from "../Common/hooks/useArticle6Permissions";
 import { API_PATHS } from "../../Config/apiConfig";
 import { Loading } from "../Loading/loading";
 import { TimedPageInfoTitle } from "../Common/TimedPageInfoTitle/TimedPageInfoTitle";
@@ -70,6 +71,10 @@ const ReportingComponent = (props: { translator: i18n }) => {
   const t = translator.t;
 
   const { get, post } = useConnection();
+  // DNA ViewOnly/Manager can view every AEF table, including
+  // Submission, but only Root/Admin gets the Submit action — matches
+  // AefV2Controller's submit guard (Action.Manage, AefReport).
+  const { canManage } = useArticle6Permissions();
 
   const [selectedYear, setSelectedYear] = useState<Moment>(moment());
   const [selectedReports, setSelectedReports] = useState<REPORT_TYPES[]>([
@@ -239,7 +244,7 @@ const ReportingComponent = (props: { translator: i18n }) => {
       provisional={type === REPORT_TYPES.HOLDINGS && holdingsProvisional}
       columns={
         type === REPORT_TYPES.SUBMISSION
-          ? getSubmissionReportColumns(t, setSubmitTarget)
+          ? getSubmissionReportColumns(t, canManage ? setSubmitTarget : undefined)
           : COLUMN_BUILDERS[type](t)
       }
       data={tableState[type]?.data ?? []}

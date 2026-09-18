@@ -1,29 +1,26 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
-import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
 import { Button, Row, Col, Table, Tag, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
 import "./initialReports.scss";
 import "../../Styles/common.table.scss";
 import { useTranslation } from "react-i18next";
 import { TimedPageInfoTitle } from "../../Components/Common/TimedPageInfoTitle/TimedPageInfoTitle";
 import { statusColors } from "./initialReport.helpers";
+import { useArticle6Permissions } from "../../Components/Common/hooks/useArticle6Permissions";
+import RequireDnaAccess from "../../Components/Common/AccessControl/RequireDnaAccess";
 
 const InitialReportManagement = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(["common","InitialReport"]);
   const { post } = useConnection();
-  const { userInfoState } = useUserContext();
+  const { canManage: canCreate } = useArticle6Permissions();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-
-  const canCreate =
-    userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY;
 
   const columns = [
     {
@@ -89,6 +86,7 @@ const InitialReportManagement = () => {
   }, [currentPage, pageSize]);
 
   return (
+    <RequireDnaAccess>
     <div className="initial-reports-container">
       <div className="title-bar">
         <TimedPageInfoTitle
@@ -139,6 +137,7 @@ const InitialReportManagement = () => {
         />
       </div>
     </div>
+    </RequireDnaAccess>
   );
 };
 

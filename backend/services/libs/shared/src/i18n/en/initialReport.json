@@ -1,6 +1,6 @@
 {
   "notFound": "The initial report does not exist.",
-  "noManagePermission": "Only a government (DNA) Admin or Root user can manage initial reports.",
+  "noManagePermission": "Only a government (DNA) Root or Admin user can manage initial reports.",
   "cooperativeApproachNotFound": "The specified cooperative approach does not exist.",
   "approachNotDraft": "Cooperative approaches can only be added to an initial report while they are a Draft ({} is {}).",
   "approachAlreadyLinked": "Cooperative approach {} is already linked to initial report {}.",
@@ -15,5 +15,6 @@
   "periodAlreadyClaimedBy": "NDC period {}–{} is already covered by initial report {} — pick a different period.",
   "versionNotFound": "Initial report {} has no version {}.",
   "notDraft": "Initial report {} is {} — only a Draft report can be discarded.",
-  "trajectoryFieldsLocked": "NDC Period, NDC Type, Base Year, Base Year Emission, NDC Target, and CA Method cannot be changed once initial report {} has been submitted."
+  "trajectoryFieldsLocked": "NDC Period, NDC Type, Base Year, Base Year Emission, NDC Target, and CA Method cannot be changed once initial report {} has been submitted.",
+  "emissionMustExceedTarget": "Base Year Emission ({}) must be greater than NDC Target ({})."
 }

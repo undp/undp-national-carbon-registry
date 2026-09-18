@@ -4,9 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Button, Col, Row, Skeleton, Table, Tag, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
-import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
-import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
-import { Role } from "../../Definitions/Enums/role.enum";
+import { useArticle6Permissions } from "../../Components/Common/hooks/useArticle6Permissions";
+import RequireDnaAccess from "../../Components/Common/AccessControl/RequireDnaAccess";
 import InitialReportGeneralSections from "../../Components/InitialReport/initialReportGeneralSections";
 import { statusColors, versionLabel } from "./initialReport.helpers";
 import "./initialReports.scss";
@@ -22,17 +21,10 @@ const InitialReportDetails = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(["common", "InitialReport"]);
   const { get } = useConnection();
-  const { userInfoState } = useUserContext();
+  const { canManage } = useArticle6Permissions();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
   const [versions, setVersions] = useState<any[]>([]);
-
-  // Initial reports are managed by government (DNA) Admin/Root only.
-  const canManage =
-    userInfoState?.companyRole ===
-      CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-    (userInfoState?.userRole === Role.Admin ||
-      userInfoState?.userRole === Role.Root);
 
   const fetchData = async () => {
     setLoading(true);
@@ -141,6 +133,7 @@ const InitialReportDetails = () => {
   ];
 
   return (
+    <RequireDnaAccess>
     <div className="initial-reports-container">
       <div className="title-bar">
         <Row justify="space-between" align="middle">
@@ -201,6 +194,7 @@ const InitialReportDetails = () => {
         />
       </div>
     </div>
+    </RequireDnaAccess>
   );
 };
 

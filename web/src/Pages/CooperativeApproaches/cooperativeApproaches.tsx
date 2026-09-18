@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
-import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
 import { useCountryOptions } from "../../Components/Common/hooks/useCountryOptions";
+import { useArticle6Permissions } from "../../Components/Common/hooks/useArticle6Permissions";
+import RequireDnaAccess from "../../Components/Common/AccessControl/RequireDnaAccess";
 import { Button, Row, Col, Table, Tag, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
 import { CA_STATUS_COLORS } from "../../Definitions/Enums/cooperativeApproachStatus.enum";
 import "./cooperativeApproaches.scss";
 import "../../Styles/common.table.scss";
@@ -16,7 +16,7 @@ const CooperativeApproaches = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(["common","coopApproach"]);
   const { post } = useConnection();
-  const { userInfoState } = useUserContext();
+  const { canManage: canCreate } = useArticle6Permissions();
   const { byCode: countryNameByCode } = useCountryOptions();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
@@ -28,11 +28,6 @@ const CooperativeApproaches = () => {
   // table can't reorder a page it only holds one slice of.
   const [sortField, setSortField] = useState("createdTime");
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC");
-
-  const canCreate =
-    userInfoState?.companyRole ===
-      CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
-    userInfoState?.companyRole === CompanyRole.MINISTRY;
 
   const columns = [
     {
@@ -136,6 +131,7 @@ const CooperativeApproaches = () => {
   };
 
   return (
+    <RequireDnaAccess>
     <div className="cooperative-approaches-container">
       <div className="title-bar">
         <TimedPageInfoTitle
@@ -191,6 +187,7 @@ const CooperativeApproaches = () => {
         />
       </div>
     </div>
+    </RequireDnaAccess>
   );
 };
 

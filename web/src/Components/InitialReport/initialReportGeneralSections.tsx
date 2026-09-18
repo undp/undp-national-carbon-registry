@@ -1,6 +1,7 @@
 import { Descriptions, Tag } from "antd";
 import { useTranslation } from "react-i18next";
 import { statusColors } from "../../Pages/InitialReport/initialReport.helpers";
+import { NDC_TYPE_LABELS } from "../../Definitions/Enums/ndcType.enum";
 
 // Two decimal places with thousands separators, matching the
 // Corresponding Adjustment pages' fmtDecimal — Base Year Emission and
@@ -54,7 +55,7 @@ const InitialReportGeneralSections: React.FC<InitialReportGeneralSectionsProps> 
           {general.ndcStartYear ?? "—"}–{general.ndcEndYear ?? "—"}
         </Descriptions.Item>
         <Descriptions.Item label={t("InitialReport:fieldNdcType")}>
-          {general.ndcType ?? "—"}
+          {general.ndcType ? NDC_TYPE_LABELS[general.ndcType] ?? general.ndcType : "—"}
         </Descriptions.Item>
         <Descriptions.Item label={t("InitialReport:fieldStatus")}>
           {report ? (
@@ -109,7 +110,7 @@ const InitialReportGeneralSections: React.FC<InitialReportGeneralSectionsProps> 
           {general.ndcStartYear ?? "—"}–{general.ndcEndYear ?? "—"}
         </Descriptions.Item>
         <Descriptions.Item label={t("InitialReport:fieldNdcType")}>
-          {general.ndcType ?? "—"}
+          {general.ndcType ? NDC_TYPE_LABELS[general.ndcType] ?? general.ndcType : "—"}
         </Descriptions.Item>
         <Descriptions.Item label={t("InitialReport:fieldBaseYear")}>
           {general.baseYear ?? "—"}

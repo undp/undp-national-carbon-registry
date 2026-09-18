@@ -188,6 +188,14 @@ export class CaslAbilityFactory {
           can(Action.Manage, DocumentAction);
           can(Action.Manage, Investment);
           can(Action.Manage, ProgrammeCertify);
+        }
+
+        // Cooperative Approaches, Initial Reports, Corresponding
+        // Adjustments and the AEF report are add/edit/submit-restricted
+        // to Root/Admin only — Manager, unlike everywhere else in this
+        // DNA block, is view-only here too (mirrors each service's
+        // assertCanManage / AefV2Controller's submit guard).
+        if (user.role === Role.Root || user.role === Role.Admin) {
           can(Action.Manage, CooperativeApproach);
           can(Action.Manage, CorrespondingAdjustment);
           can(Action.Manage, InitialReport);
@@ -216,10 +224,14 @@ export class CaslAbilityFactory {
         can(Action.Read, Investment);
         can(Action.Read, Programme);
         can(Action.Read, ProgrammeTransfer);
-        can(Action.Read, CooperativeApproach);
-        can(Action.Read, CorrespondingAdjustment);
-        can(Action.Read, InitialReport);
         can(Action.Read, AefReport);
+        // Cooperative Approaches, Initial Reports and Corresponding
+        // Adjustments are a Designated National Authority (DNA)-only
+        // feature set — Ministry previously mirrored DNA's grants here
+        // (both Read and Manage), which let a Ministry user view and
+        // even write these through the API despite the UI never
+        // surfacing them for that company role. Deliberately not
+        // granted to Ministry at all now; see the DNA block above.
 
         if (user.role !== Role.ViewOnly) {
           can(Action.Create, Emission);
@@ -230,9 +242,6 @@ export class CaslAbilityFactory {
           can(Action.Manage, ProgrammeTransferRequest);
           can(Action.Manage, ProgrammeTransfer);
           can(Action.Manage, ProgrammeCertify);
-          can(Action.Manage, CooperativeApproach);
-          can(Action.Manage, CorrespondingAdjustment);
-          can(Action.Manage, InitialReport);
         }
       }
 
