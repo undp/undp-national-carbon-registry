@@ -5,7 +5,6 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  Max,
   Min,
 } from "class-validator";
 import { CaMethod } from "../enum/ca.method.enum";
@@ -20,8 +19,7 @@ export class CaPreviewDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsInt()
-  @Min(1990)
-  @Max(2100)
+  @Min(1900)
   year: number;
 
   // The reporting year's actual emissions. Collected here rather than

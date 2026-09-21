@@ -413,7 +413,7 @@ const CaDetails = () => {
 
       <IrreversibleActionConfirmModal
         open={submitConfirmOpen}
-        title={t("correspondingAdjust:submit")}
+        title={t("correspondingAdjust:submitCA")}
         message={t("correspondingAdjust:submitConfirmTitle")}
         confirmText={t("correspondingAdjust:submit")}
         cancelText={t("correspondingAdjust:cancel")}

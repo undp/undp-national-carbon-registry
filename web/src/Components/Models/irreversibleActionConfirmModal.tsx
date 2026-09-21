@@ -1,14 +1,23 @@
 import { Button, Checkbox, Form, Modal } from "antd";
 import { FC, ReactNode, useEffect, useState } from "react";
 import { CheckCircleOutlined } from "@ant-design/icons";
+import { COLOR_CONFIGS } from "../../Config/colorConfigs";
 
 // Matches the confirm-before-an-irreversible-action modal used elsewhere
-// in the app (transferActionModel / creditRetirementSlActionModel /
-// investmentActionModel / creditActionModal) — same popup-header/icon
-// layout, same "I understand that this action cannot be undone"
-// checkbox (view:confirmClosure) gating the confirm button. Kept as its
-// own small component rather than copy-pasting that ~40-line pattern a
-// third time for Corresponding Adjustment's Submit/Finalize actions.
+// in the app — same popup-header/icon layout, same "I understand that
+// this action cannot be undone" checkbox (view:confirmClosure) gating
+// the confirm button. Kept as its own small component rather than
+// copy-pasting that ~40-line pattern a third time for Corresponding
+// Adjustment's Submit/Finalize actions.
+//
+// Styled to match ItmoAuthProceedModal specifically (the accept/reject
+// confirmation on the ITMO Authorizations table) rather than the
+// popup-primary/popup-danger CSS-class convention the OTHER Models/*
+// popups use: the confirm button and icon are colored directly via
+// COLOR_CONFIGS (not a `.popup-{type}` ancestor class), and the Cancel
+// button is left with antd's plain default styling rather than the
+// `.popup-primary .ant-btn-default` override — same as
+// itmoAuthProceedModal.tsx's Cancel button.
 export interface IrreversibleActionConfirmModalProps {
   open: boolean;
   title: string;
@@ -45,12 +54,13 @@ const IrreversibleActionConfirmModal: FC<IrreversibleActionConfirmModalProps> = 
       title={
         <div className="popup-header">
           <div className="icon">
-            <CheckCircleOutlined />
+            <CheckCircleOutlined
+              style={{ color: COLOR_CONFIGS.PRIMARY_THEME_COLOR }}
+            />
           </div>
           <div>{title}</div>
         </div>
       }
-      className="popup-primary"
       open={open}
       width={Math.min(430, window.innerWidth)}
       centered
@@ -60,8 +70,11 @@ const IrreversibleActionConfirmModal: FC<IrreversibleActionConfirmModalProps> = 
     >
       {message && <p style={{ textAlign: "center" }}>{message}</p>}
       <Form layout="vertical" onFinish={onConfirm}>
-        <Form.Item className="text-left" valuePropName="checked" name="confirm">
-          <Checkbox onChange={(e) => setChecked(e.target.checked)}>
+        <Form.Item valuePropName="checked" name="confirm">
+          <Checkbox
+            className="checkbox-confirm-primary"
+            onChange={(e) => setChecked(e.target.checked)}
+          >
             {t("view:confirmClosure")}
           </Checkbox>
         </Form.Item>
@@ -70,7 +83,15 @@ const IrreversibleActionConfirmModal: FC<IrreversibleActionConfirmModalProps> = 
             {cancelText}
           </Button>
           <Button
-            className="mg-left-2"
+            style={
+              checked
+                ? {
+                    backgroundColor: COLOR_CONFIGS.PRIMARY_THEME_COLOR,
+                    borderColor: COLOR_CONFIGS.PRIMARY_THEME_COLOR,
+                  }
+                : {}
+            }
+            className="mg-left-2 mg-bottom-1"
             type="primary"
             htmlType="submit"
             loading={loading}

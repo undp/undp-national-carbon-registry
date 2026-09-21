@@ -436,7 +436,7 @@ const CaCalculation = () => {
       </div>
       <IrreversibleActionConfirmModal
         open={submitConfirmOpen}
-        title={t("correspondingAdjust:submit")}
+        title={t("correspondingAdjust:submitCA")}
         message={t(
           isAveraging
             ? "correspondingAdjust:finalizeConfirmTitle"
