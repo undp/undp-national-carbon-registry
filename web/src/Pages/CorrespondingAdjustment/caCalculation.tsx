@@ -231,8 +231,7 @@ const CaCalculation = () => {
               >
                 <InputNumber
                   style={{ width: "100%" }}
-                  min={1990}
-                  max={2100}
+                  min={1900}
                   placeholder={t("correspondingAdjust:reportingYearPlaceholder")}
                   onChange={(v) => {
                     setYear(v == null ? null : Number(v));

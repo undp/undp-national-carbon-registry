@@ -206,7 +206,6 @@ const CreateInitialReport = () => {
                 <InputNumber
                   style={{ width: "100%" }}
                   min={1900}
-                  max={2100}
                   placeholder="e.g. 2021"
                 />
               </Form.Item>
@@ -241,7 +240,6 @@ const CreateInitialReport = () => {
                 <InputNumber
                   style={{ width: "100%" }}
                   min={1900}
-                  max={2100}
                   placeholder="e.g. 2030"
                 />
               </Form.Item>
@@ -327,7 +325,6 @@ const CreateInitialReport = () => {
                 <InputNumber
                   style={{ width: "100%" }}
                   min={1900}
-                  max={2100}
                   placeholder="e.g. 2015"
                 />
               </Form.Item>
