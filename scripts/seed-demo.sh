@@ -106,31 +106,66 @@ echo "  + overall + company ledger rows seeded"
 # ---------------------------------------------------------------------
 # Cooperative Approaches
 # ---------------------------------------------------------------------
-echo "[seed] CA-1 Ghana-Switzerland (target: Active + Submitted IR)"
-RESP=$(call POST "$DNA" /cooperativeApproach/create '{"title":"Ghana-Switzerland Cooperative Approach","participatingParties":["GH","CH"],"hostParty":"NG","description":"Bilateral approach to authorize ITMO transfers from Ghana to Switzerland under Decision 2/CMA.3.","expectedMitigationOutcomes":"500000","environmentalIntegrityAssessment":"Conservative baselines; no double-counting; additionality demonstrated."}')
+# A cooperative approach can only become Active by having its initial
+# report submitted (which drives it Draft -> Submitted) and then being
+# activated manually. Authorized entities have to be attached while it is
+# still a Draft, so they go in with the create call.
+#
+# An initial report is filed for an NDC implementation period, not for a
+# single cooperative approach — it covers every approach the Party
+# attaches to it. Submitting one requires a base-year Emission row (the
+# trajectory in ndc_target_yearly interpolates from it), so that gets
+# seeded directly via SQL first — there is no API to write it.
+AUTH_DATE=$(( NOW_MS - 86400000 ))
+IR_BASE_YEAR=$(( $(date +%Y) - 10 ))
+IR_START_YEAR=$(( $(date +%Y) - 5 ))
+IR_END_YEAR=$(( $(date +%Y) + 5 ))
+
+echo "[seed] Emission baseline for $IR_BASE_YEAR (feeds the initial report's NDC trajectory)"
+podman exec "$DB_CONTAINER" psql -U root -d carbondev -c \
+  "INSERT INTO emission (country, year, \"totalCo2WithoutLand\", state, version, \"createdAt\", \"updatedAt\")
+   VALUES ('NG', '$IR_BASE_YEAR', '{\"co2eq\": 100000}'::jsonb, 'FINALIZED', 1, NOW(), NOW())
+   ON CONFLICT DO NOTHING;" > /dev/null
+
+echo "[seed] CA-1 Ghana-Switzerland (target: Active + 2 authorized entities)"
+RESP=$(call POST "$DNA" /cooperativeApproach/create "{\"title\":\"Ghana-Switzerland Cooperative Approach\",\"participatingParties\":[\"GH\",\"CH\"],\"hostParty\":\"NG\",\"description\":\"Bilateral approach to authorize ITMO transfers from Ghana to Switzerland under Decision 2/CMA.3.\",\"expectedMitigationOutcomes\":\"500000\",\"environmentalIntegrityAssessment\":\"Conservative baselines; no double-counting; additionality demonstrated.\",\"authorizedEntities\":[{\"entityName\":\"Alpine Carbon Markets\",\"entityIdentifier\":\"ENT-001\",\"countryOfIncorporation\":\"CH\",\"authorizationDate\":$AUTH_DATE,\"authorizationReference\":\"AUTH-CH-001\"},{\"entityName\":\"Accra Mitigation Partners\",\"entityIdentifier\":\"ENT-002\",\"countryOfIncorporation\":\"GH\",\"authorizationDate\":$AUTH_DATE,\"authorizationReference\":\"AUTH-GH-001\"}]}")
 CA1=$(echo "$RESP" | extract cooperativeApproachId)
 echo "  $CA1"
-RESP=$(call PUT "$DNA" /cooperativeApproach/update "{\"cooperativeApproachId\":\"$CA1\",\"status\":\"Active\"}")
-RESP=$(call POST "$DNA" /initialReport/generate "{\"cooperativeApproachId\":\"$CA1\"}")
-IR1=$(echo "$RESP" | extract reportId)
-RESP=$(call PUT "$DNA" "/initialReport/submit?id=$IR1")
-echo "  $IR1 Submitted"
 
-echo "[seed] CA-2 Nigeria-Japan (target: Active + Draft IR)"
-RESP=$(call POST "$DNA" /cooperativeApproach/create '{"title":"Nigeria-Japan Cooperative Approach","participatingParties":["NG","JP"],"hostParty":"NG","description":"Bilateral approach for energy-sector ITMO transfers.","expectedMitigationOutcomes":"250000","environmentalIntegrityAssessment":"Conservative baselines."}')
-CA2=$(echo "$RESP" | extract cooperativeApproachId)
-echo "  $CA2"
-RESP=$(call PUT "$DNA" /cooperativeApproach/update "{\"cooperativeApproachId\":\"$CA2\",\"status\":\"Active\"}")
-RESP=$(call POST "$DNA" /initialReport/generate "{\"cooperativeApproachId\":\"$CA2\"}")
-IR2=$(echo "$RESP" | extract reportId)
-echo "  $IR2 Draft"
+echo "[seed] IR-1 NDC period $IR_START_YEAR-$IR_END_YEAR (general fields only, no approach yet)"
+RESP=$(call POST "$DNA" /initialReport/generate "{\"ndcStartYear\":$IR_START_YEAR,\"ndcEndYear\":$IR_END_YEAR,\"ndcType\":\"SingleYear\",\"baseYear\":$IR_BASE_YEAR,\"ndcTarget\":500000,\"caMethod\":\"Trajectory\",\"caMethodDescription\":\"Trajectory method against the $IR_BASE_YEAR baseline.\",\"sectors\":[\"Energy\",\"Forestry\"]}")
+IR1=$(echo "$RESP" | extract reportNumber)
+echo "  $IR1 Draft"
+
+RESP=$(call POST "$DNA" /initialReport/cooperativeApproach/add "{\"reportNumber\":\"$IR1\",\"cooperativeApproachId\":\"$CA1\"}")
+RESP=$(call PUT "$DNA" "/initialReport/submit?reportNumber=$IR1")
+echo "  $IR1 Submitted v1.0 (CA-1 -> Submitted)"
+RESP=$(call PUT "$DNA" /cooperativeApproach/update "{\"cooperativeApproachId\":\"$CA1\",\"status\":\"Active\"}")
 
 echo "[seed] CA-3 Test CA — Suspended"
 RESP=$(call POST "$DNA" /cooperativeApproach/create '{"title":"Test CA — Suspended","participatingParties":["NG","DE"],"hostParty":"NG","description":"Suspended CA to demonstrate the Draft -/CMA.5 paras 20-21 authorize gate.","expectedMitigationOutcomes":"100000","environmentalIntegrityAssessment":"Pending."}')
 CA3=$(echo "$RESP" | extract cooperativeApproachId)
 echo "  $CA3"
+
+# Adding a second approach to an already-Submitted report reopens it as
+# Draft, then this submit bumps it to v2.0 — the same IR now covers both
+# approaches, and v1.0's frozen snapshot still shows only CA-1.
+RESP=$(call POST "$DNA" /initialReport/cooperativeApproach/add "{\"reportNumber\":\"$IR1\",\"cooperativeApproachId\":\"$CA3\"}")
+RESP=$(call PUT "$DNA" "/initialReport/submit?reportNumber=$IR1")
+echo "  $IR1 Submitted v2.0 (CA-3 -> Submitted)"
 RESP=$(call PUT "$DNA" /cooperativeApproach/update "{\"cooperativeApproachId\":\"$CA3\",\"status\":\"Active\"}")
 RESP=$(call PUT "$DNA" /cooperativeApproach/update "{\"cooperativeApproachId\":\"$CA3\",\"status\":\"Suspended\"}")
+
+# Left in Draft on purpose, with a Draft report holding no other
+# approach: demonstrates the "no submitted IR" authorize gate.
+echo "[seed] CA-2 Nigeria-Japan (target: Draft + Draft IR)"
+RESP=$(call POST "$DNA" /cooperativeApproach/create '{"title":"Nigeria-Japan Cooperative Approach","participatingParties":["NG","JP"],"hostParty":"NG","description":"Bilateral approach for energy-sector ITMO transfers.","expectedMitigationOutcomes":"250000","environmentalIntegrityAssessment":"Conservative baselines."}')
+CA2=$(echo "$RESP" | extract cooperativeApproachId)
+echo "  $CA2"
+RESP=$(call POST "$DNA" /initialReport/generate "{\"ndcStartYear\":$IR_START_YEAR,\"ndcEndYear\":$IR_END_YEAR,\"ndcType\":\"SingleYear\",\"baseYear\":$IR_BASE_YEAR,\"ndcTarget\":250000,\"caMethod\":\"Trajectory\",\"caMethodDescription\":\"Draft — not yet filed.\",\"sectors\":[\"Energy\"]}")
+IR2=$(echo "$RESP" | extract reportNumber)
+RESP=$(call POST "$DNA" /initialReport/cooperativeApproach/add "{\"reportNumber\":\"$IR2\",\"cooperativeApproachId\":\"$CA2\"}")
+echo "  $IR2 Draft"
 
 # ---------------------------------------------------------------------
 # Programmes (all under CA-1)
@@ -370,6 +405,9 @@ echo "  + 4 project_entity rows"
 # ---------------------------------------------------------------------
 # Corresponding Adjustment
 # ---------------------------------------------------------------------
+# Falls inside IR-1's NDC period ($IR_START_YEAR-$IR_END_YEAR), whose
+# submission is what seeds the ndc_target row this calculation reads —
+# without it this call 400s with ndcTargetNotDefined.
 YEAR=$(date +%Y)
 echo "[seed] CA-ADJ for $CA1 year=$YEAR"
 RESP=$(call POST "$DNA" /correspondingAdjustment/calculate "{\"year\":$YEAR,\"cooperativeApproachId\":\"$CA1\",\"ndcType\":\"SingleYear\",\"caMethod\":\"Trajectory\"}")
@@ -381,8 +419,8 @@ echo "  $CA_ADJ"
 # ---------------------------------------------------------------------
 echo
 echo "[seed] Done. Login as DNA Admin (palinda+add@xeptagon.com / 123) and visit:"
-echo "  Cooperative Approaches    -> $CA1 Active, $CA2 Active, $CA3 Suspended"
-echo "  Initial Reports           -> $IR1 Submitted, $IR2 Draft"
+echo "  Cooperative Approaches    -> $CA1 Active, $CA2 Draft, $CA3 Suspended"
+echo "  Initial Reports           -> $IR1 Submitted v2.0 (covers $CA1, $CA3), $IR2 Draft (covers $CA2)"
 echo "  Project Details           -> $PA Awaiting, $PB Approved, $PC Authorised, $PD_ID Authorised+Issued"
 echo "  Credits / Credit Balance  -> issued blocks from $PD_ID"
 echo "  Corresponding Adjustments -> $CA_ADJ"

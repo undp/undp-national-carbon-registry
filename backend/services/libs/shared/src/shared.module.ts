@@ -5,6 +5,7 @@ import { AnnualReportModule } from "./annualreport/annual-report.module";
 import { AsyncOperationsModule } from "./async-operations/async-operations.module";
 import { AuthModule } from "./auth/auth.module";
 import { CadtModule } from "./cadt/cadt.module";
+import { CadTrustSyncModule } from "./cadtrust-sync/cadtrust-sync.module";
 import { CompanyModule } from "./company/company.module";
 import { EmailModule } from "./email/email.module";
 import { EmailHelperModule } from "./email-helper/email-helper.module";
@@ -37,6 +38,7 @@ import { ItmoAccountModule } from "./itmo-account/itmo-account.module";
     AsyncOperationsModule,
     AuthModule,
     CadtModule,
+    CadTrustSyncModule,
     CompanyModule,
     EmailModule,
     EmailHelperModule,
@@ -70,6 +72,7 @@ import { ItmoAccountModule } from "./itmo-account/itmo-account.module";
     AsyncOperationsModule,
     AuthModule,
     CadtModule,
+    CadTrustSyncModule,
     CompanyModule,
     EmailModule,
     EmailHelperModule,

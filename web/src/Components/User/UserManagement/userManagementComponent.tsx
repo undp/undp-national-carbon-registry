@@ -669,7 +669,7 @@ export const UserManagementComponent = (props: any) => {
           })}
         />
       </div>
-      <div className="content-card">
+      <div className="content-card user-management-card">
         <Row className="table-actions-section">
           <Col md={8} xs={24}>
             <div className="action-bar">

@@ -8,6 +8,7 @@ import {
   AppstoreOutlined,
   CalculatorOutlined,
   DashboardOutlined,
+  DeploymentUnitOutlined,
   FileTextOutlined,
   GlobalOutlined,
   SettingOutlined,
@@ -21,7 +22,6 @@ import { useTranslation } from "react-i18next";
 import { LayoutSiderProps } from "../../Definitions/Definitions/layout.sider.definitions";
 import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
 import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
-import { Role } from "../../Definitions/Enums/role.enum";
 import { ROUTES } from "../../Config/uiRoutingConfig";
 
 const { Sider } = Layout;
@@ -64,6 +64,64 @@ const LayoutSider = (props: LayoutSiderProps) => {
 
   const currentPage = location.pathname.replace(/^\/|\/$/g, "");
 
+  const isDna =
+    userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY;
+  const isPd =
+    userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER;
+
+  const creditItems: MenuItem[] = [];
+  if (isDna) {
+    creditItems.push(
+      getItem(t("nav:creditBlockList"), "credits/blockList", <Icon.Search />)
+    );
+  }
+  creditItems.push(
+    getItem(t("nav:issuance"), "credits/issuanceList", <Icon.PlusCircle />),
+    getItem(t("nav:creditBalance"), "credits/balance", <Icon.Wallet2 />),
+    getItem(t("nav:transfers"), "credits/transfers", <SwapOutlined />),
+    getItem(
+      t("nav:retirements"),
+      "credits/retirements",
+      <Icon.ClockHistory />
+    ),
+    getItem(
+      t("nav:itmoAuthorizations"),
+      "credits/itmoAuthorizations",
+      <Icon.GlobeAmericas />
+    )
+  );
+
+  // Cooperative Approaches, Corresponding Adjustments and Initial
+  // Reports are a Designated National Authority (DNA)-only feature set
+  // (mirrors casl-ability.factory.ts's DNA branch) — every DNA role,
+  // including ViewOnly and Manager, can see and open all three, since
+  // both can still view the data; add/edit is gated inside each page
+  // instead (useArticle6Permissions().canManage, Root/Admin only).
+  // Previously Cooperative Approaches was pushed unconditionally here
+  // (visible to every company role) and the other two were gated to
+  // isDnaAdmin (hiding them from DNA ViewOnly/Manager, who should still
+  // be able to view) — both were bugs.
+  const article62Items: MenuItem[] = [];
+  if (isDna) {
+    article62Items.push(
+      getItem(
+        t("nav:cooperativeApproaches"),
+        "cooperativeApproaches/viewAll",
+        <GlobalOutlined />
+      ),
+      getItem(
+        t("nav:correspondingAdjustments"),
+        "correspondingAdjustments/viewAll",
+        <CalculatorOutlined />
+      ),
+      getItem(
+        t("nav:initialReports"),
+        "initialReports/viewAll",
+        <FileTextOutlined />
+      )
+    );
+  }
+
   const items: MenuItem[] = [
     getItem(t("nav:dashboard"), "dashboard", <DashboardOutlined />),
     getItem(
@@ -71,71 +129,41 @@ const LayoutSider = (props: LayoutSiderProps) => {
       "programmeManagement/viewAll",
       <UnorderedListOutlined />
     ),
-    getItem(
-      "Cooperative Approaches",
-      "cooperativeApproaches/viewAll",
-      <GlobalOutlined />
-    ),
+    ...(isDna || isPd
+      ? [
+          getItem(
+            t("nav:credits"),
+            "credits",
+            <AppstoreOutlined />,
+            creditItems
+          ),
+        ]
+      : []),
+    ...(isDna
+      ? [
+          getItem(
+            t("nav:article62"),
+            "article62",
+            <DeploymentUnitOutlined />,
+            article62Items
+          ),
+        ]
+      : []),
+    // AEF reporting follows the same view/manage split as the Article
+    // 6.2 items above — DNA ViewOnly and Manager can view the AEF
+    // report, only Root/Admin can submit it (gated inside
+    // ReportingComponent, not here).
+    ...(isDna
+      ? [getItem(t("nav:aefReports"), "reports", <Icon.ClipboardData />)]
+      : []),
     getItem(t("nav:companies"), "companyManagement/viewAll", <ShopOutlined />),
     getItem(t("nav:users"), "userManagement/viewAll", <UserOutlined />),
   ];
 
-  if (
-    userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
-    userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER
-  ) {
-    const creditItems: MenuItem[] = [];
-    if (userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
-      creditItems.push(
-        getItem(t("nav:creditBlockList"), "credits/blockList", <Icon.Search />)
-      );
-    }
-    creditItems.push(
-      getItem(t("nav:issuance"), "credits/issuanceList", <Icon.PlusCircle />),
-      getItem(t("nav:creditBalance"), "credits/balance", <Icon.Wallet2 />),
-      getItem(t("nav:transfers"), "credits/transfers", <SwapOutlined />),
-      getItem(
-        t("nav:retirements"),
-        "credits/retirements",
-        <Icon.ClockHistory />
-      ),
-      getItem(
-        t("nav:itmoAuthorizations"),
-        "credits/itmoAuthorizations",
-        <Icon.GlobeAmericas />
-      )
-    );
-    items.splice(
-      2,
-      0,
-      getItem(t("nav:credits"), "credits", <AppstoreOutlined />, creditItems)
-    );
-  }
-
-
-  if (
-    userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-    (userInfoState?.userRole === Role.Admin ||
-      userInfoState?.userRole === Role.Root)
-  ) {
-    items.splice(
-      3,
-      0,
-      getItem(t("nav:reports"), "reports", <Icon.ClipboardData />),
-      getItem(
-        "Corresponding Adjustments",
-        "correspondingAdjustments/viewAll",
-        <CalculatorOutlined />
-      ),
-      getItem(
-        "Initial Reports",
-        "initialReports/viewAll",
-        <FileTextOutlined />
-      )
-    );
-  }
-  
-  
+  const activeKey = selectedKey || selectKey || "dashboard";
+  const defaultOpenKeys = items
+    .filter((item) => item?.children?.some((child) => child?.key === activeKey))
+    .map((item) => String(item?.key));
 
   useEffect(() => {
     setSelectKey(currentPage);
@@ -258,7 +286,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
                 alt="country flag"
                 src={
                   import.meta.env.VITE_APP_COUNTRY_FLAG_URL ||
-                  "https://carbon-common-dev.s3.amazonaws.com/flag.png"
+                  "https://undpcarbonfiles001.blob.core.windows.net/assets/flag.png"
                 }
               />
             </div>
@@ -288,6 +316,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
                 ? selectKey
                 : "dashboard",
             ]}
+            defaultOpenKeys={defaultOpenKeys}
             mode="inline"
             onClick={onClick}
           >

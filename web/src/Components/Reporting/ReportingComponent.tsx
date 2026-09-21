@@ -21,6 +21,7 @@ import {
   TABULAR_REPORT_TYPES,
 } from "./reportTypes";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
+import { useArticle6Permissions } from "../Common/hooks/useArticle6Permissions";
 import { API_PATHS } from "../../Config/apiConfig";
 import { Loading } from "../Loading/loading";
 import { TimedPageInfoTitle } from "../Common/TimedPageInfoTitle/TimedPageInfoTitle";
@@ -49,7 +50,7 @@ const initialTableState = (): Record<string, TableState> =>
   TABULAR_REPORT_TYPES.reduce(
     (acc, type) => ({
       ...acc,
-      [type]: { loading: false, data: [], total: 0, page: 1, pageSize: 10 },
+      [type]: { loading: false, data: [], total: 0, page: 1, pageSize: 5 },
     }),
     {} as Record<string, TableState>
   );
@@ -70,6 +71,10 @@ const ReportingComponent = (props: { translator: i18n }) => {
   const t = translator.t;
 
   const { get, post } = useConnection();
+  // DNA ViewOnly/Manager can view every AEF table, including
+  // Submission, but only Root/Admin gets the Submit action — matches
+  // AefV2Controller's submit guard (Action.Manage, AefReport).
+  const { canManage } = useArticle6Permissions();
 
   const [selectedYear, setSelectedYear] = useState<Moment>(moment());
   const [selectedReports, setSelectedReports] = useState<REPORT_TYPES[]>([
@@ -119,6 +124,8 @@ const ReportingComponent = (props: { translator: i18n }) => {
   const fetchTable = async (type: REPORT_TYPES) => {
     setTable(type, { loading: true });
     try {
+      // `sort` is left off so each table gets its own backend default — newest
+      // first for the store-backed tables, authorization id for Holdings.
       const res = await post(API_PATHS.AEF_V2_QUERY, {
         table: AEF_V2_TABLE_NAME[type],
         reportedYear,
@@ -155,6 +162,12 @@ const ReportingComponent = (props: { translator: i18n }) => {
       if (res?.statusText === "SUCCESS" && res.data?.submitted) {
         await fetchTable(REPORT_TYPES.SUBMISSION);
         setSubmitTarget(undefined);
+        message.open({
+          type: "success",
+          content: t("reporting:submitAefSuccess", { reportedYear }),
+          duration: 4,
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+        });
       } else {
         const issues: { message: string }[] = res?.data?.issues ?? [];
         setSubmitIssues(issues.map((issue) => issue.message));
@@ -237,7 +250,7 @@ const ReportingComponent = (props: { translator: i18n }) => {
       provisional={type === REPORT_TYPES.HOLDINGS && holdingsProvisional}
       columns={
         type === REPORT_TYPES.SUBMISSION
-          ? getSubmissionReportColumns(t, setSubmitTarget)
+          ? getSubmissionReportColumns(t, canManage ? setSubmitTarget : undefined)
           : COLUMN_BUILDERS[type](t)
       }
       data={tableState[type]?.data ?? []}
@@ -245,8 +258,8 @@ const ReportingComponent = (props: { translator: i18n }) => {
       pagination={{
         total: tableState[type]?.total ?? 0,
         current: tableState[type]?.page ?? 1,
-        pageSize: tableState[type]?.pageSize ?? 10,
-        pageSizeOptions: [10, 20, 30],
+        pageSize: tableState[type]?.pageSize ?? 5,
+        pageSizeOptions: [5, 10, 20, 30],
       }}
       downloadCSV={
         type === REPORT_TYPES.SUBMISSION ? () => downloadSubmission(FILE_TYPES.csv) : undefined

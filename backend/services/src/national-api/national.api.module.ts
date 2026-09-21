@@ -22,6 +22,7 @@ import { CorrespondingAdjustmentController } from "./corresponding-adjustment.co
 import { InitialReportController } from "./initial-report.controller";
 import { ItmoAccountController } from "./itmo-account.controller";
 import { AdminController } from "./admin.controller";
+import { CadTrustSyncController } from "./cadtrust-sync.controller";
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { AdminController } from "./admin.controller";
     InitialReportController,
     ItmoAccountController,
     AdminController,
+    CadTrustSyncController,
   ],
   providers: [NationalAPIService, Logger, AefV2SchedulerService],
 })

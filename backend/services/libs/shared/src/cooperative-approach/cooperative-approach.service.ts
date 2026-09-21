@@ -1,16 +1,18 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ConfigService } from "@nestjs/config";
-import { Repository } from "typeorm";
+import { EntityManager, Repository } from "typeorm";
 import { CooperativeApproach } from "../entities/cooperative.approach.entity";
-import { InitialReport } from "../entities/initial.report.entity";
 import { CaAuthorizedEntity } from "../entities/ca.authorized.entity.entity";
 import { CooperativeApproachCreateDto } from "../dto/cooperative.approach.create.dto";
 import { CooperativeApproachUpdateDto } from "../dto/cooperative.approach.update.dto";
-import { CaAuthorizedEntityCreateDto } from "../dto/ca.authorized.entity.create.dto";
+import {
+  CaAuthorizedEntityCreateDto,
+  CaAuthorizedEntityDto,
+} from "../dto/ca.authorized.entity.create.dto";
 import { CooperativeApproachStatus } from "../enum/cooperative.approach.status.enum";
-import { InitialReportStatus } from "../enum/initial.report.status.enum";
 import { AuthorizedEntityStatus } from "../enum/authorized.entity.status.enum";
+import { AuthorizedEntitySubmissionStatus } from "../enum/authorized.entity.submission.status.enum";
 import { CompanyRole } from "../enum/company.role.enum";
 import { Role } from "../casl/role.enum";
 import { QueryDto } from "../dto/query.dto";
@@ -21,14 +23,19 @@ import { CounterService } from "../util/counter.service";
 import { CounterType } from "../util/counter.type.enum";
 import { CountryService } from "../util/country.service";
 import { User } from "../entities/user.entity";
+import { AefV2WriteService } from "../aef-v2-registry/aef-v2-write.service";
 
-// Allowed manual status transitions. Draft -> Active carries the extra
-// submitted-initial-report requirement checked in update().
+// Allowed manual status transitions. Draft has none: an approach leaves
+// Draft only when its initial report is submitted, which drives it to
+// Submitted through markSubmitted(). From there activation is the sole
+// manual move — a submitted approach can never be pulled back to Draft,
+// and an active one can never be pushed back to Submitted.
 const ALLOWED_TRANSITIONS: Record<
   CooperativeApproachStatus,
   CooperativeApproachStatus[]
 > = {
-  [CooperativeApproachStatus.DRAFT]: [CooperativeApproachStatus.ACTIVE],
+  [CooperativeApproachStatus.DRAFT]: [],
+  [CooperativeApproachStatus.SUBMITTED]: [CooperativeApproachStatus.ACTIVE],
   [CooperativeApproachStatus.ACTIVE]: [
     CooperativeApproachStatus.SUSPENDED,
     CooperativeApproachStatus.COMPLETED,
@@ -48,18 +55,18 @@ export class CooperativeApproachService {
   constructor(
     @InjectRepository(CooperativeApproach)
     private cooperativeApproachRepo: Repository<CooperativeApproach>,
-    @InjectRepository(InitialReport)
-    private initialReportRepo: Repository<InitialReport>,
     @InjectRepository(CaAuthorizedEntity)
     private authorizedEntityRepo: Repository<CaAuthorizedEntity>,
     private readonly helperService: HelperService,
     private readonly counterService: CounterService,
     private readonly countryService: CountryService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly aefV2WriteService: AefV2WriteService
   ) {}
 
-  // Cooperative approaches are managed by the government (DNA) Admin /
-  // Root only — mirrors the retirement-action permission pattern.
+  // Cooperative approaches are managed by a government (DNA) Root/Admin
+  // only — Manager and ViewOnly are both view-only here, matching the
+  // CASL ability factory's Manage grant.
   private assertCanManage(user: User) {
     if (
       user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
@@ -129,8 +136,27 @@ export class CooperativeApproachService {
     approach.createdTime = now;
     approach.updatedTime = now;
 
-    const saved = await this.cooperativeApproachRepo.save(approach);
-    return new DataResponseDto(HttpStatus.CREATED, saved);
+    // The authorized entities are part of the same submission as the
+    // approach itself, so they are built (and validated) against the
+    // approach before anything is written, and persisted with it in one
+    // transaction — a rejected entity must not leave an orphan CA.
+    const entities = (dto.authorizedEntities ?? []).map((entityDto) =>
+      this.buildAuthorizedEntity(approach, entityDto)
+    );
+
+    const saved = await this.cooperativeApproachRepo.manager.transaction(
+      async (manager) => {
+        const savedApproach = await manager.save(approach);
+        if (entities.length > 0) {
+          await manager.save(entities);
+        }
+        return savedApproach;
+      }
+    );
+    return new DataResponseDto(HttpStatus.CREATED, {
+      ...saved,
+      authorizedEntities: entities,
+    });
   }
 
   async query(
@@ -262,7 +288,7 @@ export class CooperativeApproachService {
         dto.environmentalIntegrityAssessment;
     if (dto.ndcLink !== undefined) approach.ndcLink = dto.ndcLink;
     if (dto.status !== undefined && dto.status !== approach.status) {
-      await this.applyStatusTransition(approach, dto.status);
+      this.applyStatusTransition(approach, dto.status);
     }
     if (dto.authorizationDocumentUrl !== undefined)
       approach.authorizationDocumentUrl = dto.authorizationDocumentUrl;
@@ -273,7 +299,9 @@ export class CooperativeApproachService {
     return new DataResponseDto(HttpStatus.OK, saved);
   }
 
-  private async applyStatusTransition(
+  // Manual status changes only. The Draft -> Submitted move is not
+  // reachable from here by design — see markSubmitted().
+  private applyStatusTransition(
     approach: CooperativeApproach,
     newStatus: CooperativeApproachStatus
   ) {
@@ -287,52 +315,143 @@ export class CooperativeApproachService {
         HttpStatus.BAD_REQUEST
       );
     }
-    if (
-      approach.status === CooperativeApproachStatus.DRAFT &&
-      newStatus === CooperativeApproachStatus.ACTIVE
-    ) {
-      // Activation is only possible after the approach's initial
-      // report has been submitted (Dec 2/CMA.3 Annex para 18).
-      const submittedIr = await this.initialReportRepo.findOne({
-        where: [
-          {
-            cooperativeApproachId: approach.cooperativeApproachId,
-            status: InitialReportStatus.SUBMITTED,
-          },
-          {
-            cooperativeApproachId: approach.cooperativeApproachId,
-            status: InitialReportStatus.PUBLISHED,
-          },
-        ],
-      });
-      if (!submittedIr) {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "cooperativeApproach.activationRequiresSubmittedIr",
-            [approach.cooperativeApproachId]
-          ),
-          HttpStatus.BAD_REQUEST
-        );
+    approach.status = newStatus;
+  }
+
+  /**
+   * Drives a Draft approach to Submitted. Called by
+   * InitialReportService.submitReport once the report passes its
+   * completeness checks — submitting the initial report is the only way
+   * an approach leaves Draft, and it carries the approach's authorized
+   * entities into Submitted with it.
+   *
+   * Takes the caller's EntityManager so the whole thing (report,
+   * approach, entities) commits or rolls back as one.
+   */
+  // Flips every still-Draft authorized entity under an approach to
+  // Submitted. Called from markSubmitted() for the normal case (the
+  // approach itself is leaving Draft), and separately by
+  // InitialReportService.submitReport for every linked approach —
+  // including ones already Submitted/Active — so an entity added as an
+  // amendment after its approach was already filed also gets carried
+  // into the initial report the next time that report is resubmitted,
+  // rather than staying Draft indefinitely.
+  async flipDraftEntitiesToSubmitted(
+    cooperativeApproachId: string,
+    manager: EntityManager,
+    updatedTime: number
+  ): Promise<void> {
+    await manager.update(
+      CaAuthorizedEntity,
+      {
+        cooperativeApproachId,
+        submissionStatus: AuthorizedEntitySubmissionStatus.DRAFT,
+      },
+      {
+        submissionStatus: AuthorizedEntitySubmissionStatus.SUBMITTED,
+        updatedTime,
       }
+    );
+  }
+
+  async markSubmitted(
+    cooperativeApproachId: string,
+    manager: EntityManager
+  ): Promise<CooperativeApproach> {
+    const approach = await manager.findOneBy(CooperativeApproach, {
+      cooperativeApproachId,
+    });
+    if (!approach) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "cooperativeApproach.notFound",
+          [cooperativeApproachId]
+        ),
+        HttpStatus.NOT_FOUND
+      );
     }
-    if (
-      newStatus === CooperativeApproachStatus.ACTIVE &&
-      !approach.caReferenceNumber
-    ) {
-      // Mock of the UNFCCC review / CARP numbering: issue the CAxxxx
-      // reference the first time the approach becomes Active.
+    if (approach.status !== CooperativeApproachStatus.DRAFT) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "cooperativeApproach.notDraftForSubmission",
+          [cooperativeApproachId, approach.status]
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    approach.status = CooperativeApproachStatus.SUBMITTED;
+    if (!approach.caReferenceNumber) {
+      // Mock of the UNFCCC review / CARP numbering: in the real Article
+      // 6.2 flow the reference arrives from the Secretariat once the
+      // initial report is filed, which is exactly this point.
       const refId = await this.counterService.incrementCount(
         CounterType.CA_REFERENCE,
         4
       );
       approach.caReferenceNumber = `CA${refId}`;
     }
-    approach.status = newStatus;
+    approach.updatedTime = new Date().getTime();
+
+    await this.flipDraftEntitiesToSubmitted(
+      cooperativeApproachId,
+      manager,
+      approach.updatedTime
+    );
+
+    return manager.save(approach);
   }
 
   // ------------------------------------------------------------------
   // Authorized entities (AEF v2 "Authorized entities" table)
   // ------------------------------------------------------------------
+
+  // Validates an authorized entity against the approach it belongs to
+  // and returns the unsaved row. Shared by the nested create path and
+  // the standalone add endpoint, which differ only in when they run.
+  private buildAuthorizedEntity(
+    approach: CooperativeApproach,
+    dto: CaAuthorizedEntityDto
+  ): CaAuthorizedEntity {
+    if (!approach.participatingParties.includes(dto.countryOfIncorporation)) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "cooperativeApproach.countryOfIncorporationNotParticipating",
+          [dto.countryOfIncorporation, approach.cooperativeApproachId]
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    if (dto.authorizationDate > Date.now()) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "cooperativeApproach.authorizationDateInFuture",
+          []
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+    const entity = new CaAuthorizedEntity();
+    entity.cooperativeApproachId = approach.cooperativeApproachId;
+    entity.entityName = dto.entityName;
+    entity.entityIdentifier = dto.entityIdentifier;
+    // Authorizing party is always the registry's own (host) country —
+    // never client-supplied.
+    entity.authorizingParty = this.hostParty;
+    entity.countryOfIncorporation = dto.countryOfIncorporation;
+    entity.authorizationDate = dto.authorizationDate;
+    entity.authorizationReference = dto.authorizationReference;
+    entity.status = AuthorizedEntityStatus.ACTIVE;
+    // Always starts unsubmitted. For an entity added while the approach
+    // is still Draft, markSubmitted() carries it over on that first
+    // filing. For one added to an already-Submitted approach (allowed
+    // below), there is currently no path that flips it to Submitted —
+    // it stays Draft indefinitely unless/until a future change wires
+    // that up. Deliberate for now: adding is unlocked without also
+    // wiring the entity into a resubmission/versioning flow.
+    entity.submissionStatus = AuthorizedEntitySubmissionStatus.DRAFT;
+    return entity;
+  }
 
   async addAuthorizedEntity(
     dto: CaAuthorizedEntityCreateDto,
@@ -351,46 +470,34 @@ export class CooperativeApproachService {
         HttpStatus.NOT_FOUND
       );
     }
-    if (approach.status !== CooperativeApproachStatus.ACTIVE) {
+    // Entities can be added while Draft (the normal case, carried over
+    // by markSubmitted on first filing), or once the approach has been
+    // Submitted or is Active — an amendment. Submitted is a short-lived
+    // bridge state (the approach is activated right after), so Active
+    // is the realistic case this actually needs to cover. Such an
+    // entity has no path back into a resubmitted initial report yet
+    // (see buildAuthorizedEntity's comment), so it stays
+    // submissionStatus Draft indefinitely for now; adding is unlocked
+    // ahead of that wiring, not instead of it. Suspended/Completed/
+    // Revoked keep the set fixed — those are terminal or paused states,
+    // not ones an amendment makes sense against.
+    if (
+      approach.status !== CooperativeApproachStatus.DRAFT &&
+      approach.status !== CooperativeApproachStatus.SUBMITTED &&
+      approach.status !== CooperativeApproachStatus.ACTIVE
+    ) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
-          "cooperativeApproach.entityRequiresActiveCa",
-          [dto.cooperativeApproachId]
+          "cooperativeApproach.entityRequiresDraftCa",
+          [dto.cooperativeApproachId, approach.status]
         ),
         HttpStatus.BAD_REQUEST
       );
     }
-    if (!approach.participatingParties.includes(dto.countryOfIncorporation)) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "cooperativeApproach.countryOfIncorporationNotParticipating",
-          [dto.countryOfIncorporation, dto.cooperativeApproachId]
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-    if (dto.authorizationDate > Date.now()) {
-      throw new HttpException(
-        this.helperService.formatReqMessagesString(
-          "cooperativeApproach.authorizationDateInFuture",
-          []
-        ),
-        HttpStatus.BAD_REQUEST
-      );
-    }
-    const entity = new CaAuthorizedEntity();
-    entity.cooperativeApproachId = dto.cooperativeApproachId;
-    entity.entityName = dto.entityName;
-    entity.entityIdentifier = dto.entityIdentifier;
-    // Authorizing party is always the registry's own (host) country —
-    // never client-supplied.
-    entity.authorizingParty = this.hostParty;
-    entity.countryOfIncorporation = dto.countryOfIncorporation;
-    entity.authorizationDate = dto.authorizationDate;
-    entity.authorizationReference = dto.authorizationReference;
-    entity.status = AuthorizedEntityStatus.ACTIVE;
 
-    const saved = await this.authorizedEntityRepo.save(entity);
+    const saved = await this.authorizedEntityRepo.save(
+      this.buildAuthorizedEntity(approach, dto)
+    );
     return new DataResponseDto(HttpStatus.CREATED, saved);
   }
 
@@ -409,11 +516,24 @@ export class CooperativeApproachService {
         HttpStatus.NOT_FOUND
       );
     }
-    // Soft removal — the authorization history must stay in the
-    // system, so the row is only flipped to Inactive.
+    const approach = await this.cooperativeApproachRepo.findOneBy({
+      cooperativeApproachId: entity.cooperativeApproachId,
+    });
+    if (approach?.status === CooperativeApproachStatus.DRAFT) {
+      // Nothing has been submitted yet, so there is no authorization
+      // history to preserve — drop the row outright.
+      await this.authorizedEntityRepo.delete({ id });
+      return new DataResponseDto(HttpStatus.OK, entity);
+    }
+    // Once submitted, removal is a soft state change — the
+    // authorization history must stay in the system.
     entity.status = AuthorizedEntityStatus.INACTIVE;
     entity.updatedTime = new Date().getTime();
     const saved = await this.authorizedEntityRepo.save(entity);
+    // Keeps any already-filed (unfrozen) AEF V2 Table 5 row for this entity
+    // from drifting — without this, a deactivation only reaches Table 5 the
+    // next time an Action references the entity, or at year-end.
+    await this.aefV2WriteService.syncAuthorizedEntityStatus(saved, approach?.caReferenceNumber);
     return new DataResponseDto(HttpStatus.OK, saved);
   }
 

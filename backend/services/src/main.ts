@@ -1,8 +1,10 @@
 import { handler } from "./ledger-replicator/handler";
 import { handler as asyncHandler } from "./async-operations-handler/handler";
+import { handler as cadTrustAsyncHandler } from "./async-operations-handler/cadtrust-handler";
 import { handler as importHandler } from "./data-importer/handler";
 import { handler as aefRolloverHandler } from "./aef-rollover/handler";
 import * as setupHandler from "@app/shared/setup/handler";
+import { CadTrustSyncEnqueueService } from "@app/shared/cadtrust-sync/cadtrust-sync.enqueue.service";
 import { NationalAPIModule } from "./national-api/national.api.module";
 import { join } from "path";
 import { AnalyticsAPIModule } from "./analytics-api/analytics.api.module";
@@ -36,6 +38,13 @@ async function bootstrap() {
         continue;
       case "async-operations-handler":
         await asyncHandler();
+        console.log("Module initiated", moduleName);
+        continue;
+      case "cadtrust-operations-handler":
+        // CAD Trust's own async lane — separate cursor, separate loop, plus a recurring
+        // reconcile timer, all independent of async-operations-handler above. See
+        // src/async-operations-handler/cadtrust-async-operations-handler.service.ts.
+        await cadTrustAsyncHandler();
         console.log("Module initiated", moduleName);
         continue;
       case "data-importer":
@@ -73,6 +82,18 @@ async function bootstrap() {
       console.log("Static file path:", staticPath);
       app.useStaticAssets(staticPath);
       await setupHandler.handler();
+
+      // Verifies the CAD Trust home organization and stages the registry's
+      // program + methodology if not already synced. Enqueued on every start on
+      // purpose — CadTrustBootstrapHandler is idempotent, dropped entirely when
+      // CADT_V2_ENABLE is off, and runs in the replicator's
+      // async-operations-handler, not here. See libs/shared/src/cadtrust-sync/README.md.
+      const cadTrustSyncEnqueue = app.get(CadTrustSyncEnqueueService);
+      await cadTrustSyncEnqueue.enqueueBootstrap();
+      // Retries a staged-but-uncommitted batch and re-drives any project left with a FAILED
+      // sync record — otherwise nothing ever revisits one. Same idempotent-on-every-start
+      // reasoning as enqueueBootstrap() above.
+      await cadTrustSyncEnqueue.enqueueReconcile();
     }
     await app.listen(process.env.RUN_PORT || 3000);
     console.log("Module initiated", moduleName);

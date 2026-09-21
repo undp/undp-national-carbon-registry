@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { FileHandlerInterface } from "../../file-handler/filehandler.interface";
 import { CreditType } from "../../enum/creditType.enum";
 import { ConfigService } from "@nestjs/config";
+import { SignatureResolverService } from "./signature.resolver.service";
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 
@@ -20,7 +21,8 @@ export interface ProjectRegistrationCertificateData {
 export class ProjectRegistrationCertificateGenerator {
   constructor(
     private fileHandler: FileHandlerInterface,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private signatureResolver: SignatureResolverService
   ) {}
 
   async generateProjectRegistrationCertificate(
@@ -195,19 +197,13 @@ export class ProjectRegistrationCertificateGenerator {
       );
 
     // Chairman Signature
+    const chairmanSignature = await this.signatureResolver.getChairmanSignature();
 
-    const chairmanSignatureImagePath = "public/signatures/chairman.jpg";
-
-    if (fs.existsSync(chairmanSignatureImagePath)) {
-      doc.image(chairmanSignatureImagePath, 110, 579, {
+    if (chairmanSignature) {
+      doc.image(chairmanSignature, 110, 579, {
         width: 120,
         height: 100,
       });
-    } else {
-      console.log(
-        "Chairmans Signature does not exist in:",
-        chairmanSignatureImagePath
-      );
     }
 
     doc
@@ -228,16 +224,13 @@ export class ProjectRegistrationCertificateGenerator {
     });
 
     // CEO Signature
+    const ceoSignature = await this.signatureResolver.getCeoSignature();
 
-    const ceoSignatureImagePath = "public/signatures/ceo.jpg";
-
-    if (fs.existsSync(ceoSignatureImagePath)) {
-      doc.image(ceoSignatureImagePath, 410, 579, {
+    if (ceoSignature) {
+      doc.image(ceoSignature, 410, 579, {
         width: 120,
         height: 100,
       });
-    } else {
-      console.log("CEO Signature does not exist in:", ceoSignatureImagePath);
     }
 
     doc

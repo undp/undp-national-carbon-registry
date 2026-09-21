@@ -1,10 +1,20 @@
 {
   "notFound": "The initial report does not exist.",
+  "noManagePermission": "Only a government (DNA) Root or Admin user can manage initial reports.",
   "cooperativeApproachNotFound": "The specified cooperative approach does not exist.",
-  "noManagePermission": "Only a government (DNA) Admin or Root user can manage initial reports.",
-  "caNotDraft": "Initial reports can only be created for Draft cooperative approaches ({} is {}).",
-  "alreadyExists": "An initial report already exists for cooperative approach {}. Edit it to create a new version instead.",
-  "notLatestVersion": "Report {} is not the latest version — use {} instead.",
-  "notEditable": "Report {} is {} — only the latest Draft version can be edited or submitted.",
-  "incomplete": "Initial report is incomplete. Missing sections: {}"
+  "approachNotDraft": "Cooperative approaches can only be added to an initial report while they are a Draft ({} is {}).",
+  "approachAlreadyLinked": "Cooperative approach {} is already linked to initial report {}.",
+  "approachLinkNotFound": "Cooperative approach {} is not linked to initial report {}.",
+  "approachNotRemovable": "Cooperative approach {} cannot be removed from its initial report — it is {}, not Draft, so it has already been filed.",
+  "approachNotFound": "Cooperative approach {} could not be found while submitting.",
+  "noCooperativeApproach": "Initial report {} cannot be submitted with no cooperative approaches attached.",
+  "incomplete": "Initial report is incomplete. Missing fields: {}",
+  "multiYearNotSupported": "Multi-year NDCs are not supported yet — select Single-Year.",
+  "invalidNdcPeriod": "The NDC period is invalid: {}",
+  "periodAlreadyClaimed": "Another initial report already covers the NDC period {}–{}.",
+  "periodAlreadyClaimedBy": "NDC period {}–{} is already covered by initial report {} — pick a different period.",
+  "versionNotFound": "Initial report {} has no version {}.",
+  "notDraft": "Initial report {} is {} — only a Draft report can be discarded.",
+  "trajectoryFieldsLocked": "NDC Period, NDC Type, Base Year, Base Year Emission, NDC Target, and CA Method cannot be changed once initial report {} has been submitted.",
+  "emissionMustExceedTarget": "Base Year Emission ({}) must be greater than NDC Target ({})."
 }

@@ -6,6 +6,7 @@ import { CreditTransactionStatusEnum } from "../enum/credit.transaction.status.e
   expression: `
       SELECT
         ct."id" AS "id",
+        ct."creditBlockId" AS "creditBlockId",
         ct."serialNumber" AS "serialNumber",
         ct."amount" AS "creditAmount",
         ct."createTime" AS "createdDate",
@@ -33,6 +34,12 @@ import { CreditTransactionStatusEnum } from "../enum/credit.transaction.status.e
 export class CreditBlockRetirementsViewEntity {
   @ViewColumn()
   id: string;
+
+  // The credit block this retirement transaction is against. On a partial
+  // retirement this is the retained parent block (see the join note below),
+  // which is exactly the block CAD Trust keys its UNIT record by.
+  @ViewColumn()
+  creditBlockId: string;
 
   @ViewColumn()
   serialNumber: string;

@@ -23,6 +23,11 @@ import { CreditBlockOrgAggregationViewEntity } from "../view-entities/credit.blo
 import { DocumentManagementModule } from "../document-management/document-management.module";
 import { AefV2RegistryModule } from "../aef-v2-registry/aef-v2-registry.module";
 import { SerialNumberManagementModule } from "../serial-number-management/serial-number-management.module";
+// Provides CadTrustSyncEnqueueService — the producer-side half of credit sync to CAD Trust v2.
+// Not transitively inherited through DocumentManagementModule (Nest doesn't re-export imports
+// unless a module explicitly lists them in its own `exports`), so this needs its own import here,
+// the same way DocumentManagementModule itself had to import it directly.
+import { CadTrustSyncModule } from "../cadtrust-sync/cadtrust-sync.module";
 
 @Module({
   imports: [
@@ -49,6 +54,7 @@ import { SerialNumberManagementModule } from "../serial-number-management/serial
     ]),
     DocumentManagementModule,
     AefV2RegistryModule,
+    CadTrustSyncModule,
   ],
   providers: [CreditTransactionsManagementService],
   exports: [CreditTransactionsManagementService],

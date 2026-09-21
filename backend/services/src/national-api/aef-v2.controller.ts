@@ -30,7 +30,7 @@ export class AefV2Controller {
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, AefReport))
   @Post("query")
   async query(@Body() dto: AefV2QueryDto): Promise<DataResponseDto> {
-    const result = await this.aefV2ReportService.query(dto.table, dto.reportedYear);
+    const result = await this.aefV2ReportService.query(dto.table, dto.reportedYear, dto.sort);
     return new DataResponseDto(HttpStatus.OK, result);
   }
 

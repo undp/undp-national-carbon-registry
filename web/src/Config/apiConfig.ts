@@ -59,6 +59,15 @@ export const API_PATHS = {
   ITMO_AUTH_REQUEST: "national/creditTransactionsManagement/itmoAuthRequest",
   ITMO_AUTH_PERFORM:
     "national/creditTransactionsManagement/performItmoAuthAction",
+  // CAD TRUST
+  CADTRUST_SYNC_PROJECT_OVERVIEW: (refId: string) =>
+    `national/cadtrustSync/project/overview?refId=${encodeURIComponent(refId)}`,
+  CADTRUST_SYNC_CREDIT_OVERVIEW: (creditBlockId: string) =>
+    `national/cadtrustSync/credit/overview?creditBlockId=${encodeURIComponent(
+      creditBlockId
+    )}`,
+  CADTRUST_SYNC_PROJECT_STATUSES: "national/cadtrustSync/project/statuses",
+  CADTRUST_SYNC_CREDIT_STATUSES: "national/cadtrustSync/credit/statuses",
   //LOCATION
   PROVINCES: "national/location/province",
   DISTRICTS: "national/location/district",

@@ -46,14 +46,16 @@ const UserActionConfirmationModel: FC<UserActionProps> = (props: UserActionProps
           onActionConfirmed(comment);
         }}
       >
-        <Form.Item
-          className="mg-bottom-0"
-          label={t('userProfile:remarks')}
-          name="remarks"
-          required={actionInfo.type === 'danger'}
-        >
-          <TextArea defaultValue={comment} rows={2} onChange={(v) => setComment(v.target.value)} />
-        </Form.Item>
+        {!actionInfo.hideRemarks && (
+          <Form.Item
+            className="mg-bottom-0"
+            label={t('userProfile:remarks')}
+            name="remarks"
+            required={actionInfo.type === 'danger'}
+          >
+            <TextArea defaultValue={comment} rows={2} onChange={(v) => setComment(v.target.value)} />
+          </Form.Item>
+        )}
 
         {errorMsg ? <Alert className="mg-top-1" message={errorMsg} type="error" showIcon /> : ''}
 
@@ -71,7 +73,7 @@ const UserActionConfirmationModel: FC<UserActionProps> = (props: UserActionProps
             type="primary"
             htmlType="submit"
             loading={loading}
-            disabled={actionInfo.type === 'danger' && comment === ''}
+            disabled={!actionInfo.hideRemarks && actionInfo.type === 'danger' && comment === ''}
           >
             {actionInfo.action}
           </Button>

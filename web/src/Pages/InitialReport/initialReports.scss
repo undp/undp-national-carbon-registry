@@ -39,5 +39,13 @@
         margin-top: 0;
       }
     }
+
+    // The in-progress-draft row in the versions table — visually
+    // distinct from filed (immutable) version rows so it never reads
+    // as one of them.
+    .draft-version-row {
+      background: #fafafa;
+      box-shadow: inset 3px 0 0 variables.$primary-color;
+    }
   }
 }

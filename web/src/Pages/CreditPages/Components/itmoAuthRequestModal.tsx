@@ -4,6 +4,7 @@ import { Button, Col, Form, Input, InputNumber, Modal, Row, Select } from "antd"
 import { CreditBalanceInterface } from "../Interfaces/creditBalance.interface";
 import { addCommSep } from "../../../Definitions/Definitions/programme.definitions";
 import { AuthorizationPurpose, AUTHORIZATION_PURPOSE_LABELS } from "../../../Definitions/Enums/authorizationPurpose.enum";
+import { CooperativeApproachStatus } from "../../../Definitions/Enums/cooperativeApproachStatus.enum";
 import { useConnection } from "../../../Context/ConnectionContext/connectionContext";
 import { COLOR_CONFIGS } from "../../../Config/colorConfigs";
 
@@ -103,7 +104,7 @@ export const ItmoAuthRequestModal = (props: ItmoAuthRequestModalProps) => {
       const rows: any[] = response?.data ?? [];
       setCooperativeApproachRows(
         rows
-          .filter((ca) => ca.status === "Active")
+          .filter((ca) => ca.status === CooperativeApproachStatus.ACTIVE)
           .map((ca) => ({
             cooperativeApproachId: ca.cooperativeApproachId,
             title: ca.title,
@@ -304,7 +305,6 @@ export const ItmoAuthRequestModal = (props: ItmoAuthRequestModalProps) => {
                   <InputNumber
                     style={{ width: "100%" }}
                     min={1900}
-                    max={2100}
                     placeholder={t("authorizedTimeframeStartYear")}
                   />
                 </Form.Item>

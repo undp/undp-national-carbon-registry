@@ -45,6 +45,15 @@
         "tsConfigPath": "libs/core/tsconfig.lib.json"
       }
     },
+    "cadtrust": {
+      "type": "library",
+      "root": "libs/cadtrust",
+      "entryFile": "index",
+      "sourceRoot": "libs/cadtrust/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/cadtrust/tsconfig.lib.json"
+      }
+    },
     "aef-v2": {
       "type": "library",
       "root": "libs/aef-v2",

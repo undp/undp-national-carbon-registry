@@ -28,5 +28,19 @@
       font-size: 1rem;
       font-weight: 600;
     }
+
+    // Years-across period table: figures line up column to column, so
+    // lining numerals matter more than they do in a normal table.
+    .ca-period-table {
+      td,
+      th {
+        font-variant-numeric: tabular-nums;
+      }
+
+      // The year currently being calculated.
+      .ca-reporting-year-col {
+        background: #fafafa;
+      }
+    }
   }
 }

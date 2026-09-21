@@ -24,6 +24,8 @@ import {
   ItmoAuthRequestModalFinishPayload,
 } from './itmoAuthRequestModal';
 import { ProjectDetailsLink } from '../../../Components/ProjectDetailsLink/projectDetailsLink';
+import { CadTrustSyncBadge } from '../../../Components/CadTrust/CadTrustSyncBadge';
+import { CadTrustSyncStatusSummary } from '../../../Components/CadTrust/cadTrustSync.types';
 import '../creditPageStyles.scss';
 
 interface CreditSerialBalance {
@@ -164,8 +166,27 @@ const OrganizationCell = ({
 const getSerialColumns = (
   t: (key: string) => string,
   openActions?: (row: CreditSerialBalance) => ReactNode,
+  cadtStatus: Record<string, CadTrustSyncStatusSummary> = {},
 ): ColumnsType<CreditSerialBalance> => [
-  { title: 'Serial Number', dataIndex: 'serialNumber', key: 'serialNumber', align: 'left', width: openActions ? '21%' : '22%', sorter: true, render: (value) => <span className="credit-balance-serial-number">{value}</span> },
+  {
+    title: 'Serial Number',
+    dataIndex: 'serialNumber',
+    key: 'serialNumber',
+    align: 'left',
+    width: openActions ? '21%' : '22%',
+    sorter: true,
+    render: (value, row) => (
+      <span className="credit-balance-serial-number">
+        {value}
+        <CadTrustSyncBadge
+          scope="credit"
+          creditBlockId={row.id}
+          title={value}
+          status={cadtStatus[row.id]?.overallStatus}
+        />
+      </span>
+    ),
+  },
   { title: 'Credit Owner', key: 'receiverName', align: 'left', width: openActions ? '15%' : '16%', sorter: true, render: (_, row) => <OrganizationCell name={row.organization} color={row.organizationColor} logo={row.organizationLogo} /> },
   { title: 'Updated Date & Time', dataIndex: 'updatedAt', key: 'updatedTime', align: 'center', width: openActions ? '15%' : '16%', sorter: true, render: (value) => <span className="credit-balance-detail-date">{value}</span> },
   { title: 'Balance', dataIndex: 'balance', key: 'creditAmount', align: 'right', width: openActions ? '10%' : '11%', sorter: true, render: (value) => <span className="credit-balance-detail-number">{formatCredits(value)}</span> },
@@ -232,6 +253,9 @@ const CreditBalanceSerialTable = ({
   const [total, setTotal] = useState(0);
   const [sortField, setSortField] = useState<string>();
   const [sortOrder, setSortOrder] = useState<SortOrder>();
+  const [cadtStatus, setCadtStatus] = useState<
+    Record<string, CadTrustSyncStatusSummary>
+  >({});
 
   const fetchSerialBalances = useCallback(async (
     pageNumber: number,
@@ -344,6 +368,29 @@ const CreditBalanceSerialTable = ({
   }, [fetchSerialBalances, hasMore, page]);
 
   useEffect(() => {
+    const missing = rows
+      .map((row) => row.id)
+      .filter((id) => id && !(id in cadtStatus));
+    if (missing.length === 0) return undefined;
+    let cancelled = false;
+    (post(API_PATHS.CADTRUST_SYNC_CREDIT_STATUSES, {
+      creditBlockIds: missing,
+    }) as Promise<{ data?: Record<string, CadTrustSyncStatusSummary> }>)
+      .then((response) => {
+        if (!cancelled) {
+          setCadtStatus((current) => ({ ...current, ...(response.data ?? {}) }));
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+    // cadtStatus is deliberately not a dependency: we only probe ids we
+    // have not seen, and merge results in.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows, post]);
+
+  useEffect(() => {
     const scrollBody = containerRef.current?.querySelector<HTMLElement>('.ant-table-body');
     if (!scrollBody) return undefined;
 
@@ -373,7 +420,7 @@ const CreditBalanceSerialTable = ({
         }`}
         rowKey="serialNumber"
         dataSource={rows}
-        columns={getSerialColumns(t, openActions)}
+        columns={getSerialColumns(t, openActions, cadtStatus)}
         pagination={false}
         tableLayout="fixed"
         loading={loading && rows.length === 0}

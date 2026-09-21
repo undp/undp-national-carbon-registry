@@ -1,0 +1,11 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "title": "Project popup", "x": 0, "y": 0, "w": 840, "h": 2360, "expand": "fit" },
+    { "file": "Credit.dc.html", "title": "Credit popup (balance / retirement)", "x": 940, "y": 0, "w": 840, "h": 1180, "expand": "fit" },
+    { "file": "States.dc.html", "title": "Components & states", "x": 1880, "y": 0, "w": 760, "h": 1320, "expand": "fit" }
+  ],
+  "annotations": [
+    { "id": "note-intent", "x": 0, "y": -150, "w": 520, "text": "Visual refresh of the CAD Trust Sync popup — content unchanged.\nStatus banner with stat tiles replaces the plain key/value grid; each related record is a card with an entity icon, status pill and a proper JSON payload viewer. Matches the app system: Inter, #16b1ff, #3a3541 text ramp, the Credit Information modal's 16px card + #fafafa panel." }
+  ],
+  "launch": { "view": "canvas" }
+}

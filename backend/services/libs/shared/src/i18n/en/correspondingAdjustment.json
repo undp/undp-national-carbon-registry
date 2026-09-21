@@ -1,10 +1,14 @@
 {
   "notFound": "The corresponding adjustment record does not exist.",
-  "noManagePermission": "Only a government (DNA) Admin or Root user can manage corresponding adjustments.",
+  "noManagePermission": "Only a government (DNA) Root or Admin user can manage corresponding adjustments.",
   "notEditable": "Record {} is {} — only a Draft record can be edited or submitted.",
   "notSubmitted": "Record {} is {} — only a Submitted record can be approved.",
   "methodNotCompatibleWithNdcType": "CA method {} is not compatible with NDC type {}.",
-  "ndcTargetNotDefined": "No NDC target is defined for {} — it must be migrated into the registry before a calculation can run.",
-  "ndcTypeMismatch": "The NDC target for {} is defined as {}, not {} — select the correct NDC type.",
-  "multiYearPeriodNotDefined": "The NDC target for {} is missing its multi-year budget period (start/end year)."
+  "ndcTargetNotDefined": "No NDC target is defined for {} — submit an initial report covering this year, or migrate the target into the registry directly.",
+  "multiYearPeriodNotDefined": "The NDC target for {} is missing its multi-year budget period (start/end year).",
+  "reportingYearNotOver": "Reporting year {} is not over yet — this adjustment can only be submitted from 1 January {}. It stays in Draft and can be recalculated until then.",
+  "ndcPeriodNotOver": "The NDC period {}–{} is not over yet. Under the Averaging method every year stays in Draft and is recalculated as activity lands; the whole period is finalized together from 1 January {}.",
+  "alreadyFinalized": "A corresponding adjustment for {} already exists ({}) and is {} — it can no longer be recalculated.",
+  "concurrentCalculation": "Another corresponding adjustment for {} was recorded concurrently. Reload and try again.",
+  "nothingToFinalize": "The NDC period {}–{} has no Draft corresponding adjustments to finalize."
 }

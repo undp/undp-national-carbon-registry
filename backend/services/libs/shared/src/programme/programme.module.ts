@@ -28,8 +28,8 @@ import { EventLog } from "../entities/event.log.entity";
 import { Region } from "../entities/region.entity";
 import { CreditAuditLog } from "../entities/credit.audit.log.entity";
 import { DocumentEntity } from "../entities/document.entity";
-import { InitialReport } from "../entities/initial.report.entity";
 import { CooperativeApproach } from "../entities/cooperative.approach.entity";
+import { InitialReportModule } from "../initial-report/initial-report.module";
 
 @Module({
   imports: [
@@ -54,8 +54,6 @@ import { CooperativeApproach } from "../entities/cooperative.approach.entity";
       Region,
       CreditAuditLog,
       DocumentEntity,
-      // Dec 2/CMA.3 Annex chapter V para 18 guard
-      InitialReport,
       // Draft -/CMA.5 paras 20-21 revocation guard
       CooperativeApproach,
     ]),
@@ -66,6 +64,8 @@ import { CooperativeApproach } from "../entities/cooperative.approach.entity";
     LocationModule,
     AsyncOperationsModule,
     FileHandlerModule,
+    // Dec 2/CMA.3 Annex chapter V para 18 guard
+    InitialReportModule,
   ],
   providers: [Logger, ProgrammeService],
   exports: [ProgrammeService],

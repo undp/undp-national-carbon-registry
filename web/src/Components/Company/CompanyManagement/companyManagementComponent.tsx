@@ -485,7 +485,7 @@ export const CompanyManagementComponent = (props: any) => {
           })}
         />
       </div>
-      <div className="content-card">
+      <div className="content-card company-management-card">
         <Row className="table-actions-section">
           <Col md={8} xs={24}>
             <div className="action-bar">

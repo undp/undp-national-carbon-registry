@@ -79,7 +79,8 @@ it has the full architecture writeup; don't duplicate it here, just apply it.
      `ASYNC_OPERATIONS_TYPE`) are each behind an interface
      (`location.interface.ts`, `filehandler.interface.ts`). Add new backends by
      implementing the interface and registering it behind the env var, not by
-     branching inside callers.
+     branching inside callers. `FILE_SERVICE` accepts `LOCAL | S3 | AZURE`;
+     the selection switch is in `filehandler.module.ts` and rejects unknown values.
    - **Migrations are the current hot path** in this repo's recent history
      (`fix migration issues`, `add necessary changes for migrations`,
      `disable TypeORM synchronize in production` are all from the last dozen
@@ -135,8 +136,9 @@ it has the full architecture writeup; don't duplicate it here, just apply it.
 - **Migrations**: `src/migrations/` (single baseline migration as of now —
   `1780893992718-Baseline.ts`). Data source config: `src/data-source.ts`.
 - **Env reference**: `backend/services/.env.example` is the authoritative list
-  of variables (DB, JWT secrets, SMTP, `ASYNC_QUEUE_NAME`, `FILE_SERVICE`,
-  `LOCATION_SERVICE`, `LEDGER_TYPE`, host URLs). Root `.env.db.example` /
+  of variables (DB, JWT secrets, SMTP, `ASYNC_QUEUE_NAME`, `FILE_SERVICE` and
+  its `AZURE_STORAGE_*` companions, `LOCATION_SERVICE`, `LEDGER_TYPE`, host
+  URLs). Root `.env.db.example` /
   `.env.national.example` / `.env.replicator.example` are the per-container
   slices used by `docker-compose.yml`.
 - **Reference/seed data at this level**: `countries.json`, `regions.csv`,

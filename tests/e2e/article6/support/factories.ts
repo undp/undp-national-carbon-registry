@@ -280,11 +280,11 @@ export async function seedVerifiedMitigationActionDirect(
  * transitions an IR to Published.
  */
 export function setInitialReportStatusDirect(
-  reportId: string,
-  status: "Draft" | "Submitted" | "Published"
+  reportNumber: string,
+  status: "Draft" | "Submitted"
 ): void {
   const container = process.env.E2E_DB_CONTAINER ?? "db";
-  const sql = `UPDATE initial_report SET status='${status}' WHERE "reportId"='${reportId}';`;
+  const sql = `UPDATE initial_report SET status='${status}' WHERE "reportNumber"='${reportNumber}';`;
   execSync(
     `podman exec ${container} psql -U root -d carbondev -c ${JSON.stringify(sql)}`,
     { stdio: ["ignore", "ignore", "pipe"] }
@@ -297,18 +297,19 @@ export function setInitialReportStatusDirect(
  * rejects explicit nulls before they can reach the submit-layer
  * completeness validator. Bypassing the DTO lets us drive the
  * "Initial report is incomplete" 400 path directly.
+ *
+ * cooperativeApproachDetails / ndcQuantification no longer exist on
+ * initial_report (the NDC-period restructure moved approach links to
+ * initial_report_cooperative_approach and promoted ndcQuantification's
+ * fields to columns) — only the three jsonb sections that stayed on the
+ * report itself can be nulled this way.
  */
 export function nullInitialReportSectionDirect(
-  reportId: string,
-  section:
-    | "participationDemonstration"
-    | "itmoMetrics"
-    | "ndcQuantification"
-    | "cooperativeApproachDetails"
-    | "environmentalIntegrity"
+  reportNumber: string,
+  section: "participationDemonstration" | "itmoMetrics" | "environmentalIntegrity"
 ): void {
   const container = process.env.E2E_DB_CONTAINER ?? "db";
-  const sql = `UPDATE initial_report SET "${section}"=NULL WHERE "reportId"='${reportId}';`;
+  const sql = `UPDATE initial_report SET "${section}"=NULL WHERE "reportNumber"='${reportNumber}';`;
   execSync(
     `podman exec ${container} psql -U root -d carbondev -c ${JSON.stringify(sql)}`,
     { stdio: ["ignore", "ignore", "pipe"] }
@@ -782,25 +783,94 @@ export async function createCooperativeApproach(
   };
 }
 
+// An initial report is now filed for an NDC implementation period
+// rather than for a single cooperative approach — a second report
+// claiming the same (ndcStartYear, ndcEndYear) pair as an existing one
+// is rejected at submit. The e2e DB is long-lived (see
+// seedCreditBlockDirect above) and Playwright runs multiple worker
+// processes, so real years are far too small a space: this carves
+// disjoint decade-long windows out of a synthetic far-future range,
+// seeded by wall clock *and* worker index, so periods never collide
+// across parallel workers or across reruns.
+let ndcPeriodCounter = 0;
+export function nextNdcPeriod(): {
+  ndcStartYear: number;
+  ndcEndYear: number;
+  baseYear: number;
+} {
+  const worker = Number(process.env.TEST_PARALLEL_INDEX ?? 0);
+  const epochMin = Math.floor((Date.now() - Date.UTC(2026, 0, 1)) / 60000);
+  ndcPeriodCounter += 1;
+  const slot = ((epochMin * 64 + worker) * 1000 + ndcPeriodCounter) % 900_000;
+  const start = 3000 + slot * 10;
+  return { ndcStartYear: start, ndcEndYear: start + 9, baseYear: start - 5 };
+}
+
 export interface InitialReportOverrides {
   cooperativeApproachId: string;
+  ndcStartYear?: number;
+  ndcEndYear?: number;
+  ndcType?: string;
+  baseYear?: number;
+  ndcTarget?: number;
+  caMethod?: string;
+  caMethodDescription?: string;
+  sectors?: string[];
   participationDemonstration?: Record<string, unknown>;
   itmoMetrics?: Record<string, unknown>;
-  caMethodDescription?: string;
-  ndcQuantification?: Record<string, unknown>;
-  cooperativeApproachDetails?: Record<string, unknown>;
   environmentalIntegrity?: Record<string, unknown>;
 }
 
+/**
+ * Generates a report on a fresh NDC period and immediately attaches the
+ * given cooperative approach to it — the closest equivalent of the old
+ * one-report-per-CA `generate` call now that a report covers general
+ * NDC fields and its approaches are attached separately. Returns
+ * `reportId` (== the new reportNumber) for compatibility with the ~40
+ * existing call sites that destructure it that way.
+ *
+ * Also seeds a base-year Emission row: submitReport now requires one to
+ * compute the trajectory, and nothing else in the stack provides it.
+ */
 export async function generateInitialReport(
   api: ApiClient,
   overrides: InitialReportOverrides
 ): Promise<{ reportId: string; raw: any }> {
-  const res = await api.post("national/initialReport/generate", overrides);
+  const period = nextNdcPeriod();
+  const ndcStartYear = overrides.ndcStartYear ?? period.ndcStartYear;
+  const ndcEndYear = overrides.ndcEndYear ?? period.ndcEndYear;
+  const baseYear = overrides.baseYear ?? period.baseYear;
+
+  seedEmissionRowDirect({
+    year: baseYear,
+    country: "NG",
+    co2eqWithoutLand: 100_000,
+  });
+
+  const { cooperativeApproachId, ...generalOverrides } = overrides;
+  const res = await api.post("national/initialReport/generate", {
+    ndcStartYear,
+    ndcEndYear,
+    ndcType: "SingleYear",
+    baseYear,
+    ndcTarget: 70_000,
+    caMethod: "Trajectory",
+    caMethodDescription: "E2E-generated method description",
+    sectors: ["Energy"],
+    ...generalOverrides,
+  });
   await expectOk(res, "generateInitialReport");
   const raw = await api.json<any>(res);
   const data = raw?.data ?? raw;
-  return { reportId: data?.reportId ?? data?.id, raw: data };
+  const reportNumber = data?.reportNumber ?? data?.id;
+
+  const addRes = await api.post(
+    "national/initialReport/cooperativeApproach/add",
+    { reportNumber, cooperativeApproachId }
+  );
+  await expectOk(addRes, "generateInitialReport:addCooperativeApproach");
+
+  return { reportId: reportNumber, raw: data };
 }
 
 export async function submitInitialReport(
@@ -808,9 +878,90 @@ export async function submitInitialReport(
   reportId: string
 ): Promise<any> {
   const res = await api.put(
-    `national/initialReport/submit?id=${encodeURIComponent(reportId)}`
+    `national/initialReport/submit?reportNumber=${encodeURIComponent(reportId)}`
   );
   await expectOk(res, "submitInitialReport");
+  const raw = await api.json<any>(res);
+  return raw?.data ?? raw;
+}
+
+/**
+ * Ensures `ndc_target` (and therefore `ndc_target_yearly`) has a row
+ * covering the given year, by filing and submitting a throwaway
+ * single-year initial report for it. `ndc_target` has no other write
+ * path — see NdcTarget's entity comment — so any test that calls
+ * `POST /correspondingAdjustment/calculate` for a year needs this first,
+ * or the service 400s with `ndcTargetNotDefined`.
+ *
+ * corresponding-adjustment.spec.ts and cross-cutting.spec.ts both
+ * predate the NDC-period restructure and call their local
+ * `nextFutureYear()` directly into `/calculate` without this — they are
+ * very likely red against a live stack right now. Fixing them means
+ * threading `await ensureNdcTargetForYear(apiDna, year)` through every
+ * `nextFutureYear()` call site in both files (~19 sites); left undone
+ * here for lack of a live stack to verify the rewrite against. This
+ * helper is the fix's building block.
+ */
+export async function ensureNdcTargetForYear(
+  api: ApiClient,
+  year: number
+): Promise<void> {
+  const baseYear = year - 1;
+  seedEmissionRowDirect({
+    year: baseYear,
+    country: "NG",
+    co2eqWithoutLand: 100_000,
+  });
+
+  const genRes = await api.post("national/initialReport/generate", {
+    ndcStartYear: year,
+    ndcEndYear: year,
+    ndcType: "SingleYear",
+    baseYear,
+    ndcTarget: 70_000,
+    caMethod: "Trajectory",
+    caMethodDescription: "E2E ndc_target seed",
+    sectors: ["Energy"],
+  });
+  await expectOk(genRes, "ensureNdcTargetForYear:generate");
+  const genRaw = await api.json<any>(genRes);
+  const reportNumber = (genRaw?.data ?? genRaw)?.reportNumber;
+
+  const ca = await createCooperativeApproach(api, {
+    title: `NDC Target Seed ${uniqueSuffix()}`,
+  });
+  const addRes = await api.post(
+    "national/initialReport/cooperativeApproach/add",
+    { reportNumber, cooperativeApproachId: ca.cooperativeApproachId }
+  );
+  await expectOk(addRes, "ensureNdcTargetForYear:add");
+
+  const submitRes = await api.put(
+    `national/initialReport/submit?reportNumber=${encodeURIComponent(reportNumber)}`
+  );
+  await expectOk(submitRes, "ensureNdcTargetForYear:submit");
+}
+
+/**
+ * Drives a Draft cooperative approach all the way to Active, which is
+ * the only route the backend allows: generate its initial report,
+ * submit it (the approach auto-transitions Draft -> Submitted), then
+ * make the one manual move Submitted -> Active.
+ *
+ * Most specs only care that they have an Active CA to work against, so
+ * this keeps the three-step ritual in one place.
+ */
+export async function activateCooperativeApproach(
+  api: ApiClient,
+  cooperativeApproachId: string
+): Promise<any> {
+  const ir = await generateInitialReport(api, { cooperativeApproachId });
+  await submitInitialReport(api, ir.reportId);
+  const res = await api.put("national/cooperativeApproach/update", {
+    cooperativeApproachId,
+    status: "Active",
+  });
+  await expectOk(res, "activateCooperativeApproach");
   const raw = await api.json<any>(res);
   return raw?.data ?? raw;
 }

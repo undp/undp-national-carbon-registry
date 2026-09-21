@@ -141,7 +141,11 @@ export async function snapshotHoldingsForYear(
     where: { aefT1SubmissionId: submission.id },
     pageSize: MAX_HOLDINGS_PER_YEAR,
   });
-  const frozen = existing.data.filter((row) => row.snapshotAt !== undefined);
+  // `!= null` rather than `!== undefined` — see the equivalent check in
+  // `snapshotAuthorizedEntitiesForYear` for why. Table 4 has no real-time
+  // write path today, so `existing` is empty here in practice and the
+  // distinction never bit; it would the moment one is added.
+  const frozen = existing.data.filter((row) => row.snapshotAt != null);
 
   if (frozen.length > 0 && !options.force) {
     return { reportedYear: year, rows: frozen, created: false };
@@ -205,7 +209,7 @@ export async function getHoldingsForYear(
 
     const frozenByVersion = new Map<string, typeof page.data>();
     for (const row of page.data) {
-      if (row.snapshotAt === undefined || row.aefT1SubmissionId === undefined) {
+      if (row.snapshotAt == null || row.aefT1SubmissionId == null) {
         continue;
       }
       const bucket = frozenByVersion.get(row.aefT1SubmissionId);

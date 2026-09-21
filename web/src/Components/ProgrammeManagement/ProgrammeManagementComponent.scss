@@ -129,6 +129,22 @@
 .programmeManagement-table-container {
   // padding: 0px 20px;
   padding: 0px;
+  // The table carries its own horizontal scroll (scroll.x); this keeps that
+  // overflow inside the card instead of widening the page on narrow screens.
+  max-width: 100%;
+  overflow: hidden;
+
+  .ant-table-cell {
+    word-break: break-word;
+  }
+
+  // Trim the shared 12px horizontal cell padding for this table only: the
+  // column set is wide, so the space goes to the content instead. It also
+  // gives the narrow action column room to centre its ellipsis icon.
+  .common-table-class .ant-table .ant-table-cell {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 
   .ant-tag-success {
     color: #2ecc71;

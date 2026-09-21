@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #0a6fa8; text-decoration: none; }
+    a:hover { color: #085a88; }
+    pre { margin: 0; }
+    .k { color: #8a3ffc; }
+    .s { color: #1a7f37; }
+    .n { color: #9a6700; }
+    .p { color: rgba(58,53,65,.4); }
+  </style>
+</helmet>
+
+<div style="background: #eef0f6; padding: 44px 40px; min-height: 100vh;">
+  <div style="max-width: 720px; margin: 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 24px 56px -18px rgba(16,24,40,.30), 0 0 0 1px rgba(16,24,40,.04);">
+
+    <!-- Header -->
+    <div style="display: flex; align-items: flex-start; gap: 14px; padding: 26px 30px 18px; border-bottom: 1px solid #f0f0f2;">
+      <div style="width: 34px; height: 34px; border-radius: 9px; background: rgba(22,177,255,.10); color: #0a6fa8; display: flex; align-items: center; justify-content: center; flex: none;">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.4 4 5.8 4 9s-1.4 6.6-4 9c-2.6-2.4-4-5.8-4-9s1.4-6.6 4-9Z"/></svg>
+      </div>
+      <div style="flex: 1; min-width: 0;">
+        <div style="font-size: 21px; font-weight: 700; letter-spacing: -.01em; color: #101322; line-height: 1.25;">CAD Trust Sync</div>
+        <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap;">
+          <span style="font-size: 13px; color: rgba(58,53,65,.5);">Credit block</span>
+          <span style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: rgba(58,53,65,.68); background: #f4f5f7; border: 1px solid #ececf0; border-radius: 6px; padding: 2px 7px;">CA0004-VU-CH-356-1-3000-2023</span>
+        </div>
+      </div>
+      <button style="border: none; background: transparent; color: rgba(58,53,65,.4); cursor: pointer; padding: 4px; margin: -4px -4px 0 0; display: flex;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div style="padding: 22px 30px 30px;">
+
+      <!-- Status banner -->
+      <div style="position: relative; border-radius: 12px; background: #fafafa; border: 1px solid #f0f0f2; padding: 16px 18px 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 18px; overflow: hidden;">
+        <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #5dc380;"></div>
+        <div style="display: flex; align-items: center; gap: 11px;">
+          <span style="width: 9px; height: 9px; border-radius: 50%; background: #5dc380; box-shadow: 0 0 0 4px rgba(93,195,128,.18); flex: none;"></span>
+          <div>
+            <div style="font-size: 15px; font-weight: 650; color: #101322; letter-spacing: -.005em;">Synced to CAD Trust</div>
+            <div style="font-size: 12.5px; color: rgba(58,53,65,.5); margin-top: 2px;">This ITMO unit and its Article&nbsp;6 label link are published</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 22px;">
+          <div style="text-align: right;">
+            <div style="font-size: 15px; font-weight: 700; color: #101322;">3</div>
+            <div style="font-size: 10px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: rgba(58,53,65,.4); margin-top: 2px;">Records</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 15px; font-weight: 700; color: #2f7d4d;">3</div>
+            <div style="font-size: 10px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: rgba(58,53,65,.4); margin-top: 2px;">Committed</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 15px; font-weight: 700; color: rgba(58,53,65,.35);">0</div>
+            <div style="font-size: 10px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: rgba(58,53,65,.4); margin-top: 2px;">Failed</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 15px; font-weight: 700; color: #101322;">12:11</div>
+            <div style="font-size: 10px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: rgba(58,53,65,.4); margin-top: 2px;">Updated</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size: 12px; color: rgba(58,53,65,.45); line-height: 1.55; margin: 12px 2px 0;">
+        Records are staged privately on this registry's CAD Trust node and go public on the next commit.
+        <b style="color: rgba(58,53,65,.6); font-weight: 600;">Committed</b> = published;
+        <b style="color: rgba(58,53,65,.6); font-weight: 600;">Staged / Pending</b> = not yet published;
+        <b style="color: rgba(58,53,65,.6); font-weight: 600;">Failed</b> = last attempt errored.
+      </div>
+
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: rgba(58,53,65,.4); margin: 24px 0 10px;">Related records</div>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+
+        <!-- Unit (expanded payload) -->
+        <div style="border: 1px solid #ececf0; border-radius: 12px; padding: 13px 15px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 30px; height: 30px; border-radius: 8px; background: rgba(22,177,255,.10); color: #0a6fa8; display: flex; align-items: center; justify-content: center; flex: none;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 7v10l8 4 8-4V7l-8-4Z"/><path d="M4 7l8 4 8-4M12 21V11"/></svg>
+            </div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 14px; font-weight: 650; color: #1c1f2b;">Unit</div>
+              <div style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: rgba(58,53,65,.42);">CA0004-VU-CH-356-1-3000-2023</div>
+            </div>
+            <span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: rgba(93,195,128,.14); color: #2f7d4d;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #5dc380;"></span>Committed</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 7px 16px; font-size: 12px; color: rgba(58,53,65,.5); margin-top: 11px;">
+            <span style="display: inline-flex; align-items: center; gap: 6px;"><span style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">ID&nbsp; c73a91e2-…-40bd</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(58,53,65,.35);"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></span>
+            <span>3 attempts</span>
+            <span>Updated 12:11</span>
+          </div>
+          <div style="margin-top: 10px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 7px 12px; background: #f4f5f7; border: 1px solid #e7e9ee; border-bottom: none; border-radius: 8px 8px 0 0;">
+              <span style="display: inline-flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 600; color: rgba(58,53,65,.55);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" transform="rotate(-90 12 12)"/></svg>
+                payload.json
+              </span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(58,53,65,.4);"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            </div>
+            <pre style="padding: 12px 14px; background: #fbfbfc; border: 1px solid #e7e9ee; border-radius: 0 0 8px 8px; font: 12px/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: #3a3541; max-height: 240px; overflow: auto; white-space: pre;">{
+  <span class="k">"unitSerialId"</span><span class="p">:</span> <span class="s">"CA0004-VU-CH-356-1-3000-2023"</span><span class="p">,</span>
+  <span class="k">"unitStartBlock"</span><span class="p">:</span> <span class="s">"1"</span><span class="p">,</span>
+  <span class="k">"unitEndBlock"</span><span class="p">:</span> <span class="s">"3000"</span><span class="p">,</span>
+  <span class="k">"unitVintageYear"</span><span class="p">:</span> <span class="n">2023</span><span class="p">,</span>
+  <span class="k">"unitCount"</span><span class="p">:</span> <span class="n">3000</span><span class="p">,</span>
+  <span class="k">"unitType"</span><span class="p">:</span> <span class="s">"Reduction - technical"</span><span class="p">,</span>
+  <span class="k">"unitStatus"</span><span class="p">:</span> <span class="s">"Retired"</span><span class="p">,</span>
+  <span class="k">"unitStatusReason"</span><span class="p">:</span> <span class="s">"First transfer - retired towards the acquiring Party's NDC"</span><span class="p">,</span>
+  <span class="k">"unitStatusDate"</span><span class="p">:</span> <span class="s">"2026-09-01"</span><span class="p">,</span>
+  <span class="k">"unitCurrentOwner"</span><span class="p">:</span> <span class="s">"Switzerland"</span><span class="p">,</span>
+  <span class="k">"unitRetirementBeneficiary"</span><span class="p">:</span> <span class="s">"Switzerland"</span><span class="p">,</span>
+  <span class="k">"unitRetirementBeneficiaryId"</span><span class="p">:</span> <span class="s">"CH"</span><span class="p">,</span>
+  <span class="k">"unitItmosReferenceId"</span><span class="p">:</span> <span class="s">"CA0001-VU-CH-356-1-3000-2023"</span>
+}</pre>
+          </div>
+        </div>
+
+        <!-- Article 6 label -->
+        <div style="border: 1px solid #ececf0; border-radius: 12px; padding: 13px 15px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 30px; height: 30px; border-radius: 8px; background: #f4f5f7; color: rgba(58,53,65,.7); display: flex; align-items: center; justify-content: center; flex: none;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 12 22l-8-8V4h10l6.6 6.6a2 2 0 0 1 0 2.8Z"/><circle cx="8.5" cy="8.5" r="1.5"/></svg>
+            </div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 14px; font-weight: 650; color: #1c1f2b;">Article 6 label</div>
+              <div style="font-size: 11px; color: rgba(58,53,65,.42);">Article 6 - Authorisation</div>
+            </div>
+            <span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: rgba(93,195,128,.14); color: #2f7d4d;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #5dc380;"></span>Committed</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 7px 16px; font-size: 12px; color: rgba(58,53,65,.5); margin-top: 11px;">
+            <span style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">ID&nbsp; 0aa2…d5</span>
+            <span>1 attempt</span>
+            <span>Updated Jul 09</span>
+          </div>
+        </div>
+
+        <!-- Unit <-> label -->
+        <div style="border: 1px solid #ececf0; border-radius: 12px; padding: 13px 15px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 30px; height: 30px; border-radius: 8px; background: #f4f5f7; color: rgba(58,53,65,.7); display: flex; align-items: center; justify-content: center; flex: none;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6"/><path d="M8 7a5 5 0 0 0 0 10h1"/><path d="M16 7a5 5 0 0 1 0 10h-1"/></svg>
+            </div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 14px; font-weight: 650; color: #1c1f2b;">Unit &rarr; label</div>
+              <div style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: rgba(58,53,65,.42);">CA0004-VU-CH-356-1-3000-2023</div>
+            </div>
+            <span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: rgba(93,195,128,.14); color: #2f7d4d;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #5dc380;"></span>Committed</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 7px 16px; font-size: 12px; color: rgba(58,53,65,.5); margin-top: 11px;">
+            <span style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">ID&nbsp; e5b1…7a</span>
+            <span>1 attempt</span>
+            <span>Updated 12:11</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

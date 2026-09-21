@@ -5,6 +5,7 @@ import {
   AefTableName,
   AuthorizedEntitiesProvider,
   exportFileName,
+  formatSubmissionDate,
   HoldingsProvider,
   loadSubmissionBundle,
   openReportingYear,
@@ -26,6 +27,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import * as fs from "fs";
 import * as path from "path";
 
+import { SortEntry } from "../dto/sort.entry";
 import { ExportFileType } from "../enum/export.file.type.enum";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
 import { CountryService } from "../util/country.service";
@@ -40,6 +42,48 @@ import { RegistryControlledValueProvider } from "./providers/registry-controlled
 export interface AefV2DownloadResult {
   url: string;
   outputFileName: string;
+}
+
+/** Applied when the caller sends no `sort`. */
+const DEFAULT_SORT: SortEntry = { key: "updatedAt", order: "DESC" };
+
+/**
+ * Per-table overrides of {@link DEFAULT_SORT}.
+ *
+ * Holdings rows for an open year are computed live by the provider and never
+ * reach the store, so they carry no `updatedAt` for the default key to sort on —
+ * it orders by authorization id instead, which is present on both the live and
+ * the frozen path.
+ */
+const TABLE_DEFAULT_SORT: Partial<Record<AefTableName, SortEntry>> = {
+  t4Holdings: { key: "aefT4HoldingsAuthorizationId", order: "DESC" },
+};
+
+/** A full ISO 8601 instant — excludes bare dates/years and anything else `Date.parse` would guess at. */
+const ISO_INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/;
+
+/** A string that is entirely digits (optionally signed) — safe to compare numerically. */
+const NUMERIC_STRING = /^-?\d+$/;
+
+// Timestamps compare as epoch, not as text: TypeORM returns `Date` objects
+// whose default stringification collates by weekday name, and ISO strings
+// only compare correctly when every value shares the same fractional precision.
+// Purely-numeric strings (e.g. authorization ids like "10") get the same
+// treatment — compared as text, "10" sorts before "9".
+function comparable(value: unknown): unknown {
+  if (value instanceof Date) {
+    return value.getTime();
+  }
+  if (typeof value === "string" && ISO_INSTANT.test(value)) {
+    const epoch = Date.parse(value);
+    if (!Number.isNaN(epoch)) {
+      return epoch;
+    }
+  }
+  if (typeof value === "string" && NUMERIC_STRING.test(value)) {
+    return Number(value);
+  }
+  return value;
 }
 
 /**
@@ -82,11 +126,13 @@ export class AefV2ReportService {
    * for Holdings/Authorized entities, the live-vs-frozen split itself. The
    * bundle already does all of that.
    */
-  async query(table: AefTableName, reportedYear: number) {
+  async query(table: AefTableName, reportedYear: number, sort?: SortEntry) {
     const bundle = await this.loadBundle(reportedYear);
     const exportData = toAefSubmissionExport(bundle);
+    const effectiveSort = sort ?? TABLE_DEFAULT_SORT[table] ?? DEFAULT_SORT;
     return {
-      data: exportData[table] ?? [],
+      // Sorted before forDisplay, which rewrites Table 3's date to dd/mm/yyyy.
+      data: this.forDisplay(table, this.sorted(exportData[table] ?? [], effectiveSort)),
       provisional:
         table === "t4Holdings"
           ? bundle.provisional.holdings
@@ -100,6 +146,71 @@ export class AefV2ReportService {
             ? bundle.snapshotAt.authorizedEntities
             : undefined,
     };
+  }
+
+  /**
+   * Ordering for the read path, in memory — not `AefQuery.sort` on the store,
+   * since `loadSubmissionBundle` also feeds `download`/`validate`/`submit`, and
+   * an open year's Tables 4/5 are provider-computed rows that never reach the
+   * store at all.
+   */
+  private sorted(rows: readonly Record<string, unknown>[], sort: SortEntry) {
+    if (!sort?.key) {
+      return rows;
+    }
+    const descending = String(sort.order ?? "DESC").toUpperCase() === "DESC";
+
+    // Partitioned rather than handled in the comparator, which must stay transitive.
+    const keyed: Record<string, unknown>[] = [];
+    const unkeyed: Record<string, unknown>[] = [];
+    for (const row of rows) {
+      const value = row[sort.key];
+      (value === undefined || value === null ? unkeyed : keyed).push(row);
+    }
+
+    keyed.sort((a, b) => {
+      const left = comparable(a[sort.key]);
+      const right = comparable(b[sort.key]);
+      const comparison =
+        typeof left === "number" && typeof right === "number"
+          ? left - right
+          : String(left).localeCompare(String(right));
+      return descending ? -comparison : comparison;
+    });
+
+    return sort.nullFirst ? [...unkeyed, ...keyed] : [...keyed, ...unkeyed];
+  }
+
+  /**
+   * Presentation shaping for the reporting tables, applied on the read path
+   * only — `download` deliberately does not call this.
+   *
+   * Table 3's Action date is stored as an ISO 8601 UTC datetime, which is what
+   * the AEF requires (`field-spec.ts` types it `datetime`, and `recordAction`
+   * derives the reporting year by parsing it), so the stored value and the CARP
+   * export keep the time. On screen it reads as the day alone, matching Table
+   * 2's Date of authorization, which the mapper already stores as `dd/mm/yyyy`.
+   *
+   * `formatSubmissionDate` is UTC-based, so the day shown is the day the action
+   * carries rather than the server's local rendering of that instant.
+   */
+  private forDisplay(table: AefTableName, rows: readonly Record<string, unknown>[]) {
+    if (table !== "t3Actions") {
+      return rows;
+    }
+    return rows.map((row) => {
+      const actionDate = row.aefT3ActionsDate;
+      if (typeof actionDate !== "string") {
+        return row;
+      }
+      const parsed = new Date(actionDate);
+      // A value that is not a parseable date is passed through untouched
+      // rather than turned into "NaN/NaN/NaN".
+      if (Number.isNaN(parsed.getTime())) {
+        return row;
+      }
+      return { ...row, aefT3ActionsDate: formatSubmissionDate(parsed) };
+    });
   }
 
   async validate(reportedYear: number) {

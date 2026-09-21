@@ -189,14 +189,39 @@ Change by environment variable `LOCATION_SERVICE`. Supported types `MAPBOX`, `FI
 
 **File Service**
 
-Implemented 2 options for static file hosting.
+Implemented 3 options for static file hosting.
 
 1. NestJS static file hosting using the local storage and container volumes.
 2. AWS S3 file storage.
+3. Azure Blob Storage.
 
-Can add more options by implementing [file handler interface](./backend/services/src/shared/file-handler/filehandler.interface.ts)
+Can add more options by implementing [file handler interface](./backend/services/libs/shared/src/file-handler/filehandler.interface.ts)
 
-Change by environment variable `FILE_SERVICE`. Supported types `S3`, `LOCAL(Default)`
+Change by environment variable `FILE_SERVICE`. Supported types `S3`, `AZURE`, `LOCAL(Default)`
+
+**Stored file references are storage-neutral.** Uploads persist a bare storage key
+(`documents/foo.pdf`) rather than a backend-specific URL, and a global response interceptor
+(`file-handler/file-url.interceptor.ts`) resolves keys to real URLs through the active
+backend's `getUrl()` on the way out. Stored references therefore stay valid across a
+`FILE_SERVICE` change — only where the resolved URL points changes. The files themselves still
+have to be copied to the new backend; nothing migrates the bytes.
+
+Two consequences worth knowing when writing code:
+
+- Values consumed **server-side** — email attachments, links embedded in generated PDFs,
+  anything written into an export file — never pass through the response pipeline and must be
+  resolved explicitly with `resolveStoredFile()` from `file-handler/storage-key.ts`.
+- Anything accepting a file reference **back** from a client should pass it through
+  `toStorageKey()`, since the web app re-submits the resolved URL it was shown.
+
+References written before this change are absolute URLs; they match no key prefix, so they are
+left untouched and keep resolving as they always did.
+
+`AZURE` additionally requires `AZURE_STORAGE_CONNECTION_STRING` and `AZURE_STORAGE_CONTAINER`.
+The container must permit anonymous blob read, and the storage account needs a CORS rule
+allowing `GET,HEAD,OPTIONS` from the frontend origin. The web app downloads documents by
+fetching the file and re-serving it as a blob URL, which a cross-origin request without CORS
+will block — and `HEAD` matters as much as `GET`, because `file-saver` probes with it first.
 
 ### **Database Architecture**
 

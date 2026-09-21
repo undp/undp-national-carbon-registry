@@ -33,6 +33,7 @@ import { Programme } from "../entities/programme.entity";
 import { EmailTemplates } from "../email-helper/email.template";
 import { SystemActionType } from "../enum/system.action.type";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
+import { toStorageKey } from "../file-handler/storage-key";
 import { CounterType } from "../util/counter.type.enum";
 import { CounterService } from "../util/counter.service";
 import { FilterEntry } from "../dto/filter.entry";
@@ -1162,6 +1163,40 @@ export class CompanyService {
     });
   }
 
+  /**
+   * Returns the value to persist for a company logo.
+   *
+   * A logo arrives either as base64 image data the user just picked, or as the
+   * reference the client was shown and echoed back unchanged. Only the former is
+   * an upload; the latter must be reduced back to a storage key, both so an
+   * unchanged logo is not re-stored as a backend-specific URL and so the value is
+   * not uploaded as if it were image data.
+   */
+  private async storeLogo(logo: string, companyId: number): Promise<string> {
+    if (!logo) {
+      return logo;
+    }
+
+    if (!this.helperService.isBase64(logo)) {
+      return toStorageKey(logo);
+    }
+
+    const stored = await this.fileHandler.uploadFile(
+      `profile_images/${companyId}_${new Date().getTime()}.png`,
+      logo
+    );
+    if (!stored) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "company.companyUpdateFailed",
+          []
+        ),
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+    return stored;
+  }
+
   async update(
     companyUpdateDto: OrganisationUpdateDto,
     abilityCondition: string
@@ -1201,26 +1236,10 @@ export class CompanyService {
       );
     }
 
-    if (companyUpdateDto.logo && this.helperService.isBase64(companyUpdateDto.logo)) {
-      const response: any = await this.fileHandler.uploadFile(
-        `profile_images/${
-          companyUpdateDto.companyId
-        }_${new Date().getTime()}.png`,
-        companyUpdateDto.logo
-      );
-
-      if (response) {
-        companyUpdateDto.logo = response;
-      } else {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "company.companyUpdateFailed",
-            []
-          ),
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-      }
-    }
+    companyUpdateDto.logo = await this.storeLogo(
+      companyUpdateDto.logo,
+      companyUpdateDto.companyId
+    );
 
     if (companyUpdateDto.regions) {
       companyUpdateDto.geographicalLocationCordintes =
@@ -1310,24 +1329,10 @@ export class CompanyService {
       );
     }
 
-    if (companyUpdateDto.logo) {
-      const response: any = await this.fileHandler.uploadFile(
-        `profile_images/${company.companyId}_${new Date().getTime()}.png`,
-        companyUpdateDto.logo
-      );
-
-      if (response) {
-        companyUpdateDto.logo = response;
-      } else {
-        throw new HttpException(
-          this.helperService.formatReqMessagesString(
-            "company.companyUpdateFailed",
-            []
-          ),
-          HttpStatus.INTERNAL_SERVER_ERROR
-        );
-      }
-    }
+    companyUpdateDto.logo = await this.storeLogo(
+      companyUpdateDto.logo,
+      company.companyId
+    );
 
     if (companyUpdateDto.regions) {
       companyUpdateDto.geographicalLocationCordintes =

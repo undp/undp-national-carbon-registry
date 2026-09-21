@@ -4,6 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository } from "typeorm";
 
 import { AuthorizedEntityStatus } from "../../enum/authorized.entity.status.enum";
+import { AuthorizedEntitySubmissionStatus } from "../../enum/authorized.entity.submission.status.enum";
 import { CaAuthorizedEntity } from "../../entities/ca.authorized.entity.entity";
 import { CooperativeApproach } from "../../entities/cooperative.approach.entity";
 import { CountryService } from "../../util/country.service";
@@ -48,6 +49,11 @@ export class RegistryAuthorizedEntitiesProvider implements AuthorizedEntitiesPro
         active: AuthorizedEntityStatus.ACTIVE,
         asOf: asOfMs,
       })
+      // Only entities that went through initial-report submission are
+      // reportable — a draft approach's entities are not yet authorized.
+      // .andWhere("entity.submissionStatus = :submitted", {
+      //   submitted: AuthorizedEntitySubmissionStatus.SUBMITTED,
+      // })
       .getMany();
 
     const cooperativeApproachIds = [...new Set(entities.map((entity) => entity.cooperativeApproachId))];

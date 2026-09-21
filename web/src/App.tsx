@@ -60,6 +60,8 @@ import InitialReportManagement from "./Pages/InitialReport/initialReportManageme
 import CreateInitialReport from "./Pages/InitialReport/createInitialReport";
 import EditInitialReport from "./Pages/InitialReport/editInitialReport";
 import InitialReportDetails from "./Pages/InitialReport/initialReportDetails";
+import InitialReportDraft from "./Pages/InitialReport/initialReportDraft";
+import InitialReportVersionView from "./Pages/InitialReport/initialReportVersionView";
 import { CreditIssuancePage } from "./Pages/CreditPages/creditIssuancePage";
 
 const App = () => {
@@ -241,12 +243,20 @@ const App = () => {
                       element={<CreateInitialReport />}
                     />
                     <Route
-                      path="edit/:reportId"
+                      path="edit/:reportNumber"
                       element={<EditInitialReport />}
                     />
                     <Route
-                      path="view/:reportId"
+                      path="view/:reportNumber"
                       element={<InitialReportDetails />}
+                    />
+                    <Route
+                      path="view/:reportNumber/draft"
+                      element={<InitialReportDraft />}
+                    />
+                    <Route
+                      path="view/:reportNumber/version/:major/:minor"
+                      element={<InitialReportVersionView />}
                     />
                   </Route>
                   <Route

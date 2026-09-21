@@ -220,7 +220,17 @@ export const getAuthorizationsReportColumns = (t: Translate) => [
     col(t, "authorizedEntityIds", "aefT2AuthorizationsAuthoziedEntityId", "authorizedEntityIdsFootnote"),
   ]),
   col(t, "oimpAuthorized", "aefT2AuthorizationsOimpAuthorizedParty", "oimpAuthorizedFootnote"),
-  col(t, "authorizedTimeframe", "aefT2AuthorizationsAuthorizedTimeframe", "authorizedTimeframeFootnote"),
+  // Optional, and either year can be left blank — an unset timeframe reads as
+  // a dash rather than an empty cell, so it is visibly "not set" rather than
+  // looking like a rendering failure. A half-filled one shows the single year
+  // the backend stored.
+  emptyStateCol(
+    t,
+    "authorizedTimeframe",
+    "aefT2AuthorizationsAuthorizedTimeframe",
+    "notSet",
+    "authorizedTimeframeFootnote"
+  ),
   col(t, "authorizationTerms", "aefT2AuthorizationsAuthorizationTerms"),
   carpCol(t, "authorizationDocumentation", "aefT2AuthorizationsAuthorizationDocumentation"),
   col(

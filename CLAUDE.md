@@ -95,7 +95,12 @@ Credit identity: each project gets a project ID; each issuance batch gets a seri
 
 Selected by env var, each behind its own interface so new backends can be added without touching callers:
 - `LOCATION_SERVICE=FILE|OPENSTREET|MAPBOX` → `libs/shared/src/location/location.interface.ts`
-- `FILE_SERVICE=LOCAL|S3` → `libs/shared/src/file-handler/filehandler.interface.ts`
+- `FILE_SERVICE=LOCAL|S3|AZURE` → `libs/shared/src/file-handler/filehandler.interface.ts`. Uploads
+  persist a bare storage key (`documents/foo.pdf`); the global `file-url.interceptor.ts` resolves
+  keys to URLs on outbound HTTP responses via the active backend's `getUrl()`. Server-side
+  consumers (email attachments, PDF links, export files) bypass that pipeline and must call
+  `resolveStoredFile()`; anything accepting a reference back from a client must call
+  `toStorageKey()`. Pre-existing absolute URLs match no prefix and are left untouched.
 - `ASYNC_OPERATIONS_TYPE=Database|Queue`
 
 ### Authorization

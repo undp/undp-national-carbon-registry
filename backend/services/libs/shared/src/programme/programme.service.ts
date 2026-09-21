@@ -54,8 +54,7 @@ import { AsyncActionType } from "../enum/async.action.type.enum";
 import { ProgrammeAcceptedDto } from "../dto/programme.accepted.dto";
 import { CountryService } from "../util/country.service";
 import { Programme } from "../entities/programme.entity";
-import { InitialReport } from "../entities/initial.report.entity";
-import { InitialReportStatus } from "../enum/initial.report.status.enum";
+import { InitialReportService } from "../initial-report/initial-report.service";
 import { CooperativeApproach } from "../entities/cooperative.approach.entity";
 import { CooperativeApproachStatus } from "../enum/cooperative.approach.status.enum";
 import { ConstantEntity } from "../entities/constants.entity";
@@ -82,6 +81,7 @@ import { InvestmentRequestDto } from "../dto/investment.request.dto";
 import { InvestmentView } from "../view-entities/investment.view.entity";
 import { DocType } from "../enum/document.type";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
+import { resolveStoredFile } from "../file-handler/storage-key";
 import { ProgrammeDocument } from "../entities/programme.document";
 import { NDCAction } from "../entities/ndc.action.entity";
 import { NDCActionType } from "../enum/ndc.action.enum";
@@ -201,8 +201,7 @@ export class ProgrammeService {
     // Dec 2/CMA.3 Annex chapter V para 18 guard: read-side access to
     // InitialReport so we can refuse authorizeProgramme for an Article
     // 6.2 programme whose cooperative approach has no submitted IR.
-    @InjectRepository(InitialReport)
-    private initialReportRepo: Repository<InitialReport>,
+    private readonly initialReportService: InitialReportService,
     // Draft -/CMA.5 paras 20-21 guard: refuse authorizeProgramme when
     // the linked cooperative approach has been revoked.
     @InjectRepository(CooperativeApproach)
@@ -5016,7 +5015,7 @@ export class ProgrammeService {
       .getMany();
 
     if (resp.length > 0) {
-      const prepData = this.prepareProgrammeDataForExport(resp);
+      const prepData = await this.prepareProgrammeDataForExport(resp);
 
       let headers: string[] = [];
       const titleKeys = Object.keys(prepData[0]);
@@ -5049,7 +5048,7 @@ export class ProgrammeService {
     );
   }
 
-  private prepareProgrammeDataForExport(programmes: any) {
+  private async prepareProgrammeDataForExport(programmes: any) {
     const exportData: DataExportProgrammeDto[] = [];
 
     for (const programme of programmes) {
@@ -5067,9 +5066,15 @@ export class ProgrammeService {
         .join(", ");
 
       const programmeDocuments: ProgrammeDocument[] = programme.documents;
-      const concatenatedDocumentUrls = programmeDocuments
-        .map((document) => document.url)
-        .join(", ");
+      // Written into a CSV server-side, so it never passes through the response
+      // interceptor that resolves storage keys for HTTP payloads.
+      const concatenatedDocumentUrls = (
+        await Promise.all(
+          programmeDocuments.map((document) =>
+            resolveStoredFile(this.fileHandler, document.url)
+          )
+        )
+      ).join(", ");
 
       const programmeSectoralScopeKey = Object.keys(SectoralScopeDef).find(
         (key) => SectoralScopeDef[key] === programme.sectoralScope
@@ -5187,6 +5192,8 @@ export class ProgrammeService {
             : "NULLS LAST"
           : undefined
       )
+      .addOrderBy('"programme"."createdTime"', "DESC")
+      .addOrderBy('"programme"."programmeId"', "DESC")
       .offset(skip)
       .limit(query.size)
       .getManyAndCount();
@@ -6471,19 +6478,10 @@ export class ProgrammeService {
           HttpStatus.BAD_REQUEST
         );
       }
-      const submittedIr = await this.initialReportRepo.findOne({
-        where: [
-          {
-            cooperativeApproachId: program.cooperativeApproachId,
-            status: InitialReportStatus.SUBMITTED,
-          },
-          {
-            cooperativeApproachId: program.cooperativeApproachId,
-            status: InitialReportStatus.PUBLISHED,
-          },
-        ],
-      });
-      if (!submittedIr) {
+      const hasSubmittedIr = await this.initialReportService.hasSubmittedReport(
+        program.cooperativeApproachId
+      );
+      if (!hasSubmittedIr) {
         throw new HttpException(
           this.helperService.formatReqMessagesString(
             "programme.noSubmittedIrForCaAuth",

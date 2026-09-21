@@ -58,6 +58,7 @@ import { CooperativeApproach } from "../entities/cooperative.approach.entity";
 import { CooperativeApproachStatus } from "../enum/cooperative.approach.status.enum";
 import { SerialNumberManagementService } from "../serial-number-management/serial-number-management.service";
 import { CreditBlockHistoryRequestDto } from "../dto/credit.block.history.request.dto";
+import { CadTrustSyncEnqueueService } from "../cadtrust-sync/cadtrust-sync.enqueue.service";
 
 /**
  * One block's parsed ledger version, as seen by the credit-block
@@ -169,7 +170,13 @@ export class CreditTransactionsManagementService {
     @InjectRepository(CaAuthorizedEntity)
     private caAuthorizedEntityRepo: Repository<CaAuthorizedEntity>,
     private readonly serialNumberManagementService: SerialNumberManagementService,
-    private readonly aefV2WriteService: AefV2WriteService
+    private readonly aefV2WriteService: AefV2WriteService,
+    // Producer-side half of credit sync to CAD Trust v2 — see
+    // libs/shared/src/cadtrust-sync/README.md's "Two different producer-side hooks" for why
+    // issuance/transfer/retirement/ITMO-authorization sync is enqueued from here (the replicator
+    // side) rather than the request path, unlike verification (see performVerificationAction).
+    // Never throws — see CadTrustSyncEnqueueService's own doc.
+    private readonly cadTrustSyncEnqueue: CadTrustSyncEnqueueService
   ) {}
 
   public async transferCredits(
@@ -618,6 +625,13 @@ export class CreditTransactionsManagementService {
           id: dto.authorizedEntityId,
           cooperativeApproachId: ca.cooperativeApproachId,
           status: AuthorizedEntityStatus.ACTIVE,
+          // Any entity under an Active CA is eligible here regardless
+          // of submissionStatus — an entity added as an amendment after
+          // the CA was already filed/activated (see
+          // CooperativeApproachService.addAuthorizedEntity) is still
+          // Draft submissionStatus, with no filing path yet, but that's
+          // a gap in the initial-report versioning flow, not a reason
+          // to block it from backing a real transfer/retirement.
           // Must be incorporated in the resolved acquiring country —
           // an OIMP entity from a different counterparty isn't valid
           // for this particular transfer.
@@ -1102,6 +1116,10 @@ export class CreditTransactionsManagementService {
         toAccountType: creditBlock.accountType,
       });
       await em.save(CreditTransactionsEntity, newIssueRecord);
+      // CAD Trust v2: ensures verification + issuance for this project, then creates this
+      // block's unit. See CadTrustCreditIssuanceHandler's class doc — one call per vintage
+      // block, since issueCredits() writes one CreditBlocksEntity row per vintage.
+      await this.cadTrustSyncEnqueue.enqueueCreditIssuance(creditBlock.creditBlockId);
     } else if (creditBlock.txType == TxType.TRANSFER) {
       const id = await this.counterService.incrementCount(
         CounterType.CREDIT_TRANSACTIONS,
@@ -1121,6 +1139,11 @@ export class CreditTransactionsManagementService {
         toAccountType: creditBlock.accountType,
       });
       await em.save(CreditTransactionsEntity, newTranferRecord);
+      // CAD Trust v2: full-replace update to this block's unit — covers both a whole-block
+      // transfer (owner changes on the same creditBlockId) and the receiver side of a partial
+      // transfer (a brand-new creditBlockId, so this is its first-ever unit create — see
+      // CadTrustUnitUpdateHandler's class doc / CadTrustCreditResourceService.ensureUnitUpdate).
+      await this.cadTrustSyncEnqueue.enqueueUnitUpdate(creditBlock.creditBlockId);
     } else if (creditBlock.txType == TxType.RETIRE_REQ) {
       const newRetireReq =
         creditBlock.transactionRecords[
@@ -1172,6 +1195,9 @@ export class CreditTransactionsManagementService {
           serialNumber: creditBlock.serialNumber,
           isFirstTransfer,
         });
+        // CAD Trust v2: only on a COMPLETED retirement — never on reject/cancel, both of which
+        // also write TxType.RETIRE. See CadTrustUnitUpdateHandler's class doc.
+        await this.cadTrustSyncEnqueue.enqueueUnitUpdate(creditBlock.creditBlockId);
       } else {
         updatedTranferRecord = plainToClass(CreditTransactionsEntity, {
           status: retireRequestRecord.status,
@@ -1224,6 +1250,10 @@ export class CreditTransactionsManagementService {
           creditBlockId: creditBlock.creditBlockId,
           serialNumber: creditBlock.serialNumber,
         });
+        // CAD Trust v2: only on a COMPLETED authorization — never on reject/cancel, both of
+        // which also write TxType.ITMO_AUTH. Also links the resulting unit to this registry's
+        // singleton Article 6 label — see CadTrustUnitUpdateHandler's class doc.
+        await this.cadTrustSyncEnqueue.enqueueUnitUpdate(creditBlock.creditBlockId);
       } else {
         updatedAuthRecord = plainToClass(CreditTransactionsEntity, {
           status: authRequestRecord.status,
@@ -1234,6 +1264,13 @@ export class CreditTransactionsManagementService {
         { id: txData.transactionId },
         updatedAuthRecord
       );
+    } else if (creditBlock.txType == TxType.CREDIT_BLOCK_SPLIT) {
+      // The retained/shrunken side of any partial transfer, retirement or ITMO authorization.
+      // Deliberately writes no CreditTransactionsEntity row — that has always been true (this
+      // txType previously fell through this whole if/else chain doing nothing at all) and stays
+      // true; this branch exists purely to add the CAD Trust hook for the child block. See
+      // CadTrustUnitUpdateHandler's class doc and cadtrust-sync/README.md's "Why not unit.split".
+      await this.cadTrustSyncEnqueue.enqueueUnitUpdate(creditBlock.creditBlockId);
     }
     // AEF V2 (@app/aef-v2) writes here. V1 (AefReportManagementService) has
     // been retired — see the AEF V1 removal for where its trigger used to be.

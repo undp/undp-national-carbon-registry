@@ -237,6 +237,11 @@ test.describe("Programme lifecycle - POST /national/programme/create", () => {
         cooperativeApproachId: ca.cooperativeApproachId,
       });
       await submitInitialReport(apiDna, ir.reportId);
+      // Suspension is only reachable from Active, so activate first.
+      await apiDna.put("national/cooperativeApproach/update", {
+        cooperativeApproachId: ca.cooperativeApproachId,
+        status: "Active",
+      });
       const suspendRes = await apiDna.put(
         "national/cooperativeApproach/update",
         {

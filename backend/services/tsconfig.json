@@ -31,6 +31,12 @@
       "@app/core/*": [
         "libs/core/src/*"
       ],
+      "@app/cadtrust": [
+        "libs/cadtrust/src"
+      ],
+      "@app/cadtrust/*": [
+        "libs/cadtrust/src/*"
+      ],
       "@app/aef-v2": [
         "libs/aef-v2/src"
       ],

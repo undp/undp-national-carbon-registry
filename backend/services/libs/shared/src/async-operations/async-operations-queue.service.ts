@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { AsyncActionType } from "../enum/async.action.type.enum";
+import { CADTRUST_V2_ACTION_TYPES } from "../enum/cadtrust.async.action.types";
 import { HelperService } from "../util/helpers.service";
 import { AsyncAction, AsyncOperationsInterface } from "./async-operations.interface";
 
@@ -64,6 +65,18 @@ export class AsyncOperationsQueueService implements AsyncOperationsInterface {
       ].includes(action.actionType) &&
       !this.configService.get("cadTrust.enable")
     ) {
+      return false;
+    }
+
+    // CAD Trust v2 sync is a separate integration from the v1 block above, under
+    // its own flag — a node runs v1 and v2 side by side with isolated stores.
+    if (
+      CADTRUST_V2_ACTION_TYPES.includes(action.actionType) &&
+      !this.configService.get("cadTrustV2.enable")
+    ) {
+      this.logger.log(
+        `Dropping CAD Trust v2 sync event ${action.actionType} due to CADT_V2_ENABLE being off`
+      );
       return false;
     }
 

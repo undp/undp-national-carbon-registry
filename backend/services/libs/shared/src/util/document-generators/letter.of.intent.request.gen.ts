@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { HelperService } from "../helpers.service";
 import { ConfigService } from "@nestjs/config";
 import { FileHandlerInterface } from "../../file-handler/filehandler.interface";
+import { resolveStoredFile } from "../../file-handler/storage-key";
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 
@@ -20,6 +21,9 @@ export class LetterOfIntentRequestGen {
     programmeLocations,
     designDocUrl
   ) {
+    // Embedded as a hyperlink below, so resolve the stored key to a real URL.
+    designDocUrl = await resolveStoredFile(this.fileHandler, designDocUrl);
+
     const filepath = `REQUEST_FOR_LETTER_OF_INTENT_${programmeId}.pdf`;
     const country = this.configService.get("systemCountryName");
     const continent = this.configService.get("systemContinentName");

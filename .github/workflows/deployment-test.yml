@@ -8,6 +8,9 @@ on:
       - backend/**
       - .github/workflows/deployment*
 
+env:
+  REGISTRY: ${{ secrets.ACR_USERNAME }}.azurecr.io
+
 jobs:
   changes:
     name: Deploy Pre Check
@@ -63,8 +66,8 @@ jobs:
             echo "backend-changes=false" >> $GITHUB_OUTPUT
           fi
 
-  deploy_frontend:
-    name: Carbon Registry Frontend Deploy
+  build_frontend:
+    name: Carbon Registry Frontend Build
     needs: changes
     if: needs.changes.outputs.frontend-changes == 'true' || needs.changes.outputs.workflows-changes == 'true' || needs.changes.outputs.all-changes == 'true'
     runs-on: ubuntu-latest
@@ -86,47 +89,31 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: ${{ runner.os }}-yarn-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-      - name: Build, tag, and push the image to Amazon ECR
+      - name: Login to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - name: Build, tag, and push the image to ACR
         id: build-image
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: carbon-web
+          REGISTRY: ${{ env.REGISTRY }}
+          REPOSITORY: carbon-web
           IMAGE_TAG: ${{ github.head_ref || github.ref_name }}
         run: |
-          # Build a docker container and push it to ECR 
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg VITE_APP_BACKEND=http://localhost:3000 --build-arg VITE_APP_COUNTRY_NAME="CountryX" --build-arg VITE_APP_REGISTRY_NAME="CountryXRegistry" --build-arg VITE_APP_MAP_TYPE="Mapbox" --build-arg VITE_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }} --build-arg VITE_APP_MAXIMUM_FILE_SIZE=5242880 --build-arg COUNTRY_FLAG_URL="https://carbon-common-dev.s3.amazonaws.com/flag.png" 
-          echo "Pushing image to ECR..."
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-      - name: Deploy docker image to Amazon EC2
-        if: github.ref == 'refs/heads/develop'
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: carbon-web
-          IMAGE_TAG: ${{ github.head_ref || github.ref_name }}
-          PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_TEST }}
-          HOSTNAME: ${{secrets.HOST_IP_TEST }}
-          USER_NAME: ec2-user
-        run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-            carbon/dev_frontend_deploy.sh '
+          # Build a docker container and push it to ACR 
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f web/Dockerfile . --build-arg PORT=3030 --build-arg VITE_APP_BACKEND=http://localhost:3000 --build-arg VITE_APP_COUNTRY_NAME="CountryX" --build-arg VITE_APP_REGISTRY_NAME="CountryXRegistry" --build-arg VITE_APP_MAP_TYPE="Mapbox" --build-arg VITE_APP_MAPBOXGL_ACCESS_TOKEN=${{ secrets.MAPBOXGL_ACCESS_TOKEN }} --build-arg VITE_APP_MAXIMUM_FILE_SIZE=5242880 
+          echo "Pushing image to ACR..."
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$REGISTRY/$REPOSITORY:$IMAGE_TAG"
 
-  deploy_backend:
-    name: Carbon Registry Backend Deploy
+  build_backend:
+    name: Carbon Registry Backend Build
     needs: changes
     if: needs.changes.outputs.backend-changes == 'true' || needs.changes.outputs.workflows-changes == 'true' || needs.changes.outputs.all-changes == 'true'
     runs-on: ubuntu-latest
@@ -145,34 +132,45 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Login to Azure Container Registry
+        uses: docker/login-action@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-      - name: Build, tag, and push the image to Amazon ECR
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - name: Build, tag, and push the image to ACR
         id: build-image
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: carbon-services
+          REGISTRY: ${{ env.REGISTRY }}
+          REPOSITORY: carbon-services
           IMAGE_TAG: ${{ github.head_ref || github.ref_name }}
         run: |
-          # Build a docker container and push it to ECR 
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/services/Dockerfile .
-          echo "Pushing image to ECR..."
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-      - name: Deploy docker image to Amazon EC2
-        if: github.ref == 'refs/heads/develop'
-        env:
-          PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY_PRIVATE_TEST }}
-          HOSTNAME: ${{secrets.HOST_IP_TEST }}
-          USER_NAME: ec2-user
-        run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-            carbon/dev_backend_deploy.sh '
+          # Build a docker container and push it to ACR 
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f backend/services/Dockerfile .
+          echo "Pushing image to ACR..."
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$REGISTRY/$REPOSITORY:$IMAGE_TAG"
+
+  deploy_frontend:
+    name: Carbon Registry Frontend Deploy
+    needs: build_frontend
+    if: github.ref == 'refs/heads/develop'
+    runs-on: [self-hosted, registry-test]
+    concurrency:
+      group: registry-test-deploy
+      cancel-in-progress: false
+    steps:
+      - name: Deploy frontend on the Azure VM
+        run: sudo /home/azureuser/carbon/dev_frontend_deploy.sh
+
+  deploy_backend:
+    name: Carbon Registry Backend Deploy
+    needs: build_backend
+    if: github.ref == 'refs/heads/develop'
+    runs-on: [self-hosted, registry-test]
+    concurrency:
+      group: registry-test-deploy
+      cancel-in-progress: false
+    steps:
+      - name: Deploy backend on the Azure VM
+        run: sudo /home/azureuser/carbon/dev_backend_deploy.sh

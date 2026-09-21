@@ -1,128 +1,130 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
 import { TimedPageInfoTitle } from "../../Components/Common/TimedPageInfoTitle/TimedPageInfoTitle";
 import {
-  Alert,
   Button,
   Col,
-  Descriptions,
   Form,
   Input,
   InputNumber,
   Row,
   Select,
-  Spin,
-  Tag,
+  Tooltip,
   message,
 } from "antd";
+import { NdcType, NDC_TYPE_LABELS } from "../../Definitions/Enums/ndcType.enum";
+import {
+  CA_METHOD_LABELS,
+  getCompatibleCaMethods,
+} from "../../Definitions/Enums/caMethod.enum";
+import { Sector } from "../../Definitions/Enums/sector.enum";
+import { RequireDnaManage } from "../../Components/Common/AccessControl/RequireDnaAccess";
 import "./initialReports.scss";
 
 const { TextArea } = Input;
 
-type CooperativeApproach = {
-  cooperativeApproachId: string;
-  title: string;
-  hostParty: string;
-  participatingParties: string[];
-  description?: string;
-  startDate?: number | null;
-  endDate?: number | null;
-  expectedMitigationOutcomes?: string;
-  environmentalIntegrityAssessment?: string;
-  ndcLink?: string;
-  status: "Draft" | "Active" | "Suspended" | "Completed" | "Revoked" | string;
+// Just the fields the overlap preflight names in its message.
+type ConflictingReport = {
+  reportNumber: string;
+  ndcStartYear: number;
+  ndcEndYear: number;
 };
 
-const CA_STATUS_TAG_COLORS: Record<string, string> = {
-  Draft: "default",
-  Active: "green",
-  Suspended: "orange",
-  Completed: "blue",
-  Revoked: "red",
-};
-
-const formatDate = (timestamp?: number | null) => {
-  if (!timestamp) return "—";
-  return new Date(Number(timestamp)).toLocaleDateString();
-};
-
+// The initial report is filed for an NDC implementation period, not for
+// a single cooperative approach — approaches are attached afterwards
+// from the report's detail page (Add Cooperative Approach), the same
+// way authorized entities are attached to a cooperative approach. A
+// draft with no approach cannot be submitted, but it can be created and
+// saved with just the general fields below.
 const CreateInitialReport = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(["common", "InitialReport"]);
-  const { post, get } = useConnection();
+  const { post } = useConnection();
   const [loading, setLoading] = useState(false);
-  const [casLoading, setCasLoading] = useState(true);
-  const [cas, setCas] = useState<CooperativeApproach[]>([]);
-  const [selectedCa, setSelectedCa] = useState<CooperativeApproach | null>(
-    null
-  );
   const [form] = Form.useForm();
 
-  useEffect(() => {
-    const loadCas = async () => {
-      setCasLoading(true);
+  const isBlank = (v: unknown) => v === undefined || v === null || v === "";
+
+  // Preflight for the "no two reports may cover overlapping NDC periods"
+  // guarantee — the backend enforces this for real (a partial GIST
+  // exclusion constraint, checked from generate onwards, not just at
+  // submit), this just surfaces the conflict before the user finishes
+  // the form.
+  //
+  // The check runs per field so the message lands under the field that
+  // actually conflicts: an existing report's period [a,b] contains the
+  // year being validated iff a <= year AND b >= year.
+  const findReportContainingYear = async (
+    year: number
+  ): Promise<ConflictingReport | undefined> => {
+    const existing = await post("national/initialReport/query", {
+      page: 1,
+      size: 1,
+      filterAnd: [
+        { key: "ndcStartYear", operation: "<=", value: year },
+        { key: "ndcEndYear", operation: ">=", value: year },
+      ],
+    });
+    return (existing?.data ?? [])[0];
+  };
+
+  // The one overlap neither endpoint can detect on its own: a period
+  // that swallows an existing report whole (start before its start, end
+  // after its end). Neither year falls inside it, but the ranges still
+  // overlap — so both fields are equally at fault and both report it.
+  const findReportEnclosedBy = async (
+    start: number,
+    end: number
+  ): Promise<ConflictingReport | undefined> => {
+    const existing = await post("national/initialReport/query", {
+      page: 1,
+      size: 1,
+      filterAnd: [
+        { key: "ndcStartYear", operation: ">=", value: start },
+        { key: "ndcEndYear", operation: "<=", value: end },
+      ],
+    });
+    return (existing?.data ?? [])[0];
+  };
+
+  const period = (row: ConflictingReport) =>
+    `${row.ndcStartYear}–${row.ndcEndYear}`;
+
+  // Shared by both year fields. `label` names the field being validated
+  // so the message reads as being about that year specifically.
+  const validateNoOverlap = (field: "ndcStartYear" | "ndcEndYear") =>
+    async (_r: unknown, v: unknown) => {
+      if (isBlank(v)) return;
+      const year = Number(v);
+      const other = form.getFieldValue(
+        field === "ndcStartYear" ? "ndcEndYear" : "ndcStartYear"
+      );
+      const label = field === "ndcStartYear" ? "start year" : "end year";
       try {
-        // Initial reports can only be created for Draft cooperative
-        // approaches.
-        const response = await post("national/cooperativeApproach/query", {
-          page: 1,
-          size: 200,
-          sort: { key: "createdTime", order: "DESC" },
-          filterAnd: [{ key: "status", operation: "=", value: "Draft" }],
-        });
-        const rows: CooperativeApproach[] = response?.data ?? [];
-        setCas(rows);
-      } catch (error: any) {
-        message.error(
-          error?.message || "Failed to load cooperative approaches"
-        );
-      } finally {
-        setCasLoading(false);
+        const conflict = await findReportContainingYear(year);
+        if (conflict) {
+          throw new Error(
+            `NDC ${label} ${year} falls inside initial report ${conflict.reportNumber}'s period (${period(conflict)}).`
+          );
+        }
+        if (isBlank(other)) return;
+        const start = field === "ndcStartYear" ? year : Number(other);
+        const end = field === "ndcStartYear" ? Number(other) : year;
+        if (start > end) return; // the start/end ordering rule reports this
+        const enclosed = await findReportEnclosedBy(start, end);
+        if (enclosed) {
+          throw new Error(
+            `NDC period ${start}–${end} fully covers initial report ${enclosed.reportNumber}'s period (${period(enclosed)}).`
+          );
+        }
+      } catch (err) {
+        if (err instanceof Error) throw err;
+        // network/auth issues surface via the submit-time error path;
+        // don't block validation because the preflight itself failed.
       }
     };
-    loadCas();
-  }, [post]);
-
-  const caById = useMemo(() => {
-    const map: Record<string, CooperativeApproach> = {};
-    for (const ca of cas) {
-      map[ca.cooperativeApproachId] = ca;
-    }
-    return map;
-  }, [cas]);
-
-  const handleCaChange = async (cooperativeApproachId: string) => {
-    if (!cooperativeApproachId) {
-      setSelectedCa(null);
-      return;
-    }
-    const cached = caById[cooperativeApproachId];
-    if (cached) {
-      setSelectedCa(cached);
-      // Pre-fill the editable env-integrity textarea so the user can see
-      // what the backend would persist if left untouched.
-      form.setFieldsValue({
-        environmentalIntegrityAssessment:
-          cached.environmentalIntegrityAssessment ?? "",
-      });
-    }
-    try {
-      const fresh = await get(
-        `national/cooperativeApproach/get?id=${cooperativeApproachId}`
-      );
-      if (fresh?.data) {
-        setSelectedCa(fresh.data);
-        form.setFieldsValue({
-          environmentalIntegrityAssessment:
-            fresh.data.environmentalIntegrityAssessment ?? "",
-        });
-      }
-    } catch {
-      // best-effort refresh — fall back to the cached row
-    }
-  };
 
   const onFinish = async (values: any) => {
     setLoading(true);
@@ -130,25 +132,22 @@ const CreateInitialReport = () => {
       const sectors: string[] = (values.sectors ?? []).filter(
         (s: string) => s && s.trim().length > 0
       );
-      await post("national/initialReport/generate", {
-        cooperativeApproachId: values.cooperativeApproachId,
+      const response = await post("national/initialReport/generate", {
+        ndcStartYear: values.ndcStartYear,
+        ndcEndYear: values.ndcEndYear,
+        ndcType: values.ndcType,
+        baseYear: values.baseYear,
+        baseYearEmission:
+          values.baseYearEmission !== undefined && values.baseYearEmission !== null
+            ? Number(values.baseYearEmission)
+            : undefined,
+        ndcTarget:
+          values.ndcTarget !== undefined && values.ndcTarget !== null
+            ? Number(values.ndcTarget)
+            : undefined,
+        caMethod: values.caMethod,
         caMethodDescription: values.caMethodDescription || "",
-        ndcQuantification: {
-          ndcTarget:
-            values.ndcTarget !== undefined && values.ndcTarget !== null
-              ? Number(values.ndcTarget)
-              : null,
-          baseYear:
-            values.baseYear !== undefined && values.baseYear !== null
-              ? Number(values.baseYear)
-              : null,
-          targetYear:
-            values.targetYear !== undefined && values.targetYear !== null
-              ? Number(values.targetYear)
-              : null,
-          sectors,
-          ghgs: ["CO2"],
-        },
+        sectors,
         environmentalIntegrity: {
           noNetIncrease: values.environmentalIntegrityAssessment ?? "",
           conservativeBaselines: "",
@@ -157,7 +156,15 @@ const CreateInitialReport = () => {
         },
       });
       message.success("Initial report draft generated");
-      navigate("/initialReports/viewAll");
+      const reportNumber = response?.data?.reportNumber;
+      // Land on the detail page so the user can attach cooperative
+      // approaches straight away — that's the very next step and the
+      // report cannot be submitted without at least one.
+      navigate(
+        reportNumber
+          ? `/initialReports/view/${reportNumber}`
+          : "/initialReports/viewAll"
+      );
     } catch (error: any) {
       const serverMsg = error?.message;
       message.error(
@@ -171,6 +178,7 @@ const CreateInitialReport = () => {
   };
 
   return (
+    <RequireDnaManage>
     <div className="initial-reports-container">
       <div className="title-bar">
         <TimedPageInfoTitle
@@ -183,155 +191,190 @@ const CreateInitialReport = () => {
       </div>
       <div className="content-card">
         <Form form={form} layout="vertical" onFinish={onFinish}>
+          <div className="section-title">NDC Information</div>
           <Row gutter={24}>
-            <Col span={12}>
+            <Col span={8}>
               <Form.Item
-                name="cooperativeApproachId"
-                label="Cooperative Approach"
+                name="ndcStartYear"
+                label="NDC Start Year"
+                dependencies={["ndcEndYear"]}
                 rules={[
-                  {
-                    required: true,
-                    message: "Pick a cooperative approach",
-                  },
-                  {
-                    validator: async (_rule, value) => {
-                      if (!value) return;
-                      const ca = caById[value];
-                      if (!ca) {
-                        throw new Error(
-                          "Cooperative approach not found in the loaded list — refresh and try again."
-                        );
-                      }
-                      if (ca.status !== "Draft") {
-                        throw new Error(
-                          `Cooperative approach ${value} is ${ca.status}; only Draft cooperative approaches accept a new initial report.`
-                        );
-                      }
-                      // Preflight: an IR (Draft or Submitted) for this CA
-                      // would 409 on the server. Catch it client-side so
-                      // the user sees the conflict before submit.
-                      try {
-                        const existing = await post(
-                          "national/initialReport/query",
-                          {
-                            page: 1,
-                            size: 1,
-                            filterAnd: [
-                              {
-                                key: "cooperativeApproachId",
-                                operation: "=",
-                                value,
-                              },
-                            ],
-                          }
-                        );
-                        if ((existing?.data ?? []).length > 0) {
-                          throw new Error(
-                            `An initial report already exists for ${value}. Edit that report instead.`
-                          );
-                        }
-                      } catch (err: any) {
-                        if (err instanceof Error) throw err;
-                        // network/auth issues are surfaced via the
-                        // submit-time error path; don't block validation
-                        // because the preflight itself failed.
-                      }
-                    },
-                  },
+                  { required: true, message: "NDC start year is required" },
+                  { validator: validateNoOverlap("ndcStartYear") },
                 ]}
               >
-                <Select
-                  showSearch
-                  loading={casLoading}
-                  placeholder="Select a cooperative approach"
-                  optionFilterProp="label"
-                  onChange={handleCaChange}
-                  options={cas.map((ca) => ({
-                    value: ca.cooperativeApproachId,
-                    label: `${ca.cooperativeApproachId} — ${ca.title} (${ca.status})`,
-                  }))}
+                <InputNumber
+                  style={{ width: "100%" }}
+                  min={1900}
+                  placeholder="e.g. 2021"
                 />
               </Form.Item>
             </Col>
-          </Row>
-
-          {selectedCa && (
-            <Row gutter={24} style={{ marginBottom: 16 }}>
-              <Col span={24}>
-                {selectedCa.status !== "Draft" && (
-                  <Alert
-                    type="error"
-                    showIcon
-                    style={{ marginBottom: 12 }}
-                    message={`Cooperative approach ${selectedCa.cooperativeApproachId} is ${selectedCa.status}.`}
-                    description="An initial report can only be generated for a Draft cooperative approach. Pick a different one, or submit its existing initial report to move it toward Active."
-                  />
-                )}
-                <Descriptions
-                  bordered
-                  size="small"
-                  column={2}
-                  title={
-                    <span>
-                      {selectedCa.title}{" "}
-                      <Tag
-                        color={
-                          CA_STATUS_TAG_COLORS[selectedCa.status] ?? "default"
-                        }
-                      >
-                        {selectedCa.status}
-                      </Tag>
-                    </span>
-                  }
-                >
-                  <Descriptions.Item label="Host Party">
-                    {selectedCa.hostParty || "—"}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Participating Parties">
-                    {(selectedCa.participatingParties || []).join(", ") || "—"}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Start Date">
-                    {formatDate(selectedCa.startDate)}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="End Date">
-                    {formatDate(selectedCa.endDate)}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Expected Mitigation" span={2}>
-                    {selectedCa.expectedMitigationOutcomes || "—"}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="NDC Link" span={2}>
-                    {selectedCa.ndcLink || "—"}
-                  </Descriptions.Item>
-                </Descriptions>
-                <div
-                  style={{
-                    marginTop: 8,
-                    fontSize: 12,
-                    color: "rgba(0,0,0,0.55)",
+            <Col span={8}>
+              <Form.Item
+                name="ndcEndYear"
+                label="NDC End Year"
+                dependencies={["ndcStartYear"]}
+                rules={[
+                  { required: true, message: "NDC end year is required" },
+                  {
+                    validator: (_r, v) => {
+                      if (v === undefined || v === null || v === "")
+                        return Promise.resolve();
+                      const start = form.getFieldValue("ndcStartYear");
+                      if (
+                        start !== undefined &&
+                        start !== null &&
+                        start !== "" &&
+                        Number(start) > Number(v)
+                      )
+                        return Promise.reject(
+                          "NDC end year must be on or after the start year"
+                        );
+                      return Promise.resolve();
+                    },
+                  },
+                  { validator: validateNoOverlap("ndcEndYear") },
+                ]}
+              >
+                <InputNumber
+                  style={{ width: "100%" }}
+                  min={1900}
+                  placeholder="e.g. 2030"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                name="ndcType"
+                label="NDC Type"
+                rules={[{ required: true, message: "NDC type is required" }]}
+                initialValue={NdcType.SINGLE_YEAR}
+              >
+                {/* MultiYear NDCs are not supported yet — kept
+                    selectable-but-disabled rather than hidden so the
+                    option's existence (and why it can't be picked) is
+                    visible. The backend rejects it at submit too. */}
+                <Select
+                  onChange={() => {
+                    // The CA Method options depend on NDC Type
+                    // (SingleYear -> Trajectory/Averaging, MultiYear ->
+                    // MultiYear); a method valid under the old type may
+                    // not be valid under the new one, so clear it.
+                    form.setFieldValue("caMethod", undefined);
                   }}
                 >
-                  These fields are pre-filled from the selected cooperative
-                  approach and persisted on the initial report's
-                  <code> cooperativeApproachDetails</code> block at submit.
-                </div>
-              </Col>
-            </Row>
-          )}
-
-          {casLoading && !selectedCa && (
-            <Row gutter={24} style={{ marginBottom: 16 }}>
-              <Col span={24}>
-                <Spin /> Loading cooperative approaches…
-              </Col>
-            </Row>
-          )}
-
+                  <Select.Option value={NdcType.SINGLE_YEAR}>
+                    {NDC_TYPE_LABELS[NdcType.SINGLE_YEAR]}
+                  </Select.Option>
+                  <Select.Option value={NdcType.MULTI_YEAR} disabled>
+                    <Tooltip title="Multi-year NDCs are not supported yet">
+                      {NDC_TYPE_LABELS[NdcType.MULTI_YEAR]}
+                    </Tooltip>
+                  </Select.Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
           <Row gutter={24}>
+            <Col span={8}>
+              <Form.Item
+                name="baseYear"
+                label="Base Year"
+                dependencies={["ndcStartYear", "ndcEndYear"]}
+                rules={[
+                  { required: true, message: "Base year is required" },
+                  {
+                    validator: (_r, v) => {
+                      if (v === undefined || v === null || v === "")
+                        return Promise.resolve();
+                      const n = Number(v);
+                      if (!Number.isInteger(n) || n < 1900 || n > 2100)
+                        return Promise.reject(
+                          "Base year must be between 1900 and 2100"
+                        );
+                      const end = form.getFieldValue("ndcEndYear");
+                      if (end !== undefined && end !== null && end !== "" && n >= Number(end))
+                        return Promise.reject(
+                          "Base year must be before the NDC end year"
+                        );
+                      // The trajectory's origin must sit strictly before
+                      // the period it feeds — a base year inside the
+                      // period extrapolates its early years backwards
+                      // past that origin, and a base year equal to the
+                      // start year leaves the period no span to begin
+                      // from. Stricter than the backend's
+                      // PERIOD_BEFORE_BASE_YEAR check, which only
+                      // rejects a base year past the start year.
+                      const start = form.getFieldValue("ndcStartYear");
+                      if (
+                        start !== undefined &&
+                        start !== null &&
+                        start !== "" &&
+                        n >= Number(start)
+                      )
+                        return Promise.reject(
+                          "Base year must be before the NDC start year"
+                        );
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+                tooltip="The emission trajectory's origin year."
+              >
+                <InputNumber
+                  style={{ width: "100%" }}
+                  min={1900}
+                  placeholder="e.g. 2015"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                name="baseYearEmission"
+                label="Base Year Emission (tCO2eq)"
+                dependencies={["ndcTarget"]}
+                rules={[
+                  { required: true, message: "Base year emission is required" },
+                  {
+                    validator: (_r, v) => {
+                      if (v === undefined || v === null || v === "")
+                        return Promise.resolve();
+                      const n = Number(v);
+                      if (Number.isNaN(n) || n < 0)
+                        return Promise.reject(
+                          "Base year emission must be a non-negative number"
+                        );
+                      const target = form.getFieldValue("ndcTarget");
+                      if (
+                        target !== undefined &&
+                        target !== null &&
+                        target !== "" &&
+                        n <= Number(target)
+                      )
+                        return Promise.reject(
+                          "Base year emission must be greater than the NDC target"
+                        );
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+                tooltip="The country's emissions in the base year — the trajectory's starting point."
+              >
+                <InputNumber
+                  style={{ width: "100%" }}
+                  min={0}
+                  placeholder="e.g. 100000"
+                />
+              </Form.Item>
+            </Col>
             <Col span={8}>
               <Form.Item
                 name="ndcTarget"
                 label="NDC Target (tCO2eq)"
+                dependencies={["baseYearEmission"]}
                 rules={[
+                  { required: true, message: "NDC target is required" },
                   {
                     validator: (_r, v) => {
                       if (v === undefined || v === null || v === "")
@@ -341,85 +384,26 @@ const CreateInitialReport = () => {
                         return Promise.reject(
                           "NDC target must be a non-negative number"
                         );
+                      const emission = form.getFieldValue("baseYearEmission");
+                      if (
+                        emission !== undefined &&
+                        emission !== null &&
+                        emission !== "" &&
+                        Number(emission) <= n
+                      )
+                        return Promise.reject(
+                          "NDC target must be less than the base year emission"
+                        );
                       return Promise.resolve();
                     },
                   },
                 ]}
+                tooltip="The value at the NDC end year — the trajectory interpolates a straight line to it from the base year's emissions."
               >
                 <InputNumber
                   style={{ width: "100%" }}
                   min={0}
                   placeholder="e.g. 500000"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                name="baseYear"
-                label="Base Year"
-                rules={[
-                  {
-                    validator: (_r, v) => {
-                      if (v === undefined || v === null || v === "")
-                        return Promise.resolve();
-                      const n = Number(v);
-                      if (
-                        !Number.isInteger(n) ||
-                        n < 1900 ||
-                        n > 2100
-                      )
-                        return Promise.reject(
-                          "Base year must be between 1900 and 2100"
-                        );
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
-              >
-                <InputNumber
-                  style={{ width: "100%" }}
-                  min={1900}
-                  max={2100}
-                  placeholder="e.g. 2015"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                name="targetYear"
-                label="Target Year"
-                dependencies={["baseYear"]}
-                rules={[
-                  {
-                    validator: (_r, v) => {
-                      if (v === undefined || v === null || v === "")
-                        return Promise.resolve();
-                      const n = Number(v);
-                      if (
-                        !Number.isInteger(n) ||
-                        n < 1900 ||
-                        n > 2100
-                      )
-                        return Promise.reject(
-                          "Target year must be between 1900 and 2100"
-                        );
-                      const base = form.getFieldValue("baseYear");
-                      if (base !== undefined && base !== null && base !== "") {
-                        if (Number(base) >= n)
-                          return Promise.reject(
-                            "Target year must be greater than base year"
-                          );
-                      }
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
-              >
-                <InputNumber
-                  style={{ width: "100%" }}
-                  min={1900}
-                  max={2100}
-                  placeholder="e.g. 2030"
                 />
               </Form.Item>
             </Col>
@@ -431,22 +415,20 @@ const CreateInitialReport = () => {
                 label="Sectors"
                 rules={[
                   {
-                    validator: (_r, v) => {
-                      const arr: string[] = Array.isArray(v) ? v : [];
-                      const cleaned = arr.filter(
-                        (s) => s && s.trim().length > 0
-                      );
-                      if (cleaned.length === 0)
-                        return Promise.reject("Add at least one sector");
-                      return Promise.resolve();
-                    },
+                    required: true,
+                    type: "array",
+                    min: 1,
+                    message: "Add at least one sector",
                   },
                 ]}
               >
                 <Select
-                  mode="tags"
-                  placeholder="Energy, Forestry, Waste …"
-                  tokenSeparators={[","]}
+                  mode="multiple"
+                  placeholder="Select sectors"
+                  options={Object.values(Sector).map((s) => ({
+                    value: s,
+                    label: s,
+                  }))}
                 />
               </Form.Item>
             </Col>
@@ -455,13 +437,45 @@ const CreateInitialReport = () => {
             <Col span={24}>
               <Form.Item
                 name="environmentalIntegrityAssessment"
-                label="Environmental Integrity Assessment (pre-filled from CA)"
-                tooltip="Populated from the cooperative approach. Edit if the IR needs a different statement."
+                label="Environmental Integrity Assessment"
               >
                 <TextArea
                   rows={3}
                   placeholder="Conservative baselines; no double counting; additionality demonstrated."
                 />
+              </Form.Item>
+            </Col>
+          </Row>
+          <div className="section-title">Corresponding Adjustment Method</div>
+          <Row gutter={24}>
+            <Col span={8}>
+              <Form.Item noStyle shouldUpdate={(prev, curr) => prev.ndcType !== curr.ndcType}>
+                {() => {
+                  const ndcType = form.getFieldValue("ndcType");
+                  const allowedMethods = getCompatibleCaMethods(ndcType);
+                  return (
+                    <Form.Item
+                      name="caMethod"
+                      label="CA Method"
+                      rules={[{ required: true, message: "CA method is required" }]}
+                      // SingleYear -> Trajectory/Averaging, MultiYear ->
+                      // MultiYear (isNdcMethodCompatible, mirrored in
+                      // caMethod.enum.ts's getCompatibleCaMethods).
+                      tooltip={
+                        ndcType === NdcType.MULTI_YEAR
+                          ? "Multi-Year NDCs require the Multi-Year method"
+                          : "Trajectory and Averaging are computed identically for a Single-Year NDC target"
+                      }
+                    >
+                      <Select
+                        options={allowedMethods.map((value) => ({
+                          value,
+                          label: CA_METHOD_LABELS[value],
+                        }))}
+                      />
+                    </Form.Item>
+                  );
+                }}
               </Form.Item>
             </Col>
           </Row>
@@ -485,14 +499,7 @@ const CreateInitialReport = () => {
               </Button>
             </Col>
             <Col>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={loading}
-                disabled={
-                  !!selectedCa && selectedCa.status !== "Draft"
-                }
-              >
+              <Button type="primary" htmlType="submit" loading={loading}>
                 Generate Draft
               </Button>
             </Col>
@@ -500,6 +507,7 @@ const CreateInitialReport = () => {
         </Form>
       </div>
     </div>
+    </RequireDnaManage>
   );
 };
 
