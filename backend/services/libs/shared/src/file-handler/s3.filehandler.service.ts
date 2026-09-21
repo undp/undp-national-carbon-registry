@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { FileHandlerInterface } from "./filehandler.interface";
+import { encodeStorageKey } from "./storage-key";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 @Injectable()
@@ -31,19 +32,13 @@ export class S3FileHandlerService implements FileHandlerInterface {
     })
     const resp = await this.client.send(putCommand)
 
-    const encodeFileName = encodeURIComponent(path);
-    return `https://${this.configService.get<string>("s3CommonBucket.name")}.s3.amazonaws.com/${encodeFileName}`
-    
-    // uploadParams.Key = `profile_images/${companyId}_${new Date().getTime()}.png`;
-    // uploadParams.Key = path
-    // return (await s3
-    //   .upload(uploadParams)
-    //   .promise())?.Location;
+    return path;
   }
 
 
-  public getUrl(path: string): Promise<string> {
-    throw new Error("Method not implemented.");
+  public async getUrl(key: string): Promise<string> {
+    const bucket = this.configService.get<string>("s3CommonBucket.name");
+    return `https://${bucket}.s3.amazonaws.com/${encodeStorageKey(key)}`;
   }
   
 }

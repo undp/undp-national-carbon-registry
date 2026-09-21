@@ -18,6 +18,11 @@
       width: 100%;
       border-radius: 10px;
     }
+    .profile-left-col,
+    .profile-right-col {
+      display: flex;
+      flex-direction: column;
+    }
   
     .mg-left-1 {
       margin-left: 1rem;
@@ -74,6 +79,47 @@
 
   }
   
+  .credit-summary-container {
+    // Grows to fill the left column's stretched height (see
+    // .profile-left-col), so its bottom edge lines up with the Organisation
+    // Details card on the right regardless of the profile photo's height.
+    flex: 1 1 auto;
+
+    .field-value {
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .credit-issued {
+      color: #9155fd;
+    }
+
+    .credit-received {
+      color: #1eb980;
+    }
+
+    .credit-retired {
+      color: #d12800;
+    }
+
+    .credit-transferred {
+      color: #16b1ff;
+    }
+
+    .credit-reserved {
+      color: #ffa070;
+    }
+
+    .credit-balance {
+      color: #3a3541;
+    }
+
+    .credit-summary-divider {
+      margin: 10px 25px;
+      border-top: 1px solid rgba(58, 53, 65, 0.12);
+    }
+  }
+
   .cnc-container {
     .btn-danger {
       color: #ff4d4f !important;

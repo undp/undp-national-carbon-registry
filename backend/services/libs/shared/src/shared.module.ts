@@ -5,6 +5,7 @@ import { AnnualReportModule } from "./annualreport/annual-report.module";
 import { AsyncOperationsModule } from "./async-operations/async-operations.module";
 import { AuthModule } from "./auth/auth.module";
 import { CadtModule } from "./cadt/cadt.module";
+import { CadTrustSyncModule } from "./cadtrust-sync/cadtrust-sync.module";
 import { CompanyModule } from "./company/company.module";
 import { EmailModule } from "./email/email.module";
 import { EmailHelperModule } from "./email-helper/email-helper.module";
@@ -24,7 +25,11 @@ import { SerialNumberManagementModule } from "./serial-number-management/serial-
 import { CreditBlocksManagementModule } from "./credit-blocks-management/credit-blocks-management.module";
 import { AnalyticsModule } from "./analytics/analytics.module";
 import { CreditTransactionsManagementModule } from "./credit-transactions-management/credit-transactions-management.module";
-import { AefReportManagementModule } from "./aef-report-management/aef-report-management.module";
+import { AefV2RegistryModule } from "./aef-v2-registry/aef-v2-registry.module";
+import { CooperativeApproachModule } from "./cooperative-approach/cooperative-approach.module";
+import { CorrespondingAdjustmentModule } from "./corresponding-adjustment/corresponding-adjustment.module";
+import { InitialReportModule } from "./initial-report/initial-report.module";
+import { ItmoAccountModule } from "./itmo-account/itmo-account.module";
 
 @Module({
   imports: [
@@ -33,6 +38,7 @@ import { AefReportManagementModule } from "./aef-report-management/aef-report-ma
     AsyncOperationsModule,
     AuthModule,
     CadtModule,
+    CadTrustSyncModule,
     CompanyModule,
     EmailModule,
     EmailHelperModule,
@@ -52,7 +58,11 @@ import { AefReportManagementModule } from "./aef-report-management/aef-report-ma
     CreditBlocksManagementModule,
     AnalyticsModule,
     CreditTransactionsManagementModule,
-    AefReportManagementModule,
+    AefV2RegistryModule,
+    CooperativeApproachModule,
+    CorrespondingAdjustmentModule,
+    InitialReportModule,
+    ItmoAccountModule,
   ],
   providers: [SharedService],
   exports: [
@@ -62,6 +72,7 @@ import { AefReportManagementModule } from "./aef-report-management/aef-report-ma
     AsyncOperationsModule,
     AuthModule,
     CadtModule,
+    CadTrustSyncModule,
     CompanyModule,
     EmailModule,
     EmailHelperModule,
@@ -81,7 +92,11 @@ import { AefReportManagementModule } from "./aef-report-management/aef-report-ma
     CreditBlocksManagementModule,
     AnalyticsModule,
     CreditTransactionsManagementModule,
-    AefReportManagementModule,
+    AefV2RegistryModule,
+    CooperativeApproachModule,
+    CorrespondingAdjustmentModule,
+    InitialReportModule,
+    ItmoAccountModule,
   ],
 })
 export class SharedModule {}

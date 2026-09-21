@@ -3,6 +3,7 @@ import { RegistryClientService } from "@app/shared/registry-client/registry-clie
 import { EmailService } from "@app/shared/email/email.service";
 import { AsyncActionType } from "@app/shared/enum/async.action.type.enum";
 import { CadtApiService } from "@app/shared/cadt/cadt.api.service";
+import { CadTrustSyncDispatcherService } from "@app/shared/cadtrust-sync/cadtrust-sync.dispatcher.service";
 
 @Injectable()
 export class AsyncOperationsHandlerService {
@@ -10,6 +11,7 @@ export class AsyncOperationsHandlerService {
     private emailService: EmailService,
     private registryClient: RegistryClientService,
     private cadtService: CadtApiService,
+    private cadTrustSyncDispatcher: CadTrustSyncDispatcherService,
     private logger: Logger
   ) {}
 
@@ -19,6 +21,15 @@ export class AsyncOperationsHandlerService {
       actionType.toString()
     );
     if (actionType) {
+      // CAD Trust v2 sync actions are routed through a handler registry rather
+      // than hand-written cases below, so adding a newly synced entity needs no
+      // change in this file. The dispatcher never throws — a throw here would
+      // stall the global async cursor and stop every queued action, email
+      // included.
+      if (this.cadTrustSyncDispatcher.canHandle(actionType)) {
+        return await this.cadTrustSyncDispatcher.handle(actionType, dataObject);
+      }
+
       switch (actionType.toString()) {
         case AsyncActionType.Email.toString():
           return await this.emailService.sendEmail(dataObject);

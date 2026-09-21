@@ -1072,7 +1072,11 @@ export class UserService {
         "company.companyId = user.companyId"
       )
       .orderBy(
-        query?.sort?.key ? `"user"."${query?.sort?.key}"` : `"user"."id"`,
+        query?.sort?.key
+          ? this.isEnumTextSortColumn(query.sort.key)
+            ? `"user"."${query.sort.key}"::text`
+            : `"user"."${query?.sort?.key}"`
+          : `"user"."id"`,
         query?.sort?.order ? query?.sort?.order : "DESC"
       )
       .offset(query.size * query.page - query.size)
@@ -1126,7 +1130,11 @@ export class UserService {
         "company.companyId = user.companyId"
       )
       .orderBy(
-        queryDto?.sort?.key ? `"user"."${queryDto?.sort?.key}"` : `"user"."id"`,
+        queryDto?.sort?.key
+          ? this.isEnumTextSortColumn(queryDto.sort.key)
+            ? `"user"."${queryDto.sort.key}"::text`
+            : `"user"."${queryDto?.sort?.key}"`
+          : `"user"."id"`,
         queryDto?.sort?.order ? queryDto?.sort?.order : "DESC"
       )
       .getMany();
@@ -1415,5 +1423,17 @@ export class UserService {
       this.helperService.formatReqMessagesString(errorMessage, []),
       HttpStatus.BAD_REQUEST
     );
+  }
+
+  /**
+   * "role" and "companyRole" are native Postgres enums (user_role_enum,
+   * user_companyrole_enum), so a plain ORDER BY sorts by declared ordinal
+   * (e.g. Root, Admin, Manager, ViewOnly) rather than alphabetically. Their
+   * enum values are already the exact display strings, so - unlike
+   * company.state - a simple ::text cast is enough; no label-order mapping
+   * needed.
+   */
+  private isEnumTextSortColumn(key: string): boolean {
+    return key === "role" || key === "companyRole";
   }
 }

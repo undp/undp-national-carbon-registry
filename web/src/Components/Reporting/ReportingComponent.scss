@@ -26,32 +26,55 @@
       color: colors.$title-sub;
     }
 
-    .report-type-selector {
-      width: 100%;
+  }
 
-      .ant-select-selector {
-        padding: 10px;
+  /*
+   * Sits between the Submission card and the four tables it controls, so it is
+   * a sibling of the cards rather than part of the page header.
+   */
+  .report-type-checkboxes {
+    align-items: center;
+    background-color: white;
+    border-radius: 10px;
+    column-gap: 24px;
+    margin: 15px 0;
+    padding: 14px 20px;
+    row-gap: 8px;
 
-        .ant-select-selection-item {
-          background-color: color.scale(
-            $color: variables.$primary-color,
-            $lightness: 85%
-          );
+    .ant-checkbox-wrapper {
+      color: colors.$title-sub;
+      font-size: 0.9rem;
+      margin-inline-start: 0;
+    }
 
-          color: color.scale($color: variables.$primary-color, $lightness: 10%);
+    .ant-checkbox-group {
+      column-gap: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      row-gap: 8px;
+    }
 
-          padding: 0px 16px;
+    /* Matches FilterBar's checked-state colors: a solid dark "all" toggle,
+       distinct from the individual options' checked color. */
+    .ant-checkbox-checked .ant-checkbox-inner {
+      border-color: #16a500;
+      background-color: #16a500;
+    }
 
-          border-radius: 6px;
+    .all-check {
+      margin-right: 10px;
 
-          border-width: 0px;
+      .ant-checkbox-inner::after {
+        background-color: rgba(58, 53, 65, 0.5);
+      }
 
-          margin: 0px 6px;
+      .ant-checkbox-checked .ant-checkbox-inner::after {
+        background-color: transparent;
+      }
 
-          .anticon {
-            color: color.scale(variables.$primary-color, $lightness: 10%);
-          }
-        }
+      .ant-checkbox-checked .ant-checkbox-inner {
+        background-color: rgba(58, 53, 65, 0.5);
+        border: none;
       }
     }
   }
@@ -74,6 +97,18 @@
     font-weight: 600;
 
     font-size: 14px;
+  }
+
+  /*
+   * `.layout-content-container .ant-btn-primary` (app.scss) forces the brand
+   * color with `!important` regardless of state, which otherwise hides the
+   * disabled look on the submit-row button. Restated here to win back the
+   * standard antd disabled gray.
+   */
+  .ant-btn-primary[disabled] {
+    background-color: #f5f5f5 !important;
+    border-color: #d9d9d9 !important;
+    color: rgba(0, 0, 0, 0.25) !important;
   }
 
   .header-row {
@@ -128,6 +163,31 @@
   }
 }
 
+
+/* CARP fills these in; greyed so "blank" reads as expected rather than missing. */
+.carp-populated {
+  color: #8c8c8c;
+  font-style: italic;
+}
+
+.submit-modal-summary {
+  margin-bottom: 16px;
+}
+
+.submit-modal-alert {
+  margin-bottom: 16px;
+}
+
+.submit-modal-form {
+  margin-bottom: 8px;
+}
+
+.report-card {
+  .provisional-tag {
+    margin-left: 12px;
+    vertical-align: middle;
+  }
+}
 
 .no-reports {
   background-color: white;

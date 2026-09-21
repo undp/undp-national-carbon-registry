@@ -17,5 +17,7 @@
   "networkError": "Erreur réseau. Veuillez vérifier votre connexion Internet et réessayer.",
   "systemError": "Quelque chose s'est mal passé. Veuillez réessayer.",
   "approve": "APPROUVER",
-  "reject": "REJETER"
+  "reject": "REJETER",
+  "cooperativeApproachCreateFailed": "Échec de la création de l'approche coopérative",
+  "cooperativeApproachUpdateFailed": "Échec de la mise à jour de l'approche coopérative"
 }

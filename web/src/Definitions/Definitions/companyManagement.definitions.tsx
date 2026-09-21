@@ -11,5 +11,7 @@ export interface CompanyTableDataType {
   state?: string;
   logo?: string;
   creditBalance?: number;
+  creditIssued?: number;
+  creditRetired?: number;
   programmeCount?: number;
 }

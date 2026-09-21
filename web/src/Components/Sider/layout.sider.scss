@@ -4,6 +4,13 @@
   background-color: variables.$background-color;
   height: 100vh;
 
+  > .ant-layout-sider-children {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+  }
+
   .country-flag {
     margin-top: 27px;
     margin-left: -8px;
@@ -22,9 +29,12 @@
   }
 
   .toggle-nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 32px;
+    box-sizing: border-box;
     cursor: pointer;
-    position: absolute;
-    bottom: 15px;
     text-align: center;
     width: calc(100% - 20px);
     border: 1px solid variables.$primary-color;
@@ -34,13 +44,51 @@
     vertical-align: middle;
     padding: 0px;
     font-size: 25px;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin: 8px 10px 15px;
   }
 
   .layout-sider-menu-container {
+    flex: 1 1 auto;
+    min-height: 0;
     background-color: variables.$background-color;
     padding-top: 12px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    &--fade-top {
+      mask-image: linear-gradient(to bottom, transparent 0, #000 20px, #000 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 20px, #000 100%);
+    }
+
+    &--fade-bottom {
+      mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 20px), transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 20px), transparent 100%);
+    }
+
+    &.layout-sider-menu-container--fade-top.layout-sider-menu-container--fade-bottom {
+      mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        #000 20px,
+        #000 calc(100% - 20px),
+        transparent 100%
+      );
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        #000 20px,
+        #000 calc(100% - 20px),
+        transparent 100%
+      );
+    }
 
     .ant-menu-inline-collapsed {
       .ant-menu-item-icon {
@@ -50,7 +98,12 @@
   }
 
   .layout-sider-div-container {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
     padding-top: 22px;
+    overflow: hidden;
 
     .layout-sider-heading-container {
       display: flex;

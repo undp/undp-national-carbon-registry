@@ -70,6 +70,9 @@ services:
       RATE_LIMIT_RETIREMENT_DURATION: 60
       RATE_LIMIT_ORGANISATION_LIMIT: 100
       RATE_LIMIT_ORGANISATION_DURATION: 60
+      FILE_SERVICE: ${FILE_SERVICE:-LOCAL}
+      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING:-}
+      AZURE_STORAGE_CONTAINER: ${AZURE_STORAGE_CONTAINER:-files}
     volumes:
       - filestore:/app/backend/services/public
       - ./users.csv:/app/backend/services/users.csv
@@ -104,7 +107,7 @@ services:
       DB_USER: root
       DB_PASSWORD: "<ANY PASSWORD>"
       # ,data-importer
-      RUN_MODULE: replicator,async-operations-handler
+      RUN_MODULE: replicator,async-operations-handler,cadtrust-operations-handler
       LOCATION_SERVICE: OPENSTREET
       SMTP_ENDPOINT: email-smtp.us-east-1.amazonaws.com
       SMTP_USERNAME: ***REMOVED***
@@ -120,6 +123,9 @@ services:
       SYNC_ENABLE: false
       MRV_API_TOKEN: ""
       BACKEND_HOST: "http://192.168.1.16:3000"
+      FILE_SERVICE: ${FILE_SERVICE:-LOCAL}
+      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING:-}
+      AZURE_STORAGE_CONTAINER: ${AZURE_STORAGE_CONTAINER:-files}
     volumes:
       - filestore:/app/backend/services/public
   web:

@@ -9,7 +9,26 @@
         color: variables.$title-text-color;
         font-weight: 600;
         font-size: 0.8rem;
-        text-align: center;
+        text-align: center !important;
+      }
+
+      // The sorter icon sits inside the flex row next to the title, which
+      // shifts the (flex: 1) title's own center away from the column's true
+      // center. Taking it out of flow lets the title center against the
+      // full column width instead. Equal left/right padding keeps that
+      // centering symmetric and reserves clearance so long titles don't
+      // run into the icon on narrower columns.
+      .ant-table-column-sorters {
+        position: relative;
+        padding: 0 22px;
+      }
+
+      .ant-table-column-sorter {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        margin-left: 0;
+        transform: translateY(-50%);
       }
     }
     .ant-table-tbody {

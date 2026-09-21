@@ -35,6 +35,7 @@ import {
   Typography,
   Form,
 } from 'antd';
+import { TimedPageInfoTitle } from '../../Common/TimedPageInfoTitle/TimedPageInfoTitle';
 import React, { useEffect, useState } from 'react';
 import { PersonDash } from 'react-bootstrap-icons';
 import './userManagementComponent.scss';
@@ -657,9 +658,18 @@ export const UserManagementComponent = (props: any) => {
   return (
     <div className="content-container">
       <div className="title-bar">
-        <div className="body-title">{t('user:viewUsers')}</div>
+        <TimedPageInfoTitle
+          title={t('user:viewUsers')}
+          description={t('user:usersPageDescription', {
+            defaultValue:
+              'View and manage registry users, their organizations, roles, contact details, and account access.',
+          })}
+          infoButtonLabel={t('user:showUsersPageDescription', {
+            defaultValue: 'Show information about Users',
+          })}
+        />
       </div>
-      <div className="content-card">
+      <div className="content-card user-management-card">
         <Row className="table-actions-section">
           <Col md={8} xs={24}>
             <div className="action-bar">

@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { FileHandlerInterface } from "./filehandler.interface";
+import { encodeStorageKey } from "./storage-key";
 import { ConfigService } from "@nestjs/config";
 const fs = require("fs").promises;
 const fsAync = require("fs");
@@ -10,7 +11,6 @@ export class LocalFileHandlerService implements FileHandlerInterface {
   constructor(private configService: ConfigService) {}
 
   public async uploadFile(filePath: string, content: string): Promise<string> {
-    const baseUrl = this.configService.get<string>("backendHost");
     // This must run inside a function marked `async`:
     const rootDir = path.resolve("./public/");
     const resolvedPath = path.resolve(rootDir, filePath);
@@ -22,9 +22,12 @@ export class LocalFileHandlerService implements FileHandlerInterface {
       await fsAync.mkdirSync(folders, { recursive: true });
     }
     await fs.writeFile(resolvedPath, content, "base64");
-    return baseUrl + "/" + filePath;
+    return filePath;
   }
-  public getUrl(path: string): Promise<string> {
-    throw new Error("Method not implemented.");
+
+  public async getUrl(key: string): Promise<string> {
+    // Served by the static middleware registered in main.ts.
+    const baseUrl = this.configService.get<string>("backendHost");
+    return `${baseUrl}/${encodeStorageKey(key)}`;
   }
 }

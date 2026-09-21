@@ -1,0 +1,6 @@
+NAME,EMAIL,PHONE,ORGANISATION TAX ID,ORGANISATION TYPE(Developer|Certifier|API),SECTORAL SCOPE,MINISTER NAME
+Org 2,palinda+org2@xeptagon.com,,33333,PD
+Cert 2,palinda+cert2@xeptagon.com,,44444,IC
+Org 3,palinda+org3@xeptagon.com,,55555,PD
+API,palinda+api@xeptagon.com,,66666,API
+Org 4,palinda+org4@xeptagon.com,,77777,PD

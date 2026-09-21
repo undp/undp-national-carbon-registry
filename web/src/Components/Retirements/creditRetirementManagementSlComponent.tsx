@@ -501,7 +501,7 @@ export const CreditRetirementSlComponent = (props: any) => {
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
         return (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             {itemObj.fromCompany &&
               itemObj.fromCompany.map((v: any, i: any) => {
                 return (
@@ -528,7 +528,7 @@ export const CreditRetirementSlComponent = (props: any) => {
       align: 'left' as const,
       render: (item: any, itemObj: any) => {
         return (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             {itemObj.toCompany &&
               itemObj.toCompany.map((v: any, i: any) => {
                 return !itemObj.isRetirement ? (

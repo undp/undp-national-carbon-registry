@@ -35,6 +35,28 @@ export class CountryService {
     )?.name;
   }
 
+  // AEF party/country fields are ISO 3166-1 alpha-3 (PARTY_CODE_PATTERN in
+  // @app/aef-v2); everything in this registry (systemCountry, Country codes,
+  // CooperativeApproach.hostParty/participatingParties, retirement use-data)
+  // is alpha-2. This is the one conversion point between the two.
+  async getAlpha3(alpha2: string): Promise<string | undefined> {
+    return (
+      await this.countryRepo.findOneBy({
+        alpha2: alpha2,
+      })
+    )?.alpha3;
+  }
+
+  // The reverse of getAlpha3, for display. AEF stores the Party as alpha-3;
+  // the full-report export renders Table 1's Party cell as the country name.
+  async getCountryNameByAlpha3(alpha3: string): Promise<string | undefined> {
+    return (
+      await this.countryRepo.findOneBy({
+        alpha3: alpha3,
+      })
+    )?.name;
+  }
+
   async getCountryList(query: QueryDto) {
     const resp = await this.countryRepo
       .createQueryBuilder()

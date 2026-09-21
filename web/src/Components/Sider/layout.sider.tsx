@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Menu, Layout, MenuProps } from "antd";
 import sliderLogo from "../../Assets/Images/logo-slider.png";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -6,7 +6,11 @@ import "./layout.sider.scss";
 import * as Icon from "react-bootstrap-icons";
 import {
   AppstoreOutlined,
+  CalculatorOutlined,
   DashboardOutlined,
+  DeploymentUnitOutlined,
+  FileTextOutlined,
+  GlobalOutlined,
   SettingOutlined,
   ShopOutlined,
   SplitCellsOutlined,
@@ -18,7 +22,6 @@ import { useTranslation } from "react-i18next";
 import { LayoutSiderProps } from "../../Definitions/Definitions/layout.sider.definitions";
 import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
 import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
-import { Role } from "../../Definitions/Enums/role.enum";
 import { ROUTES } from "../../Config/uiRoutingConfig";
 
 const { Sider } = Layout;
@@ -52,9 +55,72 @@ const LayoutSider = (props: LayoutSiderProps) => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [selectKey, setSelectKey] = useState<any>(selectedKey);
-  const { i18n, t } = useTranslation(["nav"]);
+  const [menuScrollState, setMenuScrollState] = useState({
+    hasContentAbove: false,
+    hasContentBelow: false,
+  });
+  const menuContainerRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation(["nav"]);
 
   const currentPage = location.pathname.replace(/^\/|\/$/g, "");
+
+  const isDna =
+    userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY;
+  const isPd =
+    userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER;
+
+  const creditItems: MenuItem[] = [];
+  if (isDna) {
+    creditItems.push(
+      getItem(t("nav:creditBlockList"), "credits/blockList", <Icon.Search />)
+    );
+  }
+  creditItems.push(
+    getItem(t("nav:issuance"), "credits/issuanceList", <Icon.PlusCircle />),
+    getItem(t("nav:creditBalance"), "credits/balance", <Icon.Wallet2 />),
+    getItem(t("nav:transfers"), "credits/transfers", <SwapOutlined />),
+    getItem(
+      t("nav:retirements"),
+      "credits/retirements",
+      <Icon.ClockHistory />
+    ),
+    getItem(
+      t("nav:itmoAuthorizations"),
+      "credits/itmoAuthorizations",
+      <Icon.GlobeAmericas />
+    )
+  );
+
+  // Cooperative Approaches, Corresponding Adjustments and Initial
+  // Reports are a Designated National Authority (DNA)-only feature set
+  // (mirrors casl-ability.factory.ts's DNA branch) — every DNA role,
+  // including ViewOnly and Manager, can see and open all three, since
+  // both can still view the data; add/edit is gated inside each page
+  // instead (useArticle6Permissions().canManage, Root/Admin only).
+  // Previously Cooperative Approaches was pushed unconditionally here
+  // (visible to every company role) and the other two were gated to
+  // isDnaAdmin (hiding them from DNA ViewOnly/Manager, who should still
+  // be able to view) — both were bugs.
+  const article62Items: MenuItem[] = [];
+  if (isDna) {
+    article62Items.push(
+      getItem(
+        t("nav:cooperativeApproaches"),
+        "cooperativeApproaches/viewAll",
+        <GlobalOutlined />
+      ),
+      getItem(
+        t("nav:correspondingAdjustments"),
+        "correspondingAdjustments/viewAll",
+        <CalculatorOutlined />
+      ),
+      getItem(
+        t("nav:initialReports"),
+        "initialReports/viewAll",
+        <FileTextOutlined />
+      )
+    );
+  }
 
   const items: MenuItem[] = [
     getItem(t("nav:dashboard"), "dashboard", <DashboardOutlined />),
@@ -63,47 +129,98 @@ const LayoutSider = (props: LayoutSiderProps) => {
       "programmeManagement/viewAll",
       <UnorderedListOutlined />
     ),
+    ...(isDna || isPd
+      ? [
+          getItem(
+            t("nav:credits"),
+            "credits",
+            <AppstoreOutlined />,
+            creditItems
+          ),
+        ]
+      : []),
+    ...(isDna
+      ? [
+          getItem(
+            t("nav:article62"),
+            "article62",
+            <DeploymentUnitOutlined />,
+            article62Items
+          ),
+        ]
+      : []),
+    // AEF reporting follows the same view/manage split as the Article
+    // 6.2 items above — DNA ViewOnly and Manager can view the AEF
+    // report, only Root/Admin can submit it (gated inside
+    // ReportingComponent, not here).
+    ...(isDna
+      ? [getItem(t("nav:aefReports"), "reports", <Icon.ClipboardData />)]
+      : []),
     getItem(t("nav:companies"), "companyManagement/viewAll", <ShopOutlined />),
     getItem(t("nav:users"), "userManagement/viewAll", <UserOutlined />),
   ];
 
-  if (
-    userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
-    userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER
-  ) {
-    items.splice(
-      2,
-      0,
-      getItem(t("nav:credits"), "credits", <AppstoreOutlined />, [
-        getItem(t("nav:creditBalance"), "credits/balance", <Icon.Wallet2 />),
-        getItem(t("nav:transfers"), "credits/transfers", <SwapOutlined />),
-        getItem(
-          t("nav:retirements"),
-          "credits/retirements",
-          <Icon.ClockHistory />
-        ),
-      ])
-    );
-  }
-
-
-  if (
-    userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-    (userInfoState?.userRole === Role.Admin ||
-      userInfoState?.userRole === Role.Root)
-  ) {
-    items.splice(
-      3,
-      0,
-      getItem(t("nav:reports"), "reports", <Icon.ClipboardData />)
-    );
-  }
-  
-  
+  const activeKey = selectedKey || selectKey || "dashboard";
+  const defaultOpenKeys = items
+    .filter((item) => item?.children?.some((child) => child?.key === activeKey))
+    .map((item) => String(item?.key));
 
   useEffect(() => {
     setSelectKey(currentPage);
   }, [currentPage]);
+
+  const updateMenuScrollState = useCallback(() => {
+    const menuContainer = menuContainerRef.current;
+    if (!menuContainer) return;
+
+    const hasContentAbove = menuContainer.scrollTop > 1;
+    const hasContentBelow =
+      menuContainer.scrollTop + menuContainer.clientHeight <
+      menuContainer.scrollHeight - 1;
+
+    setMenuScrollState((current) =>
+      current.hasContentAbove === hasContentAbove &&
+      current.hasContentBelow === hasContentBelow
+        ? current
+        : { hasContentAbove, hasContentBelow }
+    );
+  }, []);
+
+  useEffect(() => {
+    const menuContainer = menuContainerRef.current;
+    if (!menuContainer) return;
+
+    let animationFrame: number | undefined;
+    const scheduleUpdate = () => {
+      if (animationFrame !== undefined) {
+        cancelAnimationFrame(animationFrame);
+      }
+      animationFrame = requestAnimationFrame(updateMenuScrollState);
+    };
+
+    scheduleUpdate();
+
+    const resizeObserver = new ResizeObserver(scheduleUpdate);
+    resizeObserver.observe(menuContainer);
+    if (menuContainer.firstElementChild) {
+      resizeObserver.observe(menuContainer.firstElementChild);
+    }
+
+    const mutationObserver = new MutationObserver(scheduleUpdate);
+    mutationObserver.observe(menuContainer, {
+      attributes: true,
+      childList: true,
+      subtree: true,
+    });
+
+    return () => {
+      if (animationFrame !== undefined) {
+        cancelAnimationFrame(animationFrame);
+      }
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+    };
+  }, [collapsed, updateMenuScrollState]);
 
   // if (
   //   userInfoState?.userRole === Role.Root ||
@@ -169,13 +286,27 @@ const LayoutSider = (props: LayoutSiderProps) => {
                 alt="country flag"
                 src={
                   import.meta.env.VITE_APP_COUNTRY_FLAG_URL ||
-                  "https://carbon-common-dev.s3.amazonaws.com/flag.png"
+                  "https://undpcarbonfiles001.blob.core.windows.net/assets/flag.png"
                 }
               />
             </div>
           )}
         </div>
-        <div className="layout-sider-menu-container">
+        <div
+          ref={menuContainerRef}
+          className={[
+            "layout-sider-menu-container",
+            menuScrollState.hasContentAbove
+              ? "layout-sider-menu-container--fade-top"
+              : "",
+            menuScrollState.hasContentBelow
+              ? "layout-sider-menu-container--fade-bottom"
+              : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+          onScroll={updateMenuScrollState}
+        >
           <Menu
             theme="light"
             selectedKeys={[
@@ -185,6 +316,7 @@ const LayoutSider = (props: LayoutSiderProps) => {
                 ? selectKey
                 : "dashboard",
             ]}
+            defaultOpenKeys={defaultOpenKeys}
             mode="inline"
             onClick={onClick}
           >

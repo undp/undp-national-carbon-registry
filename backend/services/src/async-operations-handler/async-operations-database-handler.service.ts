@@ -4,9 +4,17 @@ import { Repository } from "typeorm";
 import { AsyncOperationsHandlerInterface } from "./async-operations-handler-interface.service";
 import { AsyncOperationsHandlerService } from "./async-operations-handler.service";
 import { AsyncActionEntity } from "@app/shared/entities/async.action.entity";
+import { CADTRUST_V2_ACTION_TYPES } from "@app/shared/enum/cadtrust.async.action.types";
 import { CounterType } from "@app/shared/util/counter.type.enum";
 import { Counter } from "@app/shared/entities/counter.entity";
 
+/**
+ * The shared email/registry-sync/legacy-CADT lane. CAD Trust v2 actions
+ * (`CADTRUST_V2_ACTION_TYPES`) are deliberately excluded from this loop's query — they run on
+ * their own cursor, in `CadTrustAsyncOperationsHandlerService`, so that a slow or retrying CAD
+ * Trust call never sits inline ahead of an email queued behind it in this one. See
+ * `libs/shared/src/cadtrust-sync/README.md`'s "How a sync flows" section for the split.
+ */
 @Injectable()
 export class AsyncOperationsDatabaseHandlerService
   implements AsyncOperationsHandlerInterface
@@ -39,6 +47,9 @@ export class AsyncOperationsDatabaseHandlerService
         .createQueryBuilder("asyncAction")
         .where("asyncAction.actionId > :lastExecuted", {
           lastExecuted: lastSeq,
+        })
+        .andWhere("asyncAction.actionType NOT IN (:...cadTrustActionTypes)", {
+          cadTrustActionTypes: CADTRUST_V2_ACTION_TYPES,
         })
         .orderBy('"actionId"', "ASC")
         .select(['"actionId"', '"actionType"', '"actionProps"'])

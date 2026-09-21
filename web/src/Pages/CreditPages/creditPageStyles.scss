@@ -4,6 +4,69 @@
   margin-bottom: 30px;
 }
 
+.credit-management .search-bar {
+  gap: 12px;
+}
+
+.credit-info-modal .ant-modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111;
+  margin: 20px 0 0 0;
+}
+
+// antd's own header-bottom/body-top padding is what's left of the gap once
+// our own title/heading margins are trimmed down.
+.credit-info-modal {
+  .ant-modal-header {
+    padding-bottom: 12px;
+  }
+
+  .ant-modal-body {
+    padding-top: 8px;
+  }
+}
+
+.credit-view-overview-title,
+.credit-view-history-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 10px 0;
+  text-align: left;
+}
+
+.credit-view-overview {
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+}
+
+.credit-view-overview-row {
+  display: flex;
+  padding: 8px 0;
+  font-size: 12.5px;
+  // Overrides the global `.ant-modal-body { text-align: center; }` — without
+  // this, the label/value text centers within its box instead of starting
+  // flush left.
+  text-align: left;
+
+  .credit-view-overview-label {
+    width: 130px;
+    flex-shrink: 0;
+    color: #3a3541cc;
+    font-weight: 500;
+  }
+
+  .credit-view-overview-value {
+    color: #8c8c8c;
+  }
+}
+
 .all-check {
   .ant-checkbox-inner::after {
     background-color: rgba(#3a3541, 0.5);
@@ -52,6 +115,16 @@
 
   .ant-checkbox-input[value='Cancelled'] + .ant-checkbox-inner {
     background-color: #cb6957;
+    border: none;
+  }
+
+  .ant-checkbox-input[value='Retired'] + .ant-checkbox-inner {
+    background-color: #f1c40f;
+    border: none;
+  }
+
+  .ant-checkbox-input[value='Assigned'] + .ant-checkbox-inner {
+    background-color: #2fa100;
     border: none;
   }
 }
@@ -107,10 +180,14 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    gap: 4px;
 
     .profile-icon {
       margin-bottom: 4px;
-      margin-right: 4px;
+
+      &:not(:last-child) {
+        margin-right: 4px;
+      }
     }
   }
   .org-list {
@@ -118,10 +195,14 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    gap: 4px;
 
     .profile-icon {
       margin-bottom: 4px;
-      margin-right: 4px;
+
+      &:not(:last-child) {
+        margin-right: 4px;
+      }
     }
   }
   .table-actions-section {
@@ -148,4 +229,455 @@
 .programmeManagement-table-container {
   // padding: 0px 20px;
   padding: 0px;
+}
+
+.credit-balance-redesign {
+  .credit-balance-card {
+    padding: 0;
+    overflow: hidden;
+    border-radius: 16px;
+  }
+
+  .credit-balance-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 20px 28px;
+  }
+
+  .credit-balance-tabs {
+    align-self: center;
+
+    .ant-radio-button-wrapper {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 35px !important;
+      padding: 0 16px;
+      color: rgba(58, 53, 65, 0.5);
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+      border-color: variables.$primary-color !important;
+      background-color: variables.$primary-color !important;
+      color: #fff !important;
+    }
+
+    .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
+      background-color: variables.$primary-color !important;
+    }
+
+    .overall { border-radius: 5px 0 0 5px !important; }
+    .mine { border-radius: 0 5px 5px 0 !important; }
+  }
+
+  .credit-balance-filter-bar {
+    display: contents;
+
+    .filter-bar__toolbar {
+      flex: 1 1 320px;
+      min-width: 0;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .filter-bar__controls {
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .filter-bar__applied {
+      flex: 1 1 100%;
+      margin-top: 0;
+    }
+  }
+
+  .credit-balance-organization-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .profile-icon { flex: 0 0 auto; }
+  }
+
+  .credit-balance-placeholder-action {
+    color: #94a3b8;
+    cursor: default;
+    font-size: 1rem;
+  }
+
+  .credit-balance-project-table {
+    width: 100%;
+    max-width: 100%;
+
+    > .ant-table-wrapper > .ant-spin-nested-loading > .ant-spin-container > .ant-table {
+      > .ant-table-container > .ant-table-content > table {
+        > thead > tr > th:last-child,
+        > tbody > tr > td:last-child {
+          text-align: center;
+        }
+      }
+    }
+
+    .ant-table-expanded-row > .ant-table-cell {
+      position: relative;
+      padding: 5px 0px 5px 28px;
+      background: #f3f3f3;
+    }
+
+    .credit-balance-expand-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      margin: 0;
+      border: 0 !important;
+      border-radius: 8px;
+      background: #eaf7ff !important;
+      color: #38bdf8 !important;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: none;
+      transition: background-color 160ms ease, color 160ms ease;
+
+      &:hover {
+        background: #dff3ff !important;
+        color: #0ea5e9 !important;
+      }
+
+      &:focus-visible {
+        outline: 2px solid rgba(56, 189, 248, 0.55);
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  .credit-balance-detail-panel {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    background: transparent;
+    transform-origin: top center;
+    animation: credit-balance-detail-expand 280ms ease-in-out both;
+  }
+
+  .credit-balance-detail-panel--collapsing {
+    pointer-events: none;
+    animation-name: credit-balance-detail-collapse;
+    animation-duration: 220ms;
+  }
+
+  .credit-balance-serial-table {
+    .ant-table {
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .ant-table-container { border-radius: 0; }
+
+    .ant-table-content > table,
+    .ant-table-header > table,
+    .ant-table-body > table {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .ant-table-body {
+      max-height: 250px !important;
+      overflow-y: auto !important;
+    }
+
+    .ant-table-thead > tr > th {
+      padding: 11px 16px;
+      border-bottom: 0;
+      color: variables.$body-text-color !important;
+      overflow: hidden;
+    }
+
+    .ant-table-tbody > tr > td {
+      height: 50px;
+      padding: 11px 16px;
+      background: variables.$white;
+      border-bottom: 1px solid variables.$sep-line-color;
+      vertical-align: middle;
+      overflow: hidden;
+      transition: background-color 160ms ease;
+    }
+
+    .ant-table-tbody > tr:last-child > td { border-bottom: 0; }
+    .ant-table-tbody > tr:hover > td { background: #f8fbff; }
+
+    .credit-balance-organization-cell {
+      gap: 9px;
+
+      .profile-icon {
+        width: 28px;
+        min-width: 28px;
+        height: 28px;
+        margin-right: 0;
+        font-size: 0.75rem;
+        line-height: 28px;
+      }
+    }
+  }
+
+  .credit-balance-serial-scroll {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .credit-balance-serial-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 40px;
+    padding: 8px 18px;
+    border-top: 1px solid variables.$sep-line-color;
+    background: variables.$white;
+    color: variables.$title-text-color;
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .credit-balance-serial-loading {
+    position: absolute;
+    right: 18px;
+    bottom: 50px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(variables.$white, 0.92);
+  }
+
+  .credit-balance-serial-number,
+  .credit-balance-detail-date {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .credit-balance-detail-number {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .credit-balance-detail-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: variables.$title-text-color;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid rgba(56, 189, 248, 0.55);
+      outline-offset: 2px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .credit-balance-toolbar { align-items: stretch; }
+  }
+
+  @media (max-width: 600px) {
+    .credit-balance-toolbar { padding: 16px; }
+    .credit-balance-tabs,
+    .credit-balance-tabs .ant-radio-group { width: 100%; }
+    .credit-balance-tabs .ant-radio-button-wrapper { flex: 1; }
+    .credit-balance-project-table .ant-table-expanded-row > .ant-table-cell {
+      padding: 12px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .credit-balance-detail-panel { animation: none; }
+  }
+}
+
+@keyframes credit-balance-detail-expand {
+  from {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-8px) scaleY(0.98);
+  }
+
+  to {
+    max-height: 640px;
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+@keyframes credit-balance-detail-collapse {
+  from {
+    max-height: 640px;
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+
+  to {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-8px) scaleY(0.98);
+  }
+}
+
+.serial-search-info {
+  &__intro {
+    margin: 0 0 22px;
+    color: #3a3541;
+    font-size: 14px;
+  }
+
+  &__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__card {
+    p {
+      margin: 3px 0 3px 20px;
+      color: #3a3541;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    code {
+      display: inline-block;
+      padding: 2px 6px;
+      border: 1px solid #d0d5dd;
+      border-radius: 4px;
+      background: #fff;
+      color: #2f2f2f;
+      font-family: monospace;
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  &__heading {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #222;
+    font-size: 14px;
+  }
+
+  &__number {
+    color: inherit;
+    font-size: inherit;
+    font-weight: 700;
+
+    &::after {
+      content: ".";
+    }
+  }
+
+  &__example,
+  &__codes,
+  &__prefixes {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 3px 0 0 20px;
+    color: #3a3541;
+    font-size: 14px;
+  }
+
+  &__example span::before {
+    margin-right: 6px;
+    content: "→";
+  }
+
+  &__example span:first-child::before {
+    margin: 0;
+    content: none;
+  }
+
+  &__prefixes {
+    align-items: center;
+    flex-direction: row;
+  }
+}
+
+.popup-RETIREMENT {
+  .credit-action-model .ant-radio-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    gap: 10px 16px;
+
+    .ant-radio-wrapper {
+      align-items: baseline;
+      min-width: 0;
+      margin: 0;
+      color: #475569;
+      line-height: 1.4;
+      white-space: normal;
+
+      > span:last-child { min-width: 0; padding-right: 4px; }
+    }
+  }
+
+  @media (max-width: 420px) {
+    .credit-action-model .ant-radio-group { grid-template-columns: 1fr; }
+  }
+}
+
+// MO/ITMO classifier pill (creditTypePill.tsx) — only ITMO pills with a
+// resolved itmoSerial get this class, signalling the hover/click
+// popover revealing the serial.
+.credit-type-pill--interactive {
+  display: inline-flex;
+  cursor: pointer;
+
+  .ant-tag {
+    transition: opacity 0.15s ease;
+  }
+
+  &:hover .ant-tag,
+  &:focus-visible .ant-tag {
+    opacity: 0.75;
+  }
+}
+
+.credit-type-pill-popover {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  max-width: 260px;
+
+  &__label {
+    color: #3a3541;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  &__serial {
+    font-family: monospace;
+    font-size: 13px;
+    color: #111;
+    word-break: break-all;
+  }
 }

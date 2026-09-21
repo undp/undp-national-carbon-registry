@@ -95,6 +95,12 @@ export class Programme implements EntitySubject {
   @Column({ type: "boolean", nullable: false, default: true })
   article6trade: boolean;
 
+  // Article 6.2 (Dec 2/CMA.3 Annex chapter V para 18): ITMOs authorized
+  // under a cooperative approach must be linked back to that CA so the
+  // initial-report-before-first-authorization guard can fire.
+  @Column({ nullable: true })
+  cooperativeApproachId: string;
+
   @Column({ type: "boolean", nullable: false, default: false })
   article68trade: boolean;
 

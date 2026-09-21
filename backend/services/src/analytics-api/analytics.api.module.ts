@@ -12,6 +12,7 @@ import { Emission } from "@app/shared/entities/emission.entity";
 import { Projection } from "@app/shared/entities/projection.entity";
 import { EventLog } from "@app/shared/entities/event.log.entity";
 import { NationalAccountingController } from "./national-accounting.controller";
+import { NationalAccountingModule } from "./national-accounting/national.accounting.module";
 import { SharedModule } from "@app/shared";
 import { CoreModule } from "@app/core";
 
@@ -30,6 +31,7 @@ import { CoreModule } from "@app/core";
     ]),
     SharedModule,
     CoreModule,
+    NationalAccountingModule,
   ],
   controllers: [ProgrammeController, NationalAccountingController],
   providers: [Logger, AggregateAPIService],

@@ -19,6 +19,7 @@ const ProgrammeManagement = () => {
     ProgrammeManagementSlColumns.authorizationId,
     ProgrammeManagementSlColumns.projectCreatedDate,
     // ProgrammeManagementSlColumns.projectStatus,
+    ProgrammeManagementSlColumns.creditIssued,
     ProgrammeManagementSlColumns.creditBalance,
     ProgrammeManagementSlColumns.purposeOfCreditDevelopment,
     ProgrammeManagementSlColumns.creditRetired,

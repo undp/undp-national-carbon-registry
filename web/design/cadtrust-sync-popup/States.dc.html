@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: #0a6fa8; text-decoration: none; }
+    a:hover { color: #085a88; }
+    .lbl { font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: rgba(58,53,65,.4); margin: 26px 0 12px; }
+    .lbl:first-child { margin-top: 0; }
+    .card { border: 1px solid #ececf0; border-radius: 12px; padding: 13px 15px; }
+    .tile { display: flex; align-items: center; gap: 12px; }
+    .ico { width: 30px; height: 30px; border-radius: 8px; background: #f4f5f7; color: rgba(58,53,65,.7); display: flex; align-items: center; justify-content: center; flex: none; }
+    .nm { font-size: 14px; font-weight: 650; color: #1c1f2b; }
+    .sub { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: rgba(58,53,65,.42); }
+    .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 7px 16px; font-size: 12px; color: rgba(58,53,65,.5); margin-top: 11px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .ok { background: rgba(93,195,128,.14); color: #2f7d4d; }
+    .ok .dot { background: #5dc380; }
+    .stg { background: rgba(22,177,255,.14); color: #0a6fa8; }
+    .stg .dot { background: #16b1ff; }
+    .pnd { background: rgba(58,53,65,.08); color: rgba(58,53,65,.6); }
+    .pnd .dot { background: rgba(58,53,65,.4); }
+    .err { background: rgba(255,77,79,.12); color: #c0362f; }
+    .err .dot { background: #ff4d4f; }
+  </style>
+</helmet>
+
+<div style="background: #eef0f6; padding: 40px; min-height: 100vh;">
+  <div style="max-width: 640px; margin: 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 24px 56px -18px rgba(16,24,40,.30), 0 0 0 1px rgba(16,24,40,.04); padding: 30px 30px 34px;">
+
+    <div style="font-size: 18px; font-weight: 700; color: #101322; letter-spacing: -.01em;">Components &amp; states</div>
+    <div style="font-size: 12.5px; color: rgba(58,53,65,.5); margin-top: 4px;">Every piece of the redesigned popup, in each state.</div>
+
+    <!-- Status banner variants -->
+    <div class="lbl" style="margin-top: 26px;">Status banner</div>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+
+      <div style="position: relative; border-radius: 12px; background: #fafafa; border: 1px solid #f0f0f2; padding: 14px 16px 14px 18px; display: flex; align-items: center; gap: 11px; overflow: hidden;">
+        <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #5dc380;"></div>
+        <span style="width: 9px; height: 9px; border-radius: 50%; background: #5dc380; box-shadow: 0 0 0 4px rgba(93,195,128,.18); flex: none;"></span>
+        <div><div style="font-size: 14.5px; font-weight: 650; color: #101322;">Synced to CAD Trust</div><div style="font-size: 12px; color: rgba(58,53,65,.5); margin-top: 1px;">All records published</div></div>
+      </div>
+
+      <div style="position: relative; border-radius: 12px; background: #fafafa; border: 1px solid #f0f0f2; padding: 14px 16px 14px 18px; display: flex; align-items: center; gap: 11px; overflow: hidden;">
+        <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #16b1ff;"></div>
+        <span style="width: 9px; height: 9px; border-radius: 50%; background: #16b1ff; box-shadow: 0 0 0 4px rgba(22,177,255,.16); flex: none;"></span>
+        <div><div style="font-size: 14.5px; font-weight: 650; color: #101322;">Sync in progress</div><div style="font-size: 12px; color: rgba(58,53,65,.5); margin-top: 1px;">Awaiting the next commit</div></div>
+      </div>
+
+      <div style="position: relative; border-radius: 12px; background: #fef7f7; border: 1px solid #f7e0e0; padding: 14px 16px 14px 18px; display: flex; align-items: center; gap: 11px; overflow: hidden;">
+        <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #ff4d4f;"></div>
+        <span style="width: 9px; height: 9px; border-radius: 50%; background: #ff4d4f; box-shadow: 0 0 0 4px rgba(255,77,79,.16); flex: none;"></span>
+        <div><div style="font-size: 14.5px; font-weight: 650; color: #a5332e;">Sync failed</div><div style="font-size: 12px; color: rgba(165,51,46,.7); margin-top: 1px;">1 record needs attention</div></div>
+      </div>
+    </div>
+
+    <!-- Record card states -->
+    <div class="lbl">Record card</div>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+
+      <div class="card">
+        <div class="tile">
+          <div class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 7v10l8 4 8-4V7l-8-4Z"/><path d="M4 7l8 4 8-4M12 21V11"/></svg></div>
+          <div style="flex: 1; min-width: 0;"><div class="nm">Unit</div><div class="sub">CA0004-VU-CH-356-1-3000-2023</div></div>
+          <span class="pill ok"><span class="dot"></span>Committed</span>
+        </div>
+        <div class="meta"><span class="mono">ID&nbsp; c73a…40bd</span><span>1 attempt</span><span>Updated 12:11</span></div>
+      </div>
+
+      <div class="card">
+        <div class="tile">
+          <div class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><path d="m9 13 2 2 4-4"/></svg></div>
+          <div style="flex: 1; min-width: 0;"><div class="nm">Verification</div><div class="sub">CA0004-VU-VERIFICATION-v1</div></div>
+          <span class="pill stg"><span class="dot"></span>Staged</span>
+        </div>
+        <div class="meta"><span class="mono">ID&nbsp; b1c8…44</span><span>1 attempt</span><span>Updated 12:07</span></div>
+      </div>
+
+      <div class="card">
+        <div class="tile">
+          <div class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5"/><path d="m8.5 13-2 8 5.5-3 5.5 3-2-8"/></svg></div>
+          <div style="flex: 1; min-width: 0;"><div class="nm">Issuance</div><div class="sub">CA0004-VU-VERIFICATION-v1</div></div>
+          <span class="pill pnd"><span class="dot"></span>Pending</span>
+        </div>
+        <div class="meta"><span class="mono">ID&nbsp; &mdash;</span><span>0 attempts</span><span>Queued</span></div>
+      </div>
+
+      <div class="card">
+        <div class="tile">
+          <div class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 7v10l8 4 8-4V7l-8-4Z"/><path d="M4 7l8 4 8-4M12 21V11"/></svg></div>
+          <div style="flex: 1; min-width: 0;"><div class="nm">Unit</div><div class="sub">CA0004-VU-CH-356-1-3000-2023</div></div>
+          <span class="pill err"><span class="dot"></span>Failed</span>
+        </div>
+        <div class="meta"><span class="mono">ID&nbsp; c73a…40bd</span><span>4 attempts</span><span>Updated 12:14</span></div>
+        <div style="margin-top: 10px; display: flex; gap: 9px; background: rgba(255,77,79,.07); border: 1px solid rgba(255,77,79,.16); border-radius: 8px; padding: 10px 12px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#c0362f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex: none; margin-top: 1px;"><path d="M12 9v4M12 17h.01M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+          <div style="font-size: 12px; line-height: 1.5; color: #a5332e;">ValidationError: unitStatusReason must be a string | body={"errors":[{"path":"unitStatusReason","message":"required"}]}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payload row -->
+    <div class="lbl">Payload viewer</div>
+    <div>
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 7px 12px; background: #f4f5f7; border: 1px solid #e7e9ee; border-bottom: none; border-radius: 8px 8px 0 0;">
+        <span style="display: inline-flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 600; color: rgba(58,53,65,.55);">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" transform="rotate(-90 12 12)"/></svg>
+          payload.json
+        </span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: rgba(58,53,65,.4);"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+      </div>
+      <pre style="margin: 0; padding: 12px 14px; background: #fbfbfc; border: 1px solid #e7e9ee; border-radius: 0 0 8px 8px; font: 12px/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: #3a3541; max-height: 200px; overflow: auto; white-space: pre;">{
+  <span style="color:#8a3ffc;">"labelName"</span><span style="color:rgba(58,53,65,.4);">:</span> <span style="color:#1a7f37;">"Article 6 Authorisation"</span><span style="color:rgba(58,53,65,.4);">,</span>
+  <span style="color:#8a3ffc;">"labelType"</span><span style="color:rgba(58,53,65,.4);">:</span> <span style="color:#1a7f37;">"Article 6 - Authorisation"</span>
+}</pre>
+    </div>
+
+    <!-- Empty state -->
+    <div class="lbl">Empty state</div>
+    <div style="border: 1px dashed #e2e2e6; border-radius: 12px; padding: 34px 20px; text-align: center;">
+      <div style="width: 40px; height: 40px; border-radius: 11px; background: #f4f5f7; color: rgba(58,53,65,.4); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.4 4 5.8 4 9s-1.4 6.6-4 9c-2.6-2.4-4-5.8-4-9s1.4-6.6 4-9Z"/></svg>
+      </div>
+      <div style="font-size: 13.5px; font-weight: 600; color: #1c1f2b;">Not synced to CAD Trust yet</div>
+      <div style="font-size: 12px; color: rgba(58,53,65,.5); margin-top: 4px;">Records appear here once this project has been sent to the node.</div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

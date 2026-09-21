@@ -54,6 +54,9 @@ import { AsyncActionType } from "../enum/async.action.type.enum";
 import { ProgrammeAcceptedDto } from "../dto/programme.accepted.dto";
 import { CountryService } from "../util/country.service";
 import { Programme } from "../entities/programme.entity";
+import { InitialReportService } from "../initial-report/initial-report.service";
+import { CooperativeApproach } from "../entities/cooperative.approach.entity";
+import { CooperativeApproachStatus } from "../enum/cooperative.approach.status.enum";
 import { ConstantEntity } from "../entities/constants.entity";
 import { CounterType } from "../util/counter.type.enum";
 import { DataListResponseDto } from "../dto/data.list.response";
@@ -78,6 +81,7 @@ import { InvestmentRequestDto } from "../dto/investment.request.dto";
 import { InvestmentView } from "../view-entities/investment.view.entity";
 import { DocType } from "../enum/document.type";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
+import { resolveStoredFile } from "../file-handler/storage-key";
 import { ProgrammeDocument } from "../entities/programme.document";
 import { NDCAction } from "../entities/ndc.action.entity";
 import { NDCActionType } from "../enum/ndc.action.enum";
@@ -193,7 +197,15 @@ export class ProgrammeService {
     private regionRepo: Repository<Region>,
     @InjectRepository(EventLog) private eventLogRepo: Repository<EventLog>,
     @InjectRepository(CreditAuditLog)
-    private creditAuditLogRepo: Repository<CreditAuditLog>
+    private creditAuditLogRepo: Repository<CreditAuditLog>,
+    // Dec 2/CMA.3 Annex chapter V para 18 guard: read-side access to
+    // InitialReport so we can refuse authorizeProgramme for an Article
+    // 6.2 programme whose cooperative approach has no submitted IR.
+    private readonly initialReportService: InitialReportService,
+    // Draft -/CMA.5 paras 20-21 guard: refuse authorizeProgramme when
+    // the linked cooperative approach has been revoked.
+    @InjectRepository(CooperativeApproach)
+    private cooperativeApproachRepo: Repository<CooperativeApproach>
   ) {}
 
   private fileExtensionMap = new Map([
@@ -5003,7 +5015,7 @@ export class ProgrammeService {
       .getMany();
 
     if (resp.length > 0) {
-      const prepData = this.prepareProgrammeDataForExport(resp);
+      const prepData = await this.prepareProgrammeDataForExport(resp);
 
       let headers: string[] = [];
       const titleKeys = Object.keys(prepData[0]);
@@ -5036,7 +5048,7 @@ export class ProgrammeService {
     );
   }
 
-  private prepareProgrammeDataForExport(programmes: any) {
+  private async prepareProgrammeDataForExport(programmes: any) {
     const exportData: DataExportProgrammeDto[] = [];
 
     for (const programme of programmes) {
@@ -5054,9 +5066,15 @@ export class ProgrammeService {
         .join(", ");
 
       const programmeDocuments: ProgrammeDocument[] = programme.documents;
-      const concatenatedDocumentUrls = programmeDocuments
-        .map((document) => document.url)
-        .join(", ");
+      // Written into a CSV server-side, so it never passes through the response
+      // interceptor that resolves storage keys for HTTP payloads.
+      const concatenatedDocumentUrls = (
+        await Promise.all(
+          programmeDocuments.map((document) =>
+            resolveStoredFile(this.fileHandler, document.url)
+          )
+        )
+      ).join(", ");
 
       const programmeSectoralScopeKey = Object.keys(SectoralScopeDef).find(
         (key) => SectoralScopeDef[key] === programme.sectoralScope
@@ -5174,6 +5192,8 @@ export class ProgrammeService {
             : "NULLS LAST"
           : undefined
       )
+      .addOrderBy('"programme"."createdTime"', "DESC")
+      .addOrderBy('"programme"."programmeId"', "DESC")
       .offset(skip)
       .limit(query.size)
       .getManyAndCount();
@@ -5813,6 +5833,21 @@ export class ProgrammeService {
       );
     }
 
+    // Dec 2/CMA.3 Annex chapter V para 18: Article 6.2 ITMO issuance is
+    // only permitted under a live cooperative approach linkage. The
+    // symmetric guard on /authorize (see authorizeProgramme below) fires
+    // at the moment of authorization; this guard repeats the same check
+    // on /issue so a programme whose CA link was dropped after
+    // authorization cannot mint fresh credits. Mirrors the guard at
+    // programme.service.ts authorizeProgramme so the message cites the
+    // same clause.
+    if (program.article6trade && !program.cooperativeApproachId) {
+      throw new HttpException(
+        "Article 6.2 programmes must be linked to a cooperative approach before credit issuance (Dec 2/CMA.3 Annex para 18).",
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
     let verfiedMitigationMap = {};
     let totalCreditIssuance = 0;
     let countedActions = [];
@@ -6387,6 +6422,78 @@ export class ProgrammeService {
         ),
         HttpStatus.BAD_REQUEST
       );
+    }
+
+    // Dec 2/CMA.3 Annex chapter V para 18: "A participating Party shall
+    // submit an initial report describing how its participation meets
+    // the participation responsibilities in paragraphs 3-5 ... prior to
+    // the first transfer of ITMOs" — operationalised here as "prior to
+    // the first authorization of ITMOs under the cooperative approach."
+    //
+    // The guard fires only for Article 6.2 programmes (article6trade).
+    // A Party that attempts to authorize before a Submitted IR exists
+    // for the linked cooperative approach receives HTTP 400 with a
+    // message explicitly citing para 18.
+    if (program.article6trade) {
+      if (!program.cooperativeApproachId) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "programme.article6CaRequiredForAuth",
+            [program.programmeId]
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      // Draft -/CMA.5 paras 20-21: a revoked cooperative approach
+      // cannot be the source of new first transfers or authorizations.
+      // Completed approaches are also terminal and should not mint new
+      // ITMOs; only Active (post-Draft) approaches can authorize.
+      const ca = await this.cooperativeApproachRepo.findOne({
+        where: { cooperativeApproachId: program.cooperativeApproachId },
+      });
+      if (!ca) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "programme.caNotFoundForAuth",
+            [program.cooperativeApproachId]
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      if (ca.status === CooperativeApproachStatus.SUSPENDED) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "programme.caSuspendedBlocksAuth",
+            [program.cooperativeApproachId]
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      if (ca.status === CooperativeApproachStatus.REVOKED) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "programme.caRevokedBlocksAuth",
+            [program.cooperativeApproachId]
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
+      const hasSubmittedIr = await this.initialReportService.hasSubmittedReport(
+        program.cooperativeApproachId
+      );
+      if (!hasSubmittedIr) {
+        throw new HttpException(
+          this.helperService.formatReqMessagesString(
+            "programme.noSubmittedIrForCaAuth",
+            [
+              program.cooperativeApproachId,
+              ca.title ?? "",
+              program.cooperativeApproachId,
+            ]
+          ),
+          HttpStatus.BAD_REQUEST
+        );
+      }
     }
 
     if (user.companyRole === CompanyRole.MINISTRY) {

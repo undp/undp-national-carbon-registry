@@ -41,4 +41,6 @@ export enum TxType {
   APPROVE_VERIFICATION = "39",
   CREDIT_BLOCK_SPLIT = "40",
   RETIRE_REQ = "41",
+  ITMO_AUTH_REQ = "42",
+  ITMO_AUTH = "43",
 }

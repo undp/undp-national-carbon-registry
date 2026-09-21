@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { ProjectProposalStage } from "../enum/projectProposalStage.enum";
 import { TxType } from "../enum/txtype.enum";
+import { AuthorizationPurpose } from "../enum/authorization.purpose.enum";
 import { NumberTransformer } from "../functions/number.transformer.decorator";
 import { ActivityEntity } from "./activity.entity";
 
@@ -86,4 +87,18 @@ export class ProjectEntity {
 
   @Column({ default: 0 })
   creditChange: number;
+
+  @Column({ nullable: true })
+  cooperativeApproachId: string;
+
+  @Column({
+    type: "enum",
+    enum: AuthorizationPurpose,
+    array: false,
+    nullable: true,
+  })
+  authorizationPurpose: AuthorizationPurpose;
+
+  @Column({ nullable: true })
+  acquiringPartyCountryCode: string;
 }

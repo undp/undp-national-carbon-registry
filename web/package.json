@@ -1,7 +1,7 @@
 {
   "name": "web",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite --port 3030",
@@ -30,6 +30,7 @@
     "buffer": "^6.0.3",
     "class-transformer": "^0.5.1",
     "cross-env": "^7.0.3",
+    "elkjs": "^0.11.1",
     "env-cmd": "^10.1.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^12.12.1",
@@ -52,6 +53,7 @@
     "react-mapbox-gl": "^5.1.1",
     "react-phone-number-input": "^3.3.3",
     "react-router-dom": "^6.4.3",
+    "reactflow": "^11.11.4",
     "sha1": "^1.1.1",
     "styled-components": "^5.3.6",
     "typescript": "^5.8.3",
@@ -76,5 +78,6 @@
     "typescript-eslint": "^8.24.1",
     "vite": "^6.2.0",
     "vite-plugin-svgr": "4.2.0"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

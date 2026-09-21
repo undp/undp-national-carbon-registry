@@ -10,6 +10,7 @@ import { ViewColumn, ViewEntity } from "typeorm";
       p."createTime" as "createdTime",
       p."creditBalance",
       p."creditRetired",
+      p."creditIssued",
       p."sector",
       p."sectoralScope",
       p."authorizationId",
@@ -43,6 +44,9 @@ export class ProjectViewEntity {
 
   @ViewColumn()
   creditRetired: number;
+
+  @ViewColumn()
+  creditIssued: number;
 
   @ViewColumn()
   sector: string;

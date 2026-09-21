@@ -1,4 +1,5 @@
 export enum AefReportTypeEnum {
   HOLDINGS = "HOLDINGS",
   ACTIONS = "ACTIONS",
+  ANNUAL_INFORMATION = "ANNUAL_INFORMATION",
 }

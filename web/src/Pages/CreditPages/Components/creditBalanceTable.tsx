@@ -26,6 +26,11 @@ import "../creditPageStyles.scss";
 import { IssuedOrReceivedOptions } from "../Enums/creditEventEnum";
 import { CreditActionType } from "../Enums/creditActionType.enum";
 import { CreditActionModal } from "./creditActionModal";
+import {
+  ItmoAuthRequestModal,
+  ItmoAuthRequestModalFinishPayload,
+} from "./itmoAuthRequestModal";
+import { ProjectDetailsLink } from "../../../Components/ProjectDetailsLink/projectDetailsLink";
 import { CompanyRole } from "../../../Definitions/Enums/company.role.enum";
 import { HttpStatusCode } from "axios";
 import { ActionResponseModal } from "../../../Components/Models/actionResponseModal";
@@ -62,7 +67,7 @@ export const getIssuedReceivedTagColor = (status: IssuedOrReceivedOptions) => {
 };
 
 export const CreditBalanceTableComponent = (props: any) => {
-  const { t } = props;
+  const { t, accountTypeFilter } = props;
 
   const { post } = useConnection();
   const { userInfoState } = useUserContext();
@@ -103,6 +108,14 @@ export const CreditBalanceTableComponent = (props: any) => {
     title: string;
     buttonText: string;
   }>();
+  const [itmoModalVisible, setItmoModalVisible] = useState<boolean>(false);
+  const [itmoModalLoading, setItmoModalLoading] = useState<boolean>(false);
+  const [itmoModalData, setItmoModalData] = useState<{
+    icon: any;
+    title: string;
+    actionBtnText: string;
+    data: CreditBalanceInterface;
+  }>();
   const getQueryData = async () => {
     setLoading(true);
 
@@ -114,6 +127,14 @@ export const CreditBalanceTableComponent = (props: any) => {
         key: "type",
         operation: "in",
         value: checkBoxOptions,
+      });
+    }
+
+    if (accountTypeFilter && accountTypeFilter !== "all") {
+      filterAnd.push({
+        key: "accountType",
+        operation: "=",
+        value: accountTypeFilter,
       });
     }
 
@@ -181,28 +202,35 @@ export const CreditBalanceTableComponent = (props: any) => {
         className="action-menu"
         size="small"
         dataSource={[
-          {
-            text: t("transfer"),
-            icon: (
-              <Icon.ArrowLeftRight color={COLOR_CONFIGS.PRIMARY_THEME_COLOR} />
-            ),
-            click: () => {
-              setModalActionData({
-                icon: (
-                  <Icon.BoxArrowRight
-                    color={COLOR_CONFIGS.PRIMARY_THEME_COLOR}
-                  />
-                ),
-                title: t("tranferCredit"),
-                type: CreditActionType.TRANSFER,
-                actionBtnText: t("transfer"),
-                remarkRequired: false,
-                proceedAction: CreditRetirementProceedAction.ACCEPT,
-                data: record,
-              });
-              setModalActionVisible(true);
-            },
-          },
+          // MO blocks only — ITMO blocks cannot be transferred.
+          ...(!record.itmoAuthorizationRecord
+            ? [
+                {
+                  text: t("transfer"),
+                  icon: (
+                    <Icon.ArrowLeftRight
+                      color={COLOR_CONFIGS.PRIMARY_THEME_COLOR}
+                    />
+                  ),
+                  click: () => {
+                    setModalActionData({
+                      icon: (
+                        <Icon.BoxArrowRight
+                          color={COLOR_CONFIGS.PRIMARY_THEME_COLOR}
+                        />
+                      ),
+                      title: t("tranferCredit"),
+                      type: CreditActionType.TRANSFER,
+                      actionBtnText: t("transfer"),
+                      remarkRequired: false,
+                      proceedAction: CreditRetirementProceedAction.ACCEPT,
+                      data: record,
+                    });
+                    setModalActionVisible(true);
+                  },
+                },
+              ]
+            : []),
           {
             text: t("retire"),
             icon: <Icon.ClockHistory color="#FF4D4F" />,
@@ -223,6 +251,29 @@ export const CreditBalanceTableComponent = (props: any) => {
               setModalActionVisible(true);
             },
           },
+          // MO blocks only — an already ITMO-authorized block cannot be
+          // re-authorized.
+          ...(!record.itmoAuthorizationRecord
+            ? [
+                {
+                  text: t("itmoAuthorization"),
+                  icon: <Icon.GlobeAmericas color={COLOR_CONFIGS.PRIMARY_THEME_COLOR} />,
+                  click: () => {
+                    setItmoModalData({
+                      icon: (
+                        <Icon.GlobeAmericas
+                          color={COLOR_CONFIGS.PRIMARY_THEME_COLOR}
+                        />
+                      ),
+                      title: t("requestItmoAuthorization"),
+                      actionBtnText: t("submit"),
+                      data: record,
+                    });
+                    setItmoModalVisible(true);
+                  },
+                },
+              ]
+            : []),
         ]}
         renderItem={(item: any) => (
           <List.Item onClick={item.click}>
@@ -262,7 +313,12 @@ export const CreditBalanceTableComponent = (props: any) => {
       sorter: true,
       align: "left" as const,
       render: (record: CreditBalanceInterface) => {
-        return <span>{record?.projectName}</span>;
+        return (
+          <ProjectDetailsLink
+            projectId={record.projectId}
+            projectName={record.projectName}
+          />
+        );
       },
     },
     {
@@ -401,14 +457,20 @@ export const CreditBalanceTableComponent = (props: any) => {
 
   useEffect(() => {
     getQueryData();
-    isInitialRender.current = true;
   }, []);
 
   useEffect(() => {
     if (isInitialRender.current) {
       getQueryData();
     }
-  }, [currentPage, pageSize, modalActionVisible, modalResponseVisible]);
+  }, [
+    currentPage,
+    pageSize,
+    modalActionVisible,
+    modalResponseVisible,
+    itmoModalVisible,
+    accountTypeFilter,
+  ]);
 
   useEffect(() => {
     if (isInitialRender.current) {
@@ -419,6 +481,16 @@ export const CreditBalanceTableComponent = (props: any) => {
       }
     }
   }, [sortField, sortOrder, search, checkBoxOptions]);
+
+  // Declared last so it runs after the two effects above on the initial
+  // mount pass (effects fire in declaration order within the same commit) —
+  // flipping this here, rather than inside the first effect, is what keeps
+  // their `isInitialRender.current` check false during that mount pass, so
+  // they don't also redundantly re-fetch alongside the unconditional mount
+  // fetch above.
+  useEffect(() => {
+    isInitialRender.current = true;
+  }, []);
 
   const onFinishAction = async (
     reciveParty: any,
@@ -442,14 +514,9 @@ export const CreditBalanceTableComponent = (props: any) => {
         response = await post(API_PATHS.CREDIT_RETIREMENT_REQUEST, {
           blockId: blockId,
           remarks: remark,
-          retirementType: retirementType,
-          ...(retirementType ===
-          CreditRetirementTypeEmnum.CROSS_BORDER_TRANSACTIONS
-            ? {
-                country: reciveParty.country,
-                organizationName: reciveParty.organization?.trim(),
-              }
-            : {}),
+          subType: retirementType,
+          country: reciveParty?.country,
+          authorizedEntityId: reciveParty?.authorizedEntityId,
           amount: Number(creditAmount),
         });
       }
@@ -496,6 +563,50 @@ export const CreditBalanceTableComponent = (props: any) => {
       setModalResponseVisible(true);
       setModalActionLoading(false);
       setModalActionVisible(false);
+    }
+  };
+
+  const onFinishItmoAuthRequest = async (
+    payload: ItmoAuthRequestModalFinishPayload
+  ) => {
+    try {
+      setItmoModalLoading(true);
+      const response: any = await post(API_PATHS.ITMO_AUTH_REQUEST, payload);
+      if (response.status === HttpStatusCode.Created) {
+        setModalResponseData({
+          type: ActionResponseType.SUCCESS,
+          icon: (
+            <Icon.CheckCircle color={COLOR_CONFIGS.SUCCESS_RESPONSE_COLOR} />
+          ),
+          title: t("itmoAuthorizationRequestSubmitted"),
+          buttonText: t("okay"),
+        });
+      } else {
+        setModalResponseData({
+          type: ActionResponseType.FAILED,
+          icon: (
+            <ExclamationCircleOutlined
+              color={COLOR_CONFIGS.FAILED_RESPONSE_COLOR}
+            />
+          ),
+          title: t("itmoAuthorizationRequestSubmittedFailed"),
+          buttonText: t("okay"),
+        });
+      }
+    } catch (error: any) {
+      message.error(error.message || t("somethingWentWrong"));
+      setModalResponseData({
+        type: ActionResponseType.FAILED,
+        icon: (
+          <Icon.ExclamationCircle color={COLOR_CONFIGS.FAILED_RESPONSE_COLOR} />
+        ),
+        title: t("somethingWentWrong"),
+        buttonText: t("okay"),
+      });
+    } finally {
+      setModalResponseVisible(true);
+      setItmoModalLoading(false);
+      setItmoModalVisible(false);
     }
   };
 
@@ -564,7 +675,7 @@ export const CreditBalanceTableComponent = (props: any) => {
                 showSizeChanger: true,
                 onChange: onPaginationChange,
               }}
-              // eslint-disable-next-line no-unused-vars
+               
               onChange={onHandleTableChange}
               locale={{
                 emptyText: (
@@ -592,6 +703,17 @@ export const CreditBalanceTableComponent = (props: any) => {
         remarkRequired={modalActionData?.remarkRequired}
         proceedAction={modalActionData?.proceedAction}
         data={modalActionData?.data}
+      />
+      <ItmoAuthRequestModal
+        onFinish={onFinishItmoAuthRequest}
+        onCancel={() => setItmoModalVisible(false)}
+        t={t}
+        actionBtnText={itmoModalData?.actionBtnText}
+        openModal={itmoModalVisible}
+        loading={itmoModalLoading}
+        icon={itmoModalData?.icon}
+        title={itmoModalData?.title}
+        data={itmoModalData?.data}
       />
       <ActionResponseModal
         type={modalResponseData?.type}

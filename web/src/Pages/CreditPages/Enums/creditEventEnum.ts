@@ -22,3 +22,8 @@ export enum IssuedOrReceivedOptions {
   ISSUED = 'issued',
   RECEIVED = 'received',
 }
+
+export enum CreditBlockStatus {
+  RETIRED = 'Retired',
+  ASSIGNED = 'Assigned',
+}

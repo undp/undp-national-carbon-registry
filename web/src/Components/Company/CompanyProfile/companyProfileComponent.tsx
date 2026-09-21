@@ -17,6 +17,7 @@ import './companyProfileComponent.scss';
 import * as Icon from 'react-bootstrap-icons';
 import { OrganisationStatus } from '../../OrganisationStatus/organisationStatus';
 import { CompanyDetailsComponent } from '../CompanyDetails/companyDetailsComponent';
+import { OrganizationTransactionsTable } from './organizationTransactionsTable';
 import { useConnection } from '../../../Context/ConnectionContext/connectionContext';
 import {
   CarbonNeutralConfirmationModelSl,
@@ -27,6 +28,23 @@ import { useUserContext } from '../../../Context/UserInformationContext/userInfo
 import { CompanyRole } from '../../../Definitions/Enums/company.role.enum';
 import { Role } from '../../../Definitions/Enums/role.enum';
 import { API_PATHS } from '../../../Config/apiConfig';
+import { addCommSep } from '../../../Definitions/Definitions/programme.definitions';
+
+// '-' when the figure itself is missing (matches every other field in this card).
+const formatCreditFigure = (value: number | undefined | null): string =>
+  value !== undefined && value !== null ? addCommSep(value) : '-';
+
+// MO is derived client-side as total - ITMO (API returns the grand total plus
+// the ITMO-only subset), same convention as the Credits -> Balance tables
+// (see creditBalanceByOrganizationTable.tsx). '-' if either input is missing,
+// rather than rendering NaN.
+const formatMoCreditFigure = (
+  total: number | undefined | null,
+  itmo: number | undefined | null
+): string =>
+  total !== undefined && total !== null && itmo !== undefined && itmo !== null
+    ? addCommSep(total - itmo)
+    : '-';
 
 export const CompanyProfileComponent = (props: any) => {
   const {
@@ -457,8 +475,8 @@ export const CompanyProfileComponent = (props: any) => {
       )}
       {companyDetails && (
         <div className="content-body">
-          <Row gutter={16}>
-            <Col md={24} lg={10}>
+          <Row gutter={16} align="stretch">
+            <Col md={24} lg={10} className="profile-left-col">
               <Card className="card-container">
                 <Skeleton loading={isLoading} active>
                   <Row justify="center">
@@ -474,6 +492,94 @@ export const CompanyProfileComponent = (props: any) => {
                     ></OrganisationStatus>
                   </Row>
                 </Skeleton>
+              </Card>
+              <Card className="card-container credit-summary-container">
+                <div className="info-view">
+                  <div className="title">
+                    <span className="title-icon">
+                      <Icon.ClipboardData />
+                    </span>
+                    <span className="title-text">{t('companyProfile:creditSummary')}</span>
+                  </div>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('companyProfile:creditsIssued')}
+                    </Col>
+                    <Col span={12} className="field-value credit-issued">
+                      {companyDetails.creditIssued !== undefined &&
+                      companyDetails.creditIssued !== null
+                        ? addCommSep(companyDetails.creditIssued)
+                        : '-'}
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('companyProfile:creditsReceived')}
+                    </Col>
+                    <Col span={12} className="field-value credit-received">
+                      {companyDetails.creditReceived !== undefined &&
+                      companyDetails.creditReceived !== null
+                        ? addCommSep(companyDetails.creditReceived)
+                        : '-'}
+                    </Col>
+                  </Row>
+                  <div className="credit-summary-divider" />
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('companyProfile:creditsRetired')}
+                    </Col>
+                    <Col span={12} className="field-value credit-retired">
+                      {companyDetails.creditRetired !== undefined &&
+                      companyDetails.creditRetired !== null
+                        ? addCommSep(companyDetails.creditRetired)
+                        : '-'}
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('companyProfile:creditsTransferred')}
+                    </Col>
+                    <Col span={12} className="field-value credit-transferred">
+                      {companyDetails.creditTransferred !== undefined &&
+                      companyDetails.creditTransferred !== null
+                        ? addCommSep(companyDetails.creditTransferred)
+                        : '-'}
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('companyProfile:moReserved')}
+                    </Col>
+                    <Col span={12} className="field-value credit-reserved">
+                      {formatMoCreditFigure(companyDetails.creditReserved, companyDetails.itmoReservedCredits)}
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('companyProfile:itmoReserved')}
+                    </Col>
+                    <Col span={12} className="field-value credit-reserved">
+                      {formatCreditFigure(companyDetails.itmoReservedCredits)}
+                    </Col>
+                  </Row>
+                  <div className="credit-summary-divider" />
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('companyProfile:moBalance')}
+                    </Col>
+                    <Col span={12} className="field-value credit-balance">
+                      {formatMoCreditFigure(companyDetails.creditBalance, companyDetails.itmoBalance)}
+                    </Col>
+                  </Row>
+                  <Row className="field">
+                    <Col span={12} className="field-key">
+                      {t('companyProfile:itmoBalance')}
+                    </Col>
+                    <Col span={12} className="field-value credit-balance">
+                      {formatCreditFigure(companyDetails.itmoBalance)}
+                    </Col>
+                  </Row>
+                </div>
               </Card>
               {carbonNeutralCertificateData?.length > 0 && (
                 <Card className="card-container cnc-container">
@@ -603,7 +709,7 @@ export const CompanyProfileComponent = (props: any) => {
                 </Card>
               )}
             </Col>
-            <Col md={24} lg={14}>
+            <Col md={24} lg={14} className="profile-right-col">
               <CompanyDetailsComponent
                 t={t}
                 companyDetails={companyDetails}
@@ -650,6 +756,18 @@ export const CompanyProfileComponent = (props: any) => {
               )}
             </Col>
           </Row>
+          {/* Transactions table: DNA may view any organisation; a Project
+              Developer only their own. The credit summary card above stays
+              visible to everyone. */}
+          {(userInfoState?.companyRole === CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
+            (userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER &&
+              Number(userInfoState?.companyId) === Number(companyDetails?.companyId))) && (
+            <Row gutter={16}>
+              <Col span={24}>
+                <OrganizationTransactionsTable t={t} companyId={companyDetails?.companyId} />
+              </Col>
+            </Row>
+          )}
         </div>
       )}
 

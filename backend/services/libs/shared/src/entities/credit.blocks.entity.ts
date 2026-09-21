@@ -1,6 +1,8 @@
 import { BeforeInsert, Column, Entity, PrimaryColumn } from "typeorm";
 import { TxType } from "../enum/txtype.enum";
+import { AccountType } from "../enum/account.type.enum";
 import { CreditTransactionLedgerRecordDto } from "../dto/credit.transaction.ledger.record.dto";
+import { NumberTransformer } from "../functions/number.transformer.decorator";
 
 @Entity()
 export class CreditBlocksEntity {
@@ -20,7 +22,11 @@ export class CreditBlocksEntity {
   })
   txType: TxType;
 
-  @Column({ type: "bigint" })
+  // bigint columns come back from pg as strings; NumberTransformer coerces on read so downstream
+  // `new Date(txTime)` / arithmetic sees a real number. Matches projects.entity.ts and
+  // cadtrust.sync.record.entity.ts. Not applied to ownerCompanyId / previousOwnerCompanyId below:
+  // those only feed TypeORM `where` clauses, which pg casts fine, so there is no bug to fix there.
+  @Column({ type: "bigint", transformer: NumberTransformer })
   txTime: number;
 
   @Column("jsonb", { array: false, default: [] })
@@ -38,6 +44,14 @@ export class CreditBlocksEntity {
   @Column({ type: "text" })
   serialNumber: string;
 
+  // Dec 6/CMA.4 Annex I para 5: each ITMO must have a unique
+  // 5-component identifier (originating Party / ITMO type / vintage /
+  // mitigation activity / unique sequence). Immutable per Draft -/CMA.5
+  // para 132 — split-not-mutate preserves it. Nullable so legacy blocks
+  // issued prior to this column landing don't block migration.
+  @Column({ type: "text", nullable: true })
+  itmoSerial?: string;
+
   @Column({ type: "text" })
   vintage: string;
 
@@ -50,8 +64,23 @@ export class CreditBlocksEntity {
   @Column({ default: 0 })
   reservedCreditAmount?: number;
 
-  @Column({ type: "bigint" })
+  @Column({ type: "bigint", transformer: NumberTransformer })
   createTime: number;
+
+  @Column({
+    type: "enum",
+    enum: AccountType,
+    array: false,
+    default: AccountType.HOLDING,
+  })
+  accountType: AccountType;
+
+  // Id of the ITMO_AUTHORIZED CreditTransactionsEntity record that
+  // authorized this block. Null ⇒ the block is a plain mitigation
+  // outcome (MO); non-null ⇒ the block is an ITMO. Splits of an ITMO
+  // block inherit this so authorized credits never lose that status.
+  @Column({ type: "text", nullable: true })
+  itmoAuthorizationRecord?: string;
 
   @BeforeInsert()
   async timestampAtInsert() {

@@ -23,7 +23,7 @@ export const CompanyDetailsComponent = (props: any) => {
   };
 
   return (
-    <Card className="card-container">
+    <Card className="card-container organisation-details-container">
       <div className="info-view">
         <div className="title">
           <span className="title-icon">
@@ -182,21 +182,6 @@ export const CompanyDetailsComponent = (props: any) => {
               </Col>
               <Col span={12} className="field-value">
                 {companyDetails.programmeCount ? companyDetails.programmeCount : '-'}
-              </Col>
-            </Row>
-          )}
-
-          {![
-            CompanyRole.CERTIFIER,
-            CompanyRole.CLIMATE_FUND,
-            CompanyRole.EXECUTIVE_COMMITTEE,
-          ].includes(companyDetails?.companyRole) && (
-            <Row className="field">
-              <Col span={12} className="field-key">
-                {t('companyDetails:creditBalance')}
-              </Col>
-              <Col span={12} className="field-value">
-                {companyDetails.creditBalance ? addCommSep(companyDetails.creditBalance) : '-'}
               </Col>
             </Row>
           )}

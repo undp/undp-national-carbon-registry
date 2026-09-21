@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { HelperService } from "../util/helpers.service";
 import { CreditBlocksEntity } from "../entities/credit.blocks.entity";
 import { TxType } from "../enum/txtype.enum";
+import { AccountType } from "../enum/account.type.enum";
 import { User } from "../entities/user.entity";
 import { SerialNumberManagementService } from "../serial-number-management/serial-number-management.service";
 import { plainToClass } from "class-transformer";
@@ -92,6 +93,9 @@ export class CreditBlocksManagementService {
             ownerCompanyId: toCompanyId,
             projectRefId: creditBlock.projectRefId,
             serialNumber: secondSerialNumber,
+            // Transfers are MO-only (ITMO blocks reject transfers), so
+            // there is never an itmoSerial to propagate here.
+            itmoAuthorizationRecord: creditBlock.itmoAuthorizationRecord,
             vintage: creditBlock.vintage,
             creditAmount: transferredCreditAmountFromBlock,
             reservedCreditAmount: 0,
@@ -158,6 +162,9 @@ export class CreditBlocksManagementService {
             ownerCompanyId: toCompanyId,
             projectRefId: creditBlock.projectRefId,
             serialNumber: secondSerialNumber,
+            // Transfers are MO-only (ITMO blocks reject transfers), so
+            // there is never an itmoSerial to propagate here.
+            itmoAuthorizationRecord: creditBlock.itmoAuthorizationRecord,
             vintage: creditBlock.vintage,
             creditAmount: transferredCreditAmountFromBlock,
             reservedCreditAmount: 0,
@@ -198,6 +205,7 @@ export class CreditBlocksManagementService {
       );
     const creditBlockId =
       this.serialNumberManagementService.getCreditBlockId(serialNumber);
+
     const newBlock = plainToClass(CreditBlocksEntity, {
       creditBlockId: creditBlockId,
       txRef: this.getCreditBlockTxRef(
@@ -212,11 +220,15 @@ export class CreditBlocksManagementService {
       ownerCompanyId: project.companyId,
       projectRefId: project.refId,
       serialNumber: serialNumber,
+      // itmoSerial is only assigned at ITMO authorization approval
+      // (see ProgrammeLedgerService.itmoAuthRequestAction) — a newly
+      // issued block is always a mitigation outcome (MO), never ITMO.
       vintage: vintage,
       creditAmount: creditAmount,
       reservedCreditAmount: 0,
       transactionRecords: [],
       isNotTransferred: true,
+      accountType: AccountType.HOLDING,
     });
     return newBlock;
   }
@@ -232,4 +244,5 @@ export class CreditBlocksManagementService {
       data ? `#${data}` : ``
     }`;
   }
+
 }

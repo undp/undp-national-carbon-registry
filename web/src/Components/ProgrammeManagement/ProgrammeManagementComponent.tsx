@@ -31,6 +31,7 @@ import {
   getProjectProposalStageEnumVal,
 } from "../../Definitions/Definitions/programme.definitions";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import { TimedPageInfoTitle } from "../Common/TimedPageInfoTitle/TimedPageInfoTitle";
 import { ProgrammeManagementSlColumns } from "../../Definitions/Enums/programme.management.sl.columns.enum";
 import {
   PlusOutlined,
@@ -50,6 +51,8 @@ import { ProfileIcon } from "../IconComponents/ProfileIcon/profile.icon";
 import { CreditTypeSl } from "../../Definitions/Enums/creditTypeSl.enum";
 import { Role } from "../../Definitions/Enums/role.enum";
 import { API_PATHS } from "../../Config/apiConfig";
+import { CadTrustSyncBadge } from "../CadTrust/CadTrustSyncBadge";
+import { CadTrustSyncStatusSummary } from "../CadTrust/cadTrustSync.types";
 import { APPLICATION_STAGE } from "../../Definitions/Constants/ApplicationStage";
 import { downloadCSV } from "../../Utils/downloadCSV";
 import { deepCopy } from "../../Utils/deepCopy";
@@ -68,6 +71,9 @@ export const ProgrammeManagementComponent = (props: any) => {
   } = props;
 
   const { get, delete: del, post } = useConnection();
+  const [cadtStatus, setCadtStatus] = useState<
+    Record<string, CadTrustSyncStatusSummary>
+  >({});
   const [totalProgramme, setTotalProgramme] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
   const [tableData, setTableData] = useState<UserTableDataType[]>([]);
@@ -188,8 +194,20 @@ export const ProgrammeManagementComponent = (props: any) => {
       key: ProgrammeManagementSlColumns.title,
       sorter: true,
       align: "left" as const,
-      render: (item: any) => {
-        return <span className="clickable">{item}</span>;
+      width: 180,
+      fixed: "left" as const,
+      render: (item: any, record: any) => {
+        return (
+          <span className="clickable">
+            {item}
+            <CadTrustSyncBadge
+              scope="project"
+              refId={record?.refId}
+              title={record?.title}
+              status={cadtStatus[record?.refId]?.overallStatus}
+            />
+          </span>
+        );
       },
       onCell: (record: any, rowIndex: any) => {
         return {
@@ -204,6 +222,7 @@ export const ProgrammeManagementComponent = (props: any) => {
       dataIndex: "company",
       key: ProgrammeManagementSlColumns.company,
       align: "left" as const,
+      width: 130,
       render: (item: any) => {
         const elements = (
           <Tooltip title={item.name} color={TooltipColor} key={TooltipColor}>
@@ -235,6 +254,7 @@ export const ProgrammeManagementComponent = (props: any) => {
       key: ProgrammeManagementSlColumns.sector,
       sorter: true,
       align: "center" as const,
+      width: 130,
       render: (item: any) => {
         return <>{t(`projectList:${item}`)}</>;
       },
@@ -245,6 +265,7 @@ export const ProgrammeManagementComponent = (props: any) => {
       key: ProgrammeManagementSlColumns.sectoralScope,
       sorter: true,
       align: "center" as const,
+      width: 220,
       render: (item: any) => {
         return <>{t(`projectList:${item}`)}</>;
       },
@@ -255,6 +276,7 @@ export const ProgrammeManagementComponent = (props: any) => {
       key: ProgrammeManagementSlColumns.projectProposalStage,
       sorter: true,
       align: "center" as const,
+      width: 190,
       render: (item: any) => {
         return (
           <Tag color={getProjectProposalStage(item as ProjectProposalStage)}>
@@ -264,11 +286,23 @@ export const ProgrammeManagementComponent = (props: any) => {
       },
     },
     {
+      title: t("projectList:issued"),
+      dataIndex: "creditIssued",
+      key: ProgrammeManagementSlColumns.creditIssued,
+      sorter: true,
+      align: "right" as const,
+      width: 125,
+      render: (item: any) => {
+        return <span>{item}</span>;
+      },
+    },
+    {
       title: t("projectList:balance"),
       dataIndex: "creditBalance",
       key: ProgrammeManagementSlColumns.creditBalance,
       sorter: true,
       align: "right" as const,
+      width: 130,
       render: (item: any) => {
         return <span>{item}</span>;
       },
@@ -279,6 +313,7 @@ export const ProgrammeManagementComponent = (props: any) => {
       key: ProgrammeManagementSlColumns.creditRetired,
       sorter: true,
       align: "right" as const,
+      width: 124,
       render: (item: any) => {
         return <span>{item}</span>;
       },
@@ -288,6 +323,7 @@ export const ProgrammeManagementComponent = (props: any) => {
       dataIndex: "authorizationId",
       key: ProgrammeManagementSlColumns.authorizationId,
       align: "center" as const,
+      width: 160,
       render: (item: any) => {
         return <span>{item ? item : t("projectList:na")}</span>;
       },
@@ -297,15 +333,16 @@ export const ProgrammeManagementComponent = (props: any) => {
       dataIndex: "createdTime",
       key: ProgrammeManagementSlColumns.projectCreatedDate,
       align: "center" as const,
+      width: 150,
       render: (item: any) => {
-        console.log("-----------item-----------", item);
         return <>{toMoment(Number(item)).format("YYYY/MM/DD HH:mm:ss")}</>;
       },
     },
     {
       title: t(""),
-      width: 6,
-      align: "right" as const,
+      width: 30,
+      fixed: "right" as const,
+      align: "center" as const,
       key: ProgrammeManagementSlColumns.action,
       render: (_: any, record: any) => {
         const menu = actionMenu(record);
@@ -322,6 +359,34 @@ export const ProgrammeManagementComponent = (props: any) => {
       },
     },
   ].filter((column) => visibleColumns.includes(column.key));
+
+  // The column set is wide enough to overflow a laptop viewport, so the table
+  // scrolls horizontally inside its own container instead of pushing the page.
+  // Summing the visible widths keeps that scroll width correct whichever
+  // columns the page passes in via visibleColumns.
+  const tableScrollX = columns.reduce(
+    (total, column) => total + (column.width ?? 0),
+    0
+  );
+
+  const fetchCadtStatuses = async (rows: any[]) => {
+    const refIds = Array.from(
+      new Set((rows ?? []).map((row) => row?.refId).filter(Boolean))
+    );
+    if (refIds.length === 0) {
+      setCadtStatus({});
+      return;
+    }
+    try {
+      const response: any = await post(API_PATHS.CADTRUST_SYNC_PROJECT_STATUSES, {
+        refIds,
+      });
+      setCadtStatus(response?.data ?? {});
+    } catch (error) {
+      // A CAD Trust status probe must never break the project list.
+      setCadtStatus({});
+    }
+  };
 
   const getAllProgramme = async () => {
     setLoading(true);
@@ -370,11 +435,13 @@ export const ProgrammeManagementComponent = (props: any) => {
         filterOr: filterOr?.length > 0 ? filterOr : undefined,
         sort: sort,
       });
-      setTableData(response?.data ? response.data : []);
+      const rows = response?.data ? response.data : [];
+      setTableData(rows);
       setTotalProgramme(
         response.response?.data?.total ? response.response?.data?.total : 0
       );
       setLoading(false);
+      void fetchCadtStatuses(rows);
       setDataQuery({
         filterAnd: filter,
         filterOr: filterOr?.length > 0 ? filterOr : undefined,
@@ -565,9 +632,16 @@ export const ProgrammeManagementComponent = (props: any) => {
     <div className="content-container programme-management">
       <div className="programme-title-bar">
         <div className="title-bar">
-          <div className="body-title">
-            {t("projectList:slcfViewProgrammes")}
-          </div>
+          <TimedPageInfoTitle
+            title={t("projectList:slcfViewProgrammes")}
+            description={t("projectList:projectsPageDescription", {
+              defaultValue:
+                "View and manage projects, their organizations, sectors, proposal stages, credit activity, and current status.",
+            })}
+            infoButtonLabel={t("projectList:showProjectsPageDescription", {
+              defaultValue: "Show information about Projects",
+            })}
+          />
         </div>
         <div className="actions">
           {userInfoState?.companyRole === CompanyRole.PROJECT_DEVELOPER &&
@@ -639,10 +713,12 @@ export const ProgrammeManagementComponent = (props: any) => {
           <Col span={24}>
             <div className="programmeManagement-table-container">
               <Table
+                rowKey="refId"
                 dataSource={tableData.length ? tableData : []}
                 columns={columns}
                 className="common-table-class"
                 loading={loading}
+                scroll={{ x: tableScrollX }}
                 pagination={{
                   current: currentPage,
                   pageSize: pageSize,

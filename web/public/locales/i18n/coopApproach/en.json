@@ -1,0 +1,16 @@
+{
+    "cooperativeApproaches": "Cooperative Approaches",
+    "coopApproachDescription" :"Article 6.2 bilateral and multilateral cooperative approaches",
+    "showCoopApproachDescription" : "Show information about Cooperative Approaches",
+    "addCoopApproach": "Add Cooperative Approach",
+    "editCoopApproach": "Edit Cooperative Approach",
+    "addCoopApproachDescription": "Define a bilateral or multilateral cooperative approach under Article 6.2",
+    "showAddCoopApproachDescription": "Show information about adding a Cooperative Approach",
+    "addNew" : "Add New",
+    "columnId": "ID",
+    "columnCaReference": "CA Reference",
+    "columnTitle": "Title",
+    "columnHostParty": "Host Party",
+    "columnParticipatingParties": "Participating Parties",
+    "columnStatus": "Status"
+}

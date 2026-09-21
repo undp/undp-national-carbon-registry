@@ -206,7 +206,7 @@ const Login: FC<LoginPageProps> = (props: LoginPageProps) => {
                           ]}
                         >
                           <div className="login-input-email">
-                            <Input type="username" />
+                            <Input type="text" autoComplete="username" />
                           </div>
                         </Form.Item>
                         <Form.Item

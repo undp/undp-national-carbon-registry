@@ -105,13 +105,18 @@ export class QLDBLedgerService implements LedgerDBInterface {
     )?.getResultList();
   }
 
-  public async fetchHistory(where: Record<string, any>): Promise<dom.Value[]> {
+  public async fetchHistory(
+    where: Record<string, any>,
+    tableName?: string
+  ): Promise<dom.Value[]> {
     const whereClause = Object.keys(where)
       .map((k) => `h.data.${k} = ?`)
       .join(" and ");
     const x = (
       await this.execute(
-        `SELECT * FROM history(${this.tableName}) as h WHERE ${whereClause}`,
+        `SELECT * FROM history(${
+          tableName ? tableName : this.tableName
+        }) as h WHERE ${whereClause}`,
         ...Object.values(where)
       )
     )?.getResultList();

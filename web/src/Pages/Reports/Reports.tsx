@@ -5,7 +5,7 @@ import { useConnection } from "../../Context/ConnectionContext/connectionContext
 const Reports = () => {
   const { i18n } = useTranslation(["common", "reporting"]);
 
-  const { get, post } = useConnection();
+  // const { get, post } = useConnection();
   
   return <ReportingComponent translator={i18n} />
 };

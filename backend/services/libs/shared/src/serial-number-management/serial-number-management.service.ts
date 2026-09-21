@@ -95,6 +95,19 @@ export class SerialNumberManagementService {
     return Number(serailNumber.split(sep)[5]);
   }
 
+  /**
+   * Public [start, end] range accessor for callers outside this service
+   * (e.g. credit-block history/tree reconstruction) that need the same
+   * range parsing `splitCreditBlockSerialNumber` uses internally, without
+   * duplicating the separator/position logic.
+   */
+  public getBlockRange(serialNumber: string): { start: number; end: number } {
+    return {
+      start: this.getBlockStart(serialNumber),
+      end: this.getBlockEnd(serialNumber),
+    };
+  }
+
   public getVintage(serailNumber: string): string {
     const sep = this.configService.get("serialNumber.seperator");
     return serailNumber.split(sep)[6];
@@ -134,6 +147,46 @@ export class SerialNumberManagementService {
       projectSerialNumberPrefix +
       `${sep}${blockEnd}${sep}${blockEnd}${sep}${vintage}`
     );
+  }
+
+  /**
+   * Compose an ITMO serial in the same shape as the regular credit
+   * block serial (getCreditBlockSerialNumber) — same separator, same
+   * positions for project id / block range / vintage — but with the
+   * mock creditIdentifier and firstTransferringPartyId components
+   * replaced by real data: the block's ITMO-authorized cooperative
+   * approach's real caReferenceNumber, and the config system country
+   * in both the originating-party and first-transferring-party slots
+   * (the host/origin country IS the first transferring Party for an
+   * ITMO under this registry).
+   *
+   * Format: "{caReferenceNumber}-{country}-{country}-{projectId}-{blockStart}-{blockEnd}-{vintage}"
+   *
+   * Because this mirrors the regular serial's shape exactly,
+   * splitCreditBlockSerialNumber/getBlockRange/getVintage all work on
+   * itmoSerial strings unchanged — no separate parsing/split logic is
+   * needed to keep it in sync through block splits.
+   */
+  public getItmoSerial(
+    caReferenceNumber: string,
+    projectId: string,
+    blockStart: number,
+    blockEnd: number,
+    vintage: string
+  ): string {
+    const originatingPartyId = this.configService.get("systemCountry");
+    const sep = this.configService.get("serialNumber.seperator");
+    return `${caReferenceNumber}${sep}${originatingPartyId}${sep}${originatingPartyId}${sep}${projectId}${sep}${blockStart}${sep}${blockEnd}${sep}${vintage}`;
+  }
+
+  /**
+   * Pulls the project id straight out of an existing (regular or ITMO)
+   * serial string, avoiding a project-row fetch when the caller already
+   * has the block's serial in hand.
+   */
+  public getProjectIdFromSerial(serialNumber: string): string {
+    const sep = this.configService.get("serialNumber.seperator");
+    return serialNumber.split(sep)[3];
   }
 
   public getAuthorizationId(projectId: string, authTime: number) {

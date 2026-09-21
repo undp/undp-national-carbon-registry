@@ -33,6 +33,7 @@ import { CreditIssueCertificateGenerator } from "./document-generators/creditIss
 import { CarbonNeutralCertificateGenerator } from "./document-generators/carbonNeutralCertificate.gen";
 import { CoreModule } from "@app/core";
 import { NoObjectionLetterGenerateService } from "./document-generators/no.objection.letter.gen";
+import { SignatureResolverService } from "./document-generators/signature.resolver.service";
 import { ProvinceService } from "./province.service";
 import { Province } from "../entities/province.entity";
 import { IsValidProvinceConstraint } from "../decorators/validProvince.decorator";
@@ -86,6 +87,7 @@ import { IsValidProvinceConstraint } from "../decorators/validProvince.decorator
     CarbonNeutralCertificateGenerator,
     DateUtilService,
     NoObjectionLetterGenerateService,
+    SignatureResolverService,
   ],
   exports: [
     CounterService,
