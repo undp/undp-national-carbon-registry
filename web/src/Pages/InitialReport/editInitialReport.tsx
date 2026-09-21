@@ -280,7 +280,6 @@ const EditInitialReport = () => {
                 <InputNumber
                   style={{ width: "100%" }}
                   min={1900}
-                  max={2100}
                   disabled={locked}
                 />
               </Form.Item>
@@ -316,7 +315,6 @@ const EditInitialReport = () => {
                 <InputNumber
                   style={{ width: "100%" }}
                   min={1900}
-                  max={2100}
                   disabled={locked}
                 />
               </Form.Item>
@@ -393,7 +391,6 @@ const EditInitialReport = () => {
                 <InputNumber
                   style={{ width: "100%" }}
                   min={1900}
-                  max={2100}
                   disabled={locked}
                 />
               </Form.Item>
