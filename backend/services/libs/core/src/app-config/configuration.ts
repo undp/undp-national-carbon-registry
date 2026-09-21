@@ -67,6 +67,11 @@ export default () => ({
   s3CommonBucket: {
     name: process.env.S3_COMMON_BUCKET || "carbon-common-dev",
   },
+  azureBlobStorage: {
+    // No account-name setting: the connection string carries it.
+    connectionString: process.env.AZURE_STORAGE_CONNECTION_STRING,
+    containerName: process.env.AZURE_STORAGE_CONTAINER || "files",
+  },
   host: process.env.HOST || "http://localhost:3030",
   backendHost: process.env.BACKEND_HOST || "http://localhost:3000",
   liveChat: "https://undp2020cdo.typeform.com/to/emSWOmDo",
@@ -105,6 +110,91 @@ export default () => ({
   cadTrust: {
     enable: process.env.CADTRUST_ENABLE === "true" ? true : false,
     endpoint: process.env.CADTRUST_ENDPOINT,
+  },
+  // CADT v2 client (@app/cadtrust). Separate from the legacy v1 `cadTrust` block
+  // above — v1 and v2 are isolated on the node and can run side by side.
+  cadTrustV2: {
+    enable: process.env.CADT_V2_ENABLE === "true" ? true : false,
+    baseUrl: process.env.CADT_V2_BASE_URL || "http://localhost:31310/v2",
+    apiKey: process.env.CADT_V2_API_KEY,
+    timeoutMs: Number(process.env.CADT_V2_TIMEOUT_MS || 30000),
+    // How often the CAD Trust-only async lane re-runs CadTrustReconcileHandler, independent of
+    // the shared email/registry queue's own polling cadence. See
+    // src/async-operations-handler/cadtrust-async-operations-handler.service.ts and
+    // libs/shared/src/cadtrust-sync/README.md's "Re-driving children on update, and reconciling
+    // on a schedule" section. Only read in the process running RUN_MODULE=cadtrust-operations-handler.
+    reconcileIntervalMs: Number(process.env.CADT_V2_RECONCILE_INTERVAL_MS || 30 * 1000),
+    // Consecutive commit-failure count (see cadtrust_sync_record.attemptCount) past which
+    // CadTrustCommitHandler logs a loud, one-time-per-crossing "this may need a human" warning
+    // instead of quietly retrying forever. Not every failure this deep is a stuck commit — see
+    // the handler's own doc — but it is the signal an operator should investigate
+    // POST /staging/reset-committed rather than assume it will clear itself.
+    commitStuckThreshold: Number(process.env.CADT_V2_COMMIT_STUCK_THRESHOLD || 6),
+    // Per-record cap on `cadtrust_sync_record.attemptCount` past which CadTrustReconcileHandler
+    // stops re-driving a FAILED project/snapshot/credit-block record — otherwise a permanently
+    // broken record (bad data, a resource CAD Trust will never accept) would be retried forever,
+    // every reconcileIntervalMs tick, indefinitely. Once a record crosses this it is left alone;
+    // findStuckFailures/commitStuckThreshold above is the separate signal that surfaces it to an
+    // operator.
+    reconcileMaxAttempts: Number(process.env.CADT_V2_RECONCILE_MAX_ATTEMPTS || 10),
+    // Sent as CAD Trust's `projectRegistryName` — the name this registry is
+    // published under on the network, not the CADT node's own identity.
+    registryName: process.env.CADT_V2_REGISTRY_NAME || process.env.SYSTEM_NAME || "SystemX",
+    // Recorded as the `author` on each staging commit.
+    commitAuthor: process.env.CADT_V2_COMMIT_AUTHOR || process.env.SYSTEM_NAME || "SystemX",
+    // The registry's own CAD Trust organization name — used only for logging and
+    // the verify-only bootstrap check. The organization is never created by this
+    // codebase (see libs/shared/src/cadtrust-sync/handlers/bootstrap.handler.ts).
+    orgName:
+      process.env.CADT_V2_ORG_NAME ||
+      process.env.CADT_V2_REGISTRY_NAME ||
+      process.env.SYSTEM_NAME ||
+      "SystemX",
+    // This registry's one national crediting program and one methodology,
+    // staged once by CadTrustBootstrapHandler. See
+    // CadTrustRegistryProfileService.assertConfigured() for the guard that
+    // refuses to publish these under a placeholder value.
+    program: {
+      name:
+        process.env.CADT_V2_PROGRAM_NAME ||
+        `${process.env.systemCountryName || "CountryX"} National Carbon Crediting Demo Program`,
+      registry:
+        process.env.CADT_V2_PROGRAM_REGISTRY ||
+        process.env.CADT_V2_REGISTRY_NAME ||
+        process.env.SYSTEM_NAME ||
+        "SystemX",
+      registryActivityId:
+        process.env.CADT_V2_PROGRAM_REGISTRY_ACTIVITY_ID || process.env.systemCountryCode || "NG",
+      registryProgramId: process.env.CADT_V2_PROGRAM_REGISTRY_PROGRAM_ID || "NG-NCC",
+      description: process.env.CADT_V2_PROGRAM_DESCRIPTION || "National Carbon Crediting Program",
+    },
+    methodology: {
+      code: process.env.CADT_V2_METHODOLOGY_CODE || `${process.env.systemCountryCode || "NG"}-NCC`,
+      name: process.env.CADT_V2_METHODOLOGY_NAME || "National Carbon Crediting",
+      version: process.env.CADT_V2_METHODOLOGY_VERSION || "1.0",
+      date: process.env.CADT_V2_METHODOLOGY_DATE || new Date().toISOString().split("T")[0],
+      link: process.env.CADT_V2_METHODOLOGY_LINK,
+      type: process.env.CADT_V2_METHODOLOGY_TYPE || 'Not Determined',
+    },
+    // Picklist "validation_body" — CAD Trust's validation_body list is a closed set of ~90
+    // internationally accredited VVBs; this registry's Independent Certifiers will not be on it by
+    // name (see mappers/validation.mapper.ts). Always used as-is for every validation sync — not a
+    // fallback-if-unmatched scheme. "DNV" is a real live-observed entry (picklistValues.ts); reconfirm
+    // against GET /v2/governance/meta/pickList on the target node before go-live.
+    validationBodyDefault: process.env.CADT_V2_VALIDATION_BODY || "DNV",
+    // Picklist "verification_body" — same closed international VVB list as validation_body, and
+    // the same reasoning: a national verifying body will not be on it by name (see
+    // mappers/verification.mapper.ts). Defaults to the same value as validationBodyDefault, since
+    // both fields are filled by the same category of accredited-VVB placeholder; override
+    // separately if the target node's verification_body and validation_body lists diverge.
+    verificationBodyDefault:
+      process.env.CADT_V2_VERIFICATION_BODY || process.env.CADT_V2_VALIDATION_BODY || "DNV",
+    // Picklist "unit_type", required on every CAD Trust unit. Unlike every other CADT_V2_* value
+    // in this block, there is NO safe hardcoded fallback — no unit_type value has ever been
+    // confirmed against a live node (see mappers/picklist.map.ts). Left unset until an operator
+    // sets it; CadTrustRegistryProfileService.getUnitType() returns undefined rather than a guess,
+    // and the credit-unit mapper's warnOnUnknownValues call will flag that loudly in the logs.
+    unitType: process.env.CADT_V2_UNIT_TYPE || "Not Determined",
   },
   systemType: process.env.SYSTEM_TYPE || "CARBON_UNIFIED_SYSTEM",
   systemName: process.env.SYSTEM_NAME || "SystemX",

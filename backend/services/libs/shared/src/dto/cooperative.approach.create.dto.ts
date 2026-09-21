@@ -5,8 +5,11 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  ValidateNested,
 } from "class-validator";
+import { Type } from "class-transformer";
 import { IsValidCountry } from "../decorators/validcountry.decorator";
+import { CaAuthorizedEntityDto } from "./ca.authorized.entity.create.dto";
 
 export class CooperativeApproachCreateDto {
   @ApiProperty()
@@ -57,4 +60,15 @@ export class CooperativeApproachCreateDto {
   @IsOptional()
   @IsString()
   authorizationDocumentUrl?: string;
+
+  // Authorized entities are submitted together with the approach they
+  // belong to. They can only ever be added while the approach is Draft,
+  // so this is the primary path — authorizedEntity/add exists for
+  // amending a draft afterwards.
+  @ApiPropertyOptional({ type: [CaAuthorizedEntityDto] })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CaAuthorizedEntityDto)
+  authorizedEntities?: CaAuthorizedEntityDto[];
 }

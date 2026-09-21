@@ -1,6 +1,7 @@
 import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { EntitySubject } from "./entity.subject";
 import { AuthorizedEntityStatus } from "../enum/authorized.entity.status.enum";
+import { AuthorizedEntitySubmissionStatus } from "../enum/authorized.entity.submission.status.enum";
 
 // An entity (company / organisation) authorized to act under a
 // cooperative approach — field set modeled on the AEF v2 "Authorized
@@ -34,6 +35,7 @@ export class CaAuthorizedEntity extends EntitySubject {
   @Column({ type: "text", nullable: true })
   authorizationReference?: string;
 
+  // Is the authorization currently in force.
   @Column({
     type: "enum",
     enum: AuthorizedEntityStatus,
@@ -41,6 +43,17 @@ export class CaAuthorizedEntity extends EntitySubject {
     default: AuthorizedEntityStatus.ACTIVE,
   })
   status: AuthorizedEntityStatus;
+
+  // Has the authorization been through initial-report submission.
+  // Entities are added while the cooperative approach is Draft and flip
+  // to Submitted with it — only Submitted entities are reportable.
+  @Column({
+    type: "enum",
+    enum: AuthorizedEntitySubmissionStatus,
+    array: false,
+    default: AuthorizedEntitySubmissionStatus.DRAFT,
+  })
+  submissionStatus: AuthorizedEntitySubmissionStatus;
 
   @Column({ type: "bigint" })
   createdTime: number;

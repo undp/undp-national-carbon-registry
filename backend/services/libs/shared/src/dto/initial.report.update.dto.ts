@@ -1,34 +1,13 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsString } from "class-validator";
+import { InitialReportCreateDto } from "./initial.report.create.dto";
 
-export class InitialReportUpdateDto {
+// Edits the live report row in place. Cooperative approaches are not
+// editable here — they go through the dedicated add/remove endpoints, so
+// that adding one can drive the version bump.
+export class InitialReportUpdateDto extends InitialReportCreateDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  reportId: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  participationDemonstration?: any;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  itmoMetrics?: any;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  caMethodDescription?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  ndcQuantification?: any;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  cooperativeApproachDetails?: any;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  environmentalIntegrity?: any;
+  reportNumber: string;
 }

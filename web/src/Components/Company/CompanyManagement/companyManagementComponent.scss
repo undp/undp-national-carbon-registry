@@ -15,3 +15,41 @@
   margin-top: 0.8rem;
 }
 
+.content-card.company-management-card {
+  .table-actions-section {
+    align-items: center;
+    margin-bottom: 0;
+  }
+
+  .action-bar,
+  .filter-section {
+    padding-top: 1rem;
+    padding-bottom: 0.8rem;
+  }
+
+  .action-bar {
+    display: flex;
+    align-items: center;
+  }
+
+  .filter-section .filter-bar,
+  .company-data-download {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .filter-section .search-bar,
+  .filter-section .filter-bar,
+  .filter-section .download-data-btn {
+    display: flex;
+    align-items: center;
+    min-height: 32px;
+  }
+
+  .filter-section a {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+  }
+}
+

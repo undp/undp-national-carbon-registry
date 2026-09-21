@@ -31,4 +31,9 @@ backend/services/public/*
 .env.local
 CODE_QUALITY_REVIEW.md
 backend/services/docs/
+# CAD Trust live-node capture output — see backend/services/libs/cadtrust/src/live/*.capture.spec.ts
+backend/services/libs/cadtrust/src/live/.captures/
+# Local, read-only CAD Trust v2 node inspector — see cadtrust-viewer/README.md. Testing tool only,
+# never meant to ship.
+/cadtrust-viewer/
 

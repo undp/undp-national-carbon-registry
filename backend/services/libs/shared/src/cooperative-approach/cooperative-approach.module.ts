@@ -2,18 +2,15 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { CooperativeApproachService } from "./cooperative-approach.service";
 import { CooperativeApproach } from "../entities/cooperative.approach.entity";
-import { InitialReport } from "../entities/initial.report.entity";
 import { CaAuthorizedEntity } from "../entities/ca.authorized.entity.entity";
 import { UtilModule } from "../util/util.module";
+import { AefV2RegistryModule } from "../aef-v2-registry/aef-v2-registry.module";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      CooperativeApproach,
-      InitialReport,
-      CaAuthorizedEntity,
-    ]),
+    TypeOrmModule.forFeature([CooperativeApproach, CaAuthorizedEntity]),
     UtilModule,
+    AefV2RegistryModule,
   ],
   providers: [CooperativeApproachService],
   exports: [CooperativeApproachService],

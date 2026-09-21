@@ -3,8 +3,9 @@ import moment from "moment";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
-import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
 import { useCountryOptions } from "../../Components/Common/hooks/useCountryOptions";
+import { useArticle6Permissions } from "../../Components/Common/hooks/useArticle6Permissions";
+import RequireDnaAccess from "../../Components/Common/AccessControl/RequireDnaAccess";
 import {
   Button,
   Col,
@@ -13,27 +14,22 @@ import {
   Form,
   Input,
   Modal,
-  Popconfirm,
   Row,
   Select,
   Skeleton,
   Table,
   Tag,
-  Tooltip,
   message,
 } from "antd";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
-import { Role } from "../../Definitions/Enums/role.enum";
+import { Trash } from "react-bootstrap-icons";
+import {
+  CA_ALLOWED_TRANSITIONS,
+  CA_STATUS_COLORS,
+  CooperativeApproachStatus,
+} from "../../Definitions/Enums/cooperativeApproachStatus.enum";
+import UserActionConfirmationModel from "../../Components/Models/userActionConfirmationModel";
 import "./cooperativeApproaches.scss";
-
-const statusColors: Record<string, string> = {
-  Draft: "default",
-  Active: "green",
-  Suspended: "orange",
-  Completed: "blue",
-  Revoked: "red",
-};
 
 const entityStatusColors: Record<string, string> = {
   Active: "green",
@@ -45,25 +41,21 @@ const CooperativeApproachDetails = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(["common"]);
   const { get, put, post } = useConnection();
-  const { userInfoState } = useUserContext();
+  const { canManage } = useArticle6Permissions();
   const { byCode: countryNameByCode } = useCountryOptions();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
   const [updatingStatus, setUpdatingStatus] = useState(false);
-  const [hasSubmittedIr, setHasSubmittedIr] = useState(false);
   const [authorizedEntities, setAuthorizedEntities] = useState<any[]>([]);
   const [entitiesLoading, setEntitiesLoading] = useState(false);
   const [addEntityOpen, setAddEntityOpen] = useState(false);
   const [addingEntity, setAddingEntity] = useState(false);
   const [entityForm] = Form.useForm();
+  const [removeEntityTarget, setRemoveEntityTarget] = useState<any>(null);
+  const [removeEntityModalOpen, setRemoveEntityModalOpen] = useState(false);
+  const [removingEntity, setRemovingEntity] = useState(false);
+  const [removeEntityErrorMsg, setRemoveEntityErrorMsg] = useState("");
 
-  // Cooperative approaches are managed by government (DNA) Admin/Root
-  // only — mirrors the backend service check.
-  const canManage =
-    userInfoState?.companyRole ===
-      CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-    (userInfoState?.userRole === Role.Admin ||
-      userInfoState?.userRole === Role.Root);
 
   const fetchAuthorizedEntities = async () => {
     setEntitiesLoading(true);
@@ -87,14 +79,10 @@ const CooperativeApproachDetails = () => {
       );
       if (response?.data) {
         setData(response.data);
-        if (response.data.status === "Active") {
-          fetchAuthorizedEntities();
-        }
+        // Entities are attached while the approach is still a Draft, so
+        // the section is relevant at every status, not just Active.
+        fetchAuthorizedEntities();
       }
-      const check = await get(
-        `national/initialReport/check?cooperativeApproachId=${id}`
-      );
-      setHasSubmittedIr(!!check?.data?.hasSubmittedReport);
     } catch (error) {
       const serverMsg = (error as any)?.message;
       message.error(
@@ -160,21 +148,36 @@ const CooperativeApproachDetails = () => {
     }
   };
 
-  const handleRemoveEntity = async (entityId: string) => {
+  const openRemoveEntityModal = (record: any) => {
+    setRemoveEntityTarget(record);
+    setRemoveEntityErrorMsg("");
+    setRemoveEntityModalOpen(true);
+  };
+
+  const handleRemoveEntityCanceled = () => {
+    setRemoveEntityModalOpen(false);
+  };
+
+  const handleRemoveEntityConfirmed = async () => {
+    if (!removeEntityTarget) return;
+    setRemovingEntity(true);
     try {
       await put(
-        `national/cooperativeApproach/authorizedEntity/remove?id=${entityId}`,
+        `national/cooperativeApproach/authorizedEntity/remove?id=${removeEntityTarget.id}`,
         {}
       );
       message.success("Authorized entity removed");
+      setRemoveEntityModalOpen(false);
       fetchAuthorizedEntities();
     } catch (error) {
       const serverMsg = (error as any)?.message;
-      message.error(
+      setRemoveEntityErrorMsg(
         serverMsg && typeof serverMsg === "string"
           ? serverMsg
           : "Failed to remove authorized entity"
       );
+    } finally {
+      setRemovingEntity(false);
     }
   };
 
@@ -189,7 +192,32 @@ const CooperativeApproachDetails = () => {
   if (loading) return <Skeleton active />;
   if (!data) return <div>Not found</div>;
 
-  const isDraft = data.status === "Draft";
+  const isDraft = data.status === CooperativeApproachStatus.DRAFT;
+  // Entities can be added while Draft (the normal case), or once
+  // Submitted or Active (an amendment — mirrors the backend's relaxed
+  // gate on addAuthorizedEntity). Submitted is short-lived since an
+  // approach gets activated right after, so Active is the realistic
+  // case. Beyond that the set stays fixed.
+  const canAddEntities =
+    canManage &&
+    (isDraft ||
+      data.status === CooperativeApproachStatus.SUBMITTED ||
+      data.status === CooperativeApproachStatus.ACTIVE);
+  const nextStatuses = CA_ALLOWED_TRANSITIONS[data.status] ?? [];
+
+  // Copy differs by CA status: on a Draft nothing has been submitted yet
+  // so removal deletes the row outright; afterwards it only soft-flips
+  // to Inactive, preserving the authorization history.
+  const removeEntityActionInfo = {
+    action: "Remove",
+    headerText: "Remove Authorized Entity",
+    text: isDraft
+      ? "Remove this authorized entity? Nothing has been submitted yet, so it will be deleted outright."
+      : "Remove this authorized entity? It will remain in the system as Inactive.",
+    type: "danger",
+    icon: <Trash />,
+    hideRemarks: true,
+  };
 
   const entityColumns = [
     { title: "Entity Name", dataIndex: "entityName", key: "entityName" },
@@ -231,6 +259,22 @@ const CooperativeApproachDetails = () => {
         <Tag color={entityStatusColors[status] || "default"}>{status}</Tag>
       ),
     },
+    {
+      title: "Submission",
+      dataIndex: "submissionStatus",
+      key: "submissionStatus",
+      render: (submissionStatus: string) => (
+        <Tag
+          color={
+            submissionStatus === CooperativeApproachStatus.SUBMITTED
+              ? "geekblue"
+              : "default"
+          }
+        >
+          {submissionStatus || CooperativeApproachStatus.DRAFT}
+        </Tag>
+      ),
+    },
     ...(canManage
       ? [
           {
@@ -238,14 +282,13 @@ const CooperativeApproachDetails = () => {
             key: "action",
             render: (record: any) =>
               record.status === "Active" ? (
-                <Popconfirm
-                  title="Remove this authorized entity? It will remain in the system as Inactive."
-                  onConfirm={() => handleRemoveEntity(record.id)}
+                <Button
+                  danger
+                  size="small"
+                  onClick={() => openRemoveEntityModal(record)}
                 >
-                  <Button danger size="small">
-                    Remove
-                  </Button>
-                </Popconfirm>
+                  Remove
+                </Button>
               ) : null,
           },
         ]
@@ -253,6 +296,7 @@ const CooperativeApproachDetails = () => {
   ];
 
   return (
+    <RequireDnaAccess>
     <div className="cooperative-approaches-container">
       <div className="title-bar">
         <Row justify="space-between" align="middle">
@@ -285,42 +329,44 @@ const CooperativeApproachDetails = () => {
             {data.cooperativeApproachId}
           </Descriptions.Item>
           <Descriptions.Item label="Status">
-            {canManage ? (
+            {/* The dropdown offers only the transitions the server will
+                accept. A Draft has none — submitting its initial report
+                is what advances it, so it renders as a plain tag. */}
+            {canManage && nextStatuses.length > 0 ? (
               <Select
                 value={data.status}
                 onChange={handleStatusChange}
                 loading={updatingStatus}
                 style={{ width: 180 }}
               >
-                <Select.Option value="Draft">Draft</Select.Option>
-                <Select.Option
-                  value="Active"
-                  disabled={isDraft && !hasSubmittedIr}
-                >
-                  <Tooltip
-                    title={
-                      isDraft && !hasSubmittedIr
-                        ? "The initial report for this cooperative approach must be submitted before it can be activated"
-                        : undefined
-                    }
-                  >
-                    Active
-                  </Tooltip>
+                <Select.Option value={data.status} disabled>
+                  {data.status}
                 </Select.Option>
-                <Select.Option value="Suspended">Suspended</Select.Option>
-                <Select.Option value="Completed">Completed</Select.Option>
+                {nextStatuses.map((status) => (
+                  <Select.Option key={status} value={status}>
+                    {status}
+                  </Select.Option>
+                ))}
               </Select>
             ) : (
-              <Tag color={statusColors[data.status] || "default"}>
-                {data.status}
-              </Tag>
+              <>
+                <Tag color={CA_STATUS_COLORS[data.status] || "default"}>
+                  {data.status}
+                </Tag>
+                {canManage && isDraft && (
+                  <span className="status-hint">
+                    Submit this approach&apos;s initial report to move it to
+                    Submitted.
+                  </span>
+                )}
+              </>
             )}
           </Descriptions.Item>
           <Descriptions.Item label="CA Reference Number">
             {data.caReferenceNumber ? (
               <Tag color="green">{data.caReferenceNumber}</Tag>
             ) : (
-              "Issued on activation"
+              "Issued on initial report submission"
             )}
           </Descriptions.Item>
           <Descriptions.Item label="Host Party">
@@ -355,38 +401,40 @@ const CooperativeApproachDetails = () => {
         </Descriptions>
       </div>
 
-      {data.status === "Active" && (
-        <div className="content-card" style={{ marginTop: 16 }}>
-          <Row
-            justify="space-between"
-            align="middle"
-            style={{ marginBottom: 16 }}
-          >
-            <Col>
-              <div className="table-title">Authorized Entities</div>
-            </Col>
-            <Col>
-              {canManage && (
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  onClick={() => setAddEntityOpen(true)}
-                >
-                  Add Authorized Entity
-                </Button>
-              )}
-            </Col>
-          </Row>
-          <Table
-            dataSource={authorizedEntities}
-            columns={entityColumns}
-            rowKey="id"
-            loading={entitiesLoading}
-            pagination={false}
-            locale={{ emptyText: "No authorized entities" }}
-          />
-        </div>
-      )}
+      <div className="content-card" style={{ marginTop: 16 }}>
+        <Row
+          justify="space-between"
+          align="middle"
+          style={{ marginBottom: 16 }}
+        >
+          <Col>
+            <div className="table-title">Authorized Entities</div>
+          </Col>
+          <Col>
+            {canAddEntities && (
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => setAddEntityOpen(true)}
+              >
+                Add Authorized Entity
+              </Button>
+            )}
+          </Col>
+        </Row>
+        <Table
+          dataSource={authorizedEntities}
+          columns={entityColumns}
+          rowKey="id"
+          loading={entitiesLoading}
+          pagination={false}
+          locale={{
+            emptyText: isDraft
+              ? "No authorized entities — add them before submitting the initial report"
+              : "No authorized entities",
+          }}
+        />
+      </div>
 
       <Modal
         title="Add Authorized Entity"
@@ -468,7 +516,18 @@ const CooperativeApproachDetails = () => {
           </Row>
         </Form>
       </Modal>
+
+      <UserActionConfirmationModel
+        t={t}
+        actionInfo={removeEntityActionInfo}
+        onActionConfirmed={handleRemoveEntityConfirmed}
+        onActionCanceled={handleRemoveEntityCanceled}
+        openModal={removeEntityModalOpen}
+        errorMsg={removeEntityErrorMsg}
+        loading={removingEntity}
+      />
     </div>
+    </RequireDnaAccess>
   );
 };
 

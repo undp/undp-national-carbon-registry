@@ -37,11 +37,11 @@
 
 | Sidebar | Item | Expected |
 |---|---|---|
-| Cooperative Approaches | `CA-001` | Active, IR-001 Submitted under it, 4 programmes under it |
-| Cooperative Approaches | `CA-002` | Active, IR-002 Draft under it, no programmes |
-| Cooperative Approaches | `CA-003` | Suspended, no IR, no programmes |
-| Initial Reports | `IR-001` | Submitted, under CA-001 |
-| Initial Reports | `IR-002` | Draft, under CA-002 |
+| Cooperative Approaches | `CA-001` | Active, on IR-001 (v1.0), 2 authorized entities (both Submission `Submitted`), 4 programmes under it |
+| Cooperative Approaches | `CA-002` | Draft, on IR-002 (Draft, never submitted) — the "no submitted IR" authorize gate is demonstrated against this one |
+| Cooperative Approaches | `CA-003` | Suspended, added to IR-001 afterwards (v2.0) |
+| Initial Reports | `IR-001` | Submitted, v2.0, NDC period spanning the current year, covers both CA-001 (added at v1.0) and CA-003 (added at v2.0) |
+| Initial Reports | `IR-002` | Draft, covers CA-002, never submitted |
 | Project Details | `001` | PENDING, no methodology |
 | Project Details | `002` | APPROVED, methodology accepted |
 | Project Details | `003` | AUTHORISED, no credits issued |
@@ -62,36 +62,71 @@ For each section below, record **Pass / Fail / N/A**, tester initials, and a one
 2. Click `CA-001` row → detail page `/cooperativeApproaches/view/CA-001`.
    - Expected: bordered Descriptions block. Status select dropdown shows current `Active`.
 3. Click the status dropdown → pick `Suspended` → wait for the toast.
-   - Expected: status persists on refresh.
+   - Expected: status persists on refresh. The dropdown only ever offers the transitions the server accepts, so from `Active` you should see exactly `Suspended`, `Completed`, `Revoked` — never `Draft` or `Submitted`.
 4. Switch back to `Active` (so downstream tests work).
-5. On `CA-001`'s detail page, attempt `Active → Draft` from the dropdown (Draft isn't in the dropdown options — confirm).
-   - Expected: Draft is not selectable from any non-Draft state. Locks Decision 2/CMA.3 ¶1 — terminal/forbidden transitions.
-6. **Negative — terminal transitions** (use a throwaway CA created via Add New, then drive it to Completed/Revoked):
-   - From a Completed CA, attempt `Completed → Active`. Toast: `Cooperative approach <id> is Completed — its lifecycle has ended and its status cannot change. To start a new bilateral arrangement, create a fresh cooperative approach.` (key `cooperativeApproach.transitionFromCompleted`)
-   - From a Revoked CA, attempt any change. Toast: `Cooperative approach <id> was Revoked under Draft -/CMA.5 paras 20-21. Revoked is terminal; no further status changes are permitted.` (key `cooperativeApproach.transitionFromRevoked`)
-   - Force a `revert-to-Draft` via API call against a non-Draft CA. Toast: `Cooperative approach <id> cannot revert from <oldStatus> to Draft. Once a CA leaves Draft, its working version is fixed.` (key `cooperativeApproach.transitionRevertToDraft`)
-7. **Negative — not found.** Navigate to `/cooperativeApproaches/view/CA-DOES-NOT-EXIST`. Toast: `Cooperative approach CA-DOES-NOT-EXIST not found.` (key `cooperativeApproach.notFound`)
-8. From the list page, click **Add New**. Host Party is a disabled field showing the registry's own configured country (`systemCountryCode`, e.g. `NG`) — it cannot be edited. Fill title + pick one or more Participating Parties from the country dropdown (the host country is pre-selected and cannot be removed) → submit → returns to list with new row.
-9. On an **Active** CA's detail page, click **Add Authorized Entity**. Authorizing Party is shown read-only as the host country. **Country of Incorporation** is a required dropdown restricted to that CA's Participating Parties — confirm a country outside that set isn't offered, and that submitting without selecting one is blocked client-side.
+5. **Negative — terminal transitions** (use a throwaway CA driven to Completed/Revoked):
+   - From a Completed or Revoked CA, the status control renders as a plain read-only tag — there is nothing left to pick. Forcing `Completed → Active` through the API returns 400: `Cooperative approach <id> cannot move from Completed to Active.` (key `cooperativeApproach.invalidTransition`)
+   - Force `Active → Submitted` or `Submitted → Draft` through the API. Same 400 — once an approach leaves Draft its working version is fixed.
+6. **Negative — not found.** Navigate to `/cooperativeApproaches/view/CA-DOES-NOT-EXIST`. Toast: `Cooperative approach CA-DOES-NOT-EXIST not found.` (key `cooperativeApproach.notFound`)
+7. From the list page, click **Add New**. Host Party is a disabled field showing the registry's own configured country (`systemCountryCode`, e.g. `NG`) — it cannot be edited. Fill title + pick one or more Participating Parties from the country dropdown (the host country is pre-selected and cannot be removed).
+8. Still on the Add New form, use the **Authorized Entities** section to add two rows. **Country of Incorporation** is restricted to the Participating Parties selected above — confirm a country outside that set isn't offered, and that the Authorization Date picker blocks future dates. Submit → returns to list with the new row.
+9. Open the new CA's detail page.
+   - Expected: status is a read-only `Draft` tag with a hint that submitting the initial report advances it — **no dropdown**. CA Reference Number reads `Issued on initial report submission`.
+   - The **Authorized Entities** table lists both rows with Status `Active` and Submission `Draft`. **Add Authorized Entity** and per-row **Remove** are available.
+   - Remove one row → it disappears entirely (hard delete: nothing has been submitted, so there is no authorization history to keep).
 
-**Pass criteria**: 3 seeded rows visible; Active↔Suspended transitions persist; Draft is not a downstream option; terminal-state and not-found error toasts surface the new specific text; Add New creates a new row with the host country locked in; Add Authorized Entity enforces Country of Incorporation ⊆ Participating Parties.
+**Pass criteria**: 3 seeded rows visible; from Active the dropdown offers only Suspended/Completed/Revoked; a Draft CA has no dropdown at all; terminal-state and not-found errors surface; Add New creates a row with the host country locked in and its authorized entities attached in the same submit; entity Country of Incorporation ⊆ Participating Parties; removing an entity on a Draft CA deletes it.
 
 ---
 
 ## 2. Initial Report — paragraph 18 enforcement (Decision 2/CMA.3 ¶ 18)
 
+An initial report is now filed for an **NDC implementation period**, not for a single cooperative
+approach — it can cover several approaches at once, and it is a single mutable working document that
+freezes a new `major.minor` version each time it is submitted, rather than the old append-only
+one-row-per-edit scheme. Adding a cooperative approach is what bumps the major version; nothing else
+does.
+
 **Login**: DNA Admin.
 
-1. Sidebar → **Initial Reports**. URL `/initialReports/viewAll`. Expected: 2 rows (`IR-001 Submitted`, `IR-002 Draft`).
+1. Sidebar → **Initial Reports**. URL `/initialReports/viewAll`. Expected: 2 rows (`IR-001` v2.0
+   Submitted, `IR-002` v0.0 Draft), with an NDC-period column instead of a cooperative-approach column.
 2. Click `IR-002` row → detail page `/initialReports/view/IR-002`.
-   - Expected: Status tag = `Draft`. **Edit** + **Submit** buttons visible (top right).
-3. Click **Edit** → form page `/initialReports/edit/IR-002`. Five sections stacked (CA Details / Participation / ITMO Metrics / NDC Quantification / Environmental Integrity). Edit any field → **Update** → returns to detail page with the new value.
-4. From `IR-002`'s detail page click **Submit**. Expected: status flips Draft → Submitted, Submit button disappears, only Edit remains.
-5. Click `IR-001` row.
-   - Expected: Status `Submitted`. **Edit** still shown (Submitted is mutable today — see §11 known gaps), **Submit** hidden.
-6. Click **Generate Report** (top right of the list page) → form. Pick `CA-002` from the dropdown (or any CA with no IR yet) → submit. Expected: 409 Conflict toast (one IR per CA).
+   - Expected: Status tag = `Draft`. **Edit** button visible. **Submit** is visible but disabled with a
+     tooltip if the Cooperative Approaches table is empty — it isn't here, CA-002 is already attached,
+     so Submit should be enabled.
+   - **Do not click Submit** — §3 needs `CA-002` to stay Draft with an unsubmitted report.
+3. Click **Edit** → form page `/initialReports/edit/IR-002`. General NDC fields (period years, NDC
+   type — only Single-Year is selectable, Multi-Year is shown disabled — base year, NDC target, CA
+   method, sectors) plus Participation / ITMO Metrics / Environmental Integrity sections. Edit any
+   field → **Update** → returns to the detail page with the new value. There is no cooperative-approach
+   field here — approaches are managed from the detail page's own table, not the edit form.
+4. Open `IR-001`'s detail page.
+   - The **Cooperative Approaches** table lists both CA-001 and CA-003. The version selector shows
+     `Current (v2.0)` plus `Version 1.0` and `Version 2.0`. Switch to `Version 1.0` — the table must
+     show **only CA-001** — that's the frozen snapshot from before CA-003 was added, proving a later
+     filing doesn't rewrite history. Switch back to Current.
+5. **Submission drives every attached CA.** Use the throwaway Draft CA you created in §1 step 8 (it has
+   two authorized entities). From its detail page there's no direct "generate report" shortcut — instead
+   go to **Initial Reports → Generate Report**, fill the general NDC fields, submit to create a new
+   Draft report, then on that report's detail page use **Add Cooperative Approach** to attach the
+   throwaway CA, then click **Submit**.
+   - Expected: the report's version reads `v1.0`, status flips to `Submitted`.
+   - Open the CA. Its status must have auto-flipped `Draft → Submitted`, its CA Reference Number must be
+     populated (`CAxxxx`, minted at submission), and both authorized entities must show Submission
+     `Submitted`. **Add Authorized Entity** must be gone, and the status dropdown must now offer
+     `Active` and nothing else.
+   - Pick `Active`. Removing an entity from here on soft-flips it to `Inactive` rather than deleting it.
+6. Back on that report, click **Add Cooperative Approach** again and try to add a CA that is not
+   Draft (e.g. CA-001, already Active). Expected: rejected — an approach must be Draft to be attached.
+7. Attempt to submit a report with its last Cooperative Approach removed (or a freshly generated one
+   with none attached): the **Submit** button is disabled with a tooltip; forcing the call via the API
+   returns 400 (`initialReport.noCooperativeApproach`).
 
-**Pass criteria**: list shows 2 rows in correct status; edit page renders all 5 sections; Submit flips status; one-IR-per-CA guard fires.
+**Pass criteria**: list shows 2 rows with NDC-period + version columns; edit page has no
+cooperative-approach field; a report can hold multiple approaches; a version's frozen snapshot is
+unaffected by later additions; submitting drives every newly-Draft attached CA to Submitted and mints
+its reference; Submit is blocked with zero approaches; a non-Draft CA cannot be attached.
 
 ---
 
@@ -105,7 +140,7 @@ For each section below, record **Pass / Fail / N/A**, tester initials, and a one
 3. Click row `003` → detail page. Same Cooperative Approach row visible.
 4. **CA-state authorize gates.** Drive these by flipping CA-001's status from the Cooperative Approaches detail page, then attempting to authorise a project linked to it (any non-AUTHORISED row, e.g. `001` PENDING after pushing it to APPROVED).
    - **Suspended**: set CA-001 → Suspended. Authorize attempt fires toast: `Cooperative approach CA-001 is Suspended. Suspension is temporary; reactivate the cooperative approach (Active) before authorizing programmes under it (Draft -/CMA.5 para 20).` (key `programme.caSuspendedBlocksAuth`)
-   - **Revoked**: set a throwaway CA → Revoked, link a programme to it, attempt authorize. Toast: `Cooperative approach <id> is Revoked. Revoked is terminal; new ITMO authorizations are not permitted (Draft -/CMA.5 para 21). Use a different cooperative approach for this programme.` (key `programme.caRevokedBlocksAuth`)
+   - **Revoked**: take a throwaway CA all the way to Active (submit its initial report, then activate) and only then → Revoked — Revoked is unreachable from Draft or Submitted. Link a programme to it, attempt authorize. Toast: `Cooperative approach <id> is Revoked. Revoked is terminal; new ITMO authorizations are not permitted (Draft -/CMA.5 para 21). Use a different cooperative approach for this programme.` (key `programme.caRevokedBlocksAuth`)
    - **Missing IR**: link a programme to CA-002 (whose IR is Draft). Toast: `Cannot authorize ITMOs for cooperative approach CA-002 ("<title>"): submit the Initial Report for this CA first (Initial Reports → CA-002 → Submit). Required by Dec 2/CMA.3 Annex para 18.` (key `programme.noSubmittedIrForCaAuth`)
    - **Article 6 trade flag without CA**: clear `cooperativeApproachId` on a programme (DB or admin tool) and retry. Toast: `Programme <id> is flagged as Article 6.2 (article6trade=true) but has no cooperativeApproachId. Link it to a cooperative approach before authorizing (Dec 2/CMA.3 Annex para 18).` (key `programme.article6CaRequiredForAuth`)
    Restore CA-001 to Active so downstream tests pass.

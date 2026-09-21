@@ -63,43 +63,74 @@ Legend: ✅ covered · ⚠ partial · ❌ not covered
 | Query paginated | ✅ | `:100` | |
 | Update title/description | ✅ | `:115` | |
 | Update non-existent | ✅ | `:143` | 404. |
-| Draft → Active → Suspended → Completed | ✅ | `:156` | Linear path only. |
-| Draft → Revoked | ✅ | `cooperative-approach.spec.ts:189` | Gap #11. Direct happy-path transition from freshly-created Draft CA. |
-| Suspended → Revoked | ✅ | `cooperative-approach.spec.ts:217` | Gap #11. Draft → Active → Suspended → Revoked chain; verifies persistence via GET. |
-| Active → Completed (skipping Suspended) | ✅ | `cooperative-approach.spec.ts:249` | Gap #12. Locks non-linear happy path; CA lifecycle spec does not require Suspended as an intermediate. |
-| Completed → Active (invalid transition) | ✅ | `cooperative-approach.spec.ts:282` | Gap #5. State machine in cooperative-approach.service rejects transitions out of terminal states (Completed, Revoked) and any transition back to Draft with a 400. Persisted status remains Completed after the rejected update. |
+| Draft → Submitted → Active → Suspended → Completed | ✅ | `cooperative-approach.spec.ts` | Full linear path. Draft → Submitted is driven by submitting the initial report, not by `PUT /update`; asserts the CARP reference is minted at submission. |
+| Draft rejects every manual status change | ✅ | `cooperative-approach.spec.ts` | `ALLOWED_TRANSITIONS[DRAFT]` is empty — Submitted/Active/Suspended/Completed/Revoked all 400, status stays Draft. |
+| Submitted → Active only; never back to Draft | ✅ | `cooperative-approach.spec.ts` | Draft/Suspended/Completed/Revoked all 400 from Submitted; Active succeeds. |
+| Active → Submitted (invalid) | ✅ | `cooperative-approach.spec.ts` | 400; an activated approach can never be pushed back. |
+| Suspended → Revoked | ✅ | `cooperative-approach.spec.ts` | Submitted → Active → Suspended → Revoked chain; verifies persistence via GET. |
+| Active → Completed (skipping Suspended) | ✅ | `cooperative-approach.spec.ts` | Gap #12. Locks non-linear happy path; CA lifecycle spec does not require Suspended as an intermediate. |
+| Completed → Active (invalid transition) | ✅ | `cooperative-approach.spec.ts` | Gap #5. State machine rejects transitions out of terminal states (Completed, Revoked) and any transition back to Draft/Submitted with a 400. |
 | Revoked CA blocks new ITMO authorization | ✅ | `cross-cutting.spec.ts:677` | The only place Revoked is exercised at all. |
-| PD cannot create | ✅ | `cooperative-approach.spec.ts:344` | 403. |
-| PD list read | ✅ | `:328` | UI-level. |
+| PD cannot create | ✅ | `cooperative-approach.spec.ts` | 403. |
+| PD list read | ✅ | `cooperative-approach.spec.ts` | UI-level. |
 | Concurrent update conflicts | ❌ | — | No optimistic-locking test. |
-| UI add-new flow | ✅ | `:203` | Full form fill + list-appearance. |
-| UI status change via dropdown | ✅ | `:278` | Draft → Active only. |
+| UI add-new flow | ✅ | `cooperative-approach.spec.ts` | Full form fill + list-appearance. |
+| UI: a Draft CA shows a read-only status tag, no dropdown | ✅ | `cooperative-approach.spec.ts` | The dropdown only renders when the transition map offers something. |
+| UI status change via dropdown | ✅ | `cooperative-approach.spec.ts` | Submitted → Active. |
 
-### Initial Report
+### Cooperative Approach — authorized entities
 
 | Flow | Status | Citation | Note |
 |---|---|---|---|
-| Generate with minimal input | ✅ | `initial-report.spec.ts:68` | |
-| Pre-population from CA | ✅ | `:96` | Title, metric, countryCode. |
-| Generate with explicit overrides | ✅ | `:156` | |
-| Generate for missing CA | ✅ | `:218` | 400. |
-| Duplicate generate for same CA (one-IR-per-CA) | ✅ | `:233` + `cross-cutting:793` | 409. |
-| Partial update merge | ✅ | `:259` | |
-| Update nonexistent | ✅ | `:309` | 404. |
-| Update on Published IR | ✅ | `:321` | 400. |
-| **Update on Submitted (non-Published) IR** | ⚠ | `initial-report.spec.ts:784` | no immutability guard today — locked at initial-report.spec.ts:784. Service only blocks Published (initial-report.service.ts:184); Submitted edits succeed. |
-| Submit fully populated | ✅ | `:348` | |
-| Submit with nulled required field | ✅ | `initial-report.spec.ts:365` | **Was a runtime `.skip` because the update DTO rejected nulls — now covered.** Bypasses the DTO via `nullInitialReportSectionDirect` (direct SQL UPDATE on the JSONB column), then calls /submit and asserts a 400 listing the missing field. Drives the service-level "Initial report is incomplete. Missing sections" guard at programme-ledger.service.ts:229-233. |
-| Submit nonexistent | ✅ | `:407` | |
-| Submit idempotency | ✅ | `:418` | |
-| `/check` before submit | ✅ | `:460` | |
-| `/check` after submit | ✅ | `:479` | |
-| `/check` transitions across every status | ✅ | `cross-cutting:565` | Pre-IR / Draft / Submitted. |
-| `/check` reachable by any auth'd role | ✅ | `:458`, `cross-cutting:458` | JwtAuthGuard only. |
-| PD cannot generate | ✅ | `:593` | 403. |
-| IR status preserved across re-read | ✅ | `cross-cutting:851` | Draft-then-Submitted. |
-| CA title change does NOT propagate to generated IR | ✅ | `cross-cutting:754` | Snapshot drift behaviour documented. |
-| **IR of a Revoked CA — what happens?** | ⚠ | `initial-report.spec.ts:734` | no guard today — generate+submit succeed; locked at initial-report.spec.ts:734 (generate) and :760 (submit). Contrast with /authorize at programme.service.ts:6450-6458 which DOES gate on Revoked. |
+| Create CA with nested `authorizedEntities` | ✅ | `cooperative-approach.spec.ts` | Entities are submitted with the approach; land `submissionStatus=Draft`, `status=Active`, `authorizingParty` forced to the host. |
+| Nested entity outside `participatingParties` rolls the create back | ✅ | `cooperative-approach.spec.ts` | 400, and the approach itself is not persisted (one transaction). |
+| `authorizedEntity/add` on a Draft CA | ✅ | `cooperative-approach.spec.ts` | 201, `authorizingParty` derived server-side. |
+| `authorizedEntity/add` rejected once past Draft | ✅ | `cooperative-approach.spec.ts` | 400 on both a Submitted and an Active CA. |
+| Entities flip to `submissionStatus=Submitted` with the CA | ✅ | `cooperative-approach.spec.ts` | Driven by `PUT /initialReport/submit`. |
+| `authorizedEntity/remove` hard-deletes on Draft, inactivates after | ✅ | `cooperative-approach.spec.ts` | Nothing submitted yet means no authorization history to preserve. |
+| Only submitted entities reach AEF Table 5 | ⚠ unit only | `registry-authorized-entities.provider.spec.ts` | The `submissionStatus = Submitted` predicate is asserted on the query builder; no live-DB e2e assertion. |
+
+### Initial Report
+
+> **Restructured (UNCR-478, NDC-period model).** An initial report now covers an NDC implementation
+> period rather than a single cooperative approach — `initial_report` is one mutable row per report
+> (PK `reportNumber`), approaches attach via `initial_report_cooperative_approach` (globally unique
+> per approach), and each submit freezes an immutable `major.minor` snapshot in
+> `initial_report_version` instead of the old append-only per-edit row. `initial-report.spec.ts` was
+> rewritten in the same change — 30 tests across 10 `describe` blocks (generate; update; add/remove
+> cooperative approach; submit success + version bump; submit validation, one test per
+> `initialReport.*` message key; `/check`; `/query` + `/get`; enum cardinality; permissions; UI). It has
+> **not been run** — no live stack was available in this environment, only a TypeScript parse-only
+> check (clean). One assumption is marked `VERIFY:` in the file itself (the missing-base-year-emission
+> test assumes no other fixture has ever seeded an Emission row at that exact synthetic year); UI
+> selectors were derived by reading the page source directly but should be spot-checked once a stack is
+> up. Detailed per-test citations are intentionally omitted here — see the file's own header comment
+> and per-test comments, which cite message keys and service/DTO locations directly rather than line
+> numbers that would drift.
+>
+> Structurally retired by the restructure (no longer meaningful, not "still a gap"): one-IR-per-CA
+> (an approach now belongs to at most one report, enforced by a DB unique constraint, but many
+> approaches can share one report), "pre-population from CA" (a report has no single CA to pre-populate
+> from at generate time), and "CA title change does not propagate" (there is no live join to propagate
+> through — each attach snapshots the approach's fields at that moment, and history lives in the frozen
+> version snapshot instead).
+>
+> New in this model, needing coverage: submit blocked with zero approaches
+> (`initialReport.noCooperativeApproach`), add/remove cooperative approach (Draft-only, globally-unique
+> link), a version bump on adding an approach after submit (`major+1`), version-snapshot immutability
+> (an earlier version's approach set is unaffected by a later filing), rejection of `ndcType=MultiYear`
+> at submit, the `ndcType`/`caMethod` compatibility guard, the NDC-trajectory validation
+> (`ndc-trajectory.ts` — has its own unit-tested `.spec.ts`, not e2e), and the base-year-Emission-missing
+> guard now required before any submit can succeed at all.
+>
+> Two known gaps carried over unresolved, now flagged directly in the spec files rather than fixed
+> blind (no live stack to verify a rewrite against): `corresponding-adjustment.spec.ts`'s and
+> `cross-cutting.spec.ts`'s own `nextFutureYear()` helpers call `/correspondingAdjustment/calculate`
+> without seeding an `ndc_target` row first, which the restructure makes a hard 400
+> (`ndcTargetNotDefined`) rather than a maybe — both files are very likely red against a live stack
+> until each `nextFutureYear()` call site is threaded through the new
+> `ensureNdcTargetForYear(apiDna, year)` factory helper. See the `KNOWN GAP` comments in both files'
+> headers.
 
 ### Programme / project lifecycle
 
@@ -466,6 +497,7 @@ Features in matrix: CA, IR, CA-ADJ, AEF. **CreditTransfer** ✅ covered at `cred
 - **No `playwright.config.ts` project override** to pin workers=1 for Article 6 tests; default concurrency applies.
 - **Enum-cardinality tests lock exact value counts** (e.g. `NdcType` exactly 2, `CaMethod` exactly 3, `AefActionTypeEnum` exactly 11). Legitimate adding of a new enum value will break these before the feature is merged — by design, but worth flagging for reviewers.
 - **View-schema drift is unguarded**: the `programme_query_entity` bug surfaced in manual testing (a view frozen before Phase 2 added `cooperativeApproachId`) has no regression test. Any subsequent column addition to the `programme` or `project_entity` table will repeat the incident.
+- **Found and fixed during the UNCR-478 e2e rewrite**: `web/src/Pages/InitialReport/initialReportManagement.tsx` set `rowKey="reportId"` and navigated to `` `/initialReports/view/${record.reportId}` ``, but the NDC-period restructure's `/query` rows carry `reportNumber`, not `reportId` — every row click in the Initial Reports list would have navigated to `/initialReports/view/undefined`. Caught by the e2e-qa-engineer sub-agent while writing UI selectors against the real API response shape; fixed in the same change.
 
 ---
 
@@ -548,7 +580,8 @@ Each `.fixme` in the new specs pins a real compliance or correctness gap that wa
 - **CA optimistic locking** — no `@VersionColumn`; concurrent-update protection pending Phase B.
 - **Minor #24 (DNA ViewOnly coverage depth)** — partial (one test exists at cross-cutting:528). Parameterized full-resource sweep deferred.
 - **Minor #29 (i18n switch)** — UI polish; deferred.
-- **IR /generate + /submit + /update guards against Revoked CA / Submitted IR** — current no-guard behavior is locked by Wave 1 C tests; adding the guards is a separate Phase B decision (would invert those tests' assertions).
+- **IR /generate + /submit guards against a Revoked CA** — closed by the UNCR-478 lifecycle change, not by a bespoke guard. `/generate` already required a Draft CA, and a Draft can no longer be revoked (reaching a terminal state now requires submitting and activating first), so the sequence the old locks documented is unreachable. Both tests were inverted accordingly.
+- **IR /update on a Submitted (non-Published) IR** — still no immutability guard; current behavior remains locked at `initial-report.spec.ts`. Separate Phase B decision.
 
 ### Phase B decision sheet — backend additions
 

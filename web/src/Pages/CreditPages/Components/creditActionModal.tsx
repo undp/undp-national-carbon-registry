@@ -812,54 +812,56 @@ export const CreditActionModal = (props: CreditActionModalProps) => {
               <Col lg={12} md={10}>
                 <Row justify="end">
                   <Col span={isProceed ? 12 : 24}>
-                    <Form.Item
-                      className="credit-action-credit-input"
-                      name="creditAmount"
-                      rules={[
-                        {
-                          // eslint-disable-next-line no-unused-vars
-                          validator: (_, value) => {
-                            if (isProceed) return Promise.resolve();
-                            if (
-                              value === undefined ||
-                              value === null ||
-                              value.toString().trim() === ""
-                            ) {
-                              return Promise.reject(new Error(t("required")));
-                            }
-                            if (value <= 0 || isNaN(value)) {
-                              return Promise.reject(new Error(t("wrongInput")));
-                            }
-                            if (!Number.isInteger(Number(value))) {
-                              return Promise.reject(
-                                new Error(t("shouldBeInterger"))
-                              );
-                            }
-                            if (Number(value) > data.creditAmount) {
-                              return Promise.reject(
-                                new Error(t("insufficientBalance"))
-                              );
-                            }
-                            return Promise.resolve();
-                          },
-                        },
-                      ]}
-                    >
+                    <Form.Item className="credit-action-credit-input">
                       <div style={{ display: "flex", alignItems: "center" }}>
                         {!isProceed && (
                           <>
-                            <InputNumber
-                              placeholder={
-                                data?.creditAmount
-                                  ? addCommSep(data.creditAmount)
-                                  : ""
-                              }
-                              style={{ flex: 1, marginRight: 8 }}
-                              disabled={isProceed}
-                              // onChange={(value) => {
-                              //   form.setFieldsValue({ creditAmount: value });
-                              // }}
-                            />
+                            <Form.Item
+                              name="creditAmount"
+                              noStyle
+                              rules={[
+                                {
+                                  // eslint-disable-next-line no-unused-vars
+                                  validator: (_, value) => {
+                                    if (
+                                      value === undefined ||
+                                      value === null ||
+                                      value.toString().trim() === ""
+                                    ) {
+                                      return Promise.reject(
+                                        new Error(t("required"))
+                                      );
+                                    }
+                                    if (value <= 0 || isNaN(value)) {
+                                      return Promise.reject(
+                                        new Error(t("wrongInput"))
+                                      );
+                                    }
+                                    if (!Number.isInteger(Number(value))) {
+                                      return Promise.reject(
+                                        new Error(t("shouldBeInterger"))
+                                      );
+                                    }
+                                    if (Number(value) > data.creditAmount) {
+                                      return Promise.reject(
+                                        new Error(t("insufficientBalance"))
+                                      );
+                                    }
+                                    return Promise.resolve();
+                                  },
+                                },
+                              ]}
+                            >
+                              <InputNumber
+                                placeholder={
+                                  data?.creditAmount
+                                    ? addCommSep(data.creditAmount)
+                                    : ""
+                                }
+                                style={{ flex: 1, marginRight: 8 }}
+                                precision={0}
+                              />
+                            </Form.Item>
                             <span style={{ margin: "0 8px" }}>/</span>
                           </>
                         )}

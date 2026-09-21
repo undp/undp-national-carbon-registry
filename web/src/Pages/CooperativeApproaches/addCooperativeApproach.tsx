@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import moment from "moment";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
 import { useCountryOptions } from "../../Components/Common/hooks/useCountryOptions";
 import { API_PATHS } from "../../Config/apiConfig";
@@ -15,10 +16,21 @@ import {
   Tag,
   message,
 } from "antd";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import "./cooperativeApproaches.scss";
 import { TimedPageInfoTitle } from "../../Components/Common/TimedPageInfoTitle/TimedPageInfoTitle";
+import { RequireDnaManage } from "../../Components/Common/AccessControl/RequireDnaAccess";
 
 const { TextArea } = Input;
+
+// One row of the Authorized Entities Form.List, as antd hands it back.
+type AuthorizedEntityFormValues = {
+  entityName: string;
+  entityIdentifier?: string;
+  countryOfIncorporation: string;
+  authorizationDate?: moment.Moment;
+  authorizationReference?: string;
+};
 
 const AddCooperativeApproach = () => {
   const navigate = useNavigate();
@@ -35,6 +47,11 @@ const AddCooperativeApproach = () => {
 
   const existingRecord = (location.state as any)?.record;
   const isEdit = !!existingRecord;
+
+  // Participating parties drive the country-of-incorporation options for
+  // the authorized entities below, so this has to be a watched value.
+  const participatingParties: string[] =
+    Form.useWatch("participatingParties", form) ?? [];
 
   // Host party is derived server-side from the registry's own country
   // (systemCountry) — it isn't user-editable. Fetched for display, and
@@ -90,18 +107,39 @@ const AddCooperativeApproach = () => {
           ? values.startDate.valueOf()
           : undefined,
         endDate: values.endDate ? values.endDate.valueOf() : undefined,
+        // Authorized entities are submitted together with the approach.
+        // The update endpoint takes no entities array — amending a draft
+        // goes through the details page instead.
+        authorizedEntities: (
+          (values.authorizedEntities ?? []) as AuthorizedEntityFormValues[]
+        )
+          .filter((entity) => entity)
+          .map((entity) => ({
+            entityName: entity.entityName,
+            entityIdentifier: entity.entityIdentifier || undefined,
+            countryOfIncorporation: entity.countryOfIncorporation,
+            authorizationDate: entity.authorizationDate?.valueOf(),
+            authorizationReference: entity.authorizationReference || undefined,
+          })),
       };
 
       if (isEdit) {
+        delete payload.authorizedEntities;
         payload.cooperativeApproachId =
           existingRecord.cooperativeApproachId;
         await put("national/cooperativeApproach/update", payload);
         message.success("Cooperative approach updated successfully");
+        // Back to the approach that was actually edited, not the list —
+        // Edit was launched from its detail page, so Update should
+        // return there.
+        navigate(
+          `/cooperativeApproaches/view/${existingRecord.cooperativeApproachId}`
+        );
       } else {
         await post("national/cooperativeApproach/create", payload);
         message.success("Cooperative approach created successfully");
+        navigate("/cooperativeApproaches/viewAll");
       }
-      navigate("/cooperativeApproaches/viewAll");
     } catch (error) {
       const fallback = t(
         isEdit
@@ -118,6 +156,7 @@ const AddCooperativeApproach = () => {
   };
 
   return (
+    <RequireDnaManage>
     <div className="cooperative-approaches-container">
       <div className="title-bar">
         <TimedPageInfoTitle
@@ -139,8 +178,15 @@ const AddCooperativeApproach = () => {
             existingRecord
               ? {
                   ...existingRecord,
-                  startDate: undefined,
-                  endDate: undefined,
+                  // The record carries epoch millis; the DatePicker needs
+                  // moments. Leaving these undefined blanked both dates on
+                  // every save.
+                  startDate: existingRecord.startDate
+                    ? moment(Number(existingRecord.startDate))
+                    : undefined,
+                  endDate: existingRecord.endDate
+                    ? moment(Number(existingRecord.endDate))
+                    : undefined,
                 }
               : undefined
           }
@@ -251,6 +297,131 @@ const AddCooperativeApproach = () => {
               </Form.Item>
             </Col>
           </Row>
+          {/* Authorized entities can be set here at creation, or added
+              later from the approach's details page — including after
+              it's Submitted or Active, as an amendment. This form only
+              ever creates the approach, so on edit they're managed from
+              the details page instead. */}
+          {!isEdit && (
+            <>
+              <Row gutter={24}>
+                <Col span={24}>
+                  <div className="table-title" style={{ marginBottom: 8 }}>
+                    Authorized Entities
+                  </div>
+                  <div className="body-sub-title" style={{ marginBottom: 16 }}>
+                    Entities authorized to act under this cooperative
+                    approach. More can be added later from the approach's
+                    details page, including after it's Submitted or Active.
+                  </div>
+                </Col>
+              </Row>
+              <Form.List name="authorizedEntities">
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map((field) => (
+                      <Row gutter={16} key={field.key} align="bottom">
+                        <Col span={5}>
+                          <Form.Item
+                            name={[field.name, "entityName"]}
+                            label="Entity Name"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Entity name is required",
+                              },
+                            ]}
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                          <Form.Item
+                            name={[field.name, "entityIdentifier"]}
+                            label="Identifier"
+                          >
+                            <Input />
+                          </Form.Item>
+                        </Col>
+                        <Col span={5}>
+                          <Form.Item
+                            name={[field.name, "countryOfIncorporation"]}
+                            label="Country of Incorporation"
+                            rules={[
+                              {
+                                required: true,
+                                message:
+                                  "Country of incorporation is required",
+                              },
+                            ]}
+                          >
+                            <Select
+                              showSearch
+                              optionFilterProp="label"
+                              placeholder="Select country"
+                              // Must be one of the approach's participating
+                              // parties — the server rejects anything else.
+                              options={countryOptions.filter((option) =>
+                                participatingParties.includes(option.value)
+                              )}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                          <Form.Item
+                            name={[field.name, "authorizationDate"]}
+                            label="Authorization Date"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Authorization date is required",
+                              },
+                            ]}
+                          >
+                            <DatePicker
+                              style={{ width: "100%" }}
+                              disabledDate={(currentDate: moment.Moment) =>
+                                currentDate > moment().endOf("day")
+                              }
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col span={4}>
+                          <Form.Item
+                            name={[field.name, "authorizationReference"]}
+                            label="Reference"
+                          >
+                            <Input placeholder="Document reference or URL" />
+                          </Form.Item>
+                        </Col>
+                        <Col span={2}>
+                          <Form.Item>
+                            <Button
+                              danger
+                              icon={<DeleteOutlined />}
+                              onClick={() => remove(field.name)}
+                            />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    ))}
+                    <Row>
+                      <Col span={24}>
+                        <Button
+                          type="dashed"
+                          block
+                          icon={<PlusOutlined />}
+                          onClick={() => add()}
+                        >
+                          Add Authorized Entity
+                        </Button>
+                      </Col>
+                    </Row>
+                  </>
+                )}
+              </Form.List>
+            </>
+          )}
           <Row justify="end" gutter={16} style={{ marginTop: 16 }}>
             <Col>
               <Button onClick={() => navigate("/cooperativeApproaches/viewAll")}>
@@ -266,6 +437,7 @@ const AddCooperativeApproach = () => {
         </Form>
       </div>
     </div>
+    </RequireDnaManage>
   );
 };
 

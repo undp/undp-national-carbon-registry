@@ -15,6 +15,7 @@ import { test, expect } from "./support/fixtures";
 import { BASE_URL, login } from "./support/auth";
 import { ApiClient } from "./support/api-client";
 import {
+  activateCooperativeApproach,
   createCooperativeApproach,
   generateInitialReport,
   queryCooperativeApproaches,
@@ -158,7 +159,7 @@ test.describe("Cooperative Approach - Article 6.2", () => {
       expect(res.status()).toBe(404);
     });
 
-    test("status lifecycle DRAFT -> ACTIVE -> SUSPENDED -> COMPLETED", async ({
+    test("status lifecycle DRAFT -> SUBMITTED -> ACTIVE -> SUSPENDED -> COMPLETED", async ({
       apiDna,
     }) => {
       const created = await createCooperativeApproach(apiDna, {
@@ -168,6 +169,23 @@ test.describe("Cooperative Approach - Article 6.2", () => {
 
       // Initial status must be Draft (enforced server-side at create).
       expect(created.raw.status).toBe("Draft");
+
+      // Draft -> Submitted is not a manual move: submitting the initial
+      // report is what drives it.
+      const ir = await generateInitialReport(apiDna, {
+        cooperativeApproachId: id,
+      });
+      await submitInitialReport(apiDna, ir.reportId);
+      const afterSubmit = unwrap<any>(
+        await apiDna.json<any>(
+          await apiDna.get(
+            `national/cooperativeApproach/get?id=${encodeURIComponent(id)}`
+          )
+        )
+      );
+      expect(afterSubmit.status).toBe("Submitted");
+      // The mock CARP reference is minted at submission, not activation.
+      expect(afterSubmit.caReferenceNumber).toMatch(/^CA\d+/);
 
       for (const next of ["Active", "Suspended", "Completed"] as const) {
         const res = await apiDna.put("national/cooperativeApproach/update", {
@@ -187,31 +205,101 @@ test.describe("Cooperative Approach - Article 6.2", () => {
       expect(finalEntity.status).toBe("Completed");
     });
 
-    // Audit gap #11 — the new Revoked terminal state (Draft -/CMA.5 paras
-    // 20-21) was added in the Phase 6 compliance fix but never exercised
-    // as a direct Draft -> Revoked transition. Locks the happy path for
-    // an immediate revocation of a freshly-created CA.
-    test("status Draft -> Revoked direct transition persists", async ({
+    // A Draft has no manual transitions at all: it leaves Draft only by
+    // having its initial report submitted. Locks that guard so a future
+    // regression re-opening Draft -> anything surfaces here.
+    test("a Draft CA rejects every manual status change", async ({
       apiDna,
     }) => {
       const created = await createCooperativeApproach(apiDna, {
-        title: `CA Draft Revoked ${uniqueSuffix()}`,
+        title: `CA Draft Locked ${uniqueSuffix()}`,
       });
       const id = created.cooperativeApproachId;
       expect(created.raw.status).toBe("Draft");
 
-      const res = await apiDna.put("national/cooperativeApproach/update", {
-        cooperativeApproachId: id,
-        status: "Revoked",
-      });
-      expect(res.status()).toBe(200);
+      for (const next of [
+        "Submitted",
+        "Active",
+        "Suspended",
+        "Completed",
+        "Revoked",
+      ] as const) {
+        const res = await apiDna.put("national/cooperativeApproach/update", {
+          cooperativeApproachId: id,
+          status: next,
+        });
+        expect(res.ok()).toBe(false);
+        expect(res.status()).toBe(400);
+      }
 
       const getRes = await apiDna.get(
         `national/cooperativeApproach/get?id=${encodeURIComponent(id)}`
       );
       expect(getRes.status()).toBe(200);
       const entity = unwrap(await apiDna.json<any>(getRes));
-      expect(entity.status).toBe("Revoked");
+      expect(entity.status).toBe("Draft");
+    });
+
+    // Submitted is a one-way gate: Active is the only exit, and the
+    // approach can never be pulled back to Draft for re-editing.
+    test("a Submitted CA can only move to Active, never back to Draft", async ({
+      apiDna,
+    }) => {
+      const created = await createCooperativeApproach(apiDna, {
+        title: `CA Submitted Gate ${uniqueSuffix()}`,
+      });
+      const id = created.cooperativeApproachId;
+      const ir = await generateInitialReport(apiDna, {
+        cooperativeApproachId: id,
+      });
+      await submitInitialReport(apiDna, ir.reportId);
+
+      for (const rejected of [
+        "Draft",
+        "Suspended",
+        "Completed",
+        "Revoked",
+      ] as const) {
+        const res = await apiDna.put("national/cooperativeApproach/update", {
+          cooperativeApproachId: id,
+          status: rejected,
+        });
+        expect(res.ok()).toBe(false);
+        expect(res.status()).toBe(400);
+      }
+
+      const activate = await apiDna.put(
+        "national/cooperativeApproach/update",
+        { cooperativeApproachId: id, status: "Active" }
+      );
+      expect(activate.status()).toBe(200);
+      expect(unwrap<any>(await apiDna.json<any>(activate)).status).toBe(
+        "Active"
+      );
+    });
+
+    // Once Active, the approach can never be pushed back to Submitted —
+    // the working version is fixed for good.
+    test("an Active CA cannot be pushed back to Submitted", async ({
+      apiDna,
+    }) => {
+      const created = await createCooperativeApproach(apiDna, {
+        title: `CA Active NoRevert ${uniqueSuffix()}`,
+      });
+      const id = created.cooperativeApproachId;
+      await activateCooperativeApproach(apiDna, id);
+
+      const res = await apiDna.put("national/cooperativeApproach/update", {
+        cooperativeApproachId: id,
+        status: "Submitted",
+      });
+      expect(res.ok()).toBe(false);
+      expect(res.status()).toBe(400);
+
+      const getRes = await apiDna.get(
+        `national/cooperativeApproach/get?id=${encodeURIComponent(id)}`
+      );
+      expect(unwrap<any>(await apiDna.json<any>(getRes)).status).toBe("Active");
     });
 
     // Audit gap #11 — Suspended -> Revoked direct transition. Mirrors
@@ -219,13 +307,17 @@ test.describe("Cooperative Approach - Article 6.2", () => {
     // paused, then revoked outright without returning to Active or
     // Completed. Article 6 semantics permit revocation from any
     // non-terminal prior state.
-    test("status Draft -> Active -> Suspended -> Revoked persists", async ({
+    test("status Submitted -> Active -> Suspended -> Revoked persists", async ({
       apiDna,
     }) => {
       const created = await createCooperativeApproach(apiDna, {
         title: `CA Suspended Revoked ${uniqueSuffix()}`,
       });
       const id = created.cooperativeApproachId;
+      const ir = await generateInitialReport(apiDna, {
+        cooperativeApproachId: id,
+      });
+      await submitInitialReport(apiDna, ir.reportId);
 
       for (const next of ["Active", "Suspended", "Revoked"] as const) {
         const res = await apiDna.put("national/cooperativeApproach/update", {
@@ -251,13 +343,17 @@ test.describe("Cooperative Approach - Article 6.2", () => {
     // happy path for a CA that simply concludes while active. Locks
     // the accepted behaviour so a future regression that forces
     // Active -> Suspended -> Completed would surface here.
-    test("status Draft -> Active -> Completed (skipping Suspended) persists", async ({
+    test("status Submitted -> Active -> Completed (skipping Suspended) persists", async ({
       apiDna,
     }) => {
       const created = await createCooperativeApproach(apiDna, {
         title: `CA Active Completed ${uniqueSuffix()}`,
       });
       const id = created.cooperativeApproachId;
+      const ir = await generateInitialReport(apiDna, {
+        cooperativeApproachId: id,
+      });
+      await submitInitialReport(apiDna, ir.reportId);
 
       for (const next of ["Active", "Completed"] as const) {
         const res = await apiDna.put("national/cooperativeApproach/update", {
@@ -289,6 +385,10 @@ test.describe("Cooperative Approach - Article 6.2", () => {
           title: `CA Completed Reactivate ${uniqueSuffix()}`,
         });
         const id = created.cooperativeApproachId;
+        const ir = await generateInitialReport(apiDna, {
+          cooperativeApproachId: id,
+        });
+        await submitInitialReport(apiDna, ir.reportId);
 
         for (const next of ["Active", "Suspended", "Completed"] as const) {
           const res = await apiDna.put("national/cooperativeApproach/update", {
@@ -426,12 +526,14 @@ test.describe("Cooperative Approach - Article 6.2", () => {
       ).toBeVisible();
     });
 
-    test("DNA changes status from Draft to Active via the dropdown", async ({
+    // A Draft renders its status as a read-only tag — there is nothing
+    // to pick, because only submitting the initial report advances it.
+    test("a Draft CA offers no status dropdown", async ({
       dnaPage,
       apiDna,
     }) => {
       const created = await createCooperativeApproach(apiDna, {
-        title: `CA Status UI ${uniqueSuffix()}`,
+        title: `CA Draft Status UI ${uniqueSuffix()}`,
       });
 
       await dnaPage.goto(
@@ -439,12 +541,38 @@ test.describe("Cooperative Approach - Article 6.2", () => {
       );
       await dnaPage.waitForLoadState("networkidle");
 
+      await expect(
+        dnaPage.locator(".content-card .ant-select").filter({ hasText: /Draft/ })
+      ).toHaveCount(0);
+      await expect(
+        dnaPage.locator(".content-card .ant-tag").filter({ hasText: /^Draft$/ })
+      ).toHaveCount(1);
+    });
+
+    test("DNA changes status from Submitted to Active via the dropdown", async ({
+      dnaPage,
+      apiDna,
+    }) => {
+      const created = await createCooperativeApproach(apiDna, {
+        title: `CA Status UI ${uniqueSuffix()}`,
+      });
+      // Only submitting the initial report opens the dropdown up.
+      const ir = await generateInitialReport(apiDna, {
+        cooperativeApproachId: created.cooperativeApproachId,
+      });
+      await submitInitialReport(apiDna, ir.reportId);
+
+      await dnaPage.goto(
+        `${BASE_URL}/cooperativeApproaches/view/${created.cooperativeApproachId}`
+      );
+      await dnaPage.waitForLoadState("networkidle");
+
       // Scope to the .content-card (which wraps Descriptions) and find
-      // the Select whose current value is "Draft" — uniquely identifies
-      // the status Select on a freshly created CA.
+      // the Select whose current value is "Submitted" — uniquely
+      // identifies the status Select on a just-submitted CA.
       const statusSelect = dnaPage
         .locator(".content-card .ant-select")
-        .filter({ hasText: /Draft/ })
+        .filter({ hasText: /Submitted/ })
         .first();
       await statusSelect.locator(".ant-select-selector").click();
 
@@ -478,10 +606,9 @@ test.describe("Cooperative Approach - Article 6.2", () => {
   // countryOfIncorporation must be one of the CA's participatingParties.
   // ------------------------------------------------------------------
   test.describe("API: Authorized Entities", () => {
-    // Authorized entities can only be added to an Active CA, and
-    // activation requires a submitted initial report (Dec 2/CMA.3
-    // Annex para 18) — spin both up before each case.
-    async function createActiveCa(
+    // Authorized entities are part of what the initial report submits,
+    // so they can only be attached while the CA is still a Draft.
+    async function createDraftCa(
       apiDna: ApiClient,
       participatingParties: string[]
     ): Promise<string> {
@@ -489,32 +616,94 @@ test.describe("Cooperative Approach - Article 6.2", () => {
         title: `CA Entities ${uniqueSuffix()}`,
         participatingParties,
       });
-      const ir = await generateInitialReport(apiDna, {
-        cooperativeApproachId: created.cooperativeApproachId,
-      });
-      await submitInitialReport(apiDna, ir.reportId);
-      const activateRes = await apiDna.put(
-        "national/cooperativeApproach/update",
-        {
-          cooperativeApproachId: created.cooperativeApproachId,
-          status: "Active",
-        }
-      );
-      expect(activateRes.status()).toBe(200);
+      expect(created.raw.status).toBe("Draft");
       return created.cooperativeApproachId;
     }
+
+    function entityPayload(cooperativeApproachId: string, country: string) {
+      return {
+        cooperativeApproachId,
+        entityName: `Entity ${uniqueSuffix()}`,
+        countryOfIncorporation: country,
+        authorizationDate: Date.now() - 86400000,
+      };
+    }
+
+    async function queryEntities(apiDna: ApiClient, caId: string) {
+      const res = await apiDna.get(
+        `national/cooperativeApproach/authorizedEntity/query?cooperativeApproachId=${encodeURIComponent(
+          caId
+        )}`
+      );
+      expect(res.status()).toBe(200);
+      return unwrap<any[]>(await apiDna.json<any>(res));
+    }
+
+    test("POST /create accepts authorized entities nested in the same submission", async ({
+      apiDna,
+    }) => {
+      const res = await apiDna.post("national/cooperativeApproach/create", {
+        title: `CA Nested Entities ${uniqueSuffix()}`,
+        participatingParties: ["GH", "CH"],
+        authorizedEntities: [
+          {
+            entityName: `Nested A ${uniqueSuffix()}`,
+            countryOfIncorporation: "GH",
+            authorizationDate: Date.now() - 86400000,
+          },
+          {
+            entityName: `Nested B ${uniqueSuffix()}`,
+            countryOfIncorporation: "CH",
+            authorizationDate: Date.now() - 86400000,
+          },
+        ],
+      });
+      expect(res.status()).toBe(201);
+      const created = unwrap<any>(await apiDna.json<any>(res));
+
+      const entities = await queryEntities(
+        apiDna,
+        created.cooperativeApproachId
+      );
+      expect(entities).toHaveLength(2);
+      for (const entity of entities) {
+        expect(entity.authorizingParty).toBe("NG");
+        expect(entity.submissionStatus).toBe("Draft");
+        expect(entity.status).toBe("Active");
+      }
+    });
+
+    test("a nested entity outside the participatingParties rejects the whole create", async ({
+      apiDna,
+    }) => {
+      const title = `CA Nested Invalid ${uniqueSuffix()}`;
+      const res = await apiDna.post("national/cooperativeApproach/create", {
+        title,
+        participatingParties: ["GH", "CH"],
+        authorizedEntities: [
+          {
+            entityName: `Nested Bad ${uniqueSuffix()}`,
+            countryOfIncorporation: "US",
+            authorizationDate: Date.now() - 86400000,
+          },
+        ],
+      });
+      expect(res.ok()).toBe(false);
+      expect(res.status()).toBe(400);
+
+      // The approach must not survive the rejected entity — the whole
+      // create is one transaction.
+      const { items } = await queryCooperativeApproaches(apiDna, 1, 200);
+      expect(items.find((row: any) => row.title === title)).toBeUndefined();
+    });
 
     test("addAuthorizedEntity derives authorizingParty from the host regardless of client input", async ({
       apiDna,
     }) => {
-      const caId = await createActiveCa(apiDna, ["GH", "CH"]);
+      const caId = await createDraftCa(apiDna, ["GH", "CH"]);
       const res = await apiDna.post(
         "national/cooperativeApproach/authorizedEntity/add",
-        {
-          cooperativeApproachId: caId,
-          entityName: `Entity ${uniqueSuffix()}`,
-          countryOfIncorporation: "GH",
-        }
+        entityPayload(caId, "GH")
       );
       expect(res.status()).toBe(201);
       const entity = unwrap(await apiDna.json<any>(res));
@@ -522,22 +711,115 @@ test.describe("Cooperative Approach - Article 6.2", () => {
       // party, regardless of what the client sends (or omits).
       expect(entity.authorizingParty).toBe("NG");
       expect(entity.countryOfIncorporation).toBe("GH");
+      expect(entity.submissionStatus).toBe("Draft");
     });
 
     test("addAuthorizedEntity rejects a countryOfIncorporation outside the CA's participatingParties", async ({
       apiDna,
     }) => {
-      const caId = await createActiveCa(apiDna, ["GH", "CH"]);
+      const caId = await createDraftCa(apiDna, ["GH", "CH"]);
       const res = await apiDna.post(
         "national/cooperativeApproach/authorizedEntity/add",
-        {
-          cooperativeApproachId: caId,
-          entityName: `Entity ${uniqueSuffix()}`,
-          countryOfIncorporation: "US",
-        }
+        entityPayload(caId, "US")
       );
       expect(res.ok()).toBe(false);
       expect(res.status()).toBe(400);
+    });
+
+    test("submitting the initial report carries the entities to Submitted", async ({
+      apiDna,
+    }) => {
+      const caId = await createDraftCa(apiDna, ["GH", "CH"]);
+      await apiDna.post(
+        "national/cooperativeApproach/authorizedEntity/add",
+        entityPayload(caId, "GH")
+      );
+
+      const ir = await generateInitialReport(apiDna, {
+        cooperativeApproachId: caId,
+      });
+      await submitInitialReport(apiDna, ir.reportId);
+
+      const entities = await queryEntities(apiDna, caId);
+      expect(entities).toHaveLength(1);
+      expect(entities[0].submissionStatus).toBe("Submitted");
+    });
+
+    test("addAuthorizedEntity is rejected once the CA has left Draft", async ({
+      apiDna,
+    }) => {
+      const caId = await createDraftCa(apiDna, ["GH", "CH"]);
+      const ir = await generateInitialReport(apiDna, {
+        cooperativeApproachId: caId,
+      });
+      await submitInitialReport(apiDna, ir.reportId);
+
+      const submittedRes = await apiDna.post(
+        "national/cooperativeApproach/authorizedEntity/add",
+        entityPayload(caId, "GH")
+      );
+      expect(submittedRes.ok()).toBe(false);
+      expect(submittedRes.status()).toBe(400);
+
+      await apiDna.put("national/cooperativeApproach/update", {
+        cooperativeApproachId: caId,
+        status: "Active",
+      });
+      const activeRes = await apiDna.post(
+        "national/cooperativeApproach/authorizedEntity/add",
+        entityPayload(caId, "GH")
+      );
+      expect(activeRes.ok()).toBe(false);
+      expect(activeRes.status()).toBe(400);
+    });
+
+    // Removal is destructive only while nothing has been submitted; once
+    // the approach is past Draft the authorization history must survive
+    // as an Inactive row.
+    test("remove deletes on a Draft CA but soft-inactivates after submission", async ({
+      apiDna,
+    }) => {
+      const caId = await createDraftCa(apiDna, ["GH", "CH"]);
+      const first = unwrap<any>(
+        await apiDna.json<any>(
+          await apiDna.post(
+            "national/cooperativeApproach/authorizedEntity/add",
+            entityPayload(caId, "GH")
+          )
+        )
+      );
+      const second = unwrap<any>(
+        await apiDna.json<any>(
+          await apiDna.post(
+            "national/cooperativeApproach/authorizedEntity/add",
+            entityPayload(caId, "CH")
+          )
+        )
+      );
+
+      const removeDraft = await apiDna.put(
+        `national/cooperativeApproach/authorizedEntity/remove?id=${encodeURIComponent(
+          first.id
+        )}`
+      );
+      expect(removeDraft.status()).toBe(200);
+      let entities = await queryEntities(apiDna, caId);
+      expect(entities.map((e) => e.id)).toEqual([second.id]);
+
+      const ir = await generateInitialReport(apiDna, {
+        cooperativeApproachId: caId,
+      });
+      await submitInitialReport(apiDna, ir.reportId);
+
+      const removeSubmitted = await apiDna.put(
+        `national/cooperativeApproach/authorizedEntity/remove?id=${encodeURIComponent(
+          second.id
+        )}`
+      );
+      expect(removeSubmitted.status()).toBe(200);
+      entities = await queryEntities(apiDna, caId);
+      expect(entities).toHaveLength(1);
+      expect(entities[0].status).toBe("Inactive");
     });
   });
 

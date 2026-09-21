@@ -14,6 +14,7 @@ import { SerialNumberManagementModule } from "../serial-number-management/serial
 import { UserCompanyViewEntity } from "../view-entities/userCompany.view.entity";
 import { DocumentsViewEntity } from "../view-entities/documents.view.entity";
 import { ActivityViewEntity } from "../view-entities/activity.view.entity";
+import { CadTrustSyncModule } from "../cadtrust-sync/cadtrust-sync.module";
 
 @Module({
   imports: [
@@ -32,6 +33,9 @@ import { ActivityViewEntity } from "../view-entities/activity.view.entity";
     FileHandlerModule,
     UserModule,
     SerialNumberManagementModule,
+    // Provides CadTrustSyncEnqueueService. No cycle: the sync module reads
+    // projects and documents through repositories, never through this service.
+    CadTrustSyncModule,
   ],
   providers: [DocumentManagementService],
   exports: [DocumentManagementService],

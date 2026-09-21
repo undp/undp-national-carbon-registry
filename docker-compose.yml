@@ -67,7 +67,7 @@ services:
       - .env.replicator
     environment:
       # ,data-importer
-      RUN_MODULE: replicator,async-operations-handler
+      RUN_MODULE: replicator,async-operations-handler,cadtrust-operations-handler
       LOCATION_SERVICE: OPENSTREET
       ASYNC_OPERATIONS_TYPE: Database
     volumes:

@@ -1,0 +1,591 @@
+$mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+.cadtrust-sync-badge-wrap {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.cadtrust-sync-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-left: 6px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  vertical-align: middle;
+  position: relative;
+
+  &:hover {
+    background: rgba(22, 177, 255, 0.12);
+  }
+
+  &__img {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    display: block;
+  }
+
+  .cadtrust-sync-badge__dot {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1px solid #fff;
+  }
+
+  &--synced .cadtrust-sync-badge__dot { background: #5dc380; }
+  &--in_progress .cadtrust-sync-badge__dot { background: #16b1ff; }
+  &--failed .cadtrust-sync-badge__dot { background: #ff4d4f; }
+}
+
+// --- Modal shell ----------------------------------------------------------
+
+.cadtrust-sync-modal {
+  .ant-modal-content {
+    height: min(800px, calc(100vh - 80px));
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 56px -18px rgba(16, 24, 40, 0.3), 0 0 0 1px rgba(16, 24, 40, 0.04);
+  }
+
+  .ant-modal-header {
+    flex: none;
+    padding: 0;
+    border-bottom: none;
+  }
+
+  .ant-modal-title { width: 100%; }
+
+  .ant-modal-close {
+    top: 22px;
+    right: 20px;
+    color: rgba(58, 53, 65, 0.4);
+
+    &:hover { color: rgba(58, 53, 65, 0.7); }
+  }
+
+  .ant-modal-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 22px 30px 30px;
+    text-align: left;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(58, 53, 65, 0.18) transparent;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(58, 53, 65, 0.18);
+      border-radius: 999px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: rgba(58, 53, 65, 0.28);
+    }
+  }
+
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 26px 30px 18px;
+    border-bottom: 1px solid #f0f0f2;
+  }
+
+  &__logo {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    overflow: hidden;
+    flex: none;
+
+    img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+  }
+
+  &__title {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #101322;
+    line-height: 1.25;
+  }
+
+  &__subtitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 5px;
+    font-size: 13px;
+    color: rgba(58, 53, 65, 0.5);
+    font-weight: 400;
+  }
+
+  &__chip {
+    font-family: $mono;
+    font-size: 11px;
+    color: rgba(58, 53, 65, 0.68);
+    background: #f4f5f7;
+    border: 1px solid #ececf0;
+    border-radius: 6px;
+    padding: 2px 7px;
+    word-break: break-all;
+  }
+
+  &__note {
+    font-size: 12px;
+    color: rgba(58, 53, 65, 0.45);
+    line-height: 1.55;
+    margin: 12px 2px 0;
+
+    b { color: rgba(58, 53, 65, 0.6); font-weight: 600; }
+  }
+
+  &__group-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: rgba(58, 53, 65, 0.4);
+    margin: 24px 0 10px;
+  }
+
+  &__records {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+// --- Status banner -----------------------------------------------------------
+
+.cadtrust-sync-banner {
+  border-radius: 12px;
+  background: #fafafa;
+  border: 1px solid #f0f0f2;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+
+  &__lead {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+
+  &__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex: none;
+  }
+
+  &__status {
+    font-size: 15px;
+    font-weight: 650;
+    color: #101322;
+    letter-spacing: -0.005em;
+  }
+
+  &__sub {
+    font-size: 12.5px;
+    color: rgba(58, 53, 65, 0.5);
+    margin-top: 2px;
+  }
+
+  &__stats {
+    display: flex;
+    gap: 22px;
+    align-items: flex-start;
+    margin-left: auto;
+  }
+
+  &__stat {
+    text-align: right;
+
+    .num {
+      font-size: 15px;
+      font-weight: 700;
+      color: #101322;
+    }
+
+    .num--ok { color: #2f7d4d; }
+    .num--muted { color: rgba(58, 53, 65, 0.35); }
+    .num--nowrap { white-space: nowrap; }
+
+    .cap {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: rgba(58, 53, 65, 0.4);
+      margin-top: 2px;
+    }
+  }
+
+  &--failed {
+    background: #fef7f7;
+    border-color: #f7e0e0;
+
+    .cadtrust-sync-banner__status { color: #a5332e; }
+    .cadtrust-sync-banner__sub { color: rgba(165, 51, 46, 0.7); }
+  }
+}
+
+// --- Shared bits -----------------------------------------------------------
+
+.cadtrust-sync-ico {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #f4f5f7;
+  color: rgba(58, 53, 65, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+
+  &--sm { width: 28px; height: 28px; }
+
+  &--accent {
+    background: rgba(22, 177, 255, 0.1);
+    color: #0a6fa8;
+  }
+}
+
+.cadtrust-sync-uuid {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  &__text {
+    font-family: $mono;
+    font-size: 11px;
+    color: rgba(58, 53, 65, 0.5);
+    overflow-wrap: anywhere;
+  }
+}
+
+.cadtrust-sync-copy {
+  border: none;
+  background: transparent;
+  padding: 2px;
+  color: rgba(58, 53, 65, 0.38);
+  cursor: pointer;
+  display: inline-flex;
+  border-radius: 4px;
+  flex: none;
+
+  &:hover {
+    color: #0a6fa8;
+    background: rgba(22, 177, 255, 0.1);
+  }
+}
+
+.cadtrust-sync-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  flex: none;
+
+  &__dot { width: 5px; height: 5px; border-radius: 50%; }
+
+  &--committed { background: rgba(93, 195, 128, 0.14); color: #2f7d4d; }
+  &--committed .cadtrust-sync-pill__dot { background: #5dc380; }
+  &--staged { background: rgba(22, 177, 255, 0.14); color: #0a6fa8; }
+  &--staged .cadtrust-sync-pill__dot { background: #16b1ff; }
+  &--pending { background: rgba(154, 103, 0, 0.12); color: #8a5a00; }
+  &--pending .cadtrust-sync-pill__dot { background: #8a5a00; }
+  &--failed { background: rgba(214, 69, 69, 0.12); color: #b42318; }
+  &--failed .cadtrust-sync-pill__dot { background: #b42318; }
+}
+
+// --- Registry setup -----------------------------------------------------------
+
+.cadtrust-sync-setup {
+  border: 1px solid #ececf0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.cadtrust-sync-setup-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+
+  & + & { border-top: 1px solid #f2f2f4; }
+
+  &__body { flex: 1; min-width: 0; }
+
+  &__name {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1c1f2b;
+    margin-bottom: 2px;
+  }
+}
+
+// --- Entity card -----------------------------------------------------------
+
+.cadtrust-sync-card {
+  border: 1px solid #ececf0;
+  border-radius: 12px;
+  padding: 13px 15px;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__titles { flex: 1; min-width: 0; }
+
+  &__name {
+    display: block;
+    font-size: 14px;
+    font-weight: 650;
+    color: #1c1f2b;
+  }
+
+  &__sub {
+    display: block;
+    font-size: 11.5px;
+    color: rgba(58, 53, 65, 0.45);
+    margin-top: 2px;
+    overflow-wrap: anywhere;
+  }
+
+  &__table {
+    font-family: $mono;
+    font-size: 11px;
+    color: rgba(58, 53, 65, 0.55);
+    background: #f4f5f7;
+    border: 1px solid #ececf0;
+    border-radius: 6px;
+    padding: 3px 8px;
+    flex: none;
+    white-space: nowrap;
+  }
+
+  &__sections {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 11px;
+  }
+}
+
+.cadtrust-sync-section {
+  border: 1px solid #f1f1f4;
+  border-radius: 9px;
+  padding: 10px 12px;
+  background: #fcfcfd;
+
+  &__top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__id { flex: 1; min-width: 0; }
+
+  &__label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #1c1f2b;
+    margin-bottom: 3px;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 16px;
+    font-size: 11.5px;
+    color: rgba(58, 53, 65, 0.48);
+    margin-top: 9px;
+  }
+
+  &__error {
+    margin-top: 9px;
+    display: flex;
+    gap: 9px;
+    background: rgba(255, 77, 79, 0.07);
+    border: 1px solid rgba(255, 77, 79, 0.16);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #a5332e;
+    white-space: pre-wrap;
+    word-break: break-word;
+
+    svg { flex: none; margin-top: 1px; }
+  }
+}
+
+// --- Table-data disclosure -----------------------------------------------------------
+
+.cadtrust-sync-data {
+  margin-top: 9px;
+
+  &__toggle {
+    border: none;
+    background: transparent;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #0a6fa8;
+
+    &:hover { color: #085a88; }
+
+    .chev {
+      display: inline-flex;
+      transition: transform 0.15s ease;
+    }
+
+    &.is-open .chev { transform: rotate(180deg); }
+  }
+
+  &__grid {
+    margin-top: 9px;
+    border: 1px solid #ececf0;
+    border-radius: 8px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+  }
+
+  &__head {
+    padding: 7px 12px;
+    background: #f4f5f7;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(58, 53, 65, 0.5);
+    border-bottom: 1px solid #ececf0;
+  }
+
+  &__key {
+    padding: 8px 12px;
+    border-top: 1px solid #f4f4f6;
+    font-family: $mono;
+    font-size: 11.5px;
+    color: rgba(58, 53, 65, 0.62);
+    overflow-wrap: anywhere;
+  }
+
+  &__val {
+    padding: 8px 12px;
+    border-top: 1px solid #f4f4f6;
+    font-size: 12px;
+    color: #2b2733;
+    overflow-wrap: anywhere;
+  }
+}
+
+// --- Short states (loading / empty) --------------------------------------
+
+.cadtrust-sync-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}
+
+// --- Empty state -----------------------------------------------------------
+
+.cadtrust-sync-empty {
+  border: 1px dashed #e2e2e6;
+  border-radius: 12px;
+  padding: 34px 20px;
+  text-align: center;
+
+  &__ico {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: #f4f5f7;
+    color: rgba(58, 53, 65, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+  }
+
+  &__title { font-size: 13.5px; font-weight: 600; color: #1c1f2b; }
+  &__sub { font-size: 12px; color: rgba(58, 53, 65, 0.5); margin-top: 4px; }
+}
+
+// --- Responsive -----------------------------------------------------------
+
+@media (max-width: 640px) {
+  .cadtrust-sync-banner {
+    flex-direction: column;
+    align-items: stretch;
+
+    &__stats {
+      margin-left: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 22px;
+    }
+
+    &__stat { text-align: left; }
+  }
+
+  .cadtrust-sync-data__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cadtrust-sync-data__head:nth-child(2) {
+    display: none;
+  }
+
+  .cadtrust-sync-data__key {
+    border-top: 1px solid #ececf0;
+    background: #fafafa;
+  }
+
+  .cadtrust-sync-data__val {
+    border-top: none;
+  }
+}

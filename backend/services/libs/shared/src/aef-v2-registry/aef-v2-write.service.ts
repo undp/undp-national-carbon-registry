@@ -474,4 +474,52 @@ export class AefV2WriteService {
 
     return { id: record.id, key, name: entity.entityName };
   }
+
+  /**
+   * Refreshes every unfrozen Table 5 row for `entity` after a status change
+   * that happens outside the ledger-driven paths above — e.g. an authorized
+   * entity being deactivated via `CooperativeApproachService.removeAuthorizedEntity`.
+   * Those paths only touch Table 5 as a side effect of an Action, so a bare
+   * status change would otherwise sit unreflected in a stored row until the
+   * next Action happens to reference the same entity, or the year-end
+   * snapshot re-runs this same mapper.
+   *
+   * Update-only, deliberately: no row is created for an entity that never
+   * had a Table 5 footprint. The current (open) year's live read already
+   * goes through `RegistryAuthorizedEntitiesProvider`, not this stored
+   * table, so it already reflects the new status regardless; and a closed
+   * year's frozen rows are a filed record that a later status change must
+   * not rewrite, which is why frozen rows are skipped here too.
+   */
+  async syncAuthorizedEntityStatus(
+    entity: CaAuthorizedEntity,
+    caReferenceNumber: string | undefined
+  ): Promise<void> {
+    const store = this.storeFactory.forManager();
+    const alpha3 = entity.countryOfIncorporation
+      ? await this.countryService.getAlpha3(entity.countryOfIncorporation)
+      : undefined;
+    const authorizationDate = formatSubmissionDate(
+      new Date(Number(entity.authorizationDate ?? entity.createdTime))
+    );
+    const input = mapCaAuthorizedEntityToAef(entity, caReferenceNumber, alpha3, authorizationDate);
+    // Same expression Table 5's own business key uses — see
+    // ensureAuthorizedEntityRecorded above.
+    const key = entity.entityIdentifier ?? entity.id;
+
+    const existing = await store.find("t5AuthorizedEntities", {
+      where: { aefT5AuthorizedEntitiesId: key },
+    });
+
+    for (const row of existing.data) {
+      // A stored row read back from Postgres carries an unset nullable
+      // column as `null`, not `undefined` — unlike the in-memory store used
+      // in tests, which never round-trips through a DB column at all. Both
+      // must count as "unfrozen" here.
+      if (row.snapshotAt !== undefined && row.snapshotAt !== null) {
+        continue; // frozen — a past year's filed record, not rewritten retroactively
+      }
+      await store.update("t5AuthorizedEntities", row.id, input);
+    }
+  }
 }

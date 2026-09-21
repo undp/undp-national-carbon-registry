@@ -156,6 +156,8 @@ export class ProjectManagementService {
             : "NULLS LAST"
           : undefined
       )
+      .addOrderBy('"document_entity"."createdTime"', "DESC")
+      .addOrderBy('"document_entity"."refId"', "DESC")
       .offset(skip)
       .limit(query.size)
       .getManyAndCount();

@@ -28,5 +28,10 @@
       font-size: 1rem;
       font-weight: 600;
     }
+
+    .status-hint {
+      font-size: 0.75rem;
+      color: variables.$body-text-color;
+    }
   }
 }

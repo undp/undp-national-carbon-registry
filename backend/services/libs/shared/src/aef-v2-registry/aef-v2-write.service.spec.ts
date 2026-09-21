@@ -2,6 +2,7 @@ import { fixedClock, InMemoryAefStore } from "@app/aef-v2";
 import { EntityManager } from "typeorm";
 
 import { AuthorizedEntityStatus } from "../enum/authorized.entity.status.enum";
+import { AuthorizedEntitySubmissionStatus } from "../enum/authorized.entity.submission.status.enum";
 import { CreditTransactionStatusEnum } from "../enum/credit.transaction.status.enum";
 import { CreditTransactionSubTypesEnum } from "../enum/credit.transaction.sub.types.enum";
 import { TxType } from "../enum/txtype.enum";
@@ -36,6 +37,7 @@ describe("AefV2WriteService — real-time authorized-entity writes", () => {
     createdTime: Date.parse("2024-01-01T00:00:00.000Z"),
     authorizationReference: "REF-1",
     status: AuthorizedEntityStatus.ACTIVE,
+    submissionStatus: AuthorizedEntitySubmissionStatus.SUBMITTED,
   };
 
   // A legacy entity created before authorizationDate became mandatory.
@@ -311,5 +313,109 @@ describe("AefV2WriteService — real-time authorized-entity writes", () => {
     expect(action.aefT3ActionsUsingAuthorizedEntityId).toBe(NOT_APPLICABLE);
     expect(action.aefT3ActionsPurposeOfUseOimp).toBe(NOT_APPLICABLE);
     expect(action.aefT3ActionsAdditionalInformation).toBe(NOT_APPLICABLE);
+  });
+});
+
+describe("AefV2WriteService.syncAuthorizedEntityStatus", () => {
+  const defaults = {
+    aefT1SubmissionParty: "VUT",
+    aefT1SubmissionNdcFirstYear: 2021,
+    aefT1SubmissionNdcLastYear: 2030,
+  };
+  const clock = fixedClock(new Date("2026-06-01T12:00:00.000Z"));
+
+  function buildService(store: InMemoryAefStore) {
+    const countryService = { getAlpha3: jest.fn().mockResolvedValue("CHE") };
+    const configService = { get: jest.fn().mockReturnValue(undefined) };
+    const storeFactory = { forManager: () => store };
+    return new AefV2WriteService(
+      storeFactory as any,
+      defaults,
+      configService as any,
+      {} as any,
+      countryService as any
+    );
+  }
+
+  function inactiveEntity() {
+    return {
+      id: "entity-uuid-1",
+      cooperativeApproachId: "CA0004",
+      entityName: "Alpine Carbon Markets",
+      entityIdentifier: "ENT-001",
+      countryOfIncorporation: "CH",
+      authorizationDate: Date.parse("2024-03-01T00:00:00.000Z"),
+      createdTime: Date.parse("2024-01-01T00:00:00.000Z"),
+      authorizationReference: "REF-1",
+      status: AuthorizedEntityStatus.INACTIVE,
+      submissionStatus: AuthorizedEntitySubmissionStatus.SUBMITTED,
+    };
+  }
+
+  it("updates an existing unfrozen Table 5 row with the entity's new status", async () => {
+    const store = new InMemoryAefStore(undefined, clock);
+    const existing = await store.create("t5AuthorizedEntities", {
+      aefT5AuthorizedEntitiesId: "ENT-001",
+      aefT5AuthorizedEntitiesName: "Alpine Carbon Markets",
+      aefT5AuthorizedEntitiesConditions: "Active",
+      aefT1SubmissionId: "submission-2026",
+    } as any);
+    const service = buildService(store);
+
+    await service.syncAuthorizedEntityStatus(inactiveEntity() as any, "CA0004");
+
+    const rows = store.all("t5AuthorizedEntities");
+    expect(rows).toHaveLength(1);
+    expect(rows[0].id).toBe(existing.id);
+    expect(rows[0].aefT5AuthorizedEntitiesConditions).toBe("Inactive");
+    // Untouched columns (e.g. the submission link) survive the merge.
+    expect(rows[0].aefT1SubmissionId).toBe("submission-2026");
+  });
+
+  it("updates an existing unfrozen row whose snapshotAt reads back as null, not undefined", async () => {
+    // A real Postgres read via AefTypeOrmStore hydrates an unset nullable
+    // column to `null`, unlike InMemoryAefStore (used everywhere else in
+    // this spec), which simply omits the key -> `undefined`. This is the
+    // shape that actually broke: a stored T5 row's `snapshotAt` came back
+    // `null` and was wrongly treated as frozen.
+    const store = new InMemoryAefStore(undefined, clock);
+    const existing = await store.create("t5AuthorizedEntities", {
+      aefT5AuthorizedEntitiesId: "ENT-001",
+      aefT5AuthorizedEntitiesConditions: "Active",
+      aefT1SubmissionId: "submission-2026",
+      snapshotAt: null,
+    } as any);
+    const service = buildService(store);
+
+    await service.syncAuthorizedEntityStatus(inactiveEntity() as any, "CA0004");
+
+    const rows = store.all("t5AuthorizedEntities");
+    expect(rows[0].id).toBe(existing.id);
+    expect(rows[0].aefT5AuthorizedEntitiesConditions).toBe("Inactive");
+  });
+
+  it("leaves a frozen row untouched", async () => {
+    const store = new InMemoryAefStore(undefined, clock);
+    await store.create("t5AuthorizedEntities", {
+      aefT5AuthorizedEntitiesId: "ENT-001",
+      aefT5AuthorizedEntitiesConditions: "Active",
+      aefT1SubmissionId: "submission-2025",
+      snapshotAt: "2026-01-01T01:00:00.000Z",
+    } as any);
+    const service = buildService(store);
+
+    await service.syncAuthorizedEntityStatus(inactiveEntity() as any, "CA0004");
+
+    const rows = store.all("t5AuthorizedEntities");
+    expect(rows[0].aefT5AuthorizedEntitiesConditions).toBe("Active");
+  });
+
+  it("creates no row for an entity with no existing Table 5 footprint", async () => {
+    const store = new InMemoryAefStore(undefined, clock);
+    const service = buildService(store);
+
+    await service.syncAuthorizedEntityStatus(inactiveEntity() as any, "CA0004");
+
+    expect(store.all("t5AuthorizedEntities")).toHaveLength(0);
   });
 });

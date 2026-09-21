@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
-import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
 import {
   Button,
   Row,
@@ -16,11 +15,14 @@ import {
   Popconfirm,
 } from "antd";
 import { PlusOutlined, CheckCircleOutlined } from "@ant-design/icons";
-import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
-import { Role } from "../../Definitions/Enums/role.enum";
+import { fmtDecimal, fmtQty } from "./caFormat";
+import { NDC_TYPE_LABELS } from "../../Definitions/Enums/ndcType.enum";
+import { CA_METHOD_LABELS } from "../../Definitions/Enums/caMethod.enum";
 import "./caManagement.scss";
 import "../../Styles/common.table.scss";
 import { TimedPageInfoTitle } from "../../Components/Common/TimedPageInfoTitle/TimedPageInfoTitle";
+import { useArticle6Permissions } from "../../Components/Common/hooks/useArticle6Permissions";
+import RequireDnaAccess from "../../Components/Common/AccessControl/RequireDnaAccess";
 
 const statusColors: Record<string, string> = {
   Draft: "default",
@@ -39,7 +41,7 @@ const CaManagement = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(["common", "correspondingAdjust"]);
   const { post, get, put } = useConnection();
-  const { userInfoState } = useUserContext();
+  const { canManage } = useArticle6Permissions();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -49,17 +51,6 @@ const CaManagement = () => {
     useState<ReconciliationSummary | null>(null);
   const [reconciliationLoading, setReconciliationLoading] = useState(false);
   const [approvingId, setApprovingId] = useState<string | null>(null);
-
-  // Corresponding adjustments are managed by government (DNA) Admin/Root
-  // only — mirrors the backend service check.
-  const canManage = useMemo(
-    () =>
-      userInfoState?.companyRole ===
-        CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-      (userInfoState?.userRole === Role.Admin ||
-        userInfoState?.userRole === Role.Root),
-    [userInfoState]
-  );
 
   const fetchReconciliation = async () => {
     setReconciliationLoading(true);
@@ -119,9 +110,6 @@ const CaManagement = () => {
     }
   };
 
-  const fmt = (val: number | undefined) =>
-    val !== undefined && val !== null ? Number(val).toFixed(2) : "0.00";
-
   const columns = [
     { title: t("correspondingAdjust:columnId"), dataIndex: "caId", key: "caId" },
     {
@@ -131,26 +119,34 @@ const CaManagement = () => {
       sorter: true,
     },
     {
-      title: t("correspondingAdjust:columnCooperativeApproach"),
-      dataIndex: "cooperativeApproachId",
-      key: "cooperativeApproachId",
-      render: (v: string) => v || "—",
-    },
-    {
       title: t("correspondingAdjust:columnNdcType"),
       dataIndex: "ndcType",
       key: "ndcType",
+      render: (val: string) => NDC_TYPE_LABELS[val] ?? val,
     },
     {
       title: t("correspondingAdjust:columnCaMethod"),
       dataIndex: "caMethod",
       key: "caMethod",
+      render: (val: string) => CA_METHOD_LABELS[val] ?? val,
     },
     {
-      title: t("correspondingAdjust:columnEmissionsBalance"),
-      dataIndex: "emissionsBalance",
-      key: "emissionsBalance",
-      render: (val: number) => fmt(val),
+      title: t("correspondingAdjust:columnCorrespondingAdjustment"),
+      dataIndex: "appliedAdjustment",
+      key: "appliedAdjustment",
+      render: (val: number) => fmtDecimal(val),
+    },
+    {
+      title: t("correspondingAdjust:columnActualEmission"),
+      dataIndex: "reportingYearEmission",
+      key: "reportingYearEmission",
+      render: (val: number) => fmtQty(val),
+    },
+    {
+      title: t("correspondingAdjust:columnTrajectory"),
+      dataIndex: "ndcTarget",
+      key: "ndcTarget",
+      render: (val: number) => fmtQty(val),
     },
     {
       title: t("correspondingAdjust:columnSafeguard"),
@@ -172,12 +168,18 @@ const CaManagement = () => {
         <Tag color={statusColors[status] || "default"}>{status}</Tag>
       ),
     },
-    ...(canManage
+    // TEMPORARY: Approve is hidden for now — flip back to `canManage` to
+    // restore it.
+    ...(canManage && false
       ? [
           {
             title: "",
             key: "action",
-            render: (record: any) =>
+            // (value, record, index) — the column has no dataIndex, so
+            // the first argument is the (undefined) cell value, not the
+            // row. Reading `record.status` off it made the Approve
+            // button never render.
+            render: (_: any, record: any) =>
               record.status === "Submitted" ? (
                 <Popconfirm
                   title={t("correspondingAdjust:approveConfirmTitle")}
@@ -206,6 +208,7 @@ const CaManagement = () => {
   const gap = reconciliation?.outstandingGap ?? 0;
 
   return (
+    <RequireDnaAccess>
     <div className="corresponding-adjustment-container">
       <div className="title-bar">
         <TimedPageInfoTitle
@@ -229,25 +232,25 @@ const CaManagement = () => {
           <Col span={6}>
             <Statistic
               title={t("correspondingAdjust:firstTransfITMOs")}
-              value={fmt(reconciliation?.totalFirstTransferredItmos)}
+              value={fmtDecimal(reconciliation?.totalFirstTransferredItmos)}
             />
           </Col>
           <Col span={6}>
             <Statistic
               title={t("correspondingAdjust:acquiredITMOs")}
-              value={fmt(reconciliation?.totalAcquiredItmos)}
+              value={fmtDecimal(reconciliation?.totalAcquiredItmos)}
             />
           </Col>
           <Col span={6}>
             <Statistic
               title={t("correspondingAdjust:recordedCorrespondingAdjust")}
-              value={fmt(reconciliation?.totalRecordedCAdj)}
+              value={fmtDecimal(reconciliation?.totalRecordedCAdj)}
             />
           </Col>
           <Col span={6}>
             <Statistic
               title={t("correspondingAdjust:outstandingGap")}
-              value={fmt(gap)}
+              value={fmtDecimal(gap)}
               valueStyle={{ color: gap === 0 ? "#3f8600" : "#cf1322" }}
             />
           </Col>
@@ -259,10 +262,10 @@ const CaManagement = () => {
             showIcon
             message={
               gap > 0
-                ? `${fmt(gap)} ${t(
+                ? `${fmtDecimal(gap)} ${t(
                     "correspondingAdjust:stillNeedCorrespondingAdjust"
                   )}`
-                : `${fmt(Math.abs(gap))} ${t(
+                : `${fmtDecimal(Math.abs(gap))} ${t(
                     "correspondingAdjust:overloadedDescription"
                   )}`
             }
@@ -317,6 +320,7 @@ const CaManagement = () => {
         />
       </div>
     </div>
+    </RequireDnaAccess>
   );
 };
 

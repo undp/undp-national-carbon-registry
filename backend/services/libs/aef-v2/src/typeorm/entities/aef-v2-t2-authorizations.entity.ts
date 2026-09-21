@@ -11,6 +11,7 @@ import {
 
 import { AefV2T1SubmissionEntity } from './aef-v2-t1-submission.entity';
 import type { AefV2T5AuthorizedEntitiesEntity } from './aef-v2-t5-authorized-entities.entity';
+import { NumberTransformer } from '../transformers';
 
 /**
  * AEF Table 2 — Authorizations.
@@ -40,7 +41,11 @@ export class AefV2T2AuthorizationsEntity {
   @Column({ type: 'int', nullable: true })
   aefT2AuthorizationsVersion?: number;
 
-  @Column({ type: 'bigint', nullable: true })
+  // `bigint` round-trips through `pg` as a string; every other bigint column
+  // in this schema carries this same transformer for that reason (see
+  // ../transformers.ts) — this one was the one column that didn't, which made
+  // a valid integer quantity fail validation's `wrong-type` check every time.
+  @Column({ type: 'bigint', nullable: true, transformer: NumberTransformer })
   aefT2AuthorizationsQuantity?: number;
 
   @Column({ type: 'varchar', length: 32, nullable: true })

@@ -1,4 +1,5 @@
 import { AuthorizedEntityStatus } from "../../enum/authorized.entity.status.enum";
+import { AuthorizedEntitySubmissionStatus } from "../../enum/authorized.entity.submission.status.enum";
 import { NOT_APPLICABLE } from "../mappers/aef-code.maps";
 import { RegistryAuthorizedEntitiesProvider } from "./registry-authorized-entities.provider";
 
@@ -18,6 +19,7 @@ describe("RegistryAuthorizedEntitiesProvider", () => {
     authorizationDate: Date.parse("2024-03-01T00:00:00.000Z"),
     createdTime: Date.parse("2024-01-01T00:00:00.000Z"),
     status: AuthorizedEntityStatus.ACTIVE,
+    submissionStatus: AuthorizedEntitySubmissionStatus.SUBMITTED,
   };
 
   const entityWithoutDate = {
@@ -29,6 +31,7 @@ describe("RegistryAuthorizedEntitiesProvider", () => {
     authorizationDate: null,
     createdTime: Date.parse("2023-06-15T00:00:00.000Z"),
     status: AuthorizedEntityStatus.ACTIVE,
+    submissionStatus: AuthorizedEntitySubmissionStatus.SUBMITTED,
   };
 
   function buildProvider(entities: unknown[]) {
@@ -38,7 +41,10 @@ describe("RegistryAuthorizedEntitiesProvider", () => {
         whereCalls.push({ sql, params });
         return queryBuilder;
       }),
-      andWhere: jest.fn(() => queryBuilder),
+      andWhere: jest.fn((sql: string, params: unknown) => {
+        whereCalls.push({ sql, params });
+        return queryBuilder;
+      }),
       getMany: jest.fn().mockResolvedValue(entities),
     };
     const authorizedEntityRepo = {
@@ -66,6 +72,23 @@ describe("RegistryAuthorizedEntitiesProvider", () => {
     await provider.getAuthorizedEntities({ reportedYear: 2025, asOf: new Date("2025-12-31T23:59:59.999Z") });
 
     expect(whereCalls[0].sql).toBe("COALESCE(entity.authorizationDate, entity.createdTime) <= :asOf");
+  });
+
+  // Entities are created while their cooperative approach is still a
+  // Draft, so without this predicate a never-submitted approach's
+  // entities would be reported in AEF Table 5.
+  it("restricts the query to entities carried through report submission", async () => {
+    const { provider, whereCalls } = buildProvider([entityWithDate]);
+
+    await provider.getAuthorizedEntities({ reportedYear: 2025, asOf: new Date("2025-12-31T23:59:59.999Z") });
+
+    const submissionFilter = whereCalls.find((call) =>
+      call.sql.includes("entity.submissionStatus")
+    );
+    expect(submissionFilter).toBeDefined();
+    expect(submissionFilter.params).toEqual({
+      submitted: AuthorizedEntitySubmissionStatus.SUBMITTED,
+    });
   });
 
   it("uses authorizationDate when present", async () => {

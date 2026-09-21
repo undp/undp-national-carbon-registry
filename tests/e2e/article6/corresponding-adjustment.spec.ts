@@ -43,6 +43,17 @@
  * counter service issues a fresh caId per call, so multiple DRAFT rows
  * for the same year are allowed — we never re-read "the CA for year X",
  * only the one returned by our own calculate call.
+ *
+ * KNOWN GAP (UNCR-478 NDC-period restructure): `/calculate` requires an
+ * `ndc_target` row for the chosen year — see
+ * corresponding-adjustment.service.ts's `ndcTargetNotDefined` guard —
+ * and `ndc_target` now has no write path except a submitted initial
+ * report (see NdcTarget's entity comment). This spec's `nextFutureYear()`
+ * picks a fresh year but never seeds one, so every `/calculate` test
+ * below is very likely 400ing against a live stack right now. The fix
+ * is `await ensureNdcTargetForYear(apiDna, year)` (support/factories.ts)
+ * before each `/calculate` call — left undone here for lack of a live
+ * stack to verify the rewrite against; flagging rather than guessing.
  */
 import { test, expect } from "./support/fixtures";
 import { BASE_URL } from "./support/auth";

@@ -62,9 +62,56 @@ describe("mapItmoAuthorizationToAefAuthorization", () => {
     expect(result.aefT2AuthorizationsAuthorizedTimeframe).toBe("2024 - 2030");
   });
 
-  it("leaves the authorized timeframe blank when either year is missing", () => {
+  // Only a complete range is a valid timeframe - AUTHORIZED_TIMEFRAME_PATTERN
+  // is `dddd - dddd`, so a lone year would be stored only to be rejected on
+  // format at filing time.
+  it("leaves the authorized timeframe unset when only the start year is given", () => {
     const result = mapItmoAuthorizationToAefAuthorization(
       baseInput({ authorizedTimeframeStartYear: 2024, authorizedTimeframeEndYear: undefined }),
+      "01/01/2026"
+    );
+
+    expect(result.aefT2AuthorizationsAuthorizedTimeframe).toBeUndefined();
+  });
+
+  it("leaves the authorized timeframe unset when only the end year is given", () => {
+    const result = mapItmoAuthorizationToAefAuthorization(
+      baseInput({ authorizedTimeframeStartYear: undefined, authorizedTimeframeEndYear: 2030 }),
+      "01/01/2026"
+    );
+
+    expect(result.aefT2AuthorizationsAuthorizedTimeframe).toBeUndefined();
+  });
+
+  it("leaves the authorized timeframe unset when neither year is given", () => {
+    const result = mapItmoAuthorizationToAefAuthorization(
+      baseInput({ authorizedTimeframeStartYear: undefined, authorizedTimeframeEndYear: undefined }),
+      "01/01/2026"
+    );
+
+    expect(result.aefT2AuthorizationsAuthorizedTimeframe).toBeUndefined();
+  });
+
+  // The regression: antd's InputNumber yields null for a cleared field, and the
+  // old `!== undefined` guard let that through as the literal "null - null".
+  it("treats cleared years (null) as absent rather than stringifying them", () => {
+    const result = mapItmoAuthorizationToAefAuthorization(
+      baseInput({
+        authorizedTimeframeStartYear: null as unknown as number,
+        authorizedTimeframeEndYear: null as unknown as number,
+      }),
+      "01/01/2026"
+    );
+
+    expect(result.aefT2AuthorizationsAuthorizedTimeframe).toBeUndefined();
+  });
+
+  it("treats a single cleared year as an incomplete range, not a lone year", () => {
+    const result = mapItmoAuthorizationToAefAuthorization(
+      baseInput({
+        authorizedTimeframeStartYear: null as unknown as number,
+        authorizedTimeframeEndYear: 2030,
+      }),
       "01/01/2026"
     );
 

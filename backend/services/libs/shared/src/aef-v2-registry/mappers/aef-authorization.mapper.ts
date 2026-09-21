@@ -51,6 +51,35 @@ export interface AefAuthorizationMapperInput {
   creditBlockId: string;
 }
 
+/**
+ * Composes Table 2's Authorized timeframe from the two years the request popup
+ * captures. Emitted only when **both** years are present.
+ *
+ * Both years are optional and independently editable (see itmoAuthRequestModal),
+ * and antd's InputNumber yields **null** for a cleared field rather than
+ * dropping the key — so an earlier `!== undefined` guard let a cleared pair
+ * through and stored the literal string "null - null". Anything that is not a
+ * year is treated as absent here.
+ *
+ * A half-filled timeframe yields nothing rather than the surviving year alone:
+ * AUTHORIZED_TIMEFRAME_PATTERN is `dddd - dddd`, so a lone year would be stored
+ * as a value validateSubmission then rejects on format, blocking the filing
+ * over a field the AEF marks optional. Absent is both valid and honest.
+ *
+ * Never "-": the stored value feeds the CARP workbook and the CSV, where a
+ * literal dash would be data. The dash is a UI affordance — see
+ * reportingColumns.ts.
+ */
+function formatAuthorizedTimeframe(
+  startYear?: number,
+  endYear?: number
+): string | undefined {
+  if (!Number.isFinite(startYear) || !Number.isFinite(endYear)) {
+    return undefined;
+  }
+  return `${startYear} - ${endYear}`;
+}
+
 export function mapItmoAuthorizationToAefAuthorization(
   input: AefAuthorizationMapperInput,
   authorizationDateDdMmYyyy: string
@@ -84,11 +113,10 @@ export function mapItmoAuthorizationToAefAuthorization(
     aefT2AuthorizationsOimpAuthorizedParty: isOimp
       ? TOWARDS_COOPERATIVE_APPROACH_ENTITIES_LABEL
       : NOT_APPLICABLE,
-    aefT2AuthorizationsAuthorizedTimeframe:
-      input.authorizedTimeframeStartYear !== undefined &&
-      input.authorizedTimeframeEndYear !== undefined
-        ? `${input.authorizedTimeframeStartYear} - ${input.authorizedTimeframeEndYear}`
-        : undefined,
+    aefT2AuthorizationsAuthorizedTimeframe: formatAuthorizedTimeframe(
+      input.authorizedTimeframeStartYear,
+      input.authorizedTimeframeEndYear
+    ),
     aefT2AuthorizationsAuthorizationTerms: AUTHORIZATION_TERMS_LABEL,
     aefT2AuthorizationsFirstTransferDefinitionOimp: isOimp
       ? FIRST_TRANSFER_DEFINITION_OIMP_LABEL

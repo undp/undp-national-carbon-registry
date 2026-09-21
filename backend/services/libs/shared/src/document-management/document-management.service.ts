@@ -22,6 +22,7 @@ import { CompanyRole } from "../enum/company.role.enum";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { CompanyService } from "../company/company.service";
 import { FileHandlerInterface } from "../file-handler/filehandler.interface";
+import { toStorageKey } from "../file-handler/storage-key";
 import { plainToClass, plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { DocType } from "../enum/document.type";
@@ -46,6 +47,7 @@ import { PositiveIntegerValidationDto } from "../dto/positive.integer.validation
 import { ActivityVintageCreditsArrayDto } from "../dto/activty.vintage.credits.array.dto";
 import { SECTOR_TO_SCOPES_MAP } from "../constants/inf.sector.sectoralScope.mapping.const";
 import { CompanyState } from "../enum/company.state.enum";
+import { CadTrustSyncEnqueueService } from "../cadtrust-sync/cadtrust-sync.enqueue.service";
 
 @Injectable()
 export class DocumentManagementService {
@@ -69,7 +71,8 @@ export class DocumentManagementService {
     private entityManager: EntityManager,
     private readonly serialNumberManagementService: SerialNumberManagementService,
     private readonly counterService: CounterService,
-    private readonly noObjectionLetterGenerateService: NoObjectionLetterGenerateService
+    private readonly noObjectionLetterGenerateService: NoObjectionLetterGenerateService,
+    private readonly cadTrustSyncEnqueue: CadTrustSyncEnqueueService
   ) {}
 
   async addDocument(addDocumentDto: BaseDocumentDto, user: User) {
@@ -233,6 +236,18 @@ export class DocumentManagementService {
             ProjectAuditLogType.PENDING,
             user.id
           );
+
+          // Queue the CAD Trust v2 sync. Dropped by AddAction when CADT_V2_ENABLE
+          // is off, and never throws, so it cannot affect this response.
+          //
+          // Passes the whole `project` object, not just its refId: the sync
+          // handler runs later, in a different process, after `project_entity`
+          // would need to have been populated by the (independently-polling)
+          // ledger replicator — which cannot be guaranteed by then. `project`
+          // already has everything the handler needs, captured here instead.
+          // See CadTrustProjectCreateSnapshot for the full reasoning.
+          await this.cadTrustSyncEnqueue.enqueueProjectCreate(project);
+
           return new DataResponseDto(HttpStatus.OK, {
             ...savedProgramme,
             createdTime: savedProgramme.createTime,
@@ -945,7 +960,10 @@ public async uploadDocument(type: DocType, id: string, data: string) {
             HttpStatus.INTERNAL_SERVER_ERROR
           );
         }
-        return data;
+        // Not an upload - the client echoed back a document it was shown. Store
+        // the key rather than the resolved URL it received, or re-saving a form
+        // would silently replace keys with backend-specific URLs.
+        return toStorageKey(data);
       }
       filetype = this.getFileExtension(data);
       data = data.split(",")[1];
@@ -1147,6 +1165,10 @@ private getFileExtension = (file: string): string => {
         txRef,
         data
       );
+
+    // Single funnel for every lifecycle transition (INF approve/reject, all PDD
+    // steps, validation, authorisation), so one hook covers them all.
+    await this.cadTrustSyncEnqueue.enqueueProjectUpdate(refId, txType);
 
     return updatedProject;
   }
@@ -1580,6 +1602,23 @@ private getFileExtension = (file: string): string => {
             user.id
           )
         );
+        // Stage a CAD Trust validation record for this PDD. certifiedByUserDetails is resolved
+        // above from document.lastActionByUserId while it's still correct (the IC who submitted
+        // it) — see CadTrustValidationSyncProps's doc for why that has to happen here, in-request,
+        // rather than being re-derived inside the async handler.
+        await this.cadTrustSyncEnqueue.enqueueValidation({
+          refId: project.refId,
+          documentType: DocumentTypeEnum.PROJECT_DESIGN_DOCUMENT,
+          documentVersion: document.version,
+          validationBodyName: certifiedByUserDetails.Organisation.name,
+          creditPeriodStartDate: this.cadTrustEpochSecondsToIsoDate(
+            document.content?.startDateCreditingPeriod?.projectCreditingPeriodStartDate
+          ),
+          creditPeriodEndDate: this.cadTrustEpochSecondsToIsoDate(
+            document.content?.startDateCreditingPeriod?.projectCreditingPeriodEndDate
+          ),
+          validationDate: new Date().toISOString().split("T")[0],
+        });
         await this.emailHelperService.sendEmailToPDAdmins(
           EmailTemplates.PDD_APPROVAL_DNA_TO_PD,
           null,
@@ -1735,6 +1774,23 @@ private getFileExtension = (file: string): string => {
             user.id
           )
         );
+        // Stage a CAD Trust validation record for this validation report — separate from the
+        // project-status update above, which enqueueProjectUpdate (inside updateProposalStage)
+        // already handles. vrSubmittedIC is resolved from document.lastActionByUserId while it's
+        // still correct (the IC who submitted the report) — see CadTrustValidationSyncProps's doc.
+        await this.cadTrustSyncEnqueue.enqueueValidation({
+          refId: project.refId,
+          documentType: DocumentTypeEnum.VALIDATION,
+          documentVersion: document.version,
+          validationBodyName: vrSubmittedIC.Organisation.name,
+          creditPeriodStartDate: this.cadTrustEpochSecondsToIsoDate(
+            document.content?.basicInformation?.creditingPeriodStart
+          ),
+          creditPeriodEndDate: this.cadTrustEpochSecondsToIsoDate(
+            document.content?.basicInformation?.creditingPeriodEnd
+          ),
+          validationDate: new Date().toISOString().split("T")[0],
+        });
         await this.emailHelperService.sendEmailToPDAdmins(
           EmailTemplates.VALIDATION_APPROVED_TO_PD,
           { icOrganizationName: vrSubmittedIC.Organisation.name },
@@ -2048,6 +2104,22 @@ private getFileExtension = (file: string): string => {
             HttpStatus.BAD_REQUEST
           );
         }
+        // Stage a CAD Trust verification record for this verification-report approval — the
+        // request-path half of credit-issuance sync (see cadtrust-sync/README.md's "Two
+        // different producer-side hooks"). Resolved and enqueued before the ledger write below,
+        // both because document.userId (the submitting IC) is only safely readable synchronously
+        // here — same reasoning as CadTrustValidationSyncProps — and so this action's actionId is
+        // guaranteed lower than any later credit-block event the ledger write triggers via the
+        // replicator (CadTrustCreditIssuanceHandler depends on that ordering — see its doc).
+        const verifyingICCompany = await this.userCompanyViewEntityRepository.findOne({
+          where: { id: document.userId },
+        });
+        await this.cadTrustSyncEnqueue.enqueueVerification({
+          refId: project.refId,
+          documentVersion: document.version,
+          verificationBodyName: verifyingICCompany?.companyName,
+        });
+
         await this.programmeLedgerService.issueCredits(
           activity,
           creditVerified,
@@ -2060,17 +2132,14 @@ private getFileExtension = (file: string): string => {
           ),
           user
         );
-        const ICCompany = await this.userCompanyViewEntityRepository.findOne({
-          where: { id: document.userId },
-        });
         await this.emailHelperService.sendEmailToPDAdmins(
           EmailTemplates.VERIFICATION_APPROVED_TO_PD,
-          { icOrganisationName: ICCompany.companyName },
+          { icOrganisationName: verifyingICCompany?.companyName },
           project.refId
         );
         await this.emailHelperService.sendEmailToICAdmins(
           EmailTemplates.VERIFICATION_APPROVED_TO_IC,
-          { icOrganisationName: ICCompany.companyName },
+          { icOrganisationName: verifyingICCompany?.companyName },
           project.refId
         );
         await this.logProjectStage(
@@ -2112,6 +2181,18 @@ private getFileExtension = (file: string): string => {
     return `${docType}#${documentId}${
       lastActionByUserId ? `#${lastActionByUserId}` : ``
     }`;
+  }
+
+  /**
+   * PDD/validation-report crediting-period dates are stored as unix seconds (frontend forms use
+   * `moment(...).unix()`), but CAD Trust's `validationCreditPeriodStartDate`/`EndDate` want ISO
+   * 8601 dates. Guards undefined/null/NaN — the field is optional on both sides.
+   */
+  private cadTrustEpochSecondsToIsoDate(epochSeconds?: number): string | undefined {
+    if (!epochSeconds || Number.isNaN(Number(epochSeconds))) {
+      return undefined;
+    }
+    return new Date(Number(epochSeconds) * 1000).toISOString().split("T")[0];
   }
 
   async query(query: DocumentQueryDto) {

@@ -13,6 +13,9 @@ describe("CreditTransactionsManagementService", () => {
   let cooperativeApproachRepo: any;
   let creditBlockOrgTransactionsViewEntityRepository: any;
   let creditBlockItmoAuthorizationsViewEntityRepository: any;
+  let cadTrustSyncEnqueue: any;
+  let counterService: any;
+  let aefV2WriteService: any;
 
   beforeEach(() => {
     orderByCalls = [];
@@ -69,8 +72,16 @@ describe("CreditTransactionsManagementService", () => {
     companyService = {
       findByCompanyId: jest.fn(async (id: number) => ({ name: `Org ${id}` })),
     };
-    creditTransactionsEntityRepository = { find: jest.fn().mockResolvedValue([]) };
+    creditTransactionsEntityRepository = {
+      find: jest.fn().mockResolvedValue([]),
+      findOne: jest.fn().mockResolvedValue(null),
+    };
     cooperativeApproachRepo = { find: jest.fn().mockResolvedValue([]) };
+    cadTrustSyncEnqueue = {
+      enqueueCreditIssuance: jest.fn(async () => undefined),
+      enqueueUnitUpdate: jest.fn(async () => undefined),
+      enqueueVerification: jest.fn(async () => undefined),
+    };
     // The real thing, not a stub - getCreditBlockHistoryTree's range/id
     // parsing (groupCreditBlockLedgerVersions, findCreditBlockHistoryRoot)
     // depends on its actual serial-parsing logic, not just its shape. Only
@@ -87,12 +98,15 @@ describe("CreditTransactionsManagementService", () => {
       {} as any
     );
 
+    counterService = { incrementCount: jest.fn(async () => "9001") };
+    aefV2WriteService = { recordCreditBlockEvent: jest.fn(async () => undefined) };
+
     service = new CreditTransactionsManagementService(
       helperService,
       companyService,
       programmeLedgerService,
       creditBlocksEntityRepository,
-      {} as any, // counterService
+      counterService,
       creditTransactionsEntityRepository,
       {} as any, // documentManagementService
       creditBlockBalancesViewEntityRepository,
@@ -108,12 +122,165 @@ describe("CreditTransactionsManagementService", () => {
       cooperativeApproachRepo,
       {} as any, // caAuthorizedEntityRepo
       serialNumberManagementService,
-      {} as any // aefV2WriteService
+      aefV2WriteService,
+      cadTrustSyncEnqueue
     );
   });
 
   it("should be defined", () => {
     expect(service).toBeDefined();
+  });
+
+  describe("handleTransactionRecords — CAD Trust v2 dispatch", () => {
+    // Minimal fields handleTransactionRecords itself reads; irrelevant fields omitted per block.
+    const baseBlock = {
+      creditBlockId: "CA0001-XX-XX-1-1-100",
+      projectRefId: "0042",
+      serialNumber: "CA0001-XX-XX-1-1-100-2026",
+      creditAmount: 100,
+      transactionRecords: [] as any[],
+    };
+
+    function em() {
+      return { save: jest.fn(async () => undefined), update: jest.fn(async () => undefined) };
+    }
+
+    it("ISSUE: enqueues credit issuance and writes the transaction row", async () => {
+      const entityManager = em();
+      const creditBlock: any = { ...baseBlock, txType: TxType.ISSUE, ownerCompanyId: 7 };
+
+      await service.handleTransactionRecords(creditBlock, entityManager as any);
+
+      expect(entityManager.save).toHaveBeenCalledTimes(1);
+      expect(cadTrustSyncEnqueue.enqueueCreditIssuance).toHaveBeenCalledWith(creditBlock.creditBlockId);
+      expect(cadTrustSyncEnqueue.enqueueUnitUpdate).not.toHaveBeenCalled();
+      expect(aefV2WriteService.recordCreditBlockEvent).toHaveBeenCalledWith(creditBlock, entityManager, undefined);
+    });
+
+    it("TRANSFER: enqueues a unit update — covers both whole-block moves and a split's receiver side", async () => {
+      const entityManager = em();
+      const creditBlock: any = {
+        ...baseBlock,
+        txType: TxType.TRANSFER,
+        ownerCompanyId: 8,
+        previousOwnerCompanyId: 7,
+      };
+
+      await service.handleTransactionRecords(creditBlock, entityManager as any);
+
+      expect(cadTrustSyncEnqueue.enqueueUnitUpdate).toHaveBeenCalledWith(creditBlock.creditBlockId);
+      expect(cadTrustSyncEnqueue.enqueueCreditIssuance).not.toHaveBeenCalled();
+    });
+
+    it("RETIRE_REQ: does not touch CAD Trust — it's only a reservation, not an approved event", async () => {
+      const entityManager = em();
+      const creditBlock: any = {
+        ...baseBlock,
+        txType: TxType.RETIRE_REQ,
+        ownerCompanyId: 7,
+        txData: { subType: "Voluntary Cancellations", amount: 10 },
+        transactionRecords: [{ id: "1", type: "Retired", status: "Pending", amount: 10 }],
+      };
+
+      await service.handleTransactionRecords(creditBlock, entityManager as any);
+
+      expect(cadTrustSyncEnqueue.enqueueUnitUpdate).not.toHaveBeenCalled();
+      expect(cadTrustSyncEnqueue.enqueueCreditIssuance).not.toHaveBeenCalled();
+    });
+
+    it("RETIRE, COMPLETED: enqueues a unit update", async () => {
+      const entityManager = em();
+      const creditBlock: any = {
+        ...baseBlock,
+        txType: TxType.RETIRE,
+        ownerCompanyId: 0,
+        txData: { transactionId: "1" },
+        transactionRecords: [{ id: "1", type: "Retired", status: "Completed", amount: 10 }],
+      };
+
+      await service.handleTransactionRecords(creditBlock, entityManager as any);
+
+      expect(cadTrustSyncEnqueue.enqueueUnitUpdate).toHaveBeenCalledWith(creditBlock.creditBlockId);
+    });
+
+    it.each(["Rejected", "Cancelled"])(
+      "RETIRE, %s: does NOT enqueue a unit update — TxType.RETIRE also fires on reject/cancel",
+      async (status) => {
+        const entityManager = em();
+        const creditBlock: any = {
+          ...baseBlock,
+          txType: TxType.RETIRE,
+          ownerCompanyId: 7,
+          txData: { transactionId: "1" },
+          transactionRecords: [{ id: "1", type: "Retired", status, amount: 10 }],
+        };
+
+        await service.handleTransactionRecords(creditBlock, entityManager as any);
+
+        expect(cadTrustSyncEnqueue.enqueueUnitUpdate).not.toHaveBeenCalled();
+      }
+    );
+
+    it("ITMO_AUTH_REQ: does not touch CAD Trust — only a reservation", async () => {
+      const entityManager = em();
+      const creditBlock: any = {
+        ...baseBlock,
+        txType: TxType.ITMO_AUTH_REQ,
+        ownerCompanyId: 7,
+        txData: { amount: 10 },
+        transactionRecords: [{ id: "1", type: "ItmoAuthorized", status: "Pending", amount: 10 }],
+      };
+
+      await service.handleTransactionRecords(creditBlock, entityManager as any);
+
+      expect(cadTrustSyncEnqueue.enqueueUnitUpdate).not.toHaveBeenCalled();
+    });
+
+    it("ITMO_AUTH, COMPLETED: enqueues a unit update", async () => {
+      const entityManager = em();
+      const creditBlock: any = {
+        ...baseBlock,
+        txType: TxType.ITMO_AUTH,
+        ownerCompanyId: 7,
+        txData: { transactionId: "1" },
+        transactionRecords: [{ id: "1", type: "ItmoAuthorized", status: "Completed", amount: 10 }],
+      };
+
+      await service.handleTransactionRecords(creditBlock, entityManager as any);
+
+      expect(cadTrustSyncEnqueue.enqueueUnitUpdate).toHaveBeenCalledWith(creditBlock.creditBlockId);
+    });
+
+    it.each(["Rejected", "Cancelled"])(
+      "ITMO_AUTH, %s: does NOT enqueue a unit update",
+      async (status) => {
+        const entityManager = em();
+        const creditBlock: any = {
+          ...baseBlock,
+          txType: TxType.ITMO_AUTH,
+          ownerCompanyId: 7,
+          txData: { transactionId: "1" },
+          transactionRecords: [{ id: "1", type: "ItmoAuthorized", status, amount: 10 }],
+        };
+
+        await service.handleTransactionRecords(creditBlock, entityManager as any);
+
+        expect(cadTrustSyncEnqueue.enqueueUnitUpdate).not.toHaveBeenCalled();
+      }
+    );
+
+    it("CREDIT_BLOCK_SPLIT: enqueues a unit update for the retained/shrunken side, and still writes no CreditTransactionsEntity row (unchanged pre-existing behaviour)", async () => {
+      const entityManager = em();
+      const creditBlock: any = { ...baseBlock, txType: TxType.CREDIT_BLOCK_SPLIT, ownerCompanyId: 7 };
+
+      await service.handleTransactionRecords(creditBlock, entityManager as any);
+
+      expect(cadTrustSyncEnqueue.enqueueUnitUpdate).toHaveBeenCalledWith(creditBlock.creditBlockId);
+      expect(entityManager.save).not.toHaveBeenCalled();
+      expect(entityManager.update).not.toHaveBeenCalled();
+      // The AEF hook is unconditional and pre-existing — confirms this branch still reaches it.
+      expect(aefV2WriteService.recordCreditBlockEvent).toHaveBeenCalledWith(creditBlock, entityManager, undefined);
+    });
   });
 
   describe("queryTransfers sorting", () => {

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { FileHandlerInterface } from "../../file-handler/filehandler.interface";
+import { resolveStoredFile } from "../../file-handler/storage-key";
 import { HelperService } from "../helpers.service";
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
@@ -22,6 +23,15 @@ export class AuthorizationLetterGen {
     designDocUrl,
     methodologyDocUrl
   ) {
+    // Callers hand us whatever the database holds, which is a storage key for
+    // anything written since file references became backend-neutral. These become
+    // hyperlinks in the PDF, so they have to be real URLs.
+    designDocUrl = await resolveStoredFile(this.fileHandler, designDocUrl);
+    methodologyDocUrl = await resolveStoredFile(
+      this.fileHandler,
+      methodologyDocUrl
+    );
+
     const country = this.configService.get("systemCountryName");
     const minister = this.configService.get("docGenerate.ministerName");
     const ministry = this.configService.get("docGenerate.ministryName");

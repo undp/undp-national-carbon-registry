@@ -41,6 +41,8 @@ import { addCommSep } from "../../../Definitions/Definitions/programme.definitio
 import { Role } from "../../../Definitions/Enums/role.enum";
 import { COLOR_CONFIGS } from "../../../Config/colorConfigs";
 import { CreditTypePill } from "./creditTypePill";
+import { CadTrustSyncBadge } from "../../../Components/CadTrust/CadTrustSyncBadge";
+import { CadTrustSyncStatusSummary } from "../../../Components/CadTrust/cadTrustSync.types";
 
 const { Search } = Input;
 
@@ -84,6 +86,9 @@ export const CreditRetirementsTableComponent = (props: any) => {
   const { post } = useConnection();
   const { userInfoState } = useUserContext();
   const isInitialRender = useRef(false);
+  const [cadtStatus, setCadtStatus] = useState<
+    Record<string, CadTrustSyncStatusSummary>
+  >({});
   const [totalProgramme, setTotalProgramme] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
   const [tableData, setTableData] = useState<UserTableDataType[]>([]);
@@ -121,6 +126,29 @@ export const CreditRetirementsTableComponent = (props: any) => {
     title: string;
     buttonText: string;
   }>();
+
+  const fetchCadtStatuses = async (rows: any[]) => {
+    const creditBlockIds = Array.from(
+      new Set(
+        (rows ?? [])
+          .filter((row) => row?.status === StatusOptions.ACCEPTED)
+          .map((row) => row?.creditBlockId)
+          .filter(Boolean)
+      )
+    );
+    if (creditBlockIds.length === 0) {
+      setCadtStatus({});
+      return;
+    }
+    try {
+      const response: any = await post(API_PATHS.CADTRUST_SYNC_CREDIT_STATUSES, {
+        creditBlockIds,
+      });
+      setCadtStatus(response?.data ?? {});
+    } catch (error) {
+      setCadtStatus({});
+    }
+  };
 
   const getQueryData = async () => {
     setLoading(true);
@@ -171,11 +199,13 @@ export const CreditRetirementsTableComponent = (props: any) => {
         setTotalProgramme(0);
         return true;
       }
-      setTableData(response?.data ? response.data : []);
+      const rows = response?.data ? response.data : [];
+      setTableData(rows);
       setTotalProgramme(
         response.response?.data?.total ? response.response?.data?.total : 0
       );
       isInitialRender.current = true;
+      void fetchCadtStatuses(rows);
     } catch (error: any) {
       console.log("Error in getting Credit Retirements", error);
       message.open({
@@ -324,7 +354,19 @@ export const CreditRetirementsTableComponent = (props: any) => {
       key: CrediRetirementsColumns.SERIAL_NO,
       align: "left" as const,
       render: (item: CreditRetirementInterface) => {
-        return <span>{item?.serialNumber}</span>;
+        return (
+          <span>
+            {item?.serialNumber}
+            {item?.status === StatusOptions.ACCEPTED && (
+              <CadTrustSyncBadge
+                scope="credit"
+                creditBlockId={item?.creditBlockId}
+                title={item?.serialNumber}
+                status={cadtStatus[item?.creditBlockId]?.overallStatus}
+              />
+            )}
+          </span>
+        );
       },
     },
     {

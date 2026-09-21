@@ -554,6 +554,16 @@ body {
   }
 }
 
+// Same checked color as CreditPages/creditPageStyles.scss's
+// .checkbox-accept — duplicated here (rather than imported from a
+// page-scoped stylesheet) so it's available to a confirmation checkbox
+// anywhere in the app, not just after a Credit page has happened to load.
+.checkbox-confirm-primary .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: variables.$primary-color;
+  border-color: variables.$primary-color;
+  border: none;
+}
+
 .ant-modal-footer {
   .ant-btn {
     height: 32px;

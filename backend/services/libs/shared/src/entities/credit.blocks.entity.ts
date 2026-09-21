@@ -2,6 +2,7 @@ import { BeforeInsert, Column, Entity, PrimaryColumn } from "typeorm";
 import { TxType } from "../enum/txtype.enum";
 import { AccountType } from "../enum/account.type.enum";
 import { CreditTransactionLedgerRecordDto } from "../dto/credit.transaction.ledger.record.dto";
+import { NumberTransformer } from "../functions/number.transformer.decorator";
 
 @Entity()
 export class CreditBlocksEntity {
@@ -21,7 +22,11 @@ export class CreditBlocksEntity {
   })
   txType: TxType;
 
-  @Column({ type: "bigint" })
+  // bigint columns come back from pg as strings; NumberTransformer coerces on read so downstream
+  // `new Date(txTime)` / arithmetic sees a real number. Matches projects.entity.ts and
+  // cadtrust.sync.record.entity.ts. Not applied to ownerCompanyId / previousOwnerCompanyId below:
+  // those only feed TypeORM `where` clauses, which pg casts fine, so there is no bug to fix there.
+  @Column({ type: "bigint", transformer: NumberTransformer })
   txTime: number;
 
   @Column("jsonb", { array: false, default: [] })
@@ -59,7 +64,7 @@ export class CreditBlocksEntity {
   @Column({ default: 0 })
   reservedCreditAmount?: number;
 
-  @Column({ type: "bigint" })
+  @Column({ type: "bigint", transformer: NumberTransformer })
   createTime: number;
 
   @Column({
