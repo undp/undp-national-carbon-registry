@@ -162,6 +162,12 @@ const ReportingComponent = (props: { translator: i18n }) => {
       if (res?.statusText === "SUCCESS" && res.data?.submitted) {
         await fetchTable(REPORT_TYPES.SUBMISSION);
         setSubmitTarget(undefined);
+        message.open({
+          type: "success",
+          content: t("reporting:submitAefSuccess", { reportedYear }),
+          duration: 4,
+          style: { textAlign: "right", marginRight: 15, marginTop: 10 },
+        });
       } else {
         const issues: { message: string }[] = res?.data?.issues ?? [];
         setSubmitIssues(issues.map((issue) => issue.message));

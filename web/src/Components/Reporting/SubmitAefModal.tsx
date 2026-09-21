@@ -1,7 +1,7 @@
-import { Alert, DatePicker, Descriptions, Form, Modal } from "antd";
+import { Alert, Checkbox, DatePicker, Descriptions, Form, Modal } from "antd";
 import { TFunction } from "i18next";
 import moment, { Moment } from "moment";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import "./ReportingComponent.scss";
 
@@ -15,10 +15,11 @@ import "./ReportingComponent.scss";
  *    point — it is the date the AEF is actually filed, which is not knowable
  *    when the row is bootstrapped. Submitting is where it gets set.
  *
- * 2. **It states the consequence before the click.** Submission status is
- *    advisory: nothing downstream refuses to edit a filed year, so a later edit
- *    can silently diverge from what CARP holds. Saying so here is cheaper than
- *    discovering it during a technical expert review.
+ * 2. **It requires an active acknowledgement before the click.** Submission
+ *    status is advisory: nothing downstream refuses to edit a filed year, so
+ *    a later edit can silently diverge from what CARP holds. A required
+ *    checkbox gates the OK button — cheaper than discovering the drift
+ *    during a technical expert review.
  */
 
 interface ISubmitAefModal {
@@ -47,6 +48,11 @@ const SubmitAefModal = ({
   issues,
 }: ISubmitAefModal) => {
   const [form] = Form.useForm();
+  // Gates the OK button — active acknowledgement of the one-way-door nature
+  // of submitting, rather than the passive advisory text this replaced.
+  // `destroyOnClose` on the Modal unmounts this component when it closes, so
+  // this resets to unchecked on its own each time the modal reopens.
+  const [acknowledged, setAcknowledged] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -73,6 +79,7 @@ const SubmitAefModal = ({
       open={open}
       title={t("reporting:submitAefTitle")}
       okText={t("reporting:submitAefConfirm")}
+      okButtonProps={{ disabled: !acknowledged }}
       cancelText={t("reporting:cancel")}
       confirmLoading={confirming}
       onCancel={onCancel}
@@ -131,7 +138,9 @@ const SubmitAefModal = ({
         </Form.Item>
       </Form>
 
-      <Alert type="info" showIcon message={t("reporting:submitAefAdvisory")} />
+      <Checkbox checked={acknowledged} onChange={(e) => setAcknowledged(e.target.checked)}>
+        {t("reporting:submitAefAcknowledge")}
+      </Checkbox>
     </Modal>
   );
 };

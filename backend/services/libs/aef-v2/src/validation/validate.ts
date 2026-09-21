@@ -324,7 +324,14 @@ export function validateSubmission(
 
   for (const record of actions) {
     const id = record.aefT3ActionsUsingAuthorizedEntityId;
-    if (typeof id !== 'string' || id.length === 0) {
+    // `isProvided`, not a raw length check: this field is conditional
+    // (appliesWhen USE_OR_CANCEL_ONLY) and "NA" is its documented sentinel for
+    // "does not apply here" (see NOT_APPLICABLE in the registry's
+    // aef-code.maps.ts) — exactly what isProvided already treats as absent
+    // everywhere else in this library. Checking the raw string instead meant
+    // a correctly-written "NA" was looked up as if it were a real entity
+    // reference and reported as `missing-entity`.
+    if (typeof id !== 'string' || !isProvided(id)) {
       continue; // absence is already reported as `required`/`conditional-required`
     }
     if (!knownEntities.has(id)) {

@@ -127,7 +127,14 @@ export async function snapshotAuthorizedEntitiesForYear(
     where: { aefT1SubmissionId: submission.id },
     pageSize: MAX_AUTHORIZED_ENTITIES_PER_YEAR,
   });
-  const frozen = existing.data.filter((row) => row.snapshotAt !== undefined);
+  // `!= null`, not `!== undefined`: a store backed by a real database returns
+  // SQL NULL for an unfrozen row, and `null !== undefined` is true — which
+  // classified every real-time row as already frozen and returned here without
+  // ever calling the provider. Table 5 has a real-time write path
+  // (AefV2WriteService), so it hits that case constantly; the in-memory test
+  // store leaves the field absent, i.e. `undefined`, which is why the specs
+  // never caught it. Same reasoning at every `snapshotAt` check below.
+  const frozen = existing.data.filter((row) => row.snapshotAt != null);
 
   if (frozen.length > 0 && !options.force) {
     return { reportedYear: year, rows: frozen, created: false };
@@ -143,7 +150,7 @@ export async function snapshotAuthorizedEntitiesForYear(
   // year, keyed by business key so the loop below can match against them.
   const unfrozenByKey = new Map<string, AefT5AuthorizedEntitiesRecord>();
   for (const row of existing.data) {
-    if (row.snapshotAt !== undefined) {
+    if (row.snapshotAt != null) {
       continue; // was frozen; either returned above, or just deleted under force
     }
     if (typeof row.aefT5AuthorizedEntitiesId === 'string') {
@@ -216,6 +223,12 @@ export async function getAuthorizedEntitiesForYear(
   clock: Clock = systemClock,
 ): Promise<AuthorizedEntitiesForYear> {
   const versions = await findSubmissionVersions(store, defaults.aefT1SubmissionParty, year);
+  // Only meaningful for the currently-open year — a past year has no "now"
+  // to compute live entities as of, and the provider's own contract is
+  // "authorized as of `asOf`", not "as of the year in question". Fetched
+  // lazily so a closed year's lookup never calls the provider at all.
+  const live =
+    year === currentYear(clock) ? await getCurrentYearAuthorizedEntities(provider, year, clock) : undefined;
 
   if (versions.length > 0) {
     const page = await store.find('t5AuthorizedEntities', {
@@ -225,7 +238,10 @@ export async function getAuthorizedEntitiesForYear(
 
     const frozenByVersion = new Map<string, typeof page.data>();
     for (const row of page.data) {
-      if (row.snapshotAt === undefined || row.aefT1SubmissionId === undefined) {
+      /** For a current year draft version all the auth entities that are engaged in any action
+       *  should be visible in T5.
+       * */ 
+      if (year !== currentYear(clock) && (row.snapshotAt == null || row.aefT1SubmissionId == null)) {
         continue;
       }
       const bucket = frozenByVersion.get(row.aefT1SubmissionId);
@@ -239,13 +255,24 @@ export async function getAuthorizedEntitiesForYear(
     // `findSubmissionVersions` returns newest first, so the first version with
     // frozen rows is the most recent one actually filed.
     for (const version of versions) {
-      const frozen = frozenByVersion.get(version.id);
-      if (frozen && frozen.length > 0) {
+      let rows: AefT5AuthorizedEntitiesCreateInput[] | undefined = frozenByVersion.get(version.id);
+      let provisional = false;
+      if (year === currentYear(clock)) {
+        const byKey = new Map((rows ?? []).map((row) => [row.aefT5AuthorizedEntitiesId, row]));
+        for (const row of live?.rows ?? []) {
+          if (!byKey.has(row.aefT5AuthorizedEntitiesId)) {
+            byKey.set(row.aefT5AuthorizedEntitiesId, row);
+          }
+        }
+        rows = [...byKey.values()];
+        provisional = true;
+      }
+      if (rows && rows.length > 0) {
         return {
           reportedYear: year,
-          rows: frozen,
-          provisional: false,
-          snapshotAt: frozen[0].snapshotAt,
+          rows,
+          provisional,
+          snapshotAt: rows[0].snapshotAt,
         };
       }
     }
@@ -262,6 +289,7 @@ export async function getAuthorizedEntitiesForYear(
     return { reportedYear: year, rows: [], provisional: false };
   }
 
-  const live = await getCurrentYearAuthorizedEntities(provider, year, clock);
-  return { reportedYear: year, rows: live.rows, provisional: true };
+  // `live` was computed above precisely because year === currentYear(clock)
+  // — the branch above already returned otherwise, so it is always set here.
+  return { reportedYear: year, rows: live!.rows, provisional: true };
 }
