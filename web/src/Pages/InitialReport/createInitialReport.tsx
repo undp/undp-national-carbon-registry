@@ -20,9 +20,17 @@ import {
   getCompatibleCaMethods,
 } from "../../Definitions/Enums/caMethod.enum";
 import { Sector } from "../../Definitions/Enums/sector.enum";
+import { RequireDnaManage } from "../../Components/Common/AccessControl/RequireDnaAccess";
 import "./initialReports.scss";
 
 const { TextArea } = Input;
+
+// Just the fields the overlap preflight names in its message.
+type ConflictingReport = {
+  reportNumber: string;
+  ndcStartYear: number;
+  ndcEndYear: number;
+};
 
 // The initial report is filed for an NDC implementation period, not for
 // a single cooperative approach — approaches are attached afterwards
@@ -36,6 +44,87 @@ const CreateInitialReport = () => {
   const { post } = useConnection();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+
+  const isBlank = (v: unknown) => v === undefined || v === null || v === "";
+
+  // Preflight for the "no two reports may cover overlapping NDC periods"
+  // guarantee — the backend enforces this for real (a partial GIST
+  // exclusion constraint, checked from generate onwards, not just at
+  // submit), this just surfaces the conflict before the user finishes
+  // the form.
+  //
+  // The check runs per field so the message lands under the field that
+  // actually conflicts: an existing report's period [a,b] contains the
+  // year being validated iff a <= year AND b >= year.
+  const findReportContainingYear = async (
+    year: number
+  ): Promise<ConflictingReport | undefined> => {
+    const existing = await post("national/initialReport/query", {
+      page: 1,
+      size: 1,
+      filterAnd: [
+        { key: "ndcStartYear", operation: "<=", value: year },
+        { key: "ndcEndYear", operation: ">=", value: year },
+      ],
+    });
+    return (existing?.data ?? [])[0];
+  };
+
+  // The one overlap neither endpoint can detect on its own: a period
+  // that swallows an existing report whole (start before its start, end
+  // after its end). Neither year falls inside it, but the ranges still
+  // overlap — so both fields are equally at fault and both report it.
+  const findReportEnclosedBy = async (
+    start: number,
+    end: number
+  ): Promise<ConflictingReport | undefined> => {
+    const existing = await post("national/initialReport/query", {
+      page: 1,
+      size: 1,
+      filterAnd: [
+        { key: "ndcStartYear", operation: ">=", value: start },
+        { key: "ndcEndYear", operation: "<=", value: end },
+      ],
+    });
+    return (existing?.data ?? [])[0];
+  };
+
+  const period = (row: ConflictingReport) =>
+    `${row.ndcStartYear}–${row.ndcEndYear}`;
+
+  // Shared by both year fields. `label` names the field being validated
+  // so the message reads as being about that year specifically.
+  const validateNoOverlap = (field: "ndcStartYear" | "ndcEndYear") =>
+    async (_r: unknown, v: unknown) => {
+      if (isBlank(v)) return;
+      const year = Number(v);
+      const other = form.getFieldValue(
+        field === "ndcStartYear" ? "ndcEndYear" : "ndcStartYear"
+      );
+      const label = field === "ndcStartYear" ? "start year" : "end year";
+      try {
+        const conflict = await findReportContainingYear(year);
+        if (conflict) {
+          throw new Error(
+            `NDC ${label} ${year} falls inside initial report ${conflict.reportNumber}'s period (${period(conflict)}).`
+          );
+        }
+        if (isBlank(other)) return;
+        const start = field === "ndcStartYear" ? year : Number(other);
+        const end = field === "ndcStartYear" ? Number(other) : year;
+        if (start > end) return; // the start/end ordering rule reports this
+        const enclosed = await findReportEnclosedBy(start, end);
+        if (enclosed) {
+          throw new Error(
+            `NDC period ${start}–${end} fully covers initial report ${enclosed.reportNumber}'s period (${period(enclosed)}).`
+          );
+        }
+      } catch (err) {
+        if (err instanceof Error) throw err;
+        // network/auth issues surface via the submit-time error path;
+        // don't block validation because the preflight itself failed.
+      }
+    };
 
   const onFinish = async (values: any) => {
     setLoading(true);
@@ -89,6 +178,7 @@ const CreateInitialReport = () => {
   };
 
   return (
+    <RequireDnaManage>
     <div className="initial-reports-container">
       <div className="title-bar">
         <TimedPageInfoTitle
@@ -107,8 +197,10 @@ const CreateInitialReport = () => {
               <Form.Item
                 name="ndcStartYear"
                 label="NDC Start Year"
+                dependencies={["ndcEndYear"]}
                 rules={[
                   { required: true, message: "NDC start year is required" },
+                  { validator: validateNoOverlap("ndcStartYear") },
                 ]}
               >
                 <InputNumber
@@ -143,47 +235,7 @@ const CreateInitialReport = () => {
                       return Promise.resolve();
                     },
                   },
-                  {
-                    // Preflight for the "no two reports may cover
-                    // overlapping NDC periods" guarantee — the backend
-                    // enforces this for real (a partial GIST exclusion
-                    // constraint, checked from generate onwards, not
-                    // just at submit), this just surfaces the conflict
-                    // before the user finishes the form. Two inclusive
-                    // ranges [a,b] and [c,d] overlap iff a <= d AND c <=
-                    // b, so an existing report overlaps the one being
-                    // entered iff its start is <= this end AND its end
-                    // is >= this start.
-                    validator: async (_r, v) => {
-                      const start = form.getFieldValue("ndcStartYear");
-                      if (
-                        v === undefined || v === null || v === "" ||
-                        start === undefined || start === null || start === ""
-                      )
-                        return Promise.resolve();
-                      try {
-                        const existing = await post("national/initialReport/query", {
-                          page: 1,
-                          size: 1,
-                          filterAnd: [
-                            { key: "ndcStartYear", operation: "<=", value: Number(v) },
-                            { key: "ndcEndYear", operation: ">=", value: Number(start) },
-                          ],
-                        });
-                        const rows = existing?.data ?? [];
-                        if (rows.length > 0) {
-                          throw new Error(
-                            `NDC period ${start}–${v} overlaps initial report ${rows[0].reportNumber}'s period (${rows[0].ndcStartYear}–${rows[0].ndcEndYear}).`
-                          );
-                        }
-                      } catch (err: any) {
-                        if (err instanceof Error) throw err;
-                        // network/auth issues surface via the submit-time
-                        // error path; don't block validation because the
-                        // preflight itself failed.
-                      }
-                    },
-                  },
+                  { validator: validateNoOverlap("ndcEndYear") },
                 ]}
               >
                 <InputNumber
@@ -231,7 +283,7 @@ const CreateInitialReport = () => {
               <Form.Item
                 name="baseYear"
                 label="Base Year"
-                dependencies={["ndcEndYear"]}
+                dependencies={["ndcStartYear", "ndcEndYear"]}
                 rules={[
                   { required: true, message: "Base year is required" },
                   {
@@ -247,6 +299,24 @@ const CreateInitialReport = () => {
                       if (end !== undefined && end !== null && end !== "" && n >= Number(end))
                         return Promise.reject(
                           "Base year must be before the NDC end year"
+                        );
+                      // The trajectory's origin must sit strictly before
+                      // the period it feeds — a base year inside the
+                      // period extrapolates its early years backwards
+                      // past that origin, and a base year equal to the
+                      // start year leaves the period no span to begin
+                      // from. Stricter than the backend's
+                      // PERIOD_BEFORE_BASE_YEAR check, which only
+                      // rejects a base year past the start year.
+                      const start = form.getFieldValue("ndcStartYear");
+                      if (
+                        start !== undefined &&
+                        start !== null &&
+                        start !== "" &&
+                        n >= Number(start)
+                      )
+                        return Promise.reject(
+                          "Base year must be before the NDC start year"
                         );
                       return Promise.resolve();
                     },
@@ -266,6 +336,7 @@ const CreateInitialReport = () => {
               <Form.Item
                 name="baseYearEmission"
                 label="Base Year Emission (tCO2eq)"
+                dependencies={["ndcTarget"]}
                 rules={[
                   { required: true, message: "Base year emission is required" },
                   {
@@ -276,6 +347,16 @@ const CreateInitialReport = () => {
                       if (Number.isNaN(n) || n < 0)
                         return Promise.reject(
                           "Base year emission must be a non-negative number"
+                        );
+                      const target = form.getFieldValue("ndcTarget");
+                      if (
+                        target !== undefined &&
+                        target !== null &&
+                        target !== "" &&
+                        n <= Number(target)
+                      )
+                        return Promise.reject(
+                          "Base year emission must be greater than the NDC target"
                         );
                       return Promise.resolve();
                     },
@@ -294,6 +375,7 @@ const CreateInitialReport = () => {
               <Form.Item
                 name="ndcTarget"
                 label="NDC Target (tCO2eq)"
+                dependencies={["baseYearEmission"]}
                 rules={[
                   { required: true, message: "NDC target is required" },
                   {
@@ -304,6 +386,16 @@ const CreateInitialReport = () => {
                       if (Number.isNaN(n) || n < 0)
                         return Promise.reject(
                           "NDC target must be a non-negative number"
+                        );
+                      const emission = form.getFieldValue("baseYearEmission");
+                      if (
+                        emission !== undefined &&
+                        emission !== null &&
+                        emission !== "" &&
+                        Number(emission) <= n
+                      )
+                        return Promise.reject(
+                          "NDC target must be less than the base year emission"
                         );
                       return Promise.resolve();
                     },
@@ -326,12 +418,10 @@ const CreateInitialReport = () => {
                 label="Sectors"
                 rules={[
                   {
-                    validator: (_r, v) => {
-                      const arr: string[] = Array.isArray(v) ? v : [];
-                      if (arr.length === 0)
-                        return Promise.reject("Add at least one sector");
-                      return Promise.resolve();
-                    },
+                    required: true,
+                    type: "array",
+                    min: 1,
+                    message: "Add at least one sector",
                   },
                 ]}
               >
@@ -420,6 +510,7 @@ const CreateInitialReport = () => {
         </Form>
       </div>
     </div>
+    </RequireDnaManage>
   );
 };
 

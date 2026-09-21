@@ -1,6 +1,6 @@
 {
   "notFound": "Cooperative approach {} not found.",
-  "noManagePermission": "Only a government (DNA) Admin or Root user can manage cooperative approaches.",
+  "noManagePermission": "Only a government (DNA) Root or Admin user can manage cooperative approaches.",
   "invalidDateRange": "The cooperative approach start date must be before its end date.",
   "invalidTransition": "Cooperative approach {} cannot move from {} to {}.",
   "notDraftForSubmission": "Cooperative approach {} cannot be submitted because it is {}, not Draft.",

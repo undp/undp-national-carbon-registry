@@ -38,10 +38,12 @@ export class InitialReportController {
     return this.initialReportService.generateDraft(dto, req.user);
   }
 
+  // onlyInject was previously `true` here — see the identical fix (and
+  // rationale) on CooperativeApproachController's query endpoint.
   @ApiBearerAuth()
   @UseGuards(
     JwtAuthGuard,
-    PoliciesGuardEx(true, Action.Read, InitialReport, true)
+    PoliciesGuardEx(true, Action.Read, InitialReport)
   )
   @Post("query")
   query(@Body() query: QueryDto, @Request() req) {

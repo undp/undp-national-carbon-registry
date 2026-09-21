@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
-import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
 import {
   Alert,
   Button,
@@ -18,11 +17,13 @@ import {
   message,
 } from "antd";
 import { CheckCircleOutlined, EditOutlined } from "@ant-design/icons";
-import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
-import { Role } from "../../Definitions/Enums/role.enum";
-import { CaMethod } from "../../Definitions/Enums/caMethod.enum";
+import { CaMethod, CA_METHOD_LABELS } from "../../Definitions/Enums/caMethod.enum";
+import { NDC_TYPE_LABELS } from "../../Definitions/Enums/ndcType.enum";
 import { fmtDecimal, fmtQty } from "./caFormat";
 import CaPeriodTable, { CaPeriodYearRow } from "./caPeriodTable";
+import { useArticle6Permissions } from "../../Components/Common/hooks/useArticle6Permissions";
+import RequireDnaAccess from "../../Components/Common/AccessControl/RequireDnaAccess";
+import IrreversibleActionConfirmModal from "../../Components/Models/irreversibleActionConfirmModal";
 import "./caManagement.scss";
 
 const statusColors: Record<string, string> = {
@@ -36,7 +37,7 @@ const CaDetails = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(["correspondingAdjust"]);
   const { get, put } = useConnection();
-  const { userInfoState } = useUserContext();
+  const { canManage } = useArticle6Permissions();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [finalizing, setFinalizing] = useState(false);
@@ -49,15 +50,9 @@ const CaDetails = () => {
   }>({ start: null, end: null });
   const [editOpen, setEditOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [submitConfirmOpen, setSubmitConfirmOpen] = useState(false);
+  const [finalizeConfirmOpen, setFinalizeConfirmOpen] = useState(false);
   const [form] = Form.useForm();
-
-  // Corresponding adjustments are managed by government (DNA) Admin/Root
-  // only — mirrors the backend service check.
-  const canManage =
-    userInfoState?.companyRole ===
-      CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-    (userInfoState?.userRole === Role.Admin ||
-      userInfoState?.userRole === Role.Root);
 
   const fetchData = async () => {
     setLoading(true);
@@ -103,6 +98,7 @@ const CaDetails = () => {
         {}
       );
       message.success(t("correspondingAdjust:submitSuccess"));
+      setSubmitConfirmOpen(false);
       fetchData();
     } catch (error: any) {
       message.error(
@@ -121,6 +117,7 @@ const CaDetails = () => {
         {}
       );
       message.success(t("correspondingAdjust:finalizeSuccess"));
+      setFinalizeConfirmOpen(false);
       fetchData();
     } catch (error: any) {
       message.error(
@@ -184,6 +181,7 @@ const CaDetails = () => {
   const gateOpen = gateYear != null && new Date().getUTCFullYear() > gateYear;
 
   return (
+    <RequireDnaAccess>
     <div className="corresponding-adjustment-container">
       <div className="title-bar">
         <Row justify="space-between" align="middle">
@@ -226,10 +224,10 @@ const CaDetails = () => {
                   <Button
                     type="primary"
                     icon={<CheckCircleOutlined />}
-                    onClick={handleSubmit}
                     loading={submitting}
                     disabled={!gateOpen}
                     style={{ marginRight: 8 }}
+                    onClick={() => setSubmitConfirmOpen(true)}
                   >
                     {t("correspondingAdjust:submit")}
                   </Button>
@@ -250,10 +248,10 @@ const CaDetails = () => {
                   <Button
                     type="primary"
                     icon={<CheckCircleOutlined />}
-                    onClick={handleFinalizePeriod}
                     loading={finalizing}
                     disabled={!gateOpen}
                     style={{ marginRight: 8 }}
+                    onClick={() => setFinalizeConfirmOpen(true)}
                   >
                     {t("correspondingAdjust:finalizePeriod")}
                   </Button>
@@ -279,10 +277,10 @@ const CaDetails = () => {
       <div className="content-card">
         <Descriptions bordered column={2}>
           <Descriptions.Item label={t("correspondingAdjust:columnNdcType")}>
-            {data.ndcType}
+            {NDC_TYPE_LABELS[data.ndcType] ?? data.ndcType}
           </Descriptions.Item>
           <Descriptions.Item label={t("correspondingAdjust:columnCaMethod")}>
-            {data.caMethod}
+            {CA_METHOD_LABELS[data.caMethod] ?? data.caMethod}
           </Descriptions.Item>
           <Descriptions.Item
             label={t("correspondingAdjust:reportingYearEmission")}
@@ -412,7 +410,31 @@ const CaDetails = () => {
           </Row>
         </Form>
       </Modal>
+
+      <IrreversibleActionConfirmModal
+        open={submitConfirmOpen}
+        title={t("correspondingAdjust:submit")}
+        message={t("correspondingAdjust:submitConfirmTitle")}
+        confirmText={t("correspondingAdjust:submit")}
+        cancelText={t("correspondingAdjust:cancel")}
+        loading={submitting}
+        onConfirm={handleSubmit}
+        onCancel={() => setSubmitConfirmOpen(false)}
+        t={t}
+      />
+      <IrreversibleActionConfirmModal
+        open={finalizeConfirmOpen}
+        title={t("correspondingAdjust:finalizePeriod")}
+        message={t("correspondingAdjust:finalizeConfirmTitle")}
+        confirmText={t("correspondingAdjust:finalizePeriod")}
+        cancelText={t("correspondingAdjust:cancel")}
+        loading={finalizing}
+        onConfirm={handleFinalizePeriod}
+        onCancel={() => setFinalizeConfirmOpen(false)}
+        t={t}
+      />
     </div>
+    </RequireDnaAccess>
   );
 };
 

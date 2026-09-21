@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
-import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
 import {
   Button,
   Row,
@@ -16,12 +15,14 @@ import {
   Popconfirm,
 } from "antd";
 import { PlusOutlined, CheckCircleOutlined } from "@ant-design/icons";
-import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
-import { Role } from "../../Definitions/Enums/role.enum";
 import { fmtDecimal, fmtQty } from "./caFormat";
+import { NDC_TYPE_LABELS } from "../../Definitions/Enums/ndcType.enum";
+import { CA_METHOD_LABELS } from "../../Definitions/Enums/caMethod.enum";
 import "./caManagement.scss";
 import "../../Styles/common.table.scss";
 import { TimedPageInfoTitle } from "../../Components/Common/TimedPageInfoTitle/TimedPageInfoTitle";
+import { useArticle6Permissions } from "../../Components/Common/hooks/useArticle6Permissions";
+import RequireDnaAccess from "../../Components/Common/AccessControl/RequireDnaAccess";
 
 const statusColors: Record<string, string> = {
   Draft: "default",
@@ -40,7 +41,7 @@ const CaManagement = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(["common", "correspondingAdjust"]);
   const { post, get, put } = useConnection();
-  const { userInfoState } = useUserContext();
+  const { canManage } = useArticle6Permissions();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -50,17 +51,6 @@ const CaManagement = () => {
     useState<ReconciliationSummary | null>(null);
   const [reconciliationLoading, setReconciliationLoading] = useState(false);
   const [approvingId, setApprovingId] = useState<string | null>(null);
-
-  // Corresponding adjustments are managed by government (DNA) Admin/Root
-  // only — mirrors the backend service check.
-  const canManage = useMemo(
-    () =>
-      userInfoState?.companyRole ===
-        CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-      (userInfoState?.userRole === Role.Admin ||
-        userInfoState?.userRole === Role.Root),
-    [userInfoState]
-  );
 
   const fetchReconciliation = async () => {
     setReconciliationLoading(true);
@@ -132,11 +122,13 @@ const CaManagement = () => {
       title: t("correspondingAdjust:columnNdcType"),
       dataIndex: "ndcType",
       key: "ndcType",
+      render: (val: string) => NDC_TYPE_LABELS[val] ?? val,
     },
     {
       title: t("correspondingAdjust:columnCaMethod"),
       dataIndex: "caMethod",
       key: "caMethod",
+      render: (val: string) => CA_METHOD_LABELS[val] ?? val,
     },
     {
       title: t("correspondingAdjust:columnCorrespondingAdjustment"),
@@ -216,6 +208,7 @@ const CaManagement = () => {
   const gap = reconciliation?.outstandingGap ?? 0;
 
   return (
+    <RequireDnaAccess>
     <div className="corresponding-adjustment-container">
       <div className="title-bar">
         <TimedPageInfoTitle
@@ -327,6 +320,7 @@ const CaManagement = () => {
         />
       </div>
     </div>
+    </RequireDnaAccess>
   );
 };
 

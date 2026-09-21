@@ -7,6 +7,7 @@ import { useConnection } from "../../Context/ConnectionContext/connectionContext
 import InitialReportGeneralSections from "../../Components/InitialReport/initialReportGeneralSections";
 import InitialReportApproachesTable from "../../Components/InitialReport/initialReportApproachesTable";
 import { normalizeVersionSnapshot, versionLabel } from "./initialReport.helpers";
+import RequireDnaAccess from "../../Components/Common/AccessControl/RequireDnaAccess";
 import "./initialReports.scss";
 
 // A single frozen filing — read-only throughout. Reached by clicking a
@@ -56,6 +57,7 @@ const InitialReportVersionView = () => {
   const { general, approaches } = normalizeVersionSnapshot(version);
 
   return (
+    <RequireDnaAccess>
     <div className="initial-reports-container">
       <div className="title-bar">
         <div className="body-title">
@@ -88,6 +90,7 @@ const InitialReportVersionView = () => {
         <InitialReportApproachesTable approaches={approaches} showAuthorizedEntities />
       </div>
     </div>
+    </RequireDnaAccess>
   );
 };
 

@@ -21,6 +21,9 @@ import {
   getCompatibleCaMethods,
 } from "../../Definitions/Enums/caMethod.enum";
 import CaPeriodTable, { CaPeriodYearRow } from "./caPeriodTable";
+import { useArticle6Permissions } from "../../Components/Common/hooks/useArticle6Permissions";
+import RequireDnaAccess from "../../Components/Common/AccessControl/RequireDnaAccess";
+import IrreversibleActionConfirmModal from "../../Components/Models/irreversibleActionConfirmModal";
 import "./caManagement.scss";
 
 interface PeriodContext {
@@ -37,6 +40,7 @@ const CaCalculation = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(["common", "correspondingAdjust"]);
   const { get, post } = useConnection();
+  const { canManage } = useArticle6Permissions();
   const [form] = Form.useForm();
 
   const [year, setYear] = useState<number | null>(null);
@@ -46,11 +50,35 @@ const CaCalculation = () => {
   const [result, setResult] = useState<any>(null);
   const [calculating, setCalculating] = useState(false);
   const [saving, setSaving] = useState<"draft" | "submit" | null>(null);
+  const [submitConfirmOpen, setSubmitConfirmOpen] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+
+  // Whatever the period table and safeguard block are showing was
+  // computed for the year/emission combination as it stood at the last
+  // Calculate click — editing either one afterward makes that result
+  // stale, so both are hidden again until Calculate re-runs.
+  const resetCalculation = () => {
+    setResult(null);
+    setRows([]);
+  };
 
   // NDC Type and CA Method are derived from whichever NDC period covers
   // the reporting year — never picked by hand — so the calculation can
   // never disagree with what was actually filed in the initial report.
+  //
+  // Deliberately does NOT populate `rows` from periodSummary's own
+  // figures for a still-open year — the period table and safeguard
+  // block are the CALCULATED result, not a preview of the period's
+  // indicative trajectory, so they stay hidden until Calculate is
+  // actually clicked (see onCalculate).
+  //
+  // A year that is already Submitted/Approved is the one exception:
+  // recalculating it would silently diverge from what was actually
+  // filed (e.g. if ledger activity changed since), and saveCA refuses
+  // to persist over it anyway (upsertYear's alreadyFinalized guard) — so
+  // there is nothing a fresh Calculate could accomplish besides showing
+  // a number the user can't act on. Load the filed record instead and
+  // show it read-only, the same shape onCalculate would have produced.
   const loadContext = async (y: number) => {
     setContextLoading(true);
     try {
@@ -59,14 +87,31 @@ const CaCalculation = () => {
       );
       const data: PeriodContext = response?.data;
       setContext(data);
-      setRows(data?.years ?? []);
       form.setFieldsValue({
         ndcType: data?.ndcType ?? undefined,
         caMethod: data?.caMethod ?? undefined,
       });
+
+      const yearRow = data?.years?.find((row) => row.year === y);
+      const filedCaId =
+        yearRow?.status === "Submitted" || yearRow?.status === "Approved"
+          ? yearRow.caId
+          : null;
+      if (filedCaId) {
+        const caRes = await get(
+          `national/correspondingAdjustment/get?id=${encodeURIComponent(filedCaId)}`
+        );
+        setResult(caRes?.data ?? null);
+        setRows(data?.years ?? []);
+        form.setFieldsValue({
+          reportingYearEmission: caRes?.data?.reportingYearEmission ?? undefined,
+        });
+      } else {
+        resetCalculation();
+      }
     } catch {
       setContext(null);
-      setRows([]);
+      resetCalculation();
     } finally {
       setContextLoading(false);
     }
@@ -87,6 +132,13 @@ const CaCalculation = () => {
   const gateYear = isAveraging ? context?.ndcEndYear ?? year : year;
   const gateOpen =
     gateYear != null && new Date().getUTCFullYear() > Number(gateYear);
+
+  // Submitted/Approved — see loadContext's comment. Calculate, the
+  // emission input, and Save/Submit are all disabled for it; the table
+  // and safeguard block below show what was actually filed instead.
+  const filedYearRow = context?.years?.find((row) => row.year === year);
+  const isFiled =
+    filedYearRow?.status === "Submitted" || filedYearRow?.status === "Approved";
 
   const onCalculate = async (values: any) => {
     setCalculating(true);
@@ -133,6 +185,7 @@ const CaCalculation = () => {
           ? t("correspondingAdjust:adjustmentSubmitted")
           : t("correspondingAdjust:draftSaved")
       );
+      setSubmitConfirmOpen(false);
       const caId = response?.data?.caId;
       navigate(
         caId
@@ -152,6 +205,7 @@ const CaCalculation = () => {
   };
 
   return (
+    <RequireDnaAccess>
     <div className="corresponding-adjustment-container">
       <div className="title-bar">
         <TimedPageInfoTitle
@@ -180,7 +234,10 @@ const CaCalculation = () => {
                   min={1990}
                   max={2100}
                   placeholder={t("correspondingAdjust:reportingYearPlaceholder")}
-                  onChange={(v) => setYear(v == null ? null : Number(v))}
+                  onChange={(v) => {
+                    setYear(v == null ? null : Number(v));
+                    resetCalculation();
+                  }}
                 />
               </Form.Item>
             </Col>
@@ -205,6 +262,8 @@ const CaCalculation = () => {
                   placeholder={t(
                     "correspondingAdjust:reportingYearEmissionPlaceholder"
                   )}
+                  disabled={isFiled}
+                  onChange={resetCalculation}
                 />
               </Form.Item>
             </Col>
@@ -260,6 +319,18 @@ const CaCalculation = () => {
             />
           )}
 
+          {isFiled && (
+            <Alert
+              type="info"
+              showIcon
+              style={{ marginBottom: 16 }}
+              message={t("correspondingAdjust:alreadyFiledTitle", {
+                status: filedYearRow?.status,
+              })}
+              description={t("correspondingAdjust:alreadyFiledDescription")}
+            />
+          )}
+
           <Row justify="end" gutter={16}>
             <Col>
               <Button onClick={() => navigate("/correspondingAdjustments/viewAll")}>
@@ -271,7 +342,7 @@ const CaCalculation = () => {
                 type="primary"
                 htmlType="submit"
                 loading={calculating}
-                disabled={!hasPeriod}
+                disabled={!hasPeriod || isFiled}
               >
                 {t("correspondingAdjust:calculate")}
               </Button>
@@ -279,7 +350,7 @@ const CaCalculation = () => {
           </Row>
         </Form>
 
-        {hasPeriod && rows.length > 0 && (
+        {hasPeriod && result && rows.length > 0 && (
           <div style={{ marginTop: 32 }}>
             <div className="table-title" style={{ marginBottom: 12 }}>
               {t("correspondingAdjust:ndcPeriodLabel", {
@@ -315,48 +386,72 @@ const CaCalculation = () => {
               showIcon
               style={{ marginBottom: 16 }}
             />
-            <Row justify="end" gutter={16}>
-              <Col>
-                <Button
-                  loading={saving === "draft"}
-                  disabled={saving !== null}
-                  onClick={() => onSave(false)}
-                >
-                  {t("correspondingAdjust:saveDraft")}
-                </Button>
-              </Col>
-              <Col>
-                <Tooltip
-                  title={
-                    gateOpen
-                      ? undefined
-                      : isAveraging
-                      ? t("correspondingAdjust:submitBlockedPeriod", {
-                          nextYear: Number(context?.ndcEndYear) + 1,
-                        })
-                      : t("correspondingAdjust:submitBlockedYear", {
-                          year,
-                          nextYear: Number(year) + 1,
-                        })
-                  }
-                >
-                  <span>
-                    <Button
-                      type="primary"
-                      loading={saving === "submit"}
-                      disabled={saving !== null || !gateOpen}
-                      onClick={() => onSave(true)}
-                    >
-                      {t("correspondingAdjust:submit")}
-                    </Button>
-                  </span>
-                </Tooltip>
-              </Col>
-            </Row>
+            {/* A DNA-ViewOnly user may calculate (nothing above this
+                point persists anything — see the backend's
+                previewCA/assertCanView), but save/submit both persist,
+                so they stay behind canManage same as every other
+                mutating action on these three pages. Also hidden once
+                the year is filed — there's nothing left to save. */}
+            {canManage && !isFiled && (
+              <Row justify="end" gutter={16}>
+                <Col>
+                  <Button
+                    loading={saving === "draft"}
+                    disabled={saving !== null}
+                    onClick={() => onSave(false)}
+                  >
+                    {t("correspondingAdjust:saveDraft")}
+                  </Button>
+                </Col>
+                <Col>
+                  <Tooltip
+                    title={
+                      gateOpen
+                        ? undefined
+                        : isAveraging
+                        ? t("correspondingAdjust:submitBlockedPeriod", {
+                            nextYear: Number(context?.ndcEndYear) + 1,
+                          })
+                        : t("correspondingAdjust:submitBlockedYear", {
+                            year,
+                            nextYear: Number(year) + 1,
+                          })
+                    }
+                  >
+                    <span>
+                      <Button
+                        type="primary"
+                        loading={saving === "submit"}
+                        disabled={saving !== null || !gateOpen}
+                        onClick={() => setSubmitConfirmOpen(true)}
+                      >
+                        {t("correspondingAdjust:submit")}
+                      </Button>
+                    </span>
+                  </Tooltip>
+                </Col>
+              </Row>
+            )}
           </div>
         )}
       </div>
+      <IrreversibleActionConfirmModal
+        open={submitConfirmOpen}
+        title={t("correspondingAdjust:submit")}
+        message={t(
+          isAveraging
+            ? "correspondingAdjust:finalizeConfirmTitle"
+            : "correspondingAdjust:submitConfirmTitle"
+        )}
+        confirmText={t("correspondingAdjust:submit")}
+        cancelText={t("correspondingAdjust:cancel")}
+        loading={saving === "submit"}
+        onConfirm={() => onSave(true)}
+        onCancel={() => setSubmitConfirmOpen(false)}
+        t={t}
+      />
     </div>
+    </RequireDnaAccess>
   );
 };
 

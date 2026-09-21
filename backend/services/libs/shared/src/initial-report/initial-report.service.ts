@@ -59,6 +59,17 @@ const GENERAL_FIELD_KEYS = [
   "environmentalIntegrity",
 ] as const;
 
+// What submitReport insists on before a report can be filed. Everything
+// in the general set except caMethodDescription, which is optional at
+// generate time (the create DTO marks it @IsOptional and generate
+// defaults it to ""), so demanding it only at submit would block filing
+// on a field the user was never required to fill in. Excluded for the
+// same reason it is left out of TRAJECTORY_FIELD_KEYS above: pure
+// narrative text with no downstream calculation.
+const SUBMIT_REQUIRED_FIELD_KEYS = GENERAL_FIELD_KEYS.filter(
+  (key) => key !== "caMethodDescription"
+);
+
 @Injectable()
 export class InitialReportService {
   constructor(
@@ -88,8 +99,9 @@ export class InitialReportService {
     private readonly cooperativeApproachService: CooperativeApproachService
   ) {}
 
-  // Initial reports are managed by the government (DNA) Admin / Root
-  // only — mirrors the retirement-action permission pattern.
+  // Initial reports are managed by a government (DNA) Root/Admin only —
+  // Manager and ViewOnly are both view-only here, matching the CASL
+  // ability factory's Manage grant.
   private assertCanManage(user: User) {
     if (
       user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
@@ -171,6 +183,29 @@ export class InitialReportService {
     }
   }
 
+  // A target at or above the base year's own emissions would mean a
+  // flat or rising trajectory rather than the reduction an NDC target
+  // is supposed to represent — the interpolation in ndc-trajectory.ts
+  // divides fine either way, so nothing there would catch it. Checked
+  // at generate/update, alongside assertPeriodAvailable, so a report
+  // can't be drafted into this state in the first place rather than
+  // only failing much later at submit.
+  private assertEmissionTargetValid(
+    baseYearEmission: number | undefined | null,
+    ndcTarget: number | undefined | null
+  ) {
+    if (baseYearEmission == null || ndcTarget == null) return;
+    if (Number(baseYearEmission) <= Number(ndcTarget)) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "initialReport.emissionMustExceedTarget",
+          [String(baseYearEmission), String(ndcTarget)]
+        ),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
   private isUniqueViolation(error: any): boolean {
     // 23505 = unique_violation, 23P01 = exclusion_violation (the GIST
     // overlap constraint raises the latter, not the former).
@@ -183,6 +218,7 @@ export class InitialReportService {
   ): Promise<DataResponseDto> {
     this.assertCanManage(user);
     await this.assertPeriodAvailable(dto.ndcStartYear, dto.ndcEndYear);
+    this.assertEmissionTargetValid(dto.baseYearEmission, dto.ndcTarget);
 
     const now = new Date().getTime();
     const id = await this.counterService.incrementCount(
@@ -445,6 +481,10 @@ export class InitialReportService {
       dto.ndcEndYear ?? report.ndcEndYear,
       report.reportNumber
     );
+    this.assertEmissionTargetValid(
+      dto.baseYearEmission ?? report.baseYearEmission,
+      dto.ndcTarget ?? report.ndcTarget
+    );
     this.applyGeneralFields(report, dto);
     // The report is mutable in place; a Submitted filing simply reopens
     // as a Draft the moment it is touched again. The next submit becomes
@@ -674,7 +714,7 @@ export class InitialReportService {
   // ------------------------------------------------------------------
 
   private buildMissingFields(report: InitialReport): string[] {
-    return GENERAL_FIELD_KEYS.filter((key) => {
+    return SUBMIT_REQUIRED_FIELD_KEYS.filter((key) => {
       const value = (report as any)[key];
       if (Array.isArray(value)) return value.length === 0;
       return value === undefined || value === null || value === "";

@@ -91,14 +91,29 @@ export class CorrespondingAdjustmentService {
     private readonly configService: ConfigService
   ) {}
 
-  // Corresponding adjustments are managed by the government (DNA)
-  // Admin / Root only — mirrors the pattern used for cooperative
-  // approaches / initial reports / ITMO authorization.
+  // Corresponding adjustments are a government (DNA) feature end to
+  // end — no other company role gets any access. Split from
+  // assertCanManage below because DNA-ViewOnly sits between the two: it
+  // may calculate/preview (nothing persisted) but not save/submit.
+  private assertCanView(user: User) {
+    if (user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY) {
+      throw new HttpException(
+        this.helperService.formatReqMessagesString(
+          "correspondingAdjustment.noManagePermission",
+          []
+        ),
+        HttpStatus.FORBIDDEN
+      );
+    }
+  }
+
+  // Persisting a corresponding adjustment (save/submit/finalize/approve)
+  // is managed by a government (DNA) Root/Admin only — Manager and
+  // ViewOnly both stop at assertCanView (preview only), matching the
+  // CASL ability factory's Manage grant.
   private assertCanManage(user: User) {
-    if (
-      user.companyRole != CompanyRole.DESIGNATED_NATIONAL_AUTHORITY ||
-      ![Role.Admin, Role.Root].includes(user.role)
-    ) {
+    this.assertCanView(user);
+    if (![Role.Admin, Role.Root].includes(user.role)) {
       throw new HttpException(
         this.helperService.formatReqMessagesString(
           "correspondingAdjustment.noManagePermission",
@@ -217,7 +232,10 @@ export class CorrespondingAdjustmentService {
    * writing a row (and burning a CA-ADJ id) on every click.
    */
   async previewCA(dto: CaPreviewDto, user: User): Promise<DataResponseDto> {
-    this.assertCanManage(user);
+    // Deliberately assertCanView, not assertCanManage — nothing is
+    // persisted here, so a DNA-ViewOnly user may calculate a preview
+    // even though they cannot save or submit one (see saveCA below).
+    this.assertCanView(user);
     const context = await this.resolveNdcContextOrFail(dto.year);
     const caMethod = this.effectiveCaMethod(context, dto.caMethodOverride);
 
@@ -758,6 +776,11 @@ export class CorrespondingAdjustmentService {
 
       let appliedAdjustment = emissionsBalance;
       let cumulativeFirstTransferred: number | undefined;
+      // Averaging only — populated below, used to feed the safeguard
+      // check a cumulative-vs-cumulative comparison instead of the
+      // per-year one Trajectory uses.
+      let cumulativeTrajectory: number | undefined;
+      let cumulativeAdjustedBalance: number | null | undefined;
 
       if (caMethod === CaMethod.AVERAGING) {
         // Evaluated at the anchor, NOT at this row's own year: Averaging
@@ -780,6 +803,48 @@ export class CorrespondingAdjustmentService {
           elapsedYears > 0
             ? cumulativeFirstTransferred / elapsedYears
             : cumulativeFirstTransferred;
+
+        // Dec 2/CMA.3 para 9's safeguard is evaluated against the whole
+        // period under Averaging, not year by year (the per-year target
+        // and per-year adjusted balance are indicative display figures
+        // only — see CaPeriodTable's "Cumulative Adjusted Balance" /
+        // "Cumulative Trajectory" rows on the frontend, which this
+        // mirrors). Cumulative Trajectory sums every year's interpolated
+        // target from the period start through the anchor year.
+        const cumulativeTargetRows = await this.ndcTargetYearlyRepo.find({
+          where: {
+            country: countryCode,
+            targetYear: Between(context.ndcStartYear, anchorYear),
+          },
+        });
+        cumulativeTrajectory = cumulativeTargetRows.reduce(
+          (sum, t) => sum + Number(t.singleYearTarget),
+          0
+        );
+
+        // Cumulative Adjusted Balance sums every year's reported
+        // emissions from the period start through the anchor year, plus
+        // the (undivided) cumulative first-transferred balance — same
+        // shape as the MultiYear period-end reconciliation below, just
+        // evaluated every year instead of only at the period's end.
+        const priorRows = await this.caRepo.find({
+          where: { year: Between(context.ndcStartYear, anchorYear) },
+        });
+        const priorWithEmission = priorRows.filter(
+          (r) => r.year !== year && r.reportingYearEmission != null
+        );
+        const cumulativeInventory = priorWithEmission.reduce(
+          (sum, r) => sum + Number(r.reportingYearEmission),
+          0
+        );
+        const haveAllYears =
+          priorWithEmission.length + (reportingYearEmission != null ? 1 : 0) >=
+          elapsedYears;
+        cumulativeAdjustedBalance = haveAllYears
+          ? cumulativeInventory +
+            (reportingYearEmission != null ? Number(reportingYearEmission) : 0) +
+            cumulativeFirstTransferred
+          : null;
       }
 
       const adjustedEmissions =
@@ -787,10 +852,18 @@ export class CorrespondingAdjustmentService {
           ? Number(reportingYearEmission) + appliedAdjustment
           : null;
       const target = yearlyTarget.singleYearTarget ?? null;
-      const { safeguardCheckPassed, safeguardNotes } = this.evaluateSafeguard(
-        adjustedEmissions,
-        target
-      );
+      const { safeguardCheckPassed, safeguardNotes } =
+        caMethod === CaMethod.AVERAGING
+          ? this.evaluateSafeguard(
+              cumulativeAdjustedBalance ?? null,
+              cumulativeTrajectory ?? null,
+              cumulativeAdjustedBalance === null
+                ? `Cannot reconcile: missing reporting-year emissions for one or more years in [${context.ndcStartYear}, ${
+                    averagingAnchorYear ?? year
+                  }].`
+                : undefined
+            )
+          : this.evaluateSafeguard(adjustedEmissions, target);
       return {
         ...yearAggregates,
         emissionsBalance,

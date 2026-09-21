@@ -514,28 +514,32 @@ test.describe("Article 6.2 - Cross-cutting Integration", () => {
       }
     });
 
-    test("Ministry admin has Manage on IR and CA-ADJ (CASL factory mirror of DNA branch)", async ({
+    test("Ministry admin cannot Manage IR or CA-ADJ (Article 6 reporting is DNA-only)", async ({
       apiMinistry,
       apiDna,
     }) => {
-      // CASL factory grants Manage InitialReport + CorrespondingAdjustment
-      // to Ministry admins the same as DNA admins. This documents the
-      // CASL mirror — the UI hides the menu for Ministry but the API
-      // accepts their writes. Seeded user: palinda+ministry@xeptagon.com.
+      // Cooperative Approaches, Initial Reports and Corresponding
+      // Adjustments are a Designated National Authority (DNA)-only
+      // feature set. CASL factory previously mirrored DNA's Manage
+      // grant onto Ministry admins for these three subjects — removed,
+      // so Ministry gets neither Read nor Manage on them now (casl
+      // factory's Ministry branch). Seeded user:
+      // palinda+ministry@xeptagon.com.
       const ca = await createCooperativeApproach(apiDna, {
         title: `Ministry CASL ${uniqueSuffix()}`,
       });
 
-      // Ministry can generate an IR.
+      // Ministry cannot generate an IR.
       const irRes = await apiMinistry.post(
         "national/initialReport/generate",
         { cooperativeApproachId: ca.cooperativeApproachId }
       );
-      await expectOk(irRes, "Ministry IR generate");
+      expect(irRes.ok()).toBe(false);
+      expect([401, 403]).toContain(irRes.status());
 
-      // Ministry can calculate a Corresponding Adjustment.
-      const calcRes = await apiMinistry.post(
-        "national/correspondingAdjustment/calculate",
+      // Ministry cannot preview/calculate a Corresponding Adjustment.
+      const previewRes = await apiMinistry.post(
+        "national/correspondingAdjustment/preview",
         {
           year: nextFutureYear(),
           cooperativeApproachId: ca.cooperativeApproachId,
@@ -543,16 +547,18 @@ test.describe("Article 6.2 - Cross-cutting Integration", () => {
           caMethod: "Trajectory",
         }
       );
-      await expectOk(calcRes, "Ministry CA-ADJ calculate");
+      expect(previewRes.ok()).toBe(false);
+      expect([401, 403]).toContain(previewRes.status());
     });
 
     test("DNA ViewOnly cannot Manage IR (Read only)", async ({
       apiDnaViewOnly,
       apiDna,
     }) => {
-      // CASL factory lines 161-199: DNA Admin/Root/Manager gets Manage;
-      // DNA ViewOnly gets only Read on InitialReport. A ViewOnly user
-      // cannot generate or update an IR, but can query existing ones.
+      // CASL factory's DNA block: only DNA Root/Admin gets Manage on
+      // InitialReport — Manager and ViewOnly both get Read only. A
+      // ViewOnly user cannot generate or update an IR, but can query
+      // existing ones.
       const ca = await createCooperativeApproach(apiDna, {
         title: `ViewOnly CASL ${uniqueSuffix()}`,
       });
@@ -571,6 +577,36 @@ test.describe("Article 6.2 - Cross-cutting Integration", () => {
         { page: 1, size: 10, sort: { key: "createdTime", order: "DESC" } }
       );
       await expectOk(queryRes, "ViewOnly IR query");
+    });
+
+    test("DNA ViewOnly's Corresponding Adjustment preview is not blocked by permissions, but save is", async ({
+      apiDnaViewOnly,
+    }) => {
+      // Corresponding Adjustment is the one feature of the three where
+      // ViewOnly gets more than plain Read: previewCA calls
+      // assertCanView (DNA, any role), not assertCanManage (DNA,
+      // non-ViewOnly) — see corresponding-adjustment.service.ts. This
+      // asserts on the status bucket rather than a 2xx: whether 1990
+      // actually has NDC data to compute against is a business-logic
+      // question this test isn't set up to answer (no live stack to
+      // verify a seed against — see this file's own KNOWN GAPS note);
+      // what it proves is that ViewOnly's request reaches past the
+      // permission gate at all, which a 401/403 here would contradict.
+      const previewRes = await apiDnaViewOnly.post(
+        "national/correspondingAdjustment/preview",
+        { year: 1990, reportingYearEmission: 100000 }
+      );
+      expect([401, 403]).not.toContain(previewRes.status());
+
+      // save is still Action.Create at the controller — ViewOnly (Read
+      // only) is rejected by the guard itself, before the request body
+      // is even parsed, so this doesn't depend on the body being valid.
+      const saveRes = await apiDnaViewOnly.post(
+        "national/correspondingAdjustment/save",
+        { year: 1990, reportingYearEmission: 100000, submit: false }
+      );
+      expect(saveRes.ok()).toBe(false);
+      expect([401, 403]).toContain(saveRes.status());
     });
   });
 

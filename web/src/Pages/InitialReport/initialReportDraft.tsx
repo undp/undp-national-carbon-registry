@@ -21,9 +21,8 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import { useConnection } from "../../Context/ConnectionContext/connectionContext";
-import { useUserContext } from "../../Context/UserInformationContext/userInformationContext";
-import { CompanyRole } from "../../Definitions/Enums/company.role.enum";
-import { Role } from "../../Definitions/Enums/role.enum";
+import { useArticle6Permissions } from "../../Components/Common/hooks/useArticle6Permissions";
+import RequireDnaAccess from "../../Components/Common/AccessControl/RequireDnaAccess";
 import { CooperativeApproachStatus } from "../../Definitions/Enums/cooperativeApproachStatus.enum";
 import UserActionConfirmationModel from "../../Components/Models/userActionConfirmationModel";
 import InitialReportGeneralSections from "../../Components/InitialReport/initialReportGeneralSections";
@@ -44,7 +43,7 @@ const InitialReportDraft = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(["common", "InitialReport"]);
   const { get, put, post } = useConnection();
-  const { userInfoState } = useUserContext();
+  const { canManage } = useArticle6Permissions();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [discarding, setDiscarding] = useState(false);
@@ -61,13 +60,6 @@ const InitialReportDraft = () => {
 
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
   const [submitErrorMsg, setSubmitErrorMsg] = useState("");
-
-  // Initial reports are managed by government (DNA) Admin/Root only.
-  const canManage =
-    userInfoState?.companyRole ===
-      CompanyRole.DESIGNATED_NATIONAL_AUTHORITY &&
-    (userInfoState?.userRole === Role.Admin ||
-      userInfoState?.userRole === Role.Root);
 
   const loadAddApproachOptions = async () => {
     try {
@@ -280,6 +272,7 @@ const InitialReportDraft = () => {
   );
 
   return (
+    <RequireDnaAccess>
     <div className="initial-reports-container">
       <div className="title-bar">
         <Row justify="space-between" align="middle">
@@ -449,6 +442,7 @@ const InitialReportDraft = () => {
         loading={submitting}
       />
     </div>
+    </RequireDnaAccess>
   );
 };
 

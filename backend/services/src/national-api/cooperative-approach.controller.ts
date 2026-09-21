@@ -37,10 +37,17 @@ export class CooperativeApproachController {
     return this.cooperativeApproachService.create(dto, req.user);
   }
 
+  // onlyInject was previously `true` here, which — for any role with
+  // literally no CooperativeApproach Read rule at all (e.g. ClimateFund,
+  // ExecutiveCommittee, API) — skips the ability check entirely and
+  // still returns an unfiltered list, since there's no scoping
+  // condition to inject either. Dropped so this behaves like every
+  // other Read-guarded endpoint on this controller: checked AND
+  // scoped, not scoped-or-nothing.
   @ApiBearerAuth()
   @UseGuards(
     JwtAuthGuard,
-    PoliciesGuardEx(true, Action.Read, CooperativeApproach, true)
+    PoliciesGuardEx(true, Action.Read, CooperativeApproach)
   )
   @Post("query")
   query(@Body() query: QueryDto, @Request() req) {
