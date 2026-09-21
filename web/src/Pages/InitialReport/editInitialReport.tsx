@@ -27,6 +27,13 @@ import "./initialReports.scss";
 
 const { TextArea } = Input;
 
+// Just the fields the overlap preflight names in its message.
+type ConflictingReport = {
+  reportNumber: string;
+  ndcStartYear: number;
+  ndcEndYear: number;
+};
+
 type IrShape = {
   reportNumber: string;
   status: string;
@@ -55,11 +62,84 @@ const arr = (v: any): string[] =>
 const EditInitialReport = () => {
   const navigate = useNavigate();
   const { reportNumber = "" } = useParams<{ reportNumber: string }>();
-  const { get, put } = useConnection();
+  const { get, put, post } = useConnection();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [ir, setIr] = useState<IrShape | null>(null);
+
+  const isBlank = (v: unknown) => v === undefined || v === null || v === "";
+
+  // Same "no two reports may cover overlapping NDC periods" preflight as
+  // the create form (see createInitialReport.tsx) — ported here because
+  // editing an unsubmitted draft's period was missing the check
+  // entirely. Excludes this report's own row, since it always overlaps
+  // itself.
+  const findReportContainingYear = async (
+    year: number
+  ): Promise<ConflictingReport | undefined> => {
+    const existing = await post("national/initialReport/query", {
+      page: 1,
+      size: 1,
+      filterAnd: [
+        { key: "ndcStartYear", operation: "<=", value: year },
+        { key: "ndcEndYear", operation: ">=", value: year },
+        { key: "reportNumber", operation: "!=", value: reportNumber },
+      ],
+    });
+    return (existing?.data ?? [])[0];
+  };
+
+  const findReportEnclosedBy = async (
+    start: number,
+    end: number
+  ): Promise<ConflictingReport | undefined> => {
+    const existing = await post("national/initialReport/query", {
+      page: 1,
+      size: 1,
+      filterAnd: [
+        { key: "ndcStartYear", operation: ">=", value: start },
+        { key: "ndcEndYear", operation: "<=", value: end },
+        { key: "reportNumber", operation: "!=", value: reportNumber },
+      ],
+    });
+    return (existing?.data ?? [])[0];
+  };
+
+  const period = (row: ConflictingReport) =>
+    `${row.ndcStartYear}–${row.ndcEndYear}`;
+
+  const validateNoOverlap = (field: "ndcStartYear" | "ndcEndYear") =>
+    async (_r: unknown, v: unknown) => {
+      if (isBlank(v)) return;
+      const year = Number(v);
+      const other = form.getFieldValue(
+        field === "ndcStartYear" ? "ndcEndYear" : "ndcStartYear"
+      );
+      const label = field === "ndcStartYear" ? "start year" : "end year";
+      try {
+        const conflict = await findReportContainingYear(year);
+        if (conflict) {
+          throw new Error(
+            `NDC ${label} ${year} falls inside initial report ${conflict.reportNumber}'s period (${period(conflict)}).`
+          );
+        }
+        if (isBlank(other)) return;
+        const start = field === "ndcStartYear" ? year : Number(other);
+        const end = field === "ndcStartYear" ? Number(other) : year;
+        if (start > end) return; // the start/end ordering rule reports this
+        const enclosed = await findReportEnclosedBy(start, end);
+        if (enclosed) {
+          throw new Error(
+            `NDC period ${start}–${end} fully covers initial report ${enclosed.reportNumber}'s period (${period(enclosed)}).`
+          );
+        }
+      } catch (err) {
+        if (err instanceof Error) throw err;
+        // network/auth issues surface via the submit-time error path;
+        // don't block validation because the preflight itself failed.
+      }
+    };
 
   const fetchIr = async () => {
     setLoading(true);
@@ -190,7 +270,11 @@ const EditInitialReport = () => {
               <Form.Item
                 name="ndcStartYear"
                 label="NDC Start Year"
-                rules={[{ required: true, message: "NDC start year is required" }]}
+                dependencies={["ndcEndYear"]}
+                rules={[
+                  { required: true, message: "NDC start year is required" },
+                  { validator: validateNoOverlap("ndcStartYear") },
+                ]}
                 tooltip={locked ? lockedTooltip : undefined}
               >
                 <InputNumber
@@ -205,7 +289,28 @@ const EditInitialReport = () => {
               <Form.Item
                 name="ndcEndYear"
                 label="NDC End Year"
-                rules={[{ required: true, message: "NDC end year is required" }]}
+                dependencies={["ndcStartYear"]}
+                rules={[
+                  { required: true, message: "NDC end year is required" },
+                  {
+                    validator: (_r, v) => {
+                      if (v === undefined || v === null || v === "")
+                        return Promise.resolve();
+                      const start = form.getFieldValue("ndcStartYear");
+                      if (
+                        start !== undefined &&
+                        start !== null &&
+                        start !== "" &&
+                        Number(start) > Number(v)
+                      )
+                        return Promise.reject(
+                          "NDC end year must be on or after the start year"
+                        );
+                      return Promise.resolve();
+                    },
+                  },
+                  { validator: validateNoOverlap("ndcEndYear") },
+                ]}
                 tooltip={locked ? lockedTooltip : undefined}
               >
                 <InputNumber
@@ -249,7 +354,40 @@ const EditInitialReport = () => {
               <Form.Item
                 name="baseYear"
                 label="Base Year"
-                rules={[{ required: true, message: "Base year is required" }]}
+                dependencies={["ndcStartYear", "ndcEndYear"]}
+                rules={[
+                  { required: true, message: "Base year is required" },
+                  {
+                    validator: (_r, v) => {
+                      if (v === undefined || v === null || v === "")
+                        return Promise.resolve();
+                      const n = Number(v);
+                      if (!Number.isInteger(n) || n < 1900 || n > 2100)
+                        return Promise.reject(
+                          "Base year must be between 1900 and 2100"
+                        );
+                      const end = form.getFieldValue("ndcEndYear");
+                      if (end !== undefined && end !== null && end !== "" && n >= Number(end))
+                        return Promise.reject(
+                          "Base year must be before the NDC end year"
+                        );
+                      // See createInitialReport.tsx's identical check —
+                      // the trajectory's origin must sit strictly before
+                      // the period it feeds.
+                      const start = form.getFieldValue("ndcStartYear");
+                      if (
+                        start !== undefined &&
+                        start !== null &&
+                        start !== "" &&
+                        n >= Number(start)
+                      )
+                        return Promise.reject(
+                          "Base year must be before the NDC start year"
+                        );
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
                 tooltip={locked ? lockedTooltip : "The emission trajectory's origin year."}
               >
                 <InputNumber
