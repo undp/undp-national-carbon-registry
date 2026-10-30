@@ -26,7 +26,8 @@
     "migration:create": "ts-node ./node_modules/typeorm/cli.js migration:create",
     "migration:run": "yarn typeorm migration:run",
     "migration:revert": "yarn typeorm migration:revert",
-    "migration:show": "yarn typeorm migration:show"
+    "migration:show": "yarn typeorm migration:show",
+    "postinstall": "node scripts/link-app-aliases.js"
   },
   "dependencies": {
     "@aws-sdk/client-qldb": "^3.408.0",
