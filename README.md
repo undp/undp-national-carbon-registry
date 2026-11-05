@@ -375,7 +375,7 @@ For contribution and licensing terms, see [Standards and License](#standards) an
     - `SMTP_PASSWORD`
   - Use `DB_PASSWORD` env variable to change PostgresSQL database password
   - Configure system root account email by updating environment variable `ROOT EMAIL`. If the email service is enabled, on the first docker start, this email address will receive a new email with the root user password.
-  - By default frontend does not show map images on dashboard and project view. To enable them please update `REACT_APP_MAP_TYPE` env variable to `Mapbox` and add new env variable `REACT_APP_MAPBOXGL_ACCESS_TOKEN` with [MapBox public access token](https://docs.mapbox.com/help/tutorials/get-started-tokens-api/) in web container.
+  - By default frontend does not show map images on dashboard and project view. To enable them set `VITE_APP_MAP_TYPE` to `Mapbox` and `VITE_APP_MAPBOXGL_ACCESS_TOKEN` to a [MapBox public access token](https://docs.mapbox.com/help/tutorials/get-started-tokens-api/). These (like the other `VITE_APP_*` web settings) are build arguments baked into the web image at build time, so set them in a `.env` file at the repository root or in your shell before running `docker-compose up -d --build`.
 - Add user data
   - Update [organisations.csv](./organisations.csv) file to add organisations.
   - Update [users.csv](./users.csv) file to add users.
