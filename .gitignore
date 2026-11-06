@@ -2,6 +2,7 @@
 **/.serverless/
 **/dist/
 **/.build/
+/@app/
 backend/services/.env.local
 backend/services/.env
 backend/services/.env.*
