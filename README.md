@@ -397,15 +397,22 @@ For contribution and licensing terms, see [Standards and License](#standards) an
 ## Run Services Locally
 
 - Setup postgreSQL locally and create a new database.
+- **Node version**: use Node 20.x (the current lockfile needs Node >= 20 to install; on Node 20.19+/22+, serverless 3.x also needs `NODE_OPTIONS=--no-experimental-require-module` in the environment).
 - Update following DB configurations in the .env.local file (If the file does not exist please create a new .env.local)
   - DB_HOST (Default localhost)
   - DB_PORT (Default 5432)
   - DB_USER (Default root)
   - DB_PASSWORD
   - DB_NAME (Default carbondbdev)
-- Move to folder `cd backend/service`
-- Run `yarn run sls:install `
+  - DB_SYNCHRONIZE=true
+- The following variables are validated at startup and must be present in `.env.local` (placeholder values are fine for local runs):
+  - `USER_JWT_SECRET`, `REFRESH_TOKEN_JWT_SECRET`, `ADMIN_JWT_SECRET`
+  - `SMTP_ENDPOINT`, `SMTP_USERNAME`, `SMTP_PASSWORD` (set `IS_EMAIL_DISABLED=true` to skip actual sending)
+  - `ASYNC_QUEUE_NAME`
+- Move to folder `cd backend/services`
+- Run `yarn run sls:install ` (installs dependencies and links the runtime module aliases used by the local serverless flow)
 - Initial user data setup `serverless invoke local --stage=local --function setup --data '{"rootEmail": "<Root user email>","systemCountryCode": "<System country Alpha 2 code>", "name": "<System country name>", "logoBase64": "<System country logo base64>"}'`
+  - Note: the setup command does not exit on completion — when the log reaches `postalCode data loaded` the setup is done and the process can be interrupted (Ctrl+C).
 - Start all the services by executing `sls offline --stage=local`
 - Now all the system services are up and running. Swagger documentation will be available on `http://localhost:3000/local/national`
 

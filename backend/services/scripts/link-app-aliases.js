@@ -13,8 +13,11 @@
 //   node_modules/@app/<name> -> ../../.build/libs/<name>/src
 //   node_modules/src         -> ../.build/src
 //
-// Runs automatically via the package.json `postinstall` hook; safe to re-run.
-// Requires the typescript plugin to have compiled at least once (.build/).
+// Runs via `yarn sls:install` (the README local-setup flow). Deliberately NOT
+// a postinstall hook: Docker builds run `yarn install` before copying
+// scripts/ into the image, so a postinstall hook here breaks the docker build
+// (see review discussion on PR #371). Safe to re-run; requires the typescript
+// plugin to have compiled at least once (.build/).
 const fs = require("fs");
 const path = require("path");
 
